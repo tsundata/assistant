@@ -1,0 +1,22 @@
+version: '3'
+
+services: 
+    db:
+        image: mysql:latest
+        environment: 
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_DATABASE: gateway
+            MYSQL_USER: gateway
+            MYSQL_PASSWORD: 123456
+        volumes: 
+            - ../scripts/gateway.sql:/docker-entrypoint-initdb.d/gateway.sql
+
+    gateway: 
+        build: 
+            context: ..
+            dockerfile: "build/gateway/Dockerfile"
+        command: ./wait-for db:3306 -t 30 -- ./app
+        depends_on: 
+            - db
+        ports: 
+            - "5122:5000"

@@ -15,5 +15,8 @@
 # vendor/
 
 # Project
-.vscode
-.idea
+.vscode/
+.idea/
+go.sum
+dist/
+configs/*.yml
