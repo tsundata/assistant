@@ -1,2 +1,1 @@
-# assistant
-Assistant Bot
+# Assistant Bot
