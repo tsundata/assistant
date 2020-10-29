@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/spf13/viper"
 	"github.com/tsundata/rpc/registry"
 )
 
@@ -13,11 +14,15 @@ type RegistryOptions struct {
 	Port int
 }
 
-func NewRegistryOptions() (*RegistryOptions, error) {
+func NewRegistryOptions(v *viper.Viper) (*RegistryOptions, error) {
 	var (
 		err error
 		o   = new(RegistryOptions)
 	)
+
+	if err = v.UnmarshalKey("registry", o); err != nil {
+		return nil, err
+	}
 
 	return o, err
 }

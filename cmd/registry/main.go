@@ -4,14 +4,17 @@ import (
 	"flag"
 
 	"github.com/tsundata/assistant/internal/app/registry"
+	"github.com/tsundata/assistant/internal/config"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
-	rpcOptions, err := rpc.NewRegistryOptions()
-	// FIXME
-	rpcOptions.Port = 7001
+	viper, err := config.New(cf)
+	if err != nil {
+		return nil, err
+	}
+	rpcOptions, err := rpc.NewRegistryOptions(viper)
 	if err != nil {
 		return nil, err
 	}

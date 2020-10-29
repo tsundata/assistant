@@ -4,28 +4,33 @@ import (
 	"log"
 	"net"
 
+	"github.com/spf13/viper"
 	"github.com/tsundata/rpc"
 	"github.com/tsundata/rpc/registry"
 )
 
 type ServerOptions struct {
-	RegistryAddr string
+	Registry string
 }
 
-func NewServerOptions() (*ServerOptions, error) {
+func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 	var (
 		err error
 		o   = new(ServerOptions)
 	)
 
+	if err = v.UnmarshalKey("rpc", o); err != nil {
+		return nil, err
+	}
+
 	return o, err
 }
 
 type Server struct {
-	o            *ServerOptions
-	app          string
-	registryAddr string
-	server       *rpc.Server
+	o        *ServerOptions
+	app      string
+	registry string
+	server   *rpc.Server
 }
 
 type InitServers func(s *rpc.Server)
@@ -42,7 +47,7 @@ func (s *Server) Application(name string) {
 }
 
 func (s *Server) Start() error {
-	s.registryAddr = s.o.RegistryAddr
+	s.registry = s.o.Registry
 
 	go func() {
 		l, err := net.Listen("tcp", ":0")
@@ -53,7 +58,7 @@ func (s *Server) Start() error {
 		log.Println("rpc server starting ...", "tcp@"+l.Addr().String())
 
 		// s.server.Register()
-		registry.Heartbeat(s.registryAddr, "tcp@"+l.Addr().String(), 0)
+		registry.Heartbeat(s.registry, "tcp@"+l.Addr().String(), 0)
 		s.server.Accept(l)
 	}()
 

@@ -5,16 +5,18 @@ import (
 
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/app/gateway/controllers"
+	"github.com/tsundata/assistant/internal/config"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
-	httpOptions, err := http.NewOptions()
-	// FIXME
-	httpOptions.Port = 7000
-	httpOptions.Host = "0.0.0.0"
+	viper, err := config.New(cf)
+	if err != nil {
+		return nil, err
+	}
+	httpOptions, err := http.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}

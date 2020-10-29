@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/tsundata/framework"
 	"github.com/tsundata/framework/middleware"
 )
@@ -27,12 +28,15 @@ type Server struct {
 	httpServer http.Server
 }
 
-// TODO load config
-func NewOptions() (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var (
 		err error
 		o   = new(Options)
 	)
+
+	if err = v.UnmarshalKey("http", o); err != nil {
+		return nil, err
+	}
 
 	return o, err
 }
