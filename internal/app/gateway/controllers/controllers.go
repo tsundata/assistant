@@ -8,5 +8,6 @@ import (
 func CreateInitControllersFn(gc *GatewayController) http.InitControllers {
 	return func(r *framework.Engine) {
 		r.GET("/", gc.Index)
+		r.GET("/foo", gc.Foo)
 	}
 }

@@ -1,6 +1,7 @@
 package message
 
 import (
+	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
@@ -17,6 +18,10 @@ func NewOptions() (*Options, error) {
 }
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
+	// FIXME register service
+	var foo service.Foo
+	rs.Register(&foo)
+
 	a, err := app.New(o.Name, app.RpcServerOption(rs))
 
 	if err != nil {

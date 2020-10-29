@@ -39,12 +39,9 @@ func NewClient(o *ClientOptions) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) Dial(service string, options ...ClientOptional) (*xclient.XClient, error) {
+func (c *Client) Dial(ctx context.Context, serviceMethod string, args, reply interface{}) error {
 	d := xclient.NewRegistryDiscovery(c.o.Registry, 0)
 	xc := xclient.NewXClient(d, xclient.RoundRobinSelect, nil)
-	// TODO
 	defer func() { _ = xc.Close() }()
-	var reply interface{}
-	err := xc.Call(context.Background(), service, nil, &reply)
-	return xc, err
+	return xc.Call(ctx, serviceMethod, args, reply)
 }

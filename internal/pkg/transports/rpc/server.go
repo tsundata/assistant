@@ -1,7 +1,6 @@
 package rpc
 
 import (
-	"errors"
 	"log"
 	"net"
 
@@ -58,15 +57,11 @@ func (s *Server) Start() error {
 		s.server.Accept(l)
 	}()
 
-	if err := s.register(); err != nil {
-		return errors.New("register grpc server error")
-	}
-
 	return nil
 }
 
-func (s *Server) register() error {
-	return nil
+func (s *Server) Register(rcvr interface{}) {
+	s.server.Register(rcvr)
 }
 
 // TODO
