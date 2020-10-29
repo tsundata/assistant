@@ -13,6 +13,7 @@ import (
 )
 
 type Options struct {
+	Host string
 	Port int
 	Mode string
 }
@@ -63,9 +64,7 @@ func (s *Server) Application(name string) {
 
 func (s *Server) Start() error {
 	s.port = s.o.Port
-	// FIXME
-	s.host = "0.0.0.0"
-
+	s.host = s.o.Host
 	addr := fmt.Sprintf("%s:%d", s.host, s.port)
 
 	s.httpServer = http.Server{Addr: addr, Handler: s.router}

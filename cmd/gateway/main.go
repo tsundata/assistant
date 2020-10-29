@@ -12,7 +12,8 @@ import (
 func CreateApp(cf string) (*app.Application, error) {
 	httpOptions, err := http.NewOptions()
 	// FIXME
-	httpOptions.Port = 5000
+	httpOptions.Port = 7000
+	httpOptions.Host = "0.0.0.0"
 	if err != nil {
 		return nil, err
 	}
