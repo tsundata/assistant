@@ -18,5 +18,23 @@ services:
         command: ./wait-for db:3306 -t 30 -- ./app
         depends_on: 
             - db
+            - registry
         ports: 
             - "5122:5000"
+
+    registry: 
+        build: 
+            context: ..
+            dockerfile: "build/registry/Dockerfile"
+        command: ./wait-for db:3306 -t 30 -- ./app
+        depends_on: 
+            - db
+
+    message: 
+        build: 
+            context: ..
+            dockerfile: "build/message/Dockerfile"
+        command: ./wait-for db:3306 -t 30 -- ./app
+        depends_on: 
+            - db
+            - registry
