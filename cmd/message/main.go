@@ -21,7 +21,7 @@ func CreateApp(cf string) (*app.Application, error) {
 
 	server, err := rpc.NewServer(rpcOptions, nil)
 
-	messageOptions, err := message.NewOptions()
+	messageOptions, err := message.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package message
 
 import (
+	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -8,19 +9,21 @@ import (
 
 type Options struct {
 	Name string
+	v    *viper.Viper
 }
 
-func NewOptions() (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
+	o.v = v
 
 	return o, err
 }
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
-	// FIXME register service
-	var foo service.Foo
-	rs.Register(&foo)
+	var slack service.Slack
+	slack.V = o.v
+	rs.Register(&slack)
 
 	a, err := app.New(o.Name, app.RpcServerOption(rs))
 

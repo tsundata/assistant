@@ -1,2 +1,5 @@
 rpc:
     registry: http://127.0.0.1:7001/_rpc_/registry
+
+slack:
+    webhook: 
