@@ -38,3 +38,12 @@ services:
         depends_on: 
             - db
             - registry
+
+    subscribe: 
+        build: 
+            context: ..
+            dockerfile: "build/subscribe/Dockerfile"
+        command: ./wait-for db:3306 -t 30 -- ./app
+        depends_on: 
+            - db
+            - registry

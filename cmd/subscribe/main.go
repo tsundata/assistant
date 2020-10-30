@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/tsundata/assistant/internal/app/message"
+	"github.com/tsundata/assistant/internal/app/subscribe"
 	"github.com/tsundata/assistant/internal/config"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -21,18 +21,18 @@ func CreateApp(cf string) (*app.Application, error) {
 
 	server, err := rpc.NewServer(rpcOptions, nil)
 
-	appOptions, err := message.NewOptions(viper)
+	appOptions, err := subscribe.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appOptions, server)
+	application, err := subscribe.NewApp(appOptions, server)
 	if err != nil {
 		return nil, err
 	}
 	return application, nil
 }
 
-var configFile = flag.String("f", "message.yml", "set config file which will loading")
+var configFile = flag.String("f", "subscribe.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()
