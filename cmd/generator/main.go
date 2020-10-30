@@ -13,20 +13,20 @@ func main() {
 	flag.Parse()
 
 	// app
-	WirteTemplate("./cmd/generator/app.go.template", "./internal/app/"+*appName, "app.go")
+	WriteTemplate("./cmd/generator/app.go.template", "./internal/app/"+*appName, "app.go")
 
 	// cmd
-	WirteTemplate("./cmd/generator/cmd.go.template", "./cmd/"+*appName, "main.go")
+	WriteTemplate("./cmd/generator/cmd.go.template", "./cmd/"+*appName, "main.go")
 
 	// build
-	WirteTemplate("./cmd/generator/Dockerfile.template", "./build/"+*appName, "Dockerfile")
+	WriteTemplate("./cmd/generator/Dockerfile.template", "./build/"+*appName, "Dockerfile")
 
 	// config
-	WirteTemplate("./cmd/generator/config.yml.template", "./configs", *appName+".yml.example")
-	WirteTemplate("./cmd/generator/config.yml.template", "./configs", *appName+".yml")
+	WriteTemplate("./cmd/generator/config.yml.template", "./configs", *appName+".yml.example")
+	WriteTemplate("./cmd/generator/config.yml.template", "./configs", *appName+".yml")
 }
 
-func WirteTemplate(templatePath, targetDir, targetFileName string) {
+func WriteTemplate(templatePath, targetDir, targetFileName string) {
 	placeholder := []byte("$$$$$")
 
 	template, err := ioutil.ReadFile(templatePath)
@@ -36,7 +36,10 @@ func WirteTemplate(templatePath, targetDir, targetFileName string) {
 	template = bytes.ReplaceAll(template, placeholder, []byte(*appName))
 
 	if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-		os.Mkdir(targetDir, 0755)
+		err = os.Mkdir(targetDir, 0755)
+		if err != nil {
+			panic(err)
+		}
 	}
 	err = ioutil.WriteFile(targetDir+"/"+targetFileName, template, 0644)
 	if err != nil {

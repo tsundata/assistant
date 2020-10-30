@@ -61,7 +61,8 @@ func (r *Registry) Start() error {
 			return
 		}
 		registry.HandleHTTP()
-		http.Serve(l, nil)
+		err = http.Serve(l, nil)
+		log.Println(err)
 	}()
 	return nil
 }

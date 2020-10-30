@@ -10,9 +10,12 @@ import (
 func main() {
 	c := cron.New()
 
-	c.AddFunc("@every 1m", func() {
+	_, err := c.AddFunc("@every 1m", func() {
 		fmt.Println(time.Now())
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	for {
 		c.Run()

@@ -23,7 +23,7 @@ func (gc *GatewayController) Index(c *framework.Context) {
 
 func (gc *GatewayController) Foo(c *framework.Context) {
 	var reply string
-	gc.client.Dial(context.Background(), "Slack.SendMessage", "Hi Slack", &reply)
+	_ = gc.client.Dial(context.Background(), "Slack.SendMessage", "Hi Slack", &reply)
 
 	c.JSON(http.StatusOK, framework.H{"time": time.Now().String(), "reply": reply})
 }

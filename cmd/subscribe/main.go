@@ -4,8 +4,8 @@ import (
 	"flag"
 
 	"github.com/tsundata/assistant/internal/app/subscribe"
-	"github.com/tsundata/assistant/internal/config"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -37,14 +37,14 @@ var configFile = flag.String("f", "subscribe.yml", "set config file which will l
 func main() {
 	flag.Parse()
 
-	app, err := CreateApp(*configFile)
+	a, err := CreateApp(*configFile)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := app.Start(); err != nil {
+	if err := a.Start(); err != nil {
 		panic(err)
 	}
 
-	app.AwaitSignal()
+	a.AwaitSignal()
 }

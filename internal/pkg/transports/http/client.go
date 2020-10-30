@@ -18,6 +18,9 @@ func (c *Client) PostJSON(url string, body interface{}) (*http.Response, error) 
 		return nil, err
 	}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}

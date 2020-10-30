@@ -66,7 +66,8 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Register(rcvr interface{}) {
-	s.server.Register(rcvr)
+	err := s.server.Register(rcvr)
+	log.Println(err)
 }
 
 // TODO
