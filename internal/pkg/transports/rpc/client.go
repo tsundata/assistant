@@ -30,18 +30,24 @@ func WithTimeout(d time.Duration) ClientOptional {
 }
 
 type Client struct {
-	o *ClientOptions
+	o  *ClientOptions
+	xc *xclient.XClient
 }
 
 func NewClient(o *ClientOptions) (*Client, error) {
+	d := xclient.NewRegistryDiscovery(o.Registry, 0)
+	xc := xclient.NewXClient(d, xclient.RandomSelect, nil)
+
 	return &Client{
-		o: o,
+		o:  o,
+		xc: xc,
 	}, nil
 }
 
-func (c *Client) Dial(ctx context.Context, serviceMethod string, args, reply interface{}) error {
-	d := xclient.NewRegistryDiscovery(c.o.Registry, 0)
-	xc := xclient.NewXClient(d, xclient.RoundRobinSelect, nil)
-	defer func() { _ = xc.Close() }()
-	return xc.Call(ctx, serviceMethod, args, reply)
+func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
+	return c.xc.Call(ctx, serviceMethod, args, reply)
+}
+
+func (c *Client) Close() error {
+	return c.xc.Close()
 }

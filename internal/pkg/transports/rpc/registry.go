@@ -1,7 +1,9 @@
 package rpc
 
 import (
+	"errors"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net"
 	"net/http"
@@ -49,7 +51,15 @@ func (r *Registry) Application(name string) {
 
 func (r *Registry) Start() error {
 	r.port = r.o.Port
-	r.host = "127.0.0.1"
+	if r.port == 0 {
+		r.port = utils.GetAvailablePort()
+	}
+
+	r.host = utils.GetLocalIP4()
+	if r.host == "" {
+		return errors.New("get local ipv4 error")
+	}
+
 	addr := fmt.Sprintf("%s:%d", r.host, r.port)
 
 	log.Println("rpc registry starting ...", addr)

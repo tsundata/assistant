@@ -1,10 +1,9 @@
 package service
 
 import (
-	"io/ioutil"
-
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"io/ioutil"
 )
 
 type Slack struct {

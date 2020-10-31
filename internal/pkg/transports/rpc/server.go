@@ -1,6 +1,9 @@
 package rpc
 
 import (
+	"errors"
+	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net"
 
@@ -10,6 +13,8 @@ import (
 )
 
 type ServerOptions struct {
+	Host     string
+	Port     int
 	Registry string
 }
 
@@ -29,6 +34,8 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 type Server struct {
 	o        *ServerOptions
 	app      string
+	host     string
+	port     int
 	registry string
 	server   *rpc.Server
 }
@@ -48,29 +55,41 @@ func (s *Server) Application(name string) {
 
 func (s *Server) Start() error {
 	s.registry = s.o.Registry
+	if s.registry == "" {
+		return errors.New("registry error")
+	}
+
+	s.port = s.o.Port
+	if s.port == 0 {
+		s.port = utils.GetAvailablePort()
+	}
+
+	s.host = utils.GetLocalIP4()
+	if s.host == "" {
+		return errors.New("get local ipv4 error")
+	}
+
+	addr := fmt.Sprintf("%s:%d", s.host, s.port)
+
+	log.Println("rpc server starting ...", addr)
 
 	go func() {
-		l, err := net.Listen("tcp", ":0")
+		l, err := net.Listen("tcp", addr)
 		if err != nil {
 			log.Println(err)
 		}
 
-		log.Println("rpc server starting ...", "tcp@"+l.Addr().String())
-
-		// s.server.Register()
-		registry.Heartbeat(s.registry, "tcp@"+l.Addr().String(), 0)
+		registry.Heartbeat(s.registry, "tcp@"+addr, 0)
 		s.server.Accept(l)
 	}()
 
 	return nil
 }
 
-func (s *Server) Register(rcvr interface{}) {
-	err := s.server.Register(rcvr)
-	log.Println(err)
+func (s *Server) Register(rcvr interface{}) error {
+	return s.server.Register(rcvr)
 }
 
-// TODO
 func (s *Server) Stop() error {
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
 	"time"
@@ -68,7 +69,15 @@ func (s *Server) Application(name string) {
 
 func (s *Server) Start() error {
 	s.port = s.o.Port
-	s.host = s.o.Host
+	if s.port == 0 {
+		s.port = utils.GetAvailablePort()
+	}
+
+	s.host = utils.GetLocalIP4()
+	if s.host == "" {
+		return errors.New("get local ipv4 error")
+	}
+
 	addr := fmt.Sprintf("%s:%d", s.host, s.port)
 
 	s.httpServer = http.Server{Addr: addr, Handler: s.router}

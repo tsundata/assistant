@@ -32,6 +32,8 @@ func New(o *Options) (*gorm.DB, error) {
 		return nil, errors.New("gorm open database connection error")
 	}
 
+	log.Println("database open success")
+
 	if o.Debug {
 		db = db.Debug()
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/pkg/database"
 
 	"github.com/tsundata/assistant/internal/app/subscribe"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -21,7 +22,10 @@ func CreateApp(cf string) (*app.Application, error) {
 
 	server, err := rpc.NewServer(rpcOptions, nil)
 
-	appOptions, err := subscribe.NewOptions(viper)
+	dbOptions, err := database.NewOptions(viper)
+	db, err := database.New(dbOptions)
+
+	appOptions, err := subscribe.NewOptions(viper, db)
 	if err != nil {
 		return nil, err
 	}

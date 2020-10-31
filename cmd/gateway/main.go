@@ -24,8 +24,6 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	// FIXME
-	clientOptions.Registry = "http://127.0.0.1:7001/_rpc_/registry"
 	client, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
