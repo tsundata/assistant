@@ -53,6 +53,10 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply int
 	return c.xc.Call(ctx, serviceMethod, args, reply)
 }
 
+func (c *Client) Broadcast(ctx context.Context, serviceMethod string, args, reply interface{}) error {
+	return c.xc.Broadcast(ctx, serviceMethod, args, reply)
+}
+
 func (c *Client) Close() error {
 	return c.xc.Close()
 }
