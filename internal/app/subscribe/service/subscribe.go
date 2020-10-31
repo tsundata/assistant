@@ -1,9 +1,9 @@
 package service
 
 import (
-	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/models"
 	"gorm.io/gorm"
+	"log"
 )
 
 type Subscribe struct {
@@ -11,14 +11,14 @@ type Subscribe struct {
 }
 
 func (s *Subscribe) List(arg string, reply *int) error {
-	fmt.Println("Subscribe.List ............")
+	log.Println("Subscribe.List ............")
 
 	var list []models.Subscribe
 
 	s.DB.AutoMigrate(&models.Subscribe{})
 	s.DB.Create(&models.Subscribe{})
 	s.DB.Find(&list)
-	fmt.Println(list)
+	log.Println(list)
 
 	var errCode int
 	errCode = 2232

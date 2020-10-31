@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/spf13/viper"
 )
@@ -15,7 +15,7 @@ func New(path string) (*viper.Viper, error) {
 	v.SetConfigFile(string(path))
 
 	if err := v.ReadInConfig(); err == nil {
-		fmt.Printf("use config file -> %s\n", v.ConfigFileUsed())
+		log.Printf("use config file -> %s\n", v.ConfigFileUsed())
 	} else {
 		return nil, err
 	}
