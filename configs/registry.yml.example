@@ -1,2 +1,4 @@
+app:
+    name: registry
 registry:
     port: 7001

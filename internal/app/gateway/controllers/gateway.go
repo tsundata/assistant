@@ -42,7 +42,7 @@ func (gc *GatewayController) Foo(c *framework.Context) {
 	args, _ := utils.ProtoMarshal(payload)
 
 	var replay *[]byte
-	err := gc.client.Call(context.Background(), "Subscribe.Open", args, &replay)
+	err := gc.client.Call(context.Background(), "Subscribe.Subscribe.Open", args, &replay)
 	if err != nil {
 		log.Println(err)
 	}

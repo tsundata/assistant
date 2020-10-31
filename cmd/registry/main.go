@@ -21,7 +21,7 @@ func CreateApp(cf string) (*app.Application, error) {
 
 	server, err := rpc.NewRegistry(rpcOptions, nil)
 
-	registryOptions, err := registry.NewOptions()
+	registryOptions, err := registry.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}

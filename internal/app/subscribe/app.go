@@ -1,24 +1,30 @@
 package subscribe
 
 import (
+	"errors"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"gorm.io/gorm"
+	"log"
 )
 
 type Options struct {
 	Name string
-	v    *viper.Viper
 	db   *gorm.DB
 }
 
 func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.v = v
 	o.db = db
+
+	if err = v.UnmarshalKey("app", o); err != nil {
+		return nil, errors.New("unmarshal app option error")
+	}
+
+	log.Println("load application options success")
 
 	return o, err
 }

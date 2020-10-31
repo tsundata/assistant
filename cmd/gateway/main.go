@@ -35,7 +35,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayOptions, err := gateway.NewOptions()
+	gatewayOptions, err := gateway.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}

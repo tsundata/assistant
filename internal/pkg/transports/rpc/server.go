@@ -81,7 +81,7 @@ func (s *Server) Start() error {
 			log.Println(err)
 		}
 
-		registry.Heartbeat(s.registry, "tcp@"+addr, 0)
+		registry.Heartbeat(s.registry, s.app, "tcp@"+addr, 0)
 		s.server.Accept(l)
 	}()
 

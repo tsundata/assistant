@@ -1,28 +1,39 @@
 package message
 
 import (
+	"errors"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"log"
 )
 
 type Options struct {
-	Name string
-	v    *viper.Viper
+	Name    string
+	Webhook string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.v = v
+
+	if err = v.UnmarshalKey("app", o); err != nil {
+		return nil, errors.New("unmarshal app option error")
+	}
+
+	if err = v.UnmarshalKey("slack", o); err != nil {
+		return nil, errors.New("unmarshal app option error")
+	}
+
+	log.Println("load application options success")
 
 	return o, err
 }
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	var slack service.Slack
-	slack.V = o.v
+	slack.Webhook = o.Webhook
 	rs.Register(&slack)
 
 	a, err := app.New(o.Name, app.RpcServerOption(rs))
