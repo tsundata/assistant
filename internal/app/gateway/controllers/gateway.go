@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/proto"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
 	"time"
@@ -23,18 +25,35 @@ func (gc *GatewayController) Index(c *framework.Context) {
 }
 
 func (gc *GatewayController) Foo(c *framework.Context) {
-	var reply string
-	_ = gc.client.Call(context.Background(), "Slack.SendMessage", "Hi Slack", &reply)
-	log.Println(reply)
+	//var reply string
+	//_ = gc.client.Call(context.Background(), "Slack.SendMessage", "Hi Slack", &reply)
+	//log.Println(reply)
+	//
+	//var errCode int
+	//_ = gc.client.Call(context.Background(), "Subscribe.List", "", &errCode)
+	//log.Println(errCode)
 
-	var errCode int
-	_ = gc.client.Call(context.Background(), "Subscribe.List", "", &errCode)
-	log.Println(errCode)
+	payload := &proto.Detail{
+		Id:          2828,
+		Name:        "in in in",
+		Price:       212211,
+		CreatedTime: nil,
+	}
+	args, _ := utils.ProtoMarshal(payload)
 
-	err := gc.client.Call(context.Background(), "Subscribe.Abc", "", &errCode)
+	var replay *[]byte
+	err := gc.client.Call(context.Background(), "Subscribe.Open", args, &replay)
 	if err != nil {
 		log.Println(err)
 	}
 
-	c.JSON(http.StatusOK, framework.H{"time": time.Now().String(), "reply": reply})
+	var d proto.Detail
+	err = utils.ProtoUnmarshal(*replay, &d)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println(d)
+
+	c.JSON(http.StatusOK, framework.H{"time": time.Now().String(), "reply": "reply"})
 }

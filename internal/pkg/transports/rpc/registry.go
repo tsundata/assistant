@@ -55,7 +55,9 @@ func (r *Registry) Start() error {
 		r.port = utils.GetAvailablePort()
 	}
 
-	r.host = utils.GetLocalIP4()
+	// FIXME
+	// r.host = utils.GetLocalIP4()
+	r.host = "127.0.0.1"
 	if r.host == "" {
 		return errors.New("get local ipv4 error")
 	}

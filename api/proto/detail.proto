@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+option go_package = "proto";
+
+message Detail {
+    uint64 id = 1;
+    string name = 2;
+    float price = 3;
+    google.protobuf.Timestamp createdTime = 4;
+}

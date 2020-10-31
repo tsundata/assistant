@@ -20,7 +20,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions()
+	clientOptions, err := rpc.NewClientOptions(viper)
 	if err != nil {
 		return nil, err
 	}

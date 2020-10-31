@@ -18,4 +18,7 @@ lint:
 .PHONY: docker
 docker-compose: build
 	docker-compose -f deployments/docker-compose.yml up --build -d
+.PHONY: proto
+proto:
+	protoc -I api/proto ./api/proto/* --go_out=api/proto
 all: lint docker

@@ -2,9 +2,9 @@ package rpc
 
 import (
 	"context"
-	"time"
-
+	"github.com/spf13/viper"
 	"github.com/tsundata/rpc/xclient"
+	"time"
 )
 
 type ClientOptions struct {
@@ -13,11 +13,16 @@ type ClientOptions struct {
 	Registry string
 }
 
-func NewClientOptions() (*ClientOptions, error) {
+func NewClientOptions(v *viper.Viper) (*ClientOptions, error) {
 	var (
 		err error
 		o   = new(ClientOptions)
 	)
+
+	if err = v.UnmarshalKey("rpc", o); err != nil {
+		return nil, err
+	}
+
 	return o, err
 }
 

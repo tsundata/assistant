@@ -2,4 +2,5 @@ http:
     mode: release
     host: 127.0.0.1
     port: 7000
-  
+rpc:
+    registry: http://127.0.0.1:7001/_rpc_/registry
