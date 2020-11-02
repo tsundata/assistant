@@ -35,14 +35,14 @@ func (gc *GatewayController) Foo(c *framework.Context) {
 
 	payload := &proto.Detail{
 		Id:          2828,
-		Name:        "in in in",
+		Name:        "=====> in",
 		Price:       212211,
 		CreatedTime: nil,
 	}
 	args, _ := utils.ProtoMarshal(payload)
 
 	var replay *[]byte
-	err := gc.client.Broadcast(context.Background(), "Subscribe.Subscribe.Open", args, &replay)
+	err := gc.client.Call(context.Background(), "Subscribe.Subscribe.Open", args, &replay)
 	if err != nil {
 		log.Println(err)
 	}

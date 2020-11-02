@@ -6,12 +6,16 @@ import (
 )
 
 type Slack struct {
-	Webhook string
+	webhook string
+}
+
+func NewSlack(webhook string) *Slack {
+	return &Slack{webhook: webhook}
 }
 
 func (s *Slack) SendMessage(message string, reply *string) error {
 	client := http.NewClient()
-	resp, err := client.PostJSON(s.Webhook, map[string]interface{}{
+	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
 		"text": message,
 	})
 	if err != nil {

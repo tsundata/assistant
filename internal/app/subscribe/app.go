@@ -30,12 +30,13 @@ func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 }
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
-	var subscribe service.Subscribe
-	subscribe.DB = o.db
-	rs.Register(&subscribe)
+	subscribe := service.NewSubscribe(o.db)
+	err := rs.Register(subscribe)
+	if err != nil {
+		return nil, err
+	}
 
 	a, err := app.New(o.Name, app.RpcServerOption(rs))
-
 	if err != nil {
 		return nil, err
 	}

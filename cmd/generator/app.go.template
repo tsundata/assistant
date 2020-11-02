@@ -23,7 +23,6 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	a, err := app.New(o.Name, app.RpcServerOption(rs))
-
 	if err != nil {
 		return nil, err
 	}

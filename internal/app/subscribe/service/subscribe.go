@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/tsundata/assistant/api/proto"
 	"github.com/tsundata/assistant/internal/pkg/models"
@@ -12,7 +11,11 @@ import (
 )
 
 type Subscribe struct {
-	DB *gorm.DB
+	db *gorm.DB
+}
+
+func NewSubscribe(db *gorm.DB) *Subscribe {
+	return &Subscribe{db: db}
 }
 
 func (s *Subscribe) List(arg string, reply *int) error {
@@ -20,9 +23,9 @@ func (s *Subscribe) List(arg string, reply *int) error {
 
 	var list []models.Subscribe
 
-	s.DB.AutoMigrate(&models.Subscribe{})
-	s.DB.Create(&models.Subscribe{})
-	s.DB.Find(&list)
+	s.db.AutoMigrate(&models.Subscribe{})
+	s.db.Create(&models.Subscribe{})
+	s.db.Find(&list)
 	log.Println(list)
 
 	var errCode int
@@ -44,13 +47,12 @@ func (s *Subscribe) Open(payload []byte, reply *[]byte) error {
 	ct, _ := ptypes.TimestampProto(time.Now())
 	detail := &proto.Detail{
 		Id:          1,
-		Name:        "Demo test",
+		Name:        "out =====>",
 		Price:       1000,
 		CreatedTime: ct,
 	}
-	fmt.Println(detail)
 	*reply, _ = utils.ProtoMarshal(detail)
-	fmt.Println(reply)
+
 	return nil
 }
 
