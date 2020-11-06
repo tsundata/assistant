@@ -38,19 +38,30 @@ func WithTimeout(d time.Duration) ClientOptional {
 type Client struct {
 	o  *ClientOptions
 	xc map[string]*xclient.XClient
+	d *xclient.RegistryDiscovery
 }
 
 func NewClient(o *ClientOptions) (*Client, error) {
+	d := xclient.NewRegistryDiscovery(o.Registry, o.Wait)
 	return &Client{
 		o: o,
+		d: d,
 	}, nil
+}
+
+func (c *Client) Auth(servicePath, token string)  {
+	xc, ok := c.xc[servicePath]
+	if !ok {
+		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
+	}
+
+	xc.Auth(token)
 }
 
 func (c *Client) Call(ctx context.Context, servicePath, serviceMethod string, args, reply interface{}) error {
 	xc, ok := c.xc[servicePath]
 	if !ok {
-		d := xclient.NewRegistryDiscovery(c.o.Registry, c.o.Wait)
-		xc = xclient.NewXClient(servicePath, d, xclient.RandomSelect, nil)
+		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
 	}
 
 	return xc.Call(ctx, serviceMethod, args, reply)
@@ -59,8 +70,7 @@ func (c *Client) Call(ctx context.Context, servicePath, serviceMethod string, ar
 func (c *Client) Broadcast(ctx context.Context, servicePath, serviceMethod string, args, reply interface{}) error {
 	xc, ok := c.xc[servicePath]
 	if !ok {
-		d := xclient.NewRegistryDiscovery(c.o.Registry, c.o.Wait)
-		xc = xclient.NewXClient(servicePath, d, xclient.RandomSelect, nil)
+		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
 	}
 
 	return xc.Broadcast(ctx, serviceMethod, args, reply)

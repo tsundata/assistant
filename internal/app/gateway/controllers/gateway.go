@@ -48,6 +48,7 @@ func (gc *GatewayController) Foo(c *framework.Context) {
 	}
 	if replay == nil {
 		log.Println("error replay")
+		return
 	}
 
 	var d proto.Detail
