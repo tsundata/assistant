@@ -3,13 +3,11 @@ package rpc
 import (
 	"errors"
 	"fmt"
+	"github.com/smallnest/rpcx/server"
+	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
-	"net"
-
-	"github.com/spf13/viper"
-	"github.com/tsundata/rpc"
-	"github.com/tsundata/rpc/registry"
 )
 
 type ServerOptions struct {
@@ -37,15 +35,16 @@ type Server struct {
 	host     string
 	port     int
 	registry string
-	server   *rpc.Server
+	server   *server.Server
 }
 
-type InitServers func(s *rpc.Server)
+type InitServers func(s *server.Server)
 
 func NewServer(o *ServerOptions, init InitServers) (*Server, error) {
+	//share.Codecs[protocol.SerializeType(8)] = &codec.GobCodec{}
 	return &Server{
 		o:      o,
-		server: rpc.NewServer(),
+		server: server.NewServer(),
 	}, nil
 }
 
@@ -76,20 +75,19 @@ func (s *Server) Start() error {
 	log.Println("rpc server starting ...", addr)
 
 	go func() {
-		l, err := net.Listen("tcp", addr)
+		registry.Heartbeat(s.registry, s.app, "tcp@"+addr, 0)
+
+		err := s.server.Serve("tcp", addr)
 		if err != nil {
 			log.Println(err)
 		}
-
-		registry.Heartbeat(s.registry, s.app, "tcp@"+addr, 0)
-		s.server.Accept(l)
 	}()
 
 	return nil
 }
 
-func (s *Server) Register(rcvr interface{}) error {
-	return s.server.Register(rcvr)
+func (s *Server) Register(rcvr interface{}, metadata string) error {
+	return s.server.Register(rcvr, metadata)
 }
 
 func (s *Server) Stop() error {

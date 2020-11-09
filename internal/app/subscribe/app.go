@@ -31,7 +31,7 @@ func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	subscribe := service.NewSubscribe(o.db)
-	err := rs.Register(subscribe)
+	err := rs.Register(subscribe, "")
 	if err != nil {
 		return nil, err
 	}

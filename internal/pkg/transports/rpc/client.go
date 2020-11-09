@@ -2,9 +2,10 @@ package rpc
 
 import (
 	"context"
-	"errors"
+	"github.com/smallnest/rpcx/client"
+	"github.com/smallnest/rpcx/protocol"
 	"github.com/spf13/viper"
-	"github.com/tsundata/rpc/xclient"
+	"github.com/tsundata/assistant/internal/pkg/rpc/discovery"
 	"time"
 )
 
@@ -37,51 +38,27 @@ func WithTimeout(d time.Duration) ClientOptional {
 
 type Client struct {
 	o  *ClientOptions
-	xc map[string]*xclient.XClient
-	d *xclient.RegistryDiscovery
+	xc *client.XClient
 }
 
-func NewClient(o *ClientOptions) (*Client, error) {
-	d := xclient.NewRegistryDiscovery(o.Registry, o.Wait)
+func NewClient(o *ClientOptions, service, servicePath string) (*Client, error) {
+	co := client.DefaultOption
+	co.SerializeType = protocol.ProtoBuffer
+	d := discovery.NewMultiServiceDiscovery(service, o.Registry)
+	xc := client.NewXClient(servicePath, client.Failtry, client.RandomSelect, d, co)
 	return &Client{
-		o: o,
-		d: d,
+		xc: &xc,
 	}, nil
 }
 
-func (c *Client) Auth(servicePath, token string)  {
-	xc, ok := c.xc[servicePath]
-	if !ok {
-		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
-	}
-
-	xc.Auth(token)
+func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
+	return (*c.xc).Call(ctx, serviceMethod, args, reply)
 }
 
-func (c *Client) Call(ctx context.Context, servicePath, serviceMethod string, args, reply interface{}) error {
-	xc, ok := c.xc[servicePath]
-	if !ok {
-		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
-	}
-
-	return xc.Call(ctx, serviceMethod, args, reply)
+func (c *Client) Broadcast(ctx context.Context, serviceMethod string, args, reply interface{}) error {
+	return (*c.xc).Broadcast(ctx, serviceMethod, args, reply)
 }
 
-func (c *Client) Broadcast(ctx context.Context, servicePath, serviceMethod string, args, reply interface{}) error {
-	xc, ok := c.xc[servicePath]
-	if !ok {
-		xc = xclient.NewXClient(servicePath, c.d, xclient.RoundRobinSelect, nil)
-	}
-
-	return xc.Broadcast(ctx, serviceMethod, args, reply)
-}
-
-func (c *Client) Close(servicePath string) error {
-	xc, ok := c.xc[servicePath]
-	if ok {
-		delete(c.xc, servicePath)
-		return xc.Close()
-	}
-
-	return errors.New("error xc")
+func (c *Client) Close() error {
+	return (*c.xc).Close()
 }

@@ -2,62 +2,56 @@ package controllers
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
 	"github.com/tsundata/assistant/api/proto"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"github.com/tsundata/framework"
 )
 
 type GatewayController struct {
-	client *rpc.Client
+	subClient *rpc.Client
+	msgClient *rpc.Client
 }
 
-func NewGatewayController(client *rpc.Client) *GatewayController {
-	return &GatewayController{client: client}
+func NewGatewayController(subClient *rpc.Client, msgClient *rpc.Client) *GatewayController {
+	return &GatewayController{subClient: subClient, msgClient: msgClient}
 }
 
-func (gc *GatewayController) Index(c *framework.Context) {
-	c.JSON(http.StatusOK, framework.H{"path": "ROOT"})
+func (gc *GatewayController) Index(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"path": "ROOT"})
 }
 
-func (gc *GatewayController) Foo(c *framework.Context) {
-	//var reply string
-	//_ = gc.client.Call(context.Background(), "Slack.SendMessage", "Hi Slack", &reply)
-	//log.Println(reply)
-	//
-	//var errCode int
-	//_ = gc.client.Call(context.Background(), "Subscribe.List", "", &errCode)
-	//log.Println(errCode)
-
-	payload := &proto.Detail{
-		Id:          2828,
-		Name:        "=====> in",
-		Price:       212211,
+func (gc *GatewayController) Foo(c *gin.Context) {
+	args := &proto.Detail{
+		Id:          11,
+		Name:        "in ===>",
+		Price:       29292,
 		CreatedTime: nil,
 	}
-	args, _ := utils.ProtoMarshal(payload)
 
-	var replay *[]byte
-	err := gc.client.Call(context.Background(), "subscribe", "Subscribe.Open", args, &replay)
+	var reply proto.Detail
+	err := gc.subClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
-		log.Println(err)
-	}
-	if replay == nil {
-		log.Println("error replay")
-		return
+		log.Printf("failed to call: %v", err)
 	}
 
-	var d proto.Detail
-	err = utils.ProtoUnmarshal(*replay, &d)
+	log.Printf(reply.String())
+
+	args = &proto.Detail{
+		Id:          11,
+		Name:        "in ===>",
+		Price:       29292,
+		CreatedTime: nil,
+	}
+
+	err = gc.msgClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
-		log.Println(err)
+		log.Printf("failed to call: %v", err)
 	}
 
-	log.Println(d)
+	log.Printf(reply.String())
 
-	c.JSON(http.StatusOK, framework.H{"time": time.Now().String(), "reply": "reply"})
+	c.JSON(http.StatusOK, gin.H{"time": time.Now().String(), "reply": "reply"})
 }

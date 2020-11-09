@@ -3,13 +3,12 @@ package rpc
 import (
 	"errors"
 	"fmt"
+	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net"
 	"net/http"
-
-	"github.com/spf13/viper"
-	"github.com/tsundata/rpc/registry"
 )
 
 type RegistryOptions struct {

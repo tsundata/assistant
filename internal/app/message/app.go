@@ -33,7 +33,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	slack := service.NewSlack(o.Webhook)
-	err := rs.Register(slack)
+	err := rs.Register(slack, "")
 	if err != nil {
 		return nil, err
 	}

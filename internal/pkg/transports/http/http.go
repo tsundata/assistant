@@ -4,14 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/spf13/viper"
-	"github.com/tsundata/framework"
-	"github.com/tsundata/framework/middleware"
 )
 
 type Options struct {
@@ -25,7 +23,7 @@ type Server struct {
 	app        string
 	host       string
 	port       int
-	router     *framework.Engine
+	router     *gin.Engine
 	httpServer http.Server
 }
 
@@ -42,20 +40,20 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-type InitControllers func(r *framework.Engine)
+type InitControllers func(r *gin.Engine)
 
-func NewRouter(o *Options, init InitControllers) *framework.Engine {
-	r := framework.New()
+func NewRouter(o *Options, init InitControllers) *gin.Engine {
+	r := gin.New()
 
-	r.Use(middleware.Logger())
-	r.Use(middleware.Recovery())
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	init(r)
 
 	return r
 }
 
-func New(o *Options, router *framework.Engine) (*Server, error) {
+func New(o *Options, router *gin.Engine) (*Server, error) {
 	var s = &Server{
 		router: router,
 		o:      o,

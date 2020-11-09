@@ -24,11 +24,15 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := rpc.NewClient(clientOptions)
+	subClient, err := rpc.NewClient(clientOptions, "subscribe", "Subscribe")
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controllers.NewGatewayController(client)
+	msgClient, err := rpc.NewClient(clientOptions, "message", "Slack")
+	if err != nil {
+		return nil, err
+	}
+	gatewayController := controllers.NewGatewayController(subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
 	engine := http.NewRouter(httpOptions, initControllers)
 	server, err := http.New(httpOptions, engine)
