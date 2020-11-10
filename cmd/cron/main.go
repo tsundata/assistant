@@ -17,6 +17,8 @@ func main() {
 		panic(err)
 	}
 
+	// TODO Agent cron
+
 	for {
 		c.Run()
 	}

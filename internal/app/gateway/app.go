@@ -9,7 +9,10 @@ import (
 )
 
 type Options struct {
-	Name string
+	Name         string
+	Token        string
+	Verification string
+	Signing      string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -17,6 +20,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	o := new(Options)
 
 	if err = v.UnmarshalKey("app", o); err != nil {
+		return nil, errors.New("unmarshal app option error")
+	}
+
+	if err = v.UnmarshalKey("slack", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
 	}
 
