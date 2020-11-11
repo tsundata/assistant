@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+option go_package = "proto";
+
+message Message {
+  uint64 id = 1;
+  string uuid = 2;
+  int32 type = 3;
+  int32 service = 4;
+  string channelId = 5;
+  string channelName = 6;
+  string input = 7;
+  string output = 8;
+  string error = 9;
+  int32 remotes = 10;
+  string sourceLink = 11;
+  google.protobuf.Timestamp createdAt = 12;
+  google.protobuf.Timestamp updatedAt = 13;
+}

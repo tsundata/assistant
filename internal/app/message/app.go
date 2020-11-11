@@ -6,17 +6,20 @@ import (
 	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"gorm.io/gorm"
 	"log"
 )
 
 type Options struct {
 	Name    string
 	Webhook string
+	db   *gorm.DB
 }
 
-func NewOptions(v *viper.Viper) (*Options, error) {
+func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 	var err error
 	o := new(Options)
+	o.db = db
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -32,7 +35,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
-	message := service.NewManage()
+	message := service.NewManage(o.db)
 	err := rs.Register(message, "")
 	if err != nil {
 		return nil, err

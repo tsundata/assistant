@@ -10,7 +10,7 @@ import (
 
 type Options struct {
 	URL   string `yaml:"url"`
-	Debug bool
+	Debug bool   `yaml:"debug"`
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {

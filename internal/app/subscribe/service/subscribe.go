@@ -17,7 +17,7 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 }
 
 // TODO
-func (s *Subscribe) List(ctx context.Context, payload *proto.Detail, reply *proto.Detail) error {
+func (s *Subscribe) List(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
 	log.Println("Subscribe.List ............")
 
 	var list []models.Subscribe
@@ -31,25 +31,23 @@ func (s *Subscribe) List(ctx context.Context, payload *proto.Detail, reply *prot
 }
 
 // TODO
-func (s *Subscribe) Open(ctx context.Context, payload *proto.Detail, reply *proto.Detail) error {
+func (s *Subscribe) Open(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
 	log.Println(payload)
 
-	*reply = proto.Detail{
+	*reply = proto.Message{
 		Id:          1,
-		Name:        "out =====>",
-		Price:       1000,
-		CreatedTime: nil,
+		Output:        "out =====>",
 	}
 
 	return nil
 }
 
 // TODO
-func (s *Subscribe) View(ctx context.Context, payload *proto.Detail, reply *proto.Detail) error {
+func (s *Subscribe) View(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
 	return nil
 }
 
 // TODO
-func (s *Subscribe) Close(ctx context.Context, payload *proto.Detail, reply *proto.Detail) error {
+func (s *Subscribe) Close(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
 	return nil
 }

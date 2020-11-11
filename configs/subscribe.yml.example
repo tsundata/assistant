@@ -3,4 +3,5 @@ app:
 rpc:
     registry: http://127.0.0.1:7001/_rpc_/registry
 db:
-    url: root:123456@tcp(127.0.0.1:3306)/demo?charset=utf8&parseTime=True&loc=Local
+    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8&parseTime=True&loc=Local
+    debug: true

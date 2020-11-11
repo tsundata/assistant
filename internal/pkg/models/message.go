@@ -8,28 +8,21 @@ import (
 )
 
 type Message struct {
-	ID                string
-	Type              MessageType
-	Service           MessageService
-	ChannelID         string
-	ChannelName       string
-	Input             string
-	Output            string
-	Error             string
-	Timestamp         string
-	ThreadTimestamp   string
-	BotMentioned      bool
-	DirectMessageOnly bool
-	Debug             bool
-	IsEphemeral       bool
-	StartTime         int64
-	EndTime           int64
-	Attributes        map[string]string
-	Vars              map[string]string
-	OutputToRooms     []string
-	OutputToUsers     []string
-	Remotes           RemoteType
-	SourceLink        string
+	ID          int `gorm:"primaryKey"`
+	UUID        string
+	Type        MessageType
+	Service     MessageService
+	ChannelID   string
+	ChannelName string
+	Input       string
+	Output      string
+	Error       string
+	Attributes  map[string]string `gorm:"-"`
+	Vars        map[string]string `gorm:"-"`
+	Remotes     RemoteType
+	SourceLink  string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type MessageType int
@@ -71,13 +64,8 @@ const (
 func NewMessage() Message {
 	uuid, _ := GenerateMessageID()
 	return Message{
-		ID:            uuid,
-		StartTime:     MessageTimestamp(),
-		Attributes:    make(map[string]string),
-		Vars:          make(map[string]string),
-		OutputToRooms: []string{},
-		OutputToUsers: []string{},
-		Debug:         false,
-		IsEphemeral:   false,
+		UUID:       uuid,
+		Attributes: make(map[string]string),
+		Vars:       make(map[string]string),
 	}
 }

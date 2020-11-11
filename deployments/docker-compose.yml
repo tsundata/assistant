@@ -9,7 +9,7 @@ services:
             MYSQL_USER: gateway
             MYSQL_PASSWORD: 123456
         volumes: 
-            - ../scripts/gateway.sql:/docker-entrypoint-initdb.d/gateway.sql
+            - ../scripts/app.sql:/docker-entrypoint-initdb.d/app.sql
 
     gateway: 
         build: 

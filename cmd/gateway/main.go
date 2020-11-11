@@ -28,7 +28,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	msgClient, err := rpc.NewClient(clientOptions, "message", "Slack")
+	msgClient, err := rpc.NewClient(clientOptions, "message", "Message")
 	if err != nil {
 		return nil, err
 	}
