@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"log"
+	"go.uber.org/zap"
 	"net"
 	"net/http"
 )
@@ -30,6 +30,7 @@ func NewRegistryOptions(v *viper.Viper) (*RegistryOptions, error) {
 
 type Registry struct {
 	o      *RegistryOptions
+	logger *zap.Logger
 	app    string
 	host   string
 	port   int
@@ -38,9 +39,10 @@ type Registry struct {
 
 type InitRegistry func(s *http.Server)
 
-func NewRegistry(o *RegistryOptions, init InitRegistry) (*Registry, error) {
+func NewRegistry(o *RegistryOptions, logger *zap.Logger, init InitRegistry) (*Registry, error) {
 	return &Registry{
-		o: o,
+		o:      o,
+		logger: logger,
 	}, nil
 }
 
@@ -63,17 +65,19 @@ func (r *Registry) Start() error {
 
 	addr := fmt.Sprintf("%s:%d", r.host, r.port)
 
-	log.Println("rpc registry starting ...", addr)
+	r.logger.Info("rpc registry starting ... " + addr)
 
 	go func() {
 		l, err := net.Listen("tcp", addr)
 		if err != nil {
-			log.Println(err)
+			r.logger.Error(err.Error())
 			return
 		}
 		registry.HandleHTTP()
 		err = http.Serve(l, nil)
-		log.Println(err)
+		if err != nil {
+			r.logger.Error(err.Error())
+		}
 	}()
 	return nil
 }

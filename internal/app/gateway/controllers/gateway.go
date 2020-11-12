@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 	"time"
@@ -20,12 +20,13 @@ import (
 
 type GatewayController struct {
 	o         *gateway.Options
+	logger    *zap.Logger
 	subClient *rpc.Client
 	msgClient *rpc.Client
 }
 
-func NewGatewayController(o *gateway.Options, subClient *rpc.Client, msgClient *rpc.Client) *GatewayController {
-	return &GatewayController{o: o, subClient: subClient, msgClient: msgClient}
+func NewGatewayController(o *gateway.Options, logger *zap.Logger, subClient *rpc.Client, msgClient *rpc.Client) *GatewayController {
+	return &GatewayController{o: o, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
 func (gc *GatewayController) Index(c *gin.Context) {
@@ -41,10 +42,10 @@ func (gc *GatewayController) Foo(c *gin.Context) {
 	var reply proto.Message
 	err := gc.subClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
-		log.Printf("failed to call: %v", err)
+		gc.logger.Error(err.Error())
 	}
 
-	log.Printf(reply.String())
+	gc.logger.Info(reply.String())
 
 	args = &proto.Message{
 		Id:    11,
@@ -53,10 +54,10 @@ func (gc *GatewayController) Foo(c *gin.Context) {
 
 	err = gc.msgClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
-		log.Printf("failed to call: %v", err)
+		gc.logger.Error(err.Error())
 	}
 
-	log.Printf(reply.String())
+	gc.logger.Info(reply.String())
 
 	c.JSON(http.StatusOK, gin.H{"time": time.Now().String(), "reply": "reply"})
 }
@@ -65,26 +66,26 @@ func (gc *GatewayController) SlackShortcut(c *gin.Context) {
 	// verificationTokens
 	s, err := slackVendor.SlashShortcutParse(c.Request)
 	if err != nil {
-		log.Println(err)
+		gc.logger.Error(err.Error())
 		return
 	}
 
 	if !s.ValidateToken(gc.o.Verification) {
-		log.Println("unvalidated verificationTokens")
+		gc.logger.Info("unvalidated verificationTokens")
 		return
 	}
 
 	if s.Type == "shortcut" {
 		switch s.CallbackID {
 		case "report":
-			log.Println("report")
+			gc.logger.Info("report")
 		}
 	}
 
 	if s.Type == "message_action" {
 		switch s.CallbackID {
 		case "delete":
-			log.Println("delete")
+			gc.logger.Info("delete")
 		}
 	}
 
@@ -96,12 +97,12 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 	// verificationTokens
 	s, err := slack.SlashCommandParse(c.Request)
 	if err != nil {
-		log.Println(err)
+		gc.logger.Error(err.Error())
 		return
 	}
 
 	if !s.ValidateToken(gc.o.Verification) {
-		log.Println("unvalidated verificationTokens")
+		gc.logger.Info("unvalidated verificationTokens")
 		return
 	}
 
@@ -110,7 +111,7 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 	case "/view":
 		id, err := strconv.Atoi(s.Text)
 		if err != nil {
-			log.Println(err)
+			gc.logger.Error(err.Error())
 			return
 		}
 		msg := &proto.Message{
@@ -119,19 +120,19 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 		var reply proto.Message
 		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
 		if err != nil {
-			log.Println(err)
+			gc.logger.Error(err.Error())
 			return
 		}
 
 		if reply.Id > 0 {
 			err = slackVendor.ResponseText(s.ResponseURL, reply.Input)
 			if err != nil {
-				log.Println(err)
+				gc.logger.Error(err.Error())
 			}
 		} else {
 			err = slackVendor.ResponseText(s.ResponseURL, "view failed")
 			if err != nil {
-				log.Println(err)
+				gc.logger.Error(err.Error())
 			}
 		}
 	}
@@ -151,7 +152,7 @@ func (gc *GatewayController) SlackEvent(c *gin.Context) {
 	api := slack.New(gc.o.Token)
 	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.o.Verification}))
 	if err != nil {
-		log.Println(err)
+		gc.logger.Error(err.Error())
 		return
 	}
 
@@ -159,7 +160,7 @@ func (gc *GatewayController) SlackEvent(c *gin.Context) {
 		var r *slackevents.ChallengeResponse
 		err := json.Unmarshal([]byte(body), &r)
 		if err != nil {
-			log.Println(err)
+			gc.logger.Error(err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"ok": false})
 			return
 		}
@@ -182,13 +183,13 @@ func (gc *GatewayController) SlackEvent(c *gin.Context) {
 				var reply proto.Message
 				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)
 				if err != nil {
-					log.Println(err)
+					gc.logger.Error(err.Error())
 					return
 				}
 				if reply.Id > 0 {
 					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.Id), false))
 					if err != nil {
-						log.Println(err)
+						gc.logger.Error(err.Error())
 						return
 					}
 				}

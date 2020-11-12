@@ -83,7 +83,6 @@ func (s *Server) Start() error {
 
 	s.httpServer = http.Server{Addr: addr, Handler: s.router}
 
-	log.Println("http server starting ...", addr)
 	go func() {
 		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal("start http server err", err)
@@ -102,7 +101,6 @@ func (s *Server) register() error {
 }
 
 func (s *Server) Stop() error {
-	log.Println("stopping http server")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 

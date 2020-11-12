@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 
 	"github.com/tsundata/assistant/internal/app/registry"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -18,14 +19,14 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	server, err := rpc.NewRegistry(rpcOptions, nil)
+	log := logger.NewLogger()
+	server, err := rpc.NewRegistry(rpcOptions, log, nil)
 
 	registryOptions, err := registry.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := registry.NewApp(registryOptions, server)
+	application, err := registry.NewApp(registryOptions, log, server)
 	if err != nil {
 		return nil, err
 	}

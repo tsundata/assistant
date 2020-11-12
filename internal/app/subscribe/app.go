@@ -6,8 +6,8 @@ import (
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"log"
 )
 
 type Options struct {
@@ -24,19 +24,17 @@ func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 		return nil, errors.New("unmarshal app option error")
 	}
 
-	log.Println("load application options success")
-
 	return o, err
 }
 
-func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server) (*app.Application, error) {
 	subscribe := service.NewSubscribe(o.db)
 	err := rs.Register(subscribe, "")
 	if err != nil {
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, app.RpcServerOption(rs))
+	a, err := app.New(o.Name, logger, app.RpcServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

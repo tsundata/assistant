@@ -62,3 +62,8 @@ func (c *Client) Broadcast(ctx context.Context, serviceMethod string, args, repl
 func (c *Client) Close() error {
 	return (*c.xc).Close()
 }
+
+// FIXME
+func (c *Client) Reconnection() {
+
+}

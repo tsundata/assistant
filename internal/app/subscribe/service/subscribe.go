@@ -18,8 +18,6 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 
 // TODO
 func (s *Subscribe) List(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
-	log.Println("Subscribe.List ............")
-
 	var list []models.Subscribe
 
 	s.db.AutoMigrate(&models.Subscribe{})

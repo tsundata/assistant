@@ -2,7 +2,7 @@ package app
 
 import (
 	"errors"
-	"log"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,6 +13,7 @@ import (
 
 type Application struct {
 	name           string
+	logger         *zap.Logger
 	httpServer     *http.Server
 	rpcServer      *rpc.Server
 	registryServer *rpc.Registry
@@ -47,9 +48,10 @@ func RegistryServerOption(svr *rpc.Registry) Option {
 	}
 }
 
-func New(name string, options ...Option) (*Application, error) {
+func New(name string, logger *zap.Logger, options ...Option) (*Application, error) {
 	app := &Application{
-		name: name,
+		name:   name,
+		logger: logger,
 	}
 
 	for _, option := range options {
@@ -89,22 +91,22 @@ func (a *Application) AwaitSignal() {
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
 	select {
 	case s := <-c:
-		log.Println("receive a signal", s.String())
+		a.logger.Info("receive a signal " + s.String())
 		if a.httpServer != nil {
 			if err := a.httpServer.Stop(); err != nil {
-				log.Println("stop http server error", err)
+				a.logger.Error("stop http server error " + err.Error())
 			}
 		}
 
 		if a.rpcServer != nil {
 			if err := a.rpcServer.Stop(); err != nil {
-				log.Println("stop rpc server error", err)
+				a.logger.Error("stop rpc server error " + err.Error())
 			}
 		}
 
 		if a.registryServer != nil {
 			if err := a.registryServer.Stop(); err != nil {
-				log.Println("stop registry server error", err)
+				a.logger.Error("stop registry server error " + err.Error())
 			}
 		}
 

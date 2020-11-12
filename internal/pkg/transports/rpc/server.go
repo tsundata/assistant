@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"log"
+	"go.uber.org/zap"
 )
 
 type ServerOptions struct {
@@ -31,6 +31,7 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 
 type Server struct {
 	o        *ServerOptions
+	logger   *zap.Logger
 	app      string
 	host     string
 	port     int
@@ -40,10 +41,10 @@ type Server struct {
 
 type InitServers func(s *server.Server)
 
-func NewServer(o *ServerOptions, init InitServers) (*Server, error) {
-	//share.Codecs[protocol.SerializeType(8)] = &codec.GobCodec{}
+func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server, error) {
 	return &Server{
 		o:      o,
+		logger: logger,
 		server: server.NewServer(),
 	}, nil
 }
@@ -72,14 +73,14 @@ func (s *Server) Start() error {
 
 	addr := fmt.Sprintf("%s:%d", s.host, s.port)
 
-	log.Println("rpc server starting ...", addr)
+	s.logger.Info("rpc server starting ... " + addr)
 
 	go func() {
 		registry.Heartbeat(s.registry, s.app, "tcp@"+addr, 0)
 
 		err := s.server.Serve("tcp", addr)
 		if err != nil {
-			log.Println(err)
+			s.logger.Error(err.Error())
 		}
 	}()
 

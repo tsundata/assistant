@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/app/gateway/controllers"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
@@ -36,14 +36,15 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controllers.NewGatewayController(gatewayOptions, subClient, msgClient)
+	log := logger.NewLogger()
+	gatewayController := controllers.NewGatewayController(gatewayOptions, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
 	engine := http.NewRouter(httpOptions, initControllers)
 	server, err := http.New(httpOptions, engine)
 	if err != nil {
 		return nil, err
 	}
-	application, err := gateway.NewApp(gatewayOptions, server)
+	application, err := gateway.NewApp(gatewayOptions, log, server)
 	if err != nil {
 		return nil, err
 	}

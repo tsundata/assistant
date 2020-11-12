@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 type Options struct {
@@ -20,8 +19,6 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, errors.New("unmarshal db option error")
 	}
 
-	log.Println("load database options success")
-
 	return o, err
 }
 
@@ -31,8 +28,6 @@ func New(o *Options) (*gorm.DB, error) {
 	if err != nil {
 		return nil, errors.New("gorm open database connection error")
 	}
-
-	log.Println("database open success")
 
 	if o.Debug {
 		db = db.Debug()

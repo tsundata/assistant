@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
-	"log"
+	"go.uber.org/zap"
 )
 
 type Options struct {
@@ -27,13 +27,11 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, errors.New("unmarshal app option error")
 	}
 
-	log.Println("load application options success")
-
 	return o, err
 }
 
-func NewApp(o *Options, hs *http.Server) (*app.Application, error) {
-	a, err := app.New(o.Name, app.HttpServerOption(hs))
+func NewApp(o *Options, logger *zap.Logger, hs *http.Server) (*app.Application, error) {
+	a, err := app.New(o.Name, logger, app.HttpServerOption(hs))
 
 	if err != nil {
 		return nil, err
