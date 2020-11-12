@@ -1,17 +1,16 @@
 package controllers
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
 	"github.com/tsundata/assistant/api/proto"
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
+	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -29,11 +28,12 @@ func NewGatewayController(o *gateway.Options, logger *zap.Logger, subClient *rpc
 	return &GatewayController{o: o, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
-func (gc *GatewayController) Index(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"path": "ROOT"})
+func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
+	c.Response.SetBody([]byte("ROOT"))
 }
 
-func (gc *GatewayController) Foo(c *gin.Context) {
+func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
+	panic("222")
 	args := &proto.Message{
 		Id:    11,
 		Input: "in ===>",
@@ -59,12 +59,12 @@ func (gc *GatewayController) Foo(c *gin.Context) {
 
 	gc.logger.Info(reply.String())
 
-	c.JSON(http.StatusOK, gin.H{"time": time.Now().String(), "reply": "reply"})
+	c.Response.SetBodyString(time.Now().String())
 }
 
-func (gc *GatewayController) SlackShortcut(c *gin.Context) {
+func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 	// verificationTokens
-	s, err := slackVendor.SlashShortcutParse(c.Request)
+	s, err := slackVendor.SlashShortcutParse(&c.Request)
 	if err != nil {
 		gc.logger.Error(err.Error())
 		return
@@ -89,20 +89,21 @@ func (gc *GatewayController) SlackShortcut(c *gin.Context) {
 		}
 	}
 
-	c.String(http.StatusOK, "OK")
-	return
+	c.Response.SetBodyString("OK")
 }
 
-func (gc *GatewayController) SlackCommand(c *gin.Context) {
+func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 	// verificationTokens
-	s, err := slack.SlashCommandParse(c.Request)
+	s, err := slackVendor.SlashCommandParse(&c.Request)
 	if err != nil {
 		gc.logger.Error(err.Error())
+		c.Error(err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if !s.ValidateToken(gc.o.Verification) {
 		gc.logger.Info("unvalidated verificationTokens")
+		c.Error("unvalidated verificationTokens", http.StatusBadRequest)
 		return
 	}
 
@@ -112,6 +113,7 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 		id, err := strconv.Atoi(s.Text)
 		if err != nil {
 			gc.logger.Error(err.Error())
+			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
 		msg := &proto.Message{
@@ -121,6 +123,7 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
+			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -128,26 +131,24 @@ func (gc *GatewayController) SlackCommand(c *gin.Context) {
 			err = slackVendor.ResponseText(s.ResponseURL, reply.Input)
 			if err != nil {
 				gc.logger.Error(err.Error())
+				c.Error(err.Error(), http.StatusBadRequest)
+				return
 			}
 		} else {
 			err = slackVendor.ResponseText(s.ResponseURL, "view failed")
 			if err != nil {
 				gc.logger.Error(err.Error())
+				c.Error(err.Error(), http.StatusBadRequest)
+				return
 			}
 		}
 	}
-	c.String(http.StatusOK, "OK")
-	return
+
+	c.Response.SetBodyString("OK")
 }
 
-func (gc *GatewayController) SlackEvent(c *gin.Context) {
-	buf := new(bytes.Buffer)
-	_, err := buf.ReadFrom(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
-		return
-	}
-	body := buf.String()
+func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
+	body := c.Request.Body()
 
 	api := slack.New(gc.o.Token)
 	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.o.Verification}))
@@ -161,10 +162,10 @@ func (gc *GatewayController) SlackEvent(c *gin.Context) {
 		err := json.Unmarshal([]byte(body), &r)
 		if err != nil {
 			gc.logger.Error(err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"ok": false})
+			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		c.String(http.StatusOK, r.Challenge)
+		c.Response.SetBodyString(r.Challenge)
 		return
 	}
 
@@ -197,10 +198,10 @@ func (gc *GatewayController) SlackEvent(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"ok": true})
+	c.Response.SetBodyString("OK")
 }
 
 // TODO
-func (gc *GatewayController) AgentWebhook(c *gin.Context) {
+func (gc *GatewayController) AgentWebhook(c *fasthttp.RequestCtx) {
 
 }

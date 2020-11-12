@@ -1,15 +1,13 @@
 package http
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
-	"time"
 )
 
 type Options struct {
@@ -23,8 +21,8 @@ type Server struct {
 	app        string
 	host       string
 	port       int
-	router     *gin.Engine
-	httpServer http.Server
+	router     *fasthttp.RequestHandler
+	httpServer *fasthttp.Server
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -40,20 +38,11 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-type InitControllers func(r *gin.Engine)
-
-func NewRouter(o *Options, init InitControllers) *gin.Engine {
-	r := gin.New()
-
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
-
-	init(r)
-
-	return r
+func NewRouter(o *Options, init fasthttp.RequestHandler) *fasthttp.RequestHandler {
+	return &init
 }
 
-func New(o *Options, router *gin.Engine) (*Server, error) {
+func New(o *Options, router *fasthttp.RequestHandler) (*Server, error) {
 	var s = &Server{
 		router: router,
 		o:      o,
@@ -81,10 +70,12 @@ func (s *Server) Start() error {
 
 	addr := fmt.Sprintf("%s:%d", s.host, s.port)
 
-	s.httpServer = http.Server{Addr: addr, Handler: s.router}
+	log.Println("start http server ", addr)
+
+	s.httpServer = &fasthttp.Server{Handler: *s.router}
 
 	go func() {
-		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.httpServer.ListenAndServe(addr); err != nil && err != http.ErrServerClosed {
 			log.Fatal("start http server err", err)
 			return
 		}
@@ -101,10 +92,7 @@ func (s *Server) register() error {
 }
 
 func (s *Server) Stop() error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	if err := s.httpServer.Shutdown(ctx); err != nil {
+	if err := s.httpServer.Shutdown(); err != nil {
 		return errors.New("shutdown http server error")
 	}
 

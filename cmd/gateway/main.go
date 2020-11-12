@@ -39,8 +39,8 @@ func CreateApp(cf string) (*app.Application, error) {
 	log := logger.NewLogger()
 	gatewayController := controllers.NewGatewayController(gatewayOptions, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
-	engine := http.NewRouter(httpOptions, initControllers)
-	server, err := http.New(httpOptions, engine)
+	router := http.NewRouter(httpOptions, initControllers)
+	server, err := http.New(httpOptions, router)
 	if err != nil {
 		return nil, err
 	}
