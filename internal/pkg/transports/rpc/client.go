@@ -5,7 +5,7 @@ import (
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/protocol"
 	"github.com/spf13/viper"
-	"github.com/tsundata/assistant/internal/pkg/rpc/discovery"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
 	"time"
 )
 
@@ -43,7 +43,10 @@ type Client struct {
 
 func NewClient(o *ClientOptions, service, servicePath string) (*Client, error) {
 	co := client.DefaultOption
+	co.Heartbeat = true
+	co.HeartbeatInterval = time.Second
 	co.SerializeType = protocol.MsgPack
+	// TODO
 	d := discovery.NewMultiServiceDiscovery(service, o.Registry)
 	xc := client.NewXClient(servicePath, client.Failtry, client.RandomSelect, d, co)
 	return &Client{

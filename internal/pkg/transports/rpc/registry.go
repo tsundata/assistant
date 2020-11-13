@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/tsundata/assistant/internal/pkg/rpc/registry"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.uber.org/zap"
 	"net"
