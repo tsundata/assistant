@@ -2,8 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/proto"
-	"github.com/tsundata/assistant/internal/pkg/models"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -19,66 +18,46 @@ func NewManage(db *gorm.DB) *Message {
 	return &Message{db: db}
 }
 
-func (m *Message) List(ctx context.Context, payload *proto.Message, reply *[]proto.Message) error {
-	var messages []models.Message
+func (m *Message) List(ctx context.Context, payload *model.Message, reply *[]model.Message) error {
+	var messages []model.Message
 	m.db.Order("created_at DESC").Limit(10).Find(&messages)
-
-	for _, item := range messages {
-		*reply = append(*reply, proto.Message{
-			Id:     uint64(item.ID),
-			Uuid:   item.UUID,
-			Input:  item.Input,
-			Output: item.Output,
-		})
-	}
+	*reply = messages
 
 	return nil
 }
 
-func (m *Message) View(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
-	var find models.Message
-	m.db.Where("id = ?", payload.Id).Take(&find)
+func (m *Message) View(ctx context.Context, payload *model.Message, reply *model.Message) error {
+	var find model.Message
+	m.db.Where("id = ?", payload.ID).Take(&find)
+	*reply = find
 
-	*reply = proto.Message{
-		Id:     uint64(find.ID),
-		Uuid:   find.UUID,
-		Input:  find.Input,
-		Output: find.Output,
-	}
 	return nil
 }
 
-func (m *Message) Create(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
+func (m *Message) Create(ctx context.Context, payload *model.Message, reply *model.Message) error {
 	// check uuid
-	var find models.Message
-	m.db.Where("uuid = ?", payload.Uuid).Take(&find)
+	var find model.Message
+	m.db.Where("uuid = ?", payload.UUID).Take(&find)
 
 	if find.ID > 0 {
-		*reply = proto.Message{
-			Id:   uint64(find.ID),
-			Uuid: find.UUID,
-		}
+		*reply = find
 		return nil
 	}
 
 	// insert
-	msg := models.NewMessage()
-	msg.UUID = payload.Uuid
+	msg := model.NewMessage()
+	msg.UUID = payload.UUID
 	msg.Input = payload.Input
 	msg.Output = payload.Output
-	msg.Remotes = models.RemoteType(payload.Remotes)
+	msg.Remotes = model.RemoteType(payload.Remotes)
 	m.db.Create(&msg)
-
-	*reply = proto.Message{
-		Id:   uint64(msg.ID),
-		Uuid: msg.UUID,
-	}
+	*reply = msg
 
 	return nil
 }
 
-func (m *Message) Delete(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
-	m.db.Where("id = ?", payload.Id).Delete(models.Message{})
+func (m *Message) Delete(ctx context.Context, payload *model.Message, reply *model.Message) error {
+	m.db.Where("id = ?", payload.ID).Delete(model.Message{})
 	return nil
 }
 

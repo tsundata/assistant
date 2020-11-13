@@ -43,7 +43,7 @@ type Client struct {
 
 func NewClient(o *ClientOptions, service, servicePath string) (*Client, error) {
 	co := client.DefaultOption
-	co.SerializeType = protocol.ProtoBuffer
+	co.SerializeType = protocol.MsgPack
 	d := discovery.NewMultiServiceDiscovery(service, o.Registry)
 	xc := client.NewXClient(servicePath, client.Failtry, client.RandomSelect, d, co)
 	return &Client{

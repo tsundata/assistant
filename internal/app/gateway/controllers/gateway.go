@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
-	"github.com/tsundata/assistant/api/proto"
 	"github.com/tsundata/assistant/internal/app/gateway"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
@@ -33,31 +33,18 @@ func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
 }
 
 func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
-	panic("222")
-	args := &proto.Message{
-		Id:    11,
-		Input: "in ===>",
+	args := &model.Message{
+		Input:  "input --->",
+		Output: "",
 	}
 
-	var reply proto.Message
+	var reply model.Message
 	err := gc.subClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
 		gc.logger.Error(err.Error())
 	}
 
-	gc.logger.Info(reply.String())
-
-	args = &proto.Message{
-		Id:    11,
-		Input: "in ===>",
-	}
-
-	err = gc.msgClient.Call(context.Background(), "Open", args, &reply)
-	if err != nil {
-		gc.logger.Error(err.Error())
-	}
-
-	gc.logger.Info(reply.String())
+	gc.logger.Info(reply.Output)
 
 	c.Response.SetBodyString(time.Now().String())
 }
@@ -116,10 +103,10 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		msg := &proto.Message{
-			Id: uint64(id),
+		msg := &model.Message{
+			ID: id,
 		}
-		var reply proto.Message
+		var reply model.Message
 		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
@@ -127,7 +114,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		if reply.Id > 0 {
+		if reply.ID > 0 {
 			err = slackVendor.ResponseText(s.ResponseURL, reply.Input)
 			if err != nil {
 				gc.logger.Error(err.Error())
@@ -151,7 +138,7 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 	body := c.Request.Body()
 
 	api := slack.New(gc.o.Token)
-	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.o.Verification}))
+	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.o.Verification}))
 	if err != nil {
 		gc.logger.Error(err.Error())
 		return
@@ -159,7 +146,7 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 
 	if eventsAPIEvent.Type == slackevents.URLVerification {
 		var r *slackevents.ChallengeResponse
-		err := json.Unmarshal([]byte(body), &r)
+		err := json.Unmarshal(body, &r)
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)
@@ -175,20 +162,20 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 		case *slackevents.MessageEvent:
 			// ignore bot message
 			if ev.ClientMsgID != "" {
-				msg := &proto.Message{
-					Id:        0,
-					Uuid:      ev.ClientMsgID,
-					ChannelId: ev.Channel,
+				msg := &model.Message{
+					ID:        0,
+					UUID:      ev.ClientMsgID,
+					ChannelID: ev.Channel,
 					Input:     ev.Text,
 				}
-				var reply proto.Message
+				var reply model.Message
 				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)
 				if err != nil {
 					gc.logger.Error(err.Error())
 					return
 				}
-				if reply.Id > 0 {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.Id), false))
+				if reply.ID > 0 {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.ID), false))
 					if err != nil {
 						gc.logger.Error(err.Error())
 						return

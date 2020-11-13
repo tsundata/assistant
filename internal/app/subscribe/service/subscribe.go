@@ -2,8 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/proto"
-	"github.com/tsundata/assistant/internal/pkg/models"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"gorm.io/gorm"
 	"log"
 )
@@ -17,11 +16,11 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 }
 
 // TODO
-func (s *Subscribe) List(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
-	var list []models.Subscribe
+func (s *Subscribe) List(ctx context.Context, payload *model.Message, reply *model.Message) error {
+	var list []model.Subscribe
 
-	s.db.AutoMigrate(&models.Subscribe{})
-	s.db.Create(&models.Subscribe{})
+	s.db.AutoMigrate(&model.Subscribe{})
+	s.db.Create(&model.Subscribe{})
 	s.db.Find(&list)
 	log.Println(list)
 
@@ -29,23 +28,23 @@ func (s *Subscribe) List(ctx context.Context, payload *proto.Message, reply *pro
 }
 
 // TODO
-func (s *Subscribe) Open(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
+func (s *Subscribe) Open(ctx context.Context, payload *model.Message, reply *model.Message) error {
 	log.Println(payload)
 
-	*reply = proto.Message{
-		Id:          1,
-		Output:        "out =====>",
+	*reply = model.Message{
+		Input:  "",
+		Output: "out --->",
 	}
 
 	return nil
 }
 
 // TODO
-func (s *Subscribe) View(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
+func (s *Subscribe) View(ctx context.Context, payload *model.Message, reply *model.Message) error {
 	return nil
 }
 
 // TODO
-func (s *Subscribe) Close(ctx context.Context, payload *proto.Message, reply *proto.Message) error {
+func (s *Subscribe) Close(ctx context.Context, payload *model.Message, reply *model.Message) error {
 	return nil
 }
