@@ -169,12 +169,12 @@ func (m *MultiServiceDiscovery) watch() {
 				m.mu.Unlock()
 			}
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(10 * time.Second)
 		}
 
 		log.Println("chan is closed and will rewatch")
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(15 * time.Second)
 	}
 }
 

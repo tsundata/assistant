@@ -108,13 +108,12 @@ func Heartbeat(registry, servicePath, addr string, duration time.Duration) {
 	if duration == 0 {
 		duration = defaultTimeout - time.Duration(15)*time.Second
 	}
-	var err error
-	err = sendHeartbeat(registry, servicePath, addr)
+	_ = sendHeartbeat(registry, servicePath, addr)
 	go func() {
 		t := time.NewTicker(duration)
-		for err == nil {
+		for {
 			<-t.C
-			err = sendHeartbeat(registry, servicePath, addr)
+			_ = sendHeartbeat(registry, servicePath, addr)
 		}
 	}()
 }
