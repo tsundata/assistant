@@ -46,7 +46,6 @@ func NewClient(o *ClientOptions, service, servicePath string) (*Client, error) {
 	co.Heartbeat = true
 	co.HeartbeatInterval = time.Second
 	co.SerializeType = protocol.MsgPack
-	// TODO
 	d := discovery.NewMultiServiceDiscovery(service, o.Registry)
 	xc := client.NewXClient(servicePath, client.Failtry, client.RandomSelect, d, co)
 	return &Client{

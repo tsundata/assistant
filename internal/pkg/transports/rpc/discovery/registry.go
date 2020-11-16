@@ -1,10 +1,12 @@
 package discovery
 
 import (
+	"bufio"
 	"errors"
+	"fmt"
 	"github.com/smallnest/rpcx/client"
 	"log"
-	"net/http"
+	"net"
 	"strings"
 	"sync"
 	"time"
@@ -167,14 +169,12 @@ func (m *MultiServiceDiscovery) watch() {
 				m.mu.Unlock()
 			}
 
-			// FIXME
-			time.Sleep(1*time.Minute)
+			time.Sleep(5 * time.Second)
 		}
 
 		log.Println("chan is closed and will rewatch")
 
-		// FIXME
-		time.Sleep(1*time.Minute)
+		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -184,13 +184,32 @@ func (m *MultiServiceDiscovery) refresh() ([]*client.KVPair, error) {
 
 	log.Println("rpc registry: refresh servers from registry", m.registry)
 
-	resp, err := http.Get(m.registry)
+	c, err := net.Dial("tcp", m.registry)
 	if err != nil {
-		log.Println("rpc registry refresh err:", err)
+		log.Println("rpc server: heart beat err:", err)
 		return []*client.KVPair{}, err
 	}
 
-	servers := strings.Split(resp.Header.Get("X-RPC-Servers"), ",")
+	err = c.SetDeadline(time.Now().Add(10 * time.Second))
+	if err != nil {
+		log.Println("rpc server: heart beat err:", err)
+		return []*client.KVPair{}, err
+	}
+
+	_, err = fmt.Fprintf(c, "GET\n")
+	if err != nil {
+		log.Println("rpc server: heart beat err:", err)
+		return []*client.KVPair{}, err
+	}
+
+	resp, err := bufio.NewReader(c).ReadString('\n')
+	if err != nil {
+		log.Println("rpc server: heart beat err:", err)
+		return []*client.KVPair{}, err
+	}
+
+	resp = strings.Trim(resp, "\n")
+	servers := strings.Split(resp, ",")
 	pairs := make([]*client.KVPair, 0, len(servers))
 	for _, server := range servers {
 		if strings.TrimSpace(server) != "" {

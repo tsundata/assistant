@@ -1,8 +1,10 @@
 package registry
 
 import (
+	"bufio"
+	"fmt"
 	"log"
-	"net/http"
+	"net"
 	"sort"
 	"strings"
 	"sync"
@@ -22,8 +24,7 @@ type ServerItem struct {
 }
 
 const (
-	defaultPath    = "/_rpc_/registry"
-	defaultTimeout = time.Minute * 5
+	defaultTimeout = 30 * time.Second
 )
 
 func New(timeout time.Duration) *Registry {
@@ -62,39 +63,50 @@ func (r *Registry) aliveServers() []string {
 	return alive
 }
 
-func (r *Registry) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	switch req.Method {
+func (r *Registry) HandleConnection(c net.Conn) {
+	defer c.Close()
+	netData, err := bufio.NewReader(c).ReadString('\n')
+	if err != nil {
+		return
+	}
+
+	netData = strings.Trim(netData, "\n")
+	params := strings.Split(netData, " ")
+
+	if len(params) < 1 {
+		_, _ = c.Write([]byte("ERR\n"))
+		return
+	}
+
+	switch params[0] {
 	case "GET":
-		w.Header().Set("X-RPC-Servers", strings.Join(r.aliveServers(), ","))
+		_, _ = c.Write([]byte(strings.Join(r.aliveServers(), ",") + "\n"))
+		return
 	case "POST":
-		servicePath := req.Header.Get("X-RPC-Path")
-		if servicePath == "" {
-			w.WriteHeader(http.StatusInternalServerError)
+		if len(params) != 3 {
+			_, _ = c.Write([]byte("ERR\n"))
 			return
 		}
-		addr := req.Header.Get("X-RPC-Addr")
+		servicePath := params[1]
+		if servicePath == "" {
+			_, _ = c.Write([]byte("ERR\n"))
+			return
+		}
+		addr := params[2]
 		if addr == "" {
-			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = c.Write([]byte("ERR\n"))
 			return
 		}
 		r.putServer(servicePath, addr)
+		_, _ = c.Write([]byte("OK\n"))
 	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		_, _ = c.Write([]byte("ERR\n"))
 	}
-}
-
-func (r *Registry) HandleHTTP(registryPath string) {
-	http.Handle(registryPath, r)
-	log.Println("rpc registry path:", registryPath)
-}
-
-func HandleHTTP() {
-	DefaultRegister.HandleHTTP(defaultPath)
 }
 
 func Heartbeat(registry, servicePath, addr string, duration time.Duration) {
 	if duration == 0 {
-		duration = defaultTimeout - time.Duration(1)*time.Minute
+		duration = defaultTimeout - time.Duration(15)*time.Second
 	}
 	var err error
 	err = sendHeartbeat(registry, servicePath, addr)
@@ -109,17 +121,18 @@ func Heartbeat(registry, servicePath, addr string, duration time.Duration) {
 
 func sendHeartbeat(registry, servicePath, addr string) error {
 	log.Println(servicePath, addr, "send heart beat to registry", registry)
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("POST", registry, nil)
+
+	c, err := net.Dial("tcp", registry)
 	if err != nil {
 		log.Println("rpc server: heart beat err:", err)
 		return err
 	}
-	req.Header.Set("X-RPC-Path", servicePath)
-	req.Header.Set("X-RPC-Addr", addr)
-	if _, err := httpClient.Do(req); err != nil {
+
+	_, err = c.Write([]byte(fmt.Sprintf("POST %s %s\n", servicePath, addr)))
+	if err != nil {
 		log.Println("rpc server: heart beat err:", err)
 		return err
 	}
+
 	return nil
 }

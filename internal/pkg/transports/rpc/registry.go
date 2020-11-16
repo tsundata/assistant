@@ -67,19 +67,29 @@ func (r *Registry) Start() error {
 
 	r.logger.Info("rpc registry starting ... " + addr)
 
-	go func() {
-		l, err := net.Listen("tcp", addr)
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
+	if err != nil {
+		r.logger.Error(err.Error())
+		return err
+	}
+
+	l, err := net.ListenTCP("tcp", tcpAddr)
+	if err != nil {
+		r.logger.Error(err.Error())
+		return err
+	}
+	defer l.Close()
+
+	registryServer := registry.DefaultRegister
+	for {
+		c, err := l.Accept()
 		if err != nil {
 			r.logger.Error(err.Error())
-			return
+			continue
 		}
-		registry.HandleHTTP()
-		err = http.Serve(l, nil)
-		if err != nil {
-			r.logger.Error(err.Error())
-		}
-	}()
-	return nil
+
+		go registryServer.HandleConnection(c)
+	}
 }
 
 func (r *Registry) Stop() error {
