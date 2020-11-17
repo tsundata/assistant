@@ -32,8 +32,7 @@ func (s *Subscribe) Open(ctx context.Context, payload *model.Message, reply *mod
 	log.Println(payload)
 
 	*reply = model.Message{
-		Input:  "",
-		Output: "out --->",
+		Content: "out --->",
 	}
 
 	return nil

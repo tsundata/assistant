@@ -9,7 +9,6 @@ import (
 )
 
 type Message struct {
-	// TODO load config
 	webhook string
 	db      *gorm.DB
 }
@@ -45,13 +44,8 @@ func (m *Message) Create(ctx context.Context, payload *model.Message, reply *mod
 	}
 
 	// insert
-	msg := model.NewMessage()
-	msg.UUID = payload.UUID
-	msg.Input = payload.Input
-	msg.Output = payload.Output
-	msg.Remotes = model.RemoteType(payload.Remotes)
-	m.db.Create(&msg)
-	*reply = msg
+	m.db.Create(payload)
+	*reply = *payload
 
 	return nil
 }

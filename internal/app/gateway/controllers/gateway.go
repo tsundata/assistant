@@ -34,8 +34,7 @@ func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
 
 func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
 	args := &model.Message{
-		Input:  "input --->",
-		Output: "",
+		Content: "input --->",
 	}
 
 	var reply model.Message
@@ -44,7 +43,7 @@ func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
 		gc.logger.Error(err.Error())
 	}
 
-	gc.logger.Info(reply.Output)
+	gc.logger.Info(reply.Content)
 
 	c.Response.SetBodyString(time.Now().String())
 }
@@ -115,7 +114,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 		}
 
 		if reply.ID > 0 {
-			err = slackVendor.ResponseText(s.ResponseURL, reply.Input)
+			err = slackVendor.ResponseText(s.ResponseURL, reply.Content)
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)
@@ -163,10 +162,11 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 			// ignore bot message
 			if ev.ClientMsgID != "" {
 				msg := &model.Message{
-					ID:        0,
-					UUID:      ev.ClientMsgID,
-					ChannelID: ev.Channel,
-					Input:     ev.Text,
+					ID:          0,
+					UUID:        ev.ClientMsgID,
+					ChannelID:   ev.Channel,
+					ChannelName: ev.ChannelType,
+					Content:     ev.Text,
 				}
 				var reply model.Message
 				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)

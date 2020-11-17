@@ -10,33 +10,40 @@ import (
 type Message struct {
 	ID          int `gorm:"primaryKey"`
 	UUID        string
+	Remotes     RemoteType
 	Type        MessageType
-	Service     MessageService
-	ChannelID   string
-	ChannelName string
-	Input       string
-	Output      string
-	Error       string
+	ChannelID   string `gorm:"channel_id"`
+	ChannelName string `gorm:"channel_name"`
+	Content     string
 	Attributes  map[string]string `gorm:"-"`
 	Vars        map[string]string `gorm:"-"`
-	Remotes     RemoteType
 	SourceLink  string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
 type MessageType int
-type MessageService int
 
 const (
-	MsgTypeUnknown MessageType = iota
-	MsgTypeDirect
-	MsgTypeChannel
-	MsgTypePrivateChannel
+	MessageTypeText MessageType = iota
+	MessageTypeVoice
+	MessageTypeImage
+	MessageTypeFile
+	MessageTypeLocation
+	MessageTypeVideo
+	MessageTypeUrl
+	MessageTypeAction
+)
+
+type RemoteType int
+
+const (
+	RemoteSlack RemoteType = iota
+	RemoteDiscord
 )
 
 // GenerateMessageID generates a random ID for a message
-func GenerateMessageID() (string, error) {
+func GenerateMessageUUID() (string, error) {
 	uuid := make([]byte, 16)
 	n, err := io.ReadFull(rand.Reader, uuid)
 	if n != len(uuid) || err != nil {
@@ -54,15 +61,8 @@ func MessageTimestamp() int64 {
 	return time.Now().Unix()
 }
 
-type RemoteType int
-
-const (
-	RemoteSlack RemoteType = iota
-	RemoteDiscord
-)
-
 func NewMessage() Message {
-	uuid, _ := GenerateMessageID()
+	uuid, _ := GenerateMessageUUID()
 	return Message{
 		UUID:       uuid,
 		Attributes: make(map[string]string),
