@@ -1,4 +1,4 @@
-name: Go
+name: Build
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    name: Build
+    name: Go
     runs-on: ubuntu-latest
     steps:
 
@@ -26,3 +26,9 @@ jobs:
 
     - name: Build
       run: make build
+
+    - name: Archive binary
+      uses: actions/upload-artifact@v2
+      with:
+        name: Server binary
+        path: dist

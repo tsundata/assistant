@@ -39,7 +39,7 @@ func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server) (*app.Application, e
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, logger, app.RpcServerOption(rs))
+	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

@@ -21,7 +21,7 @@ type Application struct {
 
 type Option func(app *Application) error
 
-func HttpServerOption(svr *http.Server) Option {
+func HTTPServerOption(svr *http.Server) Option {
 	return func(app *Application) error {
 		svr.Application(app.name)
 		app.httpServer = svr
@@ -30,7 +30,7 @@ func HttpServerOption(svr *http.Server) Option {
 	}
 }
 
-func RpcServerOption(svr *rpc.Server) Option {
+func RPCServerOption(svr *rpc.Server) Option {
 	return func(app *Application) error {
 		svr.Application(app.name)
 		app.rpcServer = svr

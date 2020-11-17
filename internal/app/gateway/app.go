@@ -31,7 +31,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 func NewApp(o *Options, logger *zap.Logger, hs *http.Server) (*app.Application, error) {
-	a, err := app.New(o.Name, logger, app.HttpServerOption(hs))
+	a, err := app.New(o.Name, logger, app.HTTPServerOption(hs))
 
 	if err != nil {
 		return nil, err
