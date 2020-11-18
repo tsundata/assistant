@@ -1,9 +1,8 @@
 package http
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
+	"github.com/valyala/fasthttp"
 )
 
 type Client struct{}
@@ -12,17 +11,23 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c *Client) PostJSON(url string, body interface{}) (*http.Response, error) {
-	jsonStr, err := json.Marshal(body)
+func (c *Client) PostJSON(url string, body interface{}) (*fasthttp.Response, error) {
+	j, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
-	return client.Do(req)
+	req := fasthttp.AcquireRequest()
+	req.SetBody(j)
+	req.Header.SetMethodBytes([]byte("POST"))
+	req.Header.SetContentType("application/json")
+	req.SetRequestURIBytes([]byte(url))
+	res := fasthttp.AcquireResponse()
+	err = fasthttp.Do(req, res)
+	if err != nil {
+		return nil, err
+	}
+	fasthttp.ReleaseRequest(req)
+
+	return res, nil
 }

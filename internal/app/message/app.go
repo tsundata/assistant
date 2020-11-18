@@ -33,7 +33,7 @@ func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 }
 
 func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server) (*app.Application, error) {
-	message := service.NewManage(o.db)
+	message := service.NewManage(o.db, logger)
 	err := rs.Register(message, "")
 	if err != nil {
 		return nil, err

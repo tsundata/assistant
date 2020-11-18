@@ -72,6 +72,21 @@ func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 		switch s.CallbackID {
 		case "delete":
 			gc.logger.Info("delete")
+		case "run":
+			// TODO
+			fmt.Println(s)
+			gc.logger.Info("run")
+			var reply string
+			err := gc.msgClient.Call(context.Background(), "Run", s.Message.ClientMsgID, &reply)
+			if err != nil {
+				gc.logger.Error(err.Error())
+				return
+			}
+			err = slackVendor.ResponseText(s.ResponseURL, reply)
+			if err != nil {
+				gc.logger.Error(err.Error())
+				return
+			}
 		}
 	}
 
@@ -122,6 +137,40 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			}
 		} else {
 			err = slackVendor.ResponseText(s.ResponseURL, "view failed")
+			if err != nil {
+				gc.logger.Error(err.Error())
+				c.Error(err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
+	case "/run":
+		// TODO
+		id, err := strconv.Atoi(s.Text)
+		if err != nil {
+			gc.logger.Error(err.Error())
+			c.Error(err.Error(), http.StatusBadRequest)
+			return
+		}
+		msg := &model.Message{
+			ID: id,
+		}
+		var reply model.Message
+		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
+		if err != nil {
+			gc.logger.Error(err.Error())
+			c.Error(err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if reply.ID > 0 {
+			var r string
+			err = gc.msgClient.Call(context.Background(), "Run", reply.UUID, &r)
+			if err != nil {
+				gc.logger.Error(err.Error())
+				c.Error(err.Error(), http.StatusBadRequest)
+				return
+			}
+			err = slackVendor.ResponseText(s.ResponseURL, r)
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)

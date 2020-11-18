@@ -32,13 +32,17 @@ func ResponseText(responseURL, text string) error {
 
 // SlashShortcut contains information about a request of the slash command
 type SlashShortcut struct {
-	Token      string    `json:"token"`
-	Type       string    `json:"type"`
-	ActionTs   string    `json:"action_ts"`
-	Team       SlashTeam `json:"team,omitempty"`
-	User       SlashUser `json:"user,omitempty"`
-	CallbackID string    `json:"callback_id"`
-	TriggerID  string    `json:"trigger_id"`
+	Token       string       `json:"token"`
+	Type        string       `json:"type"`
+	ActionTs    string       `json:"action_ts"`
+	Team        SlashTeam    `json:"team,omitempty"`
+	User        SlashUser    `json:"user,omitempty"`
+	CallbackID  string       `json:"callback_id"`
+	TriggerID   string       `json:"trigger_id"`
+	Channel     SlashChannel `json:"channel,omitempty"`
+	ResponseURL string       `json:"response_url"`
+	MessageTs   string       `json:"message_ts"`
+	Message     SlashMessage `json:"message"`
 }
 
 type SlashUser struct {
@@ -50,6 +54,20 @@ type SlashUser struct {
 type SlashTeam struct {
 	ID     string `json:"id"`
 	Domain string `json:"domain"`
+}
+
+type SlashChannel struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type SlashMessage struct {
+	ClientMsgID string `json:"client_msg_id"`
+	Type        string `json:"type"`
+	Text        string `json:"text"`
+	User        string `json:"user"`
+	Ts          string `json:"ts"`
+	Team        string `json:"team"`
 }
 
 // SlashShortcutParse will parse the request of the slash command

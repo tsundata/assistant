@@ -33,6 +33,13 @@ const (
 	MessageTypeVideo
 	MessageTypeUrl
 	MessageTypeAction
+	MessageTypeScript
+)
+
+const (
+	MessageScriptOfJavascript = "javascript"
+	MessageScriptOfDSL        = "dsl"
+	MessageScriptOfUndefined  = "undefined"
 )
 
 type RemoteType int

@@ -26,9 +26,3 @@ jobs:
 
     - name: Build
       run: make build
-
-    - name: Archive binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: Server binary
-        path: dist
