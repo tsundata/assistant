@@ -12,57 +12,59 @@ type Interpreter struct {
 	Text         string
 	Pos          int
 	CurrentToken *Token
+	CurrentChar  byte
 }
 
 func NewInterpreter(text string) *Interpreter {
-	return &Interpreter{Text: text, Pos: 0, CurrentToken: nil}
+	return &Interpreter{Text: text, Pos: 0, CurrentToken: nil, CurrentChar: text[0]}
+}
+
+func (i *Interpreter) Advance() {
+	i.Pos++
+	if i.Pos >= len(i.Text) {
+		i.CurrentChar = 0
+	} else {
+		i.CurrentChar = i.Text[i.Pos]
+	}
+}
+
+func (i *Interpreter) SkipWhitespace() {
+	for i.CurrentChar > 0 && i.CurrentChar == ' ' {
+		i.Advance()
+	}
+}
+
+func (i *Interpreter) Integer() int {
+	var result []byte
+	for i.CurrentChar > 0 && utils.IsDigit(i.CurrentChar) {
+		result = append(result, i.CurrentChar)
+		i.Advance()
+	}
+	num, _ := strconv.Atoi(string(result))
+	return num
 }
 
 func (i *Interpreter) GetNextToken() (*Token, error) {
-	text := i.Text
-
-	if i.Pos > len(text)-1 {
-		return NewToken(EOF, nil), nil
-	}
-
-	currentChar := text[i.Pos]
-
-	if utils.IsDigit(text[i.Pos]) {
-		index := i.Pos
-		for ; index < len(text); index++ {
-			if !utils.IsDigit(text[index]) {
-				break
-			}
+	for i.CurrentChar > 0 {
+		if i.CurrentChar == ' ' {
+			i.SkipWhitespace()
+			continue
 		}
-
-		num, err := strconv.Atoi(text[i.Pos : index])
-		if err != nil {
-			return nil, err
+		if utils.IsDigit(i.CurrentChar) {
+			return NewToken(INTEGER, i.Integer()), nil
 		}
-
-		token := NewToken(INTEGER, num)
-		i.Pos = index
-		return token, nil
+		if i.CurrentChar == '+' {
+			i.Advance()
+			return NewToken(PLUS, '+'), nil
+		}
+		if i.CurrentChar == '-' {
+			i.Advance()
+			return NewToken(MINUS, '-'), nil
+		}
+		return nil, ErrParsingInput
 	}
 
-	if currentChar == '+' {
-		token := NewToken(PLUS, currentChar)
-		i.Pos++
-		return token, nil
-	}
-
-	if currentChar == '-' {
-		token := NewToken(SUBTRACT, currentChar)
-		i.Pos++
-		return token, nil
-	}
-
-	if currentChar == ' ' {
-		i.Pos++
-		return i.GetNextToken()
-	}
-
-	return nil, ErrParsingInput
+	return NewToken(EOF, nil), nil
 }
 
 func (i *Interpreter) Eat(tokenType string) (err error) {
@@ -104,7 +106,7 @@ func (i Interpreter) Expr() (int, error) {
 		return result, nil
 	}
 
-	if op.Type == SUBTRACT {
+	if op.Type == MINUS {
 		result := left.Value.(int) - right.Value.(int)
 		return result, nil
 	}
