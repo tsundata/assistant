@@ -6,7 +6,7 @@ import (
 )
 
 func TestInterpreter_Expr(t *testing.T) {
-	l := NewLexer("10 * 4  * 2 * 3 / 8")
+	l := NewLexer("14 + 2 * 3 - 6 / 2")
 	i, err := NewInterpreter(l)
 	if err != nil {
 		t.Fatal(err)
@@ -15,7 +15,7 @@ func TestInterpreter_Expr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r != 30 {
+	if r != 17 {
 		fmt.Println(r, 30)
 		t.Fatal("error expr")
 	}

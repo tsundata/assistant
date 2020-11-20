@@ -37,9 +37,7 @@ func (i *Interpreter) Factor() (int, error) {
 	return token.Value.(int), nil
 }
 
-// expr   : factor ((MUL | DIV) factor)*
-// factor : INTEGER
-func (i *Interpreter) Expr() (int, error) {
+func (i *Interpreter) Term() (int, error) {
 	value, err := i.Factor()
 	if err != nil {
 		return 0, err
@@ -74,6 +72,44 @@ func (i *Interpreter) Expr() (int, error) {
 	return value, nil
 }
 
+func (i *Interpreter) Expr() (int, error) {
+	value, err := i.Term()
+	if err != nil {
+		return 0, err
+	}
+
+	for i.CurrentToken.Type == PLUS || i.CurrentToken.Type == MINUS {
+		tokenType := i.CurrentToken.Type
+		if tokenType == PLUS {
+			err = i.Eat(PLUS)
+			if err != nil {
+				return 0, err
+			}
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
+			}
+			value += num
+		}
+		if tokenType == MINUS {
+			err = i.Eat(MINUS)
+			if err != nil {
+				return 0, err
+			}
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
+			}
+			value -= num
+		}
+	}
+
+	return value, nil
+}
+
+// expr   : term ((PLUS | MINUS) term)*
+// term   : factor ((MUL | DIV) factor)*
+// factor : INTEGER
 func (i *Interpreter) Parse() (int, error) {
 	return i.Expr()
 }

@@ -49,6 +49,14 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if utils.IsDigit(l.CurrentChar) {
 			return NewToken(INTEGER, l.Integer()), nil
 		}
+		if l.CurrentChar == '+' {
+			l.Advance()
+			return NewToken(PLUS, '+'), nil
+		}
+		if l.CurrentChar == '-' {
+			l.Advance()
+			return NewToken(MINUS, '-'), nil
+		}
 		if l.CurrentChar == '*' {
 			l.Advance()
 			return NewToken(MULTIPLY, '*'), nil
