@@ -3,10 +3,12 @@ package interpreter
 import "fmt"
 
 const (
-	EOF     = "EOF"
-	PLUS    = "PLUS"
-	MINUS   = "MINUS"
-	INTEGER = "INTEGER"
+	EOF      = "EOF"
+	PLUS     = "PLUS"
+	MINUS    = "MINUS"
+	MULTIPLY = "MULTIPLY"
+	DIVIDE   = "DIVIDE"
+	INTEGER  = "INTEGER"
 )
 
 type Token struct {

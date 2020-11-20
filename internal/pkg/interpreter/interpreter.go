@@ -61,6 +61,14 @@ func (i *Interpreter) GetNextToken() (*Token, error) {
 			i.Advance()
 			return NewToken(MINUS, '-'), nil
 		}
+		if i.CurrentChar == '*' {
+			i.Advance()
+			return NewToken(MULTIPLY, '*'), nil
+		}
+		if i.CurrentChar == '/' {
+			i.Advance()
+			return NewToken(DIVIDE, '/'), nil
+		}
 		return nil, ErrParsingInput
 	}
 
@@ -77,39 +85,45 @@ func (i *Interpreter) Eat(tokenType string) (err error) {
 }
 
 func (i Interpreter) Expr() (int, error) {
+	var result int
 	var err error
+	var prevToken *Token
 	i.CurrentToken, err = i.GetNextToken()
 	if err != nil {
 		return 0, err
 	}
+	for i.CurrentToken != nil && i.CurrentToken.Type != EOF {
+		curToken := i.CurrentToken
+		if prevToken == nil && curToken.Type == INTEGER {
+			result += curToken.Value.(int)
+		}
 
-	left := i.CurrentToken
-	err = i.Eat(INTEGER)
-	if err != nil {
-		return 0, err
+		if prevToken != nil {
+			if prevToken.Type == PLUS {
+				result = result + curToken.Value.(int)
+			}
+
+			if prevToken.Type == MINUS {
+				result = result - curToken.Value.(int)
+			}
+
+			if prevToken.Type == MULTIPLY {
+				result = result * curToken.Value.(int)
+
+			}
+
+			if prevToken.Type == DIVIDE {
+				result = result / curToken.Value.(int)
+			}
+		}
+
+		i.CurrentToken, err = i.GetNextToken()
+		if err != nil {
+			return 0, err
+		}
+
+		prevToken = curToken
 	}
 
-	op := i.CurrentToken
-	err = i.Eat(op.Type)
-	if err != nil {
-		return 0, err
-	}
-
-	right := i.CurrentToken
-	err = i.Eat(INTEGER)
-	if err != nil {
-		return 0, err
-	}
-
-	if op.Type == PLUS {
-		result := left.Value.(int) + right.Value.(int)
-		return result, nil
-	}
-
-	if op.Type == MINUS {
-		result := left.Value.(int) - right.Value.(int)
-		return result, nil
-	}
-
-	return 0, ErrParsingInput
+	return result, nil
 }
