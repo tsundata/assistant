@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var ErrParsingInput = errors.New("error parsing input")
+var ErrInterpreter = errors.New("interpreter error")
 
 type Interpreter struct {
 	Lexer        *Lexer
@@ -25,16 +25,34 @@ func (i *Interpreter) Eat(tokenType string) (err error) {
 		return
 	}
 
-	return ErrParsingInput
+	return ErrInterpreter
 }
 
 func (i *Interpreter) Factor() (int, error) {
 	token := i.CurrentToken
-	err := i.Eat(INTEGER)
-	if err != nil {
-		return 0, nil
+	if token.Type == INTEGER {
+		err := i.Eat(INTEGER)
+		if err != nil {
+			return 0, nil
+		}
+		return token.Value.(int), nil
+	} else if token.Type == LPAREN {
+		err := i.Eat(LPAREN)
+		if err != nil {
+			return 0, nil
+		}
+		value, err := i.Expr()
+		if err != nil {
+			return 0, nil
+		}
+		err = i.Eat(RPAREN)
+		if err != nil {
+			return 0, nil
+		}
+		return value, nil
 	}
-	return token.Value.(int), nil
+
+	return 0, ErrInterpreter
 }
 
 func (i *Interpreter) Term() (int, error) {
@@ -107,9 +125,9 @@ func (i *Interpreter) Expr() (int, error) {
 	return value, nil
 }
 
-// expr   : term ((PLUS | MINUS) term)*
+// expr   : term   ((PLUS | MINUS) term)*
 // term   : factor ((MUL | DIV) factor)*
-// factor : INTEGER
+// factor : INTEGER | LPAREN expr RPAREN
 func (i *Interpreter) Parse() (int, error) {
 	return i.Expr()
 }

@@ -1,9 +1,12 @@
 package interpreter
 
 import (
+	"errors"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"strconv"
 )
+
+var ErrLexer = errors.New("lexer error")
 
 type Lexer struct {
 	Text        string
@@ -65,7 +68,15 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.Advance()
 			return NewToken(DIVIDE, '/'), nil
 		}
-		return nil, ErrParsingInput
+		if l.CurrentChar == '(' {
+			l.Advance()
+			return NewToken(LPAREN, '('), nil
+		}
+		if l.CurrentChar == ')' {
+			l.Advance()
+			return NewToken(RPAREN, ')'), nil
+		}
+		return nil, ErrLexer
 	}
 
 	return NewToken(EOF, nil), nil

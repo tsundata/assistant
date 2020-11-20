@@ -9,6 +9,8 @@ const (
 	MULTIPLY = "MULTIPLY"
 	DIVIDE   = "DIVIDE"
 	INTEGER  = "INTEGER"
+	LPAREN   = "LPAREN"
+	RPAREN   = "RPAREN"
 )
 
 type Token struct {
