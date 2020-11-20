@@ -21,7 +21,7 @@ func NewInterpreter(text string) *Interpreter {
 
 func (i *Interpreter) Advance() {
 	i.Pos++
-	if i.Pos >= len(i.Text) {
+	if i.Pos > len(i.Text) - 1 {
 		i.CurrentChar = 0
 	} else {
 		i.CurrentChar = i.Text[i.Pos]
@@ -84,45 +84,77 @@ func (i *Interpreter) Eat(tokenType string) (err error) {
 	return ErrParsingInput
 }
 
-func (i Interpreter) Expr() (int, error) {
-	var result int
+func (i *Interpreter) Term() (int, error) {
+	token := i.CurrentToken
+	err := i.Eat(INTEGER)
+	if err != nil {
+		return 0, err
+	}
+	return token.Value.(int), nil
+}
+
+func (i *Interpreter) Expr() (int, error) {
 	var err error
-	var prevToken *Token
 	i.CurrentToken, err = i.GetNextToken()
 	if err != nil {
 		return 0, err
 	}
-	for i.CurrentToken != nil && i.CurrentToken.Type != EOF {
-		curToken := i.CurrentToken
-		if prevToken == nil && curToken.Type == INTEGER {
-			result += curToken.Value.(int)
+
+	result, err := i.Term()
+	if err != nil {
+		return 0, err
+	}
+	for i.CurrentToken.Type == PLUS || i.CurrentToken.Type == MINUS || i.CurrentToken.Type == MULTIPLY || i.CurrentToken.Type == DIVIDE {
+		token := i.CurrentToken
+
+		if token.Type == PLUS {
+			err = i.Eat(PLUS)
+			if err != nil {
+				return 0, err
+			}
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
+			}
+			result = result + num
 		}
 
-		if prevToken != nil {
-			if prevToken.Type == PLUS {
-				result = result + curToken.Value.(int)
+		if token.Type == MINUS {
+			err = i.Eat(MINUS)
+			if err != nil {
+				return 0, err
 			}
-
-			if prevToken.Type == MINUS {
-				result = result - curToken.Value.(int)
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
 			}
-
-			if prevToken.Type == MULTIPLY {
-				result = result * curToken.Value.(int)
-
-			}
-
-			if prevToken.Type == DIVIDE {
-				result = result / curToken.Value.(int)
-			}
+			result = result - num
 		}
 
-		i.CurrentToken, err = i.GetNextToken()
-		if err != nil {
-			return 0, err
+		if token.Type == MULTIPLY {
+			err = i.Eat(MULTIPLY)
+			if err != nil {
+				return 0, err
+			}
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
+			}
+			result = result * num
+
 		}
 
-		prevToken = curToken
+		if token.Type == DIVIDE {
+			err = i.Eat(DIVIDE)
+			if err != nil {
+				return 0, err
+			}
+			num, err := i.Term()
+			if err != nil {
+				return 0, err
+			}
+			result = result / num
+		}
 	}
 
 	return result, nil
