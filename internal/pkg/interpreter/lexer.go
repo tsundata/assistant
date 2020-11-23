@@ -50,34 +50,34 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			continue
 		}
 		if utils.IsDigit(l.CurrentChar) {
-			return NewToken(INTEGER, l.Integer()), nil
+			return &Token{INTEGER, l.Integer()}, nil
 		}
 		if l.CurrentChar == '+' {
 			l.Advance()
-			return NewToken(PLUS, '+'), nil
+			return &Token{PLUS, '+'}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
-			return NewToken(MINUS, '-'), nil
+			return &Token{MINUS, '-'}, nil
 		}
 		if l.CurrentChar == '*' {
 			l.Advance()
-			return NewToken(MULTIPLY, '*'), nil
+			return &Token{MULTIPLY, '*'}, nil
 		}
 		if l.CurrentChar == '/' {
 			l.Advance()
-			return NewToken(DIVIDE, '/'), nil
+			return &Token{DIVIDE, '/'}, nil
 		}
 		if l.CurrentChar == '(' {
 			l.Advance()
-			return NewToken(LPAREN, '('), nil
+			return &Token{LPAREN, '('}, nil
 		}
 		if l.CurrentChar == ')' {
 			l.Advance()
-			return NewToken(RPAREN, ')'), nil
+			return &Token{RPAREN, ')'}, nil
 		}
 		return nil, ErrLexer
 	}
 
-	return NewToken(EOF, nil), nil
+	return &Token{EOF, nil}, nil
 }

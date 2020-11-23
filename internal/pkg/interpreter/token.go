@@ -18,10 +18,6 @@ type Token struct {
 	Value interface{}
 }
 
-func NewToken(t string, v interface{}) *Token {
-	return &Token{Type: t, Value: v}
-}
-
 func (t *Token) String() string {
 	return fmt.Sprintf("Token(%s, %v)", t.Type, t.Value)
 }
