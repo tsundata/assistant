@@ -45,7 +45,3 @@ func MessageScriptKind(text string) string {
 	}
 	return model.MessageScriptOfUndefined
 }
-
-func IsDigit(c byte) bool {
-	return c >= 48 && c <= 57
-}

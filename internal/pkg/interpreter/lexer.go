@@ -2,19 +2,17 @@ package interpreter
 
 import (
 	"errors"
-	"github.com/tsundata/assistant/internal/pkg/utils"
 	"strconv"
+	"unicode"
 )
 
-var ErrLexer = errors.New("lexer error")
-
 type Lexer struct {
-	Text        string
+	Text        []rune
 	Pos         int
-	CurrentChar byte
+	CurrentChar rune
 }
 
-func NewLexer(text string) *Lexer {
+func NewLexer(text []rune) *Lexer {
 	return &Lexer{Text: text, Pos: 0, CurrentChar: text[0]}
 }
 
@@ -27,15 +25,38 @@ func (l *Lexer) Advance() {
 	}
 }
 
+func (l *Lexer) Peek() rune {
+	peekPos := l.Pos + 1
+	if peekPos > len(l.Text)-1 {
+		return 0
+	} else {
+		return l.Text[peekPos]
+	}
+}
+
+func (l *Lexer) Id() (*Token, error) {
+	var result []rune
+	for l.CurrentChar > 0 && unicode.IsLetter(l.CurrentChar) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	if v, ok := ReservedKeywords[string(result)]; ok {
+		return &v, nil
+	}
+
+	return &Token{TokenID, result}, nil
+}
+
 func (l *Lexer) SkipWhitespace() {
-	for l.CurrentChar > 0 && l.CurrentChar == ' ' {
+	for l.CurrentChar > 0 && unicode.IsSpace(l.CurrentChar) {
 		l.Advance()
 	}
 }
 
 func (l *Lexer) Integer() int {
-	var result []byte
-	for l.CurrentChar > 0 && utils.IsDigit(l.CurrentChar) {
+	var result []rune
+	for l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -45,39 +66,55 @@ func (l *Lexer) Integer() int {
 
 func (l *Lexer) GetNextToken() (*Token, error) {
 	for l.CurrentChar > 0 {
-		if l.CurrentChar == ' ' {
+		if unicode.IsSpace(l.CurrentChar) {
 			l.SkipWhitespace()
 			continue
 		}
-		if utils.IsDigit(l.CurrentChar) {
-			return &Token{INTEGER, l.Integer()}, nil
+		if unicode.IsDigit(l.CurrentChar) {
+			return &Token{TokenINTEGER, l.Integer()}, nil
+		}
+		if unicode.IsLetter(l.CurrentChar) {
+			return l.Id()
+		}
+		if l.CurrentChar == ':' && l.Peek() == '=' {
+			l.Advance()
+			l.Advance()
+			return &Token{TokenASSIGN, ":="}, nil
+		}
+		if l.CurrentChar == ';' {
+			l.Advance()
+			return &Token{TokenSEMI, ';'}, nil
 		}
 		if l.CurrentChar == '+' {
 			l.Advance()
-			return &Token{PLUS, '+'}, nil
+			return &Token{TokenPLUS, '+'}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
-			return &Token{MINUS, '-'}, nil
+			return &Token{TokenMINUS, '-'}, nil
 		}
 		if l.CurrentChar == '*' {
 			l.Advance()
-			return &Token{MULTIPLY, '*'}, nil
+			return &Token{TokenMULTIPLY, '*'}, nil
 		}
 		if l.CurrentChar == '/' {
 			l.Advance()
-			return &Token{DIVIDE, '/'}, nil
+			return &Token{TokenDIVIDE, '/'}, nil
 		}
 		if l.CurrentChar == '(' {
 			l.Advance()
-			return &Token{LPAREN, '('}, nil
+			return &Token{TokenLPAREN, '('}, nil
 		}
 		if l.CurrentChar == ')' {
 			l.Advance()
-			return &Token{RPAREN, ')'}, nil
+			return &Token{TokenRPAREN, ')'}, nil
 		}
-		return nil, ErrLexer
+		if l.CurrentChar == '.' {
+			l.Advance()
+			return &Token{TokenDOT, '.'}, nil
+		}
+		return nil, errors.New("lexer error get next token")
 	}
 
-	return &Token{EOF, nil}, nil
+	return &Token{TokenEOF, nil}, nil
 }

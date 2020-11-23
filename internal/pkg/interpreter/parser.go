@@ -2,43 +2,6 @@ package interpreter
 
 import "errors"
 
-var ErrParser = errors.New("parser error")
-
-type Ast struct{}
-
-type BinOp struct {
-	Ast
-	Left  interface{}
-	Token *Token
-	Op    *Token
-	Right interface{}
-}
-
-func NewBinOp(left interface{}, op *Token, right interface{}) *BinOp {
-	return &BinOp{Left: left, Token: op, Op: op, Right: right}
-}
-
-type Num struct {
-	Ast
-	Token *Token
-	Value interface{}
-}
-
-func NewNum(token *Token) *Num {
-	return &Num{Token: token, Value: token.Value}
-}
-
-type UnaryOp struct {
-	Ast
-	Token *Token
-	Op    *Token
-	Expr  interface{}
-}
-
-func NewUnaryOp(op *Token, expr interface{}) *UnaryOp {
-	return &UnaryOp{Token: op, Op: op, Expr: expr}
-}
-
 type Parser struct {
 	Lexer        *Lexer
 	CurrentToken *Token
@@ -52,96 +15,108 @@ func NewParser(lexer *Lexer) (*Parser, error) {
 	return &Parser{Lexer: lexer, CurrentToken: token}, nil
 }
 
-func (p *Parser) Eat(tokenType string) (err error) {
+func (p *Parser) Eat(tokenType TokenType) (err error) {
 	if p.CurrentToken.Type == tokenType {
 		p.CurrentToken, err = p.Lexer.GetNextToken()
 		return
 	}
 
-	return ErrInterpreter
+	return errors.New("parser error eat")
 }
 
-func (p *Parser) Factor() (interface{}, error) {
-	token := p.CurrentToken
-	if token.Type == PLUS {
-		err := p.Eat(PLUS)
-		if err != nil {
-			return nil, err
-		}
-		i, err := p.Factor()
-		if err != nil {
-			return nil, err
-		}
-		node := NewUnaryOp(token, i)
-		return node, nil
+func (p *Parser) Program() (interface{}, error) {
+	node, err := p.CompoundStatement()
+	if err != nil {
+		return nil, err
 	}
-	if token.Type == MINUS {
-		err := p.Eat(MINUS)
-		if err != nil {
-			return nil, err
-		}
-		i, err := p.Factor()
-		if err != nil {
-			return nil, err
-		}
-		node := NewUnaryOp(token, i)
-		return node, nil
+	err = p.Eat(TokenDOT)
+	if err != nil {
+		return nil, err
 	}
-	if token.Type == INTEGER {
-		err := p.Eat(INTEGER)
-		if err != nil {
-			return nil, err
-		}
-		return NewNum(token), nil
-	}
-	if token.Type == LPAREN {
-		err := p.Eat(LPAREN)
-		if err != nil {
-			return nil, err
-		}
-		node, err := p.Expr()
-		if err != nil {
-			return nil, err
-		}
-		err = p.Eat(RPAREN)
-		if err != nil {
-			return nil, err
-		}
-		return node, nil
-	}
-
-	return nil, ErrParser
+	return node, nil
 }
 
-func (p *Parser) Term() (interface{}, error) {
-	node, err := p.Factor()
+func (p *Parser) CompoundStatement() (interface{}, error) {
+	err := p.Eat(TokenBEGIN)
+	if err != nil {
+		return nil, err
+	}
+	nodes, err := p.StatementList()
+	err = p.Eat(TokenEND)
 	if err != nil {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == MULTIPLY || p.CurrentToken.Type == DIVIDE {
-		token := p.CurrentToken
-		if token.Type == MULTIPLY {
-			err = p.Eat(MULTIPLY)
-			if err != nil {
-				return nil, err
-			}
-		}
-		if token.Type == DIVIDE {
-			err = p.Eat(DIVIDE)
-			if err != nil {
-				return nil, err
-			}
-		}
+	root := NewCompound()
+	for _, node := range nodes {
+		root.Children = append(root.Children, node)
+	}
+	return root, nil
+}
 
-		right, err := p.Factor()
+func (p *Parser) StatementList() ([]interface{}, error) {
+	node, err := p.Statement()
+	if err != nil {
+		return nil, err
+	}
+
+	results := []interface{}{node}
+
+	for p.CurrentToken.Type == TokenSEMI {
+		err = p.Eat(TokenSEMI)
 		if err != nil {
 			return nil, err
 		}
-		node = NewBinOp(node, token, right)
+		i, err := p.Statement()
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, i)
 	}
 
+	if p.CurrentToken.Type == TokenID {
+		return nil, errors.New("parser error statement list: id")
+	}
+
+	return results, nil
+}
+
+func (p *Parser) Statement() (interface{}, error) {
+	if p.CurrentToken.Type == TokenBEGIN {
+		return p.CompoundStatement()
+	} else if p.CurrentToken.Type == TokenID {
+		return p.AssignmentStatement()
+	} else {
+		return p.Empty()
+	}
+}
+
+func (p *Parser) AssignmentStatement() (interface{}, error) {
+	left, err := p.Variable()
+	if err != nil {
+		return nil, err
+	}
+	token := p.CurrentToken
+	err = p.Eat(TokenASSIGN)
+	if err != nil {
+		return nil, err
+	}
+	right, err := p.Expr()
+
+	return NewAssign(left, token, right), nil
+}
+
+func (p *Parser) Variable() (interface{}, error) {
+	node := NewVar(p.CurrentToken)
+	err := p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
+}
+
+func (p *Parser) Empty() (interface{}, error) {
+	return NewNoOp(), nil
 }
 
 func (p *Parser) Expr() (interface{}, error) {
@@ -150,16 +125,16 @@ func (p *Parser) Expr() (interface{}, error) {
 		return 0, err
 	}
 
-	for p.CurrentToken.Type == PLUS || p.CurrentToken.Type == MINUS {
+	for p.CurrentToken.Type == TokenPLUS || p.CurrentToken.Type == TokenMINUS {
 		token := p.CurrentToken
-		if token.Type == PLUS {
-			err = p.Eat(PLUS)
+		if token.Type == TokenPLUS {
+			err = p.Eat(TokenPLUS)
 			if err != nil {
 				return nil, err
 			}
 		}
-		if token.Type == MINUS {
-			err = p.Eat(MINUS)
+		if token.Type == TokenMINUS {
+			err = p.Eat(TokenMINUS)
 			if err != nil {
 				return nil, err
 			}
@@ -175,9 +150,122 @@ func (p *Parser) Expr() (interface{}, error) {
 	return node, nil
 }
 
-// expr   : term   ((PLUS | MINUS) term)*
-// term   : factor ((MUL | DIV) factor)*
-// factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
+func (p *Parser) Term() (interface{}, error) {
+	node, err := p.Factor()
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenMULTIPLY || p.CurrentToken.Type == TokenDIVIDE {
+		token := p.CurrentToken
+		if token.Type == TokenMULTIPLY {
+			err = p.Eat(TokenMULTIPLY)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if token.Type == TokenDIVIDE {
+			err = p.Eat(TokenDIVIDE)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		right, err := p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		node = NewBinOp(node, token, right)
+	}
+
+	return node, nil
+}
+
+func (p *Parser) Factor() (interface{}, error) {
+	token := p.CurrentToken
+	if token.Type == TokenPLUS {
+		err := p.Eat(TokenPLUS)
+		if err != nil {
+			return nil, err
+		}
+		i, err := p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		node := NewUnaryOp(token, i)
+		return node, nil
+	}
+	if token.Type == TokenMINUS {
+		err := p.Eat(TokenMINUS)
+		if err != nil {
+			return nil, err
+		}
+		i, err := p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		node := NewUnaryOp(token, i)
+		return node, nil
+	}
+	if token.Type == TokenINTEGER {
+		err := p.Eat(TokenINTEGER)
+		if err != nil {
+			return nil, err
+		}
+		return NewNum(token), nil
+	}
+	if token.Type == TokenLPAREN {
+		err := p.Eat(TokenLPAREN)
+		if err != nil {
+			return nil, err
+		}
+		node, err := p.Expr()
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenRPAREN)
+		if err != nil {
+			return nil, err
+		}
+		return node, nil
+	}
+
+	return p.Variable()
+}
+
+// program : compound_statement DOT
+//
+// compound_statement : BEGIN statement_list END
+//
+// statement_list : statement
+//				  | statement SEMI statement_list
+//
+// statement : compound_statement
+//				  | assignment_statement
+//				  | empty
+//
+// assignment_statement : variable ASSIGN expr
+//
+// empty :
+//
+// expr : term ((PLUS | MINUS) term)*
+//
+// term : factor ((MUL | DIV) factor)*
+//
+// factor : PLUS factor
+//		  | MINUS factor
+//        | INTEGER
+//        | LPAREN expr RPAREN
+//        | variable
+//
+// variable : ID
 func (p *Parser) Parse() (interface{}, error) {
-	return p.Expr()
+	node, err := p.Program()
+	if err != nil {
+		return nil, err
+	}
+	if p.CurrentToken.Type != TokenEOF {
+		return nil, errors.New("parser error not eof")
+	}
+	return node, nil
 }

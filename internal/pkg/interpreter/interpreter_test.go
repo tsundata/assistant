@@ -1,11 +1,23 @@
 package interpreter
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestInterpreter_Expr(t *testing.T) {
-	p, err := NewParser(NewLexer("5 - - - + - (3 + 4) - +2"))
+	text := `BEGIN
+
+    BEGIN
+        number := 2;
+        a := number;
+        b := 10 * a + 10 * number / 4;
+        c := a - - b
+    END;
+
+    x := 11;
+END.`
+	p, err := NewParser(NewLexer([]rune(text)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -14,7 +26,8 @@ func TestInterpreter_Expr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r != 10 {
+	if r != 0 {
 		t.Fatal("error expr")
 	}
+	fmt.Println(i.GlobalScope)
 }
