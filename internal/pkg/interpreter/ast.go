@@ -17,11 +17,19 @@ func NewBinOp(left interface{}, op *Token, right interface{}) *BinOp {
 type Num struct {
 	Ast
 	Token *Token
-	Value interface{}
+	Value float64
 }
 
 func NewNum(token *Token) *Num {
-	return &Num{Token: token, Value: token.Value}
+	ret := &Num{Token: token}
+
+	if v, ok := token.Value.(int); ok {
+		ret.Value = float64(v)
+	} else {
+		ret.Value = token.Value.(float64)
+	}
+
+	return ret
 }
 
 type UnaryOp struct {
@@ -70,4 +78,40 @@ type NoOp struct {
 
 func NewNoOp() *NoOp {
 	return &NoOp{}
+}
+
+type Program struct {
+	Name  string
+	Block interface{}
+}
+
+func NewProgram(name string, block interface{}) *Program {
+	return &Program{Name: name, Block: block}
+}
+
+type Block struct {
+	Declarations      [][]interface{}
+	CompoundStatement interface{}
+}
+
+func NewBlock(declarations [][]interface{}, compoundStatement interface{}) *Block {
+	return &Block{Declarations: declarations, CompoundStatement: compoundStatement}
+}
+
+type VarDecl struct {
+	VarNode  interface{}
+	TypeNode interface{}
+}
+
+func NewVarDecl(varNode interface{}, typeNode interface{}) *VarDecl {
+	return &VarDecl{VarNode: varNode, TypeNode: typeNode}
+}
+
+type Type struct {
+	Token *Token
+	Value interface{}
+}
+
+func NewType(token *Token) *Type {
+	return &Type{Token: token, Value: token.Value}
 }

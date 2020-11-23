@@ -36,7 +36,7 @@ func (l *Lexer) Peek() rune {
 
 func (l *Lexer) Id() (*Token, error) {
 	var result []rune
-	for l.CurrentChar > 0 && unicode.IsLetter(l.CurrentChar) {
+	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar)) {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -54,14 +54,42 @@ func (l *Lexer) SkipWhitespace() {
 	}
 }
 
-func (l *Lexer) Integer() int {
+func (l *Lexer) SkipComment() {
+	for l.CurrentChar != '}' {
+		l.Advance()
+	}
+	l.Advance()
+}
+
+func (l *Lexer) Number() (*Token, error) {
 	var result []rune
 	for l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
-	num, _ := strconv.Atoi(string(result))
-	return num
+
+	if l.CurrentChar == '.' {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+
+		for l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
+			result = append(result, l.CurrentChar)
+			l.Advance()
+		}
+
+		f, err := strconv.ParseFloat(string(result), 64)
+		if err != nil {
+			return nil, err
+		}
+
+		return &Token{TokenREALCONST, f}, nil
+	} else {
+		i, err := strconv.Atoi(string(result))
+		if err != nil {
+			return nil, err
+		}
+		return &Token{TokenINTEGERCONST, i}, nil
+	}
 }
 
 func (l *Lexer) GetNextToken() (*Token, error) {
@@ -70,8 +98,13 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.SkipWhitespace()
 			continue
 		}
+		if l.CurrentChar == '{' {
+			l.Advance()
+			l.SkipComment()
+			continue
+		}
 		if unicode.IsDigit(l.CurrentChar) {
-			return &Token{TokenINTEGER, l.Integer()}, nil
+			return l.Number()
 		}
 		if unicode.IsLetter(l.CurrentChar) {
 			return l.Id()
@@ -84,6 +117,14 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == ';' {
 			l.Advance()
 			return &Token{TokenSEMI, ';'}, nil
+		}
+		if l.CurrentChar == ':' {
+			l.Advance()
+			return &Token{TokenCOLON, ':'}, nil
+		}
+		if l.CurrentChar == ',' {
+			l.Advance()
+			return &Token{TokenCOMMA, ','}, nil
 		}
 		if l.CurrentChar == '+' {
 			l.Advance()
@@ -99,7 +140,7 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		}
 		if l.CurrentChar == '/' {
 			l.Advance()
-			return &Token{TokenDIVIDE, '/'}, nil
+			return &Token{TokenFLOATDIV, '/'}, nil
 		}
 		if l.CurrentChar == '(' {
 			l.Advance()

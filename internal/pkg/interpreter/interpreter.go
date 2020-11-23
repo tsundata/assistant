@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Interpreter struct {
@@ -14,7 +13,19 @@ func NewInterpreter(parser *Parser) *Interpreter {
 	return &Interpreter{Parser: parser, GlobalScope: make(map[string]interface{})}
 }
 
-func (i *Interpreter) Visit(node interface{}) int {
+func (i *Interpreter) Visit(node interface{}) float64 {
+	if n, ok := node.(*Program); ok {
+		return i.VisitProgram(n)
+	}
+	if n, ok := node.(*Block); ok {
+		return i.VisitBlock(n)
+	}
+	if n, ok := node.(*VarDecl); ok {
+		return i.VisitVarDecl(n)
+	}
+	if n, ok := node.(*Type); ok {
+		return i.VisitType(n)
+	}
 	if n, ok := node.(*BinOp); ok {
 		return i.VisitBinOp(n)
 	}
@@ -40,7 +51,29 @@ func (i *Interpreter) Visit(node interface{}) int {
 	return 0
 }
 
-func (i *Interpreter) VisitBinOp(node *BinOp) int {
+func (i *Interpreter) VisitProgram(node *Program) float64 {
+	return i.Visit(node.Block)
+}
+
+func (i *Interpreter) VisitBlock(node *Block) float64 {
+	for _, declaration := range node.Declarations {
+		for _, decl := range declaration {
+			i.Visit(decl)
+		}
+	}
+	i.Visit(node.CompoundStatement)
+	return 0
+}
+
+func (i *Interpreter) VisitVarDecl(node *VarDecl) float64 {
+	return 0
+}
+
+func (i *Interpreter) VisitType(node *Type) float64 {
+	return 0
+}
+
+func (i *Interpreter) VisitBinOp(node *BinOp) float64 {
 	if node.Op.Type == TokenPLUS {
 		return i.Visit(node.Left) + i.Visit(node.Right)
 	}
@@ -50,17 +83,17 @@ func (i *Interpreter) VisitBinOp(node *BinOp) int {
 	if node.Op.Type == TokenMULTIPLY {
 		return i.Visit(node.Left) * i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenDIVIDE {
+	if node.Op.Type == TokenINTEGERDIV {
 		return i.Visit(node.Left) / i.Visit(node.Right)
 	}
-	return 0
+	return i.Visit(node.Left) / i.Visit(node.Right)
 }
 
-func (i *Interpreter) VisitNum(node *Num) int {
-	return node.Value.(int)
+func (i *Interpreter) VisitNum(node *Num) float64 {
+	return node.Value
 }
 
-func (i *Interpreter) VisitUnaryOp(node *UnaryOp) int {
+func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {
 	op := node.Op.Type
 	if op == TokenPLUS {
 		return +i.Visit(node.Expr)
@@ -70,15 +103,14 @@ func (i *Interpreter) VisitUnaryOp(node *UnaryOp) int {
 	return 0
 }
 
-func (i *Interpreter) VisitCompound(node *Compound) int {
+func (i *Interpreter) VisitCompound(node *Compound) float64 {
 	for _, child := range node.Children {
 		i.Visit(child)
 	}
 	return 0
 }
 
-func (i *Interpreter) VisitAssign(node *Assign) int {
-	fmt.Println(node)
+func (i *Interpreter) VisitAssign(node *Assign) float64 {
 	if left, ok := node.Left.(*Var); ok {
 		varName := left.Value
 		if value, ok := varName.([]rune); ok {
@@ -88,10 +120,10 @@ func (i *Interpreter) VisitAssign(node *Assign) int {
 	return 0
 }
 
-func (i *Interpreter) VisitVar(node *Var) int {
+func (i *Interpreter) VisitVar(node *Var) float64 {
 	if varName, ok := node.Value.([]rune); ok {
 		if val, ok := i.GlobalScope[string(varName)]; ok {
-			return val.(int)
+			return val.(float64)
 		} else {
 			panic(errors.New("interpreter error var name"))
 		}
@@ -99,11 +131,11 @@ func (i *Interpreter) VisitVar(node *Var) int {
 	return 0
 }
 
-func (i *Interpreter) VisitNoOp(node *NoOp) int {
+func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
 	return 0
 }
 
-func (i *Interpreter) Interpret() (int, error) {
+func (i *Interpreter) Interpret() (float64, error) {
 	tree, err := i.Parser.Parse()
 	if err != nil {
 		return 0, err

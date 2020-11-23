@@ -1,6 +1,8 @@
 package interpreter
 
-import "errors"
+import (
+	"errors"
+)
 
 type Parser struct {
 	Lexer        *Lexer
@@ -25,15 +27,112 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 }
 
 func (p *Parser) Program() (interface{}, error) {
-	node, err := p.CompoundStatement()
+	err := p.Eat(TokenPROGRAM)
 	if err != nil {
 		return nil, err
 	}
+	varNode, err := p.Variable()
+	if err != nil {
+		return nil, err
+	}
+	programName := varNode.(*Var).Value.([]rune)
+	err = p.Eat(TokenSEMI)
+	if err != nil {
+		return nil, err
+	}
+	blockNode, err := p.Block()
+	if err != nil {
+		return nil, err
+	}
+	programNode := NewProgram(string(programName), blockNode)
 	err = p.Eat(TokenDOT)
 	if err != nil {
 		return nil, err
 	}
-	return node, nil
+	return programNode, nil
+}
+
+func (p *Parser) Block() (interface{}, error) {
+	declarationNodes, err := p.Declarations()
+	if err != nil {
+		return nil, err
+	}
+	compoundStatementNode, err := p.CompoundStatement()
+	if err != nil {
+		return nil, err
+	}
+	return NewBlock(declarationNodes, compoundStatementNode), nil
+}
+
+func (p *Parser) Declarations() ([][]interface{}, error) {
+	var declarations [][]interface{}
+	if p.CurrentToken.Type == TokenVAR {
+		err := p.Eat(TokenVAR)
+		if err != nil {
+			return nil, err
+		}
+		for p.CurrentToken.Type == TokenID {
+			varDecl, err := p.VariableDeclaration()
+			if err != nil {
+				return nil, err
+			}
+			declarations = append(declarations, varDecl)
+			err = p.Eat(TokenSEMI)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return declarations, nil
+}
+
+func (p *Parser) VariableDeclaration() ([]interface{}, error) {
+	varNodes := []interface{}{NewVar(p.CurrentToken)}
+	err := p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenCOMMA {
+		err := p.Eat(TokenCOMMA)
+		if err != nil {
+			return nil, err
+		}
+		varNodes = append(varNodes, NewVar(p.CurrentToken))
+		err = p.Eat(TokenID)
+	}
+
+	err = p.Eat(TokenCOLON)
+	if err != nil {
+		return nil, err
+	}
+
+	typeNode, err := p.TypeSpec()
+	if err != nil {
+		return nil, err
+	}
+	var varDeclarations []interface{}
+	for _, varNode := range varNodes {
+		varDeclarations = append(varDeclarations, NewVarDecl(varNode, typeNode))
+	}
+	return varDeclarations, nil
+}
+
+func (p *Parser) TypeSpec() (interface{}, error) {
+	token := p.CurrentToken
+	if p.CurrentToken.Type == TokenINTEGER {
+		err := p.Eat(TokenINTEGER)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := p.Eat(TokenREAL)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return NewType(token), nil
 }
 
 func (p *Parser) CompoundStatement() (interface{}, error) {
@@ -72,10 +171,6 @@ func (p *Parser) StatementList() ([]interface{}, error) {
 			return nil, err
 		}
 		results = append(results, i)
-	}
-
-	if p.CurrentToken.Type == TokenID {
-		return nil, errors.New("parser error statement list: id")
 	}
 
 	return results, nil
@@ -156,7 +251,7 @@ func (p *Parser) Term() (interface{}, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenMULTIPLY || p.CurrentToken.Type == TokenDIVIDE {
+	for p.CurrentToken.Type == TokenMULTIPLY || p.CurrentToken.Type == TokenINTEGERDIV || p.CurrentToken.Type == TokenFLOATDIV {
 		token := p.CurrentToken
 		if token.Type == TokenMULTIPLY {
 			err = p.Eat(TokenMULTIPLY)
@@ -164,8 +259,14 @@ func (p *Parser) Term() (interface{}, error) {
 				return nil, err
 			}
 		}
-		if token.Type == TokenDIVIDE {
-			err = p.Eat(TokenDIVIDE)
+		if token.Type == TokenINTEGERDIV {
+			err = p.Eat(TokenINTEGERDIV)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if token.Type == TokenFLOATDIV {
+			err = p.Eat(TokenFLOATDIV)
 			if err != nil {
 				return nil, err
 			}
@@ -207,8 +308,15 @@ func (p *Parser) Factor() (interface{}, error) {
 		node := NewUnaryOp(token, i)
 		return node, nil
 	}
-	if token.Type == TokenINTEGER {
-		err := p.Eat(TokenINTEGER)
+	if token.Type == TokenINTEGERCONST {
+		err := p.Eat(TokenINTEGERCONST)
+		if err != nil {
+			return nil, err
+		}
+		return NewNum(token), nil
+	}
+	if token.Type == TokenREALCONST {
+		err := p.Eat(TokenREALCONST)
 		if err != nil {
 			return nil, err
 		}
@@ -233,7 +341,17 @@ func (p *Parser) Factor() (interface{}, error) {
 	return p.Variable()
 }
 
-// program : compound_statement DOT
+// program : PROGRAM variable SEMI block DOT
+//
+// block : declarations compound_statement
+//
+// declarations : VAR (variable_declaration SEMI)+
+//	            | empty
+//
+// variable_declaration : ID (COMMA ID)* COLON type_spec
+//
+// type_spec : INTEGER
+//	         | REAL
 //
 // compound_statement : BEGIN statement_list END
 //
@@ -250,13 +368,14 @@ func (p *Parser) Factor() (interface{}, error) {
 //
 // expr : term ((PLUS | MINUS) term)*
 //
-// term : factor ((MUL | DIV) factor)*
+// term : factor ((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 //
 // factor : PLUS factor
-//		  | MINUS factor
-//        | INTEGER
-//        | LPAREN expr RPAREN
-//        | variable
+//	      | MINUS factor
+//	      | INTEGER_CONST
+//	      | REAL_CONST
+//	      | LPAREN expr RPAREN
+//	      | variable
 //
 // variable : ID
 func (p *Parser) Parse() (interface{}, error) {
