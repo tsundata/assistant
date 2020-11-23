@@ -5,7 +5,7 @@ import (
 )
 
 func TestInterpreter_Expr(t *testing.T) {
-	p, err := NewParser(NewLexer("7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)"))
+	p, err := NewParser(NewLexer("5 - - - + - (3 + 4) - +2"))
 	if err != nil {
 		t.Fatal(err)
 	}

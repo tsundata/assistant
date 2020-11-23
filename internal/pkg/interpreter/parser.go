@@ -4,10 +4,10 @@ import "errors"
 
 var ErrParser = errors.New("parser error")
 
-type Ast struct {}
+type Ast struct{}
 
 type BinOp struct {
-	*Ast
+	Ast
 	Left  interface{}
 	Token *Token
 	Op    *Token
@@ -19,13 +19,24 @@ func NewBinOp(left interface{}, op *Token, right interface{}) *BinOp {
 }
 
 type Num struct {
-	*Ast
+	Ast
 	Token *Token
 	Value interface{}
 }
 
 func NewNum(token *Token) *Num {
 	return &Num{Token: token, Value: token.Value}
+}
+
+type UnaryOp struct {
+	Ast
+	Token *Token
+	Op    *Token
+	Expr  interface{}
+}
+
+func NewUnaryOp(op *Token, expr interface{}) *UnaryOp {
+	return &UnaryOp{Token: op, Op: op, Expr: expr}
 }
 
 type Parser struct {
@@ -52,13 +63,38 @@ func (p *Parser) Eat(tokenType string) (err error) {
 
 func (p *Parser) Factor() (interface{}, error) {
 	token := p.CurrentToken
+	if token.Type == PLUS {
+		err := p.Eat(PLUS)
+		if err != nil {
+			return nil, err
+		}
+		i, err := p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		node := NewUnaryOp(token, i)
+		return node, nil
+	}
+	if token.Type == MINUS {
+		err := p.Eat(MINUS)
+		if err != nil {
+			return nil, err
+		}
+		i, err := p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		node := NewUnaryOp(token, i)
+		return node, nil
+	}
 	if token.Type == INTEGER {
 		err := p.Eat(INTEGER)
 		if err != nil {
 			return nil, err
 		}
 		return NewNum(token), nil
-	} else if token.Type == LPAREN {
+	}
+	if token.Type == LPAREN {
 		err := p.Eat(LPAREN)
 		if err != nil {
 			return nil, err
@@ -141,7 +177,7 @@ func (p *Parser) Expr() (interface{}, error) {
 
 // expr   : term   ((PLUS | MINUS) term)*
 // term   : factor ((MUL | DIV) factor)*
-// factor : INTEGER | LPAREN expr RPAREN
+// factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
 func (p *Parser) Parse() (interface{}, error) {
 	return p.Expr()
 }

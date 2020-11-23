@@ -21,6 +21,9 @@ func (i *Interpreter) Visit(node interface{}) int {
 	if n, ok := node.(*Num); ok {
 		return i.VisitNum(n)
 	}
+	if n, ok := node.(*UnaryOp); ok {
+		return i.VisitUnaryOp(n)
+	}
 	return 0
 }
 
@@ -42,6 +45,16 @@ func (i *Interpreter) VisitBinOp(node *BinOp) int {
 
 func (i *Interpreter) VisitNum(node *Num) int {
 	return node.Value.(int)
+}
+
+func (i *Interpreter) VisitUnaryOp(node *UnaryOp) int {
+	op := node.Op.Type
+	if op == PLUS {
+		return +i.Visit(node.Expr)
+	} else if op == MINUS {
+		return -i.Visit(node.Expr)
+	}
+	return 0
 }
 
 func (i *Interpreter) Interpret() (int, error) {
