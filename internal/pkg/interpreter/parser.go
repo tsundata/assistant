@@ -83,6 +83,33 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 			}
 		}
 	}
+
+	for p.CurrentToken.Type == TokenPROGRAM {
+		err := p.Eat(TokenPROGRAM)
+		if err != nil {
+			return nil, err
+		}
+		procName := p.CurrentToken.Value.([]rune)
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenSEMI)
+		if err != nil {
+			return nil, err
+		}
+		blockNode, err := p.Block()
+		if err != nil {
+			return nil, err
+		}
+		procDecl := NewProcedureDecl(string(procName), blockNode)
+		declarations = append(declarations, []Ast{procDecl}) // FIXME
+		err = p.Eat(TokenSEMI)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return declarations, nil
 }
 
@@ -346,6 +373,7 @@ func (p *Parser) Factor() (Ast, error) {
 // block : declarations compound_statement
 //
 // declarations : VAR (variable_declaration SEMI)+
+//				| (PROCEDURE ID SEMI block SEMI)*
 //	            | empty
 //
 // variable_declaration : ID (COMMA ID)* COLON type_spec

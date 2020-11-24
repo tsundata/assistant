@@ -9,11 +9,11 @@ type Interpreter struct {
 	GlobalMemory map[string]interface{}
 }
 
-func NewInterpreter(tree interface{}) *Interpreter {
+func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, GlobalMemory: make(map[string]interface{})}
 }
 
-func (i *Interpreter) Visit(node interface{}) float64 {
+func (i *Interpreter) Visit(node Ast) float64 {
 	if n, ok := node.(*Program); ok {
 		return i.VisitProgram(n)
 	}
@@ -46,6 +46,9 @@ func (i *Interpreter) Visit(node interface{}) float64 {
 	}
 	if n, ok := node.(*NoOp); ok {
 		return i.VisitNoOp(n)
+	}
+	if n, ok := node.(*ProcedureDecl); ok {
+		return i.VisitProcedureDecl(n)
 	}
 
 	return 0
@@ -132,6 +135,10 @@ func (i *Interpreter) VisitVar(node *Var) float64 {
 }
 
 func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
+	return 0
+}
+
+func (i *Interpreter) VisitProcedureDecl(node *ProcedureDecl) float64 {
 	return 0
 }
 

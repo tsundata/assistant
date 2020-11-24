@@ -29,6 +29,7 @@ const (
 	TokenCOLON        = "COLON"
 	TokenVAR          = "VAR"
 	TokenDIV          = "DIV"
+	TokenPROCEDURE    = "PROCEDURE"
 )
 
 type Token struct {
@@ -41,11 +42,12 @@ func (t *Token) String() string {
 }
 
 var ReservedKeywords = map[string]Token{
-	"BEGIN":   {Type: TokenBEGIN, Value: TokenBEGIN},
-	"END":     {Type: TokenEND, Value: TokenEND},
-	"PROGRAM": {Type: TokenPROGRAM, Value: TokenPROGRAM},
-	"VAR":     {Type: TokenVAR, Value: TokenVAR},
-	"DIV":     {Type: TokenINTEGERDIV, Value: TokenDIV},
-	"INTEGER": {Type: TokenINTEGER, Value: TokenINTEGER},
-	"REAL":    {Type: TokenREAL, Value: TokenREAL},
+	"PROGRAM":   {Type: TokenPROGRAM, Value: TokenPROGRAM},
+	"VAR":       {Type: TokenVAR, Value: TokenVAR},
+	"DIV":       {Type: TokenINTEGERDIV, Value: TokenDIV},
+	"INTEGER":   {Type: TokenINTEGER, Value: TokenINTEGER},
+	"REAL":      {Type: TokenREAL, Value: TokenREAL},
+	"BEGIN":     {Type: TokenBEGIN, Value: TokenBEGIN},
+	"END":       {Type: TokenEND, Value: TokenEND},
+	"PROCEDURE": {Type: TokenPROGRAM, Value: TokenPROGRAM},
 }

@@ -52,6 +52,54 @@ END.  {Part10}`
 	fmt.Println(i.GlobalMemory)
 }
 
+func TestInterpreterProcedure(t *testing.T) {
+	text := `PROGRAM Part12;
+VAR
+   a : INTEGER;
+
+PROCEDURE P1;
+VAR
+   a : REAL;
+   k : INTEGER;
+
+   PROCEDURE P2;
+   VAR
+      a, z : INTEGER;
+   BEGIN {P2}
+      z := 777;
+   END;  {P2}
+
+BEGIN {P1}
+
+END;  {P1}
+
+BEGIN {Part12}
+   a := 10;
+END.  {Part12}`
+	p, err := NewParser(NewLexer([]rune(text)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSymbolTableBuilder()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.symbolTable)
+
+	i := NewInterpreter(tree)
+	r, err := i.Interpret()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != 0 {
+		t.Fatal("error expr")
+	}
+	fmt.Println(i.GlobalMemory)
+}
+
 func TestInterpreterNameError1(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {

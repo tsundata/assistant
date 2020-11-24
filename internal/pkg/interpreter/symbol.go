@@ -4,17 +4,14 @@ import (
 	"fmt"
 )
 
-type Symbol interface {
-	String() string
-}
+type Symbol interface{}
 
 type VarSymbol struct {
 	Name string
-	Type interface{}
-	Symbol
+	Type Symbol
 }
 
-func NewVarSymbol(name string, t interface{}) *VarSymbol {
+func NewVarSymbol(name string, t Symbol) *VarSymbol {
 	s := &VarSymbol{}
 	s.Name = name
 	s.Type = t
@@ -22,14 +19,12 @@ func NewVarSymbol(name string, t interface{}) *VarSymbol {
 }
 
 func (s *VarSymbol) String() string {
-	// return fmt.Sprintf("<%s:%v>", s.Name, s.Type)
-	return s.Name
+	return fmt.Sprintf("<%s:%v>", s.Name, s.Type)
 }
 
 type BuiltinTypeSymbol struct {
 	Name string
-	Type interface{}
-	Symbol
+	Type Symbol
 }
 
 func NewBuiltinTypeSymbol(name string) *BuiltinTypeSymbol {
@@ -43,11 +38,11 @@ func (s *BuiltinTypeSymbol) String() string {
 }
 
 type SymbolTable struct {
-	symbols map[string]interface{}
+	symbols map[string]Symbol
 }
 
 func NewSymbolTable() *SymbolTable {
-	table := &SymbolTable{symbols: make(map[string]interface{})}
+	table := &SymbolTable{symbols: make(map[string]Symbol)}
 	table.Define(NewBuiltinTypeSymbol("INTEGER"))
 	table.Define(NewBuiltinTypeSymbol("REAL"))
 	return table
@@ -59,7 +54,14 @@ func (t *SymbolTable) String() string {
 
 func (t *SymbolTable) Define(symbol Symbol) {
 	fmt.Printf("Define: %v\n", symbol)
-	t.symbols[symbol.String()] = symbol
+	var name string
+	if s, ok := symbol.(*VarSymbol); ok {
+		name = s.Name
+	}
+	if s, ok := symbol.(*BuiltinTypeSymbol); ok {
+		name = s.Name
+	}
+	t.symbols[name] = symbol
 }
 
 func (t *SymbolTable) Lookup(name string) Symbol {
@@ -79,7 +81,7 @@ func NewSymbolTableBuilder() *SymbolTableBuilder {
 	return &SymbolTableBuilder{symbolTable: NewSymbolTable()}
 }
 
-func (b *SymbolTableBuilder) Visit(node interface{}) {
+func (b *SymbolTableBuilder) Visit(node Ast) {
 	if n, ok := node.(*Program); ok {
 		b.VisitProgram(n)
 		return
@@ -184,4 +186,8 @@ func (b *SymbolTableBuilder) VisitVar(node *Var) {
 	if varSymbol == nil {
 		panic(fmt.Sprintf("error var symbol %s %v", string(varName), varSymbol))
 	}
+}
+
+func (b *SymbolTableBuilder) VisitProcedureDecl() {
+	// pass
 }
