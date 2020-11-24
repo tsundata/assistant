@@ -3,6 +3,7 @@ package interpreter
 import (
 	"errors"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
@@ -41,7 +42,7 @@ func (l *Lexer) Id() (*Token, error) {
 		l.Advance()
 	}
 
-	if v, ok := ReservedKeywords[string(result)]; ok {
+	if v, ok := ReservedKeywords[strings.ToUpper(string(result))]; ok {
 		return &v, nil
 	}
 

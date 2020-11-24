@@ -37,7 +37,7 @@ END.  {Part10}`
 		t.Fatal(err)
 	}
 
-	symbolTable := NewSymbolTableBuilder()
+	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
 	fmt.Println(symbolTable.symbolTable)
 
@@ -85,7 +85,7 @@ END.  {Part12}`
 		t.Fatal(err)
 	}
 
-	symbolTable := NewSymbolTableBuilder()
+	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
 	fmt.Println(symbolTable.symbolTable)
 
@@ -123,7 +123,7 @@ END.`
 		t.Fatal(err)
 	}
 
-	symbolTable := NewSymbolTableBuilder()
+	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
 	fmt.Println(symbolTable.symbolTable)
 
@@ -162,7 +162,7 @@ END.`
 		t.Fatal(err)
 	}
 
-	symbolTable := NewSymbolTableBuilder()
+	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
 	fmt.Println(symbolTable.symbolTable)
 

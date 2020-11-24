@@ -2,6 +2,8 @@ package interpreter
 
 import (
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"strings"
 )
 
 type Symbol interface{}
@@ -19,7 +21,7 @@ func NewVarSymbol(name string, t Symbol) *VarSymbol {
 }
 
 func (s *VarSymbol) String() string {
-	return fmt.Sprintf("<%s:%v>", s.Name, s.Type)
+	return fmt.Sprintf("<VarSymbol(name=%s:type=%v)>", s.Name, s.Type)
 }
 
 type BuiltinTypeSymbol struct {
@@ -34,26 +36,42 @@ func NewBuiltinTypeSymbol(name string) *BuiltinTypeSymbol {
 }
 
 func (s *BuiltinTypeSymbol) String() string {
-	return s.Name
+	return fmt.Sprintf("<BuiltinTypeSymbol(name=%s)>", s.Name)
 }
 
 type SymbolTable struct {
-	symbols map[string]Symbol
+	symbols *collection.OrderedDict
 }
 
 func NewSymbolTable() *SymbolTable {
-	table := &SymbolTable{symbols: make(map[string]Symbol)}
-	table.Define(NewBuiltinTypeSymbol("INTEGER"))
-	table.Define(NewBuiltinTypeSymbol("REAL"))
+	table := &SymbolTable{symbols: collection.NewOrderedDict()}
+	table.Insert(NewBuiltinTypeSymbol("INTEGER"))
+	table.Insert(NewBuiltinTypeSymbol("REAL"))
 	return table
 }
 
 func (t *SymbolTable) String() string {
-	return fmt.Sprintf("Symbols: %v\n", t.symbols)
+	var lines []string
+	i := 0
+	for v := range t.symbols.Iterate() {
+		i++
+		lines = append(lines, fmt.Sprintf("%6d: %v", i, v))
+	}
+
+	return fmt.Sprintf("Symbol table contents\n%s\n", strings.Join(lines, "\n"))
 }
 
-func (t *SymbolTable) Define(symbol Symbol) {
-	fmt.Printf("Define: %v\n", symbol)
+func (t *SymbolTable) Lookup(name string) Symbol {
+	fmt.Printf("Lookup: %s\n", name)
+	s := t.symbols.Get(name)
+	if s != nil {
+		return s.(Symbol)
+	}
+	return nil
+}
+
+func (t *SymbolTable) Insert(symbol Symbol) {
+	fmt.Printf("Insert: %s\n", symbol)
 	var name string
 	if s, ok := symbol.(*VarSymbol); ok {
 		name = s.Name
@@ -61,27 +79,18 @@ func (t *SymbolTable) Define(symbol Symbol) {
 	if s, ok := symbol.(*BuiltinTypeSymbol); ok {
 		name = s.Name
 	}
-	t.symbols[name] = symbol
+	t.symbols.Set(name, symbol)
 }
 
-func (t *SymbolTable) Lookup(name string) Symbol {
-	fmt.Printf("Lookup: %s\n", name)
-
-	if _, ok := t.symbols[name]; ok {
-		return t.symbols[name].(Symbol)
-	}
-	return nil
-}
-
-type SymbolTableBuilder struct {
+type SemanticAnalyzer struct {
 	symbolTable *SymbolTable
 }
 
-func NewSymbolTableBuilder() *SymbolTableBuilder {
-	return &SymbolTableBuilder{symbolTable: NewSymbolTable()}
+func NewSemanticAnalyzer() *SemanticAnalyzer {
+	return &SemanticAnalyzer{symbolTable: NewSymbolTable()}
 }
 
-func (b *SymbolTableBuilder) Visit(node Ast) {
+func (b *SemanticAnalyzer) Visit(node Ast) {
 	if n, ok := node.(*Program); ok {
 		b.VisitProgram(n)
 		return
@@ -96,14 +105,6 @@ func (b *SymbolTableBuilder) Visit(node Ast) {
 	}
 	if n, ok := node.(*BinOp); ok {
 		b.VisitBinOp(n)
-		return
-	}
-	if n, ok := node.(*Num); ok {
-		b.VisitNum(n)
-		return
-	}
-	if n, ok := node.(*UnaryOp); ok {
-		b.VisitUnaryOp(n)
 		return
 	}
 	if n, ok := node.(*Compound); ok {
@@ -124,7 +125,7 @@ func (b *SymbolTableBuilder) Visit(node Ast) {
 	}
 }
 
-func (b *SymbolTableBuilder) VisitBlock(node *Block) {
+func (b *SemanticAnalyzer) VisitBlock(node *Block) {
 	for _, declaration := range node.Declarations {
 		for _, decl := range declaration {
 			b.Visit(decl)
@@ -133,42 +134,37 @@ func (b *SymbolTableBuilder) VisitBlock(node *Block) {
 	b.Visit(node.CompoundStatement)
 }
 
-func (b *SymbolTableBuilder) VisitProgram(node *Program) {
+func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	b.Visit(node.Block)
 }
 
-func (b *SymbolTableBuilder) VisitBinOp(node *BinOp) {
-	b.Visit(node.Left)
-	b.Visit(node.Right)
-}
-
-func (b *SymbolTableBuilder) VisitNum(node *Num) {
-	// pass
-}
-
-func (b *SymbolTableBuilder) VisitUnaryOp(node *UnaryOp) {
-	b.Visit(node.Expr)
-}
-
-func (b *SymbolTableBuilder) VisitCompound(node *Compound) {
+func (b *SemanticAnalyzer) VisitCompound(node *Compound) {
 	for _, child := range node.Children {
 		b.Visit(child)
 	}
 }
 
-func (b *SymbolTableBuilder) VisitNoOp(node *NoOp) {
+func (b *SemanticAnalyzer) VisitNoOp(node *NoOp) {
 	// pass
 }
 
-func (b *SymbolTableBuilder) VisitVarDecl(node *VarDecl) {
+func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
+	b.Visit(node.Left)
+	b.Visit(node.Right)
+}
+
+func (b *SemanticAnalyzer) VisitVarDecl(node *VarDecl) {
 	typeName := node.TypeNode.(*Type).Value.(string)
 	typeSymbol := b.symbolTable.Lookup(typeName)
 	varName := node.VarNode.(*Var).Value.([]rune)
 	varSymbol := NewVarSymbol(string(varName), typeSymbol)
-	b.symbolTable.Define(varSymbol)
+	if b.symbolTable.Lookup(string(varName)) != nil {
+		panic(fmt.Sprintf("Error: Duplicate identifier '%s' found", string(varName)))
+	}
+	b.symbolTable.Insert(varSymbol)
 }
 
-func (b *SymbolTableBuilder) VisitAssign(node *Assign) {
+func (b *SemanticAnalyzer) VisitAssign(node *Assign) {
 	varName := node.Left.(*Var).Value.([]rune)
 	varSymbol := b.symbolTable.Lookup(string(varName))
 
@@ -179,15 +175,11 @@ func (b *SymbolTableBuilder) VisitAssign(node *Assign) {
 	b.Visit(node.Right)
 }
 
-func (b *SymbolTableBuilder) VisitVar(node *Var) {
+func (b *SemanticAnalyzer) VisitVar(node *Var) {
 	varName := node.Value.([]rune)
 	varSymbol := b.symbolTable.Lookup(string(varName))
 
 	if varSymbol == nil {
-		panic(fmt.Sprintf("error var symbol %s %v", string(varName), varSymbol))
+		panic(fmt.Sprintf("Error: Symbol(identifier) not found '%s'", string(varName)))
 	}
-}
-
-func (b *SymbolTableBuilder) VisitProcedureDecl() {
-	// pass
 }

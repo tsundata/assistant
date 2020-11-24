@@ -66,47 +66,50 @@ func (p *Parser) Block() (Ast, error) {
 
 func (p *Parser) Declarations() ([][]Ast, error) {
 	var declarations [][]Ast
-	if p.CurrentToken.Type == TokenVAR {
-		err := p.Eat(TokenVAR)
-		if err != nil {
-			return nil, err
-		}
-		for p.CurrentToken.Type == TokenID {
-			varDecl, err := p.VariableDeclaration()
+
+	for true {
+		if p.CurrentToken.Type == TokenVAR {
+			err := p.Eat(TokenVAR)
 			if err != nil {
 				return nil, err
 			}
-			declarations = append(declarations, varDecl)
+			for p.CurrentToken.Type == TokenID {
+				varDecl, err := p.VariableDeclaration()
+				if err != nil {
+					return nil, err
+				}
+				declarations = append(declarations, varDecl)
+				err = p.Eat(TokenSEMI)
+				if err != nil {
+					return nil, err
+				}
+			}
+		} else if p.CurrentToken.Type == TokenPROGRAM {
+			err := p.Eat(TokenPROGRAM)
+			if err != nil {
+				return nil, err
+			}
+			procName := p.CurrentToken.Value.([]rune)
+			err = p.Eat(TokenID)
+			if err != nil {
+				return nil, err
+			}
 			err = p.Eat(TokenSEMI)
 			if err != nil {
 				return nil, err
 			}
-		}
-	}
-
-	for p.CurrentToken.Type == TokenPROGRAM {
-		err := p.Eat(TokenPROGRAM)
-		if err != nil {
-			return nil, err
-		}
-		procName := p.CurrentToken.Value.([]rune)
-		err = p.Eat(TokenID)
-		if err != nil {
-			return nil, err
-		}
-		err = p.Eat(TokenSEMI)
-		if err != nil {
-			return nil, err
-		}
-		blockNode, err := p.Block()
-		if err != nil {
-			return nil, err
-		}
-		procDecl := NewProcedureDecl(string(procName), blockNode)
-		declarations = append(declarations, []Ast{procDecl}) // FIXME
-		err = p.Eat(TokenSEMI)
-		if err != nil {
-			return nil, err
+			blockNode, err := p.Block()
+			if err != nil {
+				return nil, err
+			}
+			procDecl := NewProcedureDecl(string(procName), blockNode)
+			declarations = append(declarations, []Ast{procDecl}) // FIXME
+			err = p.Eat(TokenSEMI)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			break
 		}
 	}
 
