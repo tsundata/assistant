@@ -5,6 +5,31 @@ import (
 	"testing"
 )
 
+func run(t *testing.T, text string) {
+	p, err := NewParser(NewLexer([]rune(text)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSemanticAnalyzer()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.CurrentScope)
+
+	i := NewInterpreter(tree)
+	r, err := i.Interpret()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != 0 {
+		t.Fatal("error expr")
+	}
+	fmt.Println(i.GlobalMemory)
+}
+
 func TestInterpreter(t *testing.T) {
 	text := `PROGRAM Part10;
 VAR
@@ -28,28 +53,7 @@ BEGIN {Part10}
    { writeln('x = ', x); }
    { writeln('y = ', y); }
 END.  {Part10}`
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
-
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
-	}
-	fmt.Println(i.GlobalMemory)
+	run(t, text)
 }
 
 func TestInterpreterProcedure(t *testing.T) {
@@ -76,28 +80,7 @@ END;  {P1}
 BEGIN {Part12}
    a := 10;
 END.  {Part12}`
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
-
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
-	}
-	fmt.Println(i.GlobalMemory)
+	run(t, text)
 }
 
 func TestInterpreterNestedScopes(t *testing.T) {
@@ -133,28 +116,7 @@ func TestInterpreterNestedScopes(t *testing.T) {
 
 begin { Main }
 end.  { Main }`
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
-
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
-	}
-	fmt.Println(i.GlobalMemory)
+	run(t, text)
 }
 
 func TestInterpreterNameError1(t *testing.T) {
@@ -171,28 +133,7 @@ VAR
 BEGIN
    a := 2 + b;
 END.`
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
-
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
-	}
-	fmt.Println(i.GlobalMemory)
+	run(t, text)
 }
 
 func TestInterpreterNameError2(t *testing.T) {
@@ -210,26 +151,5 @@ BEGIN
    b := 1;
    a := b + 2;
 END.`
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
-
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
-	}
-	fmt.Println(i.GlobalMemory)
+	run(t, text)
 }
