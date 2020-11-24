@@ -1,21 +1,19 @@
 package interpreter
 
-type Ast struct{}
+type Ast interface{}
 
 type BinOp struct {
-	Ast
-	Left  interface{}
+	Left  Ast
 	Token *Token
 	Op    *Token
-	Right interface{}
+	Right Ast
 }
 
-func NewBinOp(left interface{}, op *Token, right interface{}) *BinOp {
+func NewBinOp(left Ast, op *Token, right Ast) *BinOp {
 	return &BinOp{Left: left, Token: op, Op: op, Right: right}
 }
 
 type Num struct {
-	Ast
 	Token *Token
 	Value float64
 }
@@ -33,18 +31,16 @@ func NewNum(token *Token) *Num {
 }
 
 type UnaryOp struct {
-	Ast
 	Op   *Token
-	Expr interface{}
+	Expr Ast
 }
 
-func NewUnaryOp(op *Token, expr interface{}) *UnaryOp {
+func NewUnaryOp(op *Token, expr Ast) *UnaryOp {
 	return &UnaryOp{Op: op, Expr: expr}
 }
 
 type Compound struct {
-	Ast
-	Children []interface{}
+	Children []Ast
 }
 
 func NewCompound() *Compound {
@@ -52,18 +48,16 @@ func NewCompound() *Compound {
 }
 
 type Assign struct {
-	Ast
-	Left  interface{}
+	Left  Ast
 	Op    *Token
-	Right interface{}
+	Right Ast
 }
 
-func NewAssign(left interface{}, op *Token, right interface{}) *Assign {
+func NewAssign(left Ast, op *Token, right Ast) *Assign {
 	return &Assign{Left: left, Op: op, Right: right}
 }
 
 type Var struct {
-	Ast
 	Token *Token
 	Value interface{}
 }
@@ -72,9 +66,7 @@ func NewVar(token *Token) *Var {
 	return &Var{Token: token, Value: token.Value}
 }
 
-type NoOp struct {
-	Ast
-}
+type NoOp struct{}
 
 func NewNoOp() *NoOp {
 	return &NoOp{}
@@ -82,28 +74,28 @@ func NewNoOp() *NoOp {
 
 type Program struct {
 	Name  string
-	Block interface{}
+	Block Ast
 }
 
-func NewProgram(name string, block interface{}) *Program {
+func NewProgram(name string, block Ast) *Program {
 	return &Program{Name: name, Block: block}
 }
 
 type Block struct {
-	Declarations      [][]interface{}
-	CompoundStatement interface{}
+	Declarations      [][]Ast
+	CompoundStatement Ast
 }
 
-func NewBlock(declarations [][]interface{}, compoundStatement interface{}) *Block {
+func NewBlock(declarations [][]Ast, compoundStatement Ast) *Block {
 	return &Block{Declarations: declarations, CompoundStatement: compoundStatement}
 }
 
 type VarDecl struct {
-	VarNode  interface{}
-	TypeNode interface{}
+	VarNode  Ast
+	TypeNode Ast
 }
 
-func NewVarDecl(varNode interface{}, typeNode interface{}) *VarDecl {
+func NewVarDecl(varNode Ast, typeNode Ast) *VarDecl {
 	return &VarDecl{VarNode: varNode, TypeNode: typeNode}
 }
 
@@ -114,4 +106,13 @@ type Type struct {
 
 func NewType(token *Token) *Type {
 	return &Type{Token: token, Value: token.Value}
+}
+
+type ProcedureDecl struct {
+	ProcName  string
+	BlockNode Ast
+}
+
+func NewProcedureDecl(procName string, blockNode Ast) *ProcedureDecl {
+	return &ProcedureDecl{ProcName: procName, BlockNode: blockNode}
 }

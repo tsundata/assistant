@@ -26,7 +26,7 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 	return errors.New("parser error eat")
 }
 
-func (p *Parser) Program() (interface{}, error) {
+func (p *Parser) Program() (Ast, error) {
 	err := p.Eat(TokenPROGRAM)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (p *Parser) Program() (interface{}, error) {
 	return programNode, nil
 }
 
-func (p *Parser) Block() (interface{}, error) {
+func (p *Parser) Block() (Ast, error) {
 	declarationNodes, err := p.Declarations()
 	if err != nil {
 		return nil, err
@@ -64,8 +64,8 @@ func (p *Parser) Block() (interface{}, error) {
 	return NewBlock(declarationNodes, compoundStatementNode), nil
 }
 
-func (p *Parser) Declarations() ([][]interface{}, error) {
-	var declarations [][]interface{}
+func (p *Parser) Declarations() ([][]Ast, error) {
+	var declarations [][]Ast
 	if p.CurrentToken.Type == TokenVAR {
 		err := p.Eat(TokenVAR)
 		if err != nil {
@@ -86,8 +86,8 @@ func (p *Parser) Declarations() ([][]interface{}, error) {
 	return declarations, nil
 }
 
-func (p *Parser) VariableDeclaration() ([]interface{}, error) {
-	varNodes := []interface{}{NewVar(p.CurrentToken)}
+func (p *Parser) VariableDeclaration() ([]Ast, error) {
+	varNodes := []Ast{NewVar(p.CurrentToken)}
 	err := p.Eat(TokenID)
 	if err != nil {
 		return nil, err
@@ -111,14 +111,14 @@ func (p *Parser) VariableDeclaration() ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	var varDeclarations []interface{}
+	var varDeclarations []Ast
 	for _, varNode := range varNodes {
 		varDeclarations = append(varDeclarations, NewVarDecl(varNode, typeNode))
 	}
 	return varDeclarations, nil
 }
 
-func (p *Parser) TypeSpec() (interface{}, error) {
+func (p *Parser) TypeSpec() (Ast, error) {
 	token := p.CurrentToken
 	if p.CurrentToken.Type == TokenINTEGER {
 		err := p.Eat(TokenINTEGER)
@@ -135,7 +135,7 @@ func (p *Parser) TypeSpec() (interface{}, error) {
 	return NewType(token), nil
 }
 
-func (p *Parser) CompoundStatement() (interface{}, error) {
+func (p *Parser) CompoundStatement() (Ast, error) {
 	err := p.Eat(TokenBEGIN)
 	if err != nil {
 		return nil, err
@@ -153,13 +153,13 @@ func (p *Parser) CompoundStatement() (interface{}, error) {
 	return root, nil
 }
 
-func (p *Parser) StatementList() ([]interface{}, error) {
+func (p *Parser) StatementList() ([]Ast, error) {
 	node, err := p.Statement()
 	if err != nil {
 		return nil, err
 	}
 
-	results := []interface{}{node}
+	results := []Ast{node}
 
 	for p.CurrentToken.Type == TokenSEMI {
 		err = p.Eat(TokenSEMI)
@@ -176,7 +176,7 @@ func (p *Parser) StatementList() ([]interface{}, error) {
 	return results, nil
 }
 
-func (p *Parser) Statement() (interface{}, error) {
+func (p *Parser) Statement() (Ast, error) {
 	if p.CurrentToken.Type == TokenBEGIN {
 		return p.CompoundStatement()
 	} else if p.CurrentToken.Type == TokenID {
@@ -186,7 +186,7 @@ func (p *Parser) Statement() (interface{}, error) {
 	}
 }
 
-func (p *Parser) AssignmentStatement() (interface{}, error) {
+func (p *Parser) AssignmentStatement() (Ast, error) {
 	left, err := p.Variable()
 	if err != nil {
 		return nil, err
@@ -201,7 +201,7 @@ func (p *Parser) AssignmentStatement() (interface{}, error) {
 	return NewAssign(left, token, right), nil
 }
 
-func (p *Parser) Variable() (interface{}, error) {
+func (p *Parser) Variable() (Ast, error) {
 	node := NewVar(p.CurrentToken)
 	err := p.Eat(TokenID)
 	if err != nil {
@@ -210,11 +210,11 @@ func (p *Parser) Variable() (interface{}, error) {
 	return node, nil
 }
 
-func (p *Parser) Empty() (interface{}, error) {
+func (p *Parser) Empty() (Ast, error) {
 	return NewNoOp(), nil
 }
 
-func (p *Parser) Expr() (interface{}, error) {
+func (p *Parser) Expr() (Ast, error) {
 	node, err := p.Term()
 	if err != nil {
 		return 0, err
@@ -245,7 +245,7 @@ func (p *Parser) Expr() (interface{}, error) {
 	return node, nil
 }
 
-func (p *Parser) Term() (interface{}, error) {
+func (p *Parser) Term() (Ast, error) {
 	node, err := p.Factor()
 	if err != nil {
 		return nil, err
@@ -282,7 +282,7 @@ func (p *Parser) Term() (interface{}, error) {
 	return node, nil
 }
 
-func (p *Parser) Factor() (interface{}, error) {
+func (p *Parser) Factor() (Ast, error) {
 	token := p.CurrentToken
 	if token.Type == TokenPLUS {
 		err := p.Eat(TokenPLUS)
@@ -378,7 +378,7 @@ func (p *Parser) Factor() (interface{}, error) {
 //	      | variable
 //
 // variable : ID
-func (p *Parser) Parse() (interface{}, error) {
+func (p *Parser) Parse() (Ast, error) {
 	node, err := p.Program()
 	if err != nil {
 		return nil, err

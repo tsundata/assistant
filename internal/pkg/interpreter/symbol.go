@@ -79,91 +79,94 @@ func NewSymbolTableBuilder() *SymbolTableBuilder {
 	return &SymbolTableBuilder{symbolTable: NewSymbolTable()}
 }
 
-func (b *SymbolTableBuilder) Visit(node interface{}) float64 {
+func (b *SymbolTableBuilder) Visit(node interface{}) {
 	if n, ok := node.(*Program); ok {
-		return b.VisitProgram(n)
+		b.VisitProgram(n)
+		return
 	}
 	if n, ok := node.(*Block); ok {
-		return b.VisitBlock(n)
+		b.VisitBlock(n)
+		return
 	}
 	if n, ok := node.(*VarDecl); ok {
-		return b.VisitVarDecl(n)
+		b.VisitVarDecl(n)
+		return
 	}
 	if n, ok := node.(*BinOp); ok {
-		return b.VisitBinOp(n)
+		b.VisitBinOp(n)
+		return
 	}
 	if n, ok := node.(*Num); ok {
-		return b.VisitNum(n)
+		b.VisitNum(n)
+		return
 	}
 	if n, ok := node.(*UnaryOp); ok {
-		return b.VisitUnaryOp(n)
+		b.VisitUnaryOp(n)
+		return
 	}
 	if n, ok := node.(*Compound); ok {
-		return b.VisitCompound(n)
+		b.VisitCompound(n)
+		return
 	}
 	if n, ok := node.(*Assign); ok {
-		return b.VisitAssign(n)
+		b.VisitAssign(n)
+		return
 	}
 	if n, ok := node.(*Var); ok {
-		return b.VisitVar(n)
+		b.VisitVar(n)
+		return
 	}
 	if n, ok := node.(*NoOp); ok {
-		return b.VisitNoOp(n)
+		b.VisitNoOp(n)
+		return
 	}
-
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitBlock(node *Block) float64 {
+func (b *SymbolTableBuilder) VisitBlock(node *Block) {
 	for _, declaration := range node.Declarations {
 		for _, decl := range declaration {
 			b.Visit(decl)
 		}
 	}
 	b.Visit(node.CompoundStatement)
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitProgram(node *Program) float64 {
-	return b.Visit(node.Block)
+func (b *SymbolTableBuilder) VisitProgram(node *Program) {
+	b.Visit(node.Block)
 }
 
-func (b *SymbolTableBuilder) VisitBinOp(node *BinOp) float64 {
+func (b *SymbolTableBuilder) VisitBinOp(node *BinOp) {
 	b.Visit(node.Left)
 	b.Visit(node.Right)
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitNum(node *Num) float64 {
-	return 0
+func (b *SymbolTableBuilder) VisitNum(node *Num) {
+	// pass
 }
 
-func (b *SymbolTableBuilder) VisitUnaryOp(node *UnaryOp) float64 {
+func (b *SymbolTableBuilder) VisitUnaryOp(node *UnaryOp) {
 	b.Visit(node.Expr)
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitCompound(node *Compound) float64 {
+func (b *SymbolTableBuilder) VisitCompound(node *Compound) {
 	for _, child := range node.Children {
 		b.Visit(child)
 	}
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitNoOp(node *NoOp) float64 {
-	return 0
+func (b *SymbolTableBuilder) VisitNoOp(node *NoOp) {
+	// pass
 }
 
-func (b *SymbolTableBuilder) VisitVarDecl(node *VarDecl) float64 {
+func (b *SymbolTableBuilder) VisitVarDecl(node *VarDecl) {
 	typeName := node.TypeNode.(*Type).Value.(string)
 	typeSymbol := b.symbolTable.Lookup(typeName)
 	varName := node.VarNode.(*Var).Value.([]rune)
 	varSymbol := NewVarSymbol(string(varName), typeSymbol)
 	b.symbolTable.Define(varSymbol)
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitAssign(node *Assign) float64 {
+func (b *SymbolTableBuilder) VisitAssign(node *Assign) {
 	varName := node.Left.(*Var).Value.([]rune)
 	varSymbol := b.symbolTable.Lookup(string(varName))
 
@@ -172,16 +175,13 @@ func (b *SymbolTableBuilder) VisitAssign(node *Assign) float64 {
 	}
 
 	b.Visit(node.Right)
-	return 0
 }
 
-func (b *SymbolTableBuilder) VisitVar(node *Var) float64 {
+func (b *SymbolTableBuilder) VisitVar(node *Var) {
 	varName := node.Value.([]rune)
 	varSymbol := b.symbolTable.Lookup(string(varName))
 
 	if varSymbol == nil {
 		panic(fmt.Sprintf("error var symbol %s %v", string(varName), varSymbol))
 	}
-
-	return 0
 }
