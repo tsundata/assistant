@@ -5,12 +5,12 @@ import (
 )
 
 type Interpreter struct {
-	Parser      *Parser
-	GlobalScope map[string]interface{}
+	tree         interface{}
+	GlobalMemory map[string]interface{}
 }
 
-func NewInterpreter(parser *Parser) *Interpreter {
-	return &Interpreter{Parser: parser, GlobalScope: make(map[string]interface{})}
+func NewInterpreter(tree interface{}) *Interpreter {
+	return &Interpreter{tree: tree, GlobalMemory: make(map[string]interface{})}
 }
 
 func (i *Interpreter) Visit(node interface{}) float64 {
@@ -114,7 +114,7 @@ func (i *Interpreter) VisitAssign(node *Assign) float64 {
 	if left, ok := node.Left.(*Var); ok {
 		varName := left.Value
 		if value, ok := varName.([]rune); ok {
-			i.GlobalScope[string(value)] = i.Visit(node.Right)
+			i.GlobalMemory[string(value)] = i.Visit(node.Right)
 		}
 	}
 	return 0
@@ -122,7 +122,7 @@ func (i *Interpreter) VisitAssign(node *Assign) float64 {
 
 func (i *Interpreter) VisitVar(node *Var) float64 {
 	if varName, ok := node.Value.([]rune); ok {
-		if val, ok := i.GlobalScope[string(varName)]; ok {
+		if val, ok := i.GlobalMemory[string(varName)]; ok {
 			return val.(float64)
 		} else {
 			panic(errors.New("interpreter error var name"))
@@ -136,9 +136,8 @@ func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
 }
 
 func (i *Interpreter) Interpret() (float64, error) {
-	tree, err := i.Parser.Parse()
-	if err != nil {
-		return 0, err
+	if i.tree == nil {
+		return 0, errors.New("error ast tree")
 	}
-	return i.Visit(tree), nil
+	return i.Visit(i.tree), nil
 }

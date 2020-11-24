@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestInterpreter_Expr(t *testing.T) {
+func TestInterpreter(t *testing.T) {
 	text := `PROGRAM Part10;
 VAR
    number     : INTEGER;
@@ -32,7 +32,16 @@ END.  {Part10}`
 	if err != nil {
 		t.Fatal(err)
 	}
-	i := NewInterpreter(p)
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSymbolTableBuilder()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.symbolTable)
+
+	i := NewInterpreter(tree)
 	r, err := i.Interpret()
 	if err != nil {
 		t.Fatal(err)
@@ -40,5 +49,82 @@ END.  {Part10}`
 	if r != 0 {
 		t.Fatal("error expr")
 	}
-	fmt.Println(i.GlobalScope)
+	fmt.Println(i.GlobalMemory)
+}
+
+func TestInterpreterNameError1(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic, NameError1")
+		}
+	}()
+
+	text := `PROGRAM NameError1;
+VAR
+   a : INTEGER;
+
+BEGIN
+   a := 2 + b;
+END.`
+	p, err := NewParser(NewLexer([]rune(text)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSymbolTableBuilder()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.symbolTable)
+
+	i := NewInterpreter(tree)
+	r, err := i.Interpret()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != 0 {
+		t.Fatal("error expr")
+	}
+	fmt.Println(i.GlobalMemory)
+}
+
+func TestInterpreterNameError2(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic, NameError2")
+		}
+	}()
+
+	text := `PROGRAM NameError2;
+VAR
+   b : INTEGER;
+
+BEGIN
+   b := 1;
+   a := b + 2;
+END.`
+	p, err := NewParser(NewLexer([]rune(text)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSymbolTableBuilder()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.symbolTable)
+
+	i := NewInterpreter(tree)
+	r, err := i.Interpret()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != 0 {
+		t.Fatal("error expr")
+	}
+	fmt.Println(i.GlobalMemory)
 }
