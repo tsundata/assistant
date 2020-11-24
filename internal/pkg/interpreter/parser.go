@@ -94,6 +94,23 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			var params []Ast
+			if p.CurrentToken.Type == TokenLPAREN {
+				err = p.Eat(TokenLPAREN)
+				if err != nil {
+					return nil, err
+				}
+				params, err = p.FormalParameterList()
+				if err != nil {
+					return nil, err
+				}
+				err = p.Eat(TokenRPAREN)
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			err = p.Eat(TokenSEMI)
 			if err != nil {
 				return nil, err
@@ -102,7 +119,7 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 			if err != nil {
 				return nil, err
 			}
-			procDecl := NewProcedureDecl(string(procName), blockNode)
+			procDecl := NewProcedureDecl(string(procName), params, blockNode)
 			declarations = append(declarations, []Ast{procDecl}) // FIXME
 			err = p.Eat(TokenSEMI)
 			if err != nil {
@@ -114,6 +131,68 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 	}
 
 	return declarations, nil
+}
+
+func (p *Parser) FormalParameters() ([]Ast, error) {
+	var paramNodes []Ast
+
+	paramTokens := []*Token{p.CurrentToken}
+	err := p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
+	for p.CurrentToken.Type == TokenCOMMA {
+		err = p.Eat(TokenCOMMA)
+		if err != nil {
+			return nil, err
+		}
+		paramTokens = append(paramTokens, p.CurrentToken)
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = p.Eat(TokenCOLON)
+	if err != nil {
+		return nil, err
+	}
+	typeNode, err := p.TypeSpec()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, paramToken := range paramTokens {
+		paramNode := NewParam(NewVar(paramToken), typeNode)
+		paramNodes = append(paramNodes, paramNode)
+	}
+
+	return paramNodes, nil
+}
+
+func (p *Parser) FormalParameterList() ([]Ast, error) {
+	if p.CurrentToken.Type != TokenID {
+		return []Ast{}, nil
+	}
+
+	paramNodes, err := p.FormalParameters()
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenSEMI {
+		err := p.Eat(TokenSEMI)
+		if err != nil {
+			return nil, err
+		}
+		params, err := p.FormalParameters()
+		if err != nil {
+			return nil, err
+		}
+		paramNodes = append(paramNodes, params...)
+	}
+
+	return paramNodes, nil
 }
 
 func (p *Parser) VariableDeclaration() ([]Ast, error) {
@@ -375,11 +454,16 @@ func (p *Parser) Factor() (Ast, error) {
 //
 // block : declarations compound_statement
 //
-// declarations : VAR (variable_declaration SEMI)+
-//				| (PROCEDURE ID SEMI block SEMI)*
-//	            | empty
+// declarations : (VAR (variable_declaration SEMI)+)*
+// 				| (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+// 				| empty
 //
 // variable_declaration : ID (COMMA ID)* COLON type_spec
+//
+// formal_params_list : formal_parameters
+// 					  | formal_parameters SEMI formal_parameter_list
+//
+// formal_parameters : ID (COMMA ID)* COLON type_spec
 //
 // type_spec : INTEGER
 //	         | REAL

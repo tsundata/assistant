@@ -108,11 +108,21 @@ func NewType(token *Token) *Type {
 	return &Type{Token: token, Value: token.Value}
 }
 
+type Param struct {
+	VarNode  Ast
+	TypeNode Ast
+}
+
+func NewParam(varNode Ast, typeNode Ast) *Param {
+	return &Param{VarNode: varNode, TypeNode: typeNode}
+}
+
 type ProcedureDecl struct {
 	ProcName  string
+	Params    []Ast
 	BlockNode Ast
 }
 
-func NewProcedureDecl(procName string, blockNode Ast) *ProcedureDecl {
-	return &ProcedureDecl{ProcName: procName, BlockNode: blockNode}
+func NewProcedureDecl(procName string, params []Ast, blockNode Ast) *ProcedureDecl {
+	return &ProcedureDecl{ProcName: procName, Params: params, BlockNode: blockNode}
 }

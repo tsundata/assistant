@@ -39,7 +39,7 @@ END.  {Part10}`
 
 	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.symbolTable)
+	fmt.Println(symbolTable.CurrentScope)
 
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
@@ -87,7 +87,64 @@ END.  {Part12}`
 
 	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.symbolTable)
+	fmt.Println(symbolTable.CurrentScope)
+
+	i := NewInterpreter(tree)
+	r, err := i.Interpret()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != 0 {
+		t.Fatal("error expr")
+	}
+	fmt.Println(i.GlobalMemory)
+}
+
+func TestInterpreterNestedScopes(t *testing.T) {
+	text := `program Main;
+   var b, x, y : real;
+   var z : integer;
+
+   procedure AlphaA(a : integer);
+      var b : integer;
+
+      procedure Beta(c : integer);
+         var y : integer;
+
+         procedure Gamma(c : integer);
+            var x : integer;
+         begin { Gamma }
+            x := a + b + c + x + y + z;
+         end;  { Gamma }
+
+      begin { Beta }
+
+      end;  { Beta }
+
+   begin { AlphaA }
+
+   end;  { AlphaA }
+
+   procedure AlphaB(a : integer);
+      var c : real;
+   begin { AlphaB }
+      c := a + b;
+   end;  { AlphaB }
+
+begin { Main }
+end.  { Main }`
+	p, err := NewParser(NewLexer([]rune(text)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	symbolTable := NewSemanticAnalyzer()
+	symbolTable.Visit(tree)
+	fmt.Println(symbolTable.CurrentScope)
 
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
@@ -125,7 +182,7 @@ END.`
 
 	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.symbolTable)
+	fmt.Println(symbolTable.CurrentScope)
 
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
@@ -164,7 +221,7 @@ END.`
 
 	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.symbolTable)
+	fmt.Println(symbolTable.CurrentScope)
 
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
