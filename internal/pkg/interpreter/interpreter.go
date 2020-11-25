@@ -50,6 +50,9 @@ func (i *Interpreter) Visit(node Ast) float64 {
 	if n, ok := node.(*ProcedureDecl); ok {
 		return i.VisitProcedureDecl(n)
 	}
+	if n, ok := node.(*ProcedureCall); ok {
+		return i.VisitProcedureCall(n)
+	}
 
 	return 0
 }
@@ -139,6 +142,10 @@ func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
 }
 
 func (i *Interpreter) VisitProcedureDecl(node *ProcedureDecl) float64 {
+	return 0
+}
+
+func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 	return 0
 }
 

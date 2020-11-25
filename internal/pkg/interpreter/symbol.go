@@ -176,6 +176,10 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitVar(n)
 		return
 	}
+	if n, ok := node.(*ProcedureCall); ok {
+		b.VisitProcedureCall(n)
+		return
+	}
 }
 
 func (b *SemanticAnalyzer) VisitBlock(node *Block) {
@@ -263,5 +267,22 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 
 	if varSymbol == nil {
 		panic(b.error(IdNotFound, node.Token))
+	}
+}
+
+func (b *SemanticAnalyzer) VisitProcedureCall(node *ProcedureCall) {
+	//procSymbol := b.CurrentScope.Lookup(node.ProcName, false)
+	//var formalParams []Ast
+	//if procSymbol != nil {
+	//	formalParams = procSymbol.(*ProcedureSymbol).Params
+	//}
+	//actualParams := node.ActualParams
+	//
+	//if len(actualParams) != len(formalParams) {
+	//	panic(b.error(WrongParamsNum, node.Token))
+	//}
+
+	for _, paramNode := range node.ActualParams {
+		b.Visit(paramNode)
 	}
 }

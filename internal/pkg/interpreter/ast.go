@@ -126,3 +126,13 @@ type ProcedureDecl struct {
 func NewProcedureDecl(procName string, params []Ast, blockNode Ast) *ProcedureDecl {
 	return &ProcedureDecl{ProcName: procName, Params: params, BlockNode: blockNode}
 }
+
+type ProcedureCall struct {
+	ProcName string
+	ActualParams []Ast
+	Token *Token
+}
+
+func NewProcedureCall(procName string, actualParams []Ast, token *Token) *ProcedureCall {
+	return &ProcedureCall{ProcName: procName, ActualParams: actualParams, Token: token}
+}

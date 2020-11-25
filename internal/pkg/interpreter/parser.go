@@ -313,11 +313,54 @@ func (p *Parser) StatementList() ([]Ast, error) {
 func (p *Parser) Statement() (Ast, error) {
 	if p.CurrentToken.Type == TokenBEGIN {
 		return p.CompoundStatement()
+	} else if p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(' {
+		return p.ProcallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
 	} else {
 		return p.Empty()
 	}
+}
+
+func (p *Parser) ProcallStatement() (Ast, error) {
+	token := p.CurrentToken
+
+	procName := p.CurrentToken.Value.(string)
+	err := p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
+	err = p.Eat(TokenLPAREN)
+	if err != nil {
+		return nil, err
+	}
+	var actualParams []Ast
+	if p.CurrentToken.Type != TokenRPAREN {
+		node, err := p.Expr()
+		if err != nil {
+			return nil, err
+		}
+		actualParams = append(actualParams, node)
+	}
+
+	for p.CurrentToken.Type == TokenCOMMA {
+		err := p.Eat(TokenCOMMA)
+		if err != nil {
+			return nil, err
+		}
+		node, err := p.Expr()
+		if err != nil {
+			return nil, err
+		}
+		actualParams = append(actualParams, node)
+	}
+
+	err = p.Eat(TokenRPAREN)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewProcedureCall(procName, actualParams, token), nil
 }
 
 func (p *Parser) AssignmentStatement() (Ast, error) {
@@ -498,8 +541,11 @@ func (p *Parser) Factor() (Ast, error) {
 //				  | statement SEMI statement_list
 //
 // statement : compound_statement
-//				  | assignment_statement
-//				  | empty
+//			 | proccall_statement
+//		     | assignment_statement
+//			 | empty
+//
+// proccall_statement : ID LPAREN (expr (COMMA expr)*)? RPAREN
 //
 // assignment_statement : variable ASSIGN expr
 //
