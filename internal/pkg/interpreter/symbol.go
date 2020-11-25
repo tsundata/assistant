@@ -73,6 +73,10 @@ func NewScopedSymbolTable(scopeName string, scopeLevel int, enclosingScope *Scop
 }
 
 func (t *ScopedSymbolTable) String() string {
+	if t == nil {
+		return ""
+	}
+
 	var lines []string
 
 	lines = append(lines, fmt.Sprintf("Scope name : %s", t.ScopeName))

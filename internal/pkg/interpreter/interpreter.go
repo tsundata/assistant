@@ -2,15 +2,88 @@ package interpreter
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 )
 
+type ARType string
+
+const (
+	ARTypeProgram ARType = "PROGRAM"
+)
+
+type CallStack struct {
+	records []*ActivationRecord
+}
+
+func NewCallStack() *CallStack {
+	return &CallStack{}
+}
+
+func (s *CallStack) Push(ar *ActivationRecord) {
+	s.records = append(s.records, ar)
+}
+
+func (s *CallStack) Pop() *ActivationRecord {
+	if len(s.records) > 0 {
+		top := s.records[len(s.records)-1]
+		s.records = s.records[:len(s.records)-1]
+		return top
+	}
+	return nil
+}
+
+func (s *CallStack) Peek() *ActivationRecord {
+	if len(s.records) > 0 {
+		return s.records[len(s.records)-1]
+	}
+	return nil
+}
+
+func (s *CallStack) String() string {
+	var lines []string
+	for i := len(s.records) - 1; i >= 0; i-- {
+		lines = append(lines, fmt.Sprintf("%s", s.records[i]))
+	}
+	return fmt.Sprintf("CALL STACK\n%s\n", strings.Join(lines, "\n"))
+}
+
+type ActivationRecord struct {
+	Name         string
+	Type         ARType
+	NestingLevel int
+	Members      map[string]interface{}
+}
+
+func NewActivationRecord(name string, t ARType, nestingLevel int) *ActivationRecord {
+	return &ActivationRecord{Name: name, Type: t, NestingLevel: nestingLevel, Members: make(map[string]interface{})}
+}
+
+func (r *ActivationRecord) Get(key string) interface{} {
+	return r.Members[key]
+}
+
+func (r *ActivationRecord) Set(key string, value interface{}) {
+	r.Members[key] = value
+}
+
+func (r *ActivationRecord) String() string {
+	var lines []string
+	lines = append(lines, fmt.Sprintf("%d: %s %s", r.NestingLevel, r.Type, r.Name))
+	for name, val := range r.Members {
+		lines = append(lines, fmt.Sprintf("  %s : %v", name, val))
+	}
+
+	return strings.Join(lines, "\n")
+}
+
 type Interpreter struct {
-	tree         interface{}
-	GlobalMemory map[string]interface{}
+	tree      Ast
+	callStack *CallStack
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
-	return &Interpreter{tree: tree, GlobalMemory: make(map[string]interface{})}
+	return &Interpreter{tree: tree, callStack: NewCallStack()}
 }
 
 func (i *Interpreter) Visit(node Ast) float64 {
@@ -58,7 +131,21 @@ func (i *Interpreter) Visit(node Ast) float64 {
 }
 
 func (i *Interpreter) VisitProgram(node *Program) float64 {
-	return i.Visit(node.Block)
+	programName := node.Name
+	fmt.Printf("ENTER: PROGRAM %s\n", programName)
+
+	ar := NewActivationRecord(programName, ARTypeProgram, 1)
+	i.callStack.Push(ar)
+	fmt.Println(i.callStack)
+
+	result := i.Visit(node.Block)
+
+	fmt.Printf("LEAVE: PROGRAM %s\n", programName)
+	fmt.Println(i.callStack)
+
+	i.callStack.Pop()
+
+	return result
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {
@@ -119,16 +206,21 @@ func (i *Interpreter) VisitCompound(node *Compound) float64 {
 func (i *Interpreter) VisitAssign(node *Assign) float64 {
 	if left, ok := node.Left.(*Var); ok {
 		varName := left.Value
-		if value, ok := varName.([]rune); ok {
-			i.GlobalMemory[string(value)] = i.Visit(node.Right)
+		if value, ok := varName.(string); ok {
+			ar := i.callStack.Peek()
+			if ar != nil {
+				ar.Set(value, i.Visit(node.Right))
+			}
 		}
 	}
 	return 0
 }
 
 func (i *Interpreter) VisitVar(node *Var) float64 {
-	if varName, ok := node.Value.([]rune); ok {
-		if val, ok := i.GlobalMemory[string(varName)]; ok {
+	if varName, ok := node.Value.(string); ok {
+		ar := i.callStack.Peek()
+		if ar != nil {
+			val := ar.Get(varName)
 			return val.(float64)
 		} else {
 			panic(errors.New("interpreter error var name"))

@@ -27,7 +27,7 @@ func run(t *testing.T, text string) {
 	if r != 0 {
 		t.Fatal("error expr")
 	}
-	fmt.Println(i.GlobalMemory)
+	fmt.Println(i.callStack)
 }
 
 func TestInterpreter(t *testing.T) {
@@ -169,4 +169,32 @@ begin { Main }
 
 end.  { Main }`
 	run(t, text)
+}
+
+func TestInterpreterCallStack(t *testing.T) {
+	text := `program Main;
+var x, y : integer;
+begin { Main }
+   y := 7;
+   x := (y + 3) * 3;
+end.  { Main }`
+	run(t, text)
+}
+
+func TestCallStack(t *testing.T) {
+	s := NewCallStack()
+	s.Push(NewActivationRecord("a", ARTypeProgram, 1))
+	s.Push(NewActivationRecord("b", ARTypeProgram, 1))
+	s.Push(NewActivationRecord("c", ARTypeProgram, 1))
+	fmt.Println(s)
+	fmt.Println(s.Peek())
+	s.Pop()
+	fmt.Println(s)
+	fmt.Println(s.Peek())
+	s.Pop()
+	fmt.Println(s)
+	fmt.Println(s.Peek())
+	s.Pop()
+	fmt.Println(s)
+	fmt.Println(s.Peek())
 }
