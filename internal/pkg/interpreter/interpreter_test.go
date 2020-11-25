@@ -181,6 +181,23 @@ end.  { Main }`
 	run(t, text)
 }
 
+func TestInterpreterExecutingProcedureCalls(t *testing.T) {
+	text := `program Main;
+
+procedure Alpha(a : integer; b : integer);
+var x : integer;
+begin
+   x := (a + b ) * 2;
+end;
+
+begin { Main }
+
+   Alpha(3 + 5, 7);  { procedure call }
+
+end.  { Main }`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

@@ -3,13 +3,15 @@ package interpreter
 import (
 	"errors"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils/collection"
 	"strings"
 )
 
 type ARType string
 
 const (
-	ARTypeProgram ARType = "PROGRAM"
+	ARTypeProgram   ARType = "PROGRAM"
+	ARTypeProcedure ARType = "PROCEDURE"
 )
 
 type CallStack struct {
@@ -45,7 +47,7 @@ func (s *CallStack) String() string {
 	for i := len(s.records) - 1; i >= 0; i-- {
 		lines = append(lines, fmt.Sprintf("%s", s.records[i]))
 	}
-	return fmt.Sprintf("CALL STACK\n%s\n", strings.Join(lines, "\n"))
+	return fmt.Sprintf("CALL STACK\n%s\n\n", strings.Join(lines, "\n"))
 }
 
 type ActivationRecord struct {
@@ -238,6 +240,38 @@ func (i *Interpreter) VisitProcedureDecl(node *ProcedureDecl) float64 {
 }
 
 func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
+	procName := node.ProcName
+
+	ar := NewActivationRecord(procName, ARTypeProcedure, 2)
+
+	procSymbol := node.ProcSymbol
+
+	var formalParams []Ast
+	if procSymbol != nil {
+		formalParams = procSymbol.(*ProcedureSymbol).FormalParams
+	}
+	actualParams := node.ActualParams
+
+	for _, item := range collection.Zip(formalParams, actualParams) {
+		k := item.Element1.(*VarSymbol).Name
+		v := i.Visit(item.Element2)
+		ar.Set(k, v)
+	}
+
+	i.callStack.Push(ar)
+
+	fmt.Printf("ENTER: PROCEDURE %s\n", procName)
+	fmt.Println(i.callStack)
+
+	if procSymbol != nil {
+		i.Visit(procSymbol.(*ProcedureSymbol).BlockAst)
+	}
+
+	fmt.Printf("LEAVE: PROCEDURE %s\n", procName)
+	fmt.Println(i.callStack)
+
+	i.callStack.Pop()
+
 	return 0
 }
 

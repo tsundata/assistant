@@ -219,13 +219,13 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 		return nil, err
 	}
 
-	var params []Ast
+	var formalParams []Ast
 	if p.CurrentToken.Type == TokenLPAREN {
 		err = p.Eat(TokenLPAREN)
 		if err != nil {
 			return nil, err
 		}
-		params, err = p.FormalParameterList()
+		formalParams, err = p.FormalParameterList()
 		if err != nil {
 			return nil, err
 		}
@@ -243,7 +243,7 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	procDecl := NewProcedureDecl(string(procName), params, blockNode)
+	procDecl := NewProcedureDecl(string(procName), formalParams, blockNode)
 	err = p.Eat(TokenSEMI)
 	if err != nil {
 		return nil, err

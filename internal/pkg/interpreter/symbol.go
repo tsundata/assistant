@@ -40,9 +40,10 @@ func (s *BuiltinTypeSymbol) String() string {
 }
 
 type ProcedureSymbol struct {
-	Name   string
-	Type   Symbol
-	Params []Ast
+	Name         string
+	Type         Symbol
+	FormalParams []Ast
+	BlockAst     Ast
 }
 
 func NewProcedureSymbol(name string) *ProcedureSymbol {
@@ -50,7 +51,7 @@ func NewProcedureSymbol(name string) *ProcedureSymbol {
 }
 
 func (s *ProcedureSymbol) String() string {
-	return fmt.Sprintf("<ProcedureSymbol(name=%s, parameters=%v)>", s.Name, s.Params)
+	return fmt.Sprintf("<ProcedureSymbol(name=%s, parameters=%v)>", s.Name, s.FormalParams)
 }
 
 type ScopedSymbolTable struct {
@@ -105,6 +106,9 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 		name = s.Name
 	}
 	if s, ok := symbol.(*BuiltinTypeSymbol); ok {
+		name = s.Name
+	}
+	if s, ok := symbol.(*ProcedureSymbol); ok {
 		name = s.Name
 	}
 	t.symbols.Set(name, symbol)
@@ -228,12 +232,12 @@ func (b *SemanticAnalyzer) VisitProcedureDecl(node *ProcedureDecl) {
 	procedureScope := NewScopedSymbolTable(procName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
 	b.CurrentScope = procedureScope
 
-	for _, param := range node.Params {
+	for _, param := range node.FormalParams {
 		paramType := b.CurrentScope.Lookup(param.(*Param).TypeNode.(*Type).Value.(string), false)
 		paramName := param.(*Param).VarNode.(*Var).Value.(string)
 		varSymbol := NewVarSymbol(paramName, paramType)
 		b.CurrentScope.Insert(varSymbol)
-		procSymbol.Params = append(procSymbol.Params, varSymbol)
+		procSymbol.FormalParams = append(procSymbol.FormalParams, varSymbol)
 	}
 
 	b.Visit(node.BlockNode)
@@ -242,6 +246,8 @@ func (b *SemanticAnalyzer) VisitProcedureDecl(node *ProcedureDecl) {
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
 	fmt.Printf("LEAVE scope: %s\n", procName)
+
+	procSymbol.BlockAst = node.BlockNode
 }
 
 func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
@@ -275,18 +281,20 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 }
 
 func (b *SemanticAnalyzer) VisitProcedureCall(node *ProcedureCall) {
-	//procSymbol := b.CurrentScope.Lookup(node.ProcName, false)
-	//var formalParams []Ast
-	//if procSymbol != nil {
-	//	formalParams = procSymbol.(*ProcedureSymbol).Params
-	//}
-	//actualParams := node.ActualParams
-	//
-	//if len(actualParams) != len(formalParams) {
-	//	panic(b.error(WrongParamsNum, node.Token))
-	//}
+	procSymbol := b.CurrentScope.Lookup(node.ProcName, false)
+	var formalParams []Ast
+	if procSymbol != nil {
+		formalParams = procSymbol.(*ProcedureSymbol).FormalParams
+	}
+	actualParams := node.ActualParams
+
+	if len(actualParams) != len(formalParams) {
+		panic(b.error(WrongParamsNum, node.Token))
+	}
 
 	for _, paramNode := range node.ActualParams {
 		b.Visit(paramNode)
 	}
+
+	node.ProcSymbol = procSymbol
 }

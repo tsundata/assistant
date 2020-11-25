@@ -118,19 +118,20 @@ func NewParam(varNode Ast, typeNode Ast) *Param {
 }
 
 type ProcedureDecl struct {
-	ProcName  string
-	Params    []Ast
-	BlockNode Ast
+	ProcName     string
+	FormalParams []Ast
+	BlockNode    Ast
 }
 
-func NewProcedureDecl(procName string, params []Ast, blockNode Ast) *ProcedureDecl {
-	return &ProcedureDecl{ProcName: procName, Params: params, BlockNode: blockNode}
+func NewProcedureDecl(procName string, formalParams []Ast, blockNode Ast) *ProcedureDecl {
+	return &ProcedureDecl{ProcName: procName, FormalParams: formalParams, BlockNode: blockNode}
 }
 
 type ProcedureCall struct {
-	ProcName string
+	ProcName     string
 	ActualParams []Ast
-	Token *Token
+	Token        *Token
+	ProcSymbol   Symbol
 }
 
 func NewProcedureCall(procName string, actualParams []Ast, token *Token) *ProcedureCall {
