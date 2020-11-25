@@ -1,7 +1,7 @@
 package interpreter
 
 import (
-	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -11,18 +11,32 @@ type Lexer struct {
 	Text        []rune
 	Pos         int
 	CurrentChar rune
+	LineNo      int
+	Column      int
 }
 
 func NewLexer(text []rune) *Lexer {
-	return &Lexer{Text: text, Pos: 0, CurrentChar: text[0]}
+	return &Lexer{Text: text, Pos: 0, CurrentChar: text[0], LineNo: 1, Column: 1}
+}
+
+func (l *Lexer) error() error {
+	return Error{
+		Message: fmt.Sprintf("Lexer error on '%s' line: %d column: %d", string(l.CurrentChar), l.LineNo, l.Column),
+		Type:    LexerErrorType,
+	}
 }
 
 func (l *Lexer) Advance() {
+	if l.CurrentChar == '\n' {
+		l.LineNo += 1
+		l.Column = 0
+	}
 	l.Pos++
 	if l.Pos > len(l.Text)-1 {
 		l.CurrentChar = 0
 	} else {
 		l.CurrentChar = l.Text[l.Pos]
+		l.Column += 1
 	}
 }
 
@@ -33,20 +47,6 @@ func (l *Lexer) Peek() rune {
 	} else {
 		return l.Text[peekPos]
 	}
-}
-
-func (l *Lexer) Id() (*Token, error) {
-	var result []rune
-	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar)) {
-		result = append(result, l.CurrentChar)
-		l.Advance()
-	}
-
-	if v, ok := ReservedKeywords[strings.ToUpper(string(result))]; ok {
-		return &v, nil
-	}
-
-	return &Token{TokenID, result}, nil
 }
 
 func (l *Lexer) SkipWhitespace() {
@@ -63,6 +63,8 @@ func (l *Lexer) SkipComment() {
 }
 
 func (l *Lexer) Number() (*Token, error) {
+	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
+
 	var result []rune
 	for l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
 		result = append(result, l.CurrentChar)
@@ -83,14 +85,39 @@ func (l *Lexer) Number() (*Token, error) {
 			return nil, err
 		}
 
-		return &Token{TokenREALCONST, f}, nil
+		token.Type = TokenREALCONST
+		token.Value = f
 	} else {
 		i, err := strconv.Atoi(string(result))
 		if err != nil {
 			return nil, err
 		}
-		return &Token{TokenINTEGERCONST, i}, nil
+
+		token.Type = TokenINTEGERCONST
+		token.Value = i
 	}
+
+	return token, nil
+}
+
+func (l *Lexer) Id() (*Token, error) {
+	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
+
+	var result []rune
+	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar)) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	if v, ok := ReservedKeywords[strings.ToUpper(string(result))]; ok {
+		token.Type = v.Type
+		token.Value = strings.ToUpper(string(result))
+	} else {
+		token.Type = TokenID
+		token.Value = string(result)
+	}
+
+	return token, nil
 }
 
 func (l *Lexer) GetNextToken() (*Token, error) {
@@ -113,50 +140,50 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{TokenASSIGN, ":="}, nil
+			return &Token{Type: TokenASSIGN, Value: TokenASSIGN, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ';' {
 			l.Advance()
-			return &Token{TokenSEMI, ';'}, nil
+			return &Token{Type: TokenSEMI, Value: TokenSEMI}, nil
 		}
 		if l.CurrentChar == ':' {
 			l.Advance()
-			return &Token{TokenCOLON, ':'}, nil
+			return &Token{Type: TokenCOLON, Value: TokenCOLON}, nil
 		}
 		if l.CurrentChar == ',' {
 			l.Advance()
-			return &Token{TokenCOMMA, ','}, nil
+			return &Token{Type: TokenCOMMA, Value: TokenCOMMA}, nil
 		}
 		if l.CurrentChar == '+' {
 			l.Advance()
-			return &Token{TokenPLUS, '+'}, nil
+			return &Token{Type: TokenPLUS, Value: TokenPLUS}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
-			return &Token{TokenMINUS, '-'}, nil
+			return &Token{Type: TokenMINUS, Value: TokenMINUS}, nil
 		}
 		if l.CurrentChar == '*' {
 			l.Advance()
-			return &Token{TokenMULTIPLY, '*'}, nil
+			return &Token{Type: TokenMULTIPLY, Value: TokenMULTIPLY}, nil
 		}
 		if l.CurrentChar == '/' {
 			l.Advance()
-			return &Token{TokenFLOATDIV, '/'}, nil
+			return &Token{Type: TokenFLOATDIV, Value: TokenFLOATDIV}, nil
 		}
 		if l.CurrentChar == '(' {
 			l.Advance()
-			return &Token{TokenLPAREN, '('}, nil
+			return &Token{Type: TokenLPAREN, Value: TokenLPAREN}, nil
 		}
 		if l.CurrentChar == ')' {
 			l.Advance()
-			return &Token{TokenRPAREN, ')'}, nil
+			return &Token{Type: TokenRPAREN, Value: TokenRPAREN}, nil
 		}
 		if l.CurrentChar == '.' {
 			l.Advance()
-			return &Token{TokenDOT, '.'}, nil
+			return &Token{Type: TokenDOT, Value: TokenDOT}, nil
 		}
-		return nil, errors.New("lexer error get next token")
+		return nil, l.error()
 	}
 
-	return &Token{TokenEOF, nil}, nil
+	return &Token{Type: TokenEOF, Value: nil}, nil
 }

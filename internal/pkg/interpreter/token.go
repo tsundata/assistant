@@ -5,46 +5,46 @@ import "fmt"
 type TokenType string
 
 const (
-	TokenEOF          = "EOF"
-	TokenPLUS         = "PLUS"
-	TokenMINUS        = "MINUS"
-	TokenMULTIPLY     = "MUL"
-	TokenDIVIDE       = "DIV"
-	TokenINTEGER      = "INTEGER"
+	TokenPLUS         = "+"
+	TokenMINUS        = "-"
+	TokenMULTIPLY     = "*"
+	TokenFLOATDIV     = "/"
 	TokenLPAREN       = "("
 	TokenRPAREN       = ")"
-	TokenID           = "ID"
-	TokenASSIGN       = "ASSIGN"
+	TokenSEMI         = ";"
+	TokenDOT          = "."
+	TokenCOLON        = ":"
+	TokenCOMMA        = ","
+	TokenPROGRAM      = "PROGRAM"
+	TokenINTEGER      = "INTEGER"
+	TokenREAL         = "REAL"
+	TokenINTEGERDIV   = "DIV"
+	TokenVAR          = "VAR"
+	TokenPROCEDURE    = "PROCEDURE"
 	TokenBEGIN        = "BEGIN"
 	TokenEND          = "END"
-	TokenSEMI         = "SEMI"
-	TokenDOT          = "DOT"
+	TokenID           = "ID"
 	TokenINTEGERCONST = "INTEGER_CONST"
-	TokenREAL         = "REAL"
-	TokenINTEGERDIV   = "INTEGER_DIV"
-	TokenFLOATDIV     = "FLOAT_DIV"
 	TokenREALCONST    = "REAL_CONST"
-	TokenPROGRAM      = "PROGRAM"
-	TokenCOMMA        = "COMMA"
-	TokenCOLON        = "COLON"
-	TokenVAR          = "VAR"
-	TokenDIV          = "DIV"
-	TokenPROCEDURE    = "PROCEDURE"
+	TokenASSIGN       = ":="
+	TokenEOF          = "EOF"
 )
 
 type Token struct {
-	Type  TokenType
-	Value interface{}
+	Type   TokenType
+	Value  interface{}
+	LineNo int
+	Column int
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("Token(%s, %v)", t.Type, t.Value)
+	return fmt.Sprintf("Token(%s, %v, position=%d:%d)", t.Type, t.Value, t.LineNo, t.Column)
 }
 
 var ReservedKeywords = map[string]Token{
 	"PROGRAM":   {Type: TokenPROGRAM, Value: TokenPROGRAM},
 	"VAR":       {Type: TokenVAR, Value: TokenVAR},
-	"DIV":       {Type: TokenINTEGERDIV, Value: TokenDIV},
+	"DIV":       {Type: TokenINTEGERDIV, Value: TokenINTEGERDIV},
 	"INTEGER":   {Type: TokenINTEGER, Value: TokenINTEGER},
 	"REAL":      {Type: TokenREAL, Value: TokenREAL},
 	"BEGIN":     {Type: TokenBEGIN, Value: TokenBEGIN},

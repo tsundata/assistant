@@ -130,6 +130,15 @@ func NewSemanticAnalyzer() *SemanticAnalyzer {
 	return &SemanticAnalyzer{CurrentScope: nil}
 }
 
+func (b *SemanticAnalyzer) error(errorCode ErrorCode, token *Token) error {
+	return Error{
+		ErrorCode: errorCode,
+		Token:     token,
+		Message:   fmt.Sprintf("%s -> %v", errorCode, token),
+		Type:      SemanticErrorType,
+	}
+}
+
 func (b *SemanticAnalyzer) Visit(node Ast) {
 	if n, ok := node.(*Block); ok {
 		b.VisitBlock(n)
@@ -213,8 +222,8 @@ func (b *SemanticAnalyzer) VisitProcedureDecl(node *ProcedureDecl) {
 
 	for _, param := range node.Params {
 		paramType := b.CurrentScope.Lookup(param.(*Param).TypeNode.(*Type).Value.(string), false)
-		paramName := param.(*Param).VarNode.(*Var).Value.([]rune)
-		varSymbol := NewVarSymbol(string(paramName), paramType)
+		paramName := param.(*Param).VarNode.(*Var).Value.(string)
+		varSymbol := NewVarSymbol(paramName, paramType)
 		b.CurrentScope.Insert(varSymbol)
 		procSymbol.Params = append(procSymbol.Params, varSymbol)
 	}
@@ -235,10 +244,10 @@ func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
 func (b *SemanticAnalyzer) VisitVarDecl(node *VarDecl) {
 	typeName := node.TypeNode.(*Type).Value.(string)
 	typeSymbol := b.CurrentScope.Lookup(typeName, false)
-	varName := node.VarNode.(*Var).Value.([]rune)
-	varSymbol := NewVarSymbol(string(varName), typeSymbol)
-	if b.CurrentScope.Lookup(string(varName), true) != nil {
-		panic(fmt.Sprintf("Error: Duplicate identifier '%s' found", string(varName)))
+	varName := node.VarNode.(*Var).Value.(string)
+	varSymbol := NewVarSymbol(varName, typeSymbol)
+	if b.CurrentScope.Lookup(varName, true) != nil {
+		panic(b.error(DuplicateId, node.VarNode.(*Var).Token))
 	}
 	b.CurrentScope.Insert(varSymbol)
 }
@@ -249,10 +258,10 @@ func (b *SemanticAnalyzer) VisitAssign(node *Assign) {
 }
 
 func (b *SemanticAnalyzer) VisitVar(node *Var) {
-	varName := node.Value.([]rune)
-	varSymbol := b.CurrentScope.Lookup(string(varName), false)
+	varName := node.Value.(string)
+	varSymbol := b.CurrentScope.Lookup(varName, false)
 
 	if varSymbol == nil {
-		panic(fmt.Sprintf("Error: Symbol(identifier) not found '%s'", string(varName)))
+		panic(b.error(IdNotFound, node.Token))
 	}
 }

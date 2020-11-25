@@ -1,7 +1,7 @@
 package interpreter
 
 import (
-	"errors"
+	"fmt"
 )
 
 type Parser struct {
@@ -10,11 +10,25 @@ type Parser struct {
 }
 
 func NewParser(lexer *Lexer) (*Parser, error) {
-	token, err := lexer.GetNextToken()
+	p := &Parser{Lexer: lexer, CurrentToken: nil}
+	token, err := p.getNextToken()
 	if err != nil {
 		return nil, err
 	}
-	return &Parser{Lexer: lexer, CurrentToken: token}, nil
+	p.CurrentToken = token
+	return p, nil
+}
+
+func (p *Parser) getNextToken() (*Token, error) {
+	return p.Lexer.GetNextToken()
+}
+
+func (p *Parser) error(errorCode ErrorCode, token *Token) error {
+	return Error{
+		Token:   token,
+		Message: fmt.Sprintf("%s -> %v", errorCode, token),
+		Type:    ParserErrorType,
+	}
 }
 
 func (p *Parser) Eat(tokenType TokenType) (err error) {
@@ -23,7 +37,7 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 		return
 	}
 
-	return errors.New("parser error eat")
+	return p.error(UnexpectedToken, p.CurrentToken)
 }
 
 func (p *Parser) Program() (Ast, error) {
@@ -35,7 +49,7 @@ func (p *Parser) Program() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	programName := varNode.(*Var).Value.([]rune)
+	programName := varNode.(*Var).Value.(string)
 	err = p.Eat(TokenSEMI)
 	if err != nil {
 		return nil, err
@@ -84,50 +98,17 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 					return nil, err
 				}
 			}
-		} else if p.CurrentToken.Type == TokenPROGRAM {
-			err := p.Eat(TokenPROGRAM)
-			if err != nil {
-				return nil, err
-			}
-			procName := p.CurrentToken.Value.([]rune)
-			err = p.Eat(TokenID)
-			if err != nil {
-				return nil, err
-			}
-
-			var params []Ast
-			if p.CurrentToken.Type == TokenLPAREN {
-				err = p.Eat(TokenLPAREN)
-				if err != nil {
-					return nil, err
-				}
-				params, err = p.FormalParameterList()
-				if err != nil {
-					return nil, err
-				}
-				err = p.Eat(TokenRPAREN)
-				if err != nil {
-					return nil, err
-				}
-			}
-
-			err = p.Eat(TokenSEMI)
-			if err != nil {
-				return nil, err
-			}
-			blockNode, err := p.Block()
-			if err != nil {
-				return nil, err
-			}
-			procDecl := NewProcedureDecl(string(procName), params, blockNode)
-			declarations = append(declarations, []Ast{procDecl}) // FIXME
-			err = p.Eat(TokenSEMI)
-			if err != nil {
-				return nil, err
-			}
 		} else {
 			break
 		}
+	}
+
+	for p.CurrentToken.Type == TokenPROGRAM {
+		procDecl, err := p.ProcedureDeclaration()
+		if err != nil {
+			return nil, err
+		}
+		declarations = append(declarations, []Ast{procDecl})
 	}
 
 	return declarations, nil
@@ -225,6 +206,50 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		varDeclarations = append(varDeclarations, NewVarDecl(varNode, typeNode))
 	}
 	return varDeclarations, nil
+}
+
+func (p *Parser) ProcedureDeclaration() (Ast, error) {
+	err := p.Eat(TokenPROGRAM)
+	if err != nil {
+		return nil, err
+	}
+	procName := p.CurrentToken.Value.(string)
+	err = p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
+
+	var params []Ast
+	if p.CurrentToken.Type == TokenLPAREN {
+		err = p.Eat(TokenLPAREN)
+		if err != nil {
+			return nil, err
+		}
+		params, err = p.FormalParameterList()
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenRPAREN)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = p.Eat(TokenSEMI)
+	if err != nil {
+		return nil, err
+	}
+	blockNode, err := p.Block()
+	if err != nil {
+		return nil, err
+	}
+	procDecl := NewProcedureDecl(string(procName), params, blockNode)
+	err = p.Eat(TokenSEMI)
+	if err != nil {
+		return nil, err
+	}
+
+	return procDecl, nil
 }
 
 func (p *Parser) TypeSpec() (Ast, error) {
@@ -454,19 +479,18 @@ func (p *Parser) Factor() (Ast, error) {
 //
 // block : declarations compound_statement
 //
-// declarations : (VAR (variable_declaration SEMI)+)*
-// 				| (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
-// 				| empty
+// declarations : (VAR (variable_declaration SEMI)+)* procedure_declaration*
 //
 // variable_declaration : ID (COMMA ID)* COLON type_spec
+//
+// procedure_declaration : PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
 //
 // formal_params_list : formal_parameters
 // 					  | formal_parameters SEMI formal_parameter_list
 //
 // formal_parameters : ID (COMMA ID)* COLON type_spec
 //
-// type_spec : INTEGER
-//	         | REAL
+// type_spec : INTEGER | REAL
 //
 // compound_statement : BEGIN statement_list END
 //
@@ -499,7 +523,7 @@ func (p *Parser) Parse() (Ast, error) {
 		return nil, err
 	}
 	if p.CurrentToken.Type != TokenEOF {
-		return nil, errors.New("parser error not eof")
+		return nil, p.error(UnexpectedToken, p.CurrentToken)
 	}
 	return node, nil
 }
