@@ -198,6 +198,32 @@ end.  { Main }`
 	run(t, text)
 }
 
+func TestInterpreterNestedProcedureCalls(t *testing.T) {
+	text := `program Main;
+
+procedure Alpha(a : integer; b : integer);
+var x : integer;
+
+   procedure Beta(a : integer; b : integer);
+   var x : integer;
+   begin
+      x := a * 10 + b * 2;
+   end;
+
+begin
+   x := (a + b ) * 2;
+
+   Beta(5, 10);      { procedure call }
+end;
+
+begin { Main }
+
+   Alpha(3 + 5, 7);  { procedure call }
+
+end.  { Main }`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

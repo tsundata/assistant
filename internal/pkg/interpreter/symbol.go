@@ -9,15 +9,13 @@ import (
 type Symbol interface{}
 
 type VarSymbol struct {
-	Name string
-	Type Symbol
+	Name       string
+	Type       Symbol
+	ScopeLevel int
 }
 
 func NewVarSymbol(name string, t Symbol) *VarSymbol {
-	s := &VarSymbol{}
-	s.Name = name
-	s.Type = t
-	return s
+	return &VarSymbol{Name: name, Type: t, ScopeLevel: 0}
 }
 
 func (s *VarSymbol) String() string {
@@ -25,14 +23,13 @@ func (s *VarSymbol) String() string {
 }
 
 type BuiltinTypeSymbol struct {
-	Name string
-	Type Symbol
+	Name       string
+	Type       Symbol
+	ScopeLevel int
 }
 
 func NewBuiltinTypeSymbol(name string) *BuiltinTypeSymbol {
-	s := &BuiltinTypeSymbol{}
-	s.Name = name
-	return s
+	return &BuiltinTypeSymbol{Name: name, ScopeLevel: 0}
 }
 
 func (s *BuiltinTypeSymbol) String() string {
@@ -44,10 +41,11 @@ type ProcedureSymbol struct {
 	Type         Symbol
 	FormalParams []Ast
 	BlockAst     Ast
+	ScopeLevel   int
 }
 
 func NewProcedureSymbol(name string) *ProcedureSymbol {
-	return &ProcedureSymbol{Name: name}
+	return &ProcedureSymbol{Name: name, ScopeLevel: 0}
 }
 
 func (s *ProcedureSymbol) String() string {
@@ -104,14 +102,22 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 	var name string
 	if s, ok := symbol.(*VarSymbol); ok {
 		name = s.Name
+		s.ScopeLevel = t.ScopeLevel
+		t.symbols.Set(name, s)
+		return
 	}
 	if s, ok := symbol.(*BuiltinTypeSymbol); ok {
 		name = s.Name
+		s.ScopeLevel = t.ScopeLevel
+		t.symbols.Set(name, s)
+		return
 	}
 	if s, ok := symbol.(*ProcedureSymbol); ok {
 		name = s.Name
+		s.ScopeLevel = t.ScopeLevel
+		t.symbols.Set(name, s)
+		return
 	}
-	t.symbols.Set(name, symbol)
 }
 
 func (t *ScopedSymbolTable) Lookup(name string, currentScopeOnly bool) Symbol {

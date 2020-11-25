@@ -241,10 +241,9 @@ func (i *Interpreter) VisitProcedureDecl(node *ProcedureDecl) float64 {
 
 func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 	procName := node.ProcName
-
-	ar := NewActivationRecord(procName, ARTypeProcedure, 2)
-
 	procSymbol := node.ProcSymbol
+
+	ar := NewActivationRecord(procName, ARTypeProcedure, procSymbol.(*ProcedureSymbol).ScopeLevel+1)
 
 	var formalParams []Ast
 	if procSymbol != nil {
