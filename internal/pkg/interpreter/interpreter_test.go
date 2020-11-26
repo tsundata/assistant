@@ -305,6 +305,27 @@ end.`
 	run(t, text)
 }
 
+func TestInterpreterPrint(t *testing.T) {
+	text := `program booleanTest;
+var a, b: bool;
+var s: string;
+
+begin
+   	a := true;
+	b := false;
+	s := "hi";
+	if b then
+		// then branch 
+	else
+		// else branch 
+		print a ;
+		print b ;
+		print s ;
+	end;
+end.`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

@@ -309,7 +309,6 @@ func (p *Parser) StatementList() ([]Ast, error) {
 	}
 
 	results := []Ast{node}
-
 	for p.CurrentToken.Type == TokenSemi {
 		err = p.Eat(TokenSemi)
 		if err != nil {
@@ -332,6 +331,8 @@ func (p *Parser) Statement() (Ast, error) {
 		return p.ProcallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
+	} else if p.CurrentToken.Type == TokenPrint {
+		return p.PrintStatement()
 	} else if p.CurrentToken.Type == TokenIf {
 		return p.IfStatement()
 	} else if p.CurrentToken.Type == TokenWhile {
@@ -339,6 +340,19 @@ func (p *Parser) Statement() (Ast, error) {
 	} else {
 		return p.Empty()
 	}
+}
+
+func (p *Parser) PrintStatement() (Ast, error) {
+	err := p.Eat(TokenPrint)
+	if err != nil {
+		return nil, err
+	}
+	statement, err := p.Expression()
+	if err != nil {
+		return nil, err
+	}
+
+	return NewPrint(statement), nil
 }
 
 func (p *Parser) WhileStatement() (Ast, error) {
@@ -356,7 +370,7 @@ func (p *Parser) WhileStatement() (Ast, error) {
 		return nil, err
 	}
 
-	doBranch, err := p.Statement()
+	doBranch, err := p.StatementList()
 	if err != nil {
 		return nil, err
 	}
@@ -384,18 +398,18 @@ func (p *Parser) IfStatement() (Ast, error) {
 		return nil, err
 	}
 
-	thenBranch, err := p.Statement()
+	thenBranch, err := p.StatementList()
 	if err != nil {
 		return nil, err
 	}
 
-	var elseBranch Ast
+	var elseBranch []Ast
 	if p.CurrentToken.Type == TokenElse {
 		err := p.Eat(TokenElse)
 		if err != nil {
 			return nil, err
 		}
-		elseBranch, err = p.Statement()
+		elseBranch, err = p.StatementList()
 		if err != nil {
 			return nil, err
 		}

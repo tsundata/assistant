@@ -158,20 +158,20 @@ func NewProcedureCall(procName string, actualParams []Ast, token *Token) *Proced
 
 type If struct {
 	Condition  Ast
-	ThenBranch Ast
-	ElseBranch Ast
+	ThenBranch []Ast
+	ElseBranch []Ast
 }
 
-func NewIf(condition Ast, thenBranch Ast, elseBranch Ast) *If {
+func NewIf(condition Ast, thenBranch []Ast, elseBranch []Ast) *If {
 	return &If{Condition: condition, ThenBranch: thenBranch, ElseBranch: elseBranch}
 }
 
 type While struct {
 	Condition Ast
-	DoBranch  Ast
+	DoBranch  []Ast
 }
 
-func NewWhile(condition Ast, doBranch Ast) *While {
+func NewWhile(condition Ast, doBranch []Ast) *While {
 	return &While{Condition: condition, DoBranch: doBranch}
 }
 
@@ -183,4 +183,12 @@ type Logical struct {
 
 func NewLogical(left Ast, op *Token, right Ast) *Logical {
 	return &Logical{Left: left, Op: op, Right: right}
+}
+
+type Print struct {
+	Statement Ast
+}
+
+func NewPrint(statement Ast) *Print {
+	return &Print{Statement: statement}
 }

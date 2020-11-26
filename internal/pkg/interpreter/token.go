@@ -25,6 +25,7 @@ const (
 	TokenProcedure    = "PROCEDURE"
 	TokenBegin        = "BEGIN"
 	TokenEnd          = "END"
+	TokenPrint        = "PRINT"
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
 	TokenFloatConst   = "FLOAT_CONST"
@@ -79,4 +80,5 @@ var ReservedKeywords = map[string]Token{
 	"AND":       {Type: TokenAnd, Value: TokenAnd},
 	"TRUE":      {Type: TokenTrue, Value: true},
 	"FALSE":     {Type: TokenFalse, Value: false},
+	"PRINT":     {Type: TokenPrint, Value: TokenPrint},
 }

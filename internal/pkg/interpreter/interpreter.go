@@ -134,6 +134,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*ProcedureCall); ok {
 		return i.VisitProcedureCall(n)
 	}
+	if n, ok := node.(*Print); ok {
+		return i.VisitPrint(n)
+	}
 	if n, ok := node.(*While); ok {
 		return i.VisitWhile(n)
 	}
@@ -307,19 +310,31 @@ func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 	return 0
 }
 
+func (i *Interpreter) VisitPrint(node *Print) interface{} {
+	fmt.Println(">>> ", i.Visit(node.Statement))
+	return nil
+}
+
 func (i *Interpreter) VisitWhile(node *While) float64 {
 	for i.Visit(node.Condition).(bool) {
-		i.Visit(node.DoBranch)
+		for _, n := range node.DoBranch {
+			i.Visit(n)
+		}
 	}
 	return 0
 }
 
 func (i *Interpreter) VisitIf(node *If) interface{} {
 	if i.Visit(node.Condition).(bool) {
-		return i.Visit(node.ThenBranch)
+		for _, n := range node.ThenBranch {
+			i.Visit(n)
+		}
 	} else {
-		return i.Visit(node.ElseBranch)
+		for _, n := range node.ElseBranch {
+			i.Visit(n)
+		}
 	}
+	return nil
 }
 
 func (i *Interpreter) VisitLogical(node *Logical) bool {

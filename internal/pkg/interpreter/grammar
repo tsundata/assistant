@@ -28,13 +28,16 @@ statement_list : statement
 statement : compound_statement
 		  | proccall_statement
 		  | assignment_statement
+		  | print_statement
 		  | if_statement
 		  | while_statement
 		  | empty
 
-while_statement : "while" expression "do" statement "end"
+print_statement : "print" expression
 
-if_statement : "if" expression "then" statement ( "else" statement )? "end"
+while_statement : "while" expression "do" statement_list "end"
+
+if_statement : "if" expression "then" statement_list ( "else" statement_list )? "end"
 
 expression : logic_or
 

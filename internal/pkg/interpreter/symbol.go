@@ -319,13 +319,19 @@ func (b *SemanticAnalyzer) VisitProcedureCall(node *ProcedureCall) {
 
 func (b *SemanticAnalyzer) VisitWhile(node *While) {
 	// TODO scope
-	b.Visit(node.DoBranch)
+	for _, node := range node.DoBranch {
+		b.Visit(node)
+	}
 }
 
 func (b *SemanticAnalyzer) VisitIf(node *If) {
 	// TODO scope
-	b.Visit(node.ThenBranch)
-	b.Visit(node.ElseBranch)
+	for _, node := range node.ThenBranch {
+		b.Visit(node)
+	}
+	for _, node := range node.ElseBranch {
+		b.Visit(node)
+	}
 }
 
 func (b *SemanticAnalyzer) VisitLogical(node *Logical) {
