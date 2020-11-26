@@ -31,6 +31,8 @@ const (
 	TokenIF           = "IF"
 	TokenTHEN         = "THEN"
 	TokenELSE         = "ELSE"
+	TokenWHILE        = "WHILE"
+	TokenDO           = "DO"
 	TokenOR           = "OR"
 	TokenAND          = "AND"
 	TokenTRUE         = "TRUE"
@@ -66,6 +68,8 @@ var ReservedKeywords = map[string]Token{
 	"IF":        {Type: TokenIF, Value: TokenIF},
 	"THEN":      {Type: TokenTHEN, Value: TokenTHEN},
 	"ELSE":      {Type: TokenELSE, Value: TokenELSE},
+	"WHILE":     {Type: TokenWHILE, Value: TokenWHILE},
+	"DO":        {Type: TokenDO, Value: TokenDO},
 	"OR":        {Type: TokenOR, Value: TokenOR},
 	"AND":       {Type: TokenAND, Value: TokenAND},
 	"TRUE":      {Type: TokenAND, Value: TokenAND},

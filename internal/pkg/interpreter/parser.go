@@ -319,9 +319,39 @@ func (p *Parser) Statement() (Ast, error) {
 		return p.AssignmentStatement()
 	} else if p.CurrentToken.Type == TokenIF {
 		return p.IfStatement()
+	} else if p.CurrentToken.Type == TokenWHILE {
+		return p.WhileStatement()
 	} else {
 		return p.Empty()
 	}
+}
+
+func (p *Parser) WhileStatement() (Ast, error) {
+	err := p.Eat(TokenWHILE)
+	if err != nil {
+		return nil, err
+	}
+	condition, err := p.Expression()
+	if err != nil {
+		return nil, err
+	}
+
+	err = p.Eat(TokenDO)
+	if err != nil {
+		return nil, err
+	}
+
+	doBranch, err := p.Statement()
+	if err != nil {
+		return nil, err
+	}
+
+	err = p.Eat(TokenEND)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewWhile(condition, doBranch), nil
 }
 
 func (p *Parser) IfStatement() (Ast, error) {

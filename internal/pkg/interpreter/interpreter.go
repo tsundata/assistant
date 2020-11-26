@@ -128,6 +128,9 @@ func (i *Interpreter) Visit(node Ast) float64 {
 	if n, ok := node.(*ProcedureCall); ok {
 		return i.VisitProcedureCall(n)
 	}
+	if n, ok := node.(*While); ok {
+		return i.VisitWhile(n)
+	}
 	if n, ok := node.(*If); ok {
 		return i.VisitIf(n)
 	}
@@ -229,7 +232,12 @@ func (i *Interpreter) VisitVar(node *Var) float64 {
 		ar := i.callStack.Peek()
 		if ar != nil {
 			val := ar.Get(varName)
-			return val.(float64)
+			if val != nil {
+				return val.(float64)
+			} else {
+				// TODO Uninitialized
+				return 0
+			}
 		} else {
 			panic(errors.New("interpreter error var name"))
 		}
@@ -277,6 +285,13 @@ func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 
 	i.callStack.Pop()
 
+	return 0
+}
+
+func (i *Interpreter) VisitWhile(node *While) float64 {
+	for i.Visit(node.Condition) != 0 {
+		i.Visit(node.DoBranch)
+	}
 	return 0
 }
 

@@ -171,6 +171,32 @@ end.  { Main }`
 	run(t, text)
 }
 
+func TestInterpreterProcedureCall2(t *testing.T) {
+	text := `program exProcedure;
+var a, b, c,  min: integer;
+
+procedure findMin(x, y, z: integer;  m: integer);  { Finds the minimum of the 3 values }
+begin
+   if x < y then
+      m := x
+   else
+      m := y
+   end;
+
+   if z < m then
+      m := z
+   end;
+end; { end of procedure findMin }  
+
+begin
+   	a := 1;
+	b := 2;
+	c := 3;
+   	findMin(a, b, c, min); { Procedure call }
+end.`
+	run(t, text)
+}
+
 func TestInterpreterCallStack(t *testing.T) {
 	text := `program Main;
 var x, y : integer;
@@ -236,6 +262,19 @@ begin { Main }
 		{ else branch }
 	end
 end.  { Main }`
+	run(t, text)
+}
+
+func TestInterpreterWhile(t *testing.T) {
+	text := `program whileLoop;
+var a: integer;
+
+begin
+   a := 1;
+   while  a < 20  do
+      a := a + a
+   end;
+end.`
 	run(t, text)
 }
 

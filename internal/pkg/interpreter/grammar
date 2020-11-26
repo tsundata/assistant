@@ -24,7 +24,10 @@ statement : compound_statement
 		  | proccall_statement
 		  | assignment_statement
 		  | if_statement
+		  | while_statement
 		  | empty
+
+while_statement : "while" expression "do" statement "end"
 
 if_statement : "if" expression "then" statement ( "else" statement )? "end"
 

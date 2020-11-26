@@ -148,6 +148,15 @@ func NewIf(condition Ast, thenBranch Ast, elseBranch Ast) *If {
 	return &If{Condition: condition, ThenBranch: thenBranch, ElseBranch: elseBranch}
 }
 
+type While struct {
+	Condition Ast
+	DoBranch  Ast
+}
+
+func NewWhile(condition Ast, doBranch Ast) *While {
+	return &While{Condition: condition, DoBranch: doBranch}
+}
+
 type Logical struct {
 	Left  Ast
 	Op    *Token
