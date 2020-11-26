@@ -60,14 +60,16 @@ factor : "+" factor
        | "-" factor
        | INTEGER_CONST
        | FLOAT_CONST
+       | STRING_CONST
+       | BOOLEAN
        | "(" expr ")"
        | variable
 
 variable : ID
 
-
-NUMBER : DIGIT+ ( "." DIGIT+ )?
-STRING : "\"" <any char except "\"">* "\""
-ID     : ALPHA ( ALPHA | DIGIT )*
-ALPHA  : "a" ... "z" | "A" ... "Z" | "_"
-DIGIT  : "0" ... "9"
+BOOLEAN : "true" | "false"
+NUMBER  : DIGIT+ ( "." DIGIT+ )?
+STRING  : "\"" <any char except "\"">* "\""
+ID      : ALPHA ( ALPHA | DIGIT )*
+ALPHA   : "a" ... "z" | "A" ... "Z" | "_"
+DIGIT   : "0" ... "9"

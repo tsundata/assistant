@@ -13,13 +13,13 @@ func NewBinOp(left Ast, op *Token, right Ast) *BinOp {
 	return &BinOp{Left: left, Token: op, Op: op, Right: right}
 }
 
-type Num struct {
+type Number struct {
 	Token *Token
 	Value float64
 }
 
-func NewNum(token *Token) *Num {
-	ret := &Num{Token: token}
+func NewNumber(token *Token) *Number {
+	ret := &Number{Token: token}
 
 	if v, ok := token.Value.(int); ok {
 		ret.Value = float64(v)
@@ -28,6 +28,24 @@ func NewNum(token *Token) *Num {
 	}
 
 	return ret
+}
+
+type String struct {
+	Token *Token
+	Value string
+}
+
+func NewString(token *Token) *String {
+	return &String{Token: token, Value: token.Value.(string)}
+}
+
+type Boolean struct {
+	Token *Token
+	Value bool
+}
+
+func NewBoolean(token *Token) *Boolean {
+	return &Boolean{Token: token, Value: token.Value.(bool)}
 }
 
 type UnaryOp struct {

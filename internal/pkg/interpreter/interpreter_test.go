@@ -278,6 +278,33 @@ end.`
 	run(t, text)
 }
 
+func TestInterpreterString(t *testing.T) {
+	text := `program stringTest;
+var a, b: string;
+
+begin
+   	a := "abc";
+	b := "foobar";
+end.`
+	run(t, text)
+}
+
+func TestInterpreterBoolean(t *testing.T) {
+	text := `program booleanTest;
+var a, b: bool;
+
+begin
+   	a := true;
+	b := false;
+	if a then
+		// then branch 
+	else
+		// else branch 
+	end;
+end.`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

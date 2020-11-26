@@ -259,6 +259,21 @@ func (p *Parser) TypeSpec() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
+	} else if p.CurrentToken.Type == TokenFloat {
+		err := p.Eat(TokenFloat)
+		if err != nil {
+			return nil, err
+		}
+	} else if p.CurrentToken.Type == TokenString {
+		err := p.Eat(TokenString)
+		if err != nil {
+			return nil, err
+		}
+	} else if p.CurrentToken.Type == TokenBoolean {
+		err := p.Eat(TokenBoolean)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		err := p.Eat(TokenFloat)
 		if err != nil {
@@ -639,14 +654,35 @@ func (p *Parser) Factor() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		return NewNum(token), nil
+		return NewNumber(token), nil
 	}
 	if token.Type == TokenFloatConst {
 		err := p.Eat(TokenFloatConst)
 		if err != nil {
 			return nil, err
 		}
-		return NewNum(token), nil
+		return NewNumber(token), nil
+	}
+	if token.Type == TokenStringConst {
+		err := p.Eat(TokenStringConst)
+		if err != nil {
+			return nil, err
+		}
+		return NewString(token), nil
+	}
+	if token.Type == TokenTrue {
+		err := p.Eat(TokenTrue)
+		if err != nil {
+			return nil, err
+		}
+		return NewBoolean(token), nil
+	}
+	if token.Type == TokenFalse {
+		err := p.Eat(TokenFalse)
+		if err != nil {
+			return nil, err
+		}
+		return NewBoolean(token), nil
 	}
 	if token.Type == TokenLParen {
 		err := p.Eat(TokenLParen)

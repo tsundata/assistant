@@ -18,6 +18,8 @@ const (
 	TokenProgram      = "PROGRAM"
 	TokenInteger      = "INTEGER"
 	TokenFloat        = "FLOAT"
+	TokenString       = "STRING"
+	TokenBoolean      = "BOOLEAN"
 	TokenIntegerDiv   = "DIV"
 	TokenVar          = "VAR"
 	TokenProcedure    = "PROCEDURE"
@@ -26,6 +28,7 @@ const (
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
 	TokenFloatConst   = "FLOAT_CONST"
+	TokenStringConst  = "STRING_CONST"
 	TokenAssign       = ":="
 	TokenEOF          = "EOF"
 	TokenIf           = "IF"
@@ -63,6 +66,8 @@ var ReservedKeywords = map[string]Token{
 	"DIV":       {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
 	"INT":       {Type: TokenInteger, Value: TokenInteger},
 	"FLOAT":     {Type: TokenFloat, Value: TokenFloat},
+	"STRING":    {Type: TokenString, Value: TokenString},
+	"BOOL":      {Type: TokenBoolean, Value: TokenBoolean},
 	"BEGIN":     {Type: TokenBegin, Value: TokenBegin},
 	"END":       {Type: TokenEnd, Value: TokenEnd},
 	"IF":        {Type: TokenIf, Value: TokenIf},
@@ -72,6 +77,6 @@ var ReservedKeywords = map[string]Token{
 	"DO":        {Type: TokenDo, Value: TokenDo},
 	"OR":        {Type: TokenOr, Value: TokenOr},
 	"AND":       {Type: TokenAnd, Value: TokenAnd},
-	"TRUE":      {Type: TokenTrue, Value: TokenTrue},
-	"FALSE":     {Type: TokenFalse, Value: TokenFalse},
+	"TRUE":      {Type: TokenTrue, Value: true},
+	"FALSE":     {Type: TokenFalse, Value: false},
 }

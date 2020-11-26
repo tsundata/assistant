@@ -100,6 +100,20 @@ func (l *Lexer) Number() (*Token, error) {
 	return token, nil
 }
 
+func (l *Lexer) String() (*Token, error) {
+	l.Advance()
+
+	// TODO Escape
+	var result []rune
+	for l.CurrentChar != '"' {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+	l.Advance()
+
+	return &Token{Type: TokenStringConst, Value: string(result), LineNo: l.LineNo, Column: l.Column}, nil
+}
+
 func (l *Lexer) Id() (*Token, error) {
 	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
 
@@ -111,7 +125,7 @@ func (l *Lexer) Id() (*Token, error) {
 
 	if v, ok := ReservedKeywords[strings.ToUpper(string(result))]; ok {
 		token.Type = v.Type
-		token.Value = strings.ToUpper(string(result))
+		token.Value = v.Value
 	} else {
 		token.Type = TokenID
 		token.Value = string(result)
@@ -137,6 +151,9 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		}
 		if unicode.IsLetter(l.CurrentChar) {
 			return l.Id()
+		}
+		if l.CurrentChar == '"' {
+			return l.String()
 		}
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()

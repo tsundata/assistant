@@ -88,7 +88,7 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, callStack: NewCallStack()}
 }
 
-func (i *Interpreter) Visit(node Ast) float64 {
+func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Program); ok {
 		return i.VisitProgram(n)
 	}
@@ -104,8 +104,14 @@ func (i *Interpreter) Visit(node Ast) float64 {
 	if n, ok := node.(*BinOp); ok {
 		return i.VisitBinOp(n)
 	}
-	if n, ok := node.(*Num); ok {
-		return i.VisitNum(n)
+	if n, ok := node.(*Number); ok {
+		return i.VisitNumber(n)
+	}
+	if n, ok := node.(*String); ok {
+		return i.VisitString(n)
+	}
+	if n, ok := node.(*Boolean); ok {
+		return i.VisitBoolean(n)
 	}
 	if n, ok := node.(*UnaryOp); ok {
 		return i.VisitUnaryOp(n)
@@ -156,7 +162,7 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 
 	i.callStack.Pop()
 
-	return result
+	return result.(float64)
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {
@@ -179,30 +185,38 @@ func (i *Interpreter) VisitType(node *Type) float64 {
 
 func (i *Interpreter) VisitBinOp(node *BinOp) float64 {
 	if node.Op.Type == TokenPlus {
-		return i.Visit(node.Left) + i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) + i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenMinus {
-		return i.Visit(node.Left) - i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) - i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenMultiply {
-		return i.Visit(node.Left) * i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) * i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenIntegerDiv {
-		return i.Visit(node.Left) / i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) / i.Visit(node.Right).(float64)
 	}
-	return i.Visit(node.Left) / i.Visit(node.Right)
+	return i.Visit(node.Left).(float64) / i.Visit(node.Right).(float64)
 }
 
-func (i *Interpreter) VisitNum(node *Num) float64 {
+func (i *Interpreter) VisitNumber(node *Number) float64 {
+	return node.Value
+}
+
+func (i *Interpreter) VisitString(node *String) string {
+	return node.Value
+}
+
+func (i *Interpreter) VisitBoolean(node *Boolean) bool {
 	return node.Value
 }
 
 func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {
 	op := node.Op.Type
 	if op == TokenPlus {
-		return +i.Visit(node.Expr)
+		return +i.Visit(node.Expr).(float64)
 	} else if op == TokenMinus {
-		return -i.Visit(node.Expr)
+		return -i.Visit(node.Expr).(float64)
 	}
 	return 0
 }
@@ -227,22 +241,27 @@ func (i *Interpreter) VisitAssign(node *Assign) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitVar(node *Var) float64 {
+func (i *Interpreter) VisitVar(node *Var) interface{} {
 	if varName, ok := node.Value.(string); ok {
 		ar := i.callStack.Peek()
 		if ar != nil {
 			val := ar.Get(varName)
 			if val != nil {
-				return val.(float64)
-			} else {
-				// TODO Uninitialized
-				return 0
+				if v, ok := val.(float64); ok {
+					return v
+				}
+				if v, ok := val.(string); ok {
+					return v
+				}
+				if v, ok := val.(bool); ok {
+					return v
+				}
 			}
 		} else {
 			panic(errors.New("interpreter error var name"))
 		}
 	}
-	return 0
+	return nil
 }
 
 func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
@@ -289,57 +308,52 @@ func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 }
 
 func (i *Interpreter) VisitWhile(node *While) float64 {
-	for i.Visit(node.Condition) != 0 {
+	for i.Visit(node.Condition).(bool) {
 		i.Visit(node.DoBranch)
 	}
 	return 0
 }
 
-func (i *Interpreter) VisitIf(node *If) float64 {
-	if i.Visit(node.Condition) != 0 {
+func (i *Interpreter) VisitIf(node *If) interface{} {
+	if i.Visit(node.Condition).(bool) {
 		return i.Visit(node.ThenBranch)
 	} else {
 		return i.Visit(node.ElseBranch)
 	}
 }
 
-func (i *Interpreter) VisitLogical(node *Logical) float64 {
-	var b bool
+func (i *Interpreter) VisitLogical(node *Logical) bool {
 	if node.Op.Type == TokenOr {
-		b = (i.Visit(node.Left) != 0) || (i.Visit(node.Right) != 0)
+		return (i.Visit(node.Left) != 0) || (i.Visit(node.Right) != 0)
 	}
 	if node.Op.Type == TokenAnd {
-		b = (i.Visit(node.Left) != 0) && (i.Visit(node.Right) != 0)
+		return (i.Visit(node.Left) != 0) && (i.Visit(node.Right) != 0)
 	}
 	if node.Op.Type == TokenEqual {
-		b = i.Visit(node.Left) == i.Visit(node.Right)
+		return i.Visit(node.Left) == i.Visit(node.Right)
 	}
 	if node.Op.Type == TokenNotEqual {
-		b = i.Visit(node.Left) != i.Visit(node.Right)
+		return i.Visit(node.Left) != i.Visit(node.Right)
 	}
 	if node.Op.Type == TokenGreater {
-		b = i.Visit(node.Left) > i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) > i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenGreaterEqual {
-		b = i.Visit(node.Left) >= i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) >= i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenLess {
-		b = i.Visit(node.Left) < i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) < i.Visit(node.Right).(float64)
 	}
 	if node.Op.Type == TokenLessEqual {
-		b = i.Visit(node.Left) <= i.Visit(node.Right)
+		return i.Visit(node.Left).(float64) <= i.Visit(node.Right).(float64)
 	}
 
-	if b {
-		return 1
-	} else {
-		return 0
-	}
+	return false
 }
 
 func (i *Interpreter) Interpret() (float64, error) {
 	if i.tree == nil {
 		return 0, errors.New("error ast tree")
 	}
-	return i.Visit(i.tree), nil
+	return i.Visit(i.tree).(float64), nil
 }
