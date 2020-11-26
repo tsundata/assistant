@@ -5,44 +5,44 @@ import "fmt"
 type TokenType string
 
 const (
-	TokenPLUS         = "+"
-	TokenMINUS        = "-"
-	TokenMULTIPLY     = "*"
-	TokenFLOATDIV     = "/"
-	TokenLPAREN       = "("
-	TokenRPAREN       = ")"
-	TokenSEMI         = ";"
-	TokenDOT          = "."
-	TokenCOLON        = ":"
-	TokenCOMMA        = ","
-	TokenPROGRAM      = "PROGRAM"
-	TokenINTEGER      = "INTEGER"
-	TokenREAL         = "REAL"
-	TokenINTEGERDIV   = "DIV"
-	TokenVAR          = "VAR"
-	TokenPROCEDURE    = "PROCEDURE"
-	TokenBEGIN        = "BEGIN"
-	TokenEND          = "END"
+	TokenPlus         = "+"
+	TokenMinus        = "-"
+	TokenMultiply     = "*"
+	TokenFloatDiv     = "/"
+	TokenLParen       = "("
+	TokenRParen       = ")"
+	TokenSemi         = ";"
+	TokenDot          = "."
+	TokenColon        = ":"
+	TokenComma        = ","
+	TokenProgram      = "PROGRAM"
+	TokenInteger      = "INTEGER"
+	TokenReal         = "REAL"
+	TokenIntegerDiv   = "DIV"
+	TokenVar          = "VAR"
+	TokenProcedure    = "PROCEDURE"
+	TokenBegin        = "BEGIN"
+	TokenEnd          = "END"
 	TokenID           = "ID"
-	TokenINTEGERCONST = "INTEGER_CONST"
-	TokenREALCONST    = "REAL_CONST"
-	TokenASSIGN       = ":="
+	TokenIntegerConst = "INTEGER_CONST"
+	TokenRealConst    = "REAL_CONST"
+	TokenAssign       = ":="
 	TokenEOF          = "EOF"
-	TokenIF           = "IF"
-	TokenTHEN         = "THEN"
-	TokenELSE         = "ELSE"
-	TokenWHILE        = "WHILE"
-	TokenDO           = "DO"
-	TokenOR           = "OR"
-	TokenAND          = "AND"
-	TokenTRUE         = "TRUE"
-	TokenFALSE        = "FALSE"
-	TokenEQUAL        = "=="
-	TokenNOTEQUAL     = "!="
-	TokenGREATER      = ">"
-	TokenGREATEREQUAL = ">="
-	TokenLESS         = "<"
-	TokenLESSEQUAL    = "<="
+	TokenIf           = "IF"
+	TokenThen         = "THEN"
+	TokenElse         = "ELSE"
+	TokenWhile        = "WHILE"
+	TokenDo           = "DO"
+	TokenOr           = "OR"
+	TokenAnd          = "AND"
+	TokenTrue         = "TRUE"
+	TokenFalse        = "FALSE"
+	TokenEqual        = "=="
+	TokenNotEqual     = "!="
+	TokenGreater      = ">"
+	TokenGreaterEqual = ">="
+	TokenLess         = "<"
+	TokenLessEqual    = "<="
 )
 
 type Token struct {
@@ -57,21 +57,21 @@ func (t *Token) String() string {
 }
 
 var ReservedKeywords = map[string]Token{
-	"PROGRAM":   {Type: TokenPROGRAM, Value: TokenPROGRAM},
-	"VAR":       {Type: TokenVAR, Value: TokenVAR},
-	"DIV":       {Type: TokenINTEGERDIV, Value: TokenINTEGERDIV},
-	"INTEGER":   {Type: TokenINTEGER, Value: TokenINTEGER},
-	"REAL":      {Type: TokenREAL, Value: TokenREAL},
-	"BEGIN":     {Type: TokenBEGIN, Value: TokenBEGIN},
-	"END":       {Type: TokenEND, Value: TokenEND},
-	"PROCEDURE": {Type: TokenPROGRAM, Value: TokenPROGRAM},
-	"IF":        {Type: TokenIF, Value: TokenIF},
-	"THEN":      {Type: TokenTHEN, Value: TokenTHEN},
-	"ELSE":      {Type: TokenELSE, Value: TokenELSE},
-	"WHILE":     {Type: TokenWHILE, Value: TokenWHILE},
-	"DO":        {Type: TokenDO, Value: TokenDO},
-	"OR":        {Type: TokenOR, Value: TokenOR},
-	"AND":       {Type: TokenAND, Value: TokenAND},
-	"TRUE":      {Type: TokenAND, Value: TokenAND},
-	"FALSE":     {Type: TokenTRUE, Value: TokenTRUE},
+	"PROGRAM":   {Type: TokenProgram, Value: TokenProgram},
+	"PROCEDURE": {Type: TokenProcedure, Value: TokenProcedure},
+	"VAR":       {Type: TokenVar, Value: TokenVar},
+	"DIV":       {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
+	"INTEGER":   {Type: TokenInteger, Value: TokenInteger},
+	"REAL":      {Type: TokenReal, Value: TokenReal},
+	"BEGIN":     {Type: TokenBegin, Value: TokenBegin},
+	"END":       {Type: TokenEnd, Value: TokenEnd},
+	"IF":        {Type: TokenIf, Value: TokenIf},
+	"THEN":      {Type: TokenThen, Value: TokenThen},
+	"ELSE":      {Type: TokenElse, Value: TokenElse},
+	"WHILE":     {Type: TokenWhile, Value: TokenWhile},
+	"DO":        {Type: TokenDo, Value: TokenDo},
+	"OR":        {Type: TokenOr, Value: TokenOr},
+	"AND":       {Type: TokenAnd, Value: TokenAnd},
+	"TRUE":      {Type: TokenTrue, Value: TokenTrue},
+	"FALSE":     {Type: TokenFalse, Value: TokenFalse},
 }

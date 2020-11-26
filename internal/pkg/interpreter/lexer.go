@@ -85,7 +85,7 @@ func (l *Lexer) Number() (*Token, error) {
 			return nil, err
 		}
 
-		token.Type = TokenREALCONST
+		token.Type = TokenRealConst
 		token.Value = f
 	} else {
 		i, err := strconv.Atoi(string(result))
@@ -93,7 +93,7 @@ func (l *Lexer) Number() (*Token, error) {
 			return nil, err
 		}
 
-		token.Type = TokenINTEGERCONST
+		token.Type = TokenIntegerConst
 		token.Value = i
 	}
 
@@ -140,75 +140,75 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{Type: TokenASSIGN, Value: TokenASSIGN, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenAssign, Value: TokenAssign, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '=' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{Type: TokenEQUAL, Value: TokenEQUAL, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenEqual, Value: TokenEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '!' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{Type: TokenNOTEQUAL, Value: TokenNOTEQUAL, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenNotEqual, Value: TokenNotEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '>' {
 			l.Advance()
-			return &Token{Type: TokenGREATER, Value: TokenGREATER, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenGreater, Value: TokenGreater, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '>' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{Type: TokenGREATEREQUAL, Value: TokenNOTEQUAL, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenGreaterEqual, Value: TokenNotEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '<' {
 			l.Advance()
-			return &Token{Type: TokenLESS, Value: TokenLESS, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenLess, Value: TokenLess, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '<' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
-			return &Token{Type: TokenLESSEQUAL, Value: TokenLESSEQUAL, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenLessEqual, Value: TokenLessEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ';' {
 			l.Advance()
-			return &Token{Type: TokenSEMI, Value: TokenSEMI, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenSemi, Value: TokenSemi, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ':' {
 			l.Advance()
-			return &Token{Type: TokenCOLON, Value: TokenCOLON, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenColon, Value: TokenColon, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ',' {
 			l.Advance()
-			return &Token{Type: TokenCOMMA, Value: TokenCOMMA, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenComma, Value: TokenComma, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '+' {
 			l.Advance()
-			return &Token{Type: TokenPLUS, Value: TokenPLUS, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenPlus, Value: TokenPlus, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
-			return &Token{Type: TokenMINUS, Value: TokenMINUS, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenMinus, Value: TokenMinus, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '*' {
 			l.Advance()
-			return &Token{Type: TokenMULTIPLY, Value: TokenMULTIPLY, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenMultiply, Value: TokenMultiply, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '/' {
 			l.Advance()
-			return &Token{Type: TokenFLOATDIV, Value: TokenFLOATDIV, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenFloatDiv, Value: TokenFloatDiv, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '(' {
 			l.Advance()
-			return &Token{Type: TokenLPAREN, Value: TokenLPAREN, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenLParen, Value: TokenLParen, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ')' {
 			l.Advance()
-			return &Token{Type: TokenRPAREN, Value: TokenRPAREN, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenRParen, Value: TokenRParen, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '.' {
 			l.Advance()
-			return &Token{Type: TokenDOT, Value: TokenDOT, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenDot, Value: TokenDot, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		return nil, l.error()
 	}

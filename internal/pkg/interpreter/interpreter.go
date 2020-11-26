@@ -178,16 +178,16 @@ func (i *Interpreter) VisitType(node *Type) float64 {
 }
 
 func (i *Interpreter) VisitBinOp(node *BinOp) float64 {
-	if node.Op.Type == TokenPLUS {
+	if node.Op.Type == TokenPlus {
 		return i.Visit(node.Left) + i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenMINUS {
+	if node.Op.Type == TokenMinus {
 		return i.Visit(node.Left) - i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenMULTIPLY {
+	if node.Op.Type == TokenMultiply {
 		return i.Visit(node.Left) * i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenINTEGERDIV {
+	if node.Op.Type == TokenIntegerDiv {
 		return i.Visit(node.Left) / i.Visit(node.Right)
 	}
 	return i.Visit(node.Left) / i.Visit(node.Right)
@@ -199,9 +199,9 @@ func (i *Interpreter) VisitNum(node *Num) float64 {
 
 func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {
 	op := node.Op.Type
-	if op == TokenPLUS {
+	if op == TokenPlus {
 		return +i.Visit(node.Expr)
-	} else if op == TokenMINUS {
+	} else if op == TokenMinus {
 		return -i.Visit(node.Expr)
 	}
 	return 0
@@ -305,28 +305,28 @@ func (i *Interpreter) VisitIf(node *If) float64 {
 
 func (i *Interpreter) VisitLogical(node *Logical) float64 {
 	var b bool
-	if node.Op.Type == TokenOR {
+	if node.Op.Type == TokenOr {
 		b = (i.Visit(node.Left) != 0) || (i.Visit(node.Right) != 0)
 	}
-	if node.Op.Type == TokenAND {
+	if node.Op.Type == TokenAnd {
 		b = (i.Visit(node.Left) != 0) && (i.Visit(node.Right) != 0)
 	}
-	if node.Op.Type == TokenEQUAL {
+	if node.Op.Type == TokenEqual {
 		b = i.Visit(node.Left) == i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenNOTEQUAL {
+	if node.Op.Type == TokenNotEqual {
 		b = i.Visit(node.Left) != i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenGREATER {
+	if node.Op.Type == TokenGreater {
 		b = i.Visit(node.Left) > i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenGREATEREQUAL {
+	if node.Op.Type == TokenGreaterEqual {
 		b = i.Visit(node.Left) >= i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenLESS {
+	if node.Op.Type == TokenLess {
 		b = i.Visit(node.Left) < i.Visit(node.Right)
 	}
-	if node.Op.Type == TokenLESSEQUAL {
+	if node.Op.Type == TokenLessEqual {
 		b = i.Visit(node.Left) <= i.Visit(node.Right)
 	}
 

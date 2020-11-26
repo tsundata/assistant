@@ -41,7 +41,7 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 }
 
 func (p *Parser) Program() (Ast, error) {
-	err := p.Eat(TokenPROGRAM)
+	err := p.Eat(TokenProgram)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (p *Parser) Program() (Ast, error) {
 		return nil, err
 	}
 	programName := varNode.(*Var).Value.(string)
-	err = p.Eat(TokenSEMI)
+	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func (p *Parser) Program() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	programNode := NewProgram(string(programName), blockNode)
-	err = p.Eat(TokenDOT)
+	programNode := NewProgram(programName, blockNode)
+	err = p.Eat(TokenDot)
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +82,8 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 	var declarations [][]Ast
 
 	for true {
-		if p.CurrentToken.Type == TokenVAR {
-			err := p.Eat(TokenVAR)
+		if p.CurrentToken.Type == TokenVar {
+			err := p.Eat(TokenVar)
 			if err != nil {
 				return nil, err
 			}
@@ -93,7 +93,7 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 					return nil, err
 				}
 				declarations = append(declarations, varDecl)
-				err = p.Eat(TokenSEMI)
+				err = p.Eat(TokenSemi)
 				if err != nil {
 					return nil, err
 				}
@@ -103,7 +103,7 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 		}
 	}
 
-	for p.CurrentToken.Type == TokenPROGRAM {
+	for p.CurrentToken.Type == TokenProcedure {
 		procDecl, err := p.ProcedureDeclaration()
 		if err != nil {
 			return nil, err
@@ -122,8 +122,8 @@ func (p *Parser) FormalParameters() ([]Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	for p.CurrentToken.Type == TokenCOMMA {
-		err = p.Eat(TokenCOMMA)
+	for p.CurrentToken.Type == TokenComma {
+		err = p.Eat(TokenComma)
 		if err != nil {
 			return nil, err
 		}
@@ -134,7 +134,7 @@ func (p *Parser) FormalParameters() ([]Ast, error) {
 		}
 	}
 
-	err = p.Eat(TokenCOLON)
+	err = p.Eat(TokenColon)
 	if err != nil {
 		return nil, err
 	}
@@ -161,8 +161,8 @@ func (p *Parser) FormalParameterList() ([]Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenSEMI {
-		err := p.Eat(TokenSEMI)
+	for p.CurrentToken.Type == TokenSemi {
+		err := p.Eat(TokenSemi)
 		if err != nil {
 			return nil, err
 		}
@@ -183,8 +183,8 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenCOMMA {
-		err := p.Eat(TokenCOMMA)
+	for p.CurrentToken.Type == TokenComma {
+		err := p.Eat(TokenComma)
 		if err != nil {
 			return nil, err
 		}
@@ -192,7 +192,7 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		err = p.Eat(TokenID)
 	}
 
-	err = p.Eat(TokenCOLON)
+	err = p.Eat(TokenColon)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +209,7 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 }
 
 func (p *Parser) ProcedureDeclaration() (Ast, error) {
-	err := p.Eat(TokenPROGRAM)
+	err := p.Eat(TokenProcedure)
 	if err != nil {
 		return nil, err
 	}
@@ -220,8 +220,8 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 	}
 
 	var formalParams []Ast
-	if p.CurrentToken.Type == TokenLPAREN {
-		err = p.Eat(TokenLPAREN)
+	if p.CurrentToken.Type == TokenLParen {
+		err = p.Eat(TokenLParen)
 		if err != nil {
 			return nil, err
 		}
@@ -229,13 +229,13 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = p.Eat(TokenRPAREN)
+		err = p.Eat(TokenRParen)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	err = p.Eat(TokenSEMI)
+	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +243,8 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	procDecl := NewProcedureDecl(string(procName), formalParams, blockNode)
-	err = p.Eat(TokenSEMI)
+	procDecl := NewProcedureDecl(procName, formalParams, blockNode)
+	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
 	}
@@ -254,13 +254,13 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 
 func (p *Parser) TypeSpec() (Ast, error) {
 	token := p.CurrentToken
-	if p.CurrentToken.Type == TokenINTEGER {
-		err := p.Eat(TokenINTEGER)
+	if p.CurrentToken.Type == TokenInteger {
+		err := p.Eat(TokenInteger)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := p.Eat(TokenREAL)
+		err := p.Eat(TokenReal)
 		if err != nil {
 			return nil, err
 		}
@@ -270,12 +270,12 @@ func (p *Parser) TypeSpec() (Ast, error) {
 }
 
 func (p *Parser) CompoundStatement() (Ast, error) {
-	err := p.Eat(TokenBEGIN)
+	err := p.Eat(TokenBegin)
 	if err != nil {
 		return nil, err
 	}
 	nodes, err := p.StatementList()
-	err = p.Eat(TokenEND)
+	err = p.Eat(TokenEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -295,8 +295,8 @@ func (p *Parser) StatementList() ([]Ast, error) {
 
 	results := []Ast{node}
 
-	for p.CurrentToken.Type == TokenSEMI {
-		err = p.Eat(TokenSEMI)
+	for p.CurrentToken.Type == TokenSemi {
+		err = p.Eat(TokenSemi)
 		if err != nil {
 			return nil, err
 		}
@@ -311,15 +311,15 @@ func (p *Parser) StatementList() ([]Ast, error) {
 }
 
 func (p *Parser) Statement() (Ast, error) {
-	if p.CurrentToken.Type == TokenBEGIN {
+	if p.CurrentToken.Type == TokenBegin {
 		return p.CompoundStatement()
 	} else if p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(' {
 		return p.ProcallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
-	} else if p.CurrentToken.Type == TokenIF {
+	} else if p.CurrentToken.Type == TokenIf {
 		return p.IfStatement()
-	} else if p.CurrentToken.Type == TokenWHILE {
+	} else if p.CurrentToken.Type == TokenWhile {
 		return p.WhileStatement()
 	} else {
 		return p.Empty()
@@ -327,7 +327,7 @@ func (p *Parser) Statement() (Ast, error) {
 }
 
 func (p *Parser) WhileStatement() (Ast, error) {
-	err := p.Eat(TokenWHILE)
+	err := p.Eat(TokenWhile)
 	if err != nil {
 		return nil, err
 	}
@@ -336,7 +336,7 @@ func (p *Parser) WhileStatement() (Ast, error) {
 		return nil, err
 	}
 
-	err = p.Eat(TokenDO)
+	err = p.Eat(TokenDo)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +346,7 @@ func (p *Parser) WhileStatement() (Ast, error) {
 		return nil, err
 	}
 
-	err = p.Eat(TokenEND)
+	err = p.Eat(TokenEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -355,7 +355,7 @@ func (p *Parser) WhileStatement() (Ast, error) {
 }
 
 func (p *Parser) IfStatement() (Ast, error) {
-	err := p.Eat(TokenIF)
+	err := p.Eat(TokenIf)
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +364,7 @@ func (p *Parser) IfStatement() (Ast, error) {
 		return nil, err
 	}
 
-	err = p.Eat(TokenTHEN)
+	err = p.Eat(TokenThen)
 	if err != nil {
 		return nil, err
 	}
@@ -375,8 +375,8 @@ func (p *Parser) IfStatement() (Ast, error) {
 	}
 
 	var elseBranch Ast
-	if p.CurrentToken.Type == TokenELSE {
-		err := p.Eat(TokenELSE)
+	if p.CurrentToken.Type == TokenElse {
+		err := p.Eat(TokenElse)
 		if err != nil {
 			return nil, err
 		}
@@ -386,7 +386,7 @@ func (p *Parser) IfStatement() (Ast, error) {
 		}
 	}
 
-	err = p.Eat(TokenEND)
+	err = p.Eat(TokenEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -404,9 +404,9 @@ func (p *Parser) LogicOr() (Ast, error) {
 		return 0, err
 	}
 
-	for p.CurrentToken.Type == TokenOR {
+	for p.CurrentToken.Type == TokenOr {
 		token := p.CurrentToken
-		err = p.Eat(TokenOR)
+		err = p.Eat(TokenOr)
 		if err != nil {
 			return nil, err
 		}
@@ -426,9 +426,9 @@ func (p *Parser) LogicAnd() (Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenAND {
+	for p.CurrentToken.Type == TokenAnd {
 		token := p.CurrentToken
-		err = p.Eat(TokenAND)
+		err = p.Eat(TokenAnd)
 		if err != nil {
 			return nil, err
 		}
@@ -448,7 +448,7 @@ func (p *Parser) Equality() (Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenEQUAL || p.CurrentToken.Type == TokenNOTEQUAL {
+	for p.CurrentToken.Type == TokenEqual || p.CurrentToken.Type == TokenNotEqual {
 		token := p.CurrentToken
 
 		err = p.Eat(p.CurrentToken.Type)
@@ -472,8 +472,8 @@ func (p *Parser) Comparison() (Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenGREATER || p.CurrentToken.Type == TokenGREATEREQUAL ||
-		p.CurrentToken.Type == TokenLESS || p.CurrentToken.Type == TokenLESSEQUAL {
+	for p.CurrentToken.Type == TokenGreater || p.CurrentToken.Type == TokenGreaterEqual ||
+		p.CurrentToken.Type == TokenLess || p.CurrentToken.Type == TokenLessEqual {
 		token := p.CurrentToken
 
 		err = p.Eat(p.CurrentToken.Type)
@@ -499,12 +499,12 @@ func (p *Parser) ProcallStatement() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = p.Eat(TokenLPAREN)
+	err = p.Eat(TokenLParen)
 	if err != nil {
 		return nil, err
 	}
 	var actualParams []Ast
-	if p.CurrentToken.Type != TokenRPAREN {
+	if p.CurrentToken.Type != TokenRParen {
 		node, err := p.Expr()
 		if err != nil {
 			return nil, err
@@ -512,8 +512,8 @@ func (p *Parser) ProcallStatement() (Ast, error) {
 		actualParams = append(actualParams, node)
 	}
 
-	for p.CurrentToken.Type == TokenCOMMA {
-		err := p.Eat(TokenCOMMA)
+	for p.CurrentToken.Type == TokenComma {
+		err := p.Eat(TokenComma)
 		if err != nil {
 			return nil, err
 		}
@@ -524,7 +524,7 @@ func (p *Parser) ProcallStatement() (Ast, error) {
 		actualParams = append(actualParams, node)
 	}
 
-	err = p.Eat(TokenRPAREN)
+	err = p.Eat(TokenRParen)
 	if err != nil {
 		return nil, err
 	}
@@ -538,7 +538,7 @@ func (p *Parser) AssignmentStatement() (Ast, error) {
 		return nil, err
 	}
 	token := p.CurrentToken
-	err = p.Eat(TokenASSIGN)
+	err = p.Eat(TokenAssign)
 	if err != nil {
 		return nil, err
 	}
@@ -566,7 +566,7 @@ func (p *Parser) Expr() (Ast, error) {
 		return 0, err
 	}
 
-	for p.CurrentToken.Type == TokenPLUS || p.CurrentToken.Type == TokenMINUS {
+	for p.CurrentToken.Type == TokenPlus || p.CurrentToken.Type == TokenMinus {
 		token := p.CurrentToken
 
 		err = p.Eat(p.CurrentToken.Type)
@@ -590,7 +590,7 @@ func (p *Parser) Term() (Ast, error) {
 		return nil, err
 	}
 
-	for p.CurrentToken.Type == TokenMULTIPLY || p.CurrentToken.Type == TokenINTEGERDIV || p.CurrentToken.Type == TokenFLOATDIV {
+	for p.CurrentToken.Type == TokenMultiply || p.CurrentToken.Type == TokenIntegerDiv || p.CurrentToken.Type == TokenFloatDiv {
 		token := p.CurrentToken
 
 		err = p.Eat(p.CurrentToken.Type)
@@ -610,8 +610,8 @@ func (p *Parser) Term() (Ast, error) {
 
 func (p *Parser) Factor() (Ast, error) {
 	token := p.CurrentToken
-	if token.Type == TokenPLUS {
-		err := p.Eat(TokenPLUS)
+	if token.Type == TokenPlus {
+		err := p.Eat(TokenPlus)
 		if err != nil {
 			return nil, err
 		}
@@ -622,8 +622,8 @@ func (p *Parser) Factor() (Ast, error) {
 		node := NewUnaryOp(token, i)
 		return node, nil
 	}
-	if token.Type == TokenMINUS {
-		err := p.Eat(TokenMINUS)
+	if token.Type == TokenMinus {
+		err := p.Eat(TokenMinus)
 		if err != nil {
 			return nil, err
 		}
@@ -634,22 +634,22 @@ func (p *Parser) Factor() (Ast, error) {
 		node := NewUnaryOp(token, i)
 		return node, nil
 	}
-	if token.Type == TokenINTEGERCONST {
-		err := p.Eat(TokenINTEGERCONST)
+	if token.Type == TokenIntegerConst {
+		err := p.Eat(TokenIntegerConst)
 		if err != nil {
 			return nil, err
 		}
 		return NewNum(token), nil
 	}
-	if token.Type == TokenREALCONST {
-		err := p.Eat(TokenREALCONST)
+	if token.Type == TokenRealConst {
+		err := p.Eat(TokenRealConst)
 		if err != nil {
 			return nil, err
 		}
 		return NewNum(token), nil
 	}
-	if token.Type == TokenLPAREN {
-		err := p.Eat(TokenLPAREN)
+	if token.Type == TokenLParen {
+		err := p.Eat(TokenLParen)
 		if err != nil {
 			return nil, err
 		}
@@ -657,7 +657,7 @@ func (p *Parser) Factor() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = p.Eat(TokenRPAREN)
+		err = p.Eat(TokenRParen)
 		if err != nil {
 			return nil, err
 		}
