@@ -56,7 +56,7 @@ func (l *Lexer) SkipWhitespace() {
 }
 
 func (l *Lexer) SkipComment() {
-	for l.CurrentChar != '}' {
+	for l.CurrentChar != '\n' && l.Pos != len(l.Text) {
 		l.Advance()
 	}
 	l.Advance()
@@ -126,7 +126,8 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.SkipWhitespace()
 			continue
 		}
-		if l.CurrentChar == '{' {
+		if l.CurrentChar == '/' && l.Peek() == '/' {
+			l.Advance()
 			l.Advance()
 			l.SkipComment()
 			continue

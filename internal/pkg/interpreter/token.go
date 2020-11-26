@@ -61,7 +61,7 @@ var ReservedKeywords = map[string]Token{
 	"PROCEDURE": {Type: TokenProcedure, Value: TokenProcedure},
 	"VAR":       {Type: TokenVar, Value: TokenVar},
 	"DIV":       {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
-	"INTEGER":   {Type: TokenInteger, Value: TokenInteger},
+	"INT":       {Type: TokenInteger, Value: TokenInteger},
 	"FLOAT":     {Type: TokenFloat, Value: TokenFloat},
 	"BEGIN":     {Type: TokenBegin, Value: TokenBegin},
 	"END":       {Type: TokenEnd, Value: TokenEnd},

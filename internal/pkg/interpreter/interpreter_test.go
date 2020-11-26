@@ -33,11 +33,11 @@ func run(t *testing.T, text string) {
 func TestInterpreter(t *testing.T) {
 	text := `PROGRAM Part10;
 VAR
-   number     : INTEGER;
-   a, b, c, x : INTEGER;
+   number     : INT;
+   a, b, c, x : INT;
    y          : FLOAT;
 
-BEGIN {Part10}
+BEGIN //Part10
    BEGIN
       number := 2;
       a := number;
@@ -46,76 +46,76 @@ BEGIN {Part10}
    END;
    x := 11;
    y := 20 / 7 + 3.14;
-   { writeln('a = ', a); }
-   { writeln('b = ', b); }
-   { writeln('c = ', c); }
-   { writeln('number = ', number); }
-   { writeln('x = ', x); }
-   { writeln('y = ', y); }
-END.  {Part10}`
+   // writeln('a = ', a); 
+   // writeln('b = ', b); 
+   // writeln('c = ', c); 
+   // writeln('number = ', number); 
+   // writeln('x = ', x); 
+   // writeln('y = ', y); 
+END.  //Part10`
 	run(t, text)
 }
 
 func TestInterpreterProcedure(t *testing.T) {
 	text := `PROGRAM Part12;
 VAR
-   a : INTEGER;
+   a : INT;
 
 PROCEDURE P1;
 VAR
    a : FLOAT;
-   k : INTEGER;
+   k : INT;
 
    PROCEDURE P2;
    VAR
-      a, z : INTEGER;
-   BEGIN {P2}
+      a, z : INT;
+   BEGIN //P2
       z := 777;
-   END;  {P2}
+   END;  //P2
 
-BEGIN {P1}
+BEGIN //P1
 
-END;  {P1}
+END;  //P1
 
-BEGIN {Part12}
+BEGIN //Part12
    a := 10;
-END.  {Part12}`
+END.  //Part12`
 	run(t, text)
 }
 
 func TestInterpreterNestedScopes(t *testing.T) {
 	text := `program Main;
    var b, x, y : FLOAT;
-   var z : integer;
+   var z : INT;
 
-   procedure AlphaA(a : integer);
-      var b : integer;
+   procedure AlphaA(a : INT);
+      var b : INT;
 
-      procedure Beta(c : integer);
-         var y : integer;
+      procedure Beta(c : INT);
+         var y : INT;
 
-         procedure Gamma(c : integer);
-            var x : integer;
-         begin { Gamma }
+         procedure Gamma(c : INT);
+            var x : INT;
+         begin // Gamma 
             x := a + b + c + x + y + z;
-         end;  { Gamma }
+         end;  // Gamma 
 
-      begin { Beta }
+      begin // Beta 
 
-      end;  { Beta }
+      end;  // Beta 
 
-   begin { AlphaA }
+   begin // AlphaA 
 
-   end;  { AlphaA }
+   end;  // AlphaA 
 
-   procedure AlphaB(a : integer);
+   procedure AlphaB(a : INT);
       var c : FLOAT;
-   begin { AlphaB }
+   begin // AlphaB 
       c := a + b;
-   end;  { AlphaB }
+   end;  // AlphaB 
 
-begin { Main }
-end.  { Main }`
+begin // Main 
+end.  // Main `
 	run(t, text)
 }
 
@@ -128,7 +128,7 @@ func TestInterpreterNameError1(t *testing.T) {
 
 	text := `PROGRAM NameError1;
 VAR
-   a : INTEGER;
+   a : INT;
 
 BEGIN
    a := 2 + b;
@@ -145,7 +145,7 @@ func TestInterpreterNameError2(t *testing.T) {
 
 	text := `PROGRAM NameError2;
 VAR
-   b : INTEGER;
+   b : INT;
 
 BEGIN
    b := 1;
@@ -157,25 +157,25 @@ END.`
 func TestInterpreterProcedureCall(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : integer; b : integer);
-var x : integer;
+procedure Alpha(a : INT; b : INT);
+var x : INT;
 begin
    x := (a + b ) * 2;
 end;
 
-begin { Main }
+begin // Main 
 
-   Alpha(3 + 5, 7);  { procedure call }
+   Alpha(3 + 5, 7);  // procedure call 
 
-end.  { Main }`
+end.  // Main `
 	run(t, text)
 }
 
 func TestInterpreterProcedureCall2(t *testing.T) {
 	text := `program exProcedure;
-var a, b, c,  min: integer;
+var a, b, c,  min: INT;
 
-procedure findMin(x, y, z: integer;  m: integer);  { Finds the minimum of the 3 values }
+procedure findMin(x, y, z: INT;  m: INT);  // Finds the minimum of the 3 values 
 begin
    if x < y then
       m := x
@@ -186,52 +186,52 @@ begin
    if z < m then
       m := z
    end;
-end; { end of procedure findMin }  
+end; // end of procedure findMin   
 
 begin
    	a := 1;
 	b := 2;
 	c := 3;
-   	findMin(a, b, c, min); { Procedure call }
+   	findMin(a, b, c, min); // Procedure call 
 end.`
 	run(t, text)
 }
 
 func TestInterpreterCallStack(t *testing.T) {
 	text := `program Main;
-var x, y : integer;
-begin { Main }
+var x, y : INT;
+begin // Main 
    y := 7;
    x := (y + 3) * 3;
-end.  { Main }`
+end.  // Main `
 	run(t, text)
 }
 
 func TestInterpreterExecutingProcedureCalls(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : integer; b : integer);
-var x : integer;
+procedure Alpha(a : INT; b : INT);
+var x : INT;
 begin
    x := (a + b ) * 2;
 end;
 
-begin { Main }
+begin // Main 
 
-   Alpha(3 + 5, 7);  { procedure call }
+   Alpha(3 + 5, 7);  // procedure call 
 
-end.  { Main }`
+end.  // Main `
 	run(t, text)
 }
 
 func TestInterpreterNestedProcedureCalls(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : integer; b : integer);
-var x : integer;
+procedure Alpha(a : INT; b : INT);
+var x : INT;
 
-   procedure Beta(a : integer; b : integer);
-   var x : integer;
+   procedure Beta(a : INT; b : INT);
+   var x : INT;
    begin
       x := a * 10 + b * 2;
    end;
@@ -239,35 +239,35 @@ var x : integer;
 begin
    x := (a + b ) * 2;
 
-   Beta(5, 10);      { procedure call }
+   Beta(5, 10);      // procedure call 
 end;
 
-begin { Main }
+begin // Main 
 
-   Alpha(3 + 5, 7);  { procedure call }
+   Alpha(3 + 5, 7);  // procedure call 
 
-end.  { Main }`
+end.  // Main `
 	run(t, text)
 }
 
 func TestInterpreterIf(t *testing.T) {
 	text := `program Main;
-var x, y : integer;
-begin { Main }
+var x, y : INT;
+begin // Main 
    	y := 7;
    	x := (y + 3) * 3;
 	if x < y and x > y or y > 0 then
-		{ then branch }
+		// then branch 
 	else
-		{ else branch }
+		// else branch 
 	end
-end.  { Main }`
+end.  // Main `
 	run(t, text)
 }
 
 func TestInterpreterWhile(t *testing.T) {
 	text := `program whileLoop;
-var a: integer;
+var a: INT;
 
 begin
    a := 1;
