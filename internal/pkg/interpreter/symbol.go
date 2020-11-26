@@ -194,6 +194,14 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitProcedureCall(n)
 		return
 	}
+	if n, ok := node.(*If); ok {
+		b.VisitIf(n)
+		return
+	}
+	if n, ok := node.(*Logical); ok {
+		b.VisitLogical(n)
+		return
+	}
 }
 
 func (b *SemanticAnalyzer) VisitBlock(node *Block) {
@@ -303,4 +311,14 @@ func (b *SemanticAnalyzer) VisitProcedureCall(node *ProcedureCall) {
 	}
 
 	node.ProcSymbol = procSymbol
+}
+
+func (b *SemanticAnalyzer) VisitIf(node *If) {
+	b.Visit(node.ThenBranch)
+	b.Visit(node.ElseBranch)
+}
+
+func (b *SemanticAnalyzer) VisitLogical(node *Logical) {
+	b.Visit(node.Left)
+	b.Visit(node.Right)
 }

@@ -137,3 +137,23 @@ type ProcedureCall struct {
 func NewProcedureCall(procName string, actualParams []Ast, token *Token) *ProcedureCall {
 	return &ProcedureCall{ProcName: procName, ActualParams: actualParams, Token: token}
 }
+
+type If struct {
+	Condition  Ast
+	ThenBranch Ast
+	ElseBranch Ast
+}
+
+func NewIf(condition Ast, thenBranch Ast, elseBranch Ast) *If {
+	return &If{Condition: condition, ThenBranch: thenBranch, ElseBranch: elseBranch}
+}
+
+type Logical struct {
+	Left  Ast
+	Op    *Token
+	Right Ast
+}
+
+func NewLogical(left Ast, op *Token, right Ast) *Logical {
+	return &Logical{Left: left, Op: op, Right: right}
+}

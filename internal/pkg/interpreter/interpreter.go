@@ -128,6 +128,12 @@ func (i *Interpreter) Visit(node Ast) float64 {
 	if n, ok := node.(*ProcedureCall); ok {
 		return i.VisitProcedureCall(n)
 	}
+	if n, ok := node.(*If); ok {
+		return i.VisitIf(n)
+	}
+	if n, ok := node.(*Logical); ok {
+		return i.VisitLogical(n)
+	}
 
 	return 0
 }
@@ -272,6 +278,48 @@ func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 	i.callStack.Pop()
 
 	return 0
+}
+
+func (i *Interpreter) VisitIf(node *If) float64 {
+	if i.Visit(node.Condition) != 0 {
+		return i.Visit(node.ThenBranch)
+	} else {
+		return i.Visit(node.ElseBranch)
+	}
+}
+
+func (i *Interpreter) VisitLogical(node *Logical) float64 {
+	var b bool
+	if node.Op.Type == TokenOR {
+		b = (i.Visit(node.Left) != 0) || (i.Visit(node.Right) != 0)
+	}
+	if node.Op.Type == TokenAND {
+		b = (i.Visit(node.Left) != 0) && (i.Visit(node.Right) != 0)
+	}
+	if node.Op.Type == TokenEQUAL {
+		b = i.Visit(node.Left) == i.Visit(node.Right)
+	}
+	if node.Op.Type == TokenNOTEQUAL {
+		b = i.Visit(node.Left) != i.Visit(node.Right)
+	}
+	if node.Op.Type == TokenGREATER {
+		b = i.Visit(node.Left) > i.Visit(node.Right)
+	}
+	if node.Op.Type == TokenGREATEREQUAL {
+		b = i.Visit(node.Left) >= i.Visit(node.Right)
+	}
+	if node.Op.Type == TokenLESS {
+		b = i.Visit(node.Left) < i.Visit(node.Right)
+	}
+	if node.Op.Type == TokenLESSEQUAL {
+		b = i.Visit(node.Left) <= i.Visit(node.Right)
+	}
+
+	if b {
+		return 1
+	} else {
+		return 0
+	}
 }
 
 func (i *Interpreter) Interpret() (float64, error) {

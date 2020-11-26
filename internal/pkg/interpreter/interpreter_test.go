@@ -224,6 +224,21 @@ end.  { Main }`
 	run(t, text)
 }
 
+func TestInterpreterIf(t *testing.T) {
+	text := `program Main;
+var x, y : integer;
+begin { Main }
+   	y := 7;
+   	x := (y + 3) * 3;
+	if x < y and x > y or y > 0 then
+		{ then branch }
+	else
+		{ else branch }
+	end
+end.  { Main }`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

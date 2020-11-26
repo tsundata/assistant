@@ -317,9 +317,148 @@ func (p *Parser) Statement() (Ast, error) {
 		return p.ProcallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
+	} else if p.CurrentToken.Type == TokenIF {
+		return p.IfStatement()
 	} else {
 		return p.Empty()
 	}
+}
+
+func (p *Parser) IfStatement() (Ast, error) {
+	err := p.Eat(TokenIF)
+	if err != nil {
+		return nil, err
+	}
+	condition, err := p.Expression()
+	if err != nil {
+		return nil, err
+	}
+
+	err = p.Eat(TokenTHEN)
+	if err != nil {
+		return nil, err
+	}
+
+	thenBranch, err := p.Statement()
+	if err != nil {
+		return nil, err
+	}
+
+	var elseBranch Ast
+	if p.CurrentToken.Type == TokenELSE {
+		err := p.Eat(TokenELSE)
+		if err != nil {
+			return nil, err
+		}
+		elseBranch, err = p.Statement()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = p.Eat(TokenEND)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewIf(condition, thenBranch, elseBranch), nil
+}
+
+func (p *Parser) Expression() (Ast, error) {
+	return p.LogicOr()
+}
+
+func (p *Parser) LogicOr() (Ast, error) {
+	node, err := p.LogicAnd()
+	if err != nil {
+		return 0, err
+	}
+
+	for p.CurrentToken.Type == TokenOR {
+		token := p.CurrentToken
+		err = p.Eat(TokenOR)
+		if err != nil {
+			return nil, err
+		}
+		right, err := p.LogicAnd()
+		if err != nil {
+			return nil, err
+		}
+		node = NewLogical(node, token, right)
+	}
+
+	return node, nil
+}
+
+func (p *Parser) LogicAnd() (Ast, error) {
+	node, err := p.Equality()
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenAND {
+		token := p.CurrentToken
+		err = p.Eat(TokenAND)
+		if err != nil {
+			return nil, err
+		}
+		right, err := p.Equality()
+		if err != nil {
+			return nil, err
+		}
+		node = NewLogical(node, token, right)
+	}
+
+	return node, nil
+}
+
+func (p *Parser) Equality() (Ast, error) {
+	node, err := p.Comparison()
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenEQUAL || p.CurrentToken.Type == TokenNOTEQUAL {
+		token := p.CurrentToken
+
+		err = p.Eat(p.CurrentToken.Type)
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := p.Comparison()
+		if err != nil {
+			return nil, err
+		}
+		node = NewLogical(node, token, right)
+	}
+
+	return node, nil
+}
+
+func (p *Parser) Comparison() (Ast, error) {
+	node, err := p.Expr()
+	if err != nil {
+		return nil, err
+	}
+
+	for p.CurrentToken.Type == TokenGREATER || p.CurrentToken.Type == TokenGREATEREQUAL ||
+		p.CurrentToken.Type == TokenLESS || p.CurrentToken.Type == TokenLESSEQUAL {
+		token := p.CurrentToken
+
+		err = p.Eat(p.CurrentToken.Type)
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := p.Expr()
+		if err != nil {
+			return nil, err
+		}
+		node = NewLogical(node, token, right)
+	}
+
+	return node, nil
 }
 
 func (p *Parser) ProcallStatement() (Ast, error) {
@@ -399,17 +538,10 @@ func (p *Parser) Expr() (Ast, error) {
 
 	for p.CurrentToken.Type == TokenPLUS || p.CurrentToken.Type == TokenMINUS {
 		token := p.CurrentToken
-		if token.Type == TokenPLUS {
-			err = p.Eat(TokenPLUS)
-			if err != nil {
-				return nil, err
-			}
-		}
-		if token.Type == TokenMINUS {
-			err = p.Eat(TokenMINUS)
-			if err != nil {
-				return nil, err
-			}
+
+		err = p.Eat(p.CurrentToken.Type)
+		if err != nil {
+			return nil, err
 		}
 
 		right, err := p.Term()
@@ -430,23 +562,10 @@ func (p *Parser) Term() (Ast, error) {
 
 	for p.CurrentToken.Type == TokenMULTIPLY || p.CurrentToken.Type == TokenINTEGERDIV || p.CurrentToken.Type == TokenFLOATDIV {
 		token := p.CurrentToken
-		if token.Type == TokenMULTIPLY {
-			err = p.Eat(TokenMULTIPLY)
-			if err != nil {
-				return nil, err
-			}
-		}
-		if token.Type == TokenINTEGERDIV {
-			err = p.Eat(TokenINTEGERDIV)
-			if err != nil {
-				return nil, err
-			}
-		}
-		if token.Type == TokenFLOATDIV {
-			err = p.Eat(TokenFLOATDIV)
-			if err != nil {
-				return nil, err
-			}
+
+		err = p.Eat(p.CurrentToken.Type)
+		if err != nil {
+			return nil, err
 		}
 
 		right, err := p.Factor()

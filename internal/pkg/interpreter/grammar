@@ -1,45 +1,58 @@
-program : PROGRAM variable SEMI block DOT
+program : "program" variable ";" block "."
 
 block : declarations compound_statement
 
-declarations : (VAR (variable_declaration SEMI)+)* procedure_declaration*
+declarations : ( "var" ( variable_declaration ";" )+ )* procedure_declaration*
 
-variable_declaration : ID (COMMA ID)* COLON type_spec
+variable_declaration : ID ( "," ID )* ":" type_spec
 
-procedure_declaration : PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
+procedure_declaration : "procedure" ID ( "(" formal_parameter_list ")" )? ";" block ";"
 
 formal_params_list : formal_parameters
-					  | formal_parameters SEMI formal_parameter_list
+				   | formal_parameters ";" formal_parameter_list
 
-formal_parameters : ID (COMMA ID)* COLON type_spec
+formal_parameters : ID ( "," ID )* ":" type_spec
 
 type_spec : INTEGER | REAL
 
-compound_statement : BEGIN statement_list END
+compound_statement : "begin" statement_list "end"
 
 statement_list : statement
-				  | statement SEMI statement_list
+			   | statement ";" statement_list
 
 statement : compound_statement
-			 | proccall_statement
-		     | assignment_statement
-			 | empty
+		  | proccall_statement
+		  | assignment_statement
+		  | if_statement
+		  | empty
 
-proccall_statement : ID LPAREN (expr (COMMA expr)*)? RPAREN
+if_statement : "if" expression "then" statement ( "else" statement )? "end"
 
-assignment_statement : variable ASSIGN expr
+expression : logic_or
+
+logic_or : logic_and ( "or" logic_and )*
+
+logic_and : equality ( "and" equality )*
+
+equality : comparison ( ( "!=" | "==" ) comparison )*
+
+comparison : expr ( ( ">" | ">=" | "<" | "<=" ) expr )*
+
+proccall_statement : ID "(" ( expr ( "," expr )* )? ")"
+
+assignment_statement : variable ":=" expr
 
 empty :
 
-expr : term ((PLUS | MINUS) term)*
+expr : term ( ( "+" | "-" ) term )*
 
-term : factor ((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
+term : factor ( ( "*" | "DIV" | "/" ) factor )*
 
-factor : PLUS factor
-	      | MINUS factor
-	      | INTEGER_CONST
-	      | REAL_CONST
-	      | LPAREN expr RPAREN
-	      | variable
+factor : "+" factor
+       | "-" factor
+       | INTEGER_CONST
+       | REAL_CONST
+       | "(" expr ")"
+       | variable
 
 variable : ID
