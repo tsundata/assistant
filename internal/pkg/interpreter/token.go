@@ -17,7 +17,7 @@ const (
 	TokenComma        = ","
 	TokenProgram      = "PROGRAM"
 	TokenInteger      = "INTEGER"
-	TokenReal         = "REAL"
+	TokenFloat        = "FLOAT"
 	TokenIntegerDiv   = "DIV"
 	TokenVar          = "VAR"
 	TokenProcedure    = "PROCEDURE"
@@ -25,7 +25,7 @@ const (
 	TokenEnd          = "END"
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
-	TokenRealConst    = "REAL_CONST"
+	TokenFloatConst   = "FLOAT_CONST"
 	TokenAssign       = ":="
 	TokenEOF          = "EOF"
 	TokenIf           = "IF"
@@ -62,7 +62,7 @@ var ReservedKeywords = map[string]Token{
 	"VAR":       {Type: TokenVar, Value: TokenVar},
 	"DIV":       {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
 	"INTEGER":   {Type: TokenInteger, Value: TokenInteger},
-	"REAL":      {Type: TokenReal, Value: TokenReal},
+	"FLOAT":     {Type: TokenFloat, Value: TokenFloat},
 	"BEGIN":     {Type: TokenBegin, Value: TokenBegin},
 	"END":       {Type: TokenEnd, Value: TokenEnd},
 	"IF":        {Type: TokenIf, Value: TokenIf},

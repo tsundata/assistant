@@ -13,7 +13,7 @@ formal_params_list : formal_parameters
 
 formal_parameters : ID ( "," ID )* ":" type_spec
 
-type_spec : INTEGER | REAL
+type_spec : INTEGER | FLOAT
 
 compound_statement : "begin" statement_list "end"
 
@@ -54,8 +54,15 @@ term : factor ( ( "*" | "DIV" | "/" ) factor )*
 factor : "+" factor
        | "-" factor
        | INTEGER_CONST
-       | REAL_CONST
+       | FLOAT_CONST
        | "(" expr ")"
        | variable
 
 variable : ID
+
+
+NUMBER : DIGIT+ ( "." DIGIT+ )?
+STRING : "\"" <any char except "\"">* "\""
+ID     : ALPHA ( ALPHA | DIGIT )*
+ALPHA  : "a" ... "z" | "A" ... "Z" | "_"
+DIGIT  : "0" ... "9"

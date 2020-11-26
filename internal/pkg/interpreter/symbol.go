@@ -67,7 +67,7 @@ func NewScopedSymbolTable(scopeName string, scopeLevel int, enclosingScope *Scop
 		EnclosingScope: enclosingScope,
 	}
 	table.Insert(NewBuiltinTypeSymbol("INTEGER"))
-	table.Insert(NewBuiltinTypeSymbol("REAL"))
+	table.Insert(NewBuiltinTypeSymbol("FLOAT"))
 	return table
 }
 

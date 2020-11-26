@@ -35,7 +35,7 @@ func TestInterpreter(t *testing.T) {
 VAR
    number     : INTEGER;
    a, b, c, x : INTEGER;
-   y          : REAL;
+   y          : FLOAT;
 
 BEGIN {Part10}
    BEGIN
@@ -63,7 +63,7 @@ VAR
 
 PROCEDURE P1;
 VAR
-   a : REAL;
+   a : FLOAT;
    k : INTEGER;
 
    PROCEDURE P2;
@@ -85,7 +85,7 @@ END.  {Part12}`
 
 func TestInterpreterNestedScopes(t *testing.T) {
 	text := `program Main;
-   var b, x, y : real;
+   var b, x, y : FLOAT;
    var z : integer;
 
    procedure AlphaA(a : integer);
@@ -109,7 +109,7 @@ func TestInterpreterNestedScopes(t *testing.T) {
    end;  { AlphaA }
 
    procedure AlphaB(a : integer);
-      var c : real;
+      var c : FLOAT;
    begin { AlphaB }
       c := a + b;
    end;  { AlphaB }

@@ -260,7 +260,7 @@ func (p *Parser) TypeSpec() (Ast, error) {
 			return nil, err
 		}
 	} else {
-		err := p.Eat(TokenReal)
+		err := p.Eat(TokenFloat)
 		if err != nil {
 			return nil, err
 		}
@@ -641,8 +641,8 @@ func (p *Parser) Factor() (Ast, error) {
 		}
 		return NewNum(token), nil
 	}
-	if token.Type == TokenRealConst {
-		err := p.Eat(TokenRealConst)
+	if token.Type == TokenFloatConst {
+		err := p.Eat(TokenFloatConst)
 		if err != nil {
 			return nil, err
 		}

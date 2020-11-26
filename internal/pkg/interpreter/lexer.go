@@ -85,7 +85,7 @@ func (l *Lexer) Number() (*Token, error) {
 			return nil, err
 		}
 
-		token.Type = TokenRealConst
+		token.Type = TokenFloatConst
 		token.Value = f
 	} else {
 		i, err := strconv.Atoi(string(result))
