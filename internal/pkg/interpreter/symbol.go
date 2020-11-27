@@ -19,7 +19,7 @@ func NewVarSymbol(name string, t Symbol) *VarSymbol {
 }
 
 func (s *VarSymbol) String() string {
-	return fmt.Sprintf("<VarSymbol(name=%s:type=%v)>", s.Name, s.Type)
+	return fmt.Sprintf("<VarSymbol(name=%s, type=%v)>", s.Name, s.Type)
 }
 
 type BuiltinTypeSymbol struct {
@@ -36,7 +36,7 @@ func (s *BuiltinTypeSymbol) String() string {
 	return fmt.Sprintf("<BuiltinTypeSymbol(name=%s)>", s.Name)
 }
 
-type ProcedureSymbol struct {
+type FunctionSymbol struct {
 	Name         string
 	Type         Symbol
 	FormalParams []Ast
@@ -44,12 +44,12 @@ type ProcedureSymbol struct {
 	ScopeLevel   int
 }
 
-func NewProcedureSymbol(name string) *ProcedureSymbol {
-	return &ProcedureSymbol{Name: name, ScopeLevel: 0}
+func NewFunctionSymbol(name string) *FunctionSymbol {
+	return &FunctionSymbol{Name: name, ScopeLevel: 0}
 }
 
-func (s *ProcedureSymbol) String() string {
-	return fmt.Sprintf("<ProcedureSymbol(name=%s, parameters=%v)>", s.Name, s.FormalParams)
+func (s *FunctionSymbol) String() string {
+	return fmt.Sprintf("<FunctionSymbol(name=%s, parameters=%v)>", s.Name, s.FormalParams)
 }
 
 type ScopedSymbolTable struct {
@@ -112,7 +112,7 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 		t.symbols.Set(name, s)
 		return
 	}
-	if s, ok := symbol.(*ProcedureSymbol); ok {
+	if s, ok := symbol.(*FunctionSymbol); ok {
 		name = s.Name
 		s.ScopeLevel = t.ScopeLevel
 		t.symbols.Set(name, s)
@@ -170,8 +170,8 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitNoOp(n)
 		return
 	}
-	if n, ok := node.(*ProcedureDecl); ok {
-		b.VisitProcedureDecl(n)
+	if n, ok := node.(*FunctionDecl); ok {
+		b.VisitFunctionDecl(n)
 		return
 	}
 	if n, ok := node.(*BinOp); ok {
@@ -190,8 +190,8 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitVar(n)
 		return
 	}
-	if n, ok := node.(*ProcedureCall); ok {
-		b.VisitProcedureCall(n)
+	if n, ok := node.(*FunctionCall); ok {
+		b.VisitFunctionCall(n)
 		return
 	}
 	if n, ok := node.(*While); ok {
@@ -241,14 +241,14 @@ func (b *SemanticAnalyzer) VisitNoOp(node *NoOp) {
 	// pass
 }
 
-func (b *SemanticAnalyzer) VisitProcedureDecl(node *ProcedureDecl) {
+func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 	procName := node.ProcName
-	procSymbol := NewProcedureSymbol(procName)
+	procSymbol := NewFunctionSymbol(procName)
 	b.CurrentScope.Insert(procSymbol)
 
 	fmt.Printf("ENTER scope: %s\n", procName)
-	procedureScope := NewScopedSymbolTable(procName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
-	b.CurrentScope = procedureScope
+	functionScope := NewScopedSymbolTable(procName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
+	b.CurrentScope = functionScope
 
 	for _, param := range node.FormalParams {
 		paramType := b.CurrentScope.Lookup(param.(*Param).TypeNode.(*Type).Value.(string), false)
@@ -260,7 +260,7 @@ func (b *SemanticAnalyzer) VisitProcedureDecl(node *ProcedureDecl) {
 
 	b.Visit(node.BlockNode)
 
-	fmt.Println(procedureScope.String())
+	fmt.Println(functionScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
 	fmt.Printf("LEAVE scope: %s\n", procName)
@@ -298,11 +298,11 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 	}
 }
 
-func (b *SemanticAnalyzer) VisitProcedureCall(node *ProcedureCall) {
+func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
 	procSymbol := b.CurrentScope.Lookup(node.ProcName, false)
 	var formalParams []Ast
 	if procSymbol != nil {
-		formalParams = procSymbol.(*ProcedureSymbol).FormalParams
+		formalParams = procSymbol.(*FunctionSymbol).FormalParams
 	}
 	actualParams := node.ActualParams
 

@@ -103,8 +103,8 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 		}
 	}
 
-	for p.CurrentToken.Type == TokenProcedure {
-		procDecl, err := p.ProcedureDeclaration()
+	for p.CurrentToken.Type == TokenFunction {
+		procDecl, err := p.FunctionDeclaration()
 		if err != nil {
 			return nil, err
 		}
@@ -208,8 +208,8 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 	return varDeclarations, nil
 }
 
-func (p *Parser) ProcedureDeclaration() (Ast, error) {
-	err := p.Eat(TokenProcedure)
+func (p *Parser) FunctionDeclaration() (Ast, error) {
+	err := p.Eat(TokenFunction)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +243,7 @@ func (p *Parser) ProcedureDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	procDecl := NewProcedureDecl(procName, formalParams, blockNode)
+	procDecl := NewFunctionDecl(procName, formalParams, blockNode)
 	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
@@ -328,7 +328,7 @@ func (p *Parser) Statement() (Ast, error) {
 	if p.CurrentToken.Type == TokenBegin {
 		return p.CompoundStatement()
 	} else if p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(' {
-		return p.ProcallStatement()
+		return p.FunctionCallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
 	} else if p.CurrentToken.Type == TokenPrint {
@@ -520,7 +520,7 @@ func (p *Parser) Comparison() (Ast, error) {
 	return node, nil
 }
 
-func (p *Parser) ProcallStatement() (Ast, error) {
+func (p *Parser) FunctionCallStatement() (Ast, error) {
 	token := p.CurrentToken
 
 	procName := p.CurrentToken.Value.(string)
@@ -558,7 +558,7 @@ func (p *Parser) ProcallStatement() (Ast, error) {
 		return nil, err
 	}
 
-	return NewProcedureCall(procName, actualParams, token), nil
+	return NewFunctionCall(procName, actualParams, token), nil
 }
 
 func (p *Parser) AssignmentStatement() (Ast, error) {

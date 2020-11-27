@@ -56,17 +56,17 @@ END.  //Part10`
 	run(t, text)
 }
 
-func TestInterpreterProcedure(t *testing.T) {
+func TestInterpreterFunction(t *testing.T) {
 	text := `PROGRAM Part12;
 VAR
    a : INT;
 
-PROCEDURE P1;
+FUNC P1;
 VAR
    a : FLOAT;
    k : INT;
 
-   PROCEDURE P2;
+   FUNC P2;
    VAR
       a, z : INT;
    BEGIN //P2
@@ -88,13 +88,13 @@ func TestInterpreterNestedScopes(t *testing.T) {
    var b, x, y : FLOAT;
    var z : INT;
 
-   procedure AlphaA(a : INT);
+   FUNC AlphaA(a : INT);
       var b : INT;
 
-      procedure Beta(c : INT);
+      FUNC Beta(c : INT);
          var y : INT;
 
-         procedure Gamma(c : INT);
+         FUNC Gamma(c : INT);
             var x : INT;
          begin // Gamma 
             x := a + b + c + x + y + z;
@@ -108,7 +108,7 @@ func TestInterpreterNestedScopes(t *testing.T) {
 
    end;  // AlphaA 
 
-   procedure AlphaB(a : INT);
+   FUNC AlphaB(a : INT);
       var c : FLOAT;
    begin // AlphaB 
       c := a + b;
@@ -154,10 +154,10 @@ END.`
 	run(t, text)
 }
 
-func TestInterpreterProcedureCall(t *testing.T) {
+func TestInterpreterFunctionCall(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : INT; b : INT);
+FUNC Alpha(a : INT; b : INT);
 var x : INT;
 begin
    x := (a + b ) * 2;
@@ -165,17 +165,17 @@ end;
 
 begin // Main 
 
-   Alpha(3 + 5, 7);  // procedure call 
+   Alpha(3 + 5, 7);  // FUNC call 
 
 end.  // Main `
 	run(t, text)
 }
 
-func TestInterpreterProcedureCall2(t *testing.T) {
-	text := `program exProcedure;
+func TestInterpreterFunctionCall2(t *testing.T) {
+	text := `program exFunc;
 var a, b, c,  min: INT;
 
-procedure findMin(x, y, z: INT;  m: INT);  // Finds the minimum of the 3 values 
+FUNC findMin(x, y, z: INT;  m: INT);  // Finds the minimum of the 3 values 
 begin
    if x < y then
       m := x
@@ -186,13 +186,13 @@ begin
    if z < m then
       m := z
    end;
-end; // end of procedure findMin   
+end; // end of FUNC findMin   
 
 begin
    	a := 1;
 	b := 2;
 	c := 3;
-   	findMin(a, b, c, min); // Procedure call 
+   	findMin(a, b, c, min); // FUNC call 
 end.`
 	run(t, text)
 }
@@ -207,10 +207,10 @@ end.  // Main `
 	run(t, text)
 }
 
-func TestInterpreterExecutingProcedureCalls(t *testing.T) {
+func TestInterpreterExecutingFunctionCalls(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : INT; b : INT);
+FUNC Alpha(a : INT; b : INT);
 var x : INT;
 begin
    x := (a + b ) * 2;
@@ -218,19 +218,19 @@ end;
 
 begin // Main 
 
-   Alpha(3 + 5, 7);  // procedure call 
+   Alpha(3 + 5, 7);  // FUNC call 
 
 end.  // Main `
 	run(t, text)
 }
 
-func TestInterpreterNestedProcedureCalls(t *testing.T) {
+func TestInterpreterNestedFunctionCalls(t *testing.T) {
 	text := `program Main;
 
-procedure Alpha(a : INT; b : INT);
+FUNC Alpha(a : INT; b : INT);
 var x : INT;
 
-   procedure Beta(a : INT; b : INT);
+   FUNC Beta(a : INT; b : INT);
    var x : INT;
    begin
       x := a * 10 + b * 2;
@@ -239,12 +239,12 @@ var x : INT;
 begin
    x := (a + b ) * 2;
 
-   Beta(5, 10);      // procedure call 
+   Beta(5, 10);      // FUNC call 
 end;
 
 begin // Main 
 
-   Alpha(3 + 5, 7);  // procedure call 
+   Alpha(3 + 5, 7);  // FUNC call 
 
 end.  // Main `
 	run(t, text)

@@ -2,11 +2,11 @@ program : "program" variable ";" block "."
 
 block : declarations compound_statement
 
-declarations : ( "var" ( variable_declaration ";" )+ )* procedure_declaration*
+declarations : ( "var" ( variable_declaration ";" )+ )* function_declaration*
 
 variable_declaration : ID ( "," ID )* ":" type_spec
 
-procedure_declaration : "procedure" ID ( "(" formal_parameter_list ")" )? ";" block ";"
+function_declaration : "func" ID ( "(" formal_parameter_list ")" )? ";" block ";"
 
 formal_params_list : formal_parameters
 				   | formal_parameters ";" formal_parameter_list
@@ -26,7 +26,7 @@ statement_list : statement
 			   | statement ";" statement_list
 
 statement : compound_statement
-		  | proccall_statement
+		  | function_call_statement
 		  | assignment_statement
 		  | print_statement
 		  | if_statement
@@ -49,7 +49,7 @@ equality : comparison ( ( "!=" | "==" ) comparison )*
 
 comparison : expr ( ( ">" | ">=" | "<" | "<=" ) expr )*
 
-proccall_statement : ID "(" ( expr ( "," expr )* )? ")"
+function_call_statement : ID "(" ( expr ( "," expr )* )? ")"
 
 assignment_statement : variable ":=" expr
 

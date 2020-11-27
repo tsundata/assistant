@@ -22,7 +22,7 @@ const (
 	TokenBoolean      = "BOOLEAN"
 	TokenIntegerDiv   = "DIV"
 	TokenVar          = "VAR"
-	TokenProcedure    = "PROCEDURE"
+	TokenFunction     = "FUNCTION"
 	TokenBegin        = "BEGIN"
 	TokenEnd          = "END"
 	TokenPrint        = "PRINT"
@@ -61,24 +61,24 @@ func (t *Token) String() string {
 }
 
 var ReservedKeywords = map[string]Token{
-	"PROGRAM":   {Type: TokenProgram, Value: TokenProgram},
-	"PROCEDURE": {Type: TokenProcedure, Value: TokenProcedure},
-	"VAR":       {Type: TokenVar, Value: TokenVar},
-	"DIV":       {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
-	"INT":       {Type: TokenInteger, Value: TokenInteger},
-	"FLOAT":     {Type: TokenFloat, Value: TokenFloat},
-	"STRING":    {Type: TokenString, Value: TokenString},
-	"BOOL":      {Type: TokenBoolean, Value: TokenBoolean},
-	"BEGIN":     {Type: TokenBegin, Value: TokenBegin},
-	"END":       {Type: TokenEnd, Value: TokenEnd},
-	"IF":        {Type: TokenIf, Value: TokenIf},
-	"THEN":      {Type: TokenThen, Value: TokenThen},
-	"ELSE":      {Type: TokenElse, Value: TokenElse},
-	"WHILE":     {Type: TokenWhile, Value: TokenWhile},
-	"DO":        {Type: TokenDo, Value: TokenDo},
-	"OR":        {Type: TokenOr, Value: TokenOr},
-	"AND":       {Type: TokenAnd, Value: TokenAnd},
-	"TRUE":      {Type: TokenTrue, Value: true},
-	"FALSE":     {Type: TokenFalse, Value: false},
-	"PRINT":     {Type: TokenPrint, Value: TokenPrint},
+	"PROGRAM": {Type: TokenProgram, Value: TokenProgram},
+	"FUNC":    {Type: TokenFunction, Value: TokenFunction},
+	"VAR":     {Type: TokenVar, Value: TokenVar},
+	"DIV":     {Type: TokenIntegerDiv, Value: TokenIntegerDiv},
+	"INT":     {Type: TokenInteger, Value: TokenInteger},
+	"FLOAT":   {Type: TokenFloat, Value: TokenFloat},
+	"STRING":  {Type: TokenString, Value: TokenString},
+	"BOOL":    {Type: TokenBoolean, Value: TokenBoolean},
+	"BEGIN":   {Type: TokenBegin, Value: TokenBegin},
+	"END":     {Type: TokenEnd, Value: TokenEnd},
+	"IF":      {Type: TokenIf, Value: TokenIf},
+	"THEN":    {Type: TokenThen, Value: TokenThen},
+	"ELSE":    {Type: TokenElse, Value: TokenElse},
+	"WHILE":   {Type: TokenWhile, Value: TokenWhile},
+	"DO":      {Type: TokenDo, Value: TokenDo},
+	"OR":      {Type: TokenOr, Value: TokenOr},
+	"AND":     {Type: TokenAnd, Value: TokenAnd},
+	"TRUE":    {Type: TokenTrue, Value: true},
+	"FALSE":   {Type: TokenFalse, Value: false},
+	"PRINT":   {Type: TokenPrint, Value: TokenPrint},
 }

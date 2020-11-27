@@ -10,8 +10,8 @@ import (
 type ARType string
 
 const (
-	ARTypeProgram   ARType = "PROGRAM"
-	ARTypeProcedure ARType = "PROCEDURE"
+	ARTypeProgram  ARType = "PROGRAM"
+	ARTypeFunction ARType = "FUNCTION"
 )
 
 type CallStack struct {
@@ -128,11 +128,11 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*NoOp); ok {
 		return i.VisitNoOp(n)
 	}
-	if n, ok := node.(*ProcedureDecl); ok {
-		return i.VisitProcedureDecl(n)
+	if n, ok := node.(*FunctionDecl); ok {
+		return i.VisitFunctionDecl(n)
 	}
-	if n, ok := node.(*ProcedureCall); ok {
-		return i.VisitProcedureCall(n)
+	if n, ok := node.(*FunctionCall); ok {
+		return i.VisitFunctionCall(n)
 	}
 	if n, ok := node.(*Print); ok {
 		return i.VisitPrint(n)
@@ -271,19 +271,19 @@ func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitProcedureDecl(node *ProcedureDecl) float64 {
+func (i *Interpreter) VisitFunctionDecl(node *FunctionDecl) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
+func (i *Interpreter) VisitFunctionCall(node *FunctionCall) float64 {
 	procName := node.ProcName
 	procSymbol := node.ProcSymbol
 
-	ar := NewActivationRecord(procName, ARTypeProcedure, procSymbol.(*ProcedureSymbol).ScopeLevel+1)
+	ar := NewActivationRecord(procName, ARTypeFunction, procSymbol.(*FunctionSymbol).ScopeLevel+1)
 
 	var formalParams []Ast
 	if procSymbol != nil {
-		formalParams = procSymbol.(*ProcedureSymbol).FormalParams
+		formalParams = procSymbol.(*FunctionSymbol).FormalParams
 	}
 	actualParams := node.ActualParams
 
@@ -295,14 +295,14 @@ func (i *Interpreter) VisitProcedureCall(node *ProcedureCall) float64 {
 
 	i.callStack.Push(ar)
 
-	fmt.Printf("ENTER: PROCEDURE %s\n", procName)
+	fmt.Printf("ENTER: FUNCTION %s\n", procName)
 	fmt.Println(i.callStack)
 
 	if procSymbol != nil {
-		i.Visit(procSymbol.(*ProcedureSymbol).BlockAst)
+		i.Visit(procSymbol.(*FunctionSymbol).BlockAst)
 	}
 
-	fmt.Printf("LEAVE: PROCEDURE %s\n", procName)
+	fmt.Printf("LEAVE: FUNCTION %s\n", procName)
 	fmt.Println(i.callStack)
 
 	i.callStack.Pop()
