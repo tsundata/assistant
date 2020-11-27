@@ -55,6 +55,7 @@ type ActivationRecord struct {
 	Type         ARType
 	NestingLevel int
 	Members      map[string]interface{}
+	ReturnValue  interface{}
 }
 
 func NewActivationRecord(name string, t ARType, nestingLevel int) *ActivationRecord {
@@ -71,7 +72,7 @@ func (r *ActivationRecord) Set(key string, value interface{}) {
 
 func (r *ActivationRecord) String() string {
 	var lines []string
-	lines = append(lines, fmt.Sprintf("%d: %s %s", r.NestingLevel, r.Type, r.Name))
+	lines = append(lines, fmt.Sprintf("%d: %s %s %v", r.NestingLevel, r.Type, r.Name, r.ReturnValue))
 	for name, val := range r.Members {
 		lines = append(lines, fmt.Sprintf("  %s : %v", name, val))
 	}
@@ -133,6 +134,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	}
 	if n, ok := node.(*FunctionCall); ok {
 		return i.VisitFunctionCall(n)
+	}
+	if n, ok := node.(*Return); ok {
+		return i.VisitReturn(n)
 	}
 	if n, ok := node.(*Print); ok {
 		return i.VisitPrint(n)
@@ -226,7 +230,13 @@ func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {
 
 func (i *Interpreter) VisitCompound(node *Compound) float64 {
 	for _, child := range node.Children {
-		i.Visit(child)
+		if _, ok := child.(*Return); ok {
+			ar := i.callStack.Peek()
+			ar.ReturnValue = i.Visit(child)
+			break
+		} else {
+			i.Visit(child)
+		}
 	}
 	return 0
 }
@@ -275,7 +285,7 @@ func (i *Interpreter) VisitFunctionDecl(node *FunctionDecl) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitFunctionCall(node *FunctionCall) float64 {
+func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	funcName := node.FuncName
 	funcSymbol := node.FuncSymbol
 
@@ -302,12 +312,19 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) float64 {
 		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
 	}
 
+	// return
+	returnValue := ar.ReturnValue
+
 	fmt.Printf("LEAVE: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
 
 	i.callStack.Pop()
 
-	return 0
+	return returnValue
+}
+
+func (i *Interpreter) VisitReturn(node *Return) interface{} {
+	return i.Visit(node.Statement)
 }
 
 func (i *Interpreter) VisitPrint(node *Print) interface{} {

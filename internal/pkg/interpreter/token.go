@@ -25,6 +25,7 @@ const (
 	TokenFunction     = "FUNCTION"
 	TokenBegin        = "BEGIN"
 	TokenEnd          = "END"
+	TokenReturn       = "RETURN"
 	TokenPrint        = "PRINT"
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
@@ -81,4 +82,5 @@ var ReservedKeywords = map[string]Token{
 	"TRUE":    {Type: TokenTrue, Value: true},
 	"FALSE":   {Type: TokenFalse, Value: false},
 	"PRINT":   {Type: TokenPrint, Value: TokenPrint},
+	"RETURN":  {Type: TokenReturn, Value: TokenReturn},
 }

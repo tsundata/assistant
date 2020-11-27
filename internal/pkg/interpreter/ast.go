@@ -139,10 +139,11 @@ type FunctionDecl struct {
 	FuncName     string
 	FormalParams []Ast
 	BlockNode    Ast
+	ReturnType   Ast
 }
 
-func NewFunctionDecl(funcName string, formalParams []Ast, blockNode Ast) *FunctionDecl {
-	return &FunctionDecl{FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode}
+func NewFunctionDecl(funcName string, formalParams []Ast, blockNode Ast, returnType Ast) *FunctionDecl {
+	return &FunctionDecl{FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode, ReturnType: returnType}
 }
 
 type FunctionCall struct {
@@ -191,4 +192,12 @@ type Print struct {
 
 func NewPrint(statement Ast) *Print {
 	return &Print{Statement: statement}
+}
+
+type Return struct {
+	Statement Ast
+}
+
+func NewReturn(statement Ast) *Return {
+	return &Return{Statement: statement}
 }

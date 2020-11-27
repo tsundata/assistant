@@ -123,14 +123,15 @@ func (l *Lexer) Id() (*Token, error) {
 		l.Advance()
 	}
 
-	if v, ok := ReservedKeywords[strings.ToUpper(string(result))]; ok {
+	s := string(result)
+	if v, ok := ReservedKeywords[strings.ToUpper(s)]; ok {
 		token.Type = v.Type
 		token.Value = v.Value
 	} else {
 		token.Type = TokenID
-		token.Value = string(result)
+		token.Value = s
 	}
-
+	fmt.Println(token, s, string(l.Peek()))
 	return token, nil
 }
 

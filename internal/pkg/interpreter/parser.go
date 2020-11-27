@@ -235,6 +235,18 @@ func (p *Parser) FunctionDeclaration() (Ast, error) {
 		}
 	}
 
+	var returnType Ast
+	if p.CurrentToken.Type == TokenColon {
+		err = p.Eat(TokenColon)
+		if err != nil {
+			return nil, err
+		}
+		returnType, err = p.TypeSpec()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
@@ -243,7 +255,7 @@ func (p *Parser) FunctionDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	funcDecl := NewFunctionDecl(funcName, formalParams, blockNode)
+	funcDecl := NewFunctionDecl(funcName, formalParams, blockNode, returnType)
 	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
@@ -331,6 +343,8 @@ func (p *Parser) Statement() (Ast, error) {
 		return p.FunctionCallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
+	} else if p.CurrentToken.Type == TokenReturn {
+		return p.ReturnStatement()
 	} else if p.CurrentToken.Type == TokenPrint {
 		return p.PrintStatement()
 	} else if p.CurrentToken.Type == TokenIf {
@@ -340,6 +354,19 @@ func (p *Parser) Statement() (Ast, error) {
 	} else {
 		return p.Empty()
 	}
+}
+
+func (p *Parser) ReturnStatement() (Ast, error) {
+	err := p.Eat(TokenReturn)
+	if err != nil {
+		return nil, err
+	}
+	statement, err := p.Expression()
+	if err != nil {
+		return nil, err
+	}
+
+	return NewReturn(statement), nil
 }
 
 func (p *Parser) PrintStatement() (Ast, error) {
@@ -712,6 +739,9 @@ func (p *Parser) Factor() (Ast, error) {
 			return nil, err
 		}
 		return node, nil
+	}
+	if token.Type == TokenID && p.Lexer.CurrentChar == '(' {
+		return p.FunctionCallStatement()
 	}
 
 	return p.Variable()

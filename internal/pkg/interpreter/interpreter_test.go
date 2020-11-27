@@ -326,6 +326,42 @@ end.`
 	run(t, text)
 }
 
+func TestInterpreterFunctionReturn(t *testing.T) {
+	text := `program exFunc;
+var a, b, c,  min: INT;
+
+FUNC findMin(x, y, z: INT) : INT ;  // Finds the minimum of the 3 values 
+var m : int;
+begin
+	if x < y then
+	  m := x
+	else
+	  m := y
+	end;
+	
+	if z < m then
+	  m := z
+	end;
+	
+	print 111;
+	return m;
+	print 222;
+	return m;
+	print 333;	
+	return m;
+	
+end; // end of FUNC findMin   
+
+begin
+   	a := 1;
+	b := 2;
+	c := 3;
+   	min := findMin(a, b, c) + findMin(a, b, c) + findMin(a, b, c); // FUNC call 
+	print min;
+end.`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

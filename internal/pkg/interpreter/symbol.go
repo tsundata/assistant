@@ -40,6 +40,7 @@ type FunctionSymbol struct {
 	Name         string
 	Type         Symbol
 	FormalParams []Ast
+	ReturnType   Ast
 	BlockAst     Ast
 	ScopeLevel   int
 }
@@ -49,7 +50,7 @@ func NewFunctionSymbol(name string) *FunctionSymbol {
 }
 
 func (s *FunctionSymbol) String() string {
-	return fmt.Sprintf("<FunctionSymbol(name=%s, parameters=%v)>", s.Name, s.FormalParams)
+	return fmt.Sprintf("<FunctionSymbol(name=%s, parameters=%v, return=%v)>", s.Name, s.FormalParams, s.ReturnType)
 }
 
 type ScopedSymbolTable struct {
@@ -266,6 +267,7 @@ func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 	fmt.Printf("LEAVE scope: %s\n", funcName)
 
 	funcSymbol.BlockAst = node.BlockNode
+	funcSymbol.ReturnType = node.ReturnType
 }
 
 func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
