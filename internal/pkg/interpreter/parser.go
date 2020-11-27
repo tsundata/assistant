@@ -192,11 +192,6 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		err = p.Eat(TokenID)
 	}
 
-	err = p.Eat(TokenColon)
-	if err != nil {
-		return nil, err
-	}
-
 	typeNode, err := p.TypeSpec()
 	if err != nil {
 		return nil, err

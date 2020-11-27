@@ -4,7 +4,7 @@ block : declarations compound_statement
 
 declarations : ( "var" ( variable_declaration ";" )+ )* function_declaration*
 
-variable_declaration : ID ( "," ID )* ":" type_spec
+variable_declaration : ID ( "," ID )* type_spec
 
 function_declaration : "func" ID ( "(" formal_parameter_list ")" )? ( ":" type_spec )? ";" block ";"
 

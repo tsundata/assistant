@@ -33,9 +33,9 @@ func run(t *testing.T, text string) {
 func TestInterpreter(t *testing.T) {
 	text := `PROGRAM Part10;
 VAR
-   number     : INT;
-   a, b, c, x : INT;
-   y          : FLOAT;
+   number      INT;
+   a, b, c, x  INT;
+   y           FLOAT;
 
 BEGIN //Part10
    BEGIN
@@ -59,16 +59,16 @@ END.  //Part10`
 func TestInterpreterFunction(t *testing.T) {
 	text := `PROGRAM Part12;
 VAR
-   a : INT;
+   a  INT;
 
 FUNC P1;
 VAR
-   a : FLOAT;
-   k : INT;
+   a  FLOAT;
+   k  INT;
 
    FUNC P2;
    VAR
-      a, z : INT;
+      a, z  INT;
    BEGIN //P2
       z := 777;
    END;  //P2
@@ -85,17 +85,17 @@ END.  //Part12`
 
 func TestInterpreterNestedScopes(t *testing.T) {
 	text := `program Main;
-   var b, x, y : FLOAT;
-   var z : INT;
+   var b, x, y  FLOAT;
+   var z  INT;
 
    FUNC AlphaA(a : INT);
-      var b : INT;
+      var b  INT;
 
       FUNC Beta(c : INT);
-         var y : INT;
+         var y  INT;
 
          FUNC Gamma(c : INT);
-            var x : INT;
+            var x  INT;
          begin // Gamma 
             x := a + b + c + x + y + z;
          end;  // Gamma 
@@ -109,7 +109,7 @@ func TestInterpreterNestedScopes(t *testing.T) {
    end;  // AlphaA 
 
    FUNC AlphaB(a : INT);
-      var c : FLOAT;
+      var c  FLOAT;
    begin // AlphaB 
       c := a + b;
    end;  // AlphaB 
@@ -128,7 +128,7 @@ func TestInterpreterNameError1(t *testing.T) {
 
 	text := `PROGRAM NameError1;
 VAR
-   a : INT;
+   a  INT;
 
 BEGIN
    a := 2 + b;
@@ -145,7 +145,7 @@ func TestInterpreterNameError2(t *testing.T) {
 
 	text := `PROGRAM NameError2;
 VAR
-   b : INT;
+   b  INT;
 
 BEGIN
    b := 1;
@@ -158,7 +158,7 @@ func TestInterpreterFunctionCall(t *testing.T) {
 	text := `program Main;
 
 FUNC Alpha(a : INT; b : INT);
-var x : INT;
+var x  INT;
 begin
    x := (a + b ) * 2;
 end;
@@ -173,7 +173,7 @@ end.  // Main `
 
 func TestInterpreterFunctionCall2(t *testing.T) {
 	text := `program exFunc;
-var a, b, c,  min: INT;
+var a, b, c,  min INT;
 
 FUNC findMin(x, y, z: INT;  m: INT);  // Finds the minimum of the 3 values 
 begin
@@ -199,7 +199,7 @@ end.`
 
 func TestInterpreterCallStack(t *testing.T) {
 	text := `program Main;
-var x, y : INT;
+var x, y  INT;
 begin // Main 
    y := 7;
    x := (y + 3) * 3;
@@ -211,7 +211,7 @@ func TestInterpreterExecutingFunctionCalls(t *testing.T) {
 	text := `program Main;
 
 FUNC Alpha(a : INT; b : INT);
-var x : INT;
+var x  INT;
 begin
    x := (a + b ) * 2;
 end;
@@ -228,10 +228,10 @@ func TestInterpreterNestedFunctionCalls(t *testing.T) {
 	text := `program Main;
 
 FUNC Alpha(a : INT; b : INT);
-var x : INT;
+var x  INT;
 
    FUNC Beta(a : INT; b : INT);
-   var x : INT;
+   var x  INT;
    begin
       x := a * 10 + b * 2;
    end;
@@ -252,7 +252,7 @@ end.  // Main `
 
 func TestInterpreterIf(t *testing.T) {
 	text := `program Main;
-var x, y : INT;
+var x, y  INT;
 begin // Main 
    	y := 7;
    	x := (y + 3) * 3;
@@ -267,7 +267,7 @@ end.  // Main `
 
 func TestInterpreterWhile(t *testing.T) {
 	text := `program whileLoop;
-var a: INT;
+var a INT;
 
 begin
    a := 1;
@@ -280,7 +280,7 @@ end.`
 
 func TestInterpreterString(t *testing.T) {
 	text := `program stringTest;
-var a, b: string;
+var a, b string;
 
 begin
    	a := "abc";
@@ -291,7 +291,7 @@ end.`
 
 func TestInterpreterBoolean(t *testing.T) {
 	text := `program booleanTest;
-var a, b: bool;
+var a, b bool;
 
 begin
    	a := true;
@@ -307,8 +307,8 @@ end.`
 
 func TestInterpreterPrint(t *testing.T) {
 	text := `program booleanTest;
-var a, b: bool;
-var s: string;
+var a, b bool;
+var s string;
 
 begin
    	a := true;
@@ -328,10 +328,10 @@ end.`
 
 func TestInterpreterFunctionReturn(t *testing.T) {
 	text := `program exFunc;
-var a, b, c,  min: INT;
+var a, b, c,  min  int;
 
-FUNC findMin(x, y, z: INT) : INT ;  // Finds the minimum of the 3 values 
-var m : int;
+func findMin(x, y, z: INT) : int ;  // Finds the minimum of the 3 values 
+var m int;
 begin
 	if x < y then
 	  m := x
