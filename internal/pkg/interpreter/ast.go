@@ -136,24 +136,24 @@ func NewParam(varNode Ast, typeNode Ast) *Param {
 }
 
 type FunctionDecl struct {
-	ProcName     string
+	FuncName     string
 	FormalParams []Ast
 	BlockNode    Ast
 }
 
-func NewFunctionDecl(procName string, formalParams []Ast, blockNode Ast) *FunctionDecl {
-	return &FunctionDecl{ProcName: procName, FormalParams: formalParams, BlockNode: blockNode}
+func NewFunctionDecl(funcName string, formalParams []Ast, blockNode Ast) *FunctionDecl {
+	return &FunctionDecl{FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode}
 }
 
 type FunctionCall struct {
-	ProcName     string
+	FuncName     string
 	ActualParams []Ast
 	Token        *Token
-	ProcSymbol   Symbol
+	FuncSymbol   Symbol
 }
 
-func NewFunctionCall(procName string, actualParams []Ast, token *Token) *FunctionCall {
-	return &FunctionCall{ProcName: procName, ActualParams: actualParams, Token: token}
+func NewFunctionCall(funcName string, actualParams []Ast, token *Token) *FunctionCall {
+	return &FunctionCall{FuncName: funcName, ActualParams: actualParams, Token: token}
 }
 
 type If struct {

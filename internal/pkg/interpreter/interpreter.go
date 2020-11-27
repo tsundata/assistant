@@ -276,14 +276,14 @@ func (i *Interpreter) VisitFunctionDecl(node *FunctionDecl) float64 {
 }
 
 func (i *Interpreter) VisitFunctionCall(node *FunctionCall) float64 {
-	procName := node.ProcName
-	procSymbol := node.ProcSymbol
+	funcName := node.FuncName
+	funcSymbol := node.FuncSymbol
 
-	ar := NewActivationRecord(procName, ARTypeFunction, procSymbol.(*FunctionSymbol).ScopeLevel+1)
+	ar := NewActivationRecord(funcName, ARTypeFunction, funcSymbol.(*FunctionSymbol).ScopeLevel+1)
 
 	var formalParams []Ast
-	if procSymbol != nil {
-		formalParams = procSymbol.(*FunctionSymbol).FormalParams
+	if funcSymbol != nil {
+		formalParams = funcSymbol.(*FunctionSymbol).FormalParams
 	}
 	actualParams := node.ActualParams
 
@@ -295,14 +295,14 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) float64 {
 
 	i.callStack.Push(ar)
 
-	fmt.Printf("ENTER: FUNCTION %s\n", procName)
+	fmt.Printf("ENTER: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
 
-	if procSymbol != nil {
-		i.Visit(procSymbol.(*FunctionSymbol).BlockAst)
+	if funcSymbol != nil {
+		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
 	}
 
-	fmt.Printf("LEAVE: FUNCTION %s\n", procName)
+	fmt.Printf("LEAVE: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
 
 	i.callStack.Pop()

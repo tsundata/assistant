@@ -104,11 +104,11 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 	}
 
 	for p.CurrentToken.Type == TokenFunction {
-		procDecl, err := p.FunctionDeclaration()
+		funcDecl, err := p.FunctionDeclaration()
 		if err != nil {
 			return nil, err
 		}
-		declarations = append(declarations, []Ast{procDecl})
+		declarations = append(declarations, []Ast{funcDecl})
 	}
 
 	return declarations, nil
@@ -213,7 +213,7 @@ func (p *Parser) FunctionDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	procName := p.CurrentToken.Value.(string)
+	funcName := p.CurrentToken.Value.(string)
 	err = p.Eat(TokenID)
 	if err != nil {
 		return nil, err
@@ -243,13 +243,13 @@ func (p *Parser) FunctionDeclaration() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
-	procDecl := NewFunctionDecl(procName, formalParams, blockNode)
+	funcDecl := NewFunctionDecl(funcName, formalParams, blockNode)
 	err = p.Eat(TokenSemi)
 	if err != nil {
 		return nil, err
 	}
 
-	return procDecl, nil
+	return funcDecl, nil
 }
 
 func (p *Parser) TypeSpec() (Ast, error) {
@@ -523,7 +523,7 @@ func (p *Parser) Comparison() (Ast, error) {
 func (p *Parser) FunctionCallStatement() (Ast, error) {
 	token := p.CurrentToken
 
-	procName := p.CurrentToken.Value.(string)
+	funcName := p.CurrentToken.Value.(string)
 	err := p.Eat(TokenID)
 	if err != nil {
 		return nil, err
@@ -558,7 +558,7 @@ func (p *Parser) FunctionCallStatement() (Ast, error) {
 		return nil, err
 	}
 
-	return NewFunctionCall(procName, actualParams, token), nil
+	return NewFunctionCall(funcName, actualParams, token), nil
 }
 
 func (p *Parser) AssignmentStatement() (Ast, error) {

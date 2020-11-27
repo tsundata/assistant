@@ -242,12 +242,12 @@ func (b *SemanticAnalyzer) VisitNoOp(node *NoOp) {
 }
 
 func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
-	procName := node.ProcName
-	procSymbol := NewFunctionSymbol(procName)
-	b.CurrentScope.Insert(procSymbol)
+	funcName := node.FuncName
+	funcSymbol := NewFunctionSymbol(funcName)
+	b.CurrentScope.Insert(funcSymbol)
 
-	fmt.Printf("ENTER scope: %s\n", procName)
-	functionScope := NewScopedSymbolTable(procName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
+	fmt.Printf("ENTER scope: %s\n", funcName)
+	functionScope := NewScopedSymbolTable(funcName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
 	b.CurrentScope = functionScope
 
 	for _, param := range node.FormalParams {
@@ -255,7 +255,7 @@ func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 		paramName := param.(*Param).VarNode.(*Var).Value.(string)
 		varSymbol := NewVarSymbol(paramName, paramType)
 		b.CurrentScope.Insert(varSymbol)
-		procSymbol.FormalParams = append(procSymbol.FormalParams, varSymbol)
+		funcSymbol.FormalParams = append(funcSymbol.FormalParams, varSymbol)
 	}
 
 	b.Visit(node.BlockNode)
@@ -263,9 +263,9 @@ func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 	fmt.Println(functionScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
-	fmt.Printf("LEAVE scope: %s\n", procName)
+	fmt.Printf("LEAVE scope: %s\n", funcName)
 
-	procSymbol.BlockAst = node.BlockNode
+	funcSymbol.BlockAst = node.BlockNode
 }
 
 func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
@@ -299,10 +299,10 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 }
 
 func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
-	procSymbol := b.CurrentScope.Lookup(node.ProcName, false)
+	funcSymbol := b.CurrentScope.Lookup(node.FuncName, false)
 	var formalParams []Ast
-	if procSymbol != nil {
-		formalParams = procSymbol.(*FunctionSymbol).FormalParams
+	if funcSymbol != nil {
+		formalParams = funcSymbol.(*FunctionSymbol).FormalParams
 	}
 	actualParams := node.ActualParams
 
@@ -314,7 +314,7 @@ func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
 		b.Visit(paramNode)
 	}
 
-	node.ProcSymbol = procSymbol
+	node.FuncSymbol = funcSymbol
 }
 
 func (b *SemanticAnalyzer) VisitWhile(node *While) {
