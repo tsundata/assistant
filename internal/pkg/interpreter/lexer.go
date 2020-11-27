@@ -131,7 +131,7 @@ func (l *Lexer) Id() (*Token, error) {
 		token.Type = TokenID
 		token.Value = s
 	}
-	fmt.Println(token, s, string(l.Peek()))
+
 	return token, nil
 }
 

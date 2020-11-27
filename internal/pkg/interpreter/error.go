@@ -13,10 +13,11 @@ const (
 type ErrorCode string
 
 const (
-	UnexpectedToken ErrorCode = "Unexpected token"
-	IdNotFound      ErrorCode = "Identifier not found"
-	DuplicateId     ErrorCode = "Duplicate id found"
-	WrongParamsNum  ErrorCode = "Wrong number of arguments"
+	UnexpectedToken   ErrorCode = "Unexpected token"
+	IdNotFound        ErrorCode = "Identifier not found"
+	DuplicateId       ErrorCode = "Duplicate id found"
+	WrongParamsNum    ErrorCode = "Wrong number of arguments"
+	UndefinedFunction ErrorCode = "Undefined function"
 )
 
 type Error struct {
@@ -27,5 +28,5 @@ type Error struct {
 }
 
 func (e Error) Error() string {
-	return fmt.Sprintf("%s: %s", e.ErrorCode, e.Message)
+	return fmt.Sprintf("%s: %s", e.Type, e.Message)
 }

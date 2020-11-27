@@ -289,12 +289,13 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	funcName := node.FuncName
 	funcSymbol := node.FuncSymbol
 
+	if funcSymbol == nil {
+		return nil
+	}
+
 	ar := NewActivationRecord(funcName, ARTypeFunction, funcSymbol.(*FunctionSymbol).ScopeLevel+1)
 
-	var formalParams []Ast
-	if funcSymbol != nil {
-		formalParams = funcSymbol.(*FunctionSymbol).FormalParams
-	}
+	formalParams := funcSymbol.(*FunctionSymbol).FormalParams
 	actualParams := node.ActualParams
 
 	for _, item := range collection.Zip(formalParams, actualParams) {
@@ -308,9 +309,7 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	fmt.Printf("ENTER: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
 
-	if funcSymbol != nil {
-		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
-	}
+	i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
 
 	// return
 	returnValue := ar.ReturnValue
