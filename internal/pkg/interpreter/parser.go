@@ -54,16 +54,46 @@ func (p *Parser) Program() (Ast, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	var packages []Ast
+	if p.CurrentToken.Type == TokenImport {
+		packages, err = p.Package()
+	}
+
 	blockNode, err := p.Block()
 	if err != nil {
 		return nil, err
 	}
-	programNode := NewProgram(programName, blockNode)
+	programNode := NewProgram(programName, packages, blockNode)
 	err = p.Eat(TokenDot)
 	if err != nil {
 		return nil, err
 	}
 	return programNode, nil
+}
+
+func (p *Parser) Package() ([]Ast, error) {
+	var packages []Ast
+	for p.CurrentToken.Type == TokenImport {
+		err := p.Eat(TokenImport)
+		if err != nil {
+			return nil, err
+		}
+
+		varNode, err := p.Variable()
+		if err != nil {
+			return nil, err
+		}
+		packageName := varNode.(*Var).Value.(string)
+		packages = append(packages, NewPackage(packageName))
+
+		err = p.Eat(TokenSemi)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return packages, nil
 }
 
 func (p *Parser) Block() (Ast, error) {
@@ -334,7 +364,7 @@ func (p *Parser) StatementList() ([]Ast, error) {
 func (p *Parser) Statement() (Ast, error) {
 	if p.CurrentToken.Type == TokenBegin {
 		return p.CompoundStatement()
-	} else if p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(' {
+	} else if (p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(') || (p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '.') {
 		return p.FunctionCallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
@@ -545,11 +575,29 @@ func (p *Parser) Comparison() (Ast, error) {
 func (p *Parser) FunctionCallStatement() (Ast, error) {
 	token := p.CurrentToken
 
-	funcName := p.CurrentToken.Value.(string)
+	var packageName string
+	var funcName string
+	name := p.CurrentToken.Value.(string)
 	err := p.Eat(TokenID)
 	if err != nil {
 		return nil, err
 	}
+	if p.CurrentToken.Type == TokenDot {
+		err = p.Eat(TokenDot)
+		if err != nil {
+			return nil, err
+		}
+		packageName = name
+		funcName = p.CurrentToken.Value.(string)
+		token = p.CurrentToken
+		err := p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		funcName = name
+	}
+
 	err = p.Eat(TokenLParen)
 	if err != nil {
 		return nil, err
@@ -580,7 +628,7 @@ func (p *Parser) FunctionCallStatement() (Ast, error) {
 		return nil, err
 	}
 
-	return NewFunctionCall(funcName, actualParams, token), nil
+	return NewFunctionCall(packageName, funcName, actualParams, token), nil
 }
 
 func (p *Parser) AssignmentStatement() (Ast, error) {
@@ -735,7 +783,7 @@ func (p *Parser) Factor() (Ast, error) {
 		}
 		return node, nil
 	}
-	if token.Type == TokenID && p.Lexer.CurrentChar == '(' {
+	if (token.Type == TokenID && p.Lexer.CurrentChar == '(') || (token.Type == TokenID && p.Lexer.CurrentChar == '.') {
 		return p.FunctionCallStatement()
 	}
 

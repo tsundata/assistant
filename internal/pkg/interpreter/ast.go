@@ -91,12 +91,21 @@ func NewNoOp() *NoOp {
 }
 
 type Program struct {
-	Name  string
-	Block Ast
+	Name     string
+	Block    Ast
+	Packages []Ast
 }
 
-func NewProgram(name string, block Ast) *Program {
-	return &Program{Name: name, Block: block}
+func NewProgram(name string, packages []Ast, block Ast) *Program {
+	return &Program{Name: name, Packages: packages, Block: block}
+}
+
+type Package struct {
+	Name string
+}
+
+func NewPackage(name string) *Package {
+	return &Package{Name: name}
 }
 
 type Block struct {
@@ -136,6 +145,7 @@ func NewParam(varNode Ast, typeNode Ast) *Param {
 }
 
 type FunctionDecl struct {
+	PackageName  string
 	FuncName     string
 	FormalParams []Ast
 	BlockNode    Ast
@@ -143,18 +153,19 @@ type FunctionDecl struct {
 }
 
 func NewFunctionDecl(funcName string, formalParams []Ast, blockNode Ast, returnType Ast) *FunctionDecl {
-	return &FunctionDecl{FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode, ReturnType: returnType}
+	return &FunctionDecl{PackageName: "", FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode, ReturnType: returnType}
 }
 
 type FunctionCall struct {
+	PackageName  string
 	FuncName     string
 	ActualParams []Ast
 	Token        *Token
 	FuncSymbol   Symbol
 }
 
-func NewFunctionCall(funcName string, actualParams []Ast, token *Token) *FunctionCall {
-	return &FunctionCall{FuncName: funcName, ActualParams: actualParams, Token: token}
+func NewFunctionCall(packageName string, funcName string, actualParams []Ast, token *Token) *FunctionCall {
+	return &FunctionCall{PackageName: packageName, FuncName: funcName, ActualParams: actualParams, Token: token}
 }
 
 type If struct {

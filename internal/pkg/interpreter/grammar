@@ -1,4 +1,6 @@
-program : "program" variable ";" block "."
+program : "program" variable ";" package? block "."
+
+package : "import" variable ";" ( "import" variable ";" )*
 
 block : declarations compound_statement
 
@@ -52,7 +54,7 @@ equality : comparison ( ( "!=" | "==" ) comparison )*
 
 comparison : expr ( ( ">" | ">=" | "<" | "<=" ) expr )*
 
-function_call_statement : ID "(" ( expr ( "," expr )* )? ")"
+function_call_statement : ( ID "." )? ID "(" ( expr ( "," expr )* )? ")"
 
 assignment_statement : variable ":=" expr
 

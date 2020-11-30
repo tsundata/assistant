@@ -16,6 +16,7 @@ const (
 	TokenColon        = ":"
 	TokenComma        = ","
 	TokenProgram      = "PROGRAM"
+	TokenImport       = "IMPORT"
 	TokenInteger      = "INTEGER"
 	TokenFloat        = "FLOAT"
 	TokenString       = "STRING"
@@ -63,6 +64,7 @@ func (t *Token) String() string {
 
 var ReservedKeywords = map[string]Token{
 	"PROGRAM": {Type: TokenProgram, Value: TokenProgram},
+	"IMPORT":  {Type: TokenImport, Value: TokenImport},
 	"FUNC":    {Type: TokenFunction, Value: TokenFunction},
 	"VAR":     {Type: TokenVar, Value: TokenVar},
 	"DIV":     {Type: TokenIntegerDiv, Value: TokenIntegerDiv},

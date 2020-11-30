@@ -398,6 +398,26 @@ end.`
 	run(t, text)
 }
 
+func TestInterpreterPackages(t *testing.T) {
+	text := `program exPackages;
+import net;
+import message;
+
+var a, b, c,  min  int;
+    url string;
+
+begin
+	url := "https://httpbin.org/";
+   	a := 1;
+	b := 2;
+	c := 3;
+   	print net.get(url);
+	message.send("hi");
+	print len(url);
+end.`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

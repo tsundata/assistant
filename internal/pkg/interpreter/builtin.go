@@ -1,11 +1,13 @@
 package interpreter
 
+const BuiltinPackage = "builtin"
+
 type CallFunc func(i *Interpreter, args []interface{}) interface{}
 
 func funcDefine(funcName string, call CallFunc) Symbol {
 	return &FunctionSymbol{
+		Package:    BuiltinPackage,
 		Name:       funcName,
-		Type:       NewBuiltinFunctionSymbol(),
 		ScopeLevel: 1,
 		Call:       call,
 	}

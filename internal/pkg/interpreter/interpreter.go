@@ -95,6 +95,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Program); ok {
 		return i.VisitProgram(n)
 	}
+	if n, ok := node.(*Package); ok {
+		return i.VisitPackage(n)
+	}
 	if n, ok := node.(*Block); ok {
 		return i.VisitBlock(n)
 	}
@@ -172,6 +175,10 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	i.callStack.Pop()
 
 	return result.(float64)
+}
+
+func (i *Interpreter) VisitPackage(node *Package) float64 {
+	return 0
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {
@@ -307,25 +314,29 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 		return nil
 	}
 
+	if node.PackageName != "" {
+		funcName = fmt.Sprintf("%s.%s", node.PackageName, node.FuncName)
+	}
+
 	ar := NewActivationRecord(funcName, ARTypeFunction, funcSymbol.(*FunctionSymbol).ScopeLevel+1)
 
 	formalParams := funcSymbol.(*FunctionSymbol).FormalParams
 	actualParams := node.ActualParams
 
 	var ap []interface{}
-	funcType := funcSymbol.(*FunctionSymbol).Type
-	if _, ok := funcType.(*BuiltinFunctionSymbol); ok {
+	packageName := funcSymbol.(*FunctionSymbol).Package
+	if packageName == "" {
+		for _, item := range collection.Zip(formalParams, actualParams) {
+			k := item.Element1.(*VarSymbol).Name
+			v := i.Visit(item.Element2)
+			ar.Set(k, v)
+		}
+	} else {
 		for index, param := range actualParams {
 			k := strconv.Itoa(index)
 			v := i.Visit(param)
 			ar.Set(k, v)
 			ap = append(ap, v)
-		}
-	} else {
-		for _, item := range collection.Zip(formalParams, actualParams) {
-			k := item.Element1.(*VarSymbol).Name
-			v := i.Visit(item.Element2)
-			ar.Set(k, v)
 		}
 	}
 
@@ -335,11 +346,11 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	fmt.Println(i.callStack)
 
 	var returnValue interface{}
-	if _, ok := funcType.(*BuiltinFunctionSymbol); ok {
-		returnValue = funcSymbol.(*FunctionSymbol).Call(i, ap)
-	} else {
+	if packageName == "" {
 		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
 		returnValue = ar.ReturnValue
+	} else {
+		returnValue = funcSymbol.(*FunctionSymbol).Call(i, ap)
 	}
 
 	fmt.Printf("LEAVE: FUNCTION %s\n", funcName)
