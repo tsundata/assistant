@@ -28,6 +28,7 @@ func run(t *testing.T, text string) {
 		t.Fatal("error expr")
 	}
 	fmt.Println(i.callStack)
+	fmt.Println(i.Stdout())
 }
 
 func TestInterpreter(t *testing.T) {
@@ -378,13 +379,10 @@ begin
 	if z < m then
 	  m := z
 	end;
-	
-	print 111;
+
 	return m;
-	print 222;
-	return m;
-	print 333;	
-	return m;
+	return m + 1;
+	return m + 2;
 	
 end; // end of FUNC findMin   
 
@@ -395,7 +393,7 @@ begin
 	c := 3;
    	min := findMin(a, b, c) + findMin(a, b, c) + findMin(a, b, c); // FUNC call 
 	print min;
-	print findMin(a, b, c);
+	print findMin(a, b, c) + len(s);
 end.`
 	run(t, text)
 }

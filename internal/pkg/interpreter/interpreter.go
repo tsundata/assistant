@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"strconv"
 	"strings"
 )
 
@@ -83,6 +84,7 @@ func (r *ActivationRecord) String() string {
 type Interpreter struct {
 	tree      Ast
 	callStack *CallStack
+	stdout    []interface{}
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
@@ -191,19 +193,31 @@ func (i *Interpreter) VisitType(node *Type) float64 {
 }
 
 func (i *Interpreter) VisitBinOp(node *BinOp) float64 {
+	var left float64
+	var right float64
+	if v, ok := i.Visit(node.Left).(int); ok {
+		left = float64(v)
+	} else if v, ok := i.Visit(node.Left).(float64); ok {
+		left = v
+	}
+	if v, ok := i.Visit(node.Right).(int); ok {
+		right = float64(v)
+	} else if v, ok := i.Visit(node.Right).(float64); ok {
+		right = v
+	}
 	if node.Op.Type == TokenPlus {
-		return i.Visit(node.Left).(float64) + i.Visit(node.Right).(float64)
+		return left + right
 	}
 	if node.Op.Type == TokenMinus {
-		return i.Visit(node.Left).(float64) - i.Visit(node.Right).(float64)
+		return left - right
 	}
 	if node.Op.Type == TokenMultiply {
-		return i.Visit(node.Left).(float64) * i.Visit(node.Right).(float64)
+		return left * right
 	}
 	if node.Op.Type == TokenIntegerDiv {
-		return i.Visit(node.Left).(float64) / i.Visit(node.Right).(float64)
+		return left / right
 	}
-	return i.Visit(node.Left).(float64) / i.Visit(node.Right).(float64)
+	return 0
 }
 
 func (i *Interpreter) VisitNumber(node *Number) float64 {
@@ -298,10 +312,21 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	formalParams := funcSymbol.(*FunctionSymbol).FormalParams
 	actualParams := node.ActualParams
 
-	for _, item := range collection.Zip(formalParams, actualParams) {
-		k := item.Element1.(*VarSymbol).Name
-		v := i.Visit(item.Element2)
-		ar.Set(k, v)
+	var ap []interface{}
+	funcType := funcSymbol.(*FunctionSymbol).Type
+	if _, ok := funcType.(*BuiltinFunctionSymbol); ok {
+		for index, param := range actualParams {
+			k := strconv.Itoa(index)
+			v := i.Visit(param)
+			ar.Set(k, v)
+			ap = append(ap, v)
+		}
+	} else {
+		for _, item := range collection.Zip(formalParams, actualParams) {
+			k := item.Element1.(*VarSymbol).Name
+			v := i.Visit(item.Element2)
+			ar.Set(k, v)
+		}
 	}
 
 	i.callStack.Push(ar)
@@ -309,10 +334,13 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	fmt.Printf("ENTER: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
 
-	i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
-
-	// return
-	returnValue := ar.ReturnValue
+	var returnValue interface{}
+	if _, ok := funcType.(*BuiltinFunctionSymbol); ok {
+		returnValue = funcSymbol.(*FunctionSymbol).Call(i, ap)
+	} else {
+		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
+		returnValue = ar.ReturnValue
+	}
 
 	fmt.Printf("LEAVE: FUNCTION %s\n", funcName)
 	fmt.Println(i.callStack)
@@ -327,7 +355,7 @@ func (i *Interpreter) VisitReturn(node *Return) interface{} {
 }
 
 func (i *Interpreter) VisitPrint(node *Print) interface{} {
-	fmt.Println(">>> ", i.Visit(node.Statement))
+	i.stdout = append(i.stdout, i.Visit(node.Statement))
 	return nil
 }
 
@@ -387,4 +415,12 @@ func (i *Interpreter) Interpret() (float64, error) {
 		return 0, errors.New("error ast tree")
 	}
 	return i.Visit(i.tree).(float64), nil
+}
+
+func (i *Interpreter) Stdout() string {
+	var out []string
+	for _, line := range i.stdout {
+		out = append(out, fmt.Sprintf("> %v", line))
+	}
+	return strings.Join(out, "\n")
 }

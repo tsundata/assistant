@@ -43,6 +43,7 @@ type FunctionSymbol struct {
 	ReturnType   Ast
 	BlockAst     Ast
 	ScopeLevel   int
+	Call         CallFunc
 }
 
 func NewFunctionSymbol(name string) *FunctionSymbol {
@@ -50,7 +51,17 @@ func NewFunctionSymbol(name string) *FunctionSymbol {
 }
 
 func (s *FunctionSymbol) String() string {
-	return fmt.Sprintf("<FunctionSymbol(name=%s, parameters=%v, return=%v)>", s.Name, s.FormalParams, s.ReturnType)
+	return fmt.Sprintf("<FunctionSymbol(name=%s, type=%v, parameters=%v, return=%v)>", s.Name, s.Type, s.FormalParams, s.ReturnType)
+}
+
+type BuiltinFunctionSymbol struct{}
+
+func NewBuiltinFunctionSymbol() *BuiltinFunctionSymbol {
+	return &BuiltinFunctionSymbol{}
+}
+
+func (s *BuiltinFunctionSymbol) String() string {
+	return fmt.Sprintf("<BuiltinFunctionSymbol>")
 }
 
 type ScopedSymbolTable struct {
@@ -242,6 +253,9 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
+	// build in function
+	b.CurrentScope.Insert(LenFunc)
+
 	// visit subtree
 	b.Visit(node.Block)
 
@@ -358,8 +372,13 @@ func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
 	}
 	actualParams := node.ActualParams
 
-	if len(actualParams) != len(formalParams) {
-		panic(b.error(WrongParamsNum, node.Token))
+	funcType := funcSymbol.(*FunctionSymbol).Type
+	if _, ok := funcType.(*BuiltinFunctionSymbol); ok {
+		// pass
+	} else {
+		if len(actualParams) != len(formalParams) {
+			panic(b.error(WrongParamsNum, node.Token))
+		}
 	}
 
 	for _, paramNode := range node.ActualParams {
