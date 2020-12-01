@@ -229,6 +229,22 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.Advance()
 			return &Token{Type: TokenDot, Value: TokenDot, LineNo: l.LineNo, Column: l.Column}, nil
 		}
+		if l.CurrentChar == '[' {
+			l.Advance()
+			return &Token{Type: TokenLSquare, Value: TokenLSquare, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == ']' {
+			l.Advance()
+			return &Token{Type: TokenRSquare, Value: TokenRSquare, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '{' {
+			l.Advance()
+			return &Token{Type: TokenLCurly, Value: TokenLCurly, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '}' {
+			l.Advance()
+			return &Token{Type: TokenRCurly, Value: TokenRCurly, LineNo: l.LineNo, Column: l.Column}, nil
+		}
 		return nil, l.error()
 	}
 

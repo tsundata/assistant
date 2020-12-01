@@ -48,6 +48,24 @@ func NewBoolean(token *Token) *Boolean {
 	return &Boolean{Token: token, Value: token.Value.(bool)}
 }
 
+type List struct {
+	Token *Token
+	Value []Ast
+}
+
+func NewList(token *Token) *List {
+	return &List{Token: token, Value: token.Value.([]Ast)}
+}
+
+type Dict struct {
+	Token *Token
+	Value map[string]Ast
+}
+
+func NewDict(token *Token) *Dict {
+	return &Dict{Token: token, Value: token.Value.(map[string]Ast)}
+}
+
 type UnaryOp struct {
 	Op   *Token
 	Expr Ast

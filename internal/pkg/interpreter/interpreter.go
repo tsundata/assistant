@@ -119,6 +119,12 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Boolean); ok {
 		return i.VisitBoolean(n)
 	}
+	if n, ok := node.(*List); ok {
+		return i.VisitList(n)
+	}
+	if n, ok := node.(*Dict); ok {
+		return i.VisitDict(n)
+	}
 	if n, ok := node.(*UnaryOp); ok {
 		return i.VisitUnaryOp(n)
 	}
@@ -237,6 +243,24 @@ func (i *Interpreter) VisitString(node *String) string {
 
 func (i *Interpreter) VisitBoolean(node *Boolean) bool {
 	return node.Value
+}
+
+func (i *Interpreter) VisitList(node *List) []interface{} {
+	var result []interface{}
+	for _, item := range node.Value {
+		result = append(result, i.Visit(item))
+	}
+
+	return result
+}
+
+func (i *Interpreter) VisitDict(node *Dict) map[string]interface{} {
+	result := make(map[string]interface{})
+	for key, item := range node.Value {
+		result[key] = i.Visit(item)
+	}
+
+	return result
 }
 
 func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {

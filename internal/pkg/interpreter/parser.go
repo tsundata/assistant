@@ -311,6 +311,16 @@ func (p *Parser) TypeSpec() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
+	} else if p.CurrentToken.Type == TokenList {
+		err := p.Eat(TokenList)
+		if err != nil {
+			return nil, err
+		}
+	} else if p.CurrentToken.Type == TokenDict {
+		err := p.Eat(TokenDict)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		err := p.Eat(TokenFloat)
 		if err != nil {
@@ -327,6 +337,9 @@ func (p *Parser) CompoundStatement() (Ast, error) {
 		return nil, err
 	}
 	nodes, err := p.StatementList()
+	if err != nil {
+		return nil, err
+	}
 	err = p.Eat(TokenEnd)
 	if err != nil {
 		return nil, err
@@ -655,6 +668,98 @@ func (p *Parser) Variable() (Ast, error) {
 	return node, nil
 }
 
+func (p *Parser) List() (Ast, error) {
+	var result []Ast
+	err := p.Eat(TokenLSquare)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := p.Factor()
+	if err != nil {
+		return nil, err
+	}
+	result = append(result, node)
+
+	for p.CurrentToken.Type == TokenComma {
+		err = p.Eat(TokenComma)
+		if err != nil {
+			return nil, err
+		}
+
+		node, err = p.Factor()
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, node)
+	}
+
+	err = p.Eat(TokenRSquare)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewList(&Token{Type: TokenList, Value: result, Column: p.Lexer.Column, LineNo: p.Lexer.LineNo}), nil
+}
+
+func (p *Parser) Dict() (Ast, error) {
+	result := make(map[string]Ast)
+	err := p.Eat(TokenLCurly)
+	if err != nil {
+		return nil, err
+	}
+
+	key := p.CurrentToken.Value.(string)
+
+	err = p.Eat(TokenStringConst)
+	if err != nil {
+		return nil, err
+	}
+	err = p.Eat(TokenColon)
+	if err != nil {
+		return nil, err
+	}
+
+	value, err := p.Factor()
+	if err != nil {
+		return nil, err
+	}
+
+	result[key] = value
+
+	for p.CurrentToken.Type == TokenComma {
+		err = p.Eat(TokenComma)
+		if err != nil {
+			return nil, err
+		}
+
+		key = p.CurrentToken.Value.(string)
+
+		err = p.Eat(TokenStringConst)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenColon)
+		if err != nil {
+			return nil, err
+		}
+
+		value, err = p.Factor()
+		if err != nil {
+			return nil, err
+		}
+
+		result[key] = value
+	}
+
+	err = p.Eat(TokenRCurly)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewDict(&Token{Type: TokenDict, Value: result, Column: p.Lexer.Column, LineNo: p.Lexer.LineNo}), nil
+}
+
 func (p *Parser) Empty() (Ast, error) {
 	return NewNoOp(), nil
 }
@@ -767,6 +872,12 @@ func (p *Parser) Factor() (Ast, error) {
 			return nil, err
 		}
 		return NewBoolean(token), nil
+	}
+	if token.Type == TokenLSquare {
+		return p.List()
+	}
+	if token.Type == TokenLCurly {
+		return p.Dict()
 	}
 	if token.Type == TokenLParen {
 		err := p.Eat(TokenLParen)

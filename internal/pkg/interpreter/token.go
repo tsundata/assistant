@@ -11,6 +11,10 @@ const (
 	TokenFloatDiv     = "/"
 	TokenLParen       = "("
 	TokenRParen       = ")"
+	TokenLSquare      = "["
+	TokenRSquare      = "]"
+	TokenLCurly       = "{"
+	TokenRCurly       = "}"
 	TokenSemi         = ";"
 	TokenDot          = "."
 	TokenColon        = ":"
@@ -21,6 +25,8 @@ const (
 	TokenFloat        = "FLOAT"
 	TokenString       = "STRING"
 	TokenBoolean      = "BOOLEAN"
+	TokenList         = "LIST"
+	TokenDict         = "DICT"
 	TokenIntegerDiv   = "DIV"
 	TokenVar          = "VAR"
 	TokenFunction     = "FUNCTION"
@@ -28,6 +34,9 @@ const (
 	TokenEnd          = "END"
 	TokenReturn       = "RETURN"
 	TokenPrint        = "PRINT"
+	TokenMap          = "MAP"
+	TokenFilter       = "FILTER"
+	TokenReduce       = "REDUCE"
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
 	TokenFloatConst   = "FLOAT_CONST"
@@ -85,4 +94,9 @@ var ReservedKeywords = map[string]Token{
 	"FALSE":   {Type: TokenFalse, Value: false},
 	"PRINT":   {Type: TokenPrint, Value: TokenPrint},
 	"RETURN":  {Type: TokenReturn, Value: TokenReturn},
+	"LIST":    {Type: TokenList, Value: TokenList},
+	"DICT":    {Type: TokenDict, Value: TokenDict},
+	"MAP":     {Type: TokenMap, Value: TokenMap},
+	"FILTER":  {Type: TokenFilter, Value: TokenFilter},
+	"REDUCE":  {Type: TokenReduce, Value: TokenReduce},
 }

@@ -72,6 +72,8 @@ func NewScopedSymbolTable(scopeName string, scopeLevel int, enclosingScope *Scop
 	table.Insert(NewBuiltinTypeSymbol("FLOAT"))
 	table.Insert(NewBuiltinTypeSymbol("BOOL"))
 	table.Insert(NewBuiltinTypeSymbol("STRING"))
+	table.Insert(NewBuiltinTypeSymbol("LIST"))
+	table.Insert(NewBuiltinTypeSymbol("DICT"))
 	return table
 }
 
@@ -198,6 +200,14 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitBoolean(n)
 		return
 	}
+	if n, ok := node.(*List); ok {
+		b.VisitList(n)
+		return
+	}
+	if n, ok := node.(*Dict); ok {
+		b.VisitDict(n)
+		return
+	}
 	if n, ok := node.(*UnaryOp); ok {
 		b.VisitUnaryOp(n)
 		return
@@ -316,6 +326,18 @@ func (b *SemanticAnalyzer) VisitString(node *String) {
 
 func (b *SemanticAnalyzer) VisitBoolean(node *Boolean) {
 	// pass
+}
+
+func (b *SemanticAnalyzer) VisitList(node *List) {
+	for _, item := range node.Value {
+		b.Visit(item)
+	}
+}
+
+func (b *SemanticAnalyzer) VisitDict(node *Dict) {
+	for _, item := range node.Value {
+		b.Visit(item)
+	}
 }
 
 func (b *SemanticAnalyzer) VisitUnaryOp(node *UnaryOp) {

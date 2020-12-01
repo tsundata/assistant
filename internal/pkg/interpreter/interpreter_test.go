@@ -418,6 +418,41 @@ end.`
 	run(t, text)
 }
 
+func TestInterpreterMapFilterReduce(t *testing.T) {
+	text := `program exPackages;
+import net;
+import text;
+import message;
+
+var a, b, c,  min  int;
+    urls list;
+	demo dict;
+	l1 list;
+	d1 dict;
+
+func toLower(in: string) : string ;
+begin
+	return in;
+end;  
+
+begin
+	urls := ["https://httpbin.org/", "url2", "url3"];
+	demo := {"a": "b", "c": "d"};
+   	a := 1;
+	b := 2;
+	c := 3;
+	l1 := [a, b, c];
+	d1 := {"a": a, "b": b, "c": c};
+   	print net.get(urls);
+	message.send("hi");
+	print len(urls);
+	//print map(urls, toLower);
+	//print filter(urls, text.isLetter)
+	//print reduce(urls, text.doSomething)
+end.`
+	run(t, text)
+}
+
 func TestCallStack(t *testing.T) {
 	s := NewCallStack()
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))

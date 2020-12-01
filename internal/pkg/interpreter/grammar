@@ -15,12 +15,14 @@ formal_params_list : formal_parameters
 
 formal_parameters : ID ( "," ID )* ":" type_spec
 
-type_spec : INTEGER | FLOAT | STRING | BOOLEAN
+type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT
 
 INTEGER : "int"
 FLOAT   : "float"
 STRING  : "string"
 BOOLEAN : "bool"
+LIST    : "list"
+DICT    : "dict"
 
 compound_statement : "begin" statement_list "end"
 
@@ -69,16 +71,20 @@ factor : "+" factor
        | INTEGER_CONST
        | FLOAT_CONST
        | STRING_CONST
-       | BOOLEAN
+       | LIST
+       | DICT
+       | BOOLEAN_CONST
        | "(" expr ")"
        | variable
        | function_call_statement
 
 variable : ID
 
-BOOLEAN : "true" | "false"
-NUMBER  : DIGIT+ ( "." DIGIT+ )?
-STRING  : "\"" <any char except "\"">* "\""
-ID      : ALPHA ( ALPHA | DIGIT )*
-ALPHA   : "a" ... "z" | "A" ... "Z" | "_"
-DIGIT   : "0" ... "9"
+BOOLEAN_CONST : "true" | "false"
+NUMBER        : DIGIT+ ( "." DIGIT+ )?
+STRING_CONST  : "\"" <any char except "\"">* "\""
+ID            : ALPHA ( ALPHA | DIGIT )*
+ALPHA         : "a" ... "z" | "A" ... "Z" | "_"
+DIGIT         : "0" ... "9"
+LIST          : "[" factor ( "," factor )* "]"
+DICT          : "{" STRING ":" factor ( "," STRING ":" factor )* "}"
