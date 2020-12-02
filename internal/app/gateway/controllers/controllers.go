@@ -20,6 +20,8 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 				gc.Index(ctx)
 			case "/foo":
 				gc.Foo(ctx)
+			case "/apps":
+				gc.Apps(ctx)
 			default:
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}

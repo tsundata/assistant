@@ -12,6 +12,7 @@ import (
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
+	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,6 +31,15 @@ func NewGatewayController(o *gateway.Options, logger *zap.Logger, subClient *rpc
 
 func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
 	c.Response.SetBody([]byte("ROOT"))
+}
+
+func (gc *GatewayController) Apps(c *fasthttp.RequestCtx) {
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	t := template.Must(template.New("").Parse(`<table>{{range .}}<tr><td>{{.}}</td></tr>{{end}}</table>`))
+	names := []string{"slack", "email"}
+	if err := t.Execute(c.Response.BodyWriter(), names); err != nil {
+		gc.logger.Error(err.Error())
+	}
 }
 
 func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {

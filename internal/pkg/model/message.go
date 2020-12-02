@@ -38,7 +38,7 @@ const (
 
 const (
 	MessageScriptOfJavascript = "javascript"
-	MessageScriptOfDSL        = "dsl"
+	MessageScriptOfFlowscript = "flowscript"
 	MessageScriptOfUndefined  = "undefined"
 )
 

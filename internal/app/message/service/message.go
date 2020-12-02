@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/robertkrimen/otto"
+	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -98,14 +99,31 @@ func (m *Message) Run(ctx context.Context, payload string, reply *string) error 
 		return nil
 	}
 
-	// TODO
 	switch find.Type {
 	case model.MessageTypeAction:
+		// TODO action
 	case model.MessageTypeScript:
 		switch utils.MessageScriptKind(find.Content) {
-		case model.MessageScriptOfDSL:
+		case model.MessageScriptOfFlowscript:
+			text := strings.Replace(find.Content, "#!script:flowscript", "", -1)
+			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))
+			if err != nil {
+				m.logger.Error(err.Error())
+				return err
+			}
+			tree, err := p.Parse()
+			if err != nil {
+				m.logger.Error(err.Error())
+				return err
+			}
+			i := interpreter.NewInterpreter(tree)
+			_, err = i.Interpret()
+			if err != nil {
+				m.logger.Error(err.Error())
+				return err
+			}
+			*reply = i.Stdout()
 		case model.MessageScriptOfJavascript:
-			// TODO
 			vm := otto.New()
 			v, err := vm.Run(strings.Replace(find.Content, "#!script:javascript", "", -1))
 			if err != nil {
@@ -114,7 +132,9 @@ func (m *Message) Run(ctx context.Context, payload string, reply *string) error 
 			}
 			*reply = v.String()
 		case model.MessageScriptOfUndefined:
+			*reply = "MessageScriptOfUndefined"
 		default:
+			*reply = "MessageScriptOfUndefined"
 		}
 	default:
 		*reply = "Not running"
