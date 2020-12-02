@@ -208,6 +208,10 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitDict(n)
 		return
 	}
+	if n, ok := node.(*Message); ok {
+		b.VisitMessage(n)
+		return
+	}
 	if n, ok := node.(*UnaryOp); ok {
 		b.VisitUnaryOp(n)
 		return
@@ -330,6 +334,9 @@ func (b *SemanticAnalyzer) VisitNumber(node *Number) {
 }
 
 func (b *SemanticAnalyzer) VisitString(node *String) {
+	// pass
+}
+func (b *SemanticAnalyzer) VisitMessage(node *Message) {
 	// pass
 }
 

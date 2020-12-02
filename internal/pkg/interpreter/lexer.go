@@ -114,6 +114,23 @@ func (l *Lexer) String() (*Token, error) {
 	return &Token{Type: TokenStringConst, Value: string(result), LineNo: l.LineNo, Column: l.Column}, nil
 }
 
+func (l *Lexer) Message() (*Token, error) {
+	l.Advance()
+
+	var result []rune
+	for l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	i, err := strconv.Atoi(string(result))
+	if err != nil {
+		return nil, err
+	}
+
+	return &Token{Type: TokenMessageConst, Value: i, LineNo: l.LineNo, Column: l.Column}, nil
+}
+
 func (l *Lexer) Id() (*Token, error) {
 	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
 
@@ -155,6 +172,9 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		}
 		if l.CurrentChar == '"' {
 			return l.String()
+		}
+		if l.CurrentChar == '#' {
+			return l.Message()
 		}
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()

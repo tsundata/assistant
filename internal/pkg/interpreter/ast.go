@@ -66,6 +66,15 @@ func NewDict(token *Token) *Dict {
 	return &Dict{Token: token, Value: token.Value.(map[string]Ast)}
 }
 
+type Message struct {
+	Token *Token
+	Value interface{}
+}
+
+func NewMessage(token *Token) *Message {
+	return &Message{Token: token, Value: token.Value.(int)}
+}
+
 type UnaryOp struct {
 	Op   *Token
 	Expr Ast
@@ -232,9 +241,9 @@ func NewReturn(statement Ast) *Return {
 }
 
 type FunctionRef struct {
-	PackageName  string
-	FuncName     string
-	Token        *Token
+	PackageName string
+	FuncName    string
+	Token       *Token
 }
 
 func NewFunctionRef(packageName string, funcName string, token *Token) *FunctionRef {

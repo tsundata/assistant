@@ -401,7 +401,7 @@ end.`
 func TestInterpreterPackages(t *testing.T) {
 	text := `program exPackages;
 import net;
-import message;
+import msg;
 
 var a, b, c,  min  int;
     url string;
@@ -412,7 +412,7 @@ begin
 	b := 2;
 	c := 3;
    	print net.get(url);
-	message.send("hi");
+	msg.send("hi");
 	print len(url);
 end.`
 	run(t, text)
@@ -421,7 +421,7 @@ end.`
 func TestInterpreterMapFilterReduce(t *testing.T) {
 	text := `program exPackages;
 import net;
-import message;
+import msg;
 
 var a, b, c,  min  int;
     urls list;
@@ -444,12 +444,34 @@ begin
 	d1 := {"a": a, "b": b, "c": c};
 
    	print net.get(urls);
-	message.send("hi");
+	msg.send("hi");
 
 	print len(urls);
 	print map(urls, @len);
-	print filter(urls, @message.filter);
-	print reduce(urls, @message.reduce);
+	print filter(urls, @msg.filter);
+	print reduce(urls, @msg.reduce);
+end.`
+	run(t, text)
+}
+
+func TestInterpreterMessage(t *testing.T) {
+	text := `program exPackages;
+import net;
+import msg;
+
+var a, b, c,  min  int;
+    url string;
+	m1 message;
+
+begin
+	url := "https://httpbin.org/";
+   	a := 1;
+	b := 2;
+	c := 3;
+   	print net.get(url);
+	msg.send("hi");
+	print len(url);
+	m1 := #1728;
 end.`
 	run(t, text)
 }

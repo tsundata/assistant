@@ -125,6 +125,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Dict); ok {
 		return i.VisitDict(n)
 	}
+	if n, ok := node.(*Message); ok {
+		return i.VisitMessage(n)
+	}
 	if n, ok := node.(*UnaryOp); ok {
 		return i.VisitUnaryOp(n)
 	}
@@ -245,6 +248,11 @@ func (i *Interpreter) VisitString(node *String) string {
 }
 
 func (i *Interpreter) VisitBoolean(node *Boolean) bool {
+	return node.Value
+}
+
+func (i *Interpreter) VisitMessage(node *Message) interface{} {
+	// TODO get message
 	return node.Value
 }
 

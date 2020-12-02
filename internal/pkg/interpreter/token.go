@@ -27,6 +27,7 @@ const (
 	TokenBoolean      = "BOOLEAN"
 	TokenList         = "LIST"
 	TokenDict         = "DICT"
+	TokenMessage      = "MESSAGE"
 	TokenIntegerDiv   = "DIV"
 	TokenVar          = "VAR"
 	TokenFunction     = "FUNCTION"
@@ -38,6 +39,7 @@ const (
 	TokenIntegerConst = "INTEGER_CONST"
 	TokenFloatConst   = "FLOAT_CONST"
 	TokenStringConst  = "STRING_CONST"
+	TokenMessageConst = "MESSAGE_CONST"
 	TokenAssign       = ":="
 	TokenEOF          = "EOF"
 	TokenIf           = "IF"
@@ -56,6 +58,7 @@ const (
 	TokenLess         = "<"
 	TokenLessEqual    = "<="
 	TokenAt           = "@"
+	TokenHash         = "#"
 )
 
 type Token struct {
@@ -94,4 +97,5 @@ var ReservedKeywords = map[string]Token{
 	"RETURN":  {Type: TokenReturn, Value: TokenReturn},
 	"LIST":    {Type: TokenList, Value: TokenList},
 	"DICT":    {Type: TokenDict, Value: TokenDict},
+	"MESSAGE": {Type: TokenMessage, Value: TokenMessage},
 }

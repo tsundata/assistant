@@ -15,7 +15,7 @@ formal_params_list : formal_parameters
 
 formal_parameters : ID ( "," ID )* ":" type_spec
 
-type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT
+type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT | MESSAGE
 
 INTEGER : "int"
 FLOAT   : "float"
@@ -23,6 +23,7 @@ STRING  : "string"
 BOOLEAN : "bool"
 LIST    : "list"
 DICT    : "dict"
+MESSAGE : "message"
 
 compound_statement : "begin" statement_list "end"
 
@@ -73,6 +74,7 @@ factor : "+" factor
        | INTEGER_CONST
        | FLOAT_CONST
        | STRING_CONST
+       | MESSAGE_CONST
        | LIST
        | DICT
        | BOOLEAN_CONST
@@ -83,6 +85,7 @@ factor : "+" factor
 
 variable : ID
 
+MESSAGE_CONST : "#" DIGIT+
 BOOLEAN_CONST : "true" | "false"
 NUMBER        : DIGIT+ ( "." DIGIT+ )?
 STRING_CONST  : "\"" <any char except "\"">* "\""

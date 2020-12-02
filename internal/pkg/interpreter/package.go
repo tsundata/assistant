@@ -22,7 +22,7 @@ var packages = map[string]map[string]Symbol{
 	}),
 
 	// message
-	"message": packageDefine("message", map[string]CallFunc{
+	"msg": packageDefine("msg", map[string]CallFunc{
 		"send": func(i *Interpreter, args []interface{}) interface{} {
 			return "message.send" + args[0].(string)
 		},

@@ -321,11 +321,13 @@ func (p *Parser) TypeSpec() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else {
-		err := p.Eat(TokenFloat)
+	} else if p.CurrentToken.Type == TokenMessage {
+		err := p.Eat(TokenMessage)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		return nil, p.error(UnexpectedToken, token)
 	}
 
 	return NewType(token), nil
@@ -891,6 +893,13 @@ func (p *Parser) Factor() (Ast, error) {
 			return nil, err
 		}
 		return NewString(token), nil
+	}
+	if token.Type == TokenMessageConst {
+		err := p.Eat(TokenMessageConst)
+		if err != nil {
+			return nil, err
+		}
+		return NewMessage(token), nil
 	}
 	if token.Type == TokenTrue {
 		err := p.Eat(TokenTrue)
