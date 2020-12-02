@@ -230,3 +230,13 @@ type Return struct {
 func NewReturn(statement Ast) *Return {
 	return &Return{Statement: statement}
 }
+
+type FunctionRef struct {
+	PackageName  string
+	FuncName     string
+	Token        *Token
+}
+
+func NewFunctionRef(packageName string, funcName string, token *Token) *FunctionRef {
+	return &FunctionRef{PackageName: packageName, FuncName: funcName, Token: token}
+}

@@ -421,7 +421,6 @@ end.`
 func TestInterpreterMapFilterReduce(t *testing.T) {
 	text := `program exPackages;
 import net;
-import text;
 import message;
 
 var a, b, c,  min  int;
@@ -443,12 +442,14 @@ begin
 	c := 3;
 	l1 := [a, b, c];
 	d1 := {"a": a, "b": b, "c": c};
+
    	print net.get(urls);
 	message.send("hi");
+
 	print len(urls);
-	//print map(urls, toLower);
-	//print filter(urls, text.isLetter)
-	//print reduce(urls, text.doSomething)
+	print map(urls, @len);
+	print filter(urls, @message.filter);
+	print reduce(urls, @message.reduce);
 end.`
 	run(t, text)
 }

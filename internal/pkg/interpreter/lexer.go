@@ -245,6 +245,10 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.Advance()
 			return &Token{Type: TokenRCurly, Value: TokenRCurly, LineNo: l.LineNo, Column: l.Column}, nil
 		}
+		if l.CurrentChar == '@' {
+			l.Advance()
+			return &Token{Type: TokenAt, Value: TokenAt, LineNo: l.LineNo, Column: l.Column}, nil
+		}
 		return nil, l.error()
 	}
 

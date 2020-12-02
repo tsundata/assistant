@@ -236,6 +236,10 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitFunctionCall(n)
 		return
 	}
+	if n, ok := node.(*FunctionRef); ok {
+		b.VisitFunctionRef(n)
+		return
+	}
 	if n, ok := node.(*Return); ok {
 		b.VisitReturn(n)
 		return
@@ -263,8 +267,13 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
-	// build in function
-	b.CurrentScope.Insert(LenFunc)
+	// builtin function
+	for _, f := range functions {
+		b.CurrentScope.Insert(f)
+	}
+	for _, f := range iteration {
+		b.CurrentScope.Insert(f)
+	}
 
 	// import package
 	for _, p := range node.Packages {
@@ -430,6 +439,24 @@ func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
 	}
 
 	node.FuncSymbol = funcSymbol
+}
+
+func (b *SemanticAnalyzer) VisitFunctionRef(node *FunctionRef) {
+	var funcName string
+	if node.PackageName != "" {
+		funcName = fmt.Sprintf("%s.%s", node.PackageName, node.FuncName)
+	} else {
+		funcName = node.FuncName
+	}
+	funcSymbol := b.CurrentScope.Lookup(funcName, false)
+	if funcSymbol != nil {
+		// pass
+	} else {
+		funcSymbol = b.CurrentScope.Lookup(fmt.Sprintf("builtin.%s", node.FuncName), false)
+		if funcSymbol == nil {
+			panic(b.error(UndefinedFunction, node.Token))
+		}
+	}
 }
 
 func (b *SemanticAnalyzer) VisitReturn(node *Return) {

@@ -644,6 +644,39 @@ func (p *Parser) FunctionCallStatement() (Ast, error) {
 	return NewFunctionCall(packageName, funcName, actualParams, token), nil
 }
 
+func (p *Parser) FunctionReference() (Ast, error) {
+	err := p.Eat(TokenAt)
+	if err != nil {
+		return nil, err
+	}
+
+	node := p.CurrentToken
+	var packageName string
+	var funcName string
+	name := p.CurrentToken.Value.(string)
+	err = p.Eat(TokenID)
+	if err != nil {
+		return nil, err
+	}
+	if p.CurrentToken.Type == TokenDot {
+		err = p.Eat(TokenDot)
+		if err != nil {
+			return nil, err
+		}
+		node = p.CurrentToken
+		packageName = name
+		funcName = p.CurrentToken.Value.(string)
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		funcName = name
+	}
+
+	return NewFunctionRef(packageName, funcName, node), nil
+}
+
 func (p *Parser) AssignmentStatement() (Ast, error) {
 	left, err := p.Variable()
 	if err != nil {
@@ -896,6 +929,9 @@ func (p *Parser) Factor() (Ast, error) {
 	}
 	if (token.Type == TokenID && p.Lexer.CurrentChar == '(') || (token.Type == TokenID && p.Lexer.CurrentChar == '.') {
 		return p.FunctionCallStatement()
+	}
+	if token.Type == TokenAt {
+		return p.FunctionReference()
 	}
 
 	return p.Variable()

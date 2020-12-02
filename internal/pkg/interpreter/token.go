@@ -34,9 +34,6 @@ const (
 	TokenEnd          = "END"
 	TokenReturn       = "RETURN"
 	TokenPrint        = "PRINT"
-	TokenMap          = "MAP"
-	TokenFilter       = "FILTER"
-	TokenReduce       = "REDUCE"
 	TokenID           = "ID"
 	TokenIntegerConst = "INTEGER_CONST"
 	TokenFloatConst   = "FLOAT_CONST"
@@ -58,6 +55,7 @@ const (
 	TokenGreaterEqual = ">="
 	TokenLess         = "<"
 	TokenLessEqual    = "<="
+	TokenAt           = "@"
 )
 
 type Token struct {
@@ -96,7 +94,4 @@ var ReservedKeywords = map[string]Token{
 	"RETURN":  {Type: TokenReturn, Value: TokenReturn},
 	"LIST":    {Type: TokenList, Value: TokenList},
 	"DICT":    {Type: TokenDict, Value: TokenDict},
-	"MAP":     {Type: TokenMap, Value: TokenMap},
-	"FILTER":  {Type: TokenFilter, Value: TokenFilter},
-	"REDUCE":  {Type: TokenReduce, Value: TokenReduce},
 }

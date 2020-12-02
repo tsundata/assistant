@@ -146,6 +146,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*FunctionCall); ok {
 		return i.VisitFunctionCall(n)
 	}
+	if n, ok := node.(*FunctionRef); ok {
+		return i.VisitFunctionRef(n)
+	}
 	if n, ok := node.(*Return); ok {
 		return i.VisitReturn(n)
 	}
@@ -305,15 +308,9 @@ func (i *Interpreter) VisitVar(node *Var) interface{} {
 		if ar != nil {
 			val := ar.Get(varName)
 			if val != nil {
-				if v, ok := val.(float64); ok {
-					return v
-				}
-				if v, ok := val.(string); ok {
-					return v
-				}
-				if v, ok := val.(bool); ok {
-					return v
-				}
+				return val
+			} else {
+				// TODO var nil
 			}
 		} else {
 			panic(errors.New("interpreter error var name"))
@@ -383,6 +380,10 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 	i.callStack.Pop()
 
 	return returnValue
+}
+
+func (i *Interpreter) VisitFunctionRef(node *FunctionRef) *FunctionRef {
+	return node
 }
 
 func (i *Interpreter) VisitReturn(node *Return) interface{} {

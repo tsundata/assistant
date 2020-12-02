@@ -58,6 +58,8 @@ comparison : expr ( ( ">" | ">=" | "<" | "<=" ) expr )*
 
 function_call_statement : ( ID "." )? ID "(" ( expr ( "," expr )* )? ")"
 
+function_reference : "@" ( ID "." )? ID
+
 assignment_statement : variable ":=" expr
 
 empty :
@@ -77,6 +79,7 @@ factor : "+" factor
        | "(" expr ")"
        | variable
        | function_call_statement
+       | function_reference
 
 variable : ID
 
