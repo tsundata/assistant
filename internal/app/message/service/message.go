@@ -23,25 +23,25 @@ func NewManage(db *gorm.DB, logger *zap.Logger) *Message {
 	return &Message{db: db, logger: logger}
 }
 
-func (m *Message) List(ctx context.Context, payload *model.Message, reply *[]model.Message) error {
-	var messages []model.Message
+func (m *Message) List(ctx context.Context, payload *model.Event, reply *[]model.Event) error {
+	var messages []model.Event
 	m.db.Order("created_at DESC").Limit(10).Find(&messages)
 	*reply = messages
 
 	return nil
 }
 
-func (m *Message) View(ctx context.Context, payload *model.Message, reply *model.Message) error {
-	var find model.Message
+func (m *Message) View(ctx context.Context, payload *model.Event, reply *model.Event) error {
+	var find model.Event
 	m.db.Where("id = ?", payload.ID).Take(&find)
 	*reply = find
 
 	return nil
 }
 
-func (m *Message) Create(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	// check uuid
-	var find model.Message
+	var find model.Event
 	m.db.Where("uuid = ?", payload.UUID).Take(&find)
 
 	if find.ID > 0 {
@@ -50,15 +50,15 @@ func (m *Message) Create(ctx context.Context, payload *model.Message, reply *mod
 	}
 
 	// parse type
-	payload.Content = strings.TrimSpace(payload.Content)
-	if utils.IsUrl(payload.Content) {
-		payload.Type = model.MessageTypeUrl
+	payload.Data.Message.Text = strings.TrimSpace(payload.Data.Message.Text)
+	if utils.IsUrl(payload.Data.Message.Type) {
+		payload.Data.Message.Type = model.MessageTypeLink
 	}
-	if utils.IsMessageOfAction(payload.Content) {
-		payload.Type = model.MessageTypeAction
+	if utils.IsMessageOfAction(payload.Data.Message.Text) {
+		payload.Data.Message.Type = model.MessageTypeAction
 	}
-	if utils.IsMessageOfScript(payload.Content) {
-		payload.Type = model.MessageTypeScript
+	if utils.IsMessageOfScript(payload.Data.Message.Text) {
+		payload.Data.Message.Type = model.MessageTypeScript
 	}
 
 	// insert
@@ -68,7 +68,7 @@ func (m *Message) Create(ctx context.Context, payload *model.Message, reply *mod
 	return nil
 }
 
-func (m *Message) Delete(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (m *Message) Delete(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	m.db.Where("id = ?", payload.ID).Delete(model.Message{})
 	return nil
 }
@@ -91,7 +91,7 @@ func (m *Message) SendMessage(ctx context.Context, message string, reply *string
 
 func (m *Message) Run(ctx context.Context, payload string, reply *string) error {
 	// check uuid
-	var find model.Message
+	var find model.Event
 	m.db.Where("uuid = ?", payload).Take(&find)
 
 	if find.ID == 0 {
@@ -103,9 +103,9 @@ func (m *Message) Run(ctx context.Context, payload string, reply *string) error 
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch utils.MessageScriptKind(find.Content) {
+		switch utils.MessageScriptKind(find.Data.Message.Text) {
 		case model.MessageScriptOfFlowscript:
-			text := strings.Replace(find.Content, "#!script:flowscript", "", -1)
+			text := strings.Replace(find.Data.Message.Text, "#!script:flowscript", "", -1)
 			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))
 			if err != nil {
 				m.logger.Error(err.Error())
@@ -125,7 +125,7 @@ func (m *Message) Run(ctx context.Context, payload string, reply *string) error 
 			*reply = i.Stdout()
 		case model.MessageScriptOfJavascript:
 			vm := otto.New()
-			v, err := vm.Run(strings.Replace(find.Content, "#!script:javascript", "", -1))
+			v, err := vm.Run(strings.Replace(find.Data.Message.Text, "#!script:javascript", "", -1))
 			if err != nil {
 				m.logger.Error(err.Error())
 				return err

@@ -7,33 +7,26 @@ import (
 	"time"
 )
 
-type Message struct {
-	ID          int `gorm:"primaryKey"`
-	UUID        string
-	Remotes     RemoteType
-	Type        MessageType
-	ChannelID   string `gorm:"channel_id"`
-	ChannelName string `gorm:"channel_name"`
-	Content     string
-	Attributes  map[string]string `gorm:"-"`
-	Vars        map[string]string `gorm:"-"`
-	SourceLink  string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-}
-
-type MessageType int
+const (
+	EventTypeMessage = "message"
+	EventTypeNotice  = "notice"
+	EventTypeRequest = "request"
+)
 
 const (
-	MessageTypeText MessageType = iota
-	MessageTypeVoice
-	MessageTypeImage
-	MessageTypeFile
-	MessageTypeLocation
-	MessageTypeVideo
-	MessageTypeUrl
-	MessageTypeAction
-	MessageTypeScript
+	MessageTypeText     = "text"
+	MessageTypeAt       = "at"
+	MessageTypeAudio    = "audio"
+	MessageTypeImage    = "image"
+	MessageTypeFile     = "file"
+	MessageTypeLocation = "location"
+	MessageTypeVideo    = "video"
+	MessageTypeLink     = "link"
+	MessageTypeContact  = "contact"
+	MessageTypeGroup    = "group"
+	MessageTypeRich     = "rich"
+	MessageTypeAction   = "action"
+	MessageTypeScript   = "script"
 )
 
 const (
@@ -42,11 +35,10 @@ const (
 	MessageScriptOfUndefined  = "undefined"
 )
 
-type RemoteType int
-
 const (
-	RemoteSlack RemoteType = iota
-	RemoteDiscord
+	PlatformSlack    = "slack"
+	PlatformTelegram = "telegram"
+	PlatformDiscord  = "discord"
 )
 
 // GenerateMessageID generates a random ID for a message
@@ -63,16 +55,128 @@ func GenerateMessageUUID() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
-// MessageTimestamp timestamps the message
-func MessageTimestamp() int64 {
-	return time.Now().Unix()
+type Event struct {
+	ID      int
+	UUID    string
+	Type    string
+	Time    time.Time
+	Context EventContext
+	Data    EventData
 }
 
-func NewMessage() Message {
-	uuid, _ := GenerateMessageUUID()
-	return Message{
-		UUID:       uuid,
-		Attributes: make(map[string]string),
-		Vars:       make(map[string]string),
-	}
+type EventContext struct {
+	Platform   string
+	Via        string
+	Type       string
+	UserID     string
+	UserTID    string
+	GroupID    string
+	GroupTID   string
+	DiscussID  string
+	DiscussTID string
+	Extra      interface{}
+}
+
+type EventData struct {
+	Type              string
+	Message           Message
+	SenderID          string
+	SenderTID         string
+	SenderName        string
+	SenderRemarkName  string
+	Sender            string
+	GroupID           string
+	GroupTID          string
+	GroupName         string
+	GroupRemarkName   string
+	Group             string
+	DiscussID         string
+	DiscussTID        string
+	DiscussName       string
+	DiscussRemarkName string
+	Discuss           string
+	SenderRole        string
+	Extra             interface{}
+}
+
+type Message struct {
+	Type string
+	Text string
+	Data interface{}
+}
+
+type MessageAt struct {
+	UserID         string
+	UserTID        string
+	UserName       string
+	UserRemarkName string
+	User           interface{}
+}
+
+type MessageImage struct {
+	Url     string
+	Path    string
+	Data    string
+	MediaID string
+}
+
+type MessageAudio struct {
+	Url     string
+	Path    string
+	Data    string
+	MediaID string
+}
+
+type MessageVideo struct {
+	Url     string
+	Path    string
+	Data    string
+	MediaID string
+}
+
+type MessageFile struct {
+	Url     string
+	Path    string
+	Data    string
+	MediaID string
+}
+
+type MessageLink struct {
+	Url     string
+	Title   string
+	Content string
+	Image   string
+}
+
+type MessageLocation struct {
+	Latitude    float64
+	Longitude   float64
+	Description string
+}
+
+type MessageContact struct {
+	UserID   string
+	UserTID  string
+	UserName string
+}
+
+type MessageGroup struct {
+	GroupID   string
+	GroupTID  string
+	GroupName string
+}
+
+type MessageRich struct {
+	Url         string
+	Description string
+}
+
+type MessageAction struct {
+	Action string
+	Cron   string
+}
+
+type MessageScript struct {
+	Type string
+	Code string
 }

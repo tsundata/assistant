@@ -43,7 +43,7 @@ func TestMessageScriptKind(t *testing.T) {
 	if MessageScriptKind(`#!script:javascript`) != model.MessageScriptOfJavascript {
 		t.Fatal("error: script kind")
 	}
-	if MessageScriptKind(`#!script:dsl`) != model.MessageScriptOfDSL {
+	if MessageScriptKind(`#!script:flowscript`) != model.MessageScriptOfFlowscript {
 		t.Fatal("error: script kind")
 	}
 }

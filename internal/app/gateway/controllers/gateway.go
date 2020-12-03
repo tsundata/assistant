@@ -43,17 +43,17 @@ func (gc *GatewayController) Apps(c *fasthttp.RequestCtx) {
 }
 
 func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
-	args := &model.Message{
-		Content: "input --->",
+	args := &model.Event{
+		UUID: "input --->",
 	}
 
-	var reply model.Message
+	var reply model.Event
 	err := gc.subClient.Call(context.Background(), "Open", args, &reply)
 	if err != nil {
 		gc.logger.Error(err.Error())
 	}
 
-	gc.logger.Info(reply.Content)
+	gc.logger.Info(reply.UUID)
 
 	c.Response.SetBodyString(time.Now().String())
 }
@@ -127,10 +127,10 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		msg := &model.Message{
+		msg := &model.Event{
 			ID: id,
 		}
-		var reply model.Message
+		var reply model.Event
 		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
@@ -139,7 +139,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 		}
 
 		if reply.ID > 0 {
-			err = slackVendor.ResponseText(s.ResponseURL, reply.Content)
+			err = slackVendor.ResponseText(s.ResponseURL, reply.Data.Message.Text)
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)
@@ -161,10 +161,10 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		msg := &model.Message{
+		msg := &model.Event{
 			ID: id,
 		}
-		var reply model.Message
+		var reply model.Event
 		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
@@ -220,14 +220,18 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 		case *slackevents.MessageEvent:
 			// ignore bot message
 			if ev.ClientMsgID != "" {
-				msg := &model.Message{
-					ID:          0,
-					UUID:        ev.ClientMsgID,
-					ChannelID:   ev.Channel,
-					ChannelName: ev.ChannelType,
-					Content:     ev.Text,
+				msg := &model.Event{
+					ID:   0,
+					UUID: ev.ClientMsgID,
+					Data: model.EventData{
+						Message: model.Message{
+							Text: ev.Text,
+						},
+						GroupID:   ev.Channel,
+						GroupName: ev.ChannelType,
+					},
 				}
-				var reply model.Message
+				var reply model.Event
 				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)
 				if err != nil {
 					gc.logger.Error(err.Error())
