@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/robertkrimen/otto"
+	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
@@ -11,16 +12,18 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"strings"
+	"time"
 )
 
 type Message struct {
 	webhook string
 	db      *gorm.DB
 	logger  *zap.Logger
+	bot     *bot.Bot
 }
 
-func NewManage(db *gorm.DB, logger *zap.Logger) *Message {
-	return &Message{db: db, logger: logger}
+func NewManage(db *gorm.DB, logger *zap.Logger, bot *bot.Bot) *Message {
+	return &Message{db: db, logger: logger, bot: bot}
 }
 
 func (m *Message) List(ctx context.Context, payload *model.Event, reply *[]model.Event) error {
@@ -51,7 +54,7 @@ func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model
 
 	// parse type
 	payload.Data.Message.Text = strings.TrimSpace(payload.Data.Message.Text)
-	if utils.IsUrl(payload.Data.Message.Type) {
+	if utils.IsUrl(payload.Data.Message.Text) {
 		payload.Data.Message.Type = model.MessageTypeLink
 	}
 	if utils.IsMessageOfAction(payload.Data.Message.Text) {
@@ -61,8 +64,19 @@ func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model
 		payload.Data.Message.Type = model.MessageTypeScript
 	}
 
+	if payload.Data.Message.Type == model.MessageTypeText {
+		out := m.bot.Process(*payload).MessageProviderOut()
+		if len(out) > 0 {
+			// TODO event array
+			*reply = out[0]
+			return nil
+		}
+	}
+
+	payload.Time = time.Now()
+
 	// insert
-	m.db.Create(payload)
+	m.db.Create(&payload)
 	*reply = *payload
 
 	return nil
@@ -99,7 +113,7 @@ func (m *Message) Run(ctx context.Context, payload string, reply *string) error 
 		return nil
 	}
 
-	switch find.Type {
+	switch find.Data.Message.Text {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:

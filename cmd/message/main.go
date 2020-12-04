@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/app/message/bot"
+	"github.com/tsundata/assistant/internal/app/message/plugins"
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 
@@ -30,7 +32,8 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appOptions, log, server)
+	b := bot.New("ts", plugins.Options...)
+	application, err := message.NewApp(appOptions, log, server, b)
 	if err != nil {
 		return nil, err
 	}

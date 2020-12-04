@@ -3,6 +3,7 @@ module github.com/tsundata/assistant
 go 1.15
 
 require (
+	github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75
 	github.com/robertkrimen/otto v0.0.0-20200922221731-ef014fd054ac
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/slack-go/slack v0.7.2

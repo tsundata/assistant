@@ -225,6 +225,7 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 					UUID: ev.ClientMsgID,
 					Data: model.EventData{
 						Message: model.Message{
+							Type: model.MessageTypeText,
 							Text: ev.Text,
 						},
 						GroupID:   ev.Channel,
@@ -239,6 +240,12 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 				}
 				if reply.ID > 0 {
 					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.ID), false))
+					if err != nil {
+						gc.logger.Error(err.Error())
+						return
+					}
+				} else {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(reply.Data.Message.Text, false))
 					if err != nil {
 						gc.logger.Error(err.Error())
 						return
