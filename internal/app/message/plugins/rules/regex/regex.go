@@ -28,7 +28,7 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *bot.Bot) {}
 
-func (r regexRuleset) HelpMessage(self bot.Bot, in model.Event) string {
+func (r regexRuleset) HelpMessage(self *bot.Bot, in model.Event) string {
 	botName := self.Name()
 	var helpMsg string
 	for _, rule := range r.rules {
@@ -40,7 +40,7 @@ func (r regexRuleset) HelpMessage(self bot.Bot, in model.Event) string {
 	return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 }
 
-func (r regexRuleset) ParseMessage(self bot.Bot, in model.Event) []model.Event {
+func (r regexRuleset) ParseMessage(self *bot.Bot, in model.Event) []model.Event {
 	for _, rule := range r.rules {
 		botName := self.Name()
 		var finalRegex bytes.Buffer

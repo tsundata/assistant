@@ -15,20 +15,20 @@ var regexRules = []regex.Rule{
 		HelpMessage: `ParseMessage func(bot.Self, string, []string) []string`,
 		ParseMessage: func(s string, args []string) []string {
 			return []string{
-				args[1] + " ..... hi .....",
+				args[1] + "Hello world " + time.Now().String(),
 			}
 		},
 	},
 }
 var cronRules = map[string]cron.Rule{
-	"message of the day": {
-		"* * * * *",
+	"heartbeat": {
+		"0 0 * * *",
 		func() []model.Event {
 			fmt.Println("cron " + time.Now().String())
 			return []model.Event{
 				{
 					Data: model.EventData{Message: model.Message{
-						Text: "test hi abc",
+						Text: "Plugin Cron Heartbeat: " + time.Now().String(),
 					}},
 				},
 			}

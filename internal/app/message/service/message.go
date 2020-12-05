@@ -42,13 +42,13 @@ func (m *Message) View(ctx context.Context, payload *model.Event, reply *model.E
 	return nil
 }
 
-func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model.Event) error {
+func (m *Message) Create(ctx context.Context, payload *model.Event, reply *[]model.Event) error {
 	// check uuid
 	var find model.Event
 	m.db.Where("uuid = ?", payload.UUID).Take(&find)
 
 	if find.ID > 0 {
-		*reply = find
+		*reply = []model.Event{find}
 		return nil
 	}
 
@@ -67,8 +67,7 @@ func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model
 	if payload.Data.Message.Type == model.MessageTypeText {
 		out := m.bot.Process(*payload).MessageProviderOut()
 		if len(out) > 0 {
-			// TODO event array
-			*reply = out[0]
+			*reply = out
 			return nil
 		}
 	}
@@ -77,7 +76,7 @@ func (m *Message) Create(ctx context.Context, payload *model.Event, reply *model
 
 	// insert
 	m.db.Create(&payload)
-	*reply = *payload
+	*reply = []model.Event{*payload}
 
 	return nil
 }

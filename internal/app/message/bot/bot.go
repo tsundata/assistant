@@ -3,6 +3,8 @@ package bot
 import (
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/valyala/fasthttp"
 	"log"
 	"strings"
 )
@@ -12,9 +14,11 @@ type Bot struct {
 	providerIn  model.Event
 	providerOut []model.Event
 	rules       []RuleParser
+
+	slackWebhook string
 }
 
-func New(name string, opts ...Option) *Bot {
+func New(name string, slackWebhook string, opts ...Option) *Bot {
 	s := &Bot{
 		name: name,
 	}
@@ -22,6 +26,8 @@ func New(name string, opts ...Option) *Bot {
 	for _, opt := range opts {
 		opt(s)
 	}
+
+	s.slackWebhook = slackWebhook
 
 	return s
 }
@@ -34,7 +40,7 @@ func (s *Bot) Process(in model.Event) *Bot {
 	if strings.HasPrefix(in.Data.Message.Text, s.Name()+" help") {
 		helpMsg := fmt.Sprintln("available commands:")
 		for _, rule := range s.rules {
-			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(*s, in))
+			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
 		}
 		s.providerOut = append(s.providerOut, model.Event{
 			Data: model.EventData{
@@ -54,7 +60,7 @@ func (s *Bot) Process(in model.Event) *Bot {
 		}
 	}()
 	for _, rule := range s.rules {
-		responses := rule.ParseMessage(*s, in)
+		responses := rule.ParseMessage(s, in)
 		for _, r := range responses {
 			s.providerOut = append(s.providerOut, r)
 		}
@@ -70,8 +76,20 @@ func (s *Bot) Name() string {
 	return s.name
 }
 
-func (s *Bot) Print() {
-	fmt.Printf("bot rules : %v\n", s.rules)
+func (s *Bot) Send(out model.Event) {
+	fmt.Printf("send event : %v\n", out)
+
+	client := http.NewClient()
+	resp, err := client.PostJSON(s.slackWebhook, map[string]interface{}{
+		"text": out.Data.Message.Text,
+	})
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	fasthttp.ReleaseResponse(resp)
 }
 
 type Option func(*Bot)
@@ -79,8 +97,8 @@ type Option func(*Bot)
 type RuleParser interface {
 	Name() string
 	Boot(*Bot)
-	ParseMessage(Bot, model.Event) []model.Event
-	HelpMessage(Bot, model.Event) string
+	ParseMessage(*Bot, model.Event) []model.Event
+	HelpMessage(*Bot, model.Event) string
 }
 
 func RegisterRuleset(rule RuleParser) Option {

@@ -93,5 +93,6 @@ func (r *Registry) Start() error {
 }
 
 func (r *Registry) Stop() error {
+	// TODO
 	return nil
 }

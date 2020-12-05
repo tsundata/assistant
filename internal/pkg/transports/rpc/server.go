@@ -92,5 +92,6 @@ func (s *Server) Register(rcvr interface{}, metadata string) error {
 }
 
 func (s *Server) Stop() error {
+	// TODO
 	return nil
 }

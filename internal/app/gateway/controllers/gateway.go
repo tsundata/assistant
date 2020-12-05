@@ -84,7 +84,6 @@ func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 			gc.logger.Info("delete")
 		case "run":
 			// TODO
-			fmt.Println(s)
 			gc.logger.Info("run")
 			var reply string
 			err := gc.msgClient.Call(context.Background(), "Run", s.Message.ClientMsgID, &reply)
@@ -232,20 +231,19 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 						GroupName: ev.ChannelType,
 					},
 				}
-				var reply model.Event
+				var reply []model.Event
 				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)
 				if err != nil {
 					gc.logger.Error(err.Error())
 					return
 				}
-				if reply.ID > 0 {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.ID), false))
-					if err != nil {
-						gc.logger.Error(err.Error())
-						return
+
+				for _, item := range reply {
+					if item.ID > 0 {
+						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", item.ID), false))
+					} else {
+						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item.Data.Message.Text, false))
 					}
-				} else {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(reply.Data.Message.Text, false))
 					if err != nil {
 						gc.logger.Error(err.Error())
 						return

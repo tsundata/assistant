@@ -32,7 +32,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := bot.New("ts", plugins.Options...)
+	b := bot.New("ts", appOptions.Webhook, plugins.Options...)
 	application, err := message.NewApp(appOptions, log, server, b)
 	if err != nil {
 		return nil, err
