@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 
 	"github.com/tsundata/assistant/internal/app/subscribe"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -26,11 +27,20 @@ func CreateApp(cf string) (*app.Application, error) {
 	dbOptions, err := database.NewOptions(viper)
 	db, err := database.New(dbOptions)
 
-	appOptions, err := subscribe.NewOptions(viper, db)
+	redisOption, err := redis.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(appOptions, log, server)
+	r, err := redis.New(redisOption)
+	if err != nil {
+		return nil, err
+	}
+
+	appOptions, err := subscribe.NewOptions(viper, db, log, r)
+	if err != nil {
+		return nil, err
+	}
+	application, err := subscribe.NewApp(appOptions, server)
 	if err != nil {
 		return nil, err
 	}

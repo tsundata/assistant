@@ -22,11 +22,11 @@ func CreateApp(cf string) (*app.Application, error) {
 	log := logger.NewLogger()
 	server, err := rpc.NewRegistry(rpcOptions, log, nil)
 
-	registryOptions, err := registry.NewOptions(viper)
+	registryOptions, err := registry.NewOptions(viper, log)
 	if err != nil {
 		return nil, err
 	}
-	application, err := registry.NewApp(registryOptions, log, server)
+	application, err := registry.NewApp(registryOptions, server)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package subscribe
 
 import (
 	"errors"
+	"github.com/rpcxio/go-redis"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -11,14 +12,18 @@ import (
 )
 
 type Options struct {
-	Name string
-	db   *gorm.DB
+	Name   string
+	db     *gorm.DB
+	redis  *redis.Client
+	logger *zap.Logger
 }
 
-func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
+func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Client) (*Options, error) {
 	var err error
 	o := new(Options)
 	o.db = db
+	o.redis = redis
+	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -27,14 +32,14 @@ func NewOptions(v *viper.Viper, db *gorm.DB) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server) (*app.Application, error) {
+func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	subscribe := service.NewSubscribe(o.db)
 	err := rs.Register(subscribe, "")
 	if err != nil {
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
+	a, err := app.New(o.Name, o.logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

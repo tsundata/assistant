@@ -32,11 +32,11 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayOptions, err := gateway.NewOptions(viper)
+	log := logger.NewLogger()
+	gatewayOptions, err := gateway.NewOptions(viper, log)
 	if err != nil {
 		return nil, err
 	}
-	log := logger.NewLogger()
 	gatewayController := controllers.NewGatewayController(gatewayOptions, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
 	router := http.NewRouter(httpOptions, initControllers)
@@ -44,7 +44,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := gateway.NewApp(gatewayOptions, log, server)
+	application, err := gateway.NewApp(gatewayOptions, server)
 	if err != nil {
 		return nil, err
 	}

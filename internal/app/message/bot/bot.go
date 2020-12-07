@@ -2,6 +2,7 @@ package bot
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/valyala/fasthttp"
@@ -15,10 +16,10 @@ type Bot struct {
 	providerOut []model.Event
 	rules       []RuleParser
 
-	slackWebhook string
+	webhook string
 }
 
-func New(name string, slackWebhook string, opts ...Option) *Bot {
+func New(name string, v *viper.Viper, opts ...Option) *Bot {
 	s := &Bot{
 		name: name,
 	}
@@ -27,7 +28,8 @@ func New(name string, slackWebhook string, opts ...Option) *Bot {
 		opt(s)
 	}
 
-	s.slackWebhook = slackWebhook
+	slack := v.GetStringMapString("slack")
+	s.webhook = slack["webhook"]
 
 	return s
 }
@@ -80,7 +82,7 @@ func (s *Bot) Send(out model.Event) {
 	fmt.Printf("send event : %v\n", out)
 
 	client := http.NewClient()
-	resp, err := client.PostJSON(s.slackWebhook, map[string]interface{}{
+	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
 		"text": out.Data.Message.Text,
 	})
 

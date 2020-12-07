@@ -9,12 +9,14 @@ import (
 )
 
 type Options struct {
-	Name string
+	Name   string
+	logger *zap.Logger
 }
 
-func NewOptions(v *viper.Viper) (*Options, error) {
+func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 	var err error
 	o := new(Options)
+	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -23,8 +25,8 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Registry) (*app.Application, error) {
-	a, err := app.New(o.Name, logger, app.RegistryServerOption(rs))
+func NewApp(o *Options, rs *rpc.Registry) (*app.Application, error) {
+	a, err := app.New(o.Name, o.logger, app.RegistryServerOption(rs))
 
 	if err != nil {
 		return nil, err
