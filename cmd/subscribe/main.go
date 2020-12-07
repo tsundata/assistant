@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/app/subscribe"
+	"github.com/tsundata/assistant/internal/app/subscribe/spider"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
-
-	"github.com/tsundata/assistant/internal/app/subscribe"
-	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -36,11 +36,12 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	s := spider.New(r, viper)
 	appOptions, err := subscribe.NewOptions(viper, db, log, r)
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(appOptions, server)
+	application, err := subscribe.NewApp(appOptions, s, server)
 	if err != nil {
 		return nil, err
 	}

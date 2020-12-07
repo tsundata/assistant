@@ -2,14 +2,13 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/app/message"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/plugins"
-	"github.com/tsundata/assistant/internal/pkg/database"
-	"github.com/tsundata/assistant/internal/pkg/logger"
-
-	"github.com/tsundata/assistant/internal/app/message"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/database"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 

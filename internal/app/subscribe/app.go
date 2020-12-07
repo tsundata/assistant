@@ -2,9 +2,10 @@ package subscribe
 
 import (
 	"errors"
-	"github.com/rpcxio/go-redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
+	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.uber.org/zap"
@@ -32,7 +33,11 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 	return o, err
 }
 
-func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
+func NewApp(o *Options, s *spider.Spider, rs *rpc.Server) (*app.Application, error) {
+	// spider cron
+	s.Cron()
+
+	// service
 	subscribe := service.NewSubscribe(o.db)
 	err := rs.Register(subscribe, "")
 	if err != nil {

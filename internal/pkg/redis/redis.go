@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 	"errors"
-	"github.com/rpcxio/go-redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 )
 

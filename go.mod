@@ -3,12 +3,13 @@ module github.com/tsundata/assistant
 go 1.15
 
 require (
-	github.com/PuerkitoBio/goquery v1.6.0 // indirect
+	github.com/PuerkitoBio/goquery v1.6.0
+	github.com/go-redis/redis/v8 v8.4.2
 	github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75
 	github.com/robertkrimen/otto v0.0.0-20200922221731-ef014fd054ac
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/slack-go/slack v0.7.2
-	github.com/smallnest/rpcx v0.0.0-20201027145221-c31b15be63d4
+	github.com/smallnest/rpcx v0.0.0-20201207055143-dff6bb8dd30b
 	github.com/spf13/viper v1.7.1
 	github.com/valyala/fasthttp v1.17.0
 	go.uber.org/zap v1.16.0

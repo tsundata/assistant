@@ -8,3 +8,5 @@ db:
 redis:
     addr: localhost:6379
     password:
+slack:
+    webhook:
