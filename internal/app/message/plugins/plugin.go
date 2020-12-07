@@ -12,7 +12,7 @@ import (
 var regexRules = []regex.Rule{
 	{
 		Regex:       `demo (.*)`,
-		HelpMessage: `ParseMessage func(bot.Self, string, []string) []string`,
+		HelpMessage: `demo plugin`,
 		ParseMessage: func(s string, args []string) []string {
 			return []string{
 				args[1] + "Hello world " + time.Now().String(),

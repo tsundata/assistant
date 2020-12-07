@@ -16,7 +16,7 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 }
 
 // TODO
-func (s *Subscribe) List(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (s *Subscribe) List(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	var list []model.Subscribe
 
 	s.db.AutoMigrate(&model.Subscribe{})
@@ -28,22 +28,22 @@ func (s *Subscribe) List(ctx context.Context, payload *model.Message, reply *mod
 }
 
 // TODO
-func (s *Subscribe) Open(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (s *Subscribe) Open(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	log.Println(payload)
 
-	*reply = model.Message{
-		Content: "out --->",
+	*reply = model.Event{
+		UUID: "out --->",
 	}
 
 	return nil
 }
 
 // TODO
-func (s *Subscribe) View(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (s *Subscribe) View(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	return nil
 }
 
 // TODO
-func (s *Subscribe) Close(ctx context.Context, payload *model.Message, reply *model.Message) error {
+func (s *Subscribe) Close(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	return nil
 }

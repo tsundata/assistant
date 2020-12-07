@@ -31,11 +31,12 @@ func (r *cronRuleset) Name() string {
 }
 
 // Boot runs preparatory steps for ruleset execution
-func (r *cronRuleset) Boot(self *bot.Bot) {
-	r.start(self)
+func (r *cronRuleset) Boot(b *bot.Bot) {
+	r.start(b)
+	r.send(b)
 }
 
-func (r cronRuleset) HelpMessage(self *bot.Bot, _ model.Event) string {
+func (r cronRuleset) HelpMessage(b *bot.Bot, _ model.Event) string {
 	helpMsg := fmt.Sprintln("cron attach <job name>- attach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron detach <job name> - detach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron list - list all available crons")
@@ -45,15 +46,15 @@ func (r cronRuleset) HelpMessage(self *bot.Bot, _ model.Event) string {
 	return helpMsg
 }
 
-func (r *cronRuleset) ParseMessage(self *bot.Bot, in model.Event) []model.Event {
+func (r *cronRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
 	if strings.HasPrefix(in.Data.Message.Text, "cron attach") {
 		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Data.Message.Text, "cron attach"))
 		ret := []model.Event{{
 			Data: model.EventData{Message: model.Message{
-				Text: r.attach(self, ruleName, "in.Room"),
+				Text: r.attach(b, ruleName, "in.Room"),
 			}},
 		}}
-		r.start(self)
+		r.start(b)
 		return ret
 	}
 
@@ -61,7 +62,7 @@ func (r *cronRuleset) ParseMessage(self *bot.Bot, in model.Event) []model.Event 
 		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Data.Message.Text, "cron detach"))
 		return []model.Event{{
 			Data: model.EventData{Message: model.Message{
-				Text: r.attach(self, ruleName, "in.Room"),
+				Text: r.attach(b, ruleName, "in.Room"),
 			}},
 		}}
 	}
@@ -79,7 +80,7 @@ func (r *cronRuleset) ParseMessage(self *bot.Bot, in model.Event) []model.Event 
 	}
 
 	if in.Data.Message.Text == "cron start" {
-		r.start(self)
+		r.start(b)
 		return []model.Event{
 			{
 				Data: model.EventData{Message: model.Message{
@@ -103,7 +104,7 @@ func (r *cronRuleset) ParseMessage(self *bot.Bot, in model.Event) []model.Event 
 	return []model.Event{}
 }
 
-func (r *cronRuleset) attach(self *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) attach(b *bot.Bot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -118,17 +119,17 @@ func (r *cronRuleset) attach(self *bot.Bot, ruleName, room string) string {
 	}
 	r.attachedCrons[room] = append(r.attachedCrons[room], ruleName)
 
-	b, err := json.Marshal(r.attachedCrons)
+	a, err := json.Marshal(r.attachedCrons)
 	if err != nil {
 		return fmt.Sprintf("error attaching %s: %v", ruleName, err)
 	}
 
-	// self.MemorySave("cron", "attached", b)
-	fmt.Println(b)
+	// b.MemorySave("cron", "attached", a)
+	fmt.Println(a)
 	return ruleName + " attached to this room"
 }
 
-func (r *cronRuleset) detach(self *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) detach(b *bot.Bot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -145,16 +146,16 @@ func (r *cronRuleset) detach(self *bot.Bot, ruleName, room string) string {
 	}
 	r.attachedCrons[room] = newRoom
 
-	b, err := json.Marshal(r.attachedCrons)
+	a, err := json.Marshal(r.attachedCrons)
 	if err != nil {
 		return fmt.Sprintf("error detaching %s: %v", ruleName, err)
 	}
-	// self.MemorySave("cron", "attached", b)
-	fmt.Println(b)
+	// b.MemorySave("cron", "attached", a)
+	fmt.Println(a)
 	return ruleName + " detached to this room"
 }
 
-func (r *cronRuleset) start(self *bot.Bot) {
+func (r *cronRuleset) start(b *bot.Bot) {
 	r.stop()
 
 	r.mu.Lock()
@@ -166,13 +167,15 @@ func (r *cronRuleset) start(self *bot.Bot) {
 		r.stopChan = append(r.stopChan, c)
 		go processCronRule(r.cronRules[rule], c, r.outCh, "room")
 	}
+}
 
-	// send message
+// send message
+func (r *cronRuleset) send(b *bot.Bot)  {
 	go func() {
 		for {
 			select {
 			case out := <-r.outCh:
-				self.Send(out)
+				b.Send(out)
 			default:
 
 			}

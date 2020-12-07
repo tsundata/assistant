@@ -27,7 +27,7 @@ func TestRunPlugin(t *testing.T) {
 		},
 		{
 			Regex:       `{{ .RobotName }} hi (.*)`,
-			HelpMessage: `ParseMessage func(bot.Self, string, []string) []string`,
+			HelpMessage: `Demo plugin`,
 			ParseMessage: func(s string, args []string) []string {
 				return []string{
 					args[1] + " ..... hi .....",
@@ -40,7 +40,7 @@ func TestRunPlugin(t *testing.T) {
 		bot.RegisterRuleset(cron.New(cronRules)),
 	}
 
-	b := bot.New("test", Options...)
+	b := bot.New("test", "", Options...)
 
 	out := b.Process(model.Event{
 		Data: model.EventData{Message: model.Message{
