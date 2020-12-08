@@ -14,7 +14,7 @@ import (
 type Rule struct {
 	Regex        string
 	HelpMessage  string
-	ParseMessage func(string, []string) []string
+	ParseMessage func(*bot.Bot, string, []string) []string
 }
 
 type regexRuleset struct {
@@ -56,7 +56,7 @@ func (r regexRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
 		}
 
 		args := re.FindStringSubmatch(in.Data.Message.Text)
-		if ret := rule.ParseMessage(in.Data.Message.Text, args); len(ret) > 0 {
+		if ret := rule.ParseMessage(b, in.Data.Message.Text, args); len(ret) > 0 {
 			var retMsgs []model.Event
 			for _, m := range ret {
 				retMsgs = append(retMsgs, model.Event{

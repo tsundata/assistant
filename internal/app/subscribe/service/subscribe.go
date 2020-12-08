@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"gorm.io/gorm"
-	"log"
 )
 
 type Subscribe struct {
@@ -15,35 +16,55 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 	return &Subscribe{db: db}
 }
 
-// TODO
-func (s *Subscribe) List(ctx context.Context, payload *model.Event, reply *model.Event) error {
+func (s *Subscribe) List(ctx context.Context, payload *model.Subscribe, reply *[]string) error {
 	var list []model.Subscribe
-
-	s.db.AutoMigrate(&model.Subscribe{})
-	s.db.Create(&model.Subscribe{})
 	s.db.Find(&list)
-	log.Println(list)
 
-	return nil
-}
+	var result []string
 
-// TODO
-func (s *Subscribe) Open(ctx context.Context, payload *model.Event, reply *model.Event) error {
-	log.Println(payload)
-
-	*reply = model.Event{
-		UUID: "out --->",
+	mb := make(map[string]bool)
+	for _, item := range list {
+		mb[item.Source] = item.IsSubscribe
+	}
+	for source, _ := range spider.SubscribeRules {
+		if b, ok := mb[source]; ok {
+			mb[source] = b
+		} else {
+			mb[source] = true
+		}
 	}
 
+	for source, isSubscribe := range mb {
+		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
+	}
+
+	*reply = result
+
 	return nil
 }
 
-// TODO
-func (s *Subscribe) View(ctx context.Context, payload *model.Event, reply *model.Event) error {
+func (s *Subscribe) Open(ctx context.Context, payload *string, reply *bool) error {
+	var subscribe model.Subscribe
+	s.db.Where(model.Subscribe{Source: *payload}).FirstOrCreate(&subscribe)
+
+	if subscribe.IsSubscribe != true {
+		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", true)
+	}
+
+	*reply = true
+
 	return nil
 }
 
-// TODO
-func (s *Subscribe) Close(ctx context.Context, payload *model.Event, reply *model.Event) error {
+func (s *Subscribe) Close(ctx context.Context, payload *string, reply *bool) error {
+	var subscribe model.Subscribe
+	s.db.Where(model.Subscribe{Source: *payload}).FirstOrCreate(&subscribe)
+
+	if subscribe.IsSubscribe != false {
+		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", false)
+	}
+
+	*reply = true
+
 	return nil
 }

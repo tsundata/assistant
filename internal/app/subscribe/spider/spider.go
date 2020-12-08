@@ -37,7 +37,7 @@ func New(rdb *redis.Client, msgClient *rpc.Client, pageClient *rpc.Client) *Spid
 func (s *Spider) Cron() {
 	log.Println("subscribe spider cron starting...")
 
-	for name, rule := range spiderRules {
+	for name, rule := range SubscribeRules {
 		log.Printf("spider %v: crawl...", name)
 		go processSpiderRule(name, rule, s.outCh)
 	}

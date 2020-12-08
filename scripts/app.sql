@@ -42,6 +42,21 @@ CREATE TABLE `pages`
   DEFAULT CHARSET = utf8mb4;
 
 
+# Dump of table subscribes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `subscribes`;
+
+CREATE TABLE `subscribes`
+(
+    `id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `source`       varchar(50)      NOT NULL DEFAULT '',
+    `is_subscribe` tinyint(4)       NOT NULL DEFAULT '1',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE = @OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS */;

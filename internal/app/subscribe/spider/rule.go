@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-var spiderRules = map[string]Rule{
-	"demo 1 minute": {
+var SubscribeRules = map[string]Rule{
+	"news": {
 		false,
 		"* * * * *",
 		func() []string {
@@ -26,7 +26,7 @@ var spiderRules = map[string]Rule{
 			return result
 		},
 	},
-	"demo 3 minute": {
+	"demo": {
 		false,
 		"*/3 * * * *",
 		func() []string {

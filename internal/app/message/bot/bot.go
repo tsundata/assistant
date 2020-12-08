@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/valyala/fasthttp"
 	"log"
 	"strings"
@@ -16,10 +17,11 @@ type Bot struct {
 	providerOut []model.Event
 	rules       []RuleParser
 
-	webhook string
+	webhook   string
+	SubClient *rpc.Client
 }
 
-func New(name string, v *viper.Viper, opts ...Option) *Bot {
+func New(name string, v *viper.Viper, SubClient *rpc.Client, opts ...Option) *Bot {
 	s := &Bot{
 		name: name,
 	}
@@ -30,6 +32,7 @@ func New(name string, v *viper.Viper, opts ...Option) *Bot {
 
 	slack := v.GetStringMapString("slack")
 	s.webhook = slack["webhook"]
+	s.SubClient = SubClient
 
 	return s
 }

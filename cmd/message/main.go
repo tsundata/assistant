@@ -24,13 +24,22 @@ func CreateApp(cf string) (*app.Application, error) {
 	log := logger.NewLogger()
 	server, err := rpc.NewServer(rpcOptions, log, nil)
 
+	clientOptions, err := rpc.NewClientOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	subClient, err := rpc.NewClient(clientOptions, "subscribe", "Subscribe")
+	if err != nil {
+		return nil, err
+	}
+
 	dbOptions, err := database.NewOptions(viper)
 	db, err := database.New(dbOptions)
 	appOptions, err := message.NewOptions(viper, db, log)
 	if err != nil {
 		return nil, err
 	}
-	b := bot.New("ts", viper, plugins.Options...)
+	b := bot.New("ts", viper, subClient, plugins.Options...)
 	application, err := message.NewApp(appOptions, server, b)
 	if err != nil {
 		return nil, err
