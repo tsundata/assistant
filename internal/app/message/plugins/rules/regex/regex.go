@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"html/template"
 	"regexp"
 	"strings"
+	"text/template"
 	"unicode"
 )
 

@@ -20,3 +20,4 @@
 go.sum
 dist/
 configs/*.yml
+internal/app/web/templates/

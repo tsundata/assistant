@@ -30,7 +30,7 @@ func NewGatewayController(o *gateway.Options, logger *zap.Logger, subClient *rpc
 }
 
 func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
-	c.Response.SetBody([]byte("ROOT"))
+	c.Response.SetBody([]byte("Gateway"))
 }
 
 func (gc *GatewayController) Apps(c *fasthttp.RequestCtx) {
