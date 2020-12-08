@@ -1,5 +1,5 @@
 app:
-    name: subscribe
+    name: middle
 rpc:
     registry: 127.0.0.1:7001
 db:
@@ -8,3 +8,5 @@ db:
 redis:
     addr: localhost:6379
     password:
+web:
+    url: http://127.0.0.1:7007

@@ -2,14 +2,14 @@ package spider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorhill/cronexpr"
-	"github.com/spf13/viper"
-	httpPkg "github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
 	"strconv"
@@ -21,15 +21,16 @@ type Spider struct {
 	rdb   *redis.Client
 	outCh chan Result
 
-	webhook string
+	msgClient  *rpc.Client
+	pageClient *rpc.Client
 }
 
-func New(rdb *redis.Client, v *viper.Viper) *Spider {
-	slack := v.GetStringMapString("slack")
+func New(rdb *redis.Client, msgClient *rpc.Client, pageClient *rpc.Client) *Spider {
 	return &Spider{
-		rdb:     rdb,
-		outCh:   make(chan Result),
-		webhook: slack["webhook"],
+		rdb:        rdb,
+		outCh:      make(chan Result),
+		msgClient:  msgClient,
+		pageClient: pageClient,
 	}
 }
 
@@ -63,10 +64,13 @@ func (s *Spider) process() {
 				}
 
 				// diff
-				diff := utils.SliceDiff(latest, old)
-				if len(diff) == 0 {
+				diff := utils.SliceDiff(old, latest)
+				if len(old) > 0 && len(diff) == 0 {
 					continue
+				} else {
+					diff = latest
 				}
+
 				// add data
 				for _, item := range out.result {
 					s.rdb.SAdd(ctx, dataKey, item)
@@ -114,21 +118,31 @@ func (s *Spider) Send(name string, out []string) {
 	if len(out) <= 5 {
 		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
 	} else {
-		// TODO web display
-		text = fmt.Sprintf("Channel %s\n%s\n http://demo.url/abc", name, strings.Join(out[:5], "\n"))
+		// web page display
+		j, err := json.Marshal(out)
+		if err != nil {
+			return
+		}
+		page := model.Page{
+			Title:   fmt.Sprintf("Channel %s", name),
+			Content: string(j),
+		}
+		var reply string
+		err = s.pageClient.Call(context.Background(), "Create", &page, &reply)
+		if err != nil {
+			return
+		}
+
+		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply)
 	}
 
-	client := httpPkg.NewClient()
-	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
-		"text": text,
-	})
-
+	payload := text
+	var reply string
+	err := s.msgClient.Call(context.Background(), "Send", &payload, &reply)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
-	fasthttp.ReleaseResponse(resp)
 }
 
 type Result struct {

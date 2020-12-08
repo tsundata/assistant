@@ -1,10 +1,10 @@
-package message
+package middle
 
 import (
 	"errors"
+	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
-	"github.com/tsundata/assistant/internal/app/message/bot"
-	"github.com/tsundata/assistant/internal/app/message/service"
+	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.uber.org/zap"
@@ -12,31 +12,34 @@ import (
 )
 
 type Options struct {
-	Name    string
-	webhook string
-	db      *gorm.DB
-	logger  *zap.Logger
+	Name   string
+	db     *gorm.DB
+	redis  *redis.Client
+	logger *zap.Logger
+	webURL string
 }
 
-func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger) (*Options, error) {
+func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Client) (*Options, error) {
 	var err error
 	o := new(Options)
 	o.db = db
+	o.redis = redis
 	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
 	}
 
-	slack := v.GetStringMapString("slack")
-	o.webhook = slack["webhook"]
+	web := v.GetStringMapString("web")
+	o.webURL = web["url"]
 
 	return o, err
 }
 
-func NewApp(o *Options, rs *rpc.Server, bot *bot.Bot) (*app.Application, error) {
-	message := service.NewManage(o.db, o.logger, bot, o.webhook)
-	err := rs.Register(message, "")
+func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
+	// service
+	page := service.NewPage(o.db, o.webURL)
+	err := rs.Register(page, "")
 	if err != nil {
 		return nil, err
 	}

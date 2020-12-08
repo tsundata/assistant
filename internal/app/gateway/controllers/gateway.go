@@ -130,7 +130,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			ID: id,
 		}
 		var reply model.Event
-		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
+		err = gc.msgClient.Call(context.Background(), "Get", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)
@@ -164,7 +164,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			ID: id,
 		}
 		var reply model.Event
-		err = gc.msgClient.Call(context.Background(), "View", msg, &reply)
+		err = gc.msgClient.Call(context.Background(), "Get", msg, &reply)
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)

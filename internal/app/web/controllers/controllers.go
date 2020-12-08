@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/valyala/fasthttp"
 	"log"
+	"regexp"
 )
 
 func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
@@ -21,6 +22,11 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 			case "/Robots.txt":
 				wc.Robots(ctx)
 			default:
+				pageRe := regexp.MustCompile(`^/page/[\w\-]+$`)
+				if pageRe.Match(ctx.Path()) {
+					wc.Page(ctx)
+					return
+				}
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}
 		}

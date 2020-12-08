@@ -14,7 +14,7 @@ var spiderRules = map[string]Rule{
 			var result []string
 			fmt.Println("demo 1 minute spider " + time.Now().String())
 
-			doc, err := document("https://www.v2ex.com/")
+			doc, err := document("https://www.v2ex.com/?tab=nodes")
 			if err != nil {
 				return result
 			}

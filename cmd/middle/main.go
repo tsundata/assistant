@@ -2,8 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/internal/app/subscribe"
-	"github.com/tsundata/assistant/internal/app/subscribe/spider"
+	"github.com/tsundata/assistant/internal/app/middle"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
@@ -36,22 +35,11 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	clientOptions, err := rpc.NewClientOptions(viper)
+	appOptions, err := middle.NewOptions(viper, db, log, r)
 	if err != nil {
 		return nil, err
 	}
-	msgClient, err := rpc.NewClient(clientOptions, "message", "Message")
-	if err != nil {
-		return nil, err
-	}
-	pageClient, err := rpc.NewClient(clientOptions, "middle", "Page")
-
-	s := spider.New(r, msgClient, pageClient)
-	appOptions, err := subscribe.NewOptions(viper, db, log, r)
-	if err != nil {
-		return nil, err
-	}
-	application, err := subscribe.NewApp(appOptions, s, server)
+	application, err := middle.NewApp(appOptions, server)
 	if err != nil {
 		return nil, err
 	}

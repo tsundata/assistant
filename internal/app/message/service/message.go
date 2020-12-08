@@ -16,14 +16,14 @@ import (
 )
 
 type Message struct {
-	webhook string
 	db      *gorm.DB
 	logger  *zap.Logger
 	bot     *bot.Bot
+	webhook string
 }
 
-func NewManage(db *gorm.DB, logger *zap.Logger, bot *bot.Bot) *Message {
-	return &Message{db: db, logger: logger, bot: bot}
+func NewManage(db *gorm.DB, logger *zap.Logger, bot *bot.Bot, webhook string) *Message {
+	return &Message{db: db, logger: logger, bot: bot, webhook: webhook}
 }
 
 func (m *Message) List(ctx context.Context, payload *model.Event, reply *[]model.Event) error {
@@ -34,7 +34,7 @@ func (m *Message) List(ctx context.Context, payload *model.Event, reply *[]model
 	return nil
 }
 
-func (m *Message) View(ctx context.Context, payload *model.Event, reply *model.Event) error {
+func (m *Message) Get(ctx context.Context, payload *model.Event, reply *model.Event) error {
 	var find model.Event
 	m.db.Where("id = ?", payload.ID).Take(&find)
 	*reply = find
@@ -86,11 +86,11 @@ func (m *Message) Delete(ctx context.Context, payload *model.Event, reply *model
 	return nil
 }
 
-func (m *Message) SendMessage(ctx context.Context, message string, reply *string) error {
+func (m *Message) Send(ctx context.Context, payload string, reply *string) error {
 	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
-		"text": message,
+		"text": payload,
 	})
 	if err != nil {
 		return err

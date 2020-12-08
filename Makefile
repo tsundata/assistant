@@ -1,4 +1,4 @@
-apps = 'gateway' 'registry' 'message' 'subscribe' 'cron' 'web'
+apps = 'gateway' 'registry' 'message' 'subscribe' 'cron' 'web' 'middle'
 .PHONY: run
 run:
 	for app in $(apps) ;\
