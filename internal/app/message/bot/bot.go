@@ -82,7 +82,7 @@ func (s *Bot) Name() string {
 }
 
 func (s *Bot) Send(out model.Event) {
-	fmt.Printf("send event : %v\n", out)
+	log.Printf("send event : %v\n", out)
 
 	client := http.NewClient()
 	resp, err := client.PostJSON(s.webhook, map[string]interface{}{

@@ -50,7 +50,7 @@ func (s *Spider) process() {
 		for {
 			select {
 			case out := <-s.outCh:
-				fmt.Println(out)
+				log.Println(out)
 				ctx := context.Background()
 				latest := out.result
 
@@ -91,8 +91,8 @@ func (s *Spider) process() {
 					}
 					oldSend, err := strconv.ParseInt(sendString, 10, 64)
 					// FIXME
-					fmt.Println(oldSend)
-					fmt.Println(time.Now().Unix())
+					log.Println(oldSend)
+					log.Println(time.Now().Unix())
 					if err != nil {
 						continue
 					}
@@ -112,7 +112,7 @@ func (s *Spider) process() {
 }
 
 func (s *Spider) Send(name string, out []string) {
-	fmt.Printf("send event : %v\n", out)
+	log.Printf("send event : %v\n", out)
 
 	text := ""
 	if len(out) <= 5 {

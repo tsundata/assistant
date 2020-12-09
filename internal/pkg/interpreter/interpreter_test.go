@@ -1,7 +1,7 @@
 package interpreter
 
 import (
-	"fmt"
+	"log"
 	"testing"
 )
 
@@ -17,7 +17,7 @@ func run(t *testing.T, text string) {
 
 	symbolTable := NewSemanticAnalyzer()
 	symbolTable.Visit(tree)
-	fmt.Println(symbolTable.CurrentScope)
+	log.Println(symbolTable.CurrentScope)
 
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
@@ -27,8 +27,8 @@ func run(t *testing.T, text string) {
 	if r != 0 {
 		t.Fatal("error expr")
 	}
-	fmt.Println(i.callStack)
-	fmt.Println(i.Stdout())
+	log.Println(i.callStack)
+	log.Println(i.Stdout())
 }
 
 func TestInterpreter(t *testing.T) {
@@ -481,15 +481,15 @@ func TestCallStack(t *testing.T) {
 	s.Push(NewActivationRecord("a", ARTypeProgram, 1))
 	s.Push(NewActivationRecord("b", ARTypeProgram, 1))
 	s.Push(NewActivationRecord("c", ARTypeProgram, 1))
-	fmt.Println(s)
-	fmt.Println(s.Peek())
+	log.Println(s)
+	log.Println(s.Peek())
 	s.Pop()
-	fmt.Println(s)
-	fmt.Println(s.Peek())
+	log.Println(s)
+	log.Println(s.Peek())
 	s.Pop()
-	fmt.Println(s)
-	fmt.Println(s.Peek())
+	log.Println(s)
+	log.Println(s.Peek())
 	s.Pop()
-	fmt.Println(s)
-	fmt.Println(s.Peek())
+	log.Println(s)
+	log.Println(s.Peek())
 }

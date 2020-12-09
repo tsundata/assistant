@@ -1,8 +1,8 @@
 package spider
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"log"
 	"time"
 )
 
@@ -12,7 +12,7 @@ var SubscribeRules = map[string]Rule{
 		"* * * * *",
 		func() []string {
 			var result []string
-			fmt.Println("demo 1 minute spider " + time.Now().String())
+			log.Println("demo 1 minute spider " + time.Now().String())
 
 			doc, err := document("https://www.v2ex.com/?tab=nodes")
 			if err != nil {
@@ -30,7 +30,7 @@ var SubscribeRules = map[string]Rule{
 		false,
 		"*/3 * * * *",
 		func() []string {
-			fmt.Println("demo 3 minute spider " + time.Now().String())
+			log.Println("demo 3 minute spider " + time.Now().String())
 			return []string{}
 		},
 	},

@@ -2,11 +2,11 @@ package plugins
 
 import (
 	"context"
-	"fmt"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/cron"
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/regex"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"log"
 	"time"
 )
 
@@ -77,7 +77,7 @@ var cronRules = map[string]cron.Rule{
 	"heartbeat": {
 		"0 0 * * *",
 		func() []model.Event {
-			fmt.Println("cron " + time.Now().String())
+			log.Println("cron " + time.Now().String())
 			return []model.Event{
 				{
 					Data: model.EventData{Message: model.Message{

@@ -3,6 +3,7 @@ package interpreter
 import (
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"log"
 	"strings"
 )
 
@@ -104,7 +105,7 @@ func (t *ScopedSymbolTable) String() string {
 }
 
 func (t *ScopedSymbolTable) Insert(symbol Symbol) {
-	fmt.Printf("Insert: %s\n", symbol)
+	log.Printf("Insert: %s\n", symbol)
 	var name string
 	if s, ok := symbol.(*VarSymbol); ok {
 		name = s.Name
@@ -131,7 +132,7 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 }
 
 func (t *ScopedSymbolTable) Lookup(name string, currentScopeOnly bool) Symbol {
-	fmt.Printf("Lookup: %s. (Scope name: %s)\n", name, t.ScopeName)
+	log.Printf("Lookup: %s. (Scope name: %s)\n", name, t.ScopeName)
 	s := t.symbols.Get(name)
 	if s != nil {
 		return s.(Symbol)
@@ -267,7 +268,7 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 }
 
 func (b *SemanticAnalyzer) VisitProgram(node *Program) {
-	fmt.Println("ENTER scope: global")
+	log.Println("ENTER scope: global")
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
@@ -287,14 +288,14 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	// visit subtree
 	b.Visit(node.Block)
 
-	fmt.Println(globalScope.String())
+	log.Println(globalScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
-	fmt.Println("LEAVE scope: global")
+	log.Println("LEAVE scope: global")
 }
 
 func (b *SemanticAnalyzer) VisitPackage(node *Package) {
-	fmt.Println("Import package:", node.Name)
+	log.Println("Import package:", node.Name)
 	for _, call := range packages[node.Name] {
 		b.CurrentScope.Insert(call)
 	}
@@ -389,7 +390,7 @@ func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 	funcSymbol := NewFunctionSymbol(funcName)
 	b.CurrentScope.Insert(funcSymbol)
 
-	fmt.Printf("ENTER scope: %s\n", funcName)
+	log.Printf("ENTER scope: %s\n", funcName)
 	functionScope := NewScopedSymbolTable(funcName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
 	b.CurrentScope = functionScope
 
@@ -403,10 +404,10 @@ func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
 
 	b.Visit(node.BlockNode)
 
-	fmt.Println(functionScope.String())
+	log.Println(functionScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
-	fmt.Printf("LEAVE scope: %s\n", funcName)
+	log.Printf("LEAVE scope: %s\n", funcName)
 
 	funcSymbol.BlockAst = node.BlockNode
 	funcSymbol.ReturnType = node.ReturnType

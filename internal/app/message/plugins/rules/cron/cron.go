@@ -6,6 +6,7 @@ import (
 	"github.com/gorhill/cronexpr"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"log"
 	"strings"
 	"sync"
 	"time"
@@ -125,7 +126,7 @@ func (r *cronRuleset) attach(b *bot.Bot, ruleName, room string) string {
 	}
 
 	// b.MemorySave("cron", "attached", a)
-	fmt.Println(a)
+	log.Println(a)
 	return ruleName + " attached to this room"
 }
 
@@ -151,7 +152,7 @@ func (r *cronRuleset) detach(b *bot.Bot, ruleName, room string) string {
 		return fmt.Sprintf("error detaching %s: %v", ruleName, err)
 	}
 	// b.MemorySave("cron", "attached", a)
-	fmt.Println(a)
+	log.Println(a)
 	return ruleName + " detached to this room"
 }
 

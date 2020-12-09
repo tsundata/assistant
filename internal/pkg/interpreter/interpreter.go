@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -173,16 +174,16 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 
 func (i *Interpreter) VisitProgram(node *Program) float64 {
 	programName := node.Name
-	fmt.Printf("ENTER: PROGRAM %s\n", programName)
+	log.Printf("ENTER: PROGRAM %s\n", programName)
 
 	ar := NewActivationRecord(programName, ARTypeProgram, 1)
 	i.callStack.Push(ar)
-	fmt.Println(i.callStack)
+	log.Println(i.callStack)
 
 	result := i.Visit(node.Block)
 
-	fmt.Printf("LEAVE: PROGRAM %s\n", programName)
-	fmt.Println(i.callStack)
+	log.Printf("LEAVE: PROGRAM %s\n", programName)
+	log.Println(i.callStack)
 
 	i.callStack.Pop()
 
@@ -371,8 +372,8 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 
 	i.callStack.Push(ar)
 
-	fmt.Printf("ENTER: FUNCTION %s\n", funcName)
-	fmt.Println(i.callStack)
+	log.Printf("ENTER: FUNCTION %s\n", funcName)
+	log.Println(i.callStack)
 
 	var returnValue interface{}
 	if packageName == "" {
@@ -382,8 +383,8 @@ func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
 		returnValue = funcSymbol.(*FunctionSymbol).Call(i, ap)
 	}
 
-	fmt.Printf("LEAVE: FUNCTION %s\n", funcName)
-	fmt.Println(i.callStack)
+	log.Printf("LEAVE: FUNCTION %s\n", funcName)
+	log.Println(i.callStack)
 
 	i.callStack.Pop()
 
