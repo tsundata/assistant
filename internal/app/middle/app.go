@@ -38,7 +38,7 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	// service
-	page := service.NewPage(o.db, o.webURL)
+	page := service.NewWeb(o.db, o.webURL)
 	err := rs.Register(page, "")
 	if err != nil {
 		return nil, err

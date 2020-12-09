@@ -17,11 +17,12 @@ type Bot struct {
 	providerOut []model.Event
 	rules       []RuleParser
 
-	webhook   string
-	SubClient *rpc.Client
+	webhook    string
+	SubClient  *rpc.Client
+	WebClient *rpc.Client
 }
 
-func New(name string, v *viper.Viper, SubClient *rpc.Client, opts ...Option) *Bot {
+func New(name string, v *viper.Viper, SubClient *rpc.Client, WebClient *rpc.Client, opts ...Option) *Bot {
 	s := &Bot{
 		name: name,
 	}
@@ -33,6 +34,7 @@ func New(name string, v *viper.Viper, SubClient *rpc.Client, opts ...Option) *Bo
 	slack := v.GetStringMapString("slack")
 	s.webhook = slack["webhook"]
 	s.SubClient = SubClient
+	s.WebClient = WebClient
 
 	return s
 }

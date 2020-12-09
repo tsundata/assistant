@@ -15,6 +15,26 @@ import (
 
 var regexRules = []regex.Rule{
 	{
+		Regex:       `qr (.*)`,
+		HelpMessage: `Generate QR code`,
+		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			txt := args[1]
+			var reply string
+			err := b.WebClient.Call(context.Background(), "Qr", &txt, &reply)
+			if err != nil {
+				return []string{"error call"}
+			}
+
+			return []string{
+				reply,
+			}
+		},
+	},
+	{
 		Regex:       `ut (\d+)`,
 		HelpMessage: `Unix Timestamp`,
 		ParseMessage: func(b *bot.Bot, s string, args []string) []string {

@@ -44,9 +44,9 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	pageClient, err := rpc.NewClient(clientOptions, "middle", "Page")
+	webClient, err := rpc.NewClient(clientOptions, "middle", "Web")
 
-	s := spider.New(r, msgClient, pageClient)
+	s := spider.New(r, msgClient, webClient)
 	appOptions, err := subscribe.NewOptions(viper, db, log, r)
 	if err != nil {
 		return nil, err

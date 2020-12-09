@@ -14,17 +14,24 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 			}
 		}()
 
+		path := ctx.URI().PathOriginal()
+
 		// GET
 		if ctx.IsGet() {
-			switch string(ctx.Path()) {
+			switch string(path) {
 			case "/":
 				wc.Index(ctx)
 			case "/Robots.txt":
 				wc.Robots(ctx)
 			default:
 				pageRe := regexp.MustCompile(`^/page/[\w\-]+$`)
-				if pageRe.Match(ctx.Path()) {
+				if pageRe.Match(path) {
 					wc.Page(ctx)
+					return
+				}
+				qrRe := regexp.MustCompile(`^/qr/(.*)$`)
+				if qrRe.Match(path) {
+					wc.Qr(ctx)
 					return
 				}
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)

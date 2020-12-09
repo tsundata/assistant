@@ -24,7 +24,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	pageClient, err := rpc.NewClient(clientOptions, "middle", "Page")
+	webClient, err := rpc.NewClient(clientOptions, "middle", "Web")
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, log, pageClient)
+	webController := controllers.NewWebController(webOptions, log, webClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	router := http.NewRouter(httpOptions, initControllers)
 	server, err := http.New(httpOptions, router)

@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -10,17 +11,18 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"net/http"
+	"net/url"
 	"regexp"
 )
 
 type WebController struct {
-	o          *web.Options
-	logger     *zap.Logger
-	pageClient *rpc.Client
+	o         *web.Options
+	logger    *zap.Logger
+	webClient *rpc.Client
 }
 
-func NewWebController(o *web.Options, logger *zap.Logger, pageClient *rpc.Client) *WebController {
-	return &WebController{o: o, logger: logger, pageClient: pageClient}
+func NewWebController(o *web.Options, logger *zap.Logger, webClient *rpc.Client) *WebController {
+	return &WebController{o: o, logger: logger, webClient: webClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
@@ -37,7 +39,6 @@ Disallow: /`
 func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	pageRe := regexp.MustCompile(`([\w\-]+)$`)
 	r := pageRe.FindSubmatch(c.Path())
-
 	if len(r) < 1 {
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return
@@ -47,7 +48,7 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 		UUID: string(r[0]),
 	}
 	var reply model.Page
-	err := wc.pageClient.Call(context.Background(), "Get", &payload, &reply)
+	err := wc.webClient.Call(context.Background(), "GetPage", &payload, &reply)
 	if err != nil {
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return
@@ -81,4 +82,29 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 
 	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
+	path := c.URI().PathOriginal()
+	qrRe := regexp.MustCompile(`^/qr/(.*)$`)
+	r := qrRe.FindSubmatch(path)
+	if len(r) < 1 {
+		c.Response.SetStatusCode(http.StatusNotFound)
+		return
+	}
+
+	txt, err := url.QueryUnescape(string(r[1]))
+	if err != nil {
+		c.Response.SetBodyString("error text")
+		return
+	}
+
+	png, err := qrcode.Encode(txt, qrcode.Medium, 512)
+	if err != nil {
+		c.Response.SetBodyString("error qr")
+		return
+	}
+
+	c.Response.Header.Set("Content-Type", "image/png")
+	c.Response.SetBody(png)
 }

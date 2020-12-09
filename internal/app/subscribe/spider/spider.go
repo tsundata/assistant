@@ -22,15 +22,15 @@ type Spider struct {
 	outCh chan Result
 
 	msgClient  *rpc.Client
-	pageClient *rpc.Client
+	webClient *rpc.Client
 }
 
-func New(rdb *redis.Client, msgClient *rpc.Client, pageClient *rpc.Client) *Spider {
+func New(rdb *redis.Client, msgClient *rpc.Client, webClient *rpc.Client) *Spider {
 	return &Spider{
 		rdb:        rdb,
 		outCh:      make(chan Result),
 		msgClient:  msgClient,
-		pageClient: pageClient,
+		webClient: webClient,
 	}
 }
 
@@ -128,7 +128,7 @@ func (s *Spider) Send(name string, out []string) {
 			Content: string(j),
 		}
 		var reply string
-		err = s.pageClient.Call(context.Background(), "Create", &page, &reply)
+		err = s.webClient.Call(context.Background(), "CreatePage", &page, &reply)
 		if err != nil {
 			return
 		}
