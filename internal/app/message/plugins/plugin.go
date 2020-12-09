@@ -6,17 +6,80 @@ import (
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/cron"
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/regex"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
+	"math/rand"
+	"strconv"
 	"time"
 )
 
 var regexRules = []regex.Rule{
 	{
-		Regex:       `demo (.*)`,
-		HelpMessage: `demo plugin`,
+		Regex:       `ut (\d+)`,
+		HelpMessage: `Unix Timestamp`,
 		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			utArg := args[1]
+			tt, err := strconv.ParseInt(utArg, 10, 64)
+			if err != nil {
+				return []string{"error"}
+			}
+
+			t := time.Unix(tt, 0)
+
 			return []string{
-				args[1] + "Hello world " + time.Now().String(),
+				t.String(),
+			}
+		},
+	},
+	{
+		Regex:       `rand (\d+) (\d+)`,
+		HelpMessage: `Unix Timestamp`,
+		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+			if len(args) != 3 {
+				return []string{"error args"}
+			}
+
+			minArg := args[1]
+			maxArg := args[2]
+			min, err := strconv.Atoi(minArg)
+			if err != nil {
+				return []string{"error"}
+			}
+			max, err := strconv.Atoi(maxArg)
+			if err != nil {
+				return []string{"error"}
+			}
+
+			rand.Seed(time.Now().Unix())
+			t := rand.Intn(max-min) + min
+
+			return []string{
+				strconv.Itoa(t),
+			}
+		},
+	},
+	{
+		Regex:       `pwd (\d+)`,
+		HelpMessage: `Generate Password`,
+		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			lenArg := args[1]
+			length, err := strconv.Atoi(lenArg)
+			if err != nil {
+				return []string{"error"}
+			}
+
+			pwd := utils.GeneratePassword(length, "lowercase|uppercase|numbers")
+
+			return []string{
+				pwd,
 			}
 		},
 	},

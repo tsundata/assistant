@@ -62,3 +62,10 @@ func TestSliceDiff(t *testing.T) {
 		t.Fatal("error: slice diff")
 	}
 }
+
+func TestGeneratePassword(t *testing.T) {
+	pwd := GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
+	if len(pwd) != 32 {
+		t.Fatal("error: generate password")
+	}
+}
