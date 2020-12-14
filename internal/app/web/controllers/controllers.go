@@ -34,9 +34,9 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 					wc.Qr(ctx)
 					return
 				}
-				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}
 		}
+		ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 	}
 
 	return requestHandler
