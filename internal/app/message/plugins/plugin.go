@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/cron"
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/regex"
@@ -23,14 +24,15 @@ var regexRules = []regex.Rule{
 			}
 
 			txt := args[1]
-			var reply string
-			err := b.WebClient.Call(context.Background(), "Qr", &txt, &reply)
+			reply, err := (*b.MidClient).Qr(context.Background(), &pb.Text{
+				Text: txt,
+			})
 			if err != nil {
-				return []string{"error call"}
+				return []string{"error call: " + err.Error()}
 			}
 
 			return []string{
-				reply,
+				reply.GetText(),
 			}
 		},
 	},
@@ -45,7 +47,7 @@ var regexRules = []regex.Rule{
 			utArg := args[1]
 			tt, err := strconv.ParseInt(utArg, 10, 64)
 			if err != nil {
-				return []string{"error"}
+				return []string{"error call: " + err.Error()}
 			}
 
 			t := time.Unix(tt, 0)
@@ -67,11 +69,11 @@ var regexRules = []regex.Rule{
 			maxArg := args[2]
 			min, err := strconv.Atoi(minArg)
 			if err != nil {
-				return []string{"error"}
+				return []string{"error call: " + err.Error()}
 			}
 			max, err := strconv.Atoi(maxArg)
 			if err != nil {
-				return []string{"error"}
+				return []string{"error call: " + err.Error()}
 			}
 
 			rand.Seed(time.Now().Unix())
@@ -93,7 +95,7 @@ var regexRules = []regex.Rule{
 			lenArg := args[1]
 			length, err := strconv.Atoi(lenArg)
 			if err != nil {
-				return []string{"error"}
+				return []string{"error call: " + err.Error()}
 			}
 
 			pwd := utils.GeneratePassword(length, "lowercase|uppercase|numbers")
@@ -107,13 +109,12 @@ var regexRules = []regex.Rule{
 		Regex:       `subs list`,
 		HelpMessage: `List subscribe`,
 		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
-			var reply []string
-			err := b.SubClient.Call(context.Background(), "List", nil, &reply)
+			reply, err := (*b.SubClient).List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
-				return []string{"error call"}
+				return []string{"error call: " + err.Error()}
 			}
 
-			return reply
+			return reply.GetText()
 		},
 	},
 	{
@@ -123,12 +124,14 @@ var regexRules = []regex.Rule{
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
-			var reply bool
-			err := b.SubClient.Call(context.Background(), "Open", &args[1], &reply)
+
+			reply, err := (*b.SubClient).Open(context.Background(), &pb.SubscribeRequest{
+				Text: args[1],
+			})
 			if err != nil {
-				return []string{"error call"}
+				return []string{"error call: " + err.Error()}
 			}
-			if reply {
+			if reply.State {
 				return []string{"success"}
 			}
 
@@ -142,12 +145,14 @@ var regexRules = []regex.Rule{
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
-			var reply bool
-			err := b.SubClient.Call(context.Background(), "Close", &args[1], &reply)
+
+			reply, err := (*b.SubClient).Open(context.Background(), &pb.SubscribeRequest{
+				Text: args[1],
+			})
 			if err != nil {
-				return []string{"error call"}
+				return []string{"error call: " + err.Error()}
 			}
-			if reply {
+			if reply.State {
 				return []string{"success"}
 			}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/subscribe"
 	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -10,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"time"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
@@ -31,23 +33,28 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	r, err := redis.New(redisOption)
+	rdb, err := redis.New(redisOption)
 	if err != nil {
 		return nil, err
 	}
 
-	clientOptions, err := rpc.NewClientOptions(viper)
+	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(30*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	msgClient, err := rpc.NewClient(clientOptions, "message", "Message")
+	msgClientConn, err := rpc.NewClient(clientOptions, "message")
 	if err != nil {
 		return nil, err
 	}
-	webClient, err := rpc.NewClient(clientOptions, "middle", "Web")
+	msgClient := pb.NewMessageClient(msgClientConn.CC)
+	midClientConn, err := rpc.NewClient(clientOptions, "middle")
+	if err != nil {
+		return nil, err
+	}
+	midClient := pb.NewMiddleClient(midClientConn.CC)
 
-	s := spider.New(r, msgClient, webClient)
-	appOptions, err := subscribe.NewOptions(viper, db, log, r)
+	s := spider.New(rdb, &msgClient, &midClient)
+	appOptions, err := subscribe.NewOptions(viper, db, log)
 	if err != nil {
 		return nil, err
 	}

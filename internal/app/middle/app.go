@@ -4,10 +4,12 @@ import (
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
@@ -39,7 +41,10 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	// service
 	page := service.NewWeb(o.db, o.webURL)
-	err := rs.Register(page, "")
+	err := rs.Register(func(gs *grpc.Server) error {
+		pb.RegisterMiddleServer(gs, page)
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}

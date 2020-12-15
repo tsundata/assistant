@@ -1,21 +1,20 @@
 package rpc
 
 import (
-	"context"
-	"github.com/smallnest/rpcx/client"
-	"github.com/smallnest/rpcx/protocol"
 	"github.com/spf13/viper"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
+	"go.etcd.io/etcd/clientv3"
+	etcdnaming "go.etcd.io/etcd/clientv3/naming"
+	"google.golang.org/grpc"
 	"time"
 )
 
 type ClientOptions struct {
-	Wait     time.Duration
-	Tag      string
-	Registry string
+	Wait time.Duration
+	Tag  string
+	Etcd string
 }
 
-func NewClientOptions(v *viper.Viper) (*ClientOptions, error) {
+func NewClientOptions(v *viper.Viper, options ...ClientOptional) (*ClientOptions, error) {
 	var (
 		err error
 		o   = new(ClientOptions)
@@ -23,6 +22,10 @@ func NewClientOptions(v *viper.Viper) (*ClientOptions, error) {
 
 	if err = v.UnmarshalKey("rpc", o); err != nil {
 		return nil, err
+	}
+
+	for _, option := range options {
+		option(o)
 	}
 
 	return o, err
@@ -38,34 +41,27 @@ func WithTimeout(d time.Duration) ClientOptional {
 
 type Client struct {
 	o  *ClientOptions
-	xc *client.XClient
+	CC *grpc.ClientConn
 }
 
-func NewClient(o *ClientOptions, service, servicePath string) (*Client, error) {
-	co := client.DefaultOption
-	co.Heartbeat = true
-	co.HeartbeatInterval = time.Second
-	co.SerializeType = protocol.MsgPack
-	d := discovery.NewMultiServiceDiscovery(service, o.Registry)
-	xc := client.NewXClient(servicePath, client.Failtry, client.RandomSelect, d, co)
+func NewClient(o *ClientOptions, service string) (*Client, error) {
+	etcdCli, err := clientv3.NewFromURL(o.Etcd)
+	if err != nil {
+		return nil, err
+	}
+	re := &etcdnaming.GRPCResolver{Client: etcdCli}
+	rr := grpc.RoundRobin(re)
+
+	conn, err := grpc.Dial(service, grpc.WithBalancer(rr), grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
-		xc: &xc,
+		CC: conn,
 	}, nil
 }
 
-func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
-	return (*c.xc).Call(ctx, serviceMethod, args, reply)
-}
-
-func (c *Client) Broadcast(ctx context.Context, serviceMethod string, args, reply interface{}) error {
-	return (*c.xc).Broadcast(ctx, serviceMethod, args, reply)
-}
-
 func (c *Client) Close() error {
-	return (*c.xc).Close()
-}
-
-// FIXME
-func (c *Client) Reconnection() {
-
+	return c.CC.Close()
 }

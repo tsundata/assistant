@@ -16,7 +16,6 @@ type Application struct {
 	logger         *zap.Logger
 	httpServer     *http.Server
 	rpcServer      *rpc.Server
-	registryServer *rpc.Registry
 }
 
 type Option func(app *Application) error
@@ -34,15 +33,6 @@ func RPCServerOption(svr *rpc.Server) Option {
 	return func(app *Application) error {
 		svr.Application(app.name)
 		app.rpcServer = svr
-
-		return nil
-	}
-}
-
-func RegistryServerOption(svr *rpc.Registry) Option {
-	return func(app *Application) error {
-		svr.Application(app.name)
-		app.registryServer = svr
 
 		return nil
 	}
@@ -76,12 +66,6 @@ func (a *Application) Start() error {
 		}
 	}
 
-	if a.registryServer != nil {
-		if err := a.registryServer.Start(); err != nil {
-			return errors.New("registry server start error")
-		}
-	}
-
 	return nil
 }
 
@@ -101,12 +85,6 @@ func (a *Application) AwaitSignal() {
 		if a.rpcServer != nil {
 			if err := a.rpcServer.Stop(); err != nil {
 				a.logger.Error("stop rpc server error " + err.Error())
-			}
-		}
-
-		if a.registryServer != nil {
-			if err := a.registryServer.Stop(); err != nil {
-				a.logger.Error("stop registry server error " + err.Error())
 			}
 		}
 

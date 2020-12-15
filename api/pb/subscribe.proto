@@ -1,0 +1,22 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "api/pb";
+
+service Subscribe {
+  rpc List(SubscribeRequest) returns (SubscribeReply) {}
+  rpc Open(SubscribeRequest) returns (State) {}
+  rpc Close(SubscribeRequest) returns (State) {}
+}
+
+message SubscribeRequest {
+  string text = 1;
+}
+
+message SubscribeReply {
+  repeated string text = 1;
+}
+
+message State {
+  bool state = 1;
+}

@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/skip2/go-qrcode"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"net/http"
@@ -18,11 +17,11 @@ import (
 type WebController struct {
 	o         *web.Options
 	logger    *zap.Logger
-	webClient *rpc.Client
+	midClient *pb.MiddleClient
 }
 
-func NewWebController(o *web.Options, logger *zap.Logger, webClient *rpc.Client) *WebController {
-	return &WebController{o: o, logger: logger, webClient: webClient}
+func NewWebController(o *web.Options, logger *zap.Logger, midClient *pb.MiddleClient) *WebController {
+	return &WebController{o: o, logger: logger, midClient: midClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
@@ -44,18 +43,16 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	payload := model.Page{
-		UUID: string(r[0]),
-	}
-	var reply model.Page
-	err := wc.webClient.Call(context.Background(), "GetPage", &payload, &reply)
-	if err != nil {
+	reply, err := (*wc.midClient).GetPage(context.Background(), &pb.PageRequest{
+		Uuid: string(r[0]),
+	})
+	if err != nil || reply.GetContent() == "" {
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return
 	}
 
 	var list []string
-	err = json.Unmarshal([]byte(reply.Content), &list)
+	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return

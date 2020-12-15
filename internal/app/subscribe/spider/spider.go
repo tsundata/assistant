@@ -7,8 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorhill/cronexpr"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
@@ -21,16 +20,16 @@ type Spider struct {
 	rdb   *redis.Client
 	outCh chan Result
 
-	msgClient  *rpc.Client
-	webClient *rpc.Client
+	msgClient *pb.MessageClient
+	midClient *pb.MiddleClient
 }
 
-func New(rdb *redis.Client, msgClient *rpc.Client, webClient *rpc.Client) *Spider {
+func New(rdb *redis.Client, msgClient *pb.MessageClient, midClient *pb.MiddleClient) *Spider {
 	return &Spider{
-		rdb:        rdb,
-		outCh:      make(chan Result),
-		msgClient:  msgClient,
-		webClient: webClient,
+		rdb:       rdb,
+		outCh:     make(chan Result),
+		msgClient: msgClient,
+		midClient: midClient,
 	}
 }
 
@@ -50,7 +49,6 @@ func (s *Spider) process() {
 		for {
 			select {
 			case out := <-s.outCh:
-				log.Println(out)
 				ctx := context.Background()
 				latest := out.result
 
@@ -70,12 +68,14 @@ func (s *Spider) process() {
 				} else {
 					diff = latest
 				}
+				if len(diff) == 0 {
+					continue
+				}
 
 				// add data
 				for _, item := range out.result {
 					s.rdb.SAdd(ctx, dataKey, item)
 				}
-				// FIXME
 				s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
 
 				// is instant
@@ -85,16 +85,10 @@ func (s *Spider) process() {
 					s.Send(out.name, diff)
 				} else {
 					sendStringCmd := s.rdb.Get(ctx, sendKey)
-					sendString, err := sendStringCmd.Result()
-					if err != nil {
-						continue
-					}
-					oldSend, err := strconv.ParseInt(sendString, 10, 64)
-					// FIXME
-					log.Println(oldSend)
-					log.Println(time.Now().Unix())
-					if err != nil {
-						continue
+					sendString, _ := sendStringCmd.Result()
+					oldSend := int64(0)
+					if sendString != "" {
+						oldSend, _ = strconv.ParseInt(sendString, 10, 64)
 					}
 
 					if time.Now().Unix()-oldSend < 24*3600 {
@@ -112,8 +106,6 @@ func (s *Spider) process() {
 }
 
 func (s *Spider) Send(name string, out []string) {
-	log.Printf("send event : %v\n", out)
-
 	text := ""
 	if len(out) <= 5 {
 		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
@@ -123,22 +115,21 @@ func (s *Spider) Send(name string, out []string) {
 		if err != nil {
 			return
 		}
-		page := model.Page{
+
+		reply, err := (*s.midClient).CreatePage(context.Background(), &pb.PageRequest{
 			Title:   fmt.Sprintf("Channel %s", name),
 			Content: string(j),
-		}
-		var reply string
-		err = s.webClient.Call(context.Background(), "CreatePage", &page, &reply)
+		})
 		if err != nil {
 			return
 		}
 
-		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply)
+		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
 	}
 
-	payload := text
-	var reply string
-	err := s.msgClient.Call(context.Background(), "Send", &payload, &reply)
+	_, err := (*s.msgClient).Send(context.Background(), &pb.MessageRequest{
+		Text: text,
+	})
 	if err != nil {
 		log.Println(err)
 		return

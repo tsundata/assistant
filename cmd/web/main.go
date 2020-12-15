@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/controllers"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -9,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"time"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
@@ -20,20 +22,22 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper)
+	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(10*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	webClient, err := rpc.NewClient(clientOptions, "middle", "Web")
+	midClientConn, err := rpc.NewClient(clientOptions, "middle")
 	if err != nil {
 		return nil, err
 	}
+	midClient := pb.NewMiddleClient(midClientConn.CC)
+
 	log := logger.NewLogger()
 	webOptions, err := web.NewOptions(viper, log)
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, log, webClient)
+	webController := controllers.NewWebController(webOptions, log, &midClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	router := http.NewRouter(httpOptions, initControllers)
 	server, err := http.New(httpOptions, router)

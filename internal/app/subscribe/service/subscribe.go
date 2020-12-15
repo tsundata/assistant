@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"gorm.io/gorm"
@@ -16,7 +17,7 @@ func NewSubscribe(db *gorm.DB) *Subscribe {
 	return &Subscribe{db: db}
 }
 
-func (s *Subscribe) List(ctx context.Context, payload *model.Subscribe, reply *[]string) error {
+func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
 	var list []model.Subscribe
 	s.db.Find(&list)
 
@@ -38,33 +39,29 @@ func (s *Subscribe) List(ctx context.Context, payload *model.Subscribe, reply *[
 		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
 	}
 
-	*reply = result
-
-	return nil
+	return &pb.SubscribeReply{
+		Text: result,
+	}, nil
 }
 
-func (s *Subscribe) Open(ctx context.Context, payload *string, reply *bool) error {
+func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
 	var subscribe model.Subscribe
-	s.db.Where(model.Subscribe{Source: *payload}).FirstOrCreate(&subscribe)
+	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
 
 	if subscribe.IsSubscribe != true {
 		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", true)
 	}
 
-	*reply = true
-
-	return nil
+	return &pb.State{State: true}, nil
 }
 
-func (s *Subscribe) Close(ctx context.Context, payload *string, reply *bool) error {
+func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
 	var subscribe model.Subscribe
-	s.db.Where(model.Subscribe{Source: *payload}).FirstOrCreate(&subscribe)
+	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
 
 	if subscribe.IsSubscribe != false {
 		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", false)
 	}
 
-	*reply = true
-
-	return nil
+	return &pb.State{State: true}, nil
 }

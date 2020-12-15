@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/plugins"
@@ -10,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"time"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
@@ -24,14 +26,20 @@ func CreateApp(cf string) (*app.Application, error) {
 	log := logger.NewLogger()
 	server, err := rpc.NewServer(rpcOptions, log, nil)
 
-	clientOptions, err := rpc.NewClientOptions(viper)
+	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(30*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	subClient, err := rpc.NewClient(clientOptions, "subscribe", "Subscribe")
+	subClientConn, err := rpc.NewClient(clientOptions, "subscribe")
 	if err != nil {
 		return nil, err
 	}
+	subClient := pb.NewSubscribeClient(subClientConn.CC)
+	midClientConn, err := rpc.NewClient(clientOptions, "middle")
+	if err != nil {
+		return nil, err
+	}
+	midClient := pb.NewMiddleClient(midClientConn.CC)
 
 	dbOptions, err := database.NewOptions(viper)
 	db, err := database.New(dbOptions)
@@ -39,7 +47,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := bot.New("ts", viper, subClient, plugins.Options...)
+	b := bot.New("ts", viper, &subClient, &midClient, plugins.Options...)
 	application, err := message.NewApp(appOptions, server, b)
 	if err != nil {
 		return nil, err

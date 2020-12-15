@@ -18,8 +18,6 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 			switch string(ctx.Path()) {
 			case "/":
 				gc.Index(ctx)
-			case "/foo":
-				gc.Foo(ctx)
 			case "/apps":
 				gc.Apps(ctx)
 			default:

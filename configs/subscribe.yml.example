@@ -1,9 +1,9 @@
 app:
     name: subscribe
 rpc:
-    registry: 127.0.0.1:7001
+    etcd: http://localhost:2379
 db:
-    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8&parseTime=True&loc=Local
+    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
     debug: true
 redis:
     addr: localhost:6379

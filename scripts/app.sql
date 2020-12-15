@@ -14,15 +14,15 @@ DROP TABLE IF EXISTS `events`;
 
 CREATE TABLE `events`
 (
-    `id`    int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `uuid`  varchar(64)      NOT NULL DEFAULT '',
-    `type`  varchar(20)      NOT NULL DEFAULT '',
-    `time`  timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `event` text             NOT NULL,
+    `id`    int(11) unsigned                  NOT NULL AUTO_INCREMENT,
+    `uuid`  varchar(64) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+    `type`  varchar(20) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+    `time`  timestamp                         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `event` text CHARACTER SET utf8mb4        NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 12
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 # Dump of table pages
@@ -32,14 +32,15 @@ DROP TABLE IF EXISTS `pages`;
 
 CREATE TABLE `pages`
 (
-    `id`      int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `uuid`    varchar(64)      NOT NULL DEFAULT '',
-    `title`   varchar(256)     NOT NULL DEFAULT '',
-    `content` text             NOT NULL,
-    `time`    timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `id`      int(11) unsigned                   NOT NULL AUTO_INCREMENT,
+    `uuid`    varchar(64) CHARACTER SET utf8mb4  NOT NULL DEFAULT '',
+    `title`   varchar(256) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+    `content` text CHARACTER SET utf8mb4         NOT NULL,
+    `time`    timestamp                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 # Dump of table subscribes
@@ -47,14 +48,17 @@ CREATE TABLE `pages`
 
 DROP TABLE IF EXISTS `subscribes`;
 
-CREATE TABLE `subscribes`
+CREATE TABLE `pages`
 (
-    `id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `source`       varchar(50)      NOT NULL DEFAULT '',
-    `is_subscribe` tinyint(4)       NOT NULL DEFAULT '1',
+    `id`      int(11) unsigned                   NOT NULL AUTO_INCREMENT,
+    `uuid`    varchar(64) CHARACTER SET utf8mb4  NOT NULL DEFAULT '',
+    `title`   varchar(256) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+    `content` text CHARACTER SET utf8mb4         NOT NULL,
+    `time`    timestamp                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;

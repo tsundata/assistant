@@ -3,11 +3,13 @@ package message
 import (
 	"errors"
 	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
@@ -36,7 +38,10 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger) (*Options, erro
 
 func NewApp(o *Options, rs *rpc.Server, bot *bot.Bot) (*app.Application, error) {
 	message := service.NewManage(o.db, o.logger, bot, o.webhook)
-	err := rs.Register(message, "")
+	err := rs.Register(func(s *grpc.Server) error {
+		pb.RegisterMessageServer(s, message)
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}

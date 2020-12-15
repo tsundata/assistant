@@ -1,0 +1,26 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "api/pb";
+
+service Middle {
+  rpc CreatePage(PageRequest) returns (Text) {}
+  rpc GetPage(PageRequest) returns (PageReply) {}
+  rpc Qr(Text) returns (Text) {}
+}
+
+message PageRequest {
+  string uuid = 1;
+  string title = 2;
+  string content = 3;
+}
+
+message PageReply {
+  string uuid = 1;
+  string title = 2;
+  string content = 3;
+}
+
+message Text {
+  string text = 1;
+}

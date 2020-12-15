@@ -1,19 +1,24 @@
 package rpc
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/smallnest/rpcx/server"
 	"github.com/spf13/viper"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/registry"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"go.etcd.io/etcd/clientv3"
+	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/naming"
+	"net"
 )
 
 type ServerOptions struct {
-	Host     string
-	Port     int
-	Registry string
+	Host string
+	Port int
+	Etcd string
 }
 
 func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
@@ -30,22 +35,31 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 }
 
 type Server struct {
-	o        *ServerOptions
-	logger   *zap.Logger
-	app      string
-	host     string
-	port     int
-	registry string
-	server   *server.Server
+	o      *ServerOptions
+	logger *zap.Logger
+	app    string
+	host   string
+	port   int
+	etcd   string
+	r      *etcdnaming.GRPCResolver
+	server *grpc.Server
 }
 
 type InitServers func(s *server.Server)
 
 func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server, error) {
+	// register discovery
+	cli, err := clientv3.NewFromURL(o.Etcd)
+	if err != nil {
+		panic(err)
+	}
+	r := &etcdnaming.GRPCResolver{Client: cli}
+
 	return &Server{
 		o:      o,
 		logger: logger,
-		server: server.NewServer(),
+		r:      r,
+		server: grpc.NewServer(),
 	}, nil
 }
 
@@ -54,9 +68,9 @@ func (s *Server) Application(name string) {
 }
 
 func (s *Server) Start() error {
-	s.registry = s.o.Registry
-	if s.registry == "" {
-		return errors.New("registry error")
+	s.etcd = s.o.Etcd
+	if s.etcd == "" {
+		return errors.New("etcd error")
 	}
 
 	s.port = s.o.Port
@@ -75,23 +89,35 @@ func (s *Server) Start() error {
 
 	s.logger.Info("rpc server starting ... " + addr)
 
-	go func() {
-		registry.Heartbeat(s.registry, s.app, "tcp@"+addr, 0)
+	lis, err := net.Listen("tcp", addr)
+	if err != nil {
+		s.logger.Error(err.Error())
+		return err
+	}
 
-		err := s.server.Serve("tcp", addr)
-		if err != nil {
-			s.logger.Error(err.Error())
-		}
-	}()
+	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: addr})
+	if err != nil {
+		panic(err)
+	}
+
+	err = s.server.Serve(lis)
+	if err != nil {
+		s.logger.Error(err.Error())
+	}
 
 	return nil
 }
 
-func (s *Server) Register(rcvr interface{}, metadata string) error {
-	return s.server.Register(rcvr, metadata)
+func (s *Server) Register(f func(gs *grpc.Server) error) error {
+	return f(s.server)
 }
 
 func (s *Server) Stop() error {
-	// TODO
+	addr := fmt.Sprintf("%s:%d", s.host, s.port)
+	err := s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Delete, Addr: addr})
+	if err != nil {
+		return err
+	}
+	s.server.Stop()
 	return nil
 }

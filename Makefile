@@ -1,4 +1,4 @@
-apps = 'gateway' 'registry' 'message' 'subscribe' 'cron' 'web' 'middle'
+apps = 'gateway' 'message' 'subscribe' 'web' 'middle'
 .PHONY: run
 run:
 	for app in $(apps) ;\
@@ -19,5 +19,5 @@ docker-compose: build
 	docker-compose -f deployments/docker-compose.yml up --build -d
 .PHONY: proto
 proto:
-	protoc -I api/proto ./api/proto/* --go_out=api/proto
+	protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
 all: lint docker

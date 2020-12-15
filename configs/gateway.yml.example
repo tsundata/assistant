@@ -5,8 +5,11 @@ http:
     host: 127.0.0.1
     port: 7000
 rpc:
-    registry: 127.0.0.1:7001
+    etcd: http://localhost:2379
 slack:
     token:
     verification:
     signing:
+redis:
+    addr: localhost:6379
+    password:

@@ -2,6 +2,6 @@ FROM alpine:latest
 
 RUN apk update && apk add bash
 
-ADD ./dist/$$$$$-linux-amd64 app
-ADD ./configs/$$$$$.yml .
+ADD ./dist/web-linux-amd64 app
+ADD ./configs/web.yml .
 ADD ./scripts/wait-for .

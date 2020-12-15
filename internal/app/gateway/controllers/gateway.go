@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
@@ -20,13 +20,14 @@ import (
 
 type GatewayController struct {
 	o         *gateway.Options
+	rdb       *redis.Client
 	logger    *zap.Logger
-	subClient *rpc.Client
-	msgClient *rpc.Client
+	subClient *pb.SubscribeClient
+	msgClient *pb.MessageClient
 }
 
-func NewGatewayController(o *gateway.Options, logger *zap.Logger, subClient *rpc.Client, msgClient *rpc.Client) *GatewayController {
-	return &GatewayController{o: o, logger: logger, subClient: subClient, msgClient: msgClient}
+func NewGatewayController(o *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient *pb.SubscribeClient, msgClient *pb.MessageClient) *GatewayController {
+	return &GatewayController{o: o, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
 func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
@@ -40,22 +41,6 @@ func (gc *GatewayController) Apps(c *fasthttp.RequestCtx) {
 	if err := t.Execute(c.Response.BodyWriter(), names); err != nil {
 		gc.logger.Error(err.Error())
 	}
-}
-
-func (gc *GatewayController) Foo(c *fasthttp.RequestCtx) {
-	args := &model.Event{
-		UUID: "input --->",
-	}
-
-	var reply model.Event
-	err := gc.subClient.Call(context.Background(), "Open", args, &reply)
-	if err != nil {
-		gc.logger.Error(err.Error())
-	}
-
-	gc.logger.Info(reply.UUID)
-
-	c.Response.SetBodyString(time.Now().String())
 }
 
 func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
@@ -83,15 +68,14 @@ func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 		case "delete":
 			gc.logger.Info("delete")
 		case "run":
-			// TODO
-			gc.logger.Info("run")
-			var reply string
-			err := gc.msgClient.Call(context.Background(), "Run", s.Message.ClientMsgID, &reply)
+			reply, err := (*gc.msgClient).Run(context.Background(), &pb.MessageRequest{
+				Text: s.Message.Text,
+			})
 			if err != nil {
 				gc.logger.Error(err.Error())
 				return
 			}
-			err = slackVendor.ResponseText(s.ResponseURL, reply)
+			err = slackVendor.ResponseText(s.ResponseURL, reply.GetText())
 			if err != nil {
 				gc.logger.Error(err.Error())
 				return
@@ -126,19 +110,18 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		msg := &model.Event{
-			ID: id,
-		}
-		var reply model.Event
-		err = gc.msgClient.Call(context.Background(), "Get", msg, &reply)
+
+		reply, err := (*gc.msgClient).Get(context.Background(), &pb.MessageRequest{
+			Id: int64(id),
+		})
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		if reply.ID > 0 {
-			err = slackVendor.ResponseText(s.ResponseURL, reply.Data.Message.Text)
+		if reply.GetId() > 0 {
+			err = slackVendor.ResponseText(s.ResponseURL, reply.GetText())
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)
@@ -153,33 +136,31 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			}
 		}
 	case "/run":
-		// TODO
 		id, err := strconv.Atoi(s.Text)
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		msg := &model.Event{
-			ID: id,
-		}
-		var reply model.Event
-		err = gc.msgClient.Call(context.Background(), "Get", msg, &reply)
+		reply, err := (*gc.msgClient).Get(context.Background(), &pb.MessageRequest{
+			Id: int64(id),
+		})
 		if err != nil {
 			gc.logger.Error(err.Error())
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		if reply.ID > 0 {
-			var r string
-			err = gc.msgClient.Call(context.Background(), "Run", reply.UUID, &r)
+		if reply.GetId() > 0 {
+			r, err := (*gc.msgClient).Run(context.Background(), &pb.MessageRequest{
+				Text: reply.GetText(),
+			})
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)
 				return
 			}
-			err = slackVendor.ResponseText(s.ResponseURL, r)
+			err = slackVendor.ResponseText(s.ResponseURL, r.GetText())
 			if err != nil {
 				gc.logger.Error(err.Error())
 				c.Error(err.Error(), http.StatusBadRequest)
@@ -219,35 +200,34 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 		case *slackevents.MessageEvent:
 			// ignore bot message
 			if ev.ClientMsgID != "" {
-				msg := &model.Event{
-					ID:   0,
-					UUID: ev.ClientMsgID,
-					Data: model.EventData{
-						Message: model.Message{
-							Type: model.MessageTypeText,
-							Text: ev.Text,
-						},
-						GroupID:   ev.Channel,
-						GroupName: ev.ChannelType,
-					},
+				// ignore repeated message
+				rKey := "message:repeated"
+				isRepeated := gc.rdb.SIsMember(context.Background(), rKey, ev.ClientMsgID)
+				if isRepeated.Val() {
+					return
 				}
-				var reply []model.Event
-				err = gc.msgClient.Call(context.Background(), "Create", msg, &reply)
+				gc.rdb.SAdd(context.Background(), rKey, ev.ClientMsgID)
+				gc.rdb.Expire(context.Background(), rKey, 7*24*time.Hour)
+
+				reply, err := (*gc.msgClient).Create(context.Background(), &pb.MessageRequest{
+					Uuid: ev.ClientMsgID,
+					Text: ev.Text,
+				})
 				if err != nil {
 					gc.logger.Error(err.Error())
 					return
 				}
 
-				for _, item := range reply {
-					if item.ID > 0 {
-						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", item.ID), false))
-					} else {
-						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item.Data.Message.Text, false))
+				if reply.GetId() > 0 {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.GetId()), false))
+				} else {
+					for _, item := range reply.GetText() {
+						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))
 					}
-					if err != nil {
-						gc.logger.Error(err.Error())
-						return
-					}
+				}
+				if err != nil {
+					gc.logger.Error(err.Error())
+					return
 				}
 			}
 		}
