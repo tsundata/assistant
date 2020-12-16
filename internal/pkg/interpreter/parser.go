@@ -58,6 +58,9 @@ func (p *Parser) Program() (Ast, error) {
 	var packages []Ast
 	if p.CurrentToken.Type == TokenImport {
 		packages, err = p.Package()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	blockNode, err := p.Block()
@@ -111,7 +114,7 @@ func (p *Parser) Block() (Ast, error) {
 func (p *Parser) Declarations() ([][]Ast, error) {
 	var declarations [][]Ast
 
-	for true {
+	for {
 		if p.CurrentToken.Type == TokenVar {
 			err := p.Eat(TokenVar)
 			if err != nil {
@@ -220,6 +223,9 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		}
 		varNodes = append(varNodes, NewVar(p.CurrentToken))
 		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	typeNode, err := p.TypeSpec()
@@ -348,9 +354,7 @@ func (p *Parser) CompoundStatement() (Ast, error) {
 	}
 
 	root := NewCompound()
-	for _, node := range nodes {
-		root.Children = append(root.Children, node)
-	}
+	root.Children = append(root.Children, nodes...)
 	return root, nil
 }
 
@@ -690,6 +694,9 @@ func (p *Parser) AssignmentStatement() (Ast, error) {
 		return nil, err
 	}
 	right, err := p.Expr()
+	if err != nil {
+		return nil, err
+	}
 
 	return NewAssign(left, token, right), nil
 }

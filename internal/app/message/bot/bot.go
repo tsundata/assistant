@@ -68,9 +68,7 @@ func (s *Bot) Process(in model.Event) *Bot {
 	}()
 	for _, rule := range s.rules {
 		responses := rule.ParseMessage(s, in)
-		for _, r := range responses {
-			s.providerOut = append(s.providerOut, r)
-		}
+		s.providerOut = append(s.providerOut, responses...)
 	}
 	return s
 }
@@ -112,9 +110,4 @@ func RegisterRuleset(rule RuleParser) Option {
 		rule.Boot(s)
 		s.rules = append(s.rules, rule)
 	}
-}
-
-type pluginRuleset struct {
-	pluginBins []string
-	plugins    []RuleParser
 }

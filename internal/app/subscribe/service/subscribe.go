@@ -27,7 +27,7 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	for _, item := range list {
 		mb[item.Source] = item.IsSubscribe
 	}
-	for source, _ := range spider.SubscribeRules {
+	for source := range spider.SubscribeRules {
 		if b, ok := mb[source]; ok {
 			mb[source] = b
 		} else {
@@ -48,7 +48,7 @@ func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	var subscribe model.Subscribe
 	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
 
-	if subscribe.IsSubscribe != true {
+	if !subscribe.IsSubscribe {
 		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", true)
 	}
 
@@ -59,7 +59,7 @@ func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*p
 	var subscribe model.Subscribe
 	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
 
-	if subscribe.IsSubscribe != false {
+	if subscribe.IsSubscribe {
 		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", false)
 	}
 

@@ -163,7 +163,7 @@ func (r *cronRuleset) start(b *bot.Bot) {
 	defer r.mu.Unlock()
 
 	// process cron
-	for rule, _ := range r.cronRules {
+	for rule := range r.cronRules {
 		c := make(chan struct{})
 		r.stopChan = append(r.stopChan, c)
 		go processCronRule(r.cronRules[rule], c, r.outCh, "room")

@@ -58,6 +58,7 @@ func NewClient(o *ClientOptions, service string) (*Client, error) {
 	}
 
 	return &Client{
+		o:  o,
 		CC: conn,
 	}, nil
 }

@@ -10,6 +10,6 @@ func NewLogger() *zap.Logger {
 	if err != nil {
 		log.Fatalf("can't initialize logger: %v", err)
 	}
-	defer logger.Sync()
+	defer func() { _ = logger.Sync() }()
 	return logger
 }

@@ -163,8 +163,8 @@ var regexRules = []regex.Rule{
 
 var cronRules = map[string]cron.Rule{
 	"heartbeat": {
-		"0 0 * * *",
-		func() []model.Event {
+		When: "0 0 * * *",
+		Action: func() []model.Event {
 			log.Println("cron " + time.Now().String())
 			return []model.Event{
 				{

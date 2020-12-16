@@ -47,7 +47,7 @@ func (s *CallStack) Peek() *ActivationRecord {
 func (s *CallStack) String() string {
 	var lines []string
 	for i := len(s.records) - 1; i >= 0; i-- {
-		lines = append(lines, fmt.Sprintf("%s", s.records[i]))
+		lines = append(lines, s.records[i].String())
 	}
 	return fmt.Sprintf("CALL STACK\n%s\n\n", strings.Join(lines, "\n"))
 }
@@ -315,11 +315,10 @@ func (i *Interpreter) VisitVar(node *Var) interface{} {
 	if varName, ok := node.Value.(string); ok {
 		ar := i.callStack.Peek()
 		if ar != nil {
+			// TODO var nil
 			val := ar.Get(varName)
 			if val != nil {
 				return val
-			} else {
-				// TODO var nil
 			}
 		} else {
 			panic(errors.New("interpreter error var name"))

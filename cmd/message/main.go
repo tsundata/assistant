@@ -25,6 +25,9 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	log := logger.NewLogger()
 	server, err := rpc.NewServer(rpcOptions, log, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(30*time.Second))
 	if err != nil {
@@ -42,7 +45,13 @@ func CreateApp(cf string) (*app.Application, error) {
 	midClient := pb.NewMiddleClient(midClientConn.CC)
 
 	dbOptions, err := database.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
 	db, err := database.New(dbOptions)
+	if err != nil {
+		return nil, err
+	}
 	appOptions, err := message.NewOptions(viper, db, log)
 	if err != nil {
 		return nil, err

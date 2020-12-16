@@ -22,9 +22,18 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	log := logger.NewLogger()
 	server, err := rpc.NewServer(rpcOptions, log, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	dbOptions, err := database.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
 	db, err := database.New(dbOptions)
+	if err != nil {
+		return nil, err
+	}
 
 	redisOption, err := redis.NewOptions(viper)
 	if err != nil {
