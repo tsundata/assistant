@@ -50,9 +50,9 @@ func NewClient(o *ClientOptions, service string) (*Client, error) {
 		return nil, err
 	}
 	re := &etcdnaming.GRPCResolver{Client: etcdCli}
-	rr := grpc.RoundRobin(re)
+	rr := grpc.RoundRobin(re) // nolint
 
-	conn, err := grpc.Dial(service, grpc.WithBalancer(rr), grpc.WithInsecure())
+	conn, err := grpc.Dial(service, grpc.WithBalancer(rr), grpc.WithInsecure()) // nolint
 	if err != nil {
 		return nil, err
 	}

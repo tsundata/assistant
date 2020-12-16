@@ -119,7 +119,7 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: addr})
+	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: addr}) // nolint
 	if err != nil {
 		panic(err)
 	}
@@ -138,7 +138,7 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 
 func (s *Server) Stop() error {
 	addr := fmt.Sprintf("%s:%d", s.host, s.port)
-	err := s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Delete, Addr: addr})
+	err := s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
 		return err
 	}

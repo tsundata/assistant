@@ -130,6 +130,7 @@ func (r *cronRuleset) attach(b *bot.Bot, ruleName, room string) string {
 	return ruleName + " attached to this room"
 }
 
+// nolint:unused
 func (r *cronRuleset) detach(b *bot.Bot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -171,7 +172,7 @@ func (r *cronRuleset) start(b *bot.Bot) {
 }
 
 // send message
-func (r *cronRuleset) send(b *bot.Bot)  {
+func (r *cronRuleset) send(b *bot.Bot) {
 	go func() {
 		for {
 			select {
