@@ -37,7 +37,7 @@ func (r *cronRuleset) Boot(b *bot.Bot) {
 	r.send(b)
 }
 
-func (r cronRuleset) HelpMessage(b *bot.Bot, _ model.Event) string {
+func (r *cronRuleset) HelpMessage(b *bot.Bot, _ model.Event) string {
 	helpMsg := fmt.Sprintln("cron attach <job name>- attach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron detach <job name> - detach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron list - list all available crons")
@@ -105,7 +105,7 @@ func (r *cronRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
 	return []model.Event{}
 }
 
-func (r *cronRuleset) attach(b *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) attach(_ *bot.Bot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -131,7 +131,7 @@ func (r *cronRuleset) attach(b *bot.Bot, ruleName, room string) string {
 }
 
 // nolint:unused
-func (r *cronRuleset) detach(b *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) detach(_ *bot.Bot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -157,7 +157,7 @@ func (r *cronRuleset) detach(b *bot.Bot, ruleName, room string) string {
 	return ruleName + " detached to this room"
 }
 
-func (r *cronRuleset) start(b *bot.Bot) {
+func (r *cronRuleset) start(_ *bot.Bot) {
 	r.stop()
 
 	r.mu.Lock()
@@ -185,7 +185,7 @@ func (r *cronRuleset) send(b *bot.Bot) {
 	}()
 }
 
-func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Event, cronRoom string) {
+func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Event, _ string) {
 	nextTime := cronexpr.MustParse(rule.When).Next(time.Now())
 	for {
 		select {

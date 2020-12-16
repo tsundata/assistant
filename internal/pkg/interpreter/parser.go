@@ -217,7 +217,7 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 	}
 
 	for p.CurrentToken.Type == TokenComma {
-		err := p.Eat(TokenComma)
+		err = p.Eat(TokenComma)
 		if err != nil {
 			return nil, err
 		}
@@ -476,7 +476,7 @@ func (p *Parser) IfStatement() (Ast, error) {
 
 	var elseBranch []Ast
 	if p.CurrentToken.Type == TokenElse {
-		err := p.Eat(TokenElse)
+		err = p.Eat(TokenElse)
 		if err != nil {
 			return nil, err
 		}
@@ -609,7 +609,7 @@ func (p *Parser) FunctionCallStatement() (Ast, error) {
 		packageName = name
 		funcName = p.CurrentToken.Value.(string)
 		token = p.CurrentToken
-		err := p.Eat(TokenID)
+		err = p.Eat(TokenID)
 		if err != nil {
 			return nil, err
 		}
@@ -631,7 +631,7 @@ func (p *Parser) FunctionCallStatement() (Ast, error) {
 	}
 
 	for p.CurrentToken.Type == TokenComma {
-		err := p.Eat(TokenComma)
+		err = p.Eat(TokenComma)
 		if err != nil {
 			return nil, err
 		}
