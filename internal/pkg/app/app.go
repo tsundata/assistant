@@ -12,10 +12,10 @@ import (
 )
 
 type Application struct {
-	name           string
-	logger         *zap.Logger
-	httpServer     *http.Server
-	rpcServer      *rpc.Server
+	name       string
+	logger     *zap.Logger
+	httpServer *http.Server
+	rpcServer  *rpc.Server
 }
 
 type Option func(app *Application) error
@@ -73,21 +73,21 @@ func (a *Application) AwaitSignal() {
 	c := make(chan os.Signal, 1)
 	signal.Reset(syscall.SIGTERM, syscall.SIGINT)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
-	select {
-	case s := <-c:
-		a.logger.Info("receive a signal " + s.String())
-		if a.httpServer != nil {
-			if err := a.httpServer.Stop(); err != nil {
-				a.logger.Error("stop http server error " + err.Error())
-			}
-		}
 
-		if a.rpcServer != nil {
-			if err := a.rpcServer.Stop(); err != nil {
-				a.logger.Error("stop rpc server error " + err.Error())
-			}
-		}
+	s := <-c
+	a.logger.Info("receive a signal " + s.String())
 
-		os.Exit(0)
+	if a.httpServer != nil {
+		if err := a.httpServer.Stop(); err != nil {
+			a.logger.Error("stop http server error " + err.Error())
+		}
 	}
+
+	if a.rpcServer != nil {
+		if err := a.rpcServer.Stop(); err != nil {
+			a.logger.Error("stop rpc server error " + err.Error())
+		}
+	}
+
+	os.Exit(0)
 }

@@ -46,60 +46,55 @@ func (s *Spider) Cron() {
 
 func (s *Spider) process() {
 	go func() {
-		for {
-			select {
-			case out := <-s.outCh:
-				ctx := context.Background()
-				latest := out.result
+		for out := range s.outCh {
+			ctx := context.Background()
+			latest := out.result
 
-				dataKey := fmt.Sprintf("%s:latest", out.name)
-				sendKey := fmt.Sprintf("%s:send", out.name)
+			dataKey := fmt.Sprintf("%s:latest", out.name)
+			sendKey := fmt.Sprintf("%s:send", out.name)
 
-				smembers := s.rdb.SMembers(ctx, dataKey)
-				old, err := smembers.Result()
-				if err != nil {
+			smembers := s.rdb.SMembers(ctx, dataKey)
+			old, err := smembers.Result()
+			if err != nil {
+				continue
+			}
+
+			// diff
+			diff := utils.SliceDiff(old, latest)
+			if len(old) > 0 && len(diff) == 0 {
+				continue
+			} else {
+				diff = latest
+			}
+			if len(diff) == 0 {
+				continue
+			}
+
+			// add data
+			for _, item := range out.result {
+				s.rdb.SAdd(ctx, dataKey, item)
+			}
+			s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
+
+			// is instant
+			if out.instant {
+				// send
+				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
+				s.Send(out.name, diff)
+			} else {
+				sendStringCmd := s.rdb.Get(ctx, sendKey)
+				sendString, _ := sendStringCmd.Result()
+				oldSend := int64(0)
+				if sendString != "" {
+					oldSend, _ = strconv.ParseInt(sendString, 10, 64)
+				}
+
+				if time.Now().Unix()-oldSend < 24*3600 {
 					continue
 				}
 
-				// diff
-				diff := utils.SliceDiff(old, latest)
-				if len(old) > 0 && len(diff) == 0 {
-					continue
-				} else {
-					diff = latest
-				}
-				if len(diff) == 0 {
-					continue
-				}
-
-				// add data
-				for _, item := range out.result {
-					s.rdb.SAdd(ctx, dataKey, item)
-				}
-				s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
-
-				// is instant
-				if out.instant {
-					// send
-					s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-					s.Send(out.name, diff)
-				} else {
-					sendStringCmd := s.rdb.Get(ctx, sendKey)
-					sendString, _ := sendStringCmd.Result()
-					oldSend := int64(0)
-					if sendString != "" {
-						oldSend, _ = strconv.ParseInt(sendString, 10, 64)
-					}
-
-					if time.Now().Unix()-oldSend < 24*3600 {
-						continue
-					}
-
-					s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-					s.Send(out.name, diff)
-				}
-			default:
-
+				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
+				s.Send(out.name, diff)
 			}
 		}
 	}()

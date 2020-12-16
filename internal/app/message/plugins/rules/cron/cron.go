@@ -174,13 +174,8 @@ func (r *cronRuleset) start(_ *bot.Bot) {
 // send message
 func (r *cronRuleset) send(b *bot.Bot) {
 	go func() {
-		for {
-			select {
-			case out := <-r.outCh:
-				b.Send(out)
-			default:
-
-			}
+		for out := range r.outCh {
+			b.Send(out)
 		}
 	}()
 }
