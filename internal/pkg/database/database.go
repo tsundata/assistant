@@ -24,7 +24,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func New(o *Options) (*gorm.DB, error) {
 	var err error
-	db, err := gorm.Open(mysql.Open(o.URL), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(o.URL), &gorm.Config{
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+	})
 	if err != nil {
 		return nil, errors.New("gorm open database connection error")
 	}

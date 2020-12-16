@@ -39,8 +39,9 @@ func (s *Web) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.Text
 }
 
 func (s *Web) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
+	// TODO cache
 	var find model.Page
-	s.db.Where("uuid = ?", payload.GetUuid()).Take(&find)
+	s.db.Select("uuid", "title", "content").Where("uuid = ?", payload.GetUuid()).Take(&find)
 
 	return &pb.PageReply{
 		Uuid:    find.UUID,

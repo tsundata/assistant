@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/smallnest/rpcx/server"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -11,7 +15,9 @@ import (
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/naming"
+	"google.golang.org/grpc/status"
 	"net"
 )
 
@@ -48,6 +54,16 @@ type Server struct {
 type InitServers func(s *server.Server)
 
 func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server, error) {
+	// recovery
+	recoveryOpts := []grpc_recovery.Option{
+		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+			return status.Errorf(codes.Unknown, "panic triggered: %v", p)
+		}),
+	}
+
+	// TODO limiter
+	limiter := &alwaysPassLimiter{}
+
 	// register discovery
 	cli, err := clientv3.NewFromURL(o.Etcd)
 	if err != nil {
@@ -56,10 +72,18 @@ func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server,
 	r := &etcdnaming.GRPCResolver{Client: cli}
 
 	return &Server{
+		r:      r,
 		o:      o,
 		logger: logger,
-		r:      r,
-		server: grpc.NewServer(),
+		server: grpc.NewServer(
+			grpc.UnaryInterceptor(
+				grpc_middleware.ChainUnaryServer(
+					grpc_zap.UnaryServerInterceptor(logger),
+					grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
+					ratelimit.UnaryServerInterceptor(limiter),
+				),
+			),
+		),
 	}, nil
 }
 
@@ -120,4 +144,10 @@ func (s *Server) Stop() error {
 	}
 	s.server.Stop()
 	return nil
+}
+
+type alwaysPassLimiter struct{}
+
+func (*alwaysPassLimiter) Limit() bool {
+	return false
 }

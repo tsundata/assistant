@@ -40,7 +40,7 @@ func TestRunPlugin(t *testing.T) {
 		bot.RegisterRuleset(cron.New(cronRules)),
 	}
 
-	b := bot.New("test", nil, nil, Options...)
+	b := bot.New("test", nil, nil, nil, Options...)
 
 	out := b.Process(model.Event{
 		Data: model.EventData{Message: model.Message{
