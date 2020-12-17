@@ -105,10 +105,10 @@ func GeneratePassword(length int, containChars string) string {
 
 	charsStrSlice := []byte(charsStr)
 	charsStrLength := len(charsStrSlice)
-	password := ""
+	var password strings.Builder
 	for i := 0; i < length; i++ {
 		randNumber := rand.Intn(charsStrLength)
-		password += string(charsStrSlice[randNumber])
+		password.WriteByte(charsStrSlice[randNumber])
 	}
-	return password
+	return password.String()
 }

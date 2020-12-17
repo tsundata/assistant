@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/message/plugins/rules/regex"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -165,7 +164,6 @@ var cronRules = map[string]cron.Rule{
 	"heartbeat": {
 		When: "0 0 * * *",
 		Action: func() []model.Event {
-			log.Println("cron " + time.Now().String())
 			return []model.Event{
 				{
 					Data: model.EventData{Message: model.Message{

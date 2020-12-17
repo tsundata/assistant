@@ -69,3 +69,9 @@ func TestGeneratePassword(t *testing.T) {
 		t.Fatal("error: generate password")
 	}
 }
+
+func BenchmarkGeneratePassword(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
+	}
+}
