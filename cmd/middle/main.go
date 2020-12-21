@@ -28,6 +28,9 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
+	if err != nil {
+		return nil, err
+	}
 
 	server, err := rpc.NewServer(rpcOptions, log, j,nil)
 	if err != nil {

@@ -61,23 +61,9 @@ type Client struct {
 	CC *grpc.ClientConn
 }
 
-func NewClient(o *ClientOptions, service string) (*Client, error) {
-	etcdCli, err := clientv3.NewFromURL(o.Etcd)
-	if err != nil {
-		return nil, err
-	}
-	re := &etcdnaming.GRPCResolver{Client: etcdCli}
-	rr := grpc.RoundRobin(re) // nolint
-	gdOptions := append(o.GrpcDialOptions, grpc.WithBalancer(rr)) // nolint
-
-	conn, err := grpc.Dial(service, gdOptions...)
-	if err != nil {
-		return nil, err
-	}
-
+func NewClient(o *ClientOptions) (*Client, error) {
 	return &Client{
-		o:  o,
-		CC: conn,
+		o: o,
 	}, nil
 }
 
@@ -85,6 +71,7 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 	o := &ClientOptions{
 		Wait:            c.o.Wait,
 		Tag:             c.o.Tag,
+		Etcd:            c.o.Etcd,
 		GrpcDialOptions: c.o.GrpcDialOptions,
 	}
 	for _, option := range options {
@@ -96,7 +83,7 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 		return nil, err
 	}
 	re := &etcdnaming.GRPCResolver{Client: etcdCli}
-	rr := grpc.RoundRobin(re) // nolint
+	rr := grpc.RoundRobin(re)                                     // nolint
 	gdOptions := append(o.GrpcDialOptions, grpc.WithBalancer(rr)) // nolint
 
 	conn, err := grpc.Dial(service, gdOptions...)
@@ -105,8 +92,4 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 	}
 
 	return conn, nil
-}
-
-func (c *Client) Close() error {
-	return c.CC.Close()
 }

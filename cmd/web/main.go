@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/controllers"
+	"github.com/tsundata/assistant/internal/app/web/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
@@ -29,16 +29,22 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
+	if err != nil {
+		return nil, err
+	}
 
 	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}
-	midClientConn, err := rpc.NewClient(clientOptions, "middle")
+	client, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
-	midClient := pb.NewMiddleClient(midClientConn.CC)
+	midClient, err := rpcclients.NewMiddleClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	webOptions, err := web.NewOptions(viper, log)
 	if err != nil {

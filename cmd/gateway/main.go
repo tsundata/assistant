@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/app/gateway/controllers"
+	"github.com/tsundata/assistant/internal/app/gateway/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
@@ -30,21 +30,26 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
+	if err != nil {
+		return nil, err
+	}
 
 	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}
-	subClientConn, err := rpc.NewClient(clientOptions, "subscribe")
+	client, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
-	subClient := pb.NewSubscribeClient(subClientConn.CC)
-	msgClientConn, err := rpc.NewClient(clientOptions, "message")
+	subClient, err := rpcclients.NewSubscribeClient(client)
 	if err != nil {
 		return nil, err
 	}
-	msgClient := pb.NewMessageClient(msgClientConn.CC)
+	msgClient, err := rpcclients.NewMessageClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	redisOption, err := redis.NewOptions(viper)
 	if err != nil {

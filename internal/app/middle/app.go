@@ -40,9 +40,9 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	// service
-	page := service.NewWeb(o.db, o.webURL)
+	mid := service.NewMiddle(o.db, o.webURL)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterMiddleServer(gs, page)
+		pb.RegisterMiddleServer(gs, mid)
 		return nil
 	})
 	if err != nil {

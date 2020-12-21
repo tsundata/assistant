@@ -10,16 +10,16 @@ import (
 	"time"
 )
 
-type Web struct {
+type Middle struct {
 	db     *gorm.DB
 	webURL string
 }
 
-func NewWeb(db *gorm.DB, webURL string) *Web {
-	return &Web{db: db, webURL: webURL}
+func NewMiddle(db *gorm.DB, webURL string) *Middle {
+	return &Middle{db: db, webURL: webURL}
 }
 
-func (s *Web) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.Text, error) {
+func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.Text, error) {
 	uuid, err := model.GenerateMessageUUID()
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (s *Web) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.Text
 	}, nil
 }
 
-func (s *Web) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
+func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	// TODO cache
 	var find model.Page
 	s.db.Select("uuid", "title", "content").Where("uuid = ?", payload.GetUuid()).Take(&find)
@@ -50,7 +50,7 @@ func (s *Web) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageRep
 	}, nil
 }
 
-func (s *Web) Qr(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) Qr(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
 	return &pb.Text{
 		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil

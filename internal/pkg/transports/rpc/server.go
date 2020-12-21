@@ -10,7 +10,6 @@ import (
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
-	"github.com/smallnest/rpcx/server"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
@@ -53,7 +52,7 @@ type Server struct {
 	server *grpc.Server
 }
 
-type InitServers func(s *server.Server)
+type InitServers func(s *grpc.Server)
 
 func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, init InitServers) (*Server, error) {
 	// recovery
@@ -73,28 +72,30 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 	}
 	r := &etcdnaming.GRPCResolver{Client: cli}
 
+	gs := grpc.NewServer(
+		grpc.StreamInterceptor(
+			grpc_middleware.ChainStreamServer(
+				grpc_zap.StreamServerInterceptor(logger),
+				grpc_recovery.StreamServerInterceptor(recoveryOpts...),
+				ratelimit.StreamServerInterceptor(limiter),
+				otgrpc.OpenTracingStreamServerInterceptor(tracer),
+			),
+		),
+		grpc.UnaryInterceptor(
+			grpc_middleware.ChainUnaryServer(
+				grpc_zap.UnaryServerInterceptor(logger),
+				grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
+				ratelimit.UnaryServerInterceptor(limiter),
+				otgrpc.OpenTracingServerInterceptor(tracer),
+			),
+		),
+	)
+
 	return &Server{
 		r:      r,
 		o:      o,
 		logger: logger,
-		server: grpc.NewServer(
-			grpc.StreamInterceptor(
-				grpc_middleware.ChainStreamServer(
-					grpc_zap.StreamServerInterceptor(logger),
-					grpc_recovery.StreamServerInterceptor(recoveryOpts...),
-					ratelimit.StreamServerInterceptor(limiter),
-					otgrpc.OpenTracingStreamServerInterceptor(tracer),
-				),
-			),
-			grpc.UnaryInterceptor(
-				grpc_middleware.ChainUnaryServer(
-					grpc_zap.UnaryServerInterceptor(logger),
-					grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
-					ratelimit.UnaryServerInterceptor(limiter),
-					otgrpc.OpenTracingServerInterceptor(tracer),
-				),
-			),
-		),
+		server: gs,
 	}, nil
 }
 

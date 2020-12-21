@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message"
 	"github.com/tsundata/assistant/internal/app/message/bot"
 	"github.com/tsundata/assistant/internal/app/message/plugins"
+	"github.com/tsundata/assistant/internal/app/message/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
@@ -30,6 +30,9 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
+	if err != nil {
+		return nil, err
+	}
 
 	server, err := rpc.NewServer(rpcOptions, log, j, nil)
 	if err != nil {
@@ -40,16 +43,18 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	subClientConn, err := rpc.NewClient(clientOptions, "subscribe")
+	client, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
-	subClient := pb.NewSubscribeClient(subClientConn.CC)
-	midClientConn, err := rpc.NewClient(clientOptions, "middle")
+	subClient, err := rpcclients.NewSubscribeClient(client)
 	if err != nil {
 		return nil, err
 	}
-	midClient := pb.NewMiddleClient(midClientConn.CC)
+	midClient, err := rpcclients.NewMiddleClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	dbOptions, err := database.NewOptions(viper)
 	if err != nil {
