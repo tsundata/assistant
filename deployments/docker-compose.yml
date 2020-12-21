@@ -1,49 +1,116 @@
 version: '3'
 
-services: 
-    db:
-        image: mysql:latest
-        environment: 
-            MYSQL_ROOT_PASSWORD: 123456
-            MYSQL_DATABASE: gateway
-            MYSQL_USER: gateway
-            MYSQL_PASSWORD: 123456
-        volumes: 
-            - ../scripts/app.sql:/docker-entrypoint-initdb.d/app.sql
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: gateway
+      MYSQL_USER: gateway
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - ../scripts/app.sql:/docker-entrypoint-initdb.d/app.sql
 
-    gateway: 
-        build: 
-            context: ..
-            dockerfile: "build/gateway/Dockerfile"
-        command: ./wait-for db:3306 -t 30 -- ./app
-        depends_on: 
-            - db
-            - registry
-        ports: 
-            - "5122:5000"
+  redis:
+    image: redis:latest
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    #    volumes:
+    #      - ./redis/data:/data
+    #      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "63790:6379"
 
-    registry: 
-        build: 
-            context: ..
-            dockerfile: "build/registry/Dockerfile"
-        command: ./wait-for db:3306 -t 30 -- ./app
-        depends_on: 
-            - db
+  ### jaeger ###
 
-    message: 
-        build: 
-            context: ..
-            dockerfile: "build/message/Dockerfile"
-        command: ./wait-for db:3306 -t 30 -- ./app
-        depends_on: 
-            - db
-            - registry
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector
+    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra", "--collector.zipkin.http-port=9411" ]
+    ports:
+      - "14269"
+      - "14268:14268"
+      - "14267"
+      - "14250"
+      - "9411:9411"
+    restart: on-failure
+    depends_on:
+      - cassandra-schema
 
-    subscribe: 
-        build: 
-            context: ..
-            dockerfile: "build/subscribe/Dockerfile"
-        command: ./wait-for db:3306 -t 30 -- ./app
-        depends_on: 
-            - db
-            - registry
+  jaeger-query:
+    image: jaegertracing/jaeger-query
+    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra" ]
+    ports:
+      - "16686:16686"
+      - "16687"
+    restart: on-failure
+    depends_on:
+      - cassandra-schema
+
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent
+    command: [ "--reporter.grpc.host-port=jaeger-collector:14250" ]
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+    restart: on-failure
+    depends_on:
+      - jaeger-collector
+
+  cassandra:
+    image: cassandra:3.9
+
+  cassandra-schema:
+    image: jaegertracing/jaeger-cassandra-schema
+    depends_on:
+      - cassandra
+
+  ### app ###
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: "build/gateway/Dockerfile"
+    command: ./wait-for db:3306 -t 30 -- ./app
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "5122:5000"
+
+  message:
+    build:
+      context: ..
+      dockerfile: "build/message/Dockerfile"
+    command: ./wait-for db:3306 -t 30 -- ./app
+    depends_on:
+      - db
+
+  subscribe:
+    build:
+      context: ..
+      dockerfile: "build/subscribe/Dockerfile"
+    command: ./wait-for db:3306 -t 30 -- ./app
+    depends_on:
+      - db
+      - redis
+
+  middle:
+    build:
+      context: ..
+      dockerfile: "build/middle/Dockerfile"
+    command: ./wait-for db:3306 -t 30 -- ./app
+    depends_on:
+      - db
+      - redis
+
+  web:
+    build:
+      context: ..
+      dockerfile: "build/web/Dockerfile"
+    command: ./wait-for db:3306 -t 30 -- ./app
+    depends_on:
+      - db
+    ports:
+      - "7000:5001"

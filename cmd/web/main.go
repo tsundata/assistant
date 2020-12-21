@@ -7,13 +7,14 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/controllers"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"time"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
+	log := logger.NewLogger()
 	viper, err := config.New(cf)
 	if err != nil {
 		return nil, err
@@ -22,7 +23,14 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(10*time.Second))
+
+	t, err := jaeger.NewConfiguration(viper, log)
+	if err != nil {
+		return nil, err
+	}
+	j, err := jaeger.New(t)
+
+	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +40,6 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	midClient := pb.NewMiddleClient(midClientConn.CC)
 
-	log := logger.NewLogger()
 	webOptions, err := web.NewOptions(viper, log)
 	if err != nil {
 		return nil, err

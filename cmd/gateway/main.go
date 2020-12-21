@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/gateway/controllers"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
@@ -14,6 +15,7 @@ import (
 )
 
 func CreateApp(cf string) (*app.Application, error) {
+	log := logger.NewLogger()
 	viper, err := config.New(cf)
 	if err != nil {
 		return nil, err
@@ -23,7 +25,13 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	clientOptions, err := rpc.NewClientOptions(viper)
+	t, err := jaeger.NewConfiguration(viper, log)
+	if err != nil {
+		return nil, err
+	}
+	j, err := jaeger.New(t)
+
+	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +55,6 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	log := logger.NewLogger()
 	gatewayOptions, err := gateway.NewOptions(viper, log)
 	if err != nil {
 		return nil, err

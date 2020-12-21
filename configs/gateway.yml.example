@@ -13,3 +13,10 @@ slack:
 redis:
     addr: localhost:6379
     password:
+jaeger:
+  serviceName: gateway
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

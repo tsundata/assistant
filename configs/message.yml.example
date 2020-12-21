@@ -6,4 +6,11 @@ db:
     url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
     debug: true
 slack:
-    webhook: 
+    webhook:
+jaeger:
+  serviceName: message
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

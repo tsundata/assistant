@@ -8,10 +8,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
+	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"time"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
@@ -24,7 +24,14 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	log := logger.NewLogger()
-	server, err := rpc.NewServer(rpcOptions, log, nil)
+
+	t, err := jaeger.NewConfiguration(viper, log)
+	if err != nil {
+		return nil, err
+	}
+	j, err := jaeger.New(t)
+
+	server, err := rpc.NewServer(rpcOptions, log,j, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +54,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	clientOptions, err := rpc.NewClientOptions(viper, rpc.WithTimeout(30*time.Second))
+	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}

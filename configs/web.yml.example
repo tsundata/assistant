@@ -6,3 +6,10 @@ http:
     port: 7000
 rpc:
     etcd: http://localhost:2379
+jaeger:
+  serviceName: web
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

@@ -10,3 +10,10 @@ redis:
     password:
 web:
     url: http://127.0.0.1:7007
+jaeger:
+  serviceName: middle
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

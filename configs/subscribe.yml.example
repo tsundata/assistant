@@ -8,3 +8,10 @@ db:
 redis:
     addr: localhost:6379
     password:
+jaeger:
+  serviceName: subscribe
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

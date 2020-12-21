@@ -8,6 +8,8 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/smallnest/rpcx/server"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -53,7 +55,7 @@ type Server struct {
 
 type InitServers func(s *server.Server)
 
-func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server, error) {
+func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, init InitServers) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -76,11 +78,20 @@ func NewServer(o *ServerOptions, logger *zap.Logger, init InitServers) (*Server,
 		o:      o,
 		logger: logger,
 		server: grpc.NewServer(
+			grpc.StreamInterceptor(
+				grpc_middleware.ChainStreamServer(
+					grpc_zap.StreamServerInterceptor(logger),
+					grpc_recovery.StreamServerInterceptor(recoveryOpts...),
+					ratelimit.StreamServerInterceptor(limiter),
+					otgrpc.OpenTracingStreamServerInterceptor(tracer),
+				),
+			),
 			grpc.UnaryInterceptor(
 				grpc_middleware.ChainUnaryServer(
 					grpc_zap.UnaryServerInterceptor(logger),
 					grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
 					ratelimit.UnaryServerInterceptor(limiter),
+					otgrpc.OpenTracingServerInterceptor(tracer),
 				),
 			),
 		),
