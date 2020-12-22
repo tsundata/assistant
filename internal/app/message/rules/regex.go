@@ -3,7 +3,7 @@ package rules
 import (
 	"bytes"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"regexp"
 	"strings"
@@ -14,7 +14,7 @@ import (
 type Rule struct {
 	Regex        string
 	HelpMessage  string
-	ParseMessage func(*bot.Bot, string, []string) []string
+	ParseMessage func(*rulebot.RuleBot, string, []string) []string
 }
 
 type regexRuleset struct {
@@ -26,9 +26,9 @@ func (r regexRuleset) Name() string {
 	return "Regex Ruleset"
 }
 
-func (r regexRuleset) Boot(_ *bot.Bot) {}
+func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpMessage(b *bot.Bot, in model.Event) string {
+func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, in model.Event) string {
 	botName := b.Name()
 	var helpMsg string
 	for _, rule := range r.rules {
@@ -40,7 +40,7 @@ func (r regexRuleset) HelpMessage(b *bot.Bot, in model.Event) string {
 	return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 }
 
-func (r regexRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
+func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Event) []model.Event {
 	for _, rule := range r.rules {
 		botName := b.Name()
 		var finalRegex bytes.Buffer

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorhill/cronexpr"
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"log"
 	"strings"
@@ -32,12 +32,12 @@ func (r *cronRuleset) Name() string {
 }
 
 // Boot runs preparatory steps for ruleset execution
-func (r *cronRuleset) Boot(b *bot.Bot) {
+func (r *cronRuleset) Boot(b *rulebot.RuleBot) {
 	r.start(b)
 	r.send(b)
 }
 
-func (r *cronRuleset) HelpMessage(b *bot.Bot, _ model.Event) string {
+func (r *cronRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Event) string {
 	helpMsg := fmt.Sprintln("cron attach <job name>- attach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron detach <job name> - detach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron list - list all available crons")
@@ -47,7 +47,7 @@ func (r *cronRuleset) HelpMessage(b *bot.Bot, _ model.Event) string {
 	return helpMsg
 }
 
-func (r *cronRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
+func (r *cronRuleset) ParseMessage(b *rulebot.RuleBot, in model.Event) []model.Event {
 	if strings.HasPrefix(in.Data.Message.Text, "cron attach") {
 		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Data.Message.Text, "cron attach"))
 		ret := []model.Event{{
@@ -105,7 +105,7 @@ func (r *cronRuleset) ParseMessage(b *bot.Bot, in model.Event) []model.Event {
 	return []model.Event{}
 }
 
-func (r *cronRuleset) attach(_ *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) attach(_ *rulebot.RuleBot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -131,7 +131,7 @@ func (r *cronRuleset) attach(_ *bot.Bot, ruleName, room string) string {
 }
 
 // nolint:unused
-func (r *cronRuleset) detach(_ *bot.Bot, ruleName, room string) string {
+func (r *cronRuleset) detach(_ *rulebot.RuleBot, ruleName, room string) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -157,7 +157,7 @@ func (r *cronRuleset) detach(_ *bot.Bot, ruleName, room string) string {
 	return ruleName + " detached to this room"
 }
 
-func (r *cronRuleset) start(_ *bot.Bot) {
+func (r *cronRuleset) start(_ *rulebot.RuleBot) {
 	r.stop()
 
 	r.mu.Lock()
@@ -172,7 +172,7 @@ func (r *cronRuleset) start(_ *bot.Bot) {
 }
 
 // send message
-func (r *cronRuleset) send(b *bot.Bot) {
+func (r *cronRuleset) send(b *rulebot.RuleBot) {
 	go func() {
 		for out := range r.outCh {
 			b.Send(out)

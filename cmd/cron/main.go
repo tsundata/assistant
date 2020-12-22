@@ -6,10 +6,10 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/rpcclients"
 	"github.com/tsundata/assistant/internal/app/cron/rules"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -50,7 +50,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := bot.New("cron", viper, subClient, midClient, rules.Options...)
+	b := rulebot.New("cron", viper, subClient, midClient, rules.Options...)
 	application, err := cron.NewApp(appOptions, b)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,7 @@
 package rules
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"time"
 )
@@ -21,6 +21,6 @@ var rules = map[string]Rule{
 	},
 }
 
-var Options = []bot.Option{
-	bot.RegisterRuleset(New(rules)),
+var Options = []rulebot.Option{
+	rulebot.RegisterRuleset(New(rules)),
 }

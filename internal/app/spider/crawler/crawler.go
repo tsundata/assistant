@@ -1,4 +1,4 @@
-package bot
+package crawler
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type Spider struct {
+type Crawler struct {
 	jobs  map[string]rule.Rule
 	outCh chan rule.Result
 
@@ -26,8 +26,9 @@ type Spider struct {
 	subClient pb.SubscribeClient
 }
 
-func New(rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) *Spider {
-	return &Spider{
+func New(rdb *redis.Client, logger *zap.Logger,
+	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) *Crawler {
+	return &Crawler{
 		jobs:      make(map[string]rule.Rule),
 		outCh:     make(chan rule.Result),
 		rdb:       rdb,
@@ -38,7 +39,7 @@ func New(rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midC
 	}
 }
 
-func (s *Spider) Register(rules map[string]rule.Rule) {
+func (s *Crawler) Register(rules map[string]rule.Rule) {
 	ctx := context.Background()
 	for name, job := range rules {
 		_, err := s.subClient.Register(ctx, &pb.SubscribeRequest{
@@ -52,7 +53,7 @@ func (s *Spider) Register(rules map[string]rule.Rule) {
 	}
 }
 
-func (s *Spider) Daemon() {
+func (s *Crawler) Daemon() {
 	log.Println("subscribe spider cron starting...")
 
 	for name, job := range s.jobs {
@@ -63,7 +64,7 @@ func (s *Spider) Daemon() {
 	s.process()
 }
 
-func (s *Spider) process() {
+func (s *Crawler) process() {
 	go func() {
 		for out := range s.outCh {
 			ctx := context.Background()
@@ -119,7 +120,7 @@ func (s *Spider) process() {
 	}()
 }
 
-func (s *Spider) Send(name string, out []string) {
+func (s *Crawler) Send(name string, out []string) {
 	text := ""
 	if len(out) <= 5 {
 		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))

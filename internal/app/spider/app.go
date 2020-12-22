@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/spider/bot"
+	"github.com/tsundata/assistant/internal/app/spider/crawler"
 	"github.com/tsundata/assistant/internal/app/spider/subscribe"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"go.uber.org/zap"
@@ -33,7 +33,7 @@ func NewApp(o *Options, rdb *redis.Client, msgClient pb.MessageClient, midClient
 	go func() {
 		// FIXME
 		time.Sleep(10 * time.Second)
-		s := bot.New(rdb, o.logger, msgClient, midClient, subClient)
+		s := crawler.New(rdb, o.logger, msgClient, midClient, subClient)
 		s.Register(subscribe.Rules)
 		s.Daemon()
 	}()

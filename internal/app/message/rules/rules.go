@@ -3,7 +3,7 @@ package rules
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"math/rand"
 	"strconv"
@@ -14,7 +14,7 @@ var rules = []Rule{
 	{
 		Regex:       `qr (.*)`,
 		HelpMessage: `Generate QR code`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -35,7 +35,7 @@ var rules = []Rule{
 	{
 		Regex:       `ut (\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -56,7 +56,7 @@ var rules = []Rule{
 	{
 		Regex:       `rand (\d+) (\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 3 {
 				return []string{"error args"}
 			}
@@ -83,7 +83,7 @@ var rules = []Rule{
 	{
 		Regex:       `pwd (\d+)`,
 		HelpMessage: `Generate Password`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -104,7 +104,7 @@ var rules = []Rule{
 	{
 		Regex:       `subs list`,
 		HelpMessage: `List subscribe`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			reply, err := b.SubClient.List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
@@ -116,7 +116,7 @@ var rules = []Rule{
 	{
 		Regex:       `subs open (.*)`,
 		HelpMessage: `Open subscribe`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -137,7 +137,7 @@ var rules = []Rule{
 	{
 		Regex:       `subs close (.*)`,
 		HelpMessage: `Close subscribe`,
-		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -157,6 +157,6 @@ var rules = []Rule{
 	},
 }
 
-var Options = []bot.Option{
-	bot.RegisterRuleset(New(rules)),
+var Options = []rulebot.Option{
+	rulebot.RegisterRuleset(New(rules)),
 }

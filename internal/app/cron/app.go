@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"go.uber.org/zap"
 )
 
@@ -25,7 +25,7 @@ func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, b *bot.Bot) (*app.Application, error) {
+func NewApp(o *Options, b *rulebot.RuleBot) (*app.Application, error) {
 	o.logger.Info("start cron bot " + b.Name())
 
 	a, err := app.New(o.Name, o.logger)

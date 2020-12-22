@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/robertkrimen/otto"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/bot"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
@@ -19,11 +19,11 @@ import (
 type Message struct {
 	db      *gorm.DB
 	logger  *zap.Logger
-	bot     *bot.Bot
+	bot     *rulebot.RuleBot
 	webhook string
 }
 
-func NewManage(db *gorm.DB, logger *zap.Logger, bot *bot.Bot, webhook string) *Message {
+func NewManage(db *gorm.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string) *Message {
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook}
 }
 

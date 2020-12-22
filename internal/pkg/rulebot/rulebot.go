@@ -1,4 +1,4 @@
-package bot
+package rulebot
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type Bot struct {
+type RuleBot struct {
 	name        string
 	providerIn  model.Event
 	providerOut []model.Event
@@ -22,8 +22,8 @@ type Bot struct {
 	MidClient pb.MiddleClient
 }
 
-func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, opts ...Option) *Bot {
-	s := &Bot{
+func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, opts ...Option) *RuleBot {
+	s := &RuleBot{
 		name: name,
 	}
 
@@ -39,7 +39,7 @@ func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb
 	return s
 }
 
-func (s *Bot) Process(in model.Event) *Bot {
+func (s *RuleBot) Process(in model.Event) *RuleBot {
 	log.Println("plugin process event")
 
 	s.providerIn = in
@@ -73,15 +73,15 @@ func (s *Bot) Process(in model.Event) *Bot {
 	return s
 }
 
-func (s *Bot) MessageProviderOut() []model.Event {
+func (s *RuleBot) MessageProviderOut() []model.Event {
 	return s.providerOut
 }
 
-func (s *Bot) Name() string {
+func (s *RuleBot) Name() string {
 	return s.name
 }
 
-func (s *Bot) Send(out model.Event) {
+func (s *RuleBot) Send(out model.Event) {
 	client := http.NewClient()
 	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
 		"text": out.Data.Message.Text,
@@ -95,17 +95,17 @@ func (s *Bot) Send(out model.Event) {
 	fasthttp.ReleaseResponse(resp)
 }
 
-type Option func(*Bot)
+type Option func(*RuleBot)
 
 type RuleParser interface {
 	Name() string
-	Boot(*Bot)
-	ParseMessage(*Bot, model.Event) []model.Event
-	HelpMessage(*Bot, model.Event) string
+	Boot(*RuleBot)
+	ParseMessage(*RuleBot, model.Event) []model.Event
+	HelpMessage(*RuleBot, model.Event) string
 }
 
 func RegisterRuleset(rule RuleParser) Option {
-	return func(s *Bot) {
+	return func(s *RuleBot) {
 		log.Printf("registering ruleset %T", rule)
 		rule.Boot(s)
 		s.rules = append(s.rules, rule)
