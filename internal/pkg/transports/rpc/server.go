@@ -8,6 +8,7 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
@@ -79,6 +80,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 				grpc_recovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
+				grpc_prometheus.StreamServerInterceptor,
 			),
 		),
 		grpc.UnaryInterceptor(
@@ -87,6 +89,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 				grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
+				grpc_prometheus.UnaryServerInterceptor,
 			),
 		),
 	)

@@ -29,18 +29,19 @@ func NewClientOptions(v *viper.Viper, tracer opentracing.Tracer) (*ClientOptions
 		return nil, err
 	}
 
+	grpc_prometheus.EnableClientHandlingTimeHistogram()
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(
 			grpc_middleware.ChainUnaryClient(
-				grpc_prometheus.UnaryClientInterceptor,
 				otgrpc.OpenTracingClientInterceptor(tracer),
+				grpc_prometheus.UnaryClientInterceptor,
 			),
 		),
 		grpc.WithStreamInterceptor(
 			grpc_middleware.ChainStreamClient(
-				grpc_prometheus.StreamClientInterceptor,
 				otgrpc.OpenTracingStreamClientInterceptor(tracer),
+				grpc_prometheus.StreamClientInterceptor,
 			),
 		),
 	)
