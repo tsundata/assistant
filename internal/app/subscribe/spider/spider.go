@@ -141,11 +141,20 @@ func processSpiderRule(name string, rule Rule, outCh chan Result) {
 	nextTime := cronexpr.MustParse(rule.When).Next(time.Now())
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			result := rule.Action()
-			outCh <- Result{
-				name:    name,
-				instant: rule.Instant,
-				result:  result,
+			result := func() []string {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Println("processSpiderRule panic", name, r)
+					}
+				}()
+				return rule.Action()
+			}()
+			if len(result) > 0 {
+				outCh <- Result{
+					name:    name,
+					instant: rule.Instant,
+					result:  result,
+				}
 			}
 		}
 		nextTime = cronexpr.MustParse(rule.When).Next(time.Now())
