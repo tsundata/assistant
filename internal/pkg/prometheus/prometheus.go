@@ -60,7 +60,7 @@ func (fp *FasthttpPrometheus) Start() {
 }
 
 func (fp *FasthttpPrometheus) End(ctx *fasthttp.RequestCtx) {
-	if fp.ignored[string(ctx.Path())] == true {
+	if fp.ignored[string(ctx.Path())] {
 		return
 	}
 

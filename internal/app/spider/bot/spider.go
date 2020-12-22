@@ -1,44 +1,63 @@
-package spider
+package bot
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/go-redis/redis/v8"
-	"github.com/gorhill/cronexpr"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"go.uber.org/zap"
 	"log"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Spider struct {
-	rdb   *redis.Client
-	outCh chan Result
+	jobs  map[string]rule.Rule
+	outCh chan rule.Result
 
-	msgClient *pb.MessageClient
-	midClient *pb.MiddleClient
+	rdb       *redis.Client
+	logger    *zap.Logger
+	msgClient pb.MessageClient
+	midClient pb.MiddleClient
+	subClient pb.SubscribeClient
 }
 
-func New(rdb *redis.Client, msgClient *pb.MessageClient, midClient *pb.MiddleClient) *Spider {
+func New(rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) *Spider {
 	return &Spider{
+		jobs:      make(map[string]rule.Rule),
+		outCh:     make(chan rule.Result),
 		rdb:       rdb,
-		outCh:     make(chan Result),
+		logger:    logger,
 		msgClient: msgClient,
 		midClient: midClient,
+		subClient: subClient,
 	}
 }
 
-func (s *Spider) Cron() {
+func (s *Spider) Register(rules map[string]rule.Rule) {
+	ctx := context.Background()
+	for name, job := range rules {
+		_, err := s.subClient.Register(ctx, &pb.SubscribeRequest{
+			Text: name,
+		})
+		if err != nil {
+			s.logger.Error(err.Error())
+			continue
+		}
+		s.jobs[name] = job
+	}
+}
+
+func (s *Spider) Daemon() {
 	log.Println("subscribe spider cron starting...")
 
-	for name, rule := range SubscribeRules {
+	for name, job := range s.jobs {
 		log.Printf("spider %v: crawl...", name)
-		go processSpiderRule(name, rule, s.outCh)
+		go rule.ProcessSpiderRule(name, job, s.outCh)
 	}
 
 	s.process()
@@ -48,10 +67,10 @@ func (s *Spider) process() {
 	go func() {
 		for out := range s.outCh {
 			ctx := context.Background()
-			latest := out.result
+			latest := out.Result
 
-			dataKey := fmt.Sprintf("%s:latest", out.name)
-			sendKey := fmt.Sprintf("%s:send", out.name)
+			dataKey := fmt.Sprintf("%s:latest", out.Name)
+			sendKey := fmt.Sprintf("%s:send", out.Name)
 
 			smembers := s.rdb.SMembers(ctx, dataKey)
 			old, err := smembers.Result()
@@ -71,16 +90,16 @@ func (s *Spider) process() {
 			}
 
 			// add data
-			for _, item := range out.result {
+			for _, item := range out.Result {
 				s.rdb.SAdd(ctx, dataKey, item)
 			}
 			s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
 
 			// is instant
-			if out.instant {
+			if out.Instant {
 				// send
 				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-				s.Send(out.name, diff)
+				s.Send(out.Name, diff)
 			} else {
 				sendStringCmd := s.rdb.Get(ctx, sendKey)
 				sendString, _ := sendStringCmd.Result()
@@ -94,7 +113,7 @@ func (s *Spider) process() {
 				}
 
 				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-				s.Send(out.name, diff)
+				s.Send(out.Name, diff)
 			}
 		}
 	}()
@@ -111,7 +130,7 @@ func (s *Spider) Send(name string, out []string) {
 			return
 		}
 
-		reply, err := (*s.midClient).CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
 			Title:   fmt.Sprintf("Channel %s", name),
 			Content: string(j),
 		})
@@ -122,61 +141,11 @@ func (s *Spider) Send(name string, out []string) {
 		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
 	}
 
-	_, err := (*s.msgClient).Send(context.Background(), &pb.MessageRequest{
+	_, err := s.msgClient.Send(context.Background(), &pb.MessageRequest{
 		Text: text,
 	})
 	if err != nil {
 		log.Println(err)
 		return
 	}
-}
-
-type Result struct {
-	name    string
-	instant bool
-	result  []string
-}
-
-func processSpiderRule(name string, rule Rule, outCh chan Result) {
-	nextTime := cronexpr.MustParse(rule.When).Next(time.Now())
-	for {
-		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			result := func() []string {
-				defer func() {
-					if r := recover(); r != nil {
-						log.Println("processSpiderRule panic", name, r)
-					}
-				}()
-				return rule.Action()
-			}()
-			if len(result) > 0 {
-				outCh <- Result{
-					name:    name,
-					instant: rule.Instant,
-					result:  result,
-				}
-			}
-		}
-		nextTime = cronexpr.MustParse(rule.When).Next(time.Now())
-		time.Sleep(2 * time.Second)
-	}
-}
-
-type Rule struct {
-	Instant bool
-	When    string
-	Action  func() []string
-}
-
-func document(url string) (*goquery.Document, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return nil, err
-	}
-
-	return goquery.NewDocumentFromReader(res.Body)
 }

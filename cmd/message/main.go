@@ -68,7 +68,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := bot.New("ts", viper, &subClient, &midClient, plugins.Options...)
+	b := bot.New("ts", viper, subClient, midClient, plugins.Options...)
 	application, err := message.NewApp(appOptions, server, b)
 	if err != nil {
 		return nil, err

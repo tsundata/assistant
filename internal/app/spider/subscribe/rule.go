@@ -1,17 +1,18 @@
-package spider
+package subscribe
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/tsundata/assistant/internal/app/spider/rule"
 )
 
-var SubscribeRules = map[string]Rule{
+var Rules = map[string]rule.Rule{
 	"news": {
-		false,
-		"* * * * *",
-		func() []string {
+		When:    "* * * * *",
+		Instant: false,
+		Action: func() []string {
 			var result []string
 
-			doc, err := document("https://www.v2ex.com/?tab=nodes")
+			doc, err := rule.Document("https://www.v2ex.com/?tab=nodes")
 			if err != nil {
 				return result
 			}
@@ -24,9 +25,9 @@ var SubscribeRules = map[string]Rule{
 		},
 	},
 	"demo": {
-		false,
-		"*/10 * * * *",
-		func() []string {
+		When:    "*/10 * * * *",
+		Instant: false,
+		Action: func() []string {
 			return []string{}
 		},
 	},

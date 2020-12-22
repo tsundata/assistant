@@ -17,10 +17,10 @@ import (
 type WebController struct {
 	o         *web.Options
 	logger    *zap.Logger
-	midClient *pb.MiddleClient
+	midClient pb.MiddleClient
 }
 
-func NewWebController(o *web.Options, logger *zap.Logger, midClient *pb.MiddleClient) *WebController {
+func NewWebController(o *web.Options, logger *zap.Logger, midClient pb.MiddleClient) *WebController {
 	return &WebController{o: o, logger: logger, midClient: midClient}
 }
 
@@ -43,7 +43,7 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	reply, err := (*wc.midClient).GetPage(context.Background(), &pb.PageRequest{
+	reply, err := wc.midClient.GetPage(context.Background(), &pb.PageRequest{
 		Uuid: string(r[0]),
 	})
 	if err != nil || reply.GetContent() == "" {

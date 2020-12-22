@@ -17,7 +17,7 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - /tmp/redis/data:/data
-      - ../config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ../configs/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "63790:6379"
 

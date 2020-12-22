@@ -22,11 +22,11 @@ type GatewayController struct {
 	o         *gateway.Options
 	rdb       *redis.Client
 	logger    *zap.Logger
-	subClient *pb.SubscribeClient
-	msgClient *pb.MessageClient
+	subClient pb.SubscribeClient
+	msgClient pb.MessageClient
 }
 
-func NewGatewayController(o *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient *pb.SubscribeClient, msgClient *pb.MessageClient) *GatewayController {
+func NewGatewayController(o *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
 	return &GatewayController{o: o, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
@@ -68,7 +68,7 @@ func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 		case "delete":
 			gc.logger.Info("delete")
 		case "run":
-			reply, err := (*gc.msgClient).Run(context.Background(), &pb.MessageRequest{
+			reply, err := gc.msgClient.Run(context.Background(), &pb.MessageRequest{
 				Text: s.Message.Text,
 			})
 			if err != nil {
@@ -111,7 +111,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		reply, err := (*gc.msgClient).Get(context.Background(), &pb.MessageRequest{
+		reply, err := gc.msgClient.Get(context.Background(), &pb.MessageRequest{
 			Id: int64(id),
 		})
 		if err != nil {
@@ -142,7 +142,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			c.Error(err.Error(), http.StatusBadRequest)
 			return
 		}
-		reply, err := (*gc.msgClient).Get(context.Background(), &pb.MessageRequest{
+		reply, err := gc.msgClient.Get(context.Background(), &pb.MessageRequest{
 			Id: int64(id),
 		})
 		if err != nil {
@@ -152,7 +152,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 		}
 
 		if reply.GetId() > 0 {
-			r, err := (*gc.msgClient).Run(context.Background(), &pb.MessageRequest{
+			r, err := gc.msgClient.Run(context.Background(), &pb.MessageRequest{
 				Text: reply.GetText(),
 			})
 			if err != nil {
@@ -209,7 +209,7 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 				gc.rdb.SAdd(context.Background(), rKey, ev.ClientMsgID)
 				gc.rdb.Expire(context.Background(), rKey, 7*24*time.Hour)
 
-				reply, err := (*gc.msgClient).Create(context.Background(), &pb.MessageRequest{
+				reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,
 					Text: ev.Text,
 				})

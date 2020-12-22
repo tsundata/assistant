@@ -23,7 +23,7 @@ var regexRules = []regex.Rule{
 			}
 
 			txt := args[1]
-			reply, err := (*b.MidClient).Qr(context.Background(), &pb.Text{
+			reply, err := b.MidClient.Qr(context.Background(), &pb.Text{
 				Text: txt,
 			})
 			if err != nil {
@@ -108,7 +108,7 @@ var regexRules = []regex.Rule{
 		Regex:       `subs list`,
 		HelpMessage: `List subscribe`,
 		ParseMessage: func(b *bot.Bot, s string, args []string) []string {
-			reply, err := (*b.SubClient).List(context.Background(), &pb.SubscribeRequest{})
+			reply, err := b.SubClient.List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -124,7 +124,7 @@ var regexRules = []regex.Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := (*b.SubClient).Open(context.Background(), &pb.SubscribeRequest{
+			reply, err := b.SubClient.Open(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {
@@ -145,7 +145,7 @@ var regexRules = []regex.Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := (*b.SubClient).Open(context.Background(), &pb.SubscribeRequest{
+			reply, err := b.SubClient.Open(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {

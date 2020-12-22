@@ -2,33 +2,37 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/internal/app/web"
-	"github.com/tsundata/assistant/internal/app/web/controllers"
-	"github.com/tsundata/assistant/internal/app/web/rpcclients"
+	"github.com/tsundata/assistant/internal/app/spider"
+	"github.com/tsundata/assistant/internal/app/spider/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
-	log := logger.NewLogger()
 	viper, err := config.New(cf)
 	if err != nil {
 		return nil, err
 	}
-	httpOptions, err := http.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
+	log := logger.NewLogger()
 
 	t, err := jaeger.NewConfiguration(viper, log)
 	if err != nil {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
+	if err != nil {
+		return nil, err
+	}
+
+	redisOption, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rdb, err := redis.New(redisOption)
 	if err != nil {
 		return nil, err
 	}
@@ -41,30 +45,31 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	msgClient, err := rpcclients.NewMessageClient(client)
+	if err != nil {
+		return nil, err
+	}
+	subClient, err := rpcclients.NewSubscribeClient(client)
+	if err != nil {
+		return nil, err
+	}
 	midClient, err := rpcclients.NewMiddleClient(client)
 	if err != nil {
 		return nil, err
 	}
 
-	webOptions, err := web.NewOptions(viper, log)
+	appOptions, err := spider.NewOptions(viper, log)
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, log, midClient)
-	initControllers := controllers.CreateInitControllersFn(webController)
-	router := http.NewRouter(httpOptions, initControllers)
-	server, err := http.New(httpOptions, router)
-	if err != nil {
-		return nil, err
-	}
-	application, err := web.NewApp(webOptions, server)
+	application, err := spider.NewApp(appOptions, rdb, msgClient, midClient, subClient)
 	if err != nil {
 		return nil, err
 	}
 	return application, nil
 }
 
-var configFile = flag.String("f", "web.yml", "set config file which will loading")
+var configFile = flag.String("f", "subscribe.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()

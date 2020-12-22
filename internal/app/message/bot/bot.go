@@ -18,11 +18,11 @@ type Bot struct {
 	rules       []RuleParser
 
 	webhook   string
-	SubClient *pb.SubscribeClient
-	MidClient *pb.MiddleClient
+	SubClient pb.SubscribeClient
+	MidClient pb.MiddleClient
 }
 
-func New(name string, v *viper.Viper, SubClient *pb.SubscribeClient, MidClient *pb.MiddleClient, opts ...Option) *Bot {
+func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, opts ...Option) *Bot {
 	s := &Bot{
 		name: name,
 	}

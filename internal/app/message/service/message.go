@@ -17,8 +17,6 @@ import (
 )
 
 type Message struct {
-	pb.UnimplementedMessageServer
-
 	db      *gorm.DB
 	logger  *zap.Logger
 	bot     *bot.Bot

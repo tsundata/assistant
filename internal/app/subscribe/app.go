@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
-	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.uber.org/zap"
@@ -32,10 +31,7 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger) (*Options, erro
 	return o, err
 }
 
-func NewApp(o *Options, s *spider.Spider, rs *rpc.Server) (*app.Application, error) {
-	// spider cron
-	s.Cron()
-
+func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	// service
 	subscribe := service.NewSubscribe(o.db)
 	err := rs.Register(func(gs *grpc.Server) error {

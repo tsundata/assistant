@@ -5,6 +5,7 @@ option go_package = "api/pb";
 
 service Subscribe {
   rpc List(SubscribeRequest) returns (SubscribeReply) {}
+  rpc Register(SubscribeRequest) returns (State) {}
   rpc Open(SubscribeRequest) returns (State) {}
   rpc Close(SubscribeRequest) returns (State) {}
 }

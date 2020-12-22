@@ -3,14 +3,11 @@ package main
 import (
 	"flag"
 	"github.com/tsundata/assistant/internal/app/subscribe"
-	"github.com/tsundata/assistant/internal/app/subscribe/rpcclients"
-	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -48,38 +45,11 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	redisOption, err := redis.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rdb, err := redis.New(redisOption)
-	if err != nil {
-		return nil, err
-	}
-
-	clientOptions, err := rpc.NewClientOptions(viper, j)
-	if err != nil {
-		return nil, err
-	}
-	client, err := rpc.NewClient(clientOptions)
-	if err != nil {
-		return nil, err
-	}
-	midClient, err := rpcclients.NewMiddleClient(client)
-	if err != nil {
-		return nil, err
-	}
-	msgClient, err := rpcclients.NewMessageClient(client)
-	if err != nil {
-		return nil, err
-	}
-
-	s := spider.New(rdb, &msgClient, &midClient)
 	appOptions, err := subscribe.NewOptions(viper, db, log)
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(appOptions, s, server)
+	application, err := subscribe.NewApp(appOptions, server)
 	if err != nil {
 		return nil, err
 	}

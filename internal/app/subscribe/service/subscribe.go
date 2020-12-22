@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/subscribe/spider"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"gorm.io/gorm"
 )
@@ -27,13 +26,6 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	for _, item := range list {
 		mb[item.Source] = item.IsSubscribe
 	}
-	for source := range spider.SubscribeRules {
-		if b, ok := mb[source]; ok {
-			mb[source] = b
-		} else {
-			mb[source] = true
-		}
-	}
 
 	for source, isSubscribe := range mb {
 		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
@@ -44,12 +36,23 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	}, nil
 }
 
+func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+	var subscribe model.Subscribe
+	s.db.Where("source = ?", payload.GetText()).First(&subscribe)
+	if subscribe.ID == 0 {
+		s.db.Create(&model.Subscribe{Source: payload.GetText(), IsSubscribe: true})
+	}
+
+	return &pb.State{State: true}, nil
+}
+
 func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
 	var subscribe model.Subscribe
 	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
-
 	if !subscribe.IsSubscribe {
-		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", true)
+		s.db.Model(&subscribe).
+			Where("id = ?", subscribe.ID).
+			Update("is_subscribe", true)
 	}
 
 	return &pb.State{State: true}, nil
@@ -58,9 +61,10 @@ func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
 	var subscribe model.Subscribe
 	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
-
 	if subscribe.IsSubscribe {
-		s.db.Model(&subscribe).Where("id = ?", subscribe.ID).Update("is_subscribe", false)
+		s.db.Model(&subscribe).
+			Where("id = ?", subscribe.ID).
+			Update("is_subscribe", false)
 	}
 
 	return &pb.State{State: true}, nil
