@@ -5,7 +5,7 @@ http:
     host: 127.0.0.1
     port: 7000
 rpc:
-    etcd: http://localhost:2379
+    etcd: http://etcd:2379
 jaeger:
   serviceName: web
   reporter:

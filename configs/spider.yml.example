@@ -1,9 +1,9 @@
 app:
     name: spider
 rpc:
-    etcd: http://localhost:2379
+    etcd: http://etcd:2379
 redis:
-    addr: localhost:6379
+    addr: redis:6379
     password:
 jaeger:
   serviceName: subscribe

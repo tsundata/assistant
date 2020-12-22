@@ -5,11 +5,13 @@ services:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: gateway
-      MYSQL_USER: gateway
+      MYSQL_DATABASE: assistant
+      MYSQL_USER: ts
       MYSQL_PASSWORD: 123456
     volumes:
       - ../scripts/app.sql:/docker-entrypoint-initdb.d/app.sql
+    ports:
+      - "3309:3306"
 
   redis:
     image: redis:latest
@@ -143,49 +145,76 @@ services:
 
   ### app ###
 
+  web:
+    build:
+      context: ..
+      dockerfile: "build/web/Dockerfile"
+    command: ./app
+    depends_on:
+      - middle
+    ports:
+      - "7007:7007"
+
   gateway:
     build:
       context: ..
       dockerfile: "build/gateway/Dockerfile"
-    command: ./wait-for db:3306 -t 30 -- ./app
+    command: ./app
     depends_on:
       - db
       - redis
     ports:
-      - "5122:5000"
+      - "7003:7003"
 
   message:
     build:
       context: ..
       dockerfile: "build/message/Dockerfile"
-    command: ./wait-for db:3306 -t 30 -- ./app
+    command: ./app
     depends_on:
       - db
-
-  subscribe:
-    build:
-      context: ..
-      dockerfile: "build/subscribe/Dockerfile"
-    command: ./wait-for db:3306 -t 30 -- ./app
-    depends_on:
-      - db
-      - redis
+      - etcd
+    ports:
+      - "8001:8001"
 
   middle:
     build:
       context: ..
       dockerfile: "build/middle/Dockerfile"
-    command: ./wait-for db:3306 -t 30 -- ./app
+    command: ./app
     depends_on:
       - db
       - redis
+      - etcd
+    ports:
+      - "8002:8002"
 
-  web:
+  subscribe:
     build:
       context: ..
-      dockerfile: "build/web/Dockerfile"
-    command: ./wait-for db:3306 -t 30 -- ./app
+      dockerfile: "build/subscribe/Dockerfile"
+    command: ./app
     depends_on:
       - db
+      - redis
+      - etcd
     ports:
-      - "7000:5001"
+      - "8003:8003"
+
+  spider:
+    build:
+      context: ..
+      dockerfile: "build/middle/Dockerfile"
+    command: ./app
+    depends_on:
+      - subscribe
+      - middle
+      - message
+
+  cron:
+    build:
+      context: ..
+      dockerfile: "build/middle/Dockerfile"
+    command: ./app
+    depends_on:
+      - redis

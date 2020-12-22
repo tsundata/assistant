@@ -13,7 +13,7 @@ build:
 	done
 .PHONY: lint
 lint:
-	golint ./...
+	golangci-lint run ./...
 .PHONY: docker
 docker-compose: build
 	docker-compose -f deployments/docker-compose.yml up --build -d

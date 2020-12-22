@@ -1,12 +1,14 @@
 app:
     name: subscribe
 rpc:
-    etcd: http://localhost:2379
+    etcd: http://etcd:2379
+    host: subscribe
+    port: 8003
 db:
-    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
+    url: root:123456@tcp(db:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
     debug: true
 redis:
-    addr: localhost:6379
+    addr: redis:6379
     password:
 jaeger:
   serviceName: subscribe

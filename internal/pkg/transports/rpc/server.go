@@ -117,9 +117,7 @@ func (s *Server) Start() error {
 		s.port = utils.GetAvailablePort()
 	}
 
-	// FIXME
-	// s.host = utils.GetLocalIP4()
-	s.host = "127.0.0.1"
+	s.host = utils.GetLocalIP4()
 	if s.host == "" {
 		return errors.New("get local ipv4 error")
 	}
@@ -134,7 +132,9 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: addr}) // nolint
+	rpcAddr := fmt.Sprintf("%s:%d", s.o.Host, s.port)
+	s.logger.Info("register rpc service ... " + rpcAddr)
+	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
 	if err != nil {
 		panic(err)
 	}
