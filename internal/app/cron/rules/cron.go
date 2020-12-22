@@ -1,10 +1,10 @@
-package cron
+package rules
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorhill/cronexpr"
-	"github.com/tsundata/assistant/internal/app/message/bot"
+	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"log"
 	"strings"

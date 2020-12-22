@@ -1,9 +1,9 @@
-package regex
+package rules
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/tsundata/assistant/internal/app/message/bot"
+	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"regexp"
 	"strings"

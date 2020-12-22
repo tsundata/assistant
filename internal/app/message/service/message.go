@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/robertkrimen/otto"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/message/bot"
+	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"

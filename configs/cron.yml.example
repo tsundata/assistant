@@ -1,0 +1,14 @@
+app:
+    name: cron
+rpc:
+    etcd: http://localhost:2379
+redis:
+    addr: localhost:6379
+    password:
+jaeger:
+  serviceName: subscribe
+  reporter:
+    localAgentHostPort: "jaeger-agent:6831"
+  sampler:
+    type: const
+    param: 1

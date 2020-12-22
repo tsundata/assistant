@@ -2,13 +2,12 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/internal/app/message"
-	"github.com/tsundata/assistant/internal/app/message/rpcclients"
-	"github.com/tsundata/assistant/internal/app/message/rules"
+	"github.com/tsundata/assistant/internal/app/cron"
+	"github.com/tsundata/assistant/internal/app/cron/rpcclients"
+	"github.com/tsundata/assistant/internal/app/cron/rules"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -19,10 +18,6 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcOptions, err := rpc.NewServerOptions(viper)
-	if err != nil {
-		return nil, err
-	}
 	log := logger.NewLogger()
 
 	t, err := jaeger.NewConfiguration(viper, log)
@@ -30,11 +25,6 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	j, err := jaeger.New(t)
-	if err != nil {
-		return nil, err
-	}
-
-	server, err := rpc.NewServer(rpcOptions, log, j, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,27 +46,19 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	dbOptions, err := database.NewOptions(viper)
+	appOptions, err := cron.NewOptions(viper, log)
 	if err != nil {
 		return nil, err
 	}
-	db, err := database.New(dbOptions)
-	if err != nil {
-		return nil, err
-	}
-	appOptions, err := message.NewOptions(viper, db, log)
-	if err != nil {
-		return nil, err
-	}
-	b := bot.New("ts", viper, subClient, midClient, rules.Options...)
-	application, err := message.NewApp(appOptions, server, b)
+	b := bot.New("cron", viper, subClient, midClient, rules.Options...)
+	application, err := cron.NewApp(appOptions, b)
 	if err != nil {
 		return nil, err
 	}
 	return application, nil
 }
 
-var configFile = flag.String("f", "message.yml", "set config file which will loading")
+var configFile = flag.String("f", "subscribe.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()

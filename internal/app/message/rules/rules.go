@@ -1,19 +1,16 @@
-package plugins
+package rules
 
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/message/bot"
-	"github.com/tsundata/assistant/internal/app/message/plugins/rules/cron"
-	"github.com/tsundata/assistant/internal/app/message/plugins/rules/regex"
-	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/bot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"math/rand"
 	"strconv"
 	"time"
 )
 
-var regexRules = []regex.Rule{
+var rules = []Rule{
 	{
 		Regex:       `qr (.*)`,
 		HelpMessage: `Generate QR code`,
@@ -160,22 +157,6 @@ var regexRules = []regex.Rule{
 	},
 }
 
-var cronRules = map[string]cron.Rule{
-	"heartbeat": {
-		When: "0 0 * * *",
-		Action: func() []model.Event {
-			return []model.Event{
-				{
-					Data: model.EventData{Message: model.Message{
-						Text: "Plugin Cron Heartbeat: " + time.Now().String(),
-					}},
-				},
-			}
-		},
-	},
-}
-
 var Options = []bot.Option{
-	bot.RegisterRuleset(regex.New(regexRules)),
-	bot.RegisterRuleset(cron.New(cronRules)),
+	bot.RegisterRuleset(New(rules)),
 }
