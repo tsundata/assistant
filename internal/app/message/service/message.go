@@ -69,10 +69,10 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 	if utils.IsUrl(payload.Data.Message.Text) {
 		payload.Data.Message.Type = model.MessageTypeLink
 	}
-	if utils.IsMessageOfAction(payload.Data.Message.Text) {
+	if model.IsMessageOfAction(payload.Data.Message.Text) {
 		payload.Data.Message.Type = model.MessageTypeAction
 	}
-	if utils.IsMessageOfScript(payload.Data.Message.Text) {
+	if model.IsMessageOfScript(payload.Data.Message.Text) {
 		payload.Data.Message.Type = model.MessageTypeScript
 	}
 
@@ -114,7 +114,7 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 		return nil, err
 	}
 
-	reply := string(resp.Body())
+	reply := utils.ByteToString(resp.Body())
 	fasthttp.ReleaseResponse(resp)
 
 	return &pb.MessageReply{
@@ -138,7 +138,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch utils.MessageScriptKind(find.Data.Message.Text) {
+		switch model.MessageScriptKind(find.Data.Message.Text) {
 		case model.MessageScriptOfFlowscript:
 			text := strings.Replace(find.Data.Message.Text, "#!script:flowscript", "", -1)
 			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))

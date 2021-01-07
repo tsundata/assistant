@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/tsundata/assistant/internal/pkg/prometheus"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"log"
@@ -19,9 +20,11 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 
 		fp.Start()
 
+		path := ctx.URI().PathOriginal()
+
 		// GET
 		if ctx.IsGet() {
-			switch string(ctx.Path()) {
+			switch utils.ByteToString(path) {
 			case "/":
 				gc.Index(ctx)
 			case "/apps":
@@ -35,7 +38,7 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 
 		// POST
 		if ctx.IsPost() {
-			switch string(ctx.Path()) {
+			switch utils.ByteToString(path) {
 			case "/slack/shortcut":
 				gc.SlackShortcut(ctx)
 			case "/slack/command":

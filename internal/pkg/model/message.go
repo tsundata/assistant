@@ -4,8 +4,11 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"gorm.io/gorm"
 	"io"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -57,6 +60,7 @@ func GenerateMessageUUID() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
+// FIXME
 type Event struct {
 	ID      int
 	UUID    string
@@ -72,7 +76,7 @@ func (e *Event) BeforeCreate(tx *gorm.DB) (err error) {
 	if err != nil {
 		return
 	}
-	e.Event = string(d)
+	e.Event = utils.ByteToString(d)
 	return
 }
 
@@ -201,4 +205,34 @@ type MessageAction struct {
 type MessageScript struct {
 	Type string
 	Code string
+}
+
+func IsMessageOfScript(text string) bool {
+	lines := strings.Split(text, "\n")
+	if len(lines) >= 1 {
+		re := regexp.MustCompile(`^#!script:\w+$`)
+		return re.MatchString(strings.TrimSpace(lines[0]))
+	}
+	return false
+}
+
+func IsMessageOfAction(text string) bool {
+	lines := strings.Split(text, "\n")
+	if len(lines) >= 1 {
+		re := regexp.MustCompile(`^#!action$`)
+		return re.MatchString(strings.TrimSpace(lines[0]))
+	}
+	return false
+}
+
+func MessageScriptKind(text string) string {
+	if !IsMessageOfScript(text) {
+		return MessageScriptOfUndefined
+	}
+
+	lines := strings.Split(text, "\n")
+	if len(lines) >= 1 {
+		return strings.Replace(strings.TrimSpace(lines[0]), "#!script:", "", -1)
+	}
+	return MessageScriptOfUndefined
 }

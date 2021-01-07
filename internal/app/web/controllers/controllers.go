@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"log"
 	"regexp"
@@ -18,7 +19,7 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 
 		// GET
 		if ctx.IsGet() {
-			switch string(path) {
+			switch utils.ByteToString(path) {
 			case "/":
 				wc.Index(ctx)
 			case "/Robots.txt":

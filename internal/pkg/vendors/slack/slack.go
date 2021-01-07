@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/slack-go/slack"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"net/http"
 )
@@ -107,20 +108,20 @@ type SlashCommand struct {
 
 // SlashCommandParse will parse the request of the slash command
 func SlashCommandParse(r *fasthttp.Request) (s SlashCommand, err error) {
-	s.Token = string(r.PostArgs().Peek("token"))
-	s.TeamID = string(r.PostArgs().Peek("team_id"))
-	s.TeamDomain = string(r.PostArgs().Peek("team_domain"))
-	s.EnterpriseID = string(r.PostArgs().Peek("enterprise_id"))
-	s.EnterpriseName = string(r.PostArgs().Peek("enterprise_name"))
-	s.ChannelID = string(r.PostArgs().Peek("channel_id"))
-	s.ChannelName = string(r.PostArgs().Peek("channel_name"))
-	s.UserID = string(r.PostArgs().Peek("user_id"))
-	s.UserName = string(r.PostArgs().Peek("user_name"))
-	s.Command = string(r.PostArgs().Peek("command"))
-	s.Text = string(r.PostArgs().Peek("text"))
-	s.ResponseURL = string(r.PostArgs().Peek("response_url"))
-	s.TriggerID = string(r.PostArgs().Peek("trigger_id"))
-	s.APIAppID = string(r.PostArgs().Peek("api_app_id"))
+	s.Token = utils.ByteToString(r.PostArgs().Peek("token"))
+	s.TeamID = utils.ByteToString(r.PostArgs().Peek("team_id"))
+	s.TeamDomain = utils.ByteToString(r.PostArgs().Peek("team_domain"))
+	s.EnterpriseID = utils.ByteToString(r.PostArgs().Peek("enterprise_id"))
+	s.EnterpriseName = utils.ByteToString(r.PostArgs().Peek("enterprise_name"))
+	s.ChannelID = utils.ByteToString(r.PostArgs().Peek("channel_id"))
+	s.ChannelName = utils.ByteToString(r.PostArgs().Peek("channel_name"))
+	s.UserID = utils.ByteToString(r.PostArgs().Peek("user_id"))
+	s.UserName = utils.ByteToString(r.PostArgs().Peek("user_name"))
+	s.Command = utils.ByteToString(r.PostArgs().Peek("command"))
+	s.Text = utils.ByteToString(r.PostArgs().Peek("text"))
+	s.ResponseURL = utils.ByteToString(r.PostArgs().Peek("response_url"))
+	s.TriggerID = utils.ByteToString(r.PostArgs().Peek("trigger_id"))
+	s.APIAppID = utils.ByteToString(r.PostArgs().Peek("api_app_id"))
 	return s, nil
 }
 

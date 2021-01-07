@@ -12,7 +12,7 @@ func New(path string) (*viper.Viper, error) {
 		v   = viper.New()
 	)
 	v.AddConfigPath(".")
-	v.SetConfigFile(string(path))
+	v.SetConfigFile(path)
 
 	if err := v.ReadInConfig(); err == nil {
 		log.Printf("use config file -> %s\n", v.ConfigFileUsed())

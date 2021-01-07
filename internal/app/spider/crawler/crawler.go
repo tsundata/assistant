@@ -133,7 +133,7 @@ func (s *Crawler) Send(name string, out []string) {
 
 		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
 			Title:   fmt.Sprintf("Channel %s", name),
-			Content: string(j),
+			Content: utils.ByteToString(j),
 		})
 		if err != nil {
 			return

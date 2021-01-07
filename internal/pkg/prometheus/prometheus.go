@@ -2,6 +2,7 @@ package prometheus
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"strconv"
 	"time"
@@ -65,8 +66,8 @@ func (fp *FasthttpPrometheus) End(ctx *fasthttp.RequestCtx) {
 	}
 
 	httpHistogram.WithLabelValues(
-		string(ctx.Method()),
+		utils.ByteToString(ctx.Method()),
 		strconv.Itoa(ctx.Response.StatusCode()),
-		string(ctx.Path()),
+		utils.ByteToString(ctx.Path()),
 	).Observe(time.Since(fp.start).Seconds())
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"net/http"
@@ -44,7 +45,7 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	}
 
 	reply, err := wc.midClient.GetPage(context.Background(), &pb.PageRequest{
-		Uuid: string(r[0]),
+		Uuid: utils.ByteToString(r[0]),
 	})
 	if err != nil || reply.GetContent() == "" {
 		c.Response.SetStatusCode(http.StatusNotFound)
@@ -90,7 +91,7 @@ func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	txt, err := url.QueryUnescape(string(r[1]))
+	txt, err := url.QueryUnescape(utils.ByteToString(r[1]))
 	if err != nil {
 		c.Response.SetBodyString("error text")
 		return
