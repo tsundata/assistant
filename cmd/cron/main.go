@@ -46,12 +46,12 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	appOptions, err := cron.NewOptions(viper, log)
+	appOptions, err := cron.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
 	b := rulebot.New("cron", viper, subClient, midClient, rules.Options...)
-	application, err := cron.NewApp(appOptions, b)
+	application, err := cron.NewApp(appOptions, log, b)
 	if err != nil {
 		return nil, err
 	}

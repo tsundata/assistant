@@ -13,14 +13,12 @@ import (
 )
 
 type Options struct {
-	Name   string
-	logger *zap.Logger
+	Name string
 }
 
-func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -29,16 +27,16 @@ func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, rdb *redis.Client, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
+func NewApp(o *Options, rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
 	go func() {
 		// FIXME
 		time.Sleep(10 * time.Second)
-		s := crawler.New(rdb, o.logger, msgClient, midClient, subClient)
+		s := crawler.New(rdb, logger, msgClient, midClient, subClient)
 		s.Register(subscribe.Rules)
 		s.Daemon()
 	}()
 
-	a, err := app.New(o.Name, o.logger)
+	a, err := app.New(o.Name, logger)
 	if err != nil {
 		return nil, err
 	}

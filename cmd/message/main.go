@@ -64,12 +64,12 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	appOptions, err := message.NewOptions(viper, db, log)
+	appOptions, err := message.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
 	b := rulebot.New("ts", viper, subClient, midClient, rules.Options...)
-	application, err := message.NewApp(appOptions, server, b)
+	application, err := message.NewApp(appOptions, log, server, db, b)
 	if err != nil {
 		return nil, err
 	}

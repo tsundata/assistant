@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -46,20 +45,11 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	redisOption, err := redis.NewOptions(viper)
+	appOptions, err := middle.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	r, err := redis.New(redisOption)
-	if err != nil {
-		return nil, err
-	}
-
-	appOptions, err := middle.NewOptions(viper, db, log, r)
-	if err != nil {
-		return nil, err
-	}
-	application, err := middle.NewApp(appOptions, server)
+	application, err := middle.NewApp(appOptions, log, server, db)
 	if err != nil {
 		return nil, err
 	}

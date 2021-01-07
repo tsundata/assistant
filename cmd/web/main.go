@@ -46,7 +46,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	webOptions, err := web.NewOptions(viper, log)
+	webOptions, err := web.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := web.NewApp(webOptions, server)
+	application, err := web.NewApp(webOptions, log, server)
 	if err != nil {
 		return nil, err
 	}

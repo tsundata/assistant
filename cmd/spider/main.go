@@ -58,11 +58,11 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	appOptions, err := spider.NewOptions(viper, log)
+	appOptions, err := spider.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appOptions, rdb, msgClient, midClient, subClient)
+	application, err := spider.NewApp(appOptions, rdb, log, msgClient, midClient, subClient)
 	if err != nil {
 		return nil, err
 	}

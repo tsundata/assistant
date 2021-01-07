@@ -2,7 +2,6 @@ package middle
 
 import (
 	"errors"
-	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/service"
@@ -15,18 +14,12 @@ import (
 
 type Options struct {
 	Name   string
-	db     *gorm.DB
-	redis  *redis.Client
-	logger *zap.Logger
 	webURL string
 }
 
-func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Client) (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.db = db
-	o.redis = redis
-	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -39,9 +32,9 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 }
 
 // FIXME rename
-func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *gorm.DB) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(o.db, o.webURL)
+	mid := service.NewMiddle(db, o.webURL)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, mid)
 		return nil
@@ -50,7 +43,7 @@ func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, o.logger, app.RPCServerOption(rs))
+	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

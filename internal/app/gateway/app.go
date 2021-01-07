@@ -13,14 +13,11 @@ type Options struct {
 	Token        string
 	Verification string
 	Signing      string
-	logger       *zap.Logger
 }
 
-func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.logger = logger
-
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -33,8 +30,8 @@ func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, hs *http.Server) (*app.Application, error) {
-	a, err := app.New(o.Name, o.logger, app.HTTPServerOption(hs))
+func NewApp(o *Options,logger *zap.Logger, hs *http.Server) (*app.Application, error) {
+	a, err := app.New(o.Name, logger, app.HTTPServerOption(hs))
 
 	if err != nil {
 		return nil, err

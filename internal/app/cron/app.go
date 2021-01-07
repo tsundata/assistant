@@ -9,14 +9,12 @@ import (
 )
 
 type Options struct {
-	Name   string
-	logger *zap.Logger
+	Name string
 }
 
-func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-	o.logger = logger
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
@@ -25,10 +23,10 @@ func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, b *rulebot.RuleBot) (*app.Application, error) {
-	o.logger.Info("start cron bot " + b.Name())
+func NewApp(o *Options, logger *zap.Logger, b *rulebot.RuleBot) (*app.Application, error) {
+	logger.Info("start cron bot " + b.Name())
 
-	a, err := app.New(o.Name, o.logger)
+	a, err := app.New(o.Name, logger)
 	if err != nil {
 		return nil, err
 	}

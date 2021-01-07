@@ -45,11 +45,11 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	appOptions, err := subscribe.NewOptions(viper, db, log)
+	appOptions, err := subscribe.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(appOptions, server)
+	application, err := subscribe.NewApp(appOptions, log, server, db)
 	if err != nil {
 		return nil, err
 	}

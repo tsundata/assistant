@@ -60,7 +60,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	gatewayOptions, err := gateway.NewOptions(viper, log)
+	gatewayOptions, err := gateway.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := gateway.NewApp(gatewayOptions, server)
+	application, err := gateway.NewApp(gatewayOptions,log, server)
 	if err != nil {
 		return nil, err
 	}
