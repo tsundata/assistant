@@ -52,8 +52,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	webController := controllers.NewWebController(webOptions, log, midClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
-	router := http.NewRouter(httpOptions, initControllers)
-	server, err := http.New(httpOptions, router)
+	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {
 		return nil, err
 	}

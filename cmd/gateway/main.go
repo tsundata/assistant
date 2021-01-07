@@ -66,8 +66,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	gatewayController := controllers.NewGatewayController(gatewayOptions, r, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
-	router := http.NewRouter(httpOptions, initControllers)
-	server, err := http.New(httpOptions, router)
+	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {
 		return nil, err
 	}

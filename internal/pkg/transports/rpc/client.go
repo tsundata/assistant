@@ -57,6 +57,12 @@ func WithTimeout(d time.Duration) ClientOptional {
 	}
 }
 
+func WithTag(tag string) ClientOptional {
+	return func(o *ClientOptions) {
+		o.Tag = tag
+	}
+}
+
 type Client struct {
 	o  *ClientOptions
 	CC *grpc.ClientConn

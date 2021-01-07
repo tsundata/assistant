@@ -38,6 +38,7 @@ func NewOptions(v *viper.Viper, db *gorm.DB, logger *zap.Logger, redis *redis.Cl
 	return o, err
 }
 
+// FIXME rename
 func NewApp(o *Options, rs *rpc.Server) (*app.Application, error) {
 	// service
 	mid := service.NewMiddle(o.db, o.webURL)

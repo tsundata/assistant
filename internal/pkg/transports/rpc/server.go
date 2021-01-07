@@ -24,6 +24,7 @@ import (
 )
 
 type ServerOptions struct {
+	Name string
 	Host string
 	Port int
 	Etcd string
@@ -43,19 +44,15 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 }
 
 type Server struct {
-	o      *ServerOptions
-	logger *zap.Logger
-	app    string
-	host   string
-	port   int
-	etcd   string
-	r      *etcdnaming.GRPCResolver
-	server *grpc.Server
+	o        *ServerOptions
+	logger   *zap.Logger
+	resolver *etcdnaming.GRPCResolver
+	server   *grpc.Server
 }
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, init InitServers) (*Server, error) {
+func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -71,7 +68,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 	if err != nil {
 		panic(err)
 	}
-	r := &etcdnaming.GRPCResolver{Client: cli}
+	resolver := &etcdnaming.GRPCResolver{Client: cli}
 
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
@@ -95,34 +92,32 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 	)
 
 	return &Server{
-		r:      r,
-		o:      o,
-		logger: logger,
-		server: gs,
+		o:        o,
+		logger:   logger,
+		resolver: resolver,
+		server:   gs,
 	}, nil
 }
 
 func (s *Server) Application(name string) {
-	s.app = name
+	s.o.Name = name
 }
 
 func (s *Server) Start() error {
-	s.etcd = s.o.Etcd
-	if s.etcd == "" {
+	if s.o.Etcd == "" {
 		return errors.New("etcd error")
 	}
 
-	s.port = s.o.Port
-	if s.port == 0 {
-		s.port = utils.GetAvailablePort()
+	if s.o.Port == 0 {
+		s.o.Port = utils.GetAvailablePort()
 	}
 
-	s.host = utils.GetLocalIP4()
-	if s.host == "" {
+	s.o.Host = utils.GetLocalIP4()
+	if s.o.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.host, s.port)
+	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
 
 	s.logger.Info("rpc server starting ... " + addr)
 
@@ -132,9 +127,9 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	rpcAddr := fmt.Sprintf("%s:%d", s.o.Host, s.port)
+	rpcAddr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
 	s.logger.Info("register rpc service ... " + rpcAddr)
-	err = s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
+	err = s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
 	if err != nil {
 		panic(err)
 	}
@@ -152,8 +147,8 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 }
 
 func (s *Server) Stop() error {
-	addr := fmt.Sprintf("%s:%d", s.host, s.port)
-	err := s.r.Update(context.TODO(), s.app, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
+	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
+	err := s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
 		return err
 	}

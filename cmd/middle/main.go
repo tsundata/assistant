@@ -32,7 +32,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	server, err := rpc.NewServer(rpcOptions, log, j,nil)
+	server, err := rpc.NewServer(rpcOptions, log, j)
 	if err != nil {
 		return nil, err
 	}

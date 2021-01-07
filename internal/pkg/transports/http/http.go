@@ -11,6 +11,7 @@ import (
 )
 
 type Options struct {
+	Name string
 	Host string
 	Port int
 	Mode string
@@ -18,9 +19,6 @@ type Options struct {
 
 type Server struct {
 	o          *Options
-	app        string
-	host       string
-	port       int
 	router     *fasthttp.RequestHandler
 	httpServer *fasthttp.Server
 }
@@ -38,10 +36,6 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewRouter(o *Options, init fasthttp.RequestHandler) *fasthttp.RequestHandler {
-	return &init
-}
-
 func New(o *Options, router *fasthttp.RequestHandler) (*Server, error) {
 	var s = &Server{
 		router: router,
@@ -51,24 +45,22 @@ func New(o *Options, router *fasthttp.RequestHandler) (*Server, error) {
 }
 
 func (s *Server) Application(name string) {
-	s.app = name
+	s.o.Name = name
 }
 
 func (s *Server) Start() error {
-	s.port = s.o.Port
-	if s.port == 0 {
-		s.port = utils.GetAvailablePort()
+	if s.o.Port == 0 {
+		s.o.Port = utils.GetAvailablePort()
 	}
 
-	s.host = s.o.Host
-	if s.host == "" {
-		s.host = utils.GetLocalIP4()
+	if s.o.Host == "" {
+		s.o.Host = utils.GetLocalIP4()
 	}
-	if s.host == "" {
+	if s.o.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.host, s.port)
+	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
 
 	log.Println("start http server ", addr)
 
