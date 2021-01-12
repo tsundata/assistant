@@ -4,7 +4,6 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
 	"github.com/uber/jaeger-client-go/config"
-	"github.com/uber/jaeger-lib/metrics/prometheus"
 	"go.uber.org/zap"
 )
 
@@ -24,8 +23,7 @@ func NewConfiguration(v *viper.Viper, logger *zap.Logger) (*config.Configuration
 }
 
 func New(c *config.Configuration) (opentracing.Tracer, error) {
-	metricsFactory := prometheus.New()
-	tracer, _, err := c.NewTracer(config.Metrics(metricsFactory))
+	tracer, _, err := c.NewTracer()
 
 	if err != nil {
 		return nil, err

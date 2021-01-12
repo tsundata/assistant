@@ -1,18 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: assistant
-      MYSQL_USER: ts
-      MYSQL_PASSWORD: 123456
-    volumes:
-      - ../scripts/app.sql:/docker-entrypoint-initdb.d/app.sql
-    ports:
-      - "3309:3306"
-
   redis:
     image: redis:latest
     restart: always
@@ -32,6 +20,16 @@ services:
     ports:
       - "2379:2379"
       - "2380:2380"
+
+  influx:
+    image: quay.io/influxdb/influxdb:v2.0.3
+    environment:
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=12345678
+    volumes:
+      - ../conifgs/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+    ports:
+      - "8086:8086"
 
   ### jaeger ###
 
@@ -77,144 +75,3 @@ services:
     image: jaegertracing/jaeger-cassandra-schema
     depends_on:
       - cassandra
-
-  ### prometheus/grafana ###
-
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    command:
-      - '--config.file=/prometheus/prometheus.yml'
-      - "--web.external-url=http://localhost:9090"
-    volumes:
-      - "../configs/prometheus/prometheus.yml:/prometheus/prometheus.yml"
-      - "../configs/prometheus/rules:/rules"
-
-  alertmanager:
-    image: prom/alertmanager
-    volumes:
-      - "../configs/prometheus/alertmanager.yml:/prometheus/alertmanager.yml"
-      - "/tmp/alermanager:/data"
-    command:
-      - '--config.file=/prometheus/alertmanager.yml'
-      - '--storage.path=/data'
-    ports:
-      - 9093:9093
-
-  grafana-db:
-    image: mariadb:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: grafana
-      MYSQL_USER: grafana
-      MYSQL_PASSWORD: password
-    ports:
-      - 3306
-
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - ../configs/grafana/provisioning/:/etc/grafana/provisioning/
-      - ../configs/grafana/dashboards/:/tmp/dashboards/
-    environment:
-      # - VIRTUAL_HOST=grafana.loc
-      - GF_SERVER_ROOT_URL=http://localhost:3000
-      - GF_DATABASE_NAME=grafana
-      - GF_DATABASE_USER=grafana
-      - GF_DATABASE_PASSWORD=password
-      - GF_DATABASE_TYPE=mysql
-      - GF_DATABASE_HOST=grafana-db:3306
-      - GF_DATABASE_MAX_OPEN_CONN=300
-      - GF_SESSION_PROVIDER=mysql
-      - GF_SESSION_PROVIDER_CONFIG=grafana:password@tcp(db:3306)/grafana?allowNativePasswords=true
-      # - GF_DATABASE_TYPE=postgres
-      # - GF_DATABASE_HOST=db:5432
-      # - GF_DATABASE_SSL_MODE=disable
-      # - GF_SESSION_PROVIDER=postgres
-      # - GF_SESSION_PROVIDER_CONFIG=user=grafana password=password host=db port=5432 dbname=grafana sslmode=disable
-      - GF_SERVER_ROUTER_LOGGING=true
-      - GF_LOG_CONSOLE_FORMAT=json
-      - GF_LOG_FILTERS=alerting.notifier:debug,alerting.notifier.slack:debug,auth:debug
-      - GF_AUTH_TOKEN_ROTATION_INTERVAL_MINUTES=2
-    ports:
-      - "3000:3000"
-    depends_on:
-      - grafana-db
-    restart: always
-
-  ### app ###
-
-  web:
-    build:
-      context: ..
-      dockerfile: "build/web/Dockerfile"
-    command: ./app
-    depends_on:
-      - middle
-    ports:
-      - "7007:7007"
-
-  gateway:
-    build:
-      context: ..
-      dockerfile: "build/gateway/Dockerfile"
-    command: ./app
-    depends_on:
-      - db
-      - redis
-    ports:
-      - "7003:7003"
-
-  message:
-    build:
-      context: ..
-      dockerfile: "build/message/Dockerfile"
-    command: ./app
-    depends_on:
-      - db
-      - etcd
-    ports:
-      - "8001:8001"
-
-  middle:
-    build:
-      context: ..
-      dockerfile: "build/middle/Dockerfile"
-    command: ./app
-    depends_on:
-      - db
-      - redis
-      - etcd
-    ports:
-      - "8002:8002"
-
-  subscribe:
-    build:
-      context: ..
-      dockerfile: "build/subscribe/Dockerfile"
-    command: ./app
-    depends_on:
-      - db
-      - redis
-      - etcd
-    ports:
-      - "8003:8003"
-
-  spider:
-    build:
-      context: ..
-      dockerfile: "build/middle/Dockerfile"
-    command: ./app
-    depends_on:
-      - subscribe
-      - middle
-      - message
-
-  cron:
-    build:
-      context: ..
-      dockerfile: "build/middle/Dockerfile"
-    command: ./app
-    depends_on:
-      - redis

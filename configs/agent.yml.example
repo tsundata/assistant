@@ -1,0 +1,7 @@
+app:
+    name: agent
+influx:
+    token:
+    org:
+    bucket:
+    url:

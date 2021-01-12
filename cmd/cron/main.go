@@ -58,7 +58,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	return application, nil
 }
 
-var configFile = flag.String("f", "subscribe.yml", "set config file which will loading")
+var configFile = flag.String("f", "cron.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()

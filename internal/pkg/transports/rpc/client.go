@@ -2,7 +2,6 @@ package rpc
 
 import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
@@ -29,19 +28,16 @@ func NewClientOptions(v *viper.Viper, tracer opentracing.Tracer) (*ClientOptions
 		return nil, err
 	}
 
-	grpc_prometheus.EnableClientHandlingTimeHistogram()
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(
 			grpc_middleware.ChainUnaryClient(
 				otgrpc.OpenTracingClientInterceptor(tracer),
-				grpc_prometheus.UnaryClientInterceptor,
 			),
 		),
 		grpc.WithStreamInterceptor(
 			grpc_middleware.ChainStreamClient(
 				otgrpc.OpenTracingStreamClientInterceptor(tracer),
-				grpc_prometheus.StreamClientInterceptor,
 			),
 		),
 	)

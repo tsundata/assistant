@@ -21,4 +21,5 @@ go.sum
 dist/
 configs/*.yml
 configs/redis/
+configs/influxdb/
 internal/app/web/templates/

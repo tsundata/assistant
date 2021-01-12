@@ -1,24 +1,18 @@
 package controllers
 
 import (
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/tsundata/assistant/internal/pkg/prometheus"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
-	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"log"
 )
 
 func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
-	fp := prometheus.New()
 	requestHandler := func(ctx *fasthttp.RequestCtx) {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Println("recover", err)
 			}
 		}()
-
-		fp.Start()
 
 		path := ctx.URI().PathOriginal()
 
@@ -29,8 +23,6 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 				gc.Index(ctx)
 			case "/apps":
 				gc.Apps(ctx)
-			case "/metrics":
-				fasthttpadaptor.NewFastHTTPHandler(promhttp.Handler())
 			default:
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}
@@ -51,8 +43,6 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}
 		}
-
-		fp.End(ctx)
 	}
 
 	return requestHandler
