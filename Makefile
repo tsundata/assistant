@@ -1,16 +1,15 @@
 apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron'
-.PHONY: run
-run:
-	for app in $(apps) ;\
-	do \
-		 go run ./cmd/$$app -f configs/$$app.yml  & \
-	done
+agents = 'server'
 .PHONY: build
 build:
 	for app in $(apps) ;\
 	do \
 		GOOS=linux GOARCH="amd64" go build -o dist/$$app-linux-amd64 ./cmd/$$app/; \
 	done
+	for agent in $(agents) ;\
+	do \
+	    GOOS=linux GOARCH="amd64" go build -o dist/$$agent-agent-linux-amd64 ./cmd/agent/$$agent/; \
+    done
 .PHONY: lint
 lint:
 	golangci-lint run ./...
@@ -20,4 +19,4 @@ docker-compose: build
 .PHONY: proto
 proto:
 	protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
-all: lint docker
+all: lint build

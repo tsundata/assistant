@@ -22,4 +22,5 @@ dist/
 configs/*.yml
 configs/redis/
 configs/influxdb/
+configs/*.conf
 internal/app/web/templates/
