@@ -1,0 +1,100 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+
+builds:
+  # app
+  - main: ./cmd/gateway
+    id: "gateway"
+    binary: "gateway"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/cron
+    id: "cron"
+    binary: "cron"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/message
+    id: "message"
+    binary: "message"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/middle
+    id: "middle"
+    binary: "middle"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/spider
+    id: "spider"
+    binary: "spider"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/subscribe
+    id: "subscribe"
+    binary: "subscribe"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+  # agent
+  - main: ./cmd/agent/server
+    id: "server-agent"
+    binary: "server-agent"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - format: binary
+    name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-SNAPSHOT-{{.ShortCommit}}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+env_files:
+  github_token: ~/.gh_token
+release:
+  github:
+    owner: tsundata
+    name: assistant
+  prerelease: auto
+  name_template: "{{.ProjectName}}-v{{.Version}}-{{.ShortCommit}}"
