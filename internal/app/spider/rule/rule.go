@@ -2,7 +2,7 @@ package rule
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gorhill/cronexpr"
+	"github.com/influxdata/cron"
 	"log"
 	"net/http"
 	"time"
@@ -21,7 +21,16 @@ type Result struct {
 }
 
 func ProcessSpiderRule(name string, rule Rule, outCh chan Result) {
-	nextTime := cronexpr.MustParse(rule.When).Next(time.Now())
+	p, err := cron.ParseUTC(rule.When)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	nextTime, err := p.Next(time.Now())
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
 			result := func() []string {
@@ -40,7 +49,11 @@ func ProcessSpiderRule(name string, rule Rule, outCh chan Result) {
 				}
 			}
 		}
-		nextTime = cronexpr.MustParse(rule.When).Next(time.Now())
+		nextTime, err = p.Next(time.Now())
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 		time.Sleep(2 * time.Second)
 	}
 }

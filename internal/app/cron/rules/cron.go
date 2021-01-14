@@ -3,9 +3,9 @@ package rules
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorhill/cronexpr"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"log"
 	"strings"
 	"sync"
@@ -181,7 +181,16 @@ func (r *cronRuleset) send(b *rulebot.RuleBot) {
 }
 
 func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Event, _ string) {
-	nextTime := cronexpr.MustParse(rule.When).Next(time.Now())
+	p, err := cron.ParseUTC(rule.When)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	nextTime, err := p.Next(time.Now())
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	for {
 		select {
 		case <-stop:
@@ -194,7 +203,11 @@ func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Event, _ st
 					outCh <- msg
 				}
 			}
-			nextTime = cronexpr.MustParse(rule.When).Next(time.Now())
+			nextTime, err = p.Next(time.Now())
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 			time.Sleep(2 * time.Second)
 		}
 	}

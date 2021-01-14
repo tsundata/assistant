@@ -1,8 +1,8 @@
 package rules
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"time"
 )
 
