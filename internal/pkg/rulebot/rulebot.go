@@ -8,13 +8,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/valyala/fasthttp"
 	"log"
-	"strings"
 )
 
 type RuleBot struct {
 	name        string
-	providerIn  model.Event
-	providerOut []model.Event
+	providerIn  model.Message
+	providerOut []model.Message
 	rules       []RuleParser
 
 	webhook   string
@@ -39,24 +38,19 @@ func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb
 	return s
 }
 
-func (s *RuleBot) Process(in model.Event) *RuleBot {
+func (s *RuleBot) Process(in model.Message) *RuleBot {
 	log.Println("plugin process event")
 
 	s.providerIn = in
-	s.providerOut = []model.Event{}
-	if strings.HasPrefix(in.Data.Message.Text, s.Name()+" help") {
+	s.providerOut = []model.Message{}
+	if in.Text == "help" {
 		helpMsg := fmt.Sprintln("available commands:")
 		for _, rule := range s.rules {
 			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
 		}
-		s.providerOut = append(s.providerOut, model.Event{
-			Data: model.EventData{
-				Type: model.EventTypeMessage,
-				Message: model.Message{
-					Type: model.MessageTypeText,
-					Text: helpMsg,
-				},
-			},
+		s.providerOut = append(s.providerOut, model.Message{
+			Type: model.MessageTypeText,
+			Text: helpMsg,
 		})
 		return s
 	}
@@ -73,7 +67,7 @@ func (s *RuleBot) Process(in model.Event) *RuleBot {
 	return s
 }
 
-func (s *RuleBot) MessageProviderOut() []model.Event {
+func (s *RuleBot) MessageProviderOut() []model.Message {
 	return s.providerOut
 }
 
@@ -81,10 +75,10 @@ func (s *RuleBot) Name() string {
 	return s.name
 }
 
-func (s *RuleBot) Send(out model.Event) {
+func (s *RuleBot) Send(out model.Message) {
 	client := http.NewClient()
 	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
-		"text": out.Data.Message.Text,
+		"text": out.Text,
 	})
 
 	if err != nil {
@@ -100,8 +94,8 @@ type Option func(*RuleBot)
 type RuleParser interface {
 	Name() string
 	Boot(*RuleBot)
-	ParseMessage(*RuleBot, model.Event) []model.Event
-	HelpMessage(*RuleBot, model.Event) string
+	ParseMessage(*RuleBot, model.Message) []model.Message
+	HelpMessage(*RuleBot, model.Message) string
 }
 
 func RegisterRuleset(rule RuleParser) Option {

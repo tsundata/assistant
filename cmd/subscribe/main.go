@@ -5,7 +5,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/subscribe"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/database"
+	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -31,16 +31,16 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	server, err := rpc.NewServer(rpcOptions, log, j)
+	etcdOption, err := etcd.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	e, err := etcd.New(etcdOption)
 	if err != nil {
 		return nil, err
 	}
 
-	dbOptions, err := database.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	db, err := database.New(dbOptions)
+	server, err := rpc.NewServer(rpcOptions, log, j, e)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(appOptions, log, server, db)
+	application, err := subscribe.NewApp(appOptions, log, server, e)
 	if err != nil {
 		return nil, err
 	}

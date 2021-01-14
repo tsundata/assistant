@@ -14,11 +14,11 @@ import (
 
 type Rule struct {
 	When   string
-	Action func() []model.Event
+	Action func() []model.Message
 }
 
 type cronRuleset struct {
-	outCh     chan model.Event
+	outCh     chan model.Message
 	cronRules map[string]Rule
 
 	mu            sync.Mutex
@@ -37,7 +37,7 @@ func (r *cronRuleset) Boot(b *rulebot.RuleBot) {
 	r.send(b)
 }
 
-func (r *cronRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Event) string {
+func (r *cronRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Message) string {
 	helpMsg := fmt.Sprintln("cron attach <job name>- attach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron detach <job name> - detach one cron job")
 	helpMsg = fmt.Sprintln(helpMsg, "cron list - list all available crons")
@@ -47,62 +47,48 @@ func (r *cronRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Event) string {
 	return helpMsg
 }
 
-func (r *cronRuleset) ParseMessage(b *rulebot.RuleBot, in model.Event) []model.Event {
-	if strings.HasPrefix(in.Data.Message.Text, "cron attach") {
-		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Data.Message.Text, "cron attach"))
-		ret := []model.Event{{
-			Data: model.EventData{Message: model.Message{
-				Text: r.attach(b, ruleName, "in.Room"),
-			}},
+func (r *cronRuleset) ParseMessage(b *rulebot.RuleBot, in model.Message) []model.Message {
+	if strings.HasPrefix(in.Text, "cron attach") {
+		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Text, "cron attach"))
+		ret := []model.Message{{
+			Text: r.attach(b, ruleName, "in.Room"),
 		}}
 		r.start(b)
 		return ret
 	}
 
-	if strings.HasPrefix(in.Data.Message.Text, "cron detach") {
-		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Data.Message.Text, "cron detach"))
-		return []model.Event{{
-			Data: model.EventData{Message: model.Message{
-				Text: r.attach(b, ruleName, "in.Room"),
-			}},
+	if strings.HasPrefix(in.Text, "cron detach") {
+		ruleName := strings.TrimSpace(strings.TrimPrefix(in.Text, "cron detach"))
+		return []model.Message{{
+			Text: r.attach(b, ruleName, "in.Room"),
 		}}
 	}
 
-	if in.Data.Message.Text == "cron list" {
-		var ret []model.Event
+	if in.Text == "cron list" {
+		var ret []model.Message
 		for ruleName, rule := range r.cronRules {
-			ret = append(ret, model.Event{
-				Data: model.EventData{Message: model.Message{
-					Text: "@" + rule.When + " " + ruleName,
-				}},
+			ret = append(ret, model.Message{
+				Text: "@" + rule.When + " " + ruleName,
 			})
 		}
 		return ret
 	}
 
-	if in.Data.Message.Text == "cron start" {
+	if in.Text == "cron start" {
 		r.start(b)
-		return []model.Event{
-			{
-				Data: model.EventData{Message: model.Message{
-					Text: "all cron jobs started",
-				}},
-			},
-		}
+		return []model.Message{{
+			Text: "all cron jobs started",
+		}}
 	}
 
-	if in.Data.Message.Text == "cron stop" {
+	if in.Text == "cron stop" {
 		r.stop()
-		return []model.Event{
-			{
-				Data: model.EventData{Message: model.Message{
-					Text: "all cron jobs stopped",
-				}},
-			},
-		}
+		return []model.Message{{
+			Text: "all cron jobs started",
+		}}
 	}
 
-	return []model.Event{}
+	return []model.Message{}
 }
 
 func (r *cronRuleset) attach(_ *rulebot.RuleBot, ruleName, room string) string {
@@ -180,7 +166,7 @@ func (r *cronRuleset) send(b *rulebot.RuleBot) {
 	}()
 }
 
-func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Event, _ string) {
+func processCronRule(rule Rule, stop chan struct{}, outCh chan model.Message, _ string) {
 	p, err := cron.ParseUTC(rule.When)
 	if err != nil {
 		log.Println(err)
@@ -228,7 +214,7 @@ func New(rules map[string]Rule) *cronRuleset {
 	r := &cronRuleset{
 		attachedCrons: make(map[string][]string),
 		cronRules:     rules,
-		outCh:         make(chan model.Event, 10),
+		outCh:         make(chan model.Message, 10),
 	}
 	return r
 }

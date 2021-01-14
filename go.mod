@@ -20,12 +20,11 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.17.0
+	go.etcd.io/bbolt v1.3.5
 	go.etcd.io/etcd v0.0.0-20201125193152-8a03d2e9614b
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.34.0
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
-	gorm.io/driver/mysql v1.0.3
-	gorm.io/gorm v1.20.5
 )
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.29.0

@@ -3,13 +3,11 @@ package database
 import (
 	"errors"
 	"github.com/spf13/viper"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"go.etcd.io/bbolt"
 )
 
 type Options struct {
-	URL   string `yaml:"url"`
-	Debug bool   `yaml:"debug"`
+	Path   string `yaml:"path"`
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -22,19 +20,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func New(o *Options) (*gorm.DB, error) {
-	var err error
-	db, err := gorm.Open(mysql.Open(o.URL), &gorm.Config{
-		SkipDefaultTransaction: true,
-		PrepareStmt:            true,
-	})
+func New(o *Options) (*bbolt.DB, error) {
+	db, err := bbolt.Open(o.Path, 0600, nil)
 	if err != nil {
-		return nil, errors.New("gorm open database connection error")
+		return nil, err
 	}
-
-	if o.Debug {
-		db = db.Debug()
-	}
-
 	return db, nil
 }

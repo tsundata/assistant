@@ -14,7 +14,6 @@ import (
 type ClientOptions struct {
 	Wait            time.Duration
 	Tag             string
-	Etcd            string
 	GrpcDialOptions []grpc.DialOption
 }
 
@@ -61,12 +60,13 @@ func WithTag(tag string) ClientOptional {
 
 type Client struct {
 	o  *ClientOptions
-	CC *grpc.ClientConn
+	e  *clientv3.Client
 }
 
-func NewClient(o *ClientOptions) (*Client, error) {
+func NewClient(o *ClientOptions, e *clientv3.Client) (*Client, error) {
 	return &Client{
 		o: o,
+		e: e,
 	}, nil
 }
 
@@ -74,18 +74,13 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 	o := &ClientOptions{
 		Wait:            c.o.Wait,
 		Tag:             c.o.Tag,
-		Etcd:            c.o.Etcd,
 		GrpcDialOptions: c.o.GrpcDialOptions,
 	}
 	for _, option := range options {
 		option(o)
 	}
 
-	etcdCli, err := clientv3.NewFromURL(o.Etcd)
-	if err != nil {
-		return nil, err
-	}
-	re := &etcdnaming.GRPCResolver{Client: etcdCli}
+	re := &etcdnaming.GRPCResolver{Client: c.e}
 	rr := grpc.RoundRobin(re)                                     // nolint
 	gdOptions := append(o.GrpcDialOptions, grpc.WithBalancer(rr)) // nolint
 

@@ -4,8 +4,8 @@ import "time"
 
 type Page struct {
 	ID      int
-	UUID    string
-	Title   string
-	Content string
+	UUID    string `json:"uuid"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
 	Time    time.Time
 }

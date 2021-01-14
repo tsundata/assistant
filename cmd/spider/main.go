@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
@@ -37,11 +38,20 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	etcdOption, err := etcd.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	e, err := etcd.New(etcdOption)
+	if err != nil {
+		return nil, err
+	}
+
 	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
 	}
-	client, err := rpc.NewClient(clientOptions)
+	client, err := rpc.NewClient(clientOptions, e)
 	if err != nil {
 		return nil, err
 	}

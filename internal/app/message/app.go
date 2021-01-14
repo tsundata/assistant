@@ -8,9 +8,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"gorm.io/gorm"
 )
 
 type Options struct {
@@ -32,7 +32,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *gorm.DB, b *rulebot.RuleBot) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB, b *rulebot.RuleBot) (*app.Application, error) {
 	message := service.NewManage(db, logger, b, o.webhook)
 	err := rs.Register(func(s *grpc.Server) error {
 		pb.RegisterMessageServer(s, message)

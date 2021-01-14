@@ -9,12 +9,10 @@ import (
 var rules = map[string]Rule{
 	"heartbeat": {
 		When: "0 0 * * *",
-		Action: func() []model.Event {
-			return []model.Event{
+		Action: func() []model.Message {
+			return []model.Message{
 				{
-					Data: model.EventData{Message: model.Message{
-						Text: "Plugin Cron Heartbeat: " + time.Now().String(),
-					}},
+					Text: "Plugin Cron Heartbeat: " + time.Now().String(),
 				},
 			}
 		},

@@ -110,6 +110,10 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
+			if reply.GetText() == nil {
+				return []string{"empty subscript"}
+			}
+
 			return reply.GetText()
 		},
 	},

@@ -24,3 +24,4 @@ configs/redis/
 configs/influxdb/
 configs/*.conf
 internal/app/web/templates/
+*.db

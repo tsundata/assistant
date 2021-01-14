@@ -2,14 +2,10 @@ package model
 
 import (
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/utils"
-	"gorm.io/gorm"
 	"io"
 	"regexp"
 	"strings"
-	"time"
 )
 
 const (
@@ -60,72 +56,8 @@ func GenerateMessageUUID() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
-// FIXME
-type Event struct {
-	ID      int
-	UUID    string
-	Type    string
-	Time    time.Time
-	Context EventContext `gorm:"-"`
-	Data    EventData    `gorm:"-"`
-	Event   string       `json:"event"`
-}
-
-func (e *Event) BeforeCreate(tx *gorm.DB) (err error) {
-	d, err := json.Marshal(e.Data)
-	if err != nil {
-		return
-	}
-	e.Event = utils.ByteToString(d)
-	return
-}
-
-func (e *Event) AfterFind(tx *gorm.DB) (err error) {
-	var d EventData
-	err = json.Unmarshal([]byte(e.Event), &d)
-	if err != nil {
-		return
-	}
-	e.Data = d
-	return
-}
-
-type EventContext struct {
-	Platform   string `json:"platform"`
-	Via        string `json:"via"`
-	Type       string `json:"type"`
-	UserID     string `json:"user_id"`
-	UserTID    string `json:"user_tid"`
-	GroupID    string `json:"group_id"`
-	GroupTID   string `json:"group_tid"`
-	DiscussID  string `json:"discuss_id"`
-	DiscussTID string `json:"discuss_tid"`
-	Extra      interface{}
-}
-
-type EventData struct {
-	Type              string      `json:"type"`
-	Message           Message     `json:"message"`
-	SenderID          string      `json:"sender_id"`
-	SenderTID         string      `json:"sender_tid"`
-	SenderName        string      `json:"sender_name"`
-	SenderRemarkName  string      `json:"sender_remark_name"`
-	Sender            string      `json:"sender"`
-	GroupID           string      `json:"group_id"`
-	GroupTID          string      `json:"group_tid"`
-	GroupName         string      `json:"group_name"`
-	GroupRemarkName   string      `json:"group_remark_name"`
-	Group             string      `json:"group"`
-	DiscussID         string      `json:"discuss_id"`
-	DiscussTID        string      `json:"discuss_tid"`
-	DiscussName       string      `json:"discuss_name"`
-	DiscussRemarkName string      `json:"discuss_remark_name"`
-	Discuss           string      `json:"discuss"`
-	SenderRole        string      `json:"sender_role"`
-	Extra             interface{} `json:"extra"`
-}
-
 type Message struct {
+	UUID string
 	Type string      `json:"type"`
 	Text string      `json:"text"`
 	Data interface{} `json:"data"`

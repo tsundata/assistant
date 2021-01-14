@@ -25,6 +25,6 @@ message MessageReply {
 }
 
 message MessageList {
-  int64 id = 1;
+  string uuid = 1;
   repeated string text = 2;
 }

@@ -1,14 +1,14 @@
 app:
     name: spider
-rpc:
-    etcd: http://etcd:2379
+etcd:
+    url: http://127.0.0.1:2379
 redis:
-    addr: redis:6379
+    addr: 127.0.0.1:6379
     password:
 jaeger:
-  serviceName: subscribe
+  serviceName: spider
   reporter:
-    localAgentHostPort: "jaeger-agent:6831"
+    localAgentHostPort: "127.0.0.1:6831"
   sampler:
     type: const
     param: 1

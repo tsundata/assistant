@@ -7,9 +7,9 @@ import (
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"gorm.io/gorm"
 )
 
 type Options struct {
@@ -27,9 +27,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *gorm.DB) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client) (*app.Application, error) {
 	// service
-	subscribe := service.NewSubscribe(db)
+	subscribe := service.NewSubscribe(etcd)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterSubscribeServer(gs, subscribe)
 		return nil

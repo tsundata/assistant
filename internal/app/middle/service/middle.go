@@ -2,20 +2,21 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"gorm.io/gorm"
+	"go.etcd.io/bbolt"
 	"net/url"
 	"time"
 )
 
 type Middle struct {
-	db     *gorm.DB
+	db     *bbolt.DB
 	webURL string
 }
 
-func NewMiddle(db *gorm.DB, webURL string) *Middle {
+func NewMiddle(db *bbolt.DB, webURL string) *Middle {
 	return &Middle{db: db, webURL: webURL}
 }
 
@@ -28,10 +29,30 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 	page := model.Page{
 		UUID:    uuid,
 		Title:   payload.GetTitle(),
-		Content: payload.GetContent(), // TODO
+		Content: payload.GetContent(),
 		Time:    time.Now(),
 	}
-	s.db.Create(&page)
+
+	tx, err := s.db.Begin(true)
+	if err != nil {
+		return nil, err
+	}
+	b, err := tx.CreateBucketIfNotExists([]byte("middle"))
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(page)
+	if err != nil {
+		return nil, err
+	}
+	err = b.Put([]byte(page.UUID), data)
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.Text{
 		Text: fmt.Sprintf("%s/page/%s", s.webURL, page.UUID),
@@ -40,8 +61,22 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 
 func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	// TODO cache
+	tx, err := s.db.Begin(false)
+	if err != nil {
+		return nil, err
+	}
+	b := tx.Bucket([]byte("middle"))
+	v := b.Get([]byte(payload.Uuid))
+
 	var find model.Page
-	s.db.Select("uuid", "title", "content").Where("uuid = ?", payload.GetUuid()).Take(&find)
+	err = json.Unmarshal(v, &find)
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.PageReply{
 		Uuid:    find.UUID,

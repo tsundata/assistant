@@ -2,86 +2,127 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/robertkrimen/otto"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
+	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"strings"
-	"time"
 )
 
 type Message struct {
-	db      *gorm.DB
+	db      *bbolt.DB
 	logger  *zap.Logger
 	bot     *rulebot.RuleBot
 	webhook string
 }
 
-func NewManage(db *gorm.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string) *Message {
+func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string) *Message {
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook}
 }
 
 func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageList, error) {
-	var messages []model.Event
-	m.db.Order("created_at DESC").Limit(10).Find(&messages)
-
-	var reply []string
-	for _, item := range messages {
-		reply = append(reply, item.Data.Message.Text)
+	tx, err := m.db.Begin(false)
+	if err != nil {
+		return nil, err
 	}
+	b := tx.Bucket([]byte("message"))
+	c := b.Cursor()
+	limit := 10
+
+	index := 0
+	var reply []string
+	for k, v := c.First(); k != nil; k, v = c.Next() {
+		index++
+		reply = append(reply, utils.ByteToString(v)) // FIXME
+		if index >= limit {
+			break
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.MessageList{
 		Text: reply,
 	}, nil
 }
 
 func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	var find model.Event
-	m.db.Where("id = ?", 1).Take(&find)
+	tx, err := m.db.Begin(false)
+	if err != nil {
+		return nil, err
+	}
+	b := tx.Bucket([]byte("message"))
+	v := b.Get([]byte(payload.Uuid))
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	var find model.Message
+	err = json.Unmarshal(v, &find)
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.MessageReply{
-		Text: find.Data.Message.Text,
+		Text: find.Text,
 	}, nil
 }
 
 func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageList, error) {
 	// check uuid
-	var find model.Event
-	var payload model.Event
+	var payload model.Message
 	payload.UUID = in.GetUuid()
-	payload.Data.Message.Type = model.MessageTypeText
-	payload.Data.Message.Text = in.GetText()
-	m.db.Where("uuid = ?", in.GetUuid()).Take(&find)
+	payload.Type = model.MessageTypeText
+	payload.Text = strings.TrimSpace(in.GetText())
 
-	if find.ID > 0 {
+	// check
+	tx, err := m.db.Begin(true)
+	if err != nil {
+		return nil, err
+	}
+	b, err := tx.CreateBucketIfNotExists([]byte("message"))
+	if err != nil {
+		return nil, err
+	}
+	v := b.Get([]byte(payload.UUID))
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+	if v != nil {
 		return &pb.MessageList{
-			Id: int64(find.ID),
+			Uuid: payload.UUID,
 		}, nil
 	}
 
 	// parse type
-	payload.Data.Message.Text = strings.TrimSpace(payload.Data.Message.Text)
-	if utils.IsUrl(payload.Data.Message.Text) {
-		payload.Data.Message.Type = model.MessageTypeLink
+	payload.Text = strings.TrimSpace(payload.Text)
+	if utils.IsUrl(payload.Text) {
+		payload.Type = model.MessageTypeLink
 	}
-	if model.IsMessageOfAction(payload.Data.Message.Text) {
-		payload.Data.Message.Type = model.MessageTypeAction
+	if model.IsMessageOfAction(payload.Text) {
+		payload.Type = model.MessageTypeAction
 	}
-	if model.IsMessageOfScript(payload.Data.Message.Text) {
-		payload.Data.Message.Type = model.MessageTypeScript
+	if model.IsMessageOfScript(payload.Text) {
+		payload.Type = model.MessageTypeScript
 	}
 
-	if payload.Data.Message.Type == model.MessageTypeText {
+	if payload.Type == model.MessageTypeText {
 		out := m.bot.Process(payload).MessageProviderOut()
 		if len(out) > 0 {
 			var reply []string
 			for _, item := range out {
-				reply = append(reply, item.Data.Message.Text)
+				reply = append(reply, item.Text)
 			}
 			return &pb.MessageList{
 				Text: reply,
@@ -89,18 +130,42 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 		}
 	}
 
-	payload.Time = time.Now()
-
 	// insert
-	m.db.Create(&payload)
+	err = m.db.Update(func(tx *bbolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("message"))
+		if err != nil {
+			return err
+		}
+		data, err := json.Marshal(payload)
+		if err != nil {
+			return err
+		}
+		return b.Put([]byte(payload.UUID), data)
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.MessageList{
-		Id: int64(payload.ID),
+		Uuid: payload.UUID,
 	}, nil
 }
 
 func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	m.db.Where("id = ?", 1).Delete(model.Message{})
+	tx, err := m.db.Begin(true)
+	if err != nil {
+		return nil, err
+	}
+	b := tx.Bucket([]byte("message"))
+	err = b.Delete([]byte(payload.Uuid))
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
 }
 
@@ -125,22 +190,38 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var reply string
-	var find model.Event
-	var payload model.Event
-	m.db.Where("uuid = ?", payload).Take(&find)
+	var payload model.Message
 
-	if find.ID == 0 {
-		//	*reply = "Not message"
-		return nil, nil
+	tx, err := m.db.Begin(false)
+	if err != nil {
+		return nil, err
+	}
+	b := tx.Bucket([]byte("message"))
+	v := b.Get([]byte(payload.UUID))
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
 	}
 
-	switch find.Data.Message.Text {
+	var find model.Message
+	err = json.Unmarshal(v, &find)
+	if err != nil {
+		return nil, err
+	}
+
+	if find.UUID == "" {
+		return &pb.MessageReply{
+			Text: "Not message",
+		}, nil
+	}
+
+	switch find.Text {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch model.MessageScriptKind(find.Data.Message.Text) {
+		switch model.MessageScriptKind(find.Text) {
 		case model.MessageScriptOfFlowscript:
-			text := strings.Replace(find.Data.Message.Text, "#!script:flowscript", "", -1)
+			text := strings.Replace(find.Text, "#!script:flowscript", "", -1)
 			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))
 			if err != nil {
 				m.logger.Error(err.Error())
@@ -160,7 +241,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 			reply = i.Stdout()
 		case model.MessageScriptOfJavascript:
 			vm := otto.New()
-			v, err := vm.Run(strings.Replace(find.Data.Message.Text, "#!script:javascript", "", -1))
+			v, err := vm.Run(strings.Replace(find.Text, "#!script:javascript", "", -1))
 			if err != nil {
 				m.logger.Error(err.Error())
 				return nil, err

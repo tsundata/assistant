@@ -26,7 +26,6 @@ type ServerOptions struct {
 	Name string
 	Host string
 	Port int
-	Etcd string
 }
 
 func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
@@ -51,7 +50,7 @@ type Server struct {
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer) (*Server, error) {
+func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, e *clientv3.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -63,11 +62,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer) 
 	limiter := &alwaysPassLimiter{}
 
 	// register discovery
-	cli, err := clientv3.NewFromURL(o.Etcd)
-	if err != nil {
-		panic(err)
-	}
-	resolver := &etcdnaming.GRPCResolver{Client: cli}
+	resolver := &etcdnaming.GRPCResolver{Client: e}
 
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
@@ -101,10 +96,6 @@ func (s *Server) Application(name string) {
 }
 
 func (s *Server) Start() error {
-	if s.o.Etcd == "" {
-		return errors.New("etcd error")
-	}
-
 	if s.o.Port == 0 {
 		s.o.Port = utils.GetAvailablePort()
 	}

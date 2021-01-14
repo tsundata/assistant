@@ -3,8 +3,8 @@ package rules
 import (
 	"bytes"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"regexp"
 	"strings"
 	"text/template"
@@ -28,7 +28,7 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, in model.Event) string {
+func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, in model.Message) string {
 	botName := b.Name()
 	var helpMsg string
 	for _, rule := range r.rules {
@@ -40,7 +40,7 @@ func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, in model.Event) string {
 	return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 }
 
-func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Event) []model.Event {
+func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Message) []model.Message {
 	for _, rule := range r.rules {
 		botName := b.Name()
 		var finalRegex bytes.Buffer
@@ -50,26 +50,24 @@ func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Event) []model.E
 		_ = r.regexes[rule.Regex].Execute(&finalRegex, struct{ RobotName string }{botName})
 		sanitizedRegex := strings.TrimSpace(finalRegex.String())
 		re := regexp.MustCompile(sanitizedRegex)
-		matched := re.MatchString(in.Data.Message.Text)
+		matched := re.MatchString(in.Text)
 		if !matched {
 			continue
 		}
 
-		args := re.FindStringSubmatch(in.Data.Message.Text)
-		if ret := rule.ParseMessage(b, in.Data.Message.Text, args); len(ret) > 0 {
-			var retMsgs []model.Event
+		args := re.FindStringSubmatch(in.Text)
+		if ret := rule.ParseMessage(b, in.Text, args); len(ret) > 0 {
+			var retMsgs []model.Message
 			for _, m := range ret {
-				retMsgs = append(retMsgs, model.Event{
-					Data: model.EventData{Message: model.Message{
-						Text: m,
-					}},
+				retMsgs = append(retMsgs, model.Message{
+					Text: m,
 				})
 			}
 			return retMsgs
 		}
 	}
 
-	return []model.Event{}
+	return []model.Message{}
 }
 
 func New(rules []Rule) *regexRuleset {

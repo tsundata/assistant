@@ -218,8 +218,8 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 					return
 				}
 
-				if reply.GetId() > 0 {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %d", reply.GetId()), false))
+				if reply.GetUuid() != "" {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %s", reply.GetUuid()), false))
 				} else {
 					for _, item := range reply.GetText() {
 						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))

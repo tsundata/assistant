@@ -7,9 +7,9 @@ import (
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"gorm.io/gorm"
 )
 
 type Options struct {
@@ -32,7 +32,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 // FIXME rename
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *gorm.DB) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB) (*app.Application, error) {
 	// service
 	mid := service.NewMiddle(db, o.webURL)
 	err := rs.Register(func(gs *grpc.Server) error {

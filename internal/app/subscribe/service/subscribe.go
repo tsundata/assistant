@@ -4,27 +4,30 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"gorm.io/gorm"
+	"github.com/tsundata/assistant/internal/pkg/utils"
+	"go.etcd.io/etcd/clientv3"
+	"strings"
 )
 
 type Subscribe struct {
-	db *gorm.DB
+	etcd *clientv3.Client
 }
 
-func NewSubscribe(db *gorm.DB) *Subscribe {
-	return &Subscribe{db: db}
+func NewSubscribe(etcd *clientv3.Client) *Subscribe {
+	return &Subscribe{etcd: etcd}
 }
 
 func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
-	var list []model.Subscribe
-	s.db.Find(&list)
+	resp, err := s.etcd.Get(context.Background(), "subscribe_", clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	if err != nil {
+		return nil, err
+	}
 
 	var result []string
 
-	mb := make(map[string]bool)
-	for _, item := range list {
-		mb[item.Source] = item.IsSubscribe
+	mb := make(map[string]string)
+	for _, item := range resp.Kvs {
+		mb[strings.Replace(utils.ByteToString(item.Key), "subscribe_", "", -1)] = utils.ByteToString(item.Value)
 	}
 
 	for source, isSubscribe := range mb {
@@ -37,34 +40,27 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 }
 
 func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
-	var subscribe model.Subscribe
-	s.db.Where("source = ?", payload.GetText()).First(&subscribe)
-	if subscribe.ID == 0 {
-		s.db.Create(&model.Subscribe{Source: payload.GetText(), IsSubscribe: true})
+	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.State{State: true}, nil
 }
 
 func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
-	var subscribe model.Subscribe
-	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
-	if !subscribe.IsSubscribe {
-		s.db.Model(&subscribe).
-			Where("id = ?", subscribe.ID).
-			Update("is_subscribe", true)
+	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.State{State: true}, nil
 }
 
 func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
-	var subscribe model.Subscribe
-	s.db.Where(model.Subscribe{Source: payload.GetText()}).FirstOrCreate(&subscribe)
-	if subscribe.IsSubscribe {
-		s.db.Model(&subscribe).
-			Where("id = ?", subscribe.ID).
-			Update("is_subscribe", false)
+	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "false")
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.State{State: true}, nil

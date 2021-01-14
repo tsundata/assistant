@@ -4,12 +4,12 @@ http:
     mode: release
     host: 127.0.0.1
     port: 7000
-rpc:
-    etcd: http://etcd:2379
+etcd:
+    url: http://127.0.0.1:2379
 jaeger:
   serviceName: web
   reporter:
-    localAgentHostPort: "jaeger-agent:6831"
+    localAgentHostPort: "127.0.0.1:6831"
   sampler:
     type: const
     param: 1
