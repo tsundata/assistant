@@ -18,14 +18,14 @@ builds:
       - CGO_ENABLED=0
 
   - main: ./cmd/gateway
-      id: "gateway"
-      binary: "gateway"
-      goos:
-        - linux
-      goarch:
-        - amd64
-      env:
-        - CGO_ENABLED=0
+    id: "gateway"
+    binary: "gateway"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
 
   - main: ./cmd/message
     id: "message"
