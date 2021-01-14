@@ -7,16 +7,6 @@ before:
 
 builds:
   # app
-  - main: ./cmd/gateway
-    id: "gateway"
-    binary: "gateway"
-    goos:
-      - linux
-    goarch:
-      - amd64
-    env:
-      - CGO_ENABLED=0
-
   - main: ./cmd/cron
     id: "cron"
     binary: "cron"
@@ -26,6 +16,16 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+
+  - main: ./cmd/gateway
+      id: "gateway"
+      binary: "gateway"
+      goos:
+        - linux
+      goarch:
+        - amd64
+      env:
+        - CGO_ENABLED=0
 
   - main: ./cmd/message
     id: "message"
@@ -66,6 +66,17 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+
+  - main: ./cmd/web
+    id: "web"
+    binary: "web"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
   # agent
   - main: ./cmd/agent/server
     id: "server-agent"
