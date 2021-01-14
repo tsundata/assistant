@@ -83,18 +83,18 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-SNAPSHOT-{{.ShortCommit}}"
+  name_template: "SNAPSHOT-{{.ShortCommit}}"
 changelog:
-  sort: asc
+  sort: desc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
+      - '^merge:'
 env_files:
   github_token: ~/.gh_token
 release:
   github:
     owner: tsundata
     name: assistant
-  prerelease: auto
-  name_template: "{{.ProjectName}}-v{{.Version}}-{{.ShortCommit}}"
+  name_template: "{{.Tag}}"
