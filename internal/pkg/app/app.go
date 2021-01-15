@@ -56,13 +56,13 @@ func New(name string, logger *zap.Logger, options ...Option) (*Application, erro
 func (a *Application) Start() error {
 	if a.httpServer != nil {
 		if err := a.httpServer.Start(); err != nil {
-			return errors.New("http server start error")
+			return errors.New("http server start error " + err.Error())
 		}
 	}
 
 	if a.rpcServer != nil {
 		if err := a.rpcServer.Start(); err != nil {
-			return errors.New("rpc server start error")
+			return errors.New("rpc server start error " + err.Error())
 		}
 	}
 
