@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/crawler"
-	"github.com/tsundata/assistant/internal/app/spider/subscribe"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"go.uber.org/zap"
 	"time"
@@ -14,6 +13,7 @@ import (
 
 type Options struct {
 	Name string
+	Path string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -24,6 +24,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, errors.New("unmarshal app option error")
 	}
 
+	if err = v.UnmarshalKey("plugin", o); err != nil {
+		return nil, errors.New("unmarshal plugin option error")
+	}
+
 	return o, err
 }
 
@@ -32,7 +36,11 @@ func NewApp(o *Options, rdb *redis.Client, logger *zap.Logger, msgClient pb.Mess
 		// FIXME
 		time.Sleep(10 * time.Second)
 		s := crawler.New(rdb, logger, msgClient, midClient, subClient)
-		s.Register(subscribe.Rules)
+		err := s.LoadRule(o.Path)
+		if err != nil {
+			logger.Error(err.Error())
+			return
+		}
 		s.Daemon()
 	}()
 

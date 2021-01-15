@@ -61,11 +61,14 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 
 func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	// TODO cache
-	tx, err := s.db.Begin(false)
+	tx, err := s.db.Begin(true)
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket([]byte("middle"))
+	b, err := tx.CreateBucketIfNotExists([]byte("middle"))
+	if err != nil {
+		return nil, err
+	}
 	v := b.Get([]byte(payload.Uuid))
 
 	var find model.Page

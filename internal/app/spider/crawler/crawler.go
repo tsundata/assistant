@@ -9,7 +9,11 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -39,18 +43,52 @@ func New(rdb *redis.Client, logger *zap.Logger,
 	}
 }
 
-func (s *Crawler) Register(rules map[string]rule.Rule) {
+func (s *Crawler) LoadRule(p string) error {
 	ctx := context.Background()
-	for name, job := range rules {
-		_, err := s.subClient.Register(ctx, &pb.SubscribeRequest{
-			Text: name,
+	return filepath.Walk(p, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if ext := filepath.Ext(path); ext != ".yml" && ext != ".yaml" {
+			return nil
+		}
+
+		data, err := ioutil.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		var r rule.Rule
+		err = yaml.Unmarshal(data, &r)
+		if err != nil {
+			return err
+		}
+
+		// check
+		if r.Name == "" {
+			return nil
+		}
+		if r.When == "" {
+			return nil
+		}
+		if !utils.IsUrl(r.Page.URL) {
+			return nil
+		}
+
+		// register
+		_, err = s.subClient.Register(ctx, &pb.SubscribeRequest{
+			Text: r.Name,
 		})
 		if err != nil {
-			s.logger.Error(err.Error())
-			continue
+			return err
 		}
-		s.jobs[name] = job
-	}
+		s.jobs[r.Name] = r
+
+		return nil
+	})
 }
 
 func (s *Crawler) Daemon() {

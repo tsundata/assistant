@@ -1,0 +1,8 @@
+name: example
+when: "* * * * *"
+instant: false
+page:
+  url: "https://news.ycombinator.com/news"
+  list: "tr.athing"
+  item:
+    title: $(".title a.storylink").text

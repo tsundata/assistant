@@ -25,6 +25,7 @@ require (
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.34.0
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.29.0

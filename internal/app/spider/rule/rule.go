@@ -5,13 +5,59 @@ import (
 	"github.com/influxdata/cron"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
 type Rule struct {
-	When    string
-	Instant bool
-	Action  func() []string
+	Name    string `yaml:"name"`
+	When    string `yaml:"when"`
+	Instant bool   `yaml:"instant"`
+	Page    struct {
+		URL  string            `yaml:"url"`
+		List string            `yaml:"list"`
+		Item map[string]string `yaml:"item"`
+	}
+}
+
+func document(url string) (*goquery.Document, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		return nil, err
+	}
+
+	return goquery.NewDocumentFromReader(res.Body)
+}
+
+func runRule(r Rule) []string {
+	var result []string
+
+	doc, err := document(r.Page.URL)
+	if err != nil {
+		return result
+	}
+
+	doc.Find(r.Page.List).Each(func(i int, s *goquery.Selection) {
+		txt := strings.Builder{}
+		for k, v := range r.Page.Item {
+			f := ParseFun(s, v)
+			c, err := f.Invoke()
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			txt.WriteString(k)
+			txt.WriteString(": ")
+			txt.WriteString(c)
+			txt.WriteString("\n")
+		}
+		result = append(result, txt.String())
+	})
+	return result
 }
 
 type Result struct {
@@ -20,8 +66,8 @@ type Result struct {
 	Result  []string
 }
 
-func ProcessSpiderRule(name string, rule Rule, outCh chan Result) {
-	p, err := cron.ParseUTC(rule.When)
+func ProcessSpiderRule(name string, r Rule, outCh chan Result) {
+	p, err := cron.ParseUTC(r.When)
 	if err != nil {
 		log.Println(err)
 		return
@@ -39,12 +85,12 @@ func ProcessSpiderRule(name string, rule Rule, outCh chan Result) {
 						log.Println("processSpiderRule panic", name, r)
 					}
 				}()
-				return rule.Action()
+				return runRule(r)
 			}()
 			if len(result) > 0 {
 				outCh <- Result{
 					Name:    name,
-					Instant: rule.Instant,
+					Instant: r.Instant,
 					Result:  result,
 				}
 			}
@@ -56,17 +102,4 @@ func ProcessSpiderRule(name string, rule Rule, outCh chan Result) {
 		}
 		time.Sleep(2 * time.Second)
 	}
-}
-
-func Document(url string) (*goquery.Document, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return nil, err
-	}
-
-	return goquery.NewDocumentFromReader(res.Body)
 }
