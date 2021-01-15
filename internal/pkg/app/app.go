@@ -71,8 +71,7 @@ func (a *Application) Start() error {
 
 func (a *Application) AwaitSignal() {
 	c := make(chan os.Signal, 1)
-	signal.Reset(syscall.SIGTERM, syscall.SIGINT)
-	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP)
 
 	s := <-c
 	a.logger.Info("receive a signal " + s.String())
@@ -89,5 +88,6 @@ func (a *Application) AwaitSignal() {
 		}
 	}
 
+	a.logger.Info("Complete end")
 	os.Exit(0)
 }

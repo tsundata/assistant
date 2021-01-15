@@ -22,6 +22,12 @@ import (
 	"net"
 )
 
+type alwaysPassLimiter struct{}
+
+func (*alwaysPassLimiter) Limit() bool {
+	return false
+}
+
 type ServerOptions struct {
 	Name string
 	Host string
@@ -122,10 +128,12 @@ func (s *Server) Start() error {
 		panic(err)
 	}
 
-	err = s.server.Serve(lis)
-	if err != nil {
-		s.logger.Error(err.Error())
-	}
+	go func() {
+		err = s.server.Serve(lis)
+		if err != nil {
+			s.logger.Error(err.Error())
+		}
+	}()
 
 	return nil
 }
@@ -138,14 +146,8 @@ func (s *Server) Stop() error {
 	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
 	err := s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
-		return err
+		s.logger.Error(err.Error())
 	}
 	s.server.Stop()
-	return nil
-}
-
-type alwaysPassLimiter struct{}
-
-func (*alwaysPassLimiter) Limit() bool {
-	return false
+	return err
 }
