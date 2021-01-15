@@ -106,7 +106,9 @@ func (s *Server) Start() error {
 		s.o.Port = utils.GetAvailablePort()
 	}
 
-	s.o.Host = utils.GetLocalIP4()
+	if s.o.Host == "" {
+		s.o.Host = utils.GetLocalIP4()
+	}
 	if s.o.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
