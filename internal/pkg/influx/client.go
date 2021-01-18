@@ -7,8 +7,8 @@ import (
 )
 
 type Options struct {
-	Token  string
-	Url    string
+	Token string
+	Url   string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {

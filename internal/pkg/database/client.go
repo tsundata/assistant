@@ -7,7 +7,7 @@ import (
 )
 
 type Options struct {
-	Path   string `yaml:"path"`
+	Path string `yaml:"path"`
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {

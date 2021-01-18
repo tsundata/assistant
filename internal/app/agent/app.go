@@ -9,7 +9,7 @@ import (
 )
 
 type Options struct {
-	Name   string
+	Name string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {

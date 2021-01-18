@@ -46,6 +46,9 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	i, err := influx.New(influxOptions)
+	if err != nil {
+		return nil, err
+	}
 
 	server, err := rpc.NewServer(rpcOptions, log, j, e, i)
 	if err != nil {
