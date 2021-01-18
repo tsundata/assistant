@@ -146,7 +146,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := b.SubClient.Open(context.Background(), &pb.SubscribeRequest{
+			reply, err := b.SubClient.Close(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {

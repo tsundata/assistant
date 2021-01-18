@@ -8,6 +8,7 @@ service Subscribe {
   rpc Register(SubscribeRequest) returns (State) {}
   rpc Open(SubscribeRequest) returns (State) {}
   rpc Close(SubscribeRequest) returns (State) {}
+  rpc Status(SubscribeRequest) returns (State) {}
 }
 
 message SubscribeRequest {

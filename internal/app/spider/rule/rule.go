@@ -2,11 +2,9 @@ package rule
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/influxdata/cron"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type Rule struct {
@@ -18,6 +16,12 @@ type Rule struct {
 		List string            `yaml:"list"`
 		Item map[string]string `yaml:"item"`
 	}
+}
+
+type Result struct {
+	Name    string
+	Instant bool
+	Result  []string
 }
 
 func document(url string) (*goquery.Document, error) {
@@ -33,7 +37,7 @@ func document(url string) (*goquery.Document, error) {
 	return goquery.NewDocumentFromReader(res.Body)
 }
 
-func runRule(r Rule) []string {
+func RunRule(r Rule) []string {
 	var result []string
 
 	doc, err := document(r.Page.URL)
@@ -58,48 +62,4 @@ func runRule(r Rule) []string {
 		result = append(result, txt.String())
 	})
 	return result
-}
-
-type Result struct {
-	Name    string
-	Instant bool
-	Result  []string
-}
-
-func ProcessSpiderRule(name string, r Rule, outCh chan Result) {
-	p, err := cron.ParseUTC(r.When)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	nextTime, err := p.Next(time.Now())
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	for {
-		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			result := func() []string {
-				defer func() {
-					if r := recover(); r != nil {
-						log.Println("processSpiderRule panic", name, r)
-					}
-				}()
-				return runRule(r)
-			}()
-			if len(result) > 0 {
-				outCh <- Result{
-					Name:    name,
-					Instant: r.Instant,
-					Result:  result,
-				}
-			}
-		}
-		nextTime, err = p.Next(time.Now())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		time.Sleep(2 * time.Second)
-	}
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -96,69 +97,67 @@ func (s *Crawler) Daemon() {
 
 	for name, job := range s.jobs {
 		log.Printf("spider %v: crawl...", name)
-		go rule.ProcessSpiderRule(name, job, s.outCh)
+		go s.ruleWorker(name, job, s.outCh)
 	}
 
-	s.process()
+	go s.resultWorker()
 }
 
-func (s *Crawler) process() {
-	go func() {
-		for out := range s.outCh {
-			ctx := context.Background()
-			latest := out.Result
+func (s *Crawler) resultWorker() {
+	for out := range s.outCh {
+		ctx := context.Background()
+		latest := out.Result
 
-			dataKey := fmt.Sprintf("%s:latest", out.Name)
-			sendKey := fmt.Sprintf("%s:send", out.Name)
+		dataKey := fmt.Sprintf("%s:latest", out.Name)
+		sendKey := fmt.Sprintf("%s:send", out.Name)
 
-			smembers := s.rdb.SMembers(ctx, dataKey)
-			old, err := smembers.Result()
-			if err != nil {
-				continue
-			}
-
-			// diff
-			diff := utils.SliceDiff(old, latest)
-			if len(old) > 0 && len(diff) == 0 {
-				continue
-			} else {
-				diff = latest
-			}
-			if len(diff) == 0 {
-				continue
-			}
-
-			// add data
-			for _, item := range out.Result {
-				s.rdb.SAdd(ctx, dataKey, item)
-			}
-			s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
-
-			// is instant
-			if out.Instant {
-				// send
-				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-				s.Send(out.Name, diff)
-			} else {
-				sendStringCmd := s.rdb.Get(ctx, sendKey)
-				sendString, _ := sendStringCmd.Result()
-				oldSend := int64(0)
-				if sendString != "" {
-					oldSend, _ = strconv.ParseInt(sendString, 10, 64)
-				}
-
-				if time.Now().Unix()-oldSend < 24*3600 {
-					continue
-				}
-
-				s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-				s.Send(out.Name, diff)
-			}
+		smembers := s.rdb.SMembers(ctx, dataKey)
+		old, err := smembers.Result()
+		if err != nil {
+			continue
 		}
-	}()
+
+		// diff
+		diff := utils.SliceDiff(old, latest)
+		if len(old) > 0 && len(diff) == 0 {
+			continue
+		} else {
+			diff = latest
+		}
+		if len(diff) == 0 {
+			continue
+		}
+
+		// add data
+		for _, item := range out.Result {
+			s.rdb.SAdd(ctx, dataKey, item)
+		}
+		s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
+
+		// is instant
+		if out.Instant {
+			// send
+			s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
+			s.send(out.Name, diff)
+		} else {
+			sendStringCmd := s.rdb.Get(ctx, sendKey)
+			sendString, _ := sendStringCmd.Result()
+			oldSend := int64(0)
+			if sendString != "" {
+				oldSend, _ = strconv.ParseInt(sendString, 10, 64)
+			}
+
+			if time.Now().Unix()-oldSend < 24*3600 {
+				continue
+			}
+
+			s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
+			s.send(out.Name, diff)
+		}
+	}
 }
 
-func (s *Crawler) Send(name string, out []string) {
+func (s *Crawler) send(name string, out []string) {
 	text := ""
 	if len(out) <= 5 {
 		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
@@ -186,5 +185,56 @@ func (s *Crawler) Send(name string, out []string) {
 	if err != nil {
 		log.Println(err)
 		return
+	}
+}
+
+func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
+	p, err := cron.ParseUTC(r.When)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	nextTime, err := p.Next(time.Now())
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	for {
+		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			state, err := s.subClient.Status(context.Background(), &pb.SubscribeRequest{
+				Text: name,
+			})
+			if err != nil {
+				s.logger.Error(err.Error())
+				continue
+			}
+			// unsubscribe
+			if !state.State {
+				time.Sleep(30 * time.Second)
+				continue
+			}
+
+			result := func() []string {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Println("processSpiderRule panic", name, r)
+					}
+				}()
+				return rule.RunRule(r)
+			}()
+			if len(result) > 0 {
+				outCh <- rule.Result{
+					Name:    name,
+					Instant: r.Instant,
+					Result:  result,
+				}
+			}
+		}
+		nextTime, err = p.Next(time.Now())
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		time.Sleep(2 * time.Second)
 	}
 }

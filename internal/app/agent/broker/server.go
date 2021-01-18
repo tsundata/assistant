@@ -36,8 +36,6 @@ func (b *Server) Run() {
 	}
 	writeAPI := b.influx.WriteAPI(b.org, b.bucket)
 	for range t.C {
-		b.logger.Info(time.Now().String())
-
 		// mem
 		v, err := mem.VirtualMemory()
 		if err != nil {

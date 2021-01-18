@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
@@ -26,8 +27,8 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	var result []string
 
 	mb := make(map[string]string)
-	for _, item := range resp.Kvs {
-		mb[strings.Replace(utils.ByteToString(item.Key), "subscribe_", "", -1)] = utils.ByteToString(item.Value)
+	for _, ev := range resp.Kvs {
+		mb[strings.Replace(utils.ByteToString(ev.Key), "subscribe_", "", -1)] = utils.ByteToString(ev.Value)
 	}
 
 	for source, isSubscribe := range mb {
@@ -40,9 +41,24 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 }
 
 func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
-	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
+	key := "subscribe_" + payload.GetText()
+	resp, err := s.etcd.Get(context.Background(), key)
 	if err != nil {
 		return nil, err
+	}
+
+	hasKey := false
+	for _, ev := range resp.Kvs {
+		if key == utils.ByteToString(ev.Key) {
+			hasKey = true
+		}
+	}
+
+	if !hasKey {
+		_, err = s.etcd.Put(context.Background(), key, "true")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &pb.State{State: true}, nil
@@ -64,4 +80,22 @@ func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*p
 	}
 
 	return &pb.State{State: true}, nil
+}
+
+func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+	key := "subscribe_" + payload.GetText()
+	resp, err := s.etcd.Get(context.Background(), key)
+	if err != nil {
+		return nil, err
+	}
+	for _, ev := range resp.Kvs {
+		if utils.ByteToString(ev.Key) == key {
+			return &pb.State{
+				State: bytes.Equal(ev.Value, []byte("true")),
+			}, nil
+		}
+	}
+	return &pb.State{
+		State: false,
+	}, nil
 }
