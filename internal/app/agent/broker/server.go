@@ -2,28 +2,21 @@ package broker
 
 import (
 	"fmt"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
-	"go.uber.org/zap"
 	"time"
 )
 
 type Server struct {
-	org    string
-	bucket string
-
-	logger *zap.Logger
-	influx influxdb2.Client
+	broker *Broker
 }
 
-func (b *Server) Init(org string, bucket string, logger *zap.Logger, influx influxdb2.Client) {
-	b.org = org
-	b.bucket = bucket
-	b.logger = logger
-	b.influx = influx
+func NewServer(broker *Broker) (*Server, error) {
+	s := &Server{}
+	s.broker = broker
+	return s, nil
 }
 
 func (b *Server) Run() {
@@ -31,33 +24,33 @@ func (b *Server) Run() {
 	// host
 	h, err := host.Info()
 	if err != nil {
-		b.logger.Error(err.Error())
+		b.broker.logger.Error(err.Error())
 		return
 	}
-	writeAPI := b.influx.WriteAPI(b.org, b.bucket)
+	writeAPI := b.broker.influx.WriteAPI(b.broker.Org, b.broker.Bucket)
 	for range t.C {
 		// mem
 		v, err := mem.VirtualMemory()
 		if err != nil {
-			b.logger.Error(err.Error())
+			b.broker.logger.Error(err.Error())
 			continue
 		}
 		// swap
 		s, err := mem.SwapMemory()
 		if err != nil {
-			b.logger.Error(err.Error())
+			b.broker.logger.Error(err.Error())
 			continue
 		}
 		// cpu
 		c, err := cpu.Percent(time.Second, false)
 		if err != nil {
-			b.logger.Error(err.Error())
+			b.broker.logger.Error(err.Error())
 			continue
 		}
 		// disk
 		d, err := disk.Usage("/")
 		if err != nil {
-			b.logger.Error(err.Error())
+			b.broker.logger.Error(err.Error())
 			continue
 		}
 

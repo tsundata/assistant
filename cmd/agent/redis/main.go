@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 )
 
 func CreateApp(cf string) (*app.Application, error) {
@@ -30,12 +31,21 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	redisOption, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	r, err := redis.New(redisOption)
+	if err != nil {
+		return nil, err
+	}
+
 	br, err := broker.NewBroker(viper, log, i)
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := broker.NewServer(br)
+	b, err := broker.NewRedis(br, r)
 	if err != nil {
 		return nil, err
 	}
