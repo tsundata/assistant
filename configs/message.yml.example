@@ -2,6 +2,11 @@ app:
     name: message
 etcd:
     url: http://127.0.0.1:2379
+influx:
+    token:
+    org:
+    bucket:
+    url:
 db:
     path: message.db
 slack:

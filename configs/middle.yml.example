@@ -1,7 +1,12 @@
 app:
     name: middle
-rpc:
-    etcd: http://127.0.0.1:2379
+etcd:
+    url: http://127.0.0.1:2379
+influx:
+    token:
+    org:
+    bucket:
+    url:
 db:
     path: middle.db
 redis:

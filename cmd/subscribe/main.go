@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/etcd"
+	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -40,7 +41,13 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	server, err := rpc.NewServer(rpcOptions, log, j, e)
+	influxOptions, err := influx.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	i, err := influx.New(influxOptions)
+
+	server, err := rpc.NewServer(rpcOptions, log, j, e, i)
 	if err != nil {
 		return nil, err
 	}

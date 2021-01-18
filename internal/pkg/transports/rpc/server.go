@@ -9,8 +9,10 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
@@ -32,6 +34,9 @@ type ServerOptions struct {
 	Name string
 	Host string
 	Port int
+
+	Org    string
+	Bucket string
 }
 
 func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
@@ -42,6 +47,10 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 
 	if err = v.UnmarshalKey("rpc", o); err != nil {
 		return nil, err
+	}
+
+	if err = v.UnmarshalKey("influx", o); err != nil {
+		return nil, errors.New("unmarshal influx option error")
 	}
 
 	return o, err
@@ -56,7 +65,7 @@ type Server struct {
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, e *clientv3.Client) (*Server, error) {
+func NewServer(opt *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -68,11 +77,12 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 	limiter := &alwaysPassLimiter{}
 
 	// register discovery
-	resolver := &etcdnaming.GRPCResolver{Client: e}
+	resolver := &etcdnaming.GRPCResolver{Client: etcd}
 
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
 			grpc_middleware.ChainStreamServer(
+				influx.StreamServerInterceptor(in, opt.Org, opt.Bucket),
 				grpc_zap.StreamServerInterceptor(logger),
 				grpc_recovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
@@ -81,6 +91,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 		),
 		grpc.UnaryInterceptor(
 			grpc_middleware.ChainUnaryServer(
+				influx.UnaryServerInterceptor(in, opt.Org, opt.Bucket),
 				grpc_zap.UnaryServerInterceptor(logger),
 				grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
@@ -90,7 +101,7 @@ func NewServer(o *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, 
 	)
 
 	return &Server{
-		o:        o,
+		o:        opt,
 		logger:   logger,
 		resolver: resolver,
 		server:   gs,
