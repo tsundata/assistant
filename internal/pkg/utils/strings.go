@@ -7,8 +7,12 @@ import (
 	"strings"
 )
 
+const (
+	UrlRegex = `https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`
+)
+
 func IsUrl(text string) bool {
-	re := regexp.MustCompile(`^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
+	re := regexp.MustCompile(UrlRegex)
 	return re.MatchString(text)
 }
 

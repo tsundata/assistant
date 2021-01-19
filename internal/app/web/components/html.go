@@ -34,6 +34,10 @@ func (c *Html) GetContent() template.HTML {
     <meta name="description" content="">
     <meta name="keywords" content="">
     <style>
+		a {
+			text-decoration: none;
+			color: #4a4a5a;
+		}
         #app-container {
             color: #333;
             padding: 15px 25px;
