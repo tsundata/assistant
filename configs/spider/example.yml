@@ -6,3 +6,4 @@ page:
   list: "tr.athing"
   item:
     title: $(".title a.storylink").text
+    url: $(".title a.storylink").href
