@@ -36,7 +36,7 @@ func (c *Html) GetContent() template.HTML {
     <style>
 		a {
 			text-decoration: none;
-			color: #4a4a5a;
+			color: #003C97;
 		}
         #app-container {
             color: #333;
