@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
@@ -19,15 +18,15 @@ import (
 )
 
 type GatewayController struct {
-	o         *gateway.Options
+	opt       *gateway.Options
 	rdb       *redis.Client
 	logger    *zap.Logger
 	subClient pb.SubscribeClient
 	msgClient pb.MessageClient
 }
 
-func NewGatewayController(o *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
-	return &GatewayController{o: o, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
+func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
+	return &GatewayController{opt: opt, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
 func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
@@ -51,7 +50,7 @@ func (gc *GatewayController) SlackShortcut(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	if !s.ValidateToken(gc.o.Verification) {
+	if !s.ValidateToken(gc.opt.Verification) {
 		gc.logger.Info("unvalidated verificationTokens")
 		return
 	}
@@ -95,7 +94,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	if !s.ValidateToken(gc.o.Verification) {
+	if !s.ValidateToken(gc.opt.Verification) {
 		gc.logger.Info("unvalidated verificationTokens")
 		c.Error("unvalidated verificationTokens", http.StatusBadRequest)
 		return
@@ -175,8 +174,8 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 	body := c.Request.Body()
 
-	api := slack.New(gc.o.Token)
-	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.o.Verification}))
+	api := slack.New(gc.opt.Token)
+	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.opt.Verification}))
 	if err != nil {
 		gc.logger.Error(err.Error())
 		return
@@ -201,13 +200,12 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 			// ignore bot message
 			if ev.ClientMsgID != "" {
 				// ignore repeated message
-				rKey := "message:repeated"
-				isRepeated := gc.rdb.SIsMember(context.Background(), rKey, ev.ClientMsgID)
-				if isRepeated.Val() {
+				rKey := "message:repeated:" + ev.ClientMsgID
+				isRepeated := gc.rdb.Get(context.Background(), rKey).Val()
+				if len(isRepeated) > 0 {
 					return
 				}
-				gc.rdb.SAdd(context.Background(), rKey, ev.ClientMsgID)
-				gc.rdb.Expire(context.Background(), rKey, 7*24*time.Hour)
+				gc.rdb.Set(context.Background(), rKey, time.Now().Unix(), 7*24*time.Hour)
 
 				reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,
@@ -219,7 +217,7 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 				}
 
 				if reply.GetUuid() != "" {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("MGID: %s", reply.GetUuid()), false))
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(reply.GetUuid(), false))
 				} else {
 					for _, item := range reply.GetText() {
 						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))
@@ -234,9 +232,4 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 	}
 
 	c.Response.SetBodyString("OK")
-}
-
-// TODO
-func (gc *GatewayController) AgentWebhook(c *fasthttp.RequestCtx) {
-
 }

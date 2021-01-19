@@ -4,6 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -47,8 +48,16 @@ func RunRule(r Rule) []string {
 
 	doc.Find(r.Page.List).Each(func(i int, s *goquery.Selection) {
 		txt := strings.Builder{}
-		for k, v := range r.Page.Item {
-			f := ParseFun(s, v)
+
+		// sort keys
+		keys := make([]string, 0, len(r.Page.Item))
+		for k := range r.Page.Item {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		for _, k := range keys {
+			f := ParseFun(s, r.Page.Item[k])
 			c, err := f.Invoke()
 			if err != nil {
 				log.Println(err)

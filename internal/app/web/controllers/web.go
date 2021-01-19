@@ -16,13 +16,13 @@ import (
 )
 
 type WebController struct {
-	o         *web.Options
+	opt       *web.Options
 	logger    *zap.Logger
 	midClient pb.MiddleClient
 }
 
-func NewWebController(o *web.Options, logger *zap.Logger, midClient pb.MiddleClient) *WebController {
-	return &WebController{o: o, logger: logger, midClient: midClient}
+func NewWebController(opt *web.Options, logger *zap.Logger, midClient pb.MiddleClient) *WebController {
+	return &WebController{opt: opt, logger: logger, midClient: midClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {

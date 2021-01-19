@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -12,7 +13,6 @@ import (
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -93,10 +93,10 @@ func (s *Crawler) LoadRule(p string) error {
 }
 
 func (s *Crawler) Daemon() {
-	log.Println("subscribe spider cron starting...")
+	s.logger.Info("subscribe spider cron starting...")
 
 	for name, job := range s.jobs {
-		log.Printf("spider %v: crawl...", name)
+		s.logger.Info("spider " + name + ": crawl...")
 		go s.ruleWorker(name, job, s.outCh)
 	}
 
@@ -108,8 +108,8 @@ func (s *Crawler) resultWorker() {
 		ctx := context.Background()
 		latest := out.Result
 
-		dataKey := fmt.Sprintf("%s:latest", out.Name)
-		sendKey := fmt.Sprintf("%s:send", out.Name)
+		dataKey := fmt.Sprintf("spider:%s:latest", out.Name)
+		sendKey := fmt.Sprintf("spider:%s:send", out.Name)
 
 		smembers := s.rdb.SMembers(ctx, dataKey)
 		old, err := smembers.Result()
@@ -134,14 +134,12 @@ func (s *Crawler) resultWorker() {
 		}
 		s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
 
-		// is instant
+		// check instant send
 		if out.Instant {
-			// send
 			s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
 			s.send(out.Name, diff)
 		} else {
-			sendStringCmd := s.rdb.Get(ctx, sendKey)
-			sendString, _ := sendStringCmd.Result()
+			sendString := s.rdb.Get(ctx, sendKey).Val()
 			oldSend := int64(0)
 			if sendString != "" {
 				oldSend, _ = strconv.ParseInt(sendString, 10, 64)
@@ -169,7 +167,7 @@ func (s *Crawler) send(name string, out []string) {
 		}
 
 		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
-			Title:   fmt.Sprintf("Channel %s", name),
+			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now()),
 			Content: utils.ByteToString(j),
 		})
 		if err != nil {
@@ -179,11 +177,19 @@ func (s *Crawler) send(name string, out []string) {
 		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
 	}
 
+	//check send
+	key := fmt.Sprintf("spider:send:%x", md5.Sum(utils.StringToByte(text)))
+	isSend := s.rdb.Get(context.Background(), key).Val()
+	if len(isSend) > 0 {
+		return
+	}
+
+	s.rdb.Set(context.Background(), key, time.Now(), 7*24*time.Hour)
 	_, err := s.msgClient.Send(context.Background(), &pb.MessageRequest{
 		Text: text,
 	})
 	if err != nil {
-		log.Println(err)
+		s.logger.Error(err.Error())
 		return
 	}
 }
@@ -191,12 +197,12 @@ func (s *Crawler) send(name string, out []string) {
 func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
-		log.Println(err)
+		s.logger.Error(err.Error())
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		log.Println(err)
+		s.logger.Error(err.Error())
 		return
 	}
 	for {
@@ -217,7 +223,10 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {
-						log.Println("processSpiderRule panic", name, r)
+						s.logger.Error("processSpiderRule recover " + name)
+						if v, ok := r.(error); ok {
+							s.logger.Error(v.Error())
+						}
 					}
 				}()
 				return rule.RunRule(r)
@@ -232,7 +241,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			log.Println(err)
+			s.logger.Error(err.Error())
 			continue
 		}
 		time.Sleep(2 * time.Second)

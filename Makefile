@@ -1,5 +1,5 @@
 apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron'
-agents = 'server'
+agents = 'server' 'redis'
 
 .PHONY: build
 build:

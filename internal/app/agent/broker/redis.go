@@ -11,13 +11,13 @@ import (
 
 type Redis struct {
 	broker *Broker
-	r      *redis.Client
+	rdb    *redis.Client
 }
 
-func NewRedis(broker *Broker, r *redis.Client) (*Redis, error) {
+func NewRedis(broker *Broker, rdb *redis.Client) (*Redis, error) {
 	s := &Redis{}
 	s.broker = broker
-	s.r = r
+	s.rdb = rdb
 
 	return s, nil
 }
@@ -96,7 +96,7 @@ func writeSection(b *Redis, writeAPI api.WriteAPI, section string) error {
 		return err
 	}
 	var line strings.Builder
-	str, err := b.r.Info(context.Background(), section).Result()
+	str, err := b.rdb.Info(context.Background(), section).Result()
 	if err != nil {
 		b.broker.logger.Error(err.Error())
 		return err

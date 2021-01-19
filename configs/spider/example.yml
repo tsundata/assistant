@@ -1,6 +1,6 @@
 name: example
 when: "* * * * *"
-instant: false
+instant: true
 page:
   url: "https://news.ycombinator.com/news"
   list: "tr.athing"

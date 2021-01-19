@@ -37,8 +37,6 @@ func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
 				gc.SlackCommand(ctx)
 			case "/slack/event":
 				gc.SlackEvent(ctx)
-			case "/slack/webhook":
-				gc.AgentWebhook(ctx)
 			default:
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}

@@ -59,8 +59,8 @@ func WithTag(tag string) ClientOptional {
 }
 
 type Client struct {
-	o  *ClientOptions
-	e  *clientv3.Client
+	o *ClientOptions
+	e *clientv3.Client
 }
 
 func NewClient(o *ClientOptions, e *clientv3.Client) (*Client, error) {
