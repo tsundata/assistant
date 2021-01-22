@@ -135,7 +135,7 @@ func (l *Lexer) Id() (*Token, error) {
 	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
-	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar)) {
+	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar) || l.CurrentChar == '_') {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -268,6 +268,11 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '@' {
 			l.Advance()
 			return &Token{Type: TokenAt, Value: TokenAt, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '<' && l.Peek() == '-' {
+			l.Advance()
+			l.Advance()
+			return &Token{Type: TokenFlow, Value: TokenFlow, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		return nil, l.error()
 	}

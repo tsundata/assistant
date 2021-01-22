@@ -41,33 +41,26 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 }
 
 func (p *Parser) Program() (Ast, error) {
-	err := p.Eat(TokenProgram)
-	if err != nil {
-		return nil, err
-	}
-	varNode, err := p.Variable()
-	if err != nil {
-		return nil, err
-	}
-	programName := varNode.(*Var).Value.(string)
-	err = p.Eat(TokenSemi)
-	if err != nil {
-		return nil, err
-	}
+	programName := "RAND_NAME"
 
-	var packages []Ast
-	if p.CurrentToken.Type == TokenImport {
-		packages, err = p.Package()
+	var err error
+	var nodes []Ast
+	if p.CurrentToken.Type == TokenNode {
+		nodes, err = p.Node()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	blockNode, err := p.Block()
-	if err != nil {
-		return nil, err
+	var workflows []Ast
+	if p.CurrentToken.Type == TokenWorkflow {
+		workflows, err = p.Workflow()
+		if err != nil {
+			return nil, err
+		}
 	}
-	programNode := NewProgram(programName, packages, blockNode)
+
+	programNode := NewProgram(programName, nodes, workflows)
 	err = p.Eat(TokenDot)
 	if err != nil {
 		return nil, err
@@ -75,28 +68,101 @@ func (p *Parser) Program() (Ast, error) {
 	return programNode, nil
 }
 
-func (p *Parser) Package() ([]Ast, error) {
-	var packages []Ast
-	for p.CurrentToken.Type == TokenImport {
-		err := p.Eat(TokenImport)
+func (p *Parser) Node() ([]Ast, error) {
+	var nodes []Ast
+
+	for p.CurrentToken.Type == TokenNode {
+		err := p.Eat(TokenNode)
+		if err != nil {
+			return nil, err
+		}
+		name := p.CurrentToken.String()
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenLParen)
+		if err != nil {
+			return nil, err
+		}
+		regular := p.CurrentToken.String()
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenRParen)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenColon)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenWith)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenColon)
+		if err != nil {
+			return nil, err
+		}
+		with, err := p.Dict()
+		if err != nil {
+			return nil, err
+		}
+		var secret string
+		if p.CurrentToken.Type == TokenSecret {
+			err = p.Eat(TokenSecret)
+			if err != nil {
+				return nil, err
+			}
+			err = p.Eat(TokenColon)
+			secret = p.CurrentToken.String()
+			err = p.Eat(TokenID)
+			if err != nil {
+				return nil, err
+			}
+		}
+		err = p.Eat(TokenEnd)
 		if err != nil {
 			return nil, err
 		}
 
-		varNode, err := p.Variable()
-		if err != nil {
-			return nil, err
-		}
-		packageName := varNode.(*Var).Value.(string)
-		packages = append(packages, NewPackage(packageName))
-
-		err = p.Eat(TokenSemi)
-		if err != nil {
-			return nil, err
-		}
+		nodes = append(nodes, NewNode(name, regular, with, secret))
 	}
 
-	return packages, nil
+	return nodes, nil
+}
+
+func (p *Parser) Workflow() ([]Ast, error) {
+	var workflows []Ast
+
+	for p.CurrentToken.Type == TokenWorkflow {
+		err := p.Eat(TokenWorkflow)
+		if err != nil {
+			return nil, err
+		}
+		name := p.CurrentToken.String()
+		err = p.Eat(TokenID)
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenColon)
+		if err != nil {
+			return nil, err
+		}
+		scenarios, err := p.Block()
+		if err != nil {
+			return nil, err
+		}
+		err = p.Eat(TokenEnd)
+		if err != nil {
+			return nil, err
+		}
+		workflows = append(workflows, NewWorkflow(name, scenarios))
+	}
+
+	return nil, nil
 }
 
 func (p *Parser) Block() (Ast, error) {
@@ -134,14 +200,6 @@ func (p *Parser) Declarations() ([][]Ast, error) {
 		} else {
 			break
 		}
-	}
-
-	for p.CurrentToken.Type == TokenFunction {
-		funcDecl, err := p.FunctionDeclaration()
-		if err != nil {
-			return nil, err
-		}
-		declarations = append(declarations, []Ast{funcDecl})
 	}
 
 	return declarations, nil
@@ -184,31 +242,6 @@ func (p *Parser) FormalParameters() ([]Ast, error) {
 	return paramNodes, nil
 }
 
-func (p *Parser) FormalParameterList() ([]Ast, error) {
-	if p.CurrentToken.Type != TokenID {
-		return []Ast{}, nil
-	}
-
-	paramNodes, err := p.FormalParameters()
-	if err != nil {
-		return nil, err
-	}
-
-	for p.CurrentToken.Type == TokenSemi {
-		err := p.Eat(TokenSemi)
-		if err != nil {
-			return nil, err
-		}
-		params, err := p.FormalParameters()
-		if err != nil {
-			return nil, err
-		}
-		paramNodes = append(paramNodes, params...)
-	}
-
-	return paramNodes, nil
-}
-
 func (p *Parser) VariableDeclaration() ([]Ast, error) {
 	varNodes := []Ast{NewVar(p.CurrentToken)}
 	err := p.Eat(TokenID)
@@ -237,62 +270,6 @@ func (p *Parser) VariableDeclaration() ([]Ast, error) {
 		varDeclarations = append(varDeclarations, NewVarDecl(varNode, typeNode))
 	}
 	return varDeclarations, nil
-}
-
-func (p *Parser) FunctionDeclaration() (Ast, error) {
-	err := p.Eat(TokenFunction)
-	if err != nil {
-		return nil, err
-	}
-	funcName := p.CurrentToken.Value.(string)
-	err = p.Eat(TokenID)
-	if err != nil {
-		return nil, err
-	}
-
-	var formalParams []Ast
-	if p.CurrentToken.Type == TokenLParen {
-		err = p.Eat(TokenLParen)
-		if err != nil {
-			return nil, err
-		}
-		formalParams, err = p.FormalParameterList()
-		if err != nil {
-			return nil, err
-		}
-		err = p.Eat(TokenRParen)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var returnType Ast
-	if p.CurrentToken.Type == TokenColon {
-		err = p.Eat(TokenColon)
-		if err != nil {
-			return nil, err
-		}
-		returnType, err = p.TypeSpec()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	err = p.Eat(TokenSemi)
-	if err != nil {
-		return nil, err
-	}
-	blockNode, err := p.Block()
-	if err != nil {
-		return nil, err
-	}
-	funcDecl := NewFunctionDecl(funcName, formalParams, blockNode, returnType)
-	err = p.Eat(TokenSemi)
-	if err != nil {
-		return nil, err
-	}
-
-	return funcDecl, nil
 }
 
 func (p *Parser) TypeSpec() (Ast, error) {
@@ -340,10 +317,6 @@ func (p *Parser) TypeSpec() (Ast, error) {
 }
 
 func (p *Parser) CompoundStatement() (Ast, error) {
-	err := p.Eat(TokenBegin)
-	if err != nil {
-		return nil, err
-	}
 	nodes, err := p.StatementList()
 	if err != nil {
 		return nil, err
@@ -381,14 +354,11 @@ func (p *Parser) StatementList() ([]Ast, error) {
 }
 
 func (p *Parser) Statement() (Ast, error) {
-	if p.CurrentToken.Type == TokenBegin {
+	// FIXME
+	if p.CurrentToken.Type == TokenColon {
 		return p.CompoundStatement()
-	} else if (p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '(') || (p.CurrentToken.Type == TokenID && p.Lexer.CurrentChar == '.') {
-		return p.FunctionCallStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
-	} else if p.CurrentToken.Type == TokenReturn {
-		return p.ReturnStatement()
 	} else if p.CurrentToken.Type == TokenPrint {
 		return p.PrintStatement()
 	} else if p.CurrentToken.Type == TokenIf {
@@ -400,17 +370,11 @@ func (p *Parser) Statement() (Ast, error) {
 	}
 }
 
-func (p *Parser) ReturnStatement() (Ast, error) {
-	err := p.Eat(TokenReturn)
-	if err != nil {
-		return nil, err
-	}
-	statement, err := p.Expression()
-	if err != nil {
-		return nil, err
-	}
+// TODO
+func (p *Parser) FlowStatement() (Ast, error) {
 
-	return NewReturn(statement), nil
+
+	return nil, nil
 }
 
 func (p *Parser) PrintStatement() (Ast, error) {
@@ -436,7 +400,7 @@ func (p *Parser) WhileStatement() (Ast, error) {
 		return nil, err
 	}
 
-	err = p.Eat(TokenDo)
+	err = p.Eat(TokenColon)
 	if err != nil {
 		return nil, err
 	}
@@ -464,7 +428,7 @@ func (p *Parser) IfStatement() (Ast, error) {
 		return nil, err
 	}
 
-	err = p.Eat(TokenThen)
+	err = p.Eat(TokenColon)
 	if err != nil {
 		return nil, err
 	}
@@ -589,98 +553,6 @@ func (p *Parser) Comparison() (Ast, error) {
 	}
 
 	return node, nil
-}
-
-func (p *Parser) FunctionCallStatement() (Ast, error) {
-	token := p.CurrentToken
-
-	var packageName string
-	var funcName string
-	name := p.CurrentToken.Value.(string)
-	err := p.Eat(TokenID)
-	if err != nil {
-		return nil, err
-	}
-	if p.CurrentToken.Type == TokenDot {
-		err = p.Eat(TokenDot)
-		if err != nil {
-			return nil, err
-		}
-		packageName = name
-		funcName = p.CurrentToken.Value.(string)
-		token = p.CurrentToken
-		err = p.Eat(TokenID)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		funcName = name
-	}
-
-	err = p.Eat(TokenLParen)
-	if err != nil {
-		return nil, err
-	}
-	var actualParams []Ast
-	if p.CurrentToken.Type != TokenRParen {
-		node, err := p.Expr()
-		if err != nil {
-			return nil, err
-		}
-		actualParams = append(actualParams, node)
-	}
-
-	for p.CurrentToken.Type == TokenComma {
-		err = p.Eat(TokenComma)
-		if err != nil {
-			return nil, err
-		}
-		node, err := p.Expr()
-		if err != nil {
-			return nil, err
-		}
-		actualParams = append(actualParams, node)
-	}
-
-	err = p.Eat(TokenRParen)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewFunctionCall(packageName, funcName, actualParams, token), nil
-}
-
-func (p *Parser) FunctionReference() (Ast, error) {
-	err := p.Eat(TokenAt)
-	if err != nil {
-		return nil, err
-	}
-
-	node := p.CurrentToken
-	var packageName string
-	var funcName string
-	name := p.CurrentToken.Value.(string)
-	err = p.Eat(TokenID)
-	if err != nil {
-		return nil, err
-	}
-	if p.CurrentToken.Type == TokenDot {
-		err = p.Eat(TokenDot)
-		if err != nil {
-			return nil, err
-		}
-		node = p.CurrentToken
-		packageName = name
-		funcName = p.CurrentToken.Value.(string)
-		err = p.Eat(TokenID)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		funcName = name
-	}
-
-	return NewFunctionRef(packageName, funcName, node), nil
 }
 
 func (p *Parser) AssignmentStatement() (Ast, error) {
@@ -942,12 +814,6 @@ func (p *Parser) Factor() (Ast, error) {
 			return nil, err
 		}
 		return node, nil
-	}
-	if (token.Type == TokenID && p.Lexer.CurrentChar == '(') || (token.Type == TokenID && p.Lexer.CurrentChar == '.') {
-		return p.FunctionCallStatement()
-	}
-	if token.Type == TokenAt {
-		return p.FunctionReference()
 	}
 
 	return p.Variable()

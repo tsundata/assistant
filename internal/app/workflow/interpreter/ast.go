@@ -118,21 +118,34 @@ func NewNoOp() *NoOp {
 }
 
 type Program struct {
-	Name     string
-	Block    Ast
-	Packages []Ast
+	Name      string
+	Nodes     []Ast
+	Workflows []Ast
 }
 
-func NewProgram(name string, packages []Ast, block Ast) *Program {
-	return &Program{Name: name, Packages: packages, Block: block}
+func NewProgram(name string, nodes []Ast, workflows []Ast) *Program {
+	return &Program{Name: name, Nodes: nodes, Workflows: workflows}
 }
 
-type Package struct {
-	Name string
+type Node struct {
+	Name       string
+	Regular    string
+	With       Ast
+	Parameters map[string]interface{}
+	Secret     string
 }
 
-func NewPackage(name string) *Package {
-	return &Package{Name: name}
+func NewNode(name string, regular string, with Ast, secret string) *Node {
+	return &Node{Name: name, Regular: regular, With: with, Secret: secret}
+}
+
+type Workflow struct {
+	Name      string
+	Scenarios Ast
+}
+
+func NewWorkflow(name string, scenarios Ast) *Workflow {
+	return &Workflow{Name: name, Scenarios: scenarios}
 }
 
 type Block struct {

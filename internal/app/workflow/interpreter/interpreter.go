@@ -96,9 +96,6 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Program); ok {
 		return i.VisitProgram(n)
 	}
-	if n, ok := node.(*Package); ok {
-		return i.VisitPackage(n)
-	}
 	if n, ok := node.(*Block); ok {
 		return i.VisitBlock(n)
 	}
@@ -180,7 +177,8 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	i.callStack.Push(ar)
 	log.Println(i.callStack)
 
-	result := i.Visit(node.Block)
+	i.Visit(node.Nodes)
+	result := i.Visit(node.Workflows)
 
 	log.Printf("LEAVE: PROGRAM %s\n", programName)
 	log.Println(i.callStack)
@@ -188,10 +186,6 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	i.callStack.Pop()
 
 	return result.(float64)
-}
-
-func (i *Interpreter) VisitPackage(node *Package) float64 {
-	return 0
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {

@@ -169,10 +169,6 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitProgram(n)
 		return
 	}
-	if n, ok := node.(*Package); ok {
-		b.VisitPackage(n)
-		return
-	}
 	if n, ok := node.(*Block); ok {
 		b.VisitBlock(n)
 		return
@@ -272,33 +268,14 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
-	// builtin function
-	for _, f := range functions {
-		b.CurrentScope.Insert(f)
-	}
-	for _, f := range iteration {
-		b.CurrentScope.Insert(f)
-	}
-
-	// import package
-	for _, p := range node.Packages {
-		b.Visit(p)
-	}
-
 	// visit subtree
-	b.Visit(node.Block)
+	b.Visit(node.Nodes)
+	b.Visit(node.Workflows)
 
 	log.Println(globalScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
 	log.Println("LEAVE scope: global")
-}
-
-func (b *SemanticAnalyzer) VisitPackage(node *Package) {
-	log.Println("Import package:", node.Name)
-	for _, call := range packages[node.Name] {
-		b.CurrentScope.Insert(call)
-	}
 }
 
 func (b *SemanticAnalyzer) VisitBlock(node *Block) {
