@@ -1,21 +1,19 @@
-package message
+package workflow
 
 import (
 	"errors"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/message/service"
+	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/bbolt"
+	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type Options struct {
-	Name    string
-	webhook string
+	Name string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -26,16 +24,14 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, errors.New("unmarshal app option error")
 	}
 
-	slack := v.GetStringMapString("slack")
-	o.webhook = slack["webhook"]
-
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB, b *rulebot.RuleBot, wfClient pb.WorkflowClient) (*app.Application, error) {
-	message := service.NewManage(db, logger, b, o.webhook, wfClient)
-	err := rs.Register(func(s *grpc.Server) error {
-		pb.RegisterMessageServer(s, message)
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client) (*app.Application, error) {
+	// service
+	subscribe := service.NewWorkflow(etcd)
+	err := rs.Register(func(gs *grpc.Server) error {
+		pb.RegisterWorkflowServer(gs, subscribe)
 		return nil
 	})
 	if err != nil {

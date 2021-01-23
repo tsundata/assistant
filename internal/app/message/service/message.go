@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/robertkrimen/otto"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
@@ -17,14 +16,15 @@ import (
 )
 
 type Message struct {
-	db      *bbolt.DB
-	logger  *zap.Logger
-	bot     *rulebot.RuleBot
-	webhook string
+	webhook  string
+	db       *bbolt.DB
+	logger   *zap.Logger
+	bot      *rulebot.RuleBot
+	wfClient pb.WorkflowClient
 }
 
-func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string) *Message {
-	return &Message{db: db, logger: logger, bot: bot, webhook: webhook}
+func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
+	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 
 func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageList, error) {
@@ -221,24 +221,17 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 	case model.MessageTypeScript:
 		switch model.MessageScriptKind(find.Text) {
 		case model.MessageScriptOfFlowscript:
-			text := strings.Replace(find.Text, "#!script:flowscript", "", -1)
-			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))
+			txt := strings.Replace(find.Text, "#!script:flowscript", "", -1)
+			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
+				Text: txt,
+			})
+			reply = "run error"
 			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
+				reply = err.Error()
 			}
-			tree, err := p.Parse()
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
+			if r != nil {
+				reply = r.Text
 			}
-			i := interpreter.NewInterpreter(tree)
-			_, err = i.Interpret()
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
-			}
-			reply = i.Stdout()
 		case model.MessageScriptOfJavascript:
 			vm := otto.New()
 			v, err := vm.Run(strings.Replace(find.Text, "#!script:javascript", "", -1))
