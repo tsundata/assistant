@@ -3,17 +3,14 @@ package interpreter
 import (
 	"errors"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/utils/collection"
 	"log"
-	"strconv"
 	"strings"
 )
 
 type ARType string
 
 const (
-	ARTypeProgram  ARType = "PROGRAM"
-	ARTypeFunction ARType = "FUNCTION"
+	ARTypeProgram ARType = "PROGRAM"
 )
 
 type CallStack struct {
@@ -96,6 +93,12 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*Program); ok {
 		return i.VisitProgram(n)
 	}
+	if n, ok := node.(*Node); ok {
+		return i.VisitNode(n)
+	}
+	if n, ok := node.(*Workflow); ok {
+		return i.VisitWorkflow(n)
+	}
 	if n, ok := node.(*Block); ok {
 		return i.VisitBlock(n)
 	}
@@ -108,23 +111,26 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*BinOp); ok {
 		return i.VisitBinOp(n)
 	}
-	if n, ok := node.(*Number); ok {
-		return i.VisitNumber(n)
+	if n, ok := node.(*NumberConst); ok {
+		return i.VisitNumberConst(n)
 	}
-	if n, ok := node.(*String); ok {
-		return i.VisitString(n)
+	if n, ok := node.(*StringConst); ok {
+		return i.VisitStringConst(n)
 	}
-	if n, ok := node.(*Boolean); ok {
-		return i.VisitBoolean(n)
+	if n, ok := node.(*BooleanConst); ok {
+		return i.VisitBooleanConst(n)
+	}
+	if n, ok := node.(*MessageConst); ok {
+		return i.VisitMessageConst(n)
+	}
+	if n, ok := node.(*NodeConst); ok {
+		return i.VisitNodeConst(n)
 	}
 	if n, ok := node.(*List); ok {
 		return i.VisitList(n)
 	}
 	if n, ok := node.(*Dict); ok {
 		return i.VisitDict(n)
-	}
-	if n, ok := node.(*Message); ok {
-		return i.VisitMessage(n)
 	}
 	if n, ok := node.(*UnaryOp); ok {
 		return i.VisitUnaryOp(n)
@@ -141,18 +147,6 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	if n, ok := node.(*NoOp); ok {
 		return i.VisitNoOp(n)
 	}
-	if n, ok := node.(*FunctionDecl); ok {
-		return i.VisitFunctionDecl(n)
-	}
-	if n, ok := node.(*FunctionCall); ok {
-		return i.VisitFunctionCall(n)
-	}
-	if n, ok := node.(*FunctionRef); ok {
-		return i.VisitFunctionRef(n)
-	}
-	if n, ok := node.(*Return); ok {
-		return i.VisitReturn(n)
-	}
 	if n, ok := node.(*Print); ok {
 		return i.VisitPrint(n)
 	}
@@ -164,6 +158,9 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 	}
 	if n, ok := node.(*Logical); ok {
 		return i.VisitLogical(n)
+	}
+	if n, ok := node.(*Flow); ok {
+		return i.VisitFlow(n)
 	}
 
 	return 0
@@ -177,15 +174,31 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	i.callStack.Push(ar)
 	log.Println(i.callStack)
 
-	i.Visit(node.Nodes)
-	result := i.Visit(node.Workflows)
+	var result float64
+
+	// nodes
+	for _, item := range node.Nodes {
+		i.Visit(item)
+	}
+	// workflows
+	for _, item := range node.Workflows {
+		i.Visit(item)
+	}
 
 	log.Printf("LEAVE: PROGRAM %s\n", programName)
 	log.Println(i.callStack)
 
 	i.callStack.Pop()
 
-	return result.(float64)
+	return result
+}
+
+func (i *Interpreter) VisitNode(node *Node) float64 {
+	return 0
+}
+
+func (i *Interpreter) VisitWorkflow(node *Workflow) float64 {
+	return 0
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {
@@ -195,6 +208,10 @@ func (i *Interpreter) VisitBlock(node *Block) float64 {
 		}
 	}
 	i.Visit(node.CompoundStatement)
+	return 0
+}
+
+func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	return 0
 }
 
@@ -234,20 +251,23 @@ func (i *Interpreter) VisitBinOp(node *BinOp) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitNumber(node *Number) float64 {
+func (i *Interpreter) VisitNumberConst(node *NumberConst) float64 {
 	return node.Value
 }
 
-func (i *Interpreter) VisitString(node *String) string {
+func (i *Interpreter) VisitStringConst(node *StringConst) string {
 	return node.Value
 }
 
-func (i *Interpreter) VisitBoolean(node *Boolean) bool {
+func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 	return node.Value
 }
 
-func (i *Interpreter) VisitMessage(node *Message) interface{} {
-	// TODO get message
+func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
+	return node.Value
+}
+
+func (i *Interpreter) VisitNodeConst(node *NodeConst) interface{} {
 	return node.Value
 }
 
@@ -281,13 +301,7 @@ func (i *Interpreter) VisitUnaryOp(node *UnaryOp) float64 {
 
 func (i *Interpreter) VisitCompound(node *Compound) float64 {
 	for _, child := range node.Children {
-		if _, ok := child.(*Return); ok {
-			ar := i.callStack.Peek()
-			ar.ReturnValue = i.Visit(child)
-			break
-		} else {
-			i.Visit(child)
-		}
+		i.Visit(child)
 	}
 	return 0
 }
@@ -323,73 +337,6 @@ func (i *Interpreter) VisitVar(node *Var) interface{} {
 
 func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
 	return 0
-}
-
-func (i *Interpreter) VisitFunctionDecl(node *FunctionDecl) float64 {
-	return 0
-}
-
-func (i *Interpreter) VisitFunctionCall(node *FunctionCall) interface{} {
-	funcName := node.FuncName
-	funcSymbol := node.FuncSymbol
-
-	if funcSymbol == nil {
-		return nil
-	}
-
-	if node.PackageName != "" {
-		funcName = fmt.Sprintf("%s.%s", node.PackageName, node.FuncName)
-	}
-
-	ar := NewActivationRecord(funcName, ARTypeFunction, funcSymbol.(*FunctionSymbol).ScopeLevel+1)
-
-	formalParams := funcSymbol.(*FunctionSymbol).FormalParams
-	actualParams := node.ActualParams
-
-	var ap []interface{}
-	packageName := funcSymbol.(*FunctionSymbol).Package
-	if packageName == "" {
-		for _, item := range collection.Zip(formalParams, actualParams) {
-			k := item.Element1.(*VarSymbol).Name
-			v := i.Visit(item.Element2)
-			ar.Set(k, v)
-		}
-	} else {
-		for index, param := range actualParams {
-			k := strconv.Itoa(index)
-			v := i.Visit(param)
-			ar.Set(k, v)
-			ap = append(ap, v)
-		}
-	}
-
-	i.callStack.Push(ar)
-
-	log.Printf("ENTER: FUNCTION %s\n", funcName)
-	log.Println(i.callStack)
-
-	var returnValue interface{}
-	if packageName == "" {
-		i.Visit(funcSymbol.(*FunctionSymbol).BlockAst)
-		returnValue = ar.ReturnValue
-	} else {
-		returnValue = funcSymbol.(*FunctionSymbol).Call(i, ap)
-	}
-
-	log.Printf("LEAVE: FUNCTION %s\n", funcName)
-	log.Println(i.callStack)
-
-	i.callStack.Pop()
-
-	return returnValue
-}
-
-func (i *Interpreter) VisitFunctionRef(node *FunctionRef) *FunctionRef {
-	return node
-}
-
-func (i *Interpreter) VisitReturn(node *Return) interface{} {
-	return i.Visit(node.Statement)
 }
 
 func (i *Interpreter) VisitPrint(node *Print) interface{} {

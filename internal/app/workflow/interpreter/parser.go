@@ -41,8 +41,6 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 }
 
 func (p *Parser) Program() (Ast, error) {
-	programName := "RAND_NAME"
-
 	var err error
 	var nodes []Ast
 	if p.CurrentToken.Type == TokenNode {
@@ -60,12 +58,7 @@ func (p *Parser) Program() (Ast, error) {
 		}
 	}
 
-	programNode := NewProgram(programName, nodes, workflows)
-	err = p.Eat(TokenDot)
-	if err != nil {
-		return nil, err
-	}
-	return programNode, nil
+	return NewProgram("main", nodes, workflows), nil
 }
 
 func (p *Parser) Node() ([]Ast, error) {
@@ -76,7 +69,7 @@ func (p *Parser) Node() ([]Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		name := p.CurrentToken.String()
+		name := p.CurrentToken.Value.(string)
 		err = p.Eat(TokenID)
 		if err != nil {
 			return nil, err
@@ -85,7 +78,7 @@ func (p *Parser) Node() ([]Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		regular := p.CurrentToken.String()
+		regular := p.CurrentToken.Value.(string)
 		err = p.Eat(TokenID)
 		if err != nil {
 			return nil, err
@@ -117,7 +110,7 @@ func (p *Parser) Node() ([]Ast, error) {
 				return nil, err
 			}
 			err = p.Eat(TokenColon)
-			secret = p.CurrentToken.String()
+			secret = p.CurrentToken.Value.(string)
 			err = p.Eat(TokenID)
 			if err != nil {
 				return nil, err
@@ -142,7 +135,7 @@ func (p *Parser) Workflow() ([]Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		name := p.CurrentToken.String()
+		name := p.CurrentToken.Value.(string)
 		err = p.Eat(TokenID)
 		if err != nil {
 			return nil, err
@@ -162,7 +155,7 @@ func (p *Parser) Workflow() ([]Ast, error) {
 		workflows = append(workflows, NewWorkflow(name, scenarios))
 	}
 
-	return nil, nil
+	return workflows, nil
 }
 
 func (p *Parser) Block() (Ast, error) {
@@ -309,6 +302,11 @@ func (p *Parser) TypeSpec() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
+	} else if p.CurrentToken.Type == TokenNode {
+		err := p.Eat(TokenNode)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		return nil, p.error(UnexpectedToken, token)
 	}
@@ -318,10 +316,6 @@ func (p *Parser) TypeSpec() (Ast, error) {
 
 func (p *Parser) CompoundStatement() (Ast, error) {
 	nodes, err := p.StatementList()
-	if err != nil {
-		return nil, err
-	}
-	err = p.Eat(TokenEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -355,8 +349,10 @@ func (p *Parser) StatementList() ([]Ast, error) {
 
 func (p *Parser) Statement() (Ast, error) {
 	// FIXME
-	if p.CurrentToken.Type == TokenColon {
+	if p.CurrentToken.Type == TokenLCurly {
 		return p.CompoundStatement()
+	} else if p.CurrentToken.Type == TokenNodeConst {
+		return p.FlowStatement()
 	} else if p.CurrentToken.Type == TokenID {
 		return p.AssignmentStatement()
 	} else if p.CurrentToken.Type == TokenPrint {
@@ -370,11 +366,30 @@ func (p *Parser) Statement() (Ast, error) {
 	}
 }
 
-// TODO
 func (p *Parser) FlowStatement() (Ast, error) {
+	var nodes []Ast
+	node := p.CurrentToken
+	err := p.Eat(TokenNodeConst)
+	if err != nil {
+		return nil, err
+	}
+	nodes = append(nodes, node)
 
+	for p.CurrentToken.Type == TokenFlow {
+		err = p.Eat(TokenFlow)
+		if err != nil {
+			return nil, err
+		}
 
-	return nil, nil
+		right := p.CurrentToken
+		err := p.Eat(TokenNodeConst)
+		if err != nil {
+			return nil, err
+		}
+		nodes = append(nodes, right)
+	}
+
+	return NewFlow(nodes), nil
 }
 
 func (p *Parser) PrintStatement() (Ast, error) {
@@ -757,42 +772,42 @@ func (p *Parser) Factor() (Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		return NewNumber(token), nil
+		return NewNumberConst(token), nil
 	}
 	if token.Type == TokenFloatConst {
 		err := p.Eat(TokenFloatConst)
 		if err != nil {
 			return nil, err
 		}
-		return NewNumber(token), nil
+		return NewNumberConst(token), nil
 	}
 	if token.Type == TokenStringConst {
 		err := p.Eat(TokenStringConst)
 		if err != nil {
 			return nil, err
 		}
-		return NewString(token), nil
+		return NewStringConst(token), nil
 	}
 	if token.Type == TokenMessageConst {
 		err := p.Eat(TokenMessageConst)
 		if err != nil {
 			return nil, err
 		}
-		return NewMessage(token), nil
+		return NewMessageConst(token), nil
 	}
 	if token.Type == TokenTrue {
 		err := p.Eat(TokenTrue)
 		if err != nil {
 			return nil, err
 		}
-		return NewBoolean(token), nil
+		return NewBooleanConst(token), nil
 	}
 	if token.Type == TokenFalse {
 		err := p.Eat(TokenFalse)
 		if err != nil {
 			return nil, err
 		}
-		return NewBoolean(token), nil
+		return NewBooleanConst(token), nil
 	}
 	if token.Type == TokenLSquare {
 		return p.List()

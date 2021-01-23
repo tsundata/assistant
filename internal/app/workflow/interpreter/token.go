@@ -39,6 +39,7 @@ const (
 	TokenFloatConst   = "FLOAT_CONST"
 	TokenStringConst  = "STRING_CONST"
 	TokenMessageConst = "MESSAGE_CONST"
+	TokenNodeConst    = "NODE_CONST"
 	TokenAssign       = ":="
 	TokenEOF          = "EOF"
 	TokenIf           = "IF"

@@ -12,7 +12,7 @@ variable_declaration : ID ( "," ID )* type_spec
 
 formal_parameters : ID ( "," ID )* ":" type_spec
 
-type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT | MESSAGE
+type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT | MESSAGE | NODE
 
 INTEGER : "int"
 FLOAT   : "float"
@@ -21,11 +21,7 @@ BOOLEAN : "bool"
 LIST    : "list"
 DICT    : "dict"
 MESSAGE : "message"
-
-compound_statement : statement_list
-
-statement_list : statement
-			   | statement ";" statement_list
+NODE    : "node"
 
 statement : compound_statement
 		  | assignment_statement
@@ -35,7 +31,12 @@ statement : compound_statement
 		  | while_statement
 		  | empty
 
-flow_statement : ID "<-" ID
+compound_statement : statement_list
+
+statement_list : statement
+			   | statement ";" statement_list
+
+flow_statement : NODE_CONST ( "<-" NODE_CONST )*
 
 print_statement : "print" expression
 
@@ -57,7 +58,7 @@ assignment_statement : variable ":=" expr
 
 empty :
 
-expr : term ( ( "+" | "-" ) term )*
+expr : term ( ( "+" | "-" | "<-" ) term )*
 
 term : factor ( ( "*" | "DIV" | "/" ) factor )*
 
@@ -76,6 +77,7 @@ factor : "+" factor
 variable : ID
 
 MESSAGE_CONST : "#" DIGIT+
+NODE_CONST    : "@" DIGIT+
 BOOLEAN_CONST : "true" | "false"
 NUMBER        : DIGIT+ ( "." DIGIT+ )?
 STRING_CONST  : "\"" <any char except "\"">* "\""

@@ -62,10 +62,7 @@ node notice (http):
 end
 
 workflow main:
-	news <- abc
-	if  abc :
-		notice <- news
-	end
+    @notice <- @news <- @abc
 end
 `
 	run(t, text)
