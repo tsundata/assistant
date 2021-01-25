@@ -7,6 +7,13 @@ service Middle {
   rpc CreatePage(PageRequest) returns (Text) {}
   rpc GetPage(PageRequest) returns (PageReply) {}
   rpc Qr(Text) returns (Text) {}
+  rpc Apps(Text) returns (AppReply) {}
+  rpc StoreAppOAuth(Text) returns (Text) {}
+  rpc Credentials(Text) returns (Text) {}
+  rpc GetCredentials(Text) returns (Text) {}
+  rpc CreateCredential(Text) returns (Text) {}
+  rpc Setting(Text) returns (SettingReply) {}
+  rpc CreateSetting(KV) returns (Text) {}
 }
 
 message PageRequest {
@@ -21,6 +28,24 @@ message PageReply {
   string content = 3;
 }
 
+message AppReply {
+  repeated App apps = 1;
+}
+
+message App {
+  string title = 1;
+  bool isAuthorized = 2;
+}
+
 message Text {
   string text = 1;
+}
+
+message SettingReply {
+  repeated KV items = 1;
+}
+
+message KV {
+  string key = 1;
+  string value = 2;
 }

@@ -93,3 +93,31 @@ func (s *Middle) Qr(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
 		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil
 }
+
+func (s *Middle) Apps(ctx context.Context, payload *pb.Text) (*pb.AppReply, error) {
+	return nil, nil
+}
+
+func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+	return nil, nil
+}
+
+func (s *Middle) Credentials(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+	return nil, nil
+}
+
+func (s *Middle) GetCredentials(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+	return nil, nil
+}
+
+func (s *Middle) CreateCredential(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+	return nil, nil
+}
+
+func (s *Middle) Setting(ctx context.Context, payload *pb.Text) (*pb.SettingReply, error) {
+	return nil, nil
+}
+
+func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KV) (*pb.Text, error) {
+	return nil, nil
+}
