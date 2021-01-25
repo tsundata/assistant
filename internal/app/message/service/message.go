@@ -221,7 +221,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 	case model.MessageTypeScript:
 		switch model.MessageScriptKind(find.Text) {
 		case model.MessageScriptOfFlowscript:
-			txt := strings.Replace(find.Text, "#!script:flowscript", "", -1)
+			txt := strings.ReplaceAll(find.Text, "#!script:flowscript", "")
 			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
 				Text: txt,
 			})
@@ -234,7 +234,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 			}
 		case model.MessageScriptOfJavascript:
 			vm := otto.New()
-			v, err := vm.Run(strings.Replace(find.Text, "#!script:javascript", "", -1))
+			v, err := vm.Run(strings.ReplaceAll(find.Text, "#!script:javascript", ""))
 			if err != nil {
 				m.logger.Error(err.Error())
 				return nil, err

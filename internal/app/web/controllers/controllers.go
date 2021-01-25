@@ -63,6 +63,26 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
 			}
 		}
+
+		// POST
+		if ctx.IsPost() {
+			switch utils.ByteToString(path) {
+			case "/":
+				wc.Index(ctx)
+			default:
+				credentialsCreateRe := regexp.MustCompile(`^/credentials/[\w\-]+/store$`)
+				if credentialsCreateRe.Match(path) {
+					wc.CredentialsStore(ctx)
+					return
+				}
+				settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/store$`)
+				if settingCreateRe.Match(path) {
+					wc.SettingStore(ctx)
+					return
+				}
+				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
+			}
+		}
 	}
 
 	return requestHandler

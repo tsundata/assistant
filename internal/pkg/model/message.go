@@ -164,7 +164,7 @@ func MessageScriptKind(text string) string {
 
 	lines := strings.Split(text, "\n")
 	if len(lines) >= 1 {
-		return strings.Replace(strings.TrimSpace(lines[0]), "#!script:", "", -1)
+		return strings.ReplaceAll(strings.TrimSpace(lines[0]), "#!script:", "")
 	}
 	return MessageScriptOfUndefined
 }

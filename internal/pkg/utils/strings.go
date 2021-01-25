@@ -55,7 +55,7 @@ func GeneratePassword(length int, containChars string) string {
 	if strings.Contains(containChars, "no_similar") {
 		noSimilarChars := []byte("0ODQ1lLj8B5S2Z")
 		for _, c := range noSimilarChars {
-			charsStr = strings.Replace(charsStr, string(c), "", 1)
+			charsStr = strings.ReplaceAll(charsStr, string(c), "")
 		}
 	}
 	if charsStr == "" {

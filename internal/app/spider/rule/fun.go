@@ -253,7 +253,7 @@ func parseParams(s string) (map[string]string, int) {
 			} else if inStr && cso(1) == '"' {
 				inStr = false
 				s := strings.TrimSpace(sb.String())
-				s = strings.Replace(s, `\\`, `\`, -1)
+				s = strings.ReplaceAll(s, `\\`, `\`)
 				insertVal(s)
 				sb.Reset()
 			} else if inExp && cso(1) == '`' {

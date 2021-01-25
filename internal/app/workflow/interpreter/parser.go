@@ -110,6 +110,9 @@ func (p *Parser) Node() ([]Ast, error) {
 				return nil, err
 			}
 			err = p.Eat(TokenColon)
+			if err != nil {
+				return nil, err
+			}
 			secret = p.CurrentToken.Value.(string)
 			err = p.Eat(TokenID)
 			if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/bbolt"
+	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -32,9 +33,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 // FIXME rename
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB, etcd *clientv3.Client) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(db, o.webURL)
+	mid := service.NewMiddle(db, etcd, o.webURL)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, mid)
 		return nil

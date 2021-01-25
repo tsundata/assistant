@@ -19,7 +19,9 @@ func NewSubscribe(etcd *clientv3.Client) *Subscribe {
 }
 
 func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
-	resp, err := s.etcd.Get(context.Background(), "subscribe_", clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	resp, err := s.etcd.Get(context.Background(), "subscribe_",
+		clientv3.WithPrefix(),
+		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +30,7 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 
 	mb := make(map[string]string)
 	for _, ev := range resp.Kvs {
-		mb[strings.Replace(utils.ByteToString(ev.Key), "subscribe_", "", -1)] = utils.ByteToString(ev.Value)
+		mb[strings.ReplaceAll(utils.ByteToString(ev.Key), "subscribe_", "")] = utils.ByteToString(ev.Value)
 	}
 
 	for source, isSubscribe := range mb {

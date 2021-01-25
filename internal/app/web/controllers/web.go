@@ -206,6 +206,10 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 	c.Response.SetBody([]byte(comp.GetContent()))
 }
 
+func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
+
+}
+
 func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 	var items []components.Component
 	items = append(items, &components.Text{
@@ -216,7 +220,6 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 	})
 	items = append(items, &components.Text{
 		Title: "my's facebook (Facebook): true",
-
 	})
 	comp := components.Html{
 		Title:   "Setting",
@@ -266,4 +269,12 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 
 	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
+
+}
+
+func checkFlag(path string) bool {
+	return true
 }

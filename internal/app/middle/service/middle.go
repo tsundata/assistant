@@ -6,17 +6,21 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/bbolt"
+	"go.etcd.io/etcd/clientv3"
 	"net/url"
+	"strings"
 	"time"
 )
 
 type Middle struct {
 	db     *bbolt.DB
+	etcd   *clientv3.Client
 	webURL string
 }
 
-func NewMiddle(db *bbolt.DB, webURL string) *Middle {
+func NewMiddle(db *bbolt.DB, etcd *clientv3.Client, webURL string) *Middle {
 	return &Middle{db: db, webURL: webURL}
 }
 
@@ -115,9 +119,28 @@ func (s *Middle) CreateCredential(ctx context.Context, payload *pb.Text) (*pb.Te
 }
 
 func (s *Middle) Setting(ctx context.Context, payload *pb.Text) (*pb.SettingReply, error) {
-	return nil, nil
+	resp, err := s.etcd.Get(context.Background(), "setting/",
+		clientv3.WithPrefix(),
+		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	if err != nil {
+		return nil, err
+	}
+	var reply pb.SettingReply
+	for _, ev := range resp.Kvs {
+		reply.Items = append(reply.Items, &pb.KV{
+			Key:   strings.ReplaceAll(utils.ByteToString(ev.Key), "setting/", ""),
+			Value: utils.ByteToString(ev.Value),
+		})
+	}
+	return &reply, nil
 }
 
 func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KV) (*pb.Text, error) {
-	return nil, nil
+	_, err := s.etcd.Put(context.Background(), "setting/"+payload.Key, payload.Value)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.Text{
+		Text: "ok",
+	}, nil
 }
