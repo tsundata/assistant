@@ -30,6 +30,11 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 					wc.Page(ctx)
 					return
 				}
+				appsRe := regexp.MustCompile(`^/apps/[\w\-]+$`)
+				if appsRe.Match(path) {
+					wc.Apps(ctx)
+					return
+				}
 				qrRe := regexp.MustCompile(`^/qr/(.*)$`)
 				if qrRe.Match(path) {
 					wc.Qr(ctx)

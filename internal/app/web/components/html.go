@@ -6,11 +6,12 @@ import (
 )
 
 type Html struct {
-	Name  string
-	Title string
-	Page  Component
-	css   template.CSS
-	js    template.JS
+	Name    string
+	Title   string
+	UseIcon bool
+	Page    Component
+	css     template.CSS
+	js      template.JS
 }
 
 func (c *Html) SetCss(css template.CSS) {
@@ -22,6 +23,10 @@ func (c *Html) SetJs(js template.JS) {
 }
 
 func (c *Html) GetContent() template.HTML {
+	iconLink := ""
+	if c.UseIcon {
+		iconLink = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">`
+	}
 	return template.HTML(fmt.Sprintf(`<html lang="en">
 <head>
     <meta charset="utf-8">
@@ -33,6 +38,7 @@ func (c *Html) GetContent() template.HTML {
 	<title>%s</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
+	%s
     <style>
 		a {
 			text-decoration: none;
@@ -47,6 +53,11 @@ func (c *Html) GetContent() template.HTML {
             border-bottom: 1px solid #e8ecf1;
             padding-bottom: 15px;
         }
+		.content {
+	    	display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
         .content h2 {
             font-size: 18px;
             margin-top: 25px;
@@ -72,6 +83,22 @@ func (c *Html) GetContent() template.HTML {
             width: 30px;
             height: 30px;
         }
+		.app {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 50%%;
+			height: 210px;
+			justify-content: center;
+		}
+		.app a {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.app span {
+			margin-top: 20px;
+		}
 		%s
     </style>
 </head>
@@ -83,5 +110,5 @@ func (c *Html) GetContent() template.HTML {
 
 %s
 </body>
-</html>`, c.Title, c.css, c.Page.GetContent(), c.js))
+</html>`, c.Title, iconLink, c.css, c.Page.GetContent(), c.js))
 }

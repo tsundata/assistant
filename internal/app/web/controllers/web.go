@@ -106,3 +106,35 @@ func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
 	c.Response.Header.Set("Content-Type", "image/png")
 	c.Response.SetBody(png)
 }
+
+func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
+	var items []components.Component
+	items = append(items, &components.App{
+		Name: "Pocket",
+		Icon: "get-pocket",
+		Text: "Authorized",
+	})
+	items = append(items, &components.App{
+		Name: "Github",
+		Icon: "github",
+		Text: "Unauthorized",
+	})
+	items = append(items, &components.App{
+		Name: "Facebook",
+		Icon: "facebook",
+		Text: "Unauthorized",
+	})
+	comp := components.Html{
+		Title:   "Apps",
+		UseIcon: true,
+		Page: &components.Page{
+			Title: "Apps",
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
