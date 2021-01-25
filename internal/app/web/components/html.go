@@ -44,6 +44,34 @@ func (c *Html) GetContent() template.HTML {
 			text-decoration: none;
 			color: #003C97;
 		}
+		form {
+			width: 100%%;
+			margin-top: 50px;
+		}
+		form button {
+			width: 100%%;
+			height: 50px;
+			border: none;
+			margin: 10px;
+			border-radius: 5px;
+		}
+		form .button {
+			width: 100%%;
+			display: flex;
+			flex-direction: row;
+		}
+		form .input {
+			display: flex;
+			flex-direction: column;
+			margin-bottom: 20px;
+		}
+		form .input label {
+			margin-bottom: 10px;
+		}
+		form .input input {
+			height: 50px;
+			padding-left: 20px;
+		}
         #app-container {
             color: #333;
             padding: 15px 25px;
@@ -52,7 +80,13 @@ func (c *Html) GetContent() template.HTML {
             font-size: 21px;
             border-bottom: 1px solid #e8ecf1;
             padding-bottom: 15px;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
         }
+		.title span {
+			font-size: 13px;
+		}
 		.content {
 	    	display: flex;
 			flex-direction: row;
@@ -62,7 +96,11 @@ func (c *Html) GetContent() template.HTML {
             font-size: 18px;
             margin-top: 25px;
             margin-bottom: 15px;
+			width: 100%%;
         }
+		.link {
+			width: 100%%;
+		}
         .link .link-block {
             background-color: #f7f7f7;
 			padding: 10px;
@@ -83,6 +121,8 @@ func (c *Html) GetContent() template.HTML {
             width: 30px;
             height: 30px;
         }
+		.button {
+		}
 		.app {
 			display: flex;
 			flex-direction: column;

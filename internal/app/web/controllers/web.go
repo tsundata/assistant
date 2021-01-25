@@ -138,3 +138,132 @@ func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
 	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 	c.Response.SetBody([]byte(comp.GetContent()))
 }
+
+func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
+	var items []components.Component
+	items = append(items, &components.Link{
+		Title: "pocket (Pocket)",
+		Name:  "pocket (Pocket)",
+		URL:   "#1",
+	})
+	items = append(items, &components.Link{
+		Title: "my's github (Github)",
+		Name:  "my's github (Github)",
+		URL:   "#2",
+	})
+	items = append(items, &components.Link{
+		Title: "my's facebook (Facebook)",
+		Name:  "my's facebook (Facebook)",
+		URL:   "#3",
+	})
+	comp := components.Html{
+		Title:   "Credentials",
+		UseIcon: true,
+		Page: &components.Page{
+			Title: "Credentials",
+			Action: &components.Button{
+				Title: "Add Credentials",
+				URL:   "/credentials/xxx/create",
+			},
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
+	var items []components.Component
+	items = append(items, &components.Input{
+		Title: "Name",
+		Type:  "text",
+	})
+	items = append(items, &components.Input{
+		Title: "App Key",
+		Type:  "text",
+	})
+	comp := components.Html{
+		Title:   "Create Credentials",
+		UseIcon: true,
+		Page: &components.Page{
+			Title: "Create Credentials",
+			Action: &components.Button{
+				Title: "Go Back",
+				URL:   "/credentials/xxx",
+			},
+			Content: &components.Form{
+				Action: "/demo",
+				Method: "POST",
+				Inputs: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
+	var items []components.Component
+	items = append(items, &components.Text{
+		Title: "foo: bar",
+	})
+	items = append(items, &components.Text{
+		Title: "open: false",
+	})
+	items = append(items, &components.Text{
+		Title: "my's facebook (Facebook): true",
+
+	})
+	comp := components.Html{
+		Title:   "Setting",
+		UseIcon: true,
+		Page: &components.Page{
+			Title: "Setting",
+			Action: &components.Button{
+				Title: "Add Setting",
+				URL:   "/setting/xxx/create",
+			},
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
+	var items []components.Component
+	items = append(items, &components.Input{
+		Title: "Key",
+		Type:  "text",
+	})
+	items = append(items, &components.Input{
+		Title: "Value",
+		Type:  "text",
+	})
+	comp := components.Html{
+		Title:   "Create Setting",
+		UseIcon: true,
+		Page: &components.Page{
+			Title: "Create Setting",
+			Action: &components.Button{
+				Title: "Go Back",
+				URL:   "/setting/xxx",
+			},
+			Content: &components.Form{
+				Action: "/demo",
+				Method: "POST",
+				Inputs: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
