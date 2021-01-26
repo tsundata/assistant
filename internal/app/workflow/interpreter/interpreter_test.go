@@ -61,8 +61,12 @@ node notice (http):
 	 	}
 end
 
+workflow demo:
+    @notice -> @news
+end
+
 workflow main:
-    @notice <- @news <- @abc
+    @abc -> @news -> @notice
 end
 `
 	run(t, text)

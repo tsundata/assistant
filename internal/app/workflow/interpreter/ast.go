@@ -136,11 +136,11 @@ func NewNoOp() *NoOp {
 
 type Program struct {
 	Name      string
-	Nodes     []Ast
-	Workflows []Ast
+	Nodes     map[string]Ast
+	Workflows map[string]Ast
 }
 
-func NewProgram(name string, nodes []Ast, workflows []Ast) *Program {
+func NewProgram(name string, nodes map[string]Ast, workflows map[string]Ast) *Program {
 	return &Program{Name: name, Nodes: nodes, Workflows: workflows}
 }
 

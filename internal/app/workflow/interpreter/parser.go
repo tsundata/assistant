@@ -42,7 +42,7 @@ func (p *Parser) Eat(tokenType TokenType) (err error) {
 
 func (p *Parser) Program() (Ast, error) {
 	var err error
-	var nodes []Ast
+	nodes := make(map[string]Ast)
 	if p.CurrentToken.Type == TokenNode {
 		nodes, err = p.Node()
 		if err != nil {
@@ -50,7 +50,7 @@ func (p *Parser) Program() (Ast, error) {
 		}
 	}
 
-	var workflows []Ast
+	workflows := make(map[string]Ast)
 	if p.CurrentToken.Type == TokenWorkflow {
 		workflows, err = p.Workflow()
 		if err != nil {
@@ -61,8 +61,8 @@ func (p *Parser) Program() (Ast, error) {
 	return NewProgram("main", nodes, workflows), nil
 }
 
-func (p *Parser) Node() ([]Ast, error) {
-	var nodes []Ast
+func (p *Parser) Node() (map[string]Ast, error) {
+	nodes := make(map[string]Ast)
 
 	for p.CurrentToken.Type == TokenNode {
 		err := p.Eat(TokenNode)
@@ -124,14 +124,14 @@ func (p *Parser) Node() ([]Ast, error) {
 			return nil, err
 		}
 
-		nodes = append(nodes, NewNode(name, regular, with, secret))
+		nodes[name] = NewNode(name, regular, with, secret)
 	}
 
 	return nodes, nil
 }
 
-func (p *Parser) Workflow() ([]Ast, error) {
-	var workflows []Ast
+func (p *Parser) Workflow() (map[string]Ast, error) {
+	workflows := make(map[string]Ast)
 
 	for p.CurrentToken.Type == TokenWorkflow {
 		err := p.Eat(TokenWorkflow)
@@ -155,7 +155,7 @@ func (p *Parser) Workflow() ([]Ast, error) {
 		if err != nil {
 			return nil, err
 		}
-		workflows = append(workflows, NewWorkflow(name, scenarios))
+		workflows[name] = NewWorkflow(name, scenarios)
 	}
 
 	return workflows, nil

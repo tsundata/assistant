@@ -3,6 +3,7 @@ package interpreter
 import (
 	"errors"
 	"fmt"
+	"github.com/tsundata/assistant/internal/app/workflow/interpreter/nodes"
 	"log"
 	"strings"
 )
@@ -10,7 +11,7 @@ import (
 type ARType string
 
 const (
-	ARTypeProgram ARType = "PROGRAM"
+	ARTypeWorkflow ARType = "WORKFLOW"
 )
 
 type CallStack struct {
@@ -83,6 +84,8 @@ type Interpreter struct {
 	tree      Ast
 	callStack *CallStack
 	stdout    []interface{}
+	nodes     map[string]Ast
+	workflow  map[string]Ast
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
@@ -170,19 +173,13 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	programName := node.Name
 	log.Printf("ENTER: PROGRAM %s\n", programName)
 
-	ar := NewActivationRecord(programName, ARTypeProgram, 1)
-	i.callStack.Push(ar)
-	log.Println(i.callStack)
+	i.nodes = node.Nodes
+	i.workflow = node.Workflows
 
+	// main workflow
 	var result float64
-
-	// nodes
-	for _, item := range node.Nodes {
-		i.Visit(item)
-	}
-	// workflows
-	for _, item := range node.Workflows {
-		i.Visit(item)
+	if item, ok := node.Workflows["main"]; ok {
+		result = i.Visit(item).(float64)
 	}
 
 	log.Printf("LEAVE: PROGRAM %s\n", programName)
@@ -193,12 +190,19 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 	return result
 }
 
-func (i *Interpreter) VisitNode(node *Node) float64 {
-	return 0
+func (i *Interpreter) VisitNode(node *Node) map[string]interface{} {
+	return i.Visit(node.With).(map[string]interface{})
 }
 
 func (i *Interpreter) VisitWorkflow(node *Workflow) float64 {
-	return 0
+	ar := NewActivationRecord(node.Name, ARTypeWorkflow, 1)
+	i.callStack.Push(ar)
+	log.Printf("ENTER: WORKFLOW %s\n", node.Name)
+
+	r := i.Visit(node.Scenarios).(float64)
+
+	log.Printf("LEAVE: WORKFLOW %s\n", node.Name)
+	return r
 }
 
 func (i *Interpreter) VisitBlock(node *Block) float64 {
@@ -212,6 +216,17 @@ func (i *Interpreter) VisitBlock(node *Block) float64 {
 }
 
 func (i *Interpreter) VisitFlow(node *Flow) float64 {
+	input := ""
+	for _, item := range node.Nodes {
+		nodeName := item.(*Token).Value.(string)
+		if item, ok := i.nodes[nodeName]; ok {
+			parameters := i.Visit(item).(map[string]interface{})
+
+			// execute
+			input = nodes.Execute(nodeName, parameters, item.(*Node).Secret, input)
+		}
+	}
+
 	return 0
 }
 

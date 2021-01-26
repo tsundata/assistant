@@ -191,11 +191,6 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '@' {
 			return l.Node()
 		}
-		if l.CurrentChar == '<' && l.Peek() == '-' {
-			l.Advance()
-			l.Advance()
-			return &Token{Type: TokenFlow, Value: TokenFlow, LineNo: l.LineNo, Column: l.Column}, nil
-		}
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
@@ -244,6 +239,11 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '+' {
 			l.Advance()
 			return &Token{Type: TokenPlus, Value: TokenPlus, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '-' && l.Peek() == '>' {
+			l.Advance()
+			l.Advance()
+			return &Token{Type: TokenFlow, Value: TokenFlow, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
