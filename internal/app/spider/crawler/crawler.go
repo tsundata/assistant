@@ -103,97 +103,6 @@ func (s *Crawler) Daemon() {
 	go s.resultWorker()
 }
 
-func (s *Crawler) resultWorker() {
-	for out := range s.outCh {
-		ctx := context.Background()
-		latest := out.Result
-
-		dataKey := fmt.Sprintf("spider:%s:latest", out.Name)
-		sendKey := fmt.Sprintf("spider:%s:send", out.Name)
-
-		smembers := s.rdb.SMembers(ctx, dataKey)
-		old, err := smembers.Result()
-		if err != nil {
-			continue
-		}
-
-		// diff
-		diff := utils.SliceDiff(old, latest)
-		if len(old) > 0 && len(diff) == 0 {
-			continue
-		} else {
-			diff = latest
-		}
-		if len(diff) == 0 {
-			continue
-		}
-
-		// add data
-		for _, item := range out.Result {
-			s.rdb.SAdd(ctx, dataKey, item)
-		}
-		s.rdb.Expire(ctx, dataKey, 7*24*time.Hour)
-
-		// check instant send
-		if out.Instant {
-			s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-			s.send(out.Name, diff)
-		} else {
-			sendString := s.rdb.Get(ctx, sendKey).Val()
-			oldSend := int64(0)
-			if sendString != "" {
-				oldSend, _ = strconv.ParseInt(sendString, 10, 64)
-			}
-
-			if time.Now().Unix()-oldSend < 24*3600 {
-				continue
-			}
-
-			s.rdb.Set(ctx, sendKey, time.Now().Unix(), redis.KeepTTL)
-			s.send(out.Name, diff)
-		}
-	}
-}
-
-func (s *Crawler) send(name string, out []string) {
-	text := ""
-	if len(out) <= 5 {
-		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
-	} else {
-		// web page display
-		j, err := json.Marshal(out)
-		if err != nil {
-			return
-		}
-
-		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
-			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now()),
-			Content: utils.ByteToString(j),
-		})
-		if err != nil {
-			return
-		}
-
-		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
-	}
-
-	//check send
-	key := fmt.Sprintf("spider:send:%x", md5.Sum(utils.StringToByte(text)))
-	isSend := s.rdb.Get(context.Background(), key).Val()
-	if len(isSend) > 0 {
-		return
-	}
-
-	s.rdb.Set(context.Background(), key, time.Now(), 7*24*time.Hour)
-	_, err := s.msgClient.Send(context.Background(), &pb.MessageRequest{
-		Text: text,
-	})
-	if err != nil {
-		s.logger.Error(err.Error())
-		return
-	}
-}
-
 func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
@@ -245,5 +154,115 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 			continue
 		}
 		time.Sleep(2 * time.Second)
+	}
+}
+
+func (s *Crawler) resultWorker() {
+	for out := range s.outCh {
+		// filter
+		diff := s.filter(out.Name, out.Instant, out.Result)
+		// send
+		s.send(out.Name, diff)
+	}
+}
+
+func (s *Crawler) filter(name string, instant bool, latest []string) []string {
+	ctx := context.Background()
+	sentKey := fmt.Sprintf("spider:%s:sent", name)
+	todoKey := fmt.Sprintf("spider:%s:todo", name)
+	sendTimeKey := fmt.Sprintf("spider:%s:sendtime", name)
+
+	// sent
+	smembers := s.rdb.SMembers(ctx, sentKey)
+	old, err := smembers.Result()
+	if err != nil {
+		s.logger.Error(err.Error())
+		return []string{}
+	}
+
+	// to do
+	smembers = s.rdb.SMembers(ctx, todoKey)
+	todo, err := smembers.Result()
+	if err != nil {
+		s.logger.Error(err.Error())
+		return []string{}
+	}
+
+	// merge
+	tobeCompared := append(old, todo...)
+
+	// diff
+	diff := utils.StringSliceDiff(tobeCompared, latest)
+
+	if instant {
+		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
+	} else {
+		sendString := s.rdb.Get(ctx, sendTimeKey).Val()
+		oldSend := int64(0)
+		if sendString != "" {
+			oldSend, _ = strconv.ParseInt(sendString, 10, 64)
+		}
+
+		if time.Now().Unix()-oldSend < 24*60*60 {
+			for _, item := range diff {
+				s.rdb.SAdd(ctx, todoKey, item)
+			}
+
+			return []string{}
+		}
+
+		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
+	}
+
+	// add data
+	for _, item := range diff {
+		s.rdb.SAdd(ctx, sentKey, item)
+	}
+	s.rdb.Expire(ctx, sentKey, 7*24*time.Hour)
+
+	return diff
+}
+
+func (s *Crawler) send(name string, out []string) {
+	if len(out) == 0 {
+		return
+	}
+
+	// check send
+	key := fmt.Sprintf("spider:send:%x", md5.Sum(utils.StringToByte(strings.Join(out, "\n"))))
+	isSet, err := s.rdb.SetNX(context.Background(), key, time.Now().Unix(), 24*time.Hour).Result()
+	if err != nil || !isSet {
+		return
+	}
+
+	// simplify
+	text := ""
+	if len(out) <= 5 {
+		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
+	} else {
+		// web page display
+		j, err := json.Marshal(out)
+		if err != nil {
+			return
+		}
+
+		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
+			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now()),
+			Content: utils.ByteToString(j),
+		})
+		if err != nil {
+			return
+		}
+
+		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
+	}
+
+	// send
+	_, err = s.msgClient.Send(context.Background(), &pb.MessageRequest{
+		Text: text,
+	})
+	if err != nil {
+		s.logger.Error(err.Error())
+		return
 	}
 }
