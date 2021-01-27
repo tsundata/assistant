@@ -22,7 +22,9 @@ docker-compose: build
 
 .PHONY: proto
 proto:
+	rm api/pb/*.pb.go
 	protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
+	git add api/pb/*.pb.go
 all: lint build
 
 .PHONY: release

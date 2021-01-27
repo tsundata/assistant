@@ -11,6 +11,7 @@ service Middle {
   rpc StoreAppOAuth(Text) returns (Text) {}
   rpc Credentials(Text) returns (Text) {}
   rpc GetCredentials(Text) returns (Text) {}
+  rpc GetCredential(Text) returns (Text) {}
   rpc CreateCredential(Text) returns (Text) {}
   rpc Setting(Text) returns (SettingReply) {}
   rpc CreateSetting(KV) returns (Text) {}

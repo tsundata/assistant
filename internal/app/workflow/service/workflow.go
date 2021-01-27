@@ -10,10 +10,11 @@ import (
 
 type Workflow struct {
 	etcd *clientv3.Client
+	midClient pb.MiddleClient
 }
 
-func NewWorkflow(etcd *clientv3.Client) *Workflow {
-	return &Workflow{etcd: etcd}
+func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient) *Workflow {
+	return &Workflow{etcd: etcd, midClient: midClient}
 }
 
 func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
@@ -29,7 +30,7 @@ func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.Wo
 	sa := interpreter.NewSemanticAnalyzer()
 	sa.Visit(tree)
 
-	i := interpreter.NewInterpreter(tree)
+	i := interpreter.NewInterpreter(tree, s.midClient)
 	r, err := i.Interpret()
 	if err != nil {
 		return nil, err

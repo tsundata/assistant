@@ -114,6 +114,10 @@ func (s *Middle) GetCredentials(ctx context.Context, payload *pb.Text) (*pb.Text
 	return nil, nil
 }
 
+func (s *Middle) GetCredential(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+	return nil, nil
+}
+
 func (s *Middle) CreateCredential(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
 	return nil, nil
 }

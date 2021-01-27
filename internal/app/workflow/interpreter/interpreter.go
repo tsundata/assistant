@@ -3,6 +3,7 @@ package interpreter
 import (
 	"errors"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/interpreter/nodes"
 	"log"
 	"strings"
@@ -86,10 +87,12 @@ type Interpreter struct {
 	stdout    []interface{}
 	nodes     map[string]Ast
 	workflow  map[string]Ast
+
+	midClient pb.MiddleClient
 }
 
-func NewInterpreter(tree Ast) *Interpreter {
-	return &Interpreter{tree: tree, callStack: NewCallStack()}
+func NewInterpreter(tree Ast, midClient pb.MiddleClient) *Interpreter {
+	return &Interpreter{tree: tree, callStack: NewCallStack(), midClient: midClient}
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -216,6 +219,7 @@ func (i *Interpreter) VisitBlock(node *Block) float64 {
 }
 
 func (i *Interpreter) VisitFlow(node *Flow) float64 {
+	var err error
 	input := ""
 	for _, item := range node.Nodes {
 		nodeName := item.(*Token).Value.(string)
@@ -223,7 +227,11 @@ func (i *Interpreter) VisitFlow(node *Flow) float64 {
 			parameters := i.Visit(item).(map[string]interface{})
 
 			// execute
-			input = nodes.Execute(nodeName, parameters, item.(*Node).Secret, input)
+			input, err = nodes.Execute(nodeName, item.(*Node).Regular, parameters, item.(*Node).Secret, input, i.midClient)
+			fmt.Println(input)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 

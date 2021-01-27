@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/tsundata/assistant/internal/app/message/rpcclients"
 	"github.com/tsundata/assistant/internal/app/workflow"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -55,11 +56,24 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	clientOptions, err := rpc.NewClientOptions(viper, j)
+	if err != nil {
+		return nil, err
+	}
+	client, err := rpc.NewClient(clientOptions, e)
+	if err != nil {
+		return nil, err
+	}
+	midClient, err := rpcclients.NewMiddleClient(client)
+	if err != nil {
+		return nil, err
+	}
+
 	appOptions, err := workflow.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(appOptions, log, server, e)
+	application, err := workflow.NewApp(appOptions, log, server, e, midClient)
 	if err != nil {
 		return nil, err
 	}

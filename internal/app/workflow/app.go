@@ -27,9 +27,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client, midClient pb.MiddleClient) (*app.Application, error) {
 	// service
-	subscribe := service.NewWorkflow(etcd)
+	subscribe := service.NewWorkflow(etcd, midClient)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterWorkflowServer(gs, subscribe)
 		return nil

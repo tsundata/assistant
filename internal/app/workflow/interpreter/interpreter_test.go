@@ -19,7 +19,7 @@ func run(t *testing.T, text string) {
 	symbolTable.Visit(tree)
 	log.Println(symbolTable.CurrentScope)
 
-	i := NewInterpreter(tree)
+	i := NewInterpreter(tree, nil)
 	r, err := i.Interpret()
 	if err != nil {
 		t.Fatal(err)
@@ -44,10 +44,24 @@ end
 node news (http):
 	with: { 
 			"method": "GET",
-	 		"url": "https://httpbin.org/get",
-	 		"response_format": "json",
+	 		"url": "https://xkcd.com",
+	 		"response_format": "html",
 	 		"headers":  { "X-FOO": "BAR" },
-	 		"query": { "foo": "bar"}
+	 		"query": { "foo": "bar"},
+			"extract": {
+				"url": {
+				  "css": "#comic img",
+				  "value": "@src"
+				},
+				"title": {
+				  "css": "#comic img",
+				  "value": "@alt"
+				},
+				"hovertext": {
+				  "css": "#comic img",
+				  "value": "@title"
+				}
+			}
 	 	}
 end
 
@@ -55,9 +69,15 @@ node notice (http):
 	with: { 
 			"method": "GET",
 	 		"url": "https://httpbin.org/get",
-	 		"response_format": "json",
+	 		"response_format": "html",
 	 		"headers":  { "X-FOO": "BAR" },
-	 		"query": { "foo": "bar" }
+	 		"query": { "foo": "bar" },
+			"extract": {
+			  "url": { "css": "#comic img", "value": "@src" },
+			  "title": { "css": "#comic img", "value": "@title" },
+			  "body_text": { "css": "div.main", "value": "string(.)" },
+			  "page_title": { "css": "title", "value": "string(.)", "repeat": true }
+			}
 	 	}
 end
 
