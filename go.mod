@@ -3,7 +3,8 @@ module github.com/tsundata/assistant
 go 1.15
 
 require (
-	github.com/PuerkitoBio/goquery v1.6.0
+	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
+	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/go-redis/redis/v8 v8.4.2
 	github.com/gogo/protobuf v1.3.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
@@ -12,7 +13,6 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.2.1
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/robertkrimen/otto v0.0.0-20200922221731-ef014fd054ac
-	github.com/shirou/gopsutil v3.20.12+incompatible // indirect
 	github.com/shirou/gopsutil/v3 v3.20.12
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.7.2
