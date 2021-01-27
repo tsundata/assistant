@@ -6,10 +6,10 @@ import (
 )
 
 type Node interface {
-	Execute(properties map[string]interface{}, credentials map[string]interface{}, input string) (string, error)
+	Execute(properties map[string]interface{}, credentials map[string]interface{}, input []map[string]interface{}) ([]map[string]interface{}, error)
 }
 
-func Execute(name string, regular string, parameters map[string]interface{}, secret string, input string, midClient pb.MiddleClient) (string, error) {
+func Execute(name string, regular string, parameters map[string]interface{}, secret string, input []map[string]interface{}, midClient pb.MiddleClient) ([]map[string]interface{}, error) {
 	var node Node
 
 	switch regular {
@@ -18,7 +18,7 @@ func Execute(name string, regular string, parameters map[string]interface{}, sec
 	case "cron":
 		node = CronNode{name: name}
 	default:
-		return "", errors.New("node name error: " + regular)
+		return nil, errors.New("node name error: " + regular)
 	}
 
 	/*

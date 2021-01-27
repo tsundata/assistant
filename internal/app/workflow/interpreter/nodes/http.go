@@ -1,7 +1,6 @@
 package nodes
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tidwall/gjson"
@@ -18,12 +17,18 @@ type HttpNode struct {
 	name string
 }
 
-func (n HttpNode) Execute(properties map[string]interface{}, credentials map[string]interface{}, input string) (string, error) {
+func (n HttpNode) Execute(properties map[string]interface{}, credentials map[string]interface{}, input []map[string]interface{}) ([]map[string]interface{}, error) {
 	method := properties["method"].(string)
 	url := properties["url"].(string)
 	responseFormat := properties["response_format"].(string)
-	headers := properties["headers"].(map[string]interface{})
-	query := properties["query"].(map[string]interface{})
+	headers := make(map[string]interface{})
+	if _, ok := properties["headers"]; ok {
+		headers = properties["headers"].(map[string]interface{})
+	}
+	query := make(map[string]interface{})
+	if _, ok := properties["query"]; ok {
+		query = properties["query"].(map[string]interface{})
+	}
 	extract := properties["extract"].(map[string]interface{})
 
 	client := &http.Client{
@@ -33,7 +38,7 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 	var body io.Reader
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	for k, v := range headers {
@@ -46,7 +51,7 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
@@ -56,7 +61,7 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 	case "html", "xml":
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		htmlResult := make(map[string]interface{})
@@ -94,34 +99,14 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 				}
 			}
 		}
-		if multiple {
-			var multipleResult []map[string]interface{}
-			length := 0
-			for _, v := range htmlResult {
-				if items, ok := v.([]interface{}); ok {
-					length = len(items)
-				}
-			}
 
-			for i := 0; i < length; i++ {
-				r := make(map[string]interface{})
-				for k, v := range htmlResult {
-					if items, ok := v.([]interface{}); ok {
-						r[k] = items[i]
-					}
-				}
-				multipleResult = append(multipleResult, r)
-			}
-			result = multipleResult
-		} else {
-			result = append(result, htmlResult)
-		}
+		multipleResult(multiple, htmlResult, &result)
 	case "json":
-		body, err := ioutil.ReadAll(resp.Body)
+		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		jsonText := string(body)
+		jsonText := utils.ByteToString(data)
 		gjsonResult := gjson.Parse(jsonText)
 
 		jsonResult := make(map[string]interface{})
@@ -129,44 +114,27 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 		for field, i := range extract {
 			opt := i.(map[string]interface{})
 			path := opt["path"].(string)
+			valOpt := opt["value"].(string)
 			value := gjsonResult.Get(path)
 			if value.IsArray() {
 				multiple = true
 				var values []interface{}
 				for _, i := range value.Array() {
-					values = append(values, i.Value())
+					if valOpt == "string(.)" {
+						values = append(values, i.Value())
+					}
 				}
 				jsonResult[field] = values
 			} else {
 				jsonResult[field] = value.Value()
 			}
 		}
-		if multiple {
-			var multipleResult []map[string]interface{}
-			length := 0
-			for _, v := range jsonResult {
-				if items, ok := v.([]interface{}); ok {
-					length = len(items)
-				}
-			}
 
-			for i := 0; i < length; i++ {
-				r := make(map[string]interface{})
-				for k, v := range jsonResult {
-					if items, ok := v.([]interface{}); ok {
-						r[k] = items[i]
-					}
-				}
-				multipleResult = append(multipleResult, r)
-			}
-			result = multipleResult
-		} else {
-			result = append(result, jsonResult)
-		}
+		multipleResult(multiple, jsonResult, &result)
 	case "text":
 		text, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		textResult := make(map[string]interface{})
@@ -174,6 +142,7 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 		for field, i := range extract {
 			opt := i.(map[string]interface{})
 			reg := opt["regexp"].(string)
+			valOpt := opt["value"].(string)
 			index := opt["index"].(float64)
 
 			re := regexp.MustCompile(reg)
@@ -182,45 +151,47 @@ func (n HttpNode) Execute(properties map[string]interface{}, credentials map[str
 				multiple = true
 				var values []interface{}
 				for _, i := range findResult {
-					values = append(values, string(i))
+					if valOpt == "string(.)" {
+						values = append(values, utils.ByteToString(i))
+					}
 				}
 				textResult[field] = values
 			} else if len(findResult) == 1 {
-				textResult[field] = string(findResult[0])
+				textResult[field] = utils.ByteToString(findResult[0])
 			} else {
 				textResult[field] = ""
 			}
 		}
-		if multiple {
-			var multipleResult []map[string]interface{}
-			length := 0
-			for _, v := range textResult {
-				if items, ok := v.([]interface{}); ok {
-					length = len(items)
-				}
-			}
 
-			for i := 0; i < length; i++ {
-				r := make(map[string]interface{})
-				for k, v := range textResult {
-					if items, ok := v.([]interface{}); ok {
-						r[k] = items[i]
-					}
-				}
-				multipleResult = append(multipleResult, r)
-			}
-			result = multipleResult
-		} else {
-			result = append(result, textResult)
-		}
+		multipleResult(multiple, textResult, &result)
 	default:
-		return "", errors.New("response format error: " + responseFormat)
+		return nil, errors.New("response format error: " + responseFormat)
 	}
 
-	d, err := json.Marshal(result)
-	if err != nil {
-		return "", err
-	}
+	return result, nil
+}
 
-	return utils.ByteToString(d), nil
+func multipleResult(is bool, data map[string]interface{}, result *[]map[string]interface{}) {
+	if is {
+		var multipleResult []map[string]interface{}
+		length := 0
+		for _, v := range data {
+			if items, ok := v.([]interface{}); ok {
+				length = len(items)
+			}
+		}
+
+		for i := 0; i < length; i++ {
+			r := make(map[string]interface{})
+			for k, v := range data {
+				if items, ok := v.([]interface{}); ok {
+					r[k] = items[i]
+				}
+			}
+			multipleResult = append(multipleResult, r)
+		}
+		*result = append(*result, multipleResult...)
+	} else {
+		*result = append(*result, data)
+	}
 }

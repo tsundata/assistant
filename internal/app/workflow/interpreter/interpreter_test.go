@@ -41,7 +41,7 @@ node abc (cron):
 	secret: github_key
 end
 
-node news (http):
+node xkcd (http):
 	with: { 
 			"method": "GET",
 	 		"url": "https://xkcd.com",
@@ -65,28 +65,37 @@ node news (http):
 	 	}
 end
 
-node notice (http):
+node httpbin (http):
 	with: { 
 			"method": "GET",
-	 		"url": "https://httpbin.org/get",
-	 		"response_format": "html",
+	 		"url": "https://httpbin.org/json",
+	 		"response_format": "json",
 	 		"headers":  { "X-FOO": "BAR" },
 	 		"query": { "foo": "bar" },
 			"extract": {
-			  "url": { "css": "#comic img", "value": "@src" },
-			  "title": { "css": "#comic img", "value": "@title" },
-			  "body_text": { "css": "div.main", "value": "string(.)" },
-			  "page_title": { "css": "title", "value": "string(.)", "repeat": true }
+			  "title": { "path": "slideshow.slides.#.title", "value": "string(.)" },
+			  "type": { "path": "slideshow.slides.#.type", "value": "string(.)" }
+			}
+	 	}
+end
+
+node hi (http):
+	with: { 
+			"method": "GET",
+	 		"url": "https://httpbin.org/uuid",
+	 		"response_format": "text",
+			"extract": {
+			  "uuid": { "regexp": "(\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12})", "index": 1, "value": "string(.)" }
 			}
 	 	}
 end
 
 workflow demo:
-    @notice -> @news
+    @xkcd -> @httpbin
 end
 
 workflow main:
-    @abc -> @news -> @notice
+    @abc -> @xkcd -> @httpbin -> @hi
 end
 `
 	run(t, text)

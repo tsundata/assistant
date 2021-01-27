@@ -220,7 +220,7 @@ func (i *Interpreter) VisitBlock(node *Block) float64 {
 
 func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	var err error
-	input := ""
+	var input []map[string]interface{}
 	for _, item := range node.Nodes {
 		nodeName := item.(*Token).Value.(string)
 		if item, ok := i.nodes[nodeName]; ok {
