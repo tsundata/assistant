@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"time"
 )
 
 type WebController struct {
@@ -34,6 +35,38 @@ func (wc *WebController) Robots(c *fasthttp.RequestCtx) {
 Disallow: /`
 
 	c.Response.SetBody([]byte(txt))
+}
+
+func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
+	var items []components.Component
+
+	items = append(items, &components.Memo{
+		Time: time.Now().Format("2006-01-02 03:04:05"),
+		Tags: []string{"#Memo", "#Demo"},
+		Content: &components.Text{
+			Title: "- Downloads\n - Request",
+		},
+	})
+
+	items = append(items, &components.Memo{
+		Time: time.Now().Format("2006-01-02 03:04:05"),
+		Content: &components.Text{
+			Title: "- Downloads\n - Request",
+		},
+	})
+
+	comp := components.Html{
+		Title: "Memo",
+		Page: &components.Page{
+			Title: "Memo",
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
 }
 
 func (wc *WebController) Page(c *fasthttp.RequestCtx) {

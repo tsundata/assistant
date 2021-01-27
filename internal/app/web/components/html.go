@@ -139,6 +139,38 @@ func (c *Html) GetContent() template.HTML {
 		.app span {
 			margin-top: 20px;
 		}
+		.memo {
+			width: 100%%;
+			padding: 20px;
+			border: 1px solid #f9f9f9;
+			border-radius: 15px;
+			margin-bottom: 15px;
+			margin-top: 10px;
+			background-color: #fafafa;
+		}
+		.memo .time {
+			font-size: 13px
+		}
+		.memo .tags {
+			display: flex;
+			margin-top: 10px;
+			font-size: 13px;
+		}
+		.memo .tags span {
+			display: flex;
+			background-color: #A9EA79;
+			border-radius: 10px;
+			padding: 2px 7px;
+			margin-right: 5px;
+			align-items: center;
+			justify-content: center;
+		}
+		.memo .content {
+			font-size: 15px;
+		}
+		.memo .content h2 {
+			font-weight: normal;
+		}
 		%s
     </style>
 </head>

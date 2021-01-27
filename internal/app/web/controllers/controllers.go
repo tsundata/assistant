@@ -25,6 +25,11 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 			case "/Robots.txt":
 				wc.Robots(ctx)
 			default:
+				memoRe := regexp.MustCompile(`^/memo/[\w\-]+$`)
+				if memoRe.Match(path) {
+					wc.Memo(ctx)
+					return
+				}
 				pageRe := regexp.MustCompile(`^/page/[\w\-]+$`)
 				if pageRe.Match(path) {
 					wc.Page(ctx)
