@@ -21,11 +21,11 @@ type Middle struct {
 }
 
 func NewMiddle(db *bbolt.DB, etcd *clientv3.Client, webURL string) *Middle {
-	return &Middle{db: db, webURL: webURL}
+	return &Middle{db: db, etcd: etcd, webURL: webURL}
 }
 
-func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.Text, error) {
-	uuid, err := model.GenerateMessageUUID()
+func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
+	uuid, err := utils.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 	if err != nil {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists([]byte("middle"))
+	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 	if err != nil {
 		return nil, err
 	}
-	err = b.Put([]byte(page.UUID), data)
+	err = b.Put(utils.StringToByte(page.UUID), data)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 		return nil, err
 	}
 
-	return &pb.Text{
+	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/page/%s", s.webURL, page.UUID),
 	}, nil
 }
@@ -69,11 +69,11 @@ func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.Page
 	if err != nil {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists([]byte("middle"))
+	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
 	if err != nil {
 		return nil, err
 	}
-	v := b.Get([]byte(payload.Uuid))
+	v := b.Get(utils.StringToByte(payload.Uuid))
 
 	var find model.Page
 	err = json.Unmarshal(v, &find)
@@ -92,37 +92,37 @@ func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.Page
 	}, nil
 }
 
-func (s *Middle) Qr(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
-	return &pb.Text{
+func (s *Middle) Qr(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil
 }
 
-func (s *Middle) Apps(ctx context.Context, payload *pb.Text) (*pb.AppReply, error) {
+func (s *Middle) Apps(ctx context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) Credentials(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) Credentials(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) GetCredentials(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) GetCredential(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) GetCredential(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) CreateCredential(ctx context.Context, payload *pb.Text) (*pb.Text, error) {
+func (s *Middle) CreateCredential(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return nil, nil
 }
 
-func (s *Middle) Setting(ctx context.Context, payload *pb.Text) (*pb.SettingReply, error) {
+func (s *Middle) Setting(ctx context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "setting/",
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -139,12 +139,65 @@ func (s *Middle) Setting(ctx context.Context, payload *pb.Text) (*pb.SettingRepl
 	return &reply, nil
 }
 
-func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KV) (*pb.Text, error) {
+func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.TextReply, error) {
 	_, err := s.etcd.Put(context.Background(), "setting/"+payload.Key, payload.Value)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Text{
+	return &pb.TextReply{
 		Text: "ok",
 	}, nil
+}
+
+func (s *Middle) GetMemoUrl(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	uuid, err := authUUID(s.etcd)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TextReply{
+		Text: fmt.Sprintf("%s/memo/%s", s.webURL, uuid),
+	}, nil
+}
+
+func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	resp, err := s.etcd.Get(context.Background(), "user/auth_uuid")
+	if err != nil {
+		return nil, err
+	}
+	if len(resp.Kvs) == 0 {
+		return &pb.StateReply{
+			State: false,
+		}, nil
+	}
+
+	return &pb.StateReply{
+		State: payload.Text == utils.ByteToString(resp.Kvs[0].Value),
+	}, nil
+}
+
+func authUUID(etcd *clientv3.Client) (string, error) {
+	var uuid string
+	resp, err := etcd.Get(context.Background(), "user/auth_uuid")
+	if err != nil {
+		return "", err
+	}
+	if len(resp.Kvs) == 0 {
+		uuid, err = utils.GenerateUUID()
+		if err != nil {
+			return "", err
+		}
+
+		lease, err := etcd.Grant(context.Background(), 3600)
+		if err != nil {
+			return "", err
+		}
+		_, err = etcd.Put(context.Background(), "user/auth_uuid", uuid, clientv3.WithLease(lease.ID))
+		if err != nil {
+			return "", err
+		}
+	} else {
+		uuid = utils.ByteToString(resp.Kvs[0].Value)
+	}
+
+	return uuid, nil
 }

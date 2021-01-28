@@ -32,12 +32,7 @@ func (c *Html) GetContent() template.HTML {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="version" content="0.1">
-    <link rel="shortcut icon" href="favicon.ico">
 	<title>%s</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
 	%s
     <style>
 		a {

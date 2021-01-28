@@ -1,0 +1,16 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "api/pb";
+
+message TextRequest {
+  string text = 1;
+}
+
+message TextReply {
+  string text = 1;
+}
+
+message StateReply {
+  bool state = 1;
+}

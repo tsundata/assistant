@@ -55,12 +55,16 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	msgClient, err := rpcclients.NewMessageClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	webOptions, err := web.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, log, midClient)
+	webController := controllers.NewWebController(webOptions, log, midClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {

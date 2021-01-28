@@ -20,7 +20,7 @@ var rules = []Rule{
 			}
 
 			txt := args[1]
-			reply, err := b.MidClient.Qr(context.Background(), &pb.Text{
+			reply, err := b.MidClient.Qr(context.Background(), &pb.TextRequest{
 				Text: txt,
 			})
 			if err != nil {
@@ -157,6 +157,22 @@ var rules = []Rule{
 			}
 
 			return []string{"failed"}
+		},
+	},
+	{
+		Regex:       `memo`,
+		HelpMessage: `Get memo url`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			reply, err := b.MidClient.GetMemoUrl(context.Background(), &pb.TextRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			if reply.GetText() == "" {
+				return []string{"empty subscript"}
+			}
+
+			return []string{reply.GetText()}
 		},
 	},
 }

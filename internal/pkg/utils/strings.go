@@ -1,6 +1,9 @@
 package utils
 
 import (
+	cRand "crypto/rand"
+	"fmt"
+	"io"
 	"math/rand"
 	"net"
 	"regexp"
@@ -53,7 +56,7 @@ func GeneratePassword(length int, containChars string) string {
 		charsStr += "{}[]()<>"
 	}
 	if strings.Contains(containChars, "no_similar") {
-		noSimilarChars := []byte("0ODQ1lLj8B5S2Z")
+		noSimilarChars := StringToByte("0ODQ1lLj8B5S2Z")
 		for _, c := range noSimilarChars {
 			charsStr = strings.ReplaceAll(charsStr, string(c), "")
 		}
@@ -62,7 +65,7 @@ func GeneratePassword(length int, containChars string) string {
 		return ""
 	}
 
-	charsStrSlice := []byte(charsStr)
+	charsStrSlice := StringToByte(charsStr)
 	charsStrLength := len(charsStrSlice)
 	var password strings.Builder
 	for i := 0; i < length; i++ {
@@ -70,4 +73,18 @@ func GeneratePassword(length int, containChars string) string {
 		password.WriteByte(charsStrSlice[randNumber])
 	}
 	return password.String()
+}
+
+// GenerateMessageID generates a random ID for a message
+func GenerateUUID() (string, error) {
+	uuid := make([]byte, 16)
+	n, err := io.ReadFull(cRand.Reader, uuid)
+	if n != len(uuid) || err != nil {
+		return "", err
+	}
+	// variant bits; see section 4.1.1
+	uuid[8] = uuid[8]&^0xc0 | 0x80
+	// version 4 (pseudo-random); see section 4.1.3
+	uuid[6] = uuid[6]&^0xf0 | 0x40
+	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }

@@ -13,6 +13,7 @@ import (
 	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"strings"
+	"time"
 )
 
 type Message struct {
@@ -27,20 +28,32 @@ func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook s
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 
-func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageList, error) {
-	tx, err := m.db.Begin(false)
+func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageListReply, error) {
+	tx, err := m.db.Begin(true)
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket([]byte("message"))
+	b := tx.Bucket(utils.StringToByte("message"))
 	c := b.Cursor()
-	limit := 10
+	limit := 20
 
 	index := 0
-	var reply []string
-	for k, v := c.First(); k != nil; k, v = c.Next() {
+	var reply []*pb.MessageItem
+	for k, v := c.Last(); k != nil; k, v = c.Prev() {
 		index++
-		reply = append(reply, utils.ByteToString(v)) // FIXME
+
+		var m model.Message
+		err := json.Unmarshal(v, &m)
+		if err != nil {
+			return nil, err
+		}
+
+		reply = append(reply, &pb.MessageItem{
+			Uuid: m.UUID,
+			Text: m.Text,
+			Time: m.Time,
+		})
+
 		if index >= limit {
 			break
 		}
@@ -50,18 +63,18 @@ func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 		return nil, err
 	}
 
-	return &pb.MessageList{
-		Text: reply,
+	return &pb.MessageListReply{
+		Messages: reply,
 	}, nil
 }
 
-func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	tx, err := m.db.Begin(false)
+func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+	tx, err := m.db.Begin(true)
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket([]byte("message"))
-	v := b.Get([]byte(payload.Uuid))
+	b := tx.Bucket(utils.StringToByte("message"))
+	v := b.Get(utils.StringToByte(payload.Uuid))
 	err = tx.Commit()
 	if err != nil {
 		return nil, err
@@ -73,14 +86,15 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.Mess
 		return nil, err
 	}
 
-	return &pb.MessageReply{
+	return &pb.TextReply{
 		Text: find.Text,
 	}, nil
 }
 
-func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageList, error) {
+func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var payload model.Message
+	payload.Time = time.Now().Format("2006-01-02 15:04:05")
 	payload.UUID = in.GetUuid()
 	payload.Type = model.MessageTypeText
 	payload.Text = strings.TrimSpace(in.GetText())
@@ -90,17 +104,17 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 	if err != nil {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists([]byte("message"))
+	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("message"))
 	if err != nil {
 		return nil, err
 	}
-	v := b.Get([]byte(payload.UUID))
+	v := b.Get(utils.StringToByte(payload.UUID))
 	err = tx.Commit()
 	if err != nil {
 		return nil, err
 	}
 	if v != nil {
-		return &pb.MessageList{
+		return &pb.MessageReply{
 			Uuid: payload.UUID,
 		}, nil
 	}
@@ -124,7 +138,7 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 			for _, item := range out {
 				reply = append(reply, item.Text)
 			}
-			return &pb.MessageList{
+			return &pb.MessageReply{
 				Text: reply,
 			}, nil
 		}
@@ -132,7 +146,7 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 
 	// insert
 	err = m.db.Update(func(tx *bbolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("message"))
+		b, err := tx.CreateBucketIfNotExists(utils.StringToByte("message"))
 		if err != nil {
 			return err
 		}
@@ -140,24 +154,24 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 		if err != nil {
 			return err
 		}
-		return b.Put([]byte(payload.UUID), data)
+		return b.Put(utils.StringToByte(payload.UUID), data)
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.MessageList{
+	return &pb.MessageReply{
 		Uuid: payload.UUID,
 	}, nil
 }
 
-func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	tx, err := m.db.Begin(true)
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket([]byte("message"))
-	err = b.Delete([]byte(payload.Uuid))
+	b := tx.Bucket(utils.StringToByte("message"))
+	err = b.Delete(utils.StringToByte(payload.Uuid))
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +183,7 @@ func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	return nil, nil
 }
 
-func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
@@ -182,12 +196,12 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 	reply := utils.ByteToString(resp.Body())
 	fasthttp.ReleaseResponse(resp)
 
-	return &pb.MessageReply{
+	return &pb.TextReply{
 		Text: reply,
 	}, nil
 }
 
-func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.TextReply, error) {
 	// check uuid
 	var reply string
 	var payload model.Message
@@ -196,8 +210,8 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket([]byte("message"))
-	v := b.Get([]byte(payload.UUID))
+	b := tx.Bucket(utils.StringToByte("message"))
+	v := b.Get(utils.StringToByte(payload.UUID))
 	err = tx.Commit()
 	if err != nil {
 		return nil, err
@@ -210,7 +224,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 	}
 
 	if find.UUID == "" {
-		return &pb.MessageReply{
+		return &pb.TextReply{
 			Text: "Not message",
 		}, nil
 	}
@@ -249,7 +263,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 		reply = "Not running"
 	}
 
-	return &pb.MessageReply{
+	return &pb.TextReply{
 		Text: reply,
 	}, nil
 }

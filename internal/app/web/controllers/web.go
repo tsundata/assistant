@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
@@ -13,17 +14,18 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"time"
 )
 
 type WebController struct {
 	opt       *web.Options
 	logger    *zap.Logger
 	midClient pb.MiddleClient
+	msgClient pb.MessageClient
 }
 
-func NewWebController(opt *web.Options, logger *zap.Logger, midClient pb.MiddleClient) *WebController {
-	return &WebController{opt: opt, logger: logger, midClient: midClient}
+func NewWebController(opt *web.Options, logger *zap.Logger,
+	midClient pb.MiddleClient, msgClient pb.MessageClient) *WebController {
+	return &WebController{opt: opt, logger: logger, midClient: midClient, msgClient: msgClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
@@ -34,39 +36,7 @@ func (wc *WebController) Robots(c *fasthttp.RequestCtx) {
 	txt := `User-agent: *
 Disallow: /`
 
-	c.Response.SetBody([]byte(txt))
-}
-
-func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
-	var items []components.Component
-
-	items = append(items, &components.Memo{
-		Time: time.Now().Format("2006-01-02 03:04:05"),
-		Tags: []string{"#Memo", "#Demo"},
-		Content: &components.Text{
-			Title: "- Downloads\n - Request",
-		},
-	})
-
-	items = append(items, &components.Memo{
-		Time: time.Now().Format("2006-01-02 03:04:05"),
-		Content: &components.Text{
-			Title: "- Downloads\n - Request",
-		},
-	})
-
-	comp := components.Html{
-		Title: "Memo",
-		Page: &components.Page{
-			Title: "Memo",
-			Content: &components.List{
-				Items: items,
-			},
-		},
-	}
-
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response.SetBody(utils.StringToByte(txt))
 }
 
 func (wc *WebController) Page(c *fasthttp.RequestCtx) {
@@ -80,7 +50,12 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	reply, err := wc.midClient.GetPage(context.Background(), &pb.PageRequest{
 		Uuid: utils.ByteToString(r[0]),
 	})
-	if err != nil || reply.GetContent() == "" {
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Response.SetStatusCode(http.StatusNotFound)
+		return
+	}
+	if reply.GetContent() == "" {
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return
 	}
@@ -88,6 +63,7 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	var list []string
 	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Response.SetStatusCode(http.StatusNotFound)
 		return
 	}
@@ -126,12 +102,14 @@ func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
 
 	txt, err := url.QueryUnescape(utils.ByteToString(r[1]))
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Response.SetBodyString("error text")
 		return
 	}
 
 	png, err := qrcode.Encode(txt, qrcode.Medium, 512)
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Response.SetBodyString("error qr")
 		return
 	}
@@ -162,6 +140,39 @@ func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
 		UseIcon: true,
 		Page: &components.Page{
 			Title: "Apps",
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
+	var items []components.Component
+
+	reply, err := wc.msgClient.List(context.Background(), &pb.MessageRequest{})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Response.SetStatusCode(http.StatusNotFound)
+		return
+	}
+
+	for _, item := range reply.Messages {
+		items = append(items, &components.Memo{
+			Time: item.GetTime(),
+			Content: &components.Text{
+				Title: item.GetText(),
+			},
+		})
+	}
+
+	comp := components.Html{
+		Title: "Memo",
+		Page: &components.Page{
+			Title: "Memo",
 			Content: &components.List{
 				Items: items,
 			},
@@ -240,7 +251,7 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
-
+	fmt.Println(c.Path())
 }
 
 func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
@@ -305,9 +316,5 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
-
-}
-
-func checkFlag(path string) bool {
-	return true
+	fmt.Println(c.Path())
 }

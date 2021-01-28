@@ -42,7 +42,7 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	}, nil
 }
 
-func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	key := "subscribe_" + payload.GetText()
 	resp, err := s.etcd.Get(context.Background(), key)
 	if err != nil {
@@ -63,28 +63,28 @@ func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) 
 		}
 	}
 
-	return &pb.State{State: true}, nil
+	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.State{State: true}, nil
+	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "false")
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.State{State: true}, nil
+	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*pb.State, error) {
+func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	key := "subscribe_" + payload.GetText()
 	resp, err := s.etcd.Get(context.Background(), key)
 	if err != nil {
@@ -92,12 +92,12 @@ func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*
 	}
 	for _, ev := range resp.Kvs {
 		if utils.ByteToString(ev.Key) == key {
-			return &pb.State{
-				State: bytes.Equal(ev.Value, []byte("true")),
+			return &pb.StateReply{
+				State: bytes.Equal(ev.Value, utils.StringToByte("true")),
 			}, nil
 		}
 	}
-	return &pb.State{
+	return &pb.StateReply{
 		State: false,
 	}, nil
 }

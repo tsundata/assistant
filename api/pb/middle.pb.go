@@ -216,44 +216,6 @@ func (m *App) GetIsAuthorized() bool {
 	return false
 }
 
-type Text struct {
-	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Text) Reset()         { *m = Text{} }
-func (m *Text) String() string { return proto.CompactTextString(m) }
-func (*Text) ProtoMessage()    {}
-func (*Text) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{4}
-}
-func (m *Text) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Text.Unmarshal(m, b)
-}
-func (m *Text) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Text.Marshal(b, m, deterministic)
-}
-func (m *Text) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Text.Merge(m, src)
-}
-func (m *Text) XXX_Size() int {
-	return xxx_messageInfo_Text.Size(m)
-}
-func (m *Text) XXX_DiscardUnknown() {
-	xxx_messageInfo_Text.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Text proto.InternalMessageInfo
-
-func (m *Text) GetText() string {
-	if m != nil {
-		return m.Text
-	}
-	return ""
-}
-
 type SettingReply struct {
 	Items                []*KV    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -265,7 +227,7 @@ func (m *SettingReply) Reset()         { *m = SettingReply{} }
 func (m *SettingReply) String() string { return proto.CompactTextString(m) }
 func (*SettingReply) ProtoMessage()    {}
 func (*SettingReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{5}
+	return fileDescriptor_492fc6d32fb115aa, []int{4}
 }
 func (m *SettingReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SettingReply.Unmarshal(m, b)
@@ -290,6 +252,52 @@ func (m *SettingReply) GetItems() []*KV {
 		return m.Items
 	}
 	return nil
+}
+
+type KVRequest struct {
+	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value                string   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *KVRequest) Reset()         { *m = KVRequest{} }
+func (m *KVRequest) String() string { return proto.CompactTextString(m) }
+func (*KVRequest) ProtoMessage()    {}
+func (*KVRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{5}
+}
+func (m *KVRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KVRequest.Unmarshal(m, b)
+}
+func (m *KVRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KVRequest.Marshal(b, m, deterministic)
+}
+func (m *KVRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KVRequest.Merge(m, src)
+}
+func (m *KVRequest) XXX_Size() int {
+	return xxx_messageInfo_KVRequest.Size(m)
+}
+func (m *KVRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_KVRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KVRequest proto.InternalMessageInfo
+
+func (m *KVRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *KVRequest) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
 }
 
 type KV struct {
@@ -343,41 +351,43 @@ func init() {
 	proto.RegisterType((*PageReply)(nil), "pb.PageReply")
 	proto.RegisterType((*AppReply)(nil), "pb.AppReply")
 	proto.RegisterType((*App)(nil), "pb.App")
-	proto.RegisterType((*Text)(nil), "pb.Text")
 	proto.RegisterType((*SettingReply)(nil), "pb.SettingReply")
+	proto.RegisterType((*KVRequest)(nil), "pb.KVRequest")
 	proto.RegisterType((*KV)(nil), "pb.KV")
 }
 
 func init() { proto.RegisterFile("middle.proto", fileDescriptor_492fc6d32fb115aa) }
 
 var fileDescriptor_492fc6d32fb115aa = []byte{
-	// 405 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0xeb, 0x3f, 0xb5, 0xdd, 0x89, 0x0d, 0xd1, 0x8a, 0x83, 0x15, 0x38, 0x44, 0x8b, 0x4a,
-	0x83, 0xa8, 0x82, 0x54, 0x1e, 0x00, 0x99, 0x1e, 0x7a, 0xa8, 0x50, 0xa9, 0x8b, 0x7a, 0xe0, 0x66,
-	0xe3, 0x51, 0x59, 0xe1, 0xda, 0x83, 0x3d, 0x46, 0x0d, 0x6f, 0xc5, 0x1b, 0xa2, 0x5d, 0xdb, 0xad,
-	0x23, 0x11, 0xf5, 0xd2, 0xdb, 0xcc, 0xb7, 0xdf, 0xfe, 0xfc, 0xed, 0x8c, 0x0c, 0xe1, 0xad, 0x2a,
-	0x8a, 0x12, 0xd7, 0xd4, 0xd4, 0x5c, 0x0b, 0x9b, 0x72, 0x79, 0x09, 0xb3, 0x2f, 0xd9, 0x0d, 0xa6,
-	0xf8, 0xab, 0xc3, 0x96, 0x85, 0x00, 0xb7, 0xeb, 0x54, 0x11, 0x5b, 0x4b, 0x6b, 0x75, 0x90, 0x9a,
-	0x5a, 0xbc, 0x80, 0x7d, 0x56, 0x5c, 0x62, 0x6c, 0x1b, 0xb1, 0x6f, 0x44, 0x0c, 0xfe, 0xf7, 0xba,
-	0x62, 0xac, 0x38, 0x76, 0x8c, 0x3e, 0xb6, 0xf2, 0x02, 0x0e, 0x7a, 0x24, 0x95, 0x9b, 0x27, 0x01,
-	0x1e, 0x41, 0x90, 0x10, 0xf5, 0xbc, 0x97, 0xe0, 0x66, 0x44, 0x6d, 0x6c, 0x2d, 0x9d, 0xd5, 0xec,
-	0xc4, 0x5f, 0x53, 0xbe, 0xd6, 0x67, 0x46, 0x94, 0x1f, 0xc1, 0x49, 0x88, 0x1e, 0xf8, 0xd6, 0x94,
-	0x2f, 0x21, 0x54, 0x6d, 0xd2, 0xf1, 0x8f, 0xba, 0x51, 0x7f, 0xb0, 0x30, 0x1f, 0x0f, 0xd2, 0x2d,
-	0x4d, 0x2e, 0xc0, 0xfd, 0x8a, 0x77, 0x66, 0x0c, 0x8c, 0x77, 0x3c, 0xa6, 0xd6, 0xb5, 0x3c, 0x86,
-	0xf0, 0x0a, 0x99, 0x55, 0x75, 0xd3, 0x27, 0x79, 0x05, 0xfb, 0x8a, 0xf1, 0x76, 0x8c, 0xe2, 0xe9,
-	0x28, 0xe7, 0xd7, 0x69, 0x2f, 0xca, 0x63, 0xb0, 0xcf, 0xaf, 0xc5, 0x1c, 0x9c, 0x9f, 0xb8, 0x19,
-	0x30, 0xba, 0xd4, 0xd9, 0x7e, 0x67, 0x65, 0x77, 0xff, 0x76, 0xd3, 0x9c, 0xfc, 0x75, 0xc0, 0xfb,
-	0x6c, 0x56, 0x23, 0xde, 0x02, 0x9c, 0x36, 0x98, 0x31, 0xea, 0x19, 0x8a, 0xe7, 0x9a, 0x3a, 0x59,
-	0xd0, 0x22, 0xd0, 0x82, 0xce, 0x28, 0xf7, 0xc4, 0x3b, 0xf0, 0xcf, 0x90, 0xff, 0xef, 0x8b, 0x1e,
-	0x04, 0x2a, 0x37, 0x72, 0x4f, 0x2c, 0xc0, 0xbe, 0x6c, 0xc4, 0xfd, 0xf5, 0x2d, 0xd0, 0x12, 0xdc,
-	0x84, 0xa8, 0x9d, 0x9c, 0x86, 0xe3, 0x60, 0x87, 0xdb, 0x87, 0x10, 0x5d, 0x71, 0xdd, 0x60, 0x42,
-	0x74, 0xa1, 0xe7, 0xb5, 0x03, 0xf4, 0x1a, 0x66, 0xa7, 0x0d, 0x16, 0x58, 0xb1, 0xca, 0xca, 0x76,
-	0x87, 0xe9, 0x0d, 0x3c, 0x3b, 0x43, 0x7e, 0xdc, 0x77, 0x08, 0xd1, 0x96, 0x6f, 0x87, 0x6d, 0x05,
-	0xf3, 0x7e, 0x60, 0x8f, 0x3a, 0x8f, 0xc0, 0x1f, 0x36, 0x38, 0x31, 0xcc, 0x75, 0x35, 0x5d, 0xac,
-	0x79, 0x46, 0xd4, 0x23, 0x47, 0xfb, 0xb0, 0xdc, 0x29, 0xed, 0x53, 0xf0, 0xcd, 0xcb, 0x48, 0xbd,
-	0xa7, 0x3c, 0xf7, 0xcc, 0xef, 0xf4, 0xe1, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x25, 0x83, 0x79,
-	0xae, 0x5e, 0x03, 0x00, 0x00,
+	// 435 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x4b, 0x6f, 0xd3, 0x40,
+	0x10, 0x6e, 0x1e, 0xcd, 0x63, 0x12, 0x97, 0x68, 0xc5, 0xc1, 0x2a, 0x1c, 0xaa, 0x3d, 0xd0, 0x4a,
+	0x54, 0xae, 0x9a, 0x72, 0x47, 0xa6, 0x87, 0x1c, 0xa2, 0xaa, 0xd4, 0x85, 0x1c, 0xb8, 0xad, 0xf1,
+	0xa8, 0xac, 0x70, 0xec, 0xc1, 0x1e, 0x23, 0xca, 0x6f, 0xe7, 0x80, 0x76, 0xd7, 0x2e, 0xa9, 0xa2,
+	0x22, 0x47, 0xea, 0xcd, 0xf3, 0xe5, 0x7b, 0xcc, 0xce, 0x8c, 0x02, 0xd3, 0xb5, 0x4e, 0x92, 0x14,
+	0x03, 0x2a, 0x72, 0xce, 0x45, 0x97, 0xe2, 0x43, 0x88, 0x55, 0x59, 0xd7, 0xf2, 0x06, 0x26, 0x1f,
+	0xd5, 0x1d, 0x46, 0xf8, 0xa3, 0xc2, 0x92, 0x85, 0x80, 0x7e, 0x55, 0xe9, 0xc4, 0xef, 0x1c, 0x75,
+	0x4e, 0xc6, 0x91, 0xfd, 0x16, 0x2f, 0x61, 0x9f, 0x35, 0xa7, 0xe8, 0x77, 0x2d, 0xe8, 0x0a, 0xe1,
+	0xc3, 0xf0, 0x6b, 0x9e, 0x31, 0x66, 0xec, 0xf7, 0x2c, 0xde, 0x94, 0xf2, 0x1a, 0xc6, 0xce, 0x92,
+	0xd2, 0xfb, 0x67, 0x31, 0x3c, 0x86, 0x51, 0x48, 0xe4, 0xfc, 0x5e, 0x41, 0x5f, 0x11, 0x95, 0x7e,
+	0xe7, 0xa8, 0x77, 0x32, 0x99, 0x0f, 0x03, 0x8a, 0x03, 0xf3, 0x9b, 0x05, 0xe5, 0x7b, 0xe8, 0x85,
+	0x44, 0xff, 0xfc, 0x3b, 0x9b, 0xfe, 0x12, 0xa6, 0xba, 0x0c, 0x2b, 0xfe, 0x96, 0x17, 0xfa, 0x37,
+	0x26, 0x36, 0x7c, 0x14, 0x3d, 0xc2, 0xe4, 0x29, 0x4c, 0x6f, 0x91, 0x59, 0x67, 0x77, 0x2e, 0xed,
+	0x35, 0xec, 0x6b, 0xc6, 0x75, 0x13, 0x37, 0x30, 0x71, 0xcb, 0x55, 0xe4, 0x40, 0x79, 0x01, 0xe3,
+	0xe5, 0xaa, 0x99, 0xdc, 0x0c, 0x7a, 0xdf, 0xf1, 0xbe, 0x8e, 0x34, 0x9f, 0xa6, 0x8d, 0x9f, 0x2a,
+	0xad, 0x1e, 0x9e, 0x69, 0x0b, 0x79, 0x0a, 0xdd, 0xe5, 0xaa, 0x2d, 0x7b, 0xfe, 0xa7, 0x0f, 0x83,
+	0x2b, 0xbb, 0x3f, 0x11, 0x00, 0x5c, 0x16, 0xa8, 0x18, 0xcd, 0x70, 0xc5, 0x0b, 0xd3, 0xca, 0xc6,
+	0xe6, 0x0e, 0x3d, 0x03, 0x7c, 0xc2, 0x5f, 0x6c, 0x3b, 0x97, 0x7b, 0xe2, 0x2d, 0x0c, 0x17, 0xc8,
+	0xff, 0x21, 0x3f, 0x2c, 0x49, 0xee, 0x89, 0x37, 0xd0, 0xbd, 0x29, 0x1c, 0xcf, 0x79, 0x3c, 0x61,
+	0x7a, 0x0c, 0xfd, 0x90, 0xa8, 0xdc, 0x66, 0x4e, 0x9b, 0x4d, 0xd4, 0xc4, 0x73, 0xf0, 0x6e, 0x39,
+	0x2f, 0x30, 0x24, 0xba, 0x36, 0x03, 0x6e, 0xe1, 0x7d, 0x06, 0x93, 0xcb, 0x02, 0x13, 0xcc, 0x58,
+	0xab, 0xb4, 0x6c, 0x21, 0x98, 0xc3, 0xc1, 0x02, 0x79, 0x37, 0xcd, 0x39, 0x78, 0x8f, 0x34, 0x2d,
+	0x24, 0xef, 0x60, 0xe6, 0x06, 0xbf, 0x93, 0x2a, 0x80, 0x61, 0x7d, 0x4a, 0xdb, 0xe4, 0x99, 0x01,
+	0x36, 0x0f, 0xcd, 0xbe, 0xde, 0x73, 0x29, 0x8d, 0xca, 0xab, 0x8f, 0xed, 0xe9, 0x00, 0x58, 0x20,
+	0x5f, 0xe1, 0x3a, 0xff, 0x5c, 0xa4, 0xad, 0xa6, 0xe5, 0x35, 0x97, 0xae, 0x58, 0xe7, 0xd9, 0xb6,
+	0xe4, 0xc0, 0xb6, 0xc5, 0x8a, 0x9b, 0xb3, 0xf8, 0x30, 0xfa, 0x32, 0x50, 0xa4, 0xcf, 0x28, 0x8e,
+	0x07, 0xf6, 0xef, 0xe2, 0xe2, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x48, 0x77, 0xa2, 0x91, 0x4e,
+	0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -392,17 +402,19 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MiddleClient interface {
-	CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*Text, error)
+	CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageReply, error)
-	Qr(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	Apps(ctx context.Context, in *Text, opts ...grpc.CallOption) (*AppReply, error)
-	StoreAppOAuth(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	Credentials(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	GetCredentials(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	GetCredential(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	CreateCredential(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	Setting(ctx context.Context, in *Text, opts ...grpc.CallOption) (*SettingReply, error)
-	CreateSetting(ctx context.Context, in *KV, opts ...grpc.CallOption) (*Text, error)
+	Qr(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Apps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppReply, error)
+	StoreAppOAuth(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Credentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	GetCredential(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	CreateCredential(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Setting(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingReply, error)
+	CreateSetting(ctx context.Context, in *KVRequest, opts ...grpc.CallOption) (*TextReply, error)
+	GetMemoUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Authorization(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type middleClient struct {
@@ -413,8 +425,8 @@ func NewMiddleClient(cc *grpc.ClientConn) MiddleClient {
 	return &middleClient{cc}
 }
 
-func (c *middleClient) CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/CreatePage", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -431,8 +443,8 @@ func (c *middleClient) GetPage(ctx context.Context, in *PageRequest, opts ...grp
 	return out, nil
 }
 
-func (c *middleClient) Qr(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) Qr(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/Qr", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -440,7 +452,7 @@ func (c *middleClient) Qr(ctx context.Context, in *Text, opts ...grpc.CallOption
 	return out, nil
 }
 
-func (c *middleClient) Apps(ctx context.Context, in *Text, opts ...grpc.CallOption) (*AppReply, error) {
+func (c *middleClient) Apps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppReply, error) {
 	out := new(AppReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/Apps", in, out, opts...)
 	if err != nil {
@@ -449,8 +461,8 @@ func (c *middleClient) Apps(ctx context.Context, in *Text, opts ...grpc.CallOpti
 	return out, nil
 }
 
-func (c *middleClient) StoreAppOAuth(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) StoreAppOAuth(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/StoreAppOAuth", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -458,8 +470,8 @@ func (c *middleClient) StoreAppOAuth(ctx context.Context, in *Text, opts ...grpc
 	return out, nil
 }
 
-func (c *middleClient) Credentials(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) Credentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/Credentials", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -467,8 +479,8 @@ func (c *middleClient) Credentials(ctx context.Context, in *Text, opts ...grpc.C
 	return out, nil
 }
 
-func (c *middleClient) GetCredentials(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/GetCredentials", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -476,8 +488,8 @@ func (c *middleClient) GetCredentials(ctx context.Context, in *Text, opts ...grp
 	return out, nil
 }
 
-func (c *middleClient) GetCredential(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) GetCredential(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/GetCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -485,8 +497,8 @@ func (c *middleClient) GetCredential(ctx context.Context, in *Text, opts ...grpc
 	return out, nil
 }
 
-func (c *middleClient) CreateCredential(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) CreateCredential(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/CreateCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -494,7 +506,7 @@ func (c *middleClient) CreateCredential(ctx context.Context, in *Text, opts ...g
 	return out, nil
 }
 
-func (c *middleClient) Setting(ctx context.Context, in *Text, opts ...grpc.CallOption) (*SettingReply, error) {
+func (c *middleClient) Setting(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingReply, error) {
 	out := new(SettingReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/Setting", in, out, opts...)
 	if err != nil {
@@ -503,9 +515,27 @@ func (c *middleClient) Setting(ctx context.Context, in *Text, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *middleClient) CreateSetting(ctx context.Context, in *KV, opts ...grpc.CallOption) (*Text, error) {
-	out := new(Text)
+func (c *middleClient) CreateSetting(ctx context.Context, in *KVRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/CreateSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleClient) GetMemoUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
+	err := c.cc.Invoke(ctx, "/pb.Middle/GetMemoUrl", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleClient) Authorization(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.Middle/Authorization", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -514,55 +544,63 @@ func (c *middleClient) CreateSetting(ctx context.Context, in *KV, opts ...grpc.C
 
 // MiddleServer is the server API for Middle service.
 type MiddleServer interface {
-	CreatePage(context.Context, *PageRequest) (*Text, error)
+	CreatePage(context.Context, *PageRequest) (*TextReply, error)
 	GetPage(context.Context, *PageRequest) (*PageReply, error)
-	Qr(context.Context, *Text) (*Text, error)
-	Apps(context.Context, *Text) (*AppReply, error)
-	StoreAppOAuth(context.Context, *Text) (*Text, error)
-	Credentials(context.Context, *Text) (*Text, error)
-	GetCredentials(context.Context, *Text) (*Text, error)
-	GetCredential(context.Context, *Text) (*Text, error)
-	CreateCredential(context.Context, *Text) (*Text, error)
-	Setting(context.Context, *Text) (*SettingReply, error)
-	CreateSetting(context.Context, *KV) (*Text, error)
+	Qr(context.Context, *TextRequest) (*TextReply, error)
+	Apps(context.Context, *TextRequest) (*AppReply, error)
+	StoreAppOAuth(context.Context, *TextRequest) (*TextReply, error)
+	Credentials(context.Context, *TextRequest) (*TextReply, error)
+	GetCredentials(context.Context, *TextRequest) (*TextReply, error)
+	GetCredential(context.Context, *TextRequest) (*TextReply, error)
+	CreateCredential(context.Context, *TextRequest) (*TextReply, error)
+	Setting(context.Context, *TextRequest) (*SettingReply, error)
+	CreateSetting(context.Context, *KVRequest) (*TextReply, error)
+	GetMemoUrl(context.Context, *TextRequest) (*TextReply, error)
+	Authorization(context.Context, *TextRequest) (*StateReply, error)
 }
 
 // UnimplementedMiddleServer can be embedded to have forward compatible implementations.
 type UnimplementedMiddleServer struct {
 }
 
-func (*UnimplementedMiddleServer) CreatePage(ctx context.Context, req *PageRequest) (*Text, error) {
+func (*UnimplementedMiddleServer) CreatePage(ctx context.Context, req *PageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePage not implemented")
 }
 func (*UnimplementedMiddleServer) GetPage(ctx context.Context, req *PageRequest) (*PageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
 }
-func (*UnimplementedMiddleServer) Qr(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) Qr(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Qr not implemented")
 }
-func (*UnimplementedMiddleServer) Apps(ctx context.Context, req *Text) (*AppReply, error) {
+func (*UnimplementedMiddleServer) Apps(ctx context.Context, req *TextRequest) (*AppReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Apps not implemented")
 }
-func (*UnimplementedMiddleServer) StoreAppOAuth(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) StoreAppOAuth(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StoreAppOAuth not implemented")
 }
-func (*UnimplementedMiddleServer) Credentials(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) Credentials(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Credentials not implemented")
 }
-func (*UnimplementedMiddleServer) GetCredentials(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) GetCredentials(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCredentials not implemented")
 }
-func (*UnimplementedMiddleServer) GetCredential(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) GetCredential(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCredential not implemented")
 }
-func (*UnimplementedMiddleServer) CreateCredential(ctx context.Context, req *Text) (*Text, error) {
+func (*UnimplementedMiddleServer) CreateCredential(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
 }
-func (*UnimplementedMiddleServer) Setting(ctx context.Context, req *Text) (*SettingReply, error) {
+func (*UnimplementedMiddleServer) Setting(ctx context.Context, req *TextRequest) (*SettingReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Setting not implemented")
 }
-func (*UnimplementedMiddleServer) CreateSetting(ctx context.Context, req *KV) (*Text, error) {
+func (*UnimplementedMiddleServer) CreateSetting(ctx context.Context, req *KVRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSetting not implemented")
+}
+func (*UnimplementedMiddleServer) GetMemoUrl(ctx context.Context, req *TextRequest) (*TextReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMemoUrl not implemented")
+}
+func (*UnimplementedMiddleServer) Authorization(ctx context.Context, req *TextRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authorization not implemented")
 }
 
 func RegisterMiddleServer(s *grpc.Server, srv MiddleServer) {
@@ -606,7 +644,7 @@ func _Middle_GetPage_Handler(srv interface{}, ctx context.Context, dec func(inte
 }
 
 func _Middle_Qr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -618,13 +656,13 @@ func _Middle_Qr_Handler(srv interface{}, ctx context.Context, dec func(interface
 		FullMethod: "/pb.Middle/Qr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Qr(ctx, req.(*Text))
+		return srv.(MiddleServer).Qr(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_Apps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -636,13 +674,13 @@ func _Middle_Apps_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/pb.Middle/Apps",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Apps(ctx, req.(*Text))
+		return srv.(MiddleServer).Apps(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_StoreAppOAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -654,13 +692,13 @@ func _Middle_StoreAppOAuth_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/pb.Middle/StoreAppOAuth",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).StoreAppOAuth(ctx, req.(*Text))
+		return srv.(MiddleServer).StoreAppOAuth(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_Credentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -672,13 +710,13 @@ func _Middle_Credentials_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/pb.Middle/Credentials",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Credentials(ctx, req.(*Text))
+		return srv.(MiddleServer).Credentials(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_GetCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -690,13 +728,13 @@ func _Middle_GetCredentials_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/pb.Middle/GetCredentials",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).GetCredentials(ctx, req.(*Text))
+		return srv.(MiddleServer).GetCredentials(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_GetCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -708,13 +746,13 @@ func _Middle_GetCredential_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/pb.Middle/GetCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).GetCredential(ctx, req.(*Text))
+		return srv.(MiddleServer).GetCredential(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_CreateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -726,13 +764,13 @@ func _Middle_CreateCredential_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/pb.Middle/CreateCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).CreateCredential(ctx, req.(*Text))
+		return srv.(MiddleServer).CreateCredential(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_Setting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -744,13 +782,13 @@ func _Middle_Setting_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/pb.Middle/Setting",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Setting(ctx, req.(*Text))
+		return srv.(MiddleServer).Setting(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Middle_CreateSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KV)
+	in := new(KVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -762,7 +800,43 @@ func _Middle_CreateSetting_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/pb.Middle/CreateSetting",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).CreateSetting(ctx, req.(*KV))
+		return srv.(MiddleServer).CreateSetting(ctx, req.(*KVRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Middle_GetMemoUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleServer).GetMemoUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Middle/GetMemoUrl",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleServer).GetMemoUrl(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Middle_Authorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleServer).Authorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Middle/Authorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleServer).Authorization(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -814,6 +888,14 @@ var _Middle_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateSetting",
 			Handler:    _Middle_CreateSetting_Handler,
+		},
+		{
+			MethodName: "GetMemoUrl",
+			Handler:    _Middle_GetMemoUrl_Handler,
+		},
+		{
+			MethodName: "Authorization",
+			Handler:    _Middle_Authorization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

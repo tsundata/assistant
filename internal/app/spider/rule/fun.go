@@ -3,6 +3,7 @@ package rule
 import (
 	"bytes"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"regexp"
 	"strconv"
 	"strings"
@@ -89,7 +90,7 @@ func (f *Fun) Invoke() (string, error) {
 		var dst []byte
 		m := rx.FindStringSubmatchIndex(src)
 		s := rx.ExpandString(dst, f.Params[1], src, m)
-		f.Result = string(s)
+		f.Result = utils.ByteToString(s)
 	case "match":
 		rx, err := regexp.Compile(f.Params[0])
 		if err != nil {
