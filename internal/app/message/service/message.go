@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"github.com/robertkrimen/otto"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -246,14 +245,6 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.TextReply
 			if r != nil {
 				reply = r.Text
 			}
-		case model.MessageScriptOfJavascript:
-			vm := otto.New()
-			v, err := vm.Run(strings.ReplaceAll(find.Text, "#!script:javascript", ""))
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
-			}
-			reply = v.String()
 		case model.MessageScriptOfUndefined:
 			reply = "MessageScriptOfUndefined"
 		default:
