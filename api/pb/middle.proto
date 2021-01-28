@@ -11,13 +11,11 @@ service Middle {
   rpc Qr(TextRequest) returns (TextReply) {}
   rpc Apps(TextRequest) returns (AppReply) {}
   rpc StoreAppOAuth(TextRequest) returns (TextReply) {}
-  rpc Credentials(TextRequest) returns (TextReply) {}
-  rpc GetCredentials(TextRequest) returns (TextReply) {}
-  rpc GetCredential(TextRequest) returns (TextReply) {}
-  rpc CreateCredential(TextRequest) returns (TextReply) {}
-  rpc Setting(TextRequest) returns (SettingReply) {}
+  rpc GetCredentials(TextRequest) returns (CredentialReply) {}
+  rpc CreateCredential(KVsRequest) returns (TextReply) {}
+  rpc GetSetting(TextRequest) returns (SettingReply) {}
   rpc CreateSetting(KVRequest) returns (TextReply) {}
-  rpc GetMemoUrl(TextRequest) returns (TextReply) {}
+  rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc Authorization(TextRequest) returns (StateReply) {}
 }
 
@@ -42,6 +40,10 @@ message App {
   bool isAuthorized = 2;
 }
 
+message CredentialReply {
+  repeated KV items = 1;
+}
+
 message SettingReply {
   repeated KV items = 1;
 }
@@ -49,6 +51,10 @@ message SettingReply {
 message KVRequest {
   string key = 1;
   string value = 2;
+}
+
+message KVsRequest {
+  repeated KV kvs = 1;
 }
 
 message KV {

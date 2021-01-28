@@ -185,21 +185,21 @@ func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
 
 func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 	var items []components.Component
-	items = append(items, &components.Link{
-		Title: "pocket (Pocket)",
-		Name:  "pocket (Pocket)",
-		URL:   "#1",
-	})
-	items = append(items, &components.Link{
-		Title: "my's github (Github)",
-		Name:  "my's github (Github)",
-		URL:   "#2",
-	})
-	items = append(items, &components.Link{
-		Title: "my's facebook (Facebook)",
-		Name:  "my's facebook (Facebook)",
-		URL:   "#3",
-	})
+
+	reply, err := wc.midClient.GetCredentials(context.Background(), &pb.TextRequest{})
+	if err != nil {
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	for _, item := range reply.Items {
+		items = append(items, &components.Link{
+			Title: item.Key,
+			Name:  item.Value,
+			URL:   "javascript:void(0)",
+		})
+	}
+
 	comp := components.Html{
 		Title:   "Credentials",
 		UseIcon: true,
@@ -207,7 +207,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 			Title: "Credentials",
 			Action: &components.Button{
 				Title: "Add Credentials",
-				URL:   "/credentials/xxx/create",
+				URL:   fmt.Sprintf("/credentials/%s/create", extractUUID(c.Path())),
 			},
 			Content: &components.List{
 				Items: items,
@@ -222,10 +222,12 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 	var items []components.Component
 	items = append(items, &components.Input{
+		Name:  "name",
 		Title: "Name",
 		Type:  "text",
 	})
 	items = append(items, &components.Input{
+		Name:  "k1",
 		Title: "App Key",
 		Type:  "text",
 	})
@@ -236,10 +238,10 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 			Title: "Create Credentials",
 			Action: &components.Button{
 				Title: "Go Back",
-				URL:   "/credentials/xxx",
+				URL:   fmt.Sprintf("/credentials/%s", extractUUID(c.Path())),
 			},
 			Content: &components.Form{
-				Action: "/demo",
+				Action: fmt.Sprintf("/credentials/%s/store", extractUUID(c.Path())),
 				Method: "POST",
 				Inputs: items,
 			},
@@ -251,20 +253,39 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
-	fmt.Println(c.Path())
+	var kvs []*pb.KV
+	c.Request.PostArgs().VisitAll(func(k, v []byte) {
+		kvs = append(kvs, &pb.KV{
+			Key:   utils.ByteToString(k),
+			Value: utils.ByteToString(v),
+		})
+	})
+	_, err := wc.midClient.CreateCredential(context.Background(), &pb.KVsRequest{
+		Kvs: kvs,
+	})
+	if err != nil {
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	c.Redirect(fmt.Sprintf("/credentials/%s", extractUUID(c.Path())), http.StatusFound)
 }
 
 func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 	var items []components.Component
-	items = append(items, &components.Text{
-		Title: "foo: bar",
-	})
-	items = append(items, &components.Text{
-		Title: "open: false",
-	})
-	items = append(items, &components.Text{
-		Title: "my's facebook (Facebook): true",
-	})
+
+	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
+	if err != nil {
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	for _, item := range reply.Items {
+		items = append(items, &components.Text{
+			Title: fmt.Sprintf("%s: %s", item.Key, item.Value),
+		})
+	}
+
 	comp := components.Html{
 		Title:   "Setting",
 		UseIcon: true,
@@ -272,7 +293,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 			Title: "Setting",
 			Action: &components.Button{
 				Title: "Add Setting",
-				URL:   "/setting/xxx/create",
+				URL:   fmt.Sprintf("/setting/%s/create", extractUUID(c.Path())),
 			},
 			Content: &components.List{
 				Items: items,
@@ -285,12 +306,15 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
+	uuid := extractUUID(c.Path())
 	var items []components.Component
 	items = append(items, &components.Input{
+		Name:  "key",
 		Title: "Key",
 		Type:  "text",
 	})
 	items = append(items, &components.Input{
+		Name:  "value",
 		Title: "Value",
 		Type:  "text",
 	})
@@ -301,10 +325,10 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 			Title: "Create Setting",
 			Action: &components.Button{
 				Title: "Go Back",
-				URL:   "/setting/xxx",
+				URL:   fmt.Sprintf("/setting/%s", uuid),
 			},
 			Content: &components.Form{
-				Action: "/demo",
+				Action: fmt.Sprintf("/setting/%s/store", uuid),
 				Method: "POST",
 				Inputs: items,
 			},
@@ -316,5 +340,17 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
-	fmt.Println(c.Path())
+	key := c.FormValue("key")
+	value := c.FormValue("value")
+
+	_, err := wc.midClient.CreateSetting(context.Background(), &pb.KVRequest{
+		Key:   utils.ByteToString(key),
+		Value: utils.ByteToString(value),
+	})
+	if err != nil {
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	c.Redirect(fmt.Sprintf("/setting/%s", extractUUID(c.Path())), http.StatusFound)
 }

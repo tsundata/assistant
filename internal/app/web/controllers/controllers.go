@@ -84,14 +84,20 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 			case "/":
 				wc.Index(ctx)
 			default:
-				credentialsCreateRe := regexp.MustCompile(`^/credentials/[\w\-]+/store$`)
-				if credentialsCreateRe.Match(path) {
-					wc.CredentialsStore(ctx)
-					return
-				}
-				settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/store$`)
-				if settingCreateRe.Match(path) {
-					wc.SettingStore(ctx)
+				// auth
+				if checkUUID(ctx.Path(), wc.midClient) {
+					credentialsCreateRe := regexp.MustCompile(`^/credentials/[\w\-]+/store$`)
+					if credentialsCreateRe.Match(path) {
+						wc.CredentialsStore(ctx)
+						return
+					}
+					settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/store$`)
+					if settingCreateRe.Match(path) {
+						wc.SettingStore(ctx)
+						return
+					}
+				} else {
+					ctx.Error("Forbidden", fasthttp.StatusForbidden)
 					return
 				}
 				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
@@ -103,8 +109,7 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 }
 
 func checkUUID(path []byte, midClient pb.MiddleClient) bool {
-	re := regexp.MustCompile(`(\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12})`)
-	uuid := re.FindString(utils.ByteToString(path))
+	uuid := extractUUID(path)
 	if uuid == "" {
 		return false
 	}
@@ -117,4 +122,9 @@ func checkUUID(path []byte, midClient pb.MiddleClient) bool {
 	}
 
 	return reply.State
+}
+
+func extractUUID(path []byte) string {
+	re := regexp.MustCompile(`(\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12})`)
+	return re.FindString(utils.ByteToString(path))
 }

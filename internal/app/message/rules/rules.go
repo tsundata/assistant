@@ -160,10 +160,10 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `memo`,
-		HelpMessage: `Get memo url`,
+		Regex:       `menu`,
+		HelpMessage: `Show menu`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			reply, err := b.MidClient.GetMemoUrl(context.Background(), &pb.TextRequest{})
+			reply, err := b.MidClient.GetMenu(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

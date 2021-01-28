@@ -1,8 +1,10 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -106,23 +108,69 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.TextRequest) (*p
 	return nil, nil
 }
 
-func (s *Middle) Credentials(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return nil, nil
+func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.CredentialReply, error) {
+	tx, err := s.db.Begin(true)
+	if err != nil {
+		return nil, err
+	}
+	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
+	if err != nil {
+		return nil, err
+	}
+	c := b.Cursor()
+
+	var kvs []*pb.KV
+	prefix := utils.StringToByte("credential:")
+	for k, v := c.Seek(prefix); k != nil && bytes.HasPrefix(k, prefix); k, v = c.Next() {
+		kvs = append(kvs, &pb.KV{
+			Key:   utils.ByteToString(bytes.ReplaceAll(k, prefix, []byte(""))),
+			Value: utils.ByteToString(v),
+		})
+	}
+
+	return &pb.CredentialReply{
+		Items: kvs,
+	}, nil
 }
 
-func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return nil, nil
+func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
+	tx, err := s.db.Begin(true)
+	if err != nil {
+		return nil, err
+	}
+	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
+	if err != nil {
+		return nil, err
+	}
+
+	name := ""
+	m := make(map[string]string)
+	for _, item := range payload.Kvs {
+		if item.Key == "name" {
+			name = item.Value
+		} else {
+			m[item.Key] = item.Value
+		}
+	}
+	if name == "" {
+		return nil, errors.New("name key error")
+	}
+
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.Put(utils.StringToByte("credential:"+name), data)
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Commit()
+
+	return &pb.TextReply{}, nil
 }
 
-func (s *Middle) GetCredential(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return nil, nil
-}
-
-func (s *Middle) CreateCredential(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return nil, nil
-}
-
-func (s *Middle) Setting(ctx context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
+func (s *Middle) GetSetting(ctx context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "setting/",
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -149,13 +197,25 @@ func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.
 	}, nil
 }
 
-func (s *Middle) GetMemoUrl(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+func (s *Middle) GetMenu(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	uuid, err := authUUID(s.etcd)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/memo/%s", s.webURL, uuid),
+		Text: fmt.Sprintf(`
+Memo
+%s/memo/%s
+
+Apps
+%s/apps/%s
+
+Credentials
+%s/credentials/%s
+
+Setting
+%s/setting/%s
+`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
 	}, nil
 }
 

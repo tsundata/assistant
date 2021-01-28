@@ -20,6 +20,6 @@ func (c *Input) GetContent() template.HTML {
 	return template.HTML(fmt.Sprintf(`
 <div class="input">
 	<label for="input-%d">%s:</label>
-  	<input type="%s" id="input-%d" value="%s">
-</div>`, id, c.Title, c.Type, id, c.Value))
+  	<input type="%s" id="input-%d" value="%s" name="%s">
+</div>`, id, c.Title, c.Type, id, c.Value, c.Name))
 }
