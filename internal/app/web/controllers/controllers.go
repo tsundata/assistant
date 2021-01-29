@@ -121,7 +121,7 @@ func checkUUID(path []byte, midClient pb.MiddleClient) bool {
 		return false
 	}
 
-	return reply.State
+	return reply.GetState()
 }
 
 func extractUUID(path []byte) string {

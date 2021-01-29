@@ -3,12 +3,7 @@ package model
 import (
 	"regexp"
 	"strings"
-)
-
-const (
-	EventTypeMessage = "message"
-	EventTypeNotice  = "notice"
-	EventTypeRequest = "request"
+	"time"
 )
 
 const (
@@ -28,7 +23,6 @@ const (
 )
 
 const (
-	MessageScriptOfJavascript = "javascript"
 	MessageScriptOfFlowscript = "flowscript"
 	MessageScriptOfUndefined  = "undefined"
 )
@@ -40,87 +34,11 @@ const (
 )
 
 type Message struct {
-	UUID string
-	Type string      `json:"type"`
-	Text string      `json:"text"`
-	Time string      `json:"time"`
-	Data interface{} `json:"data"`
-}
-
-type MessageAt struct {
-	UserID         string
-	UserTID        string
-	UserName       string
-	UserRemarkName string
-	User           interface{}
-}
-
-type MessageImage struct {
-	Url     string
-	Path    string
-	Data    string
-	MediaID string
-}
-
-type MessageAudio struct {
-	Url     string
-	Path    string
-	Data    string
-	MediaID string
-}
-
-type MessageVideo struct {
-	Url     string
-	Path    string
-	Data    string
-	MediaID string
-}
-
-type MessageFile struct {
-	Url     string
-	Path    string
-	Data    string
-	MediaID string
-}
-
-type MessageLink struct {
-	Url     string
-	Title   string
-	Content string
-	Image   string
-}
-
-type MessageLocation struct {
-	Latitude    float64
-	Longitude   float64
-	Description string
-}
-
-type MessageContact struct {
-	UserID   string
-	UserTID  string
-	UserName string
-}
-
-type MessageGroup struct {
-	GroupID   string
-	GroupTID  string
-	GroupName string
-}
-
-type MessageRich struct {
-	Url         string
-	Description string
-}
-
-type MessageAction struct {
-	Action string
-	Cron   string
-}
-
-type MessageScript struct {
-	Type string
-	Code string
+	ID   int       `db:"id"`
+	UUID string    `db:"uuid"`
+	Type string    `db:"type"`
+	Text string    `db:"text"`
+	Time time.Time `db:"time"`
 }
 
 func IsMessageOfScript(text string) bool {

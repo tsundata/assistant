@@ -131,7 +131,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			if reply.State {
+			if reply.GetState() {
 				return []string{"success"}
 			}
 
@@ -152,7 +152,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			if reply.State {
+			if reply.GetState() {
 				return []string{"success"}
 			}
 

@@ -2,10 +2,10 @@ package model
 
 import "time"
 
-type Page struct {
+type Credential struct {
 	ID      int       `db:"id"`
-	UUID    string    `db:"uuid"`
-	Title   string    `db:"title"`
+	Name    string    `db:"name"`
+	Type    string    `db:"type"`
 	Content string    `db:"content"`
 	Time    time.Time `db:"time"`
 }

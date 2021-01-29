@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
@@ -217,8 +218,8 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 					return
 				}
 
-				if reply.GetUuid() != "" {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(reply.GetUuid(), false))
+				if reply.GetId() > 0 {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", reply.GetId()), false))
 				} else {
 					for _, item := range reply.GetText() {
 						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))

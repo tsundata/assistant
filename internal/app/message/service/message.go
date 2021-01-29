@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"encoding/json"
+	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
-	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"strings"
 	"time"
@@ -17,49 +17,30 @@ import (
 
 type Message struct {
 	webhook  string
-	db       *bbolt.DB
+	db       *sqlx.DB
 	logger   *zap.Logger
 	bot      *rulebot.RuleBot
 	wfClient pb.WorkflowClient
 }
 
-func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
+func NewManage(db *sqlx.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 
 func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageListReply, error) {
-	tx, err := m.db.Begin(true)
+	var messages []model.Message
+	err := m.db.Select(&messages, "SELECT * FROM `messages` ORDER BY `id` DESC")
 	if err != nil {
 		return nil, err
 	}
-	b := tx.Bucket(utils.StringToByte("message"))
-	c := b.Cursor()
-	limit := 20
 
-	index := 0
 	var reply []*pb.MessageItem
-	for k, v := c.Last(); k != nil; k, v = c.Prev() {
-		index++
-
-		var m model.Message
-		err := json.Unmarshal(v, &m)
-		if err != nil {
-			return nil, err
-		}
-
+	for _, item := range messages {
 		reply = append(reply, &pb.MessageItem{
-			Uuid: m.UUID,
-			Text: m.Text,
-			Time: m.Time,
+			Uuid: item.UUID,
+			Text: item.Text,
+			Time: item.Time.Format("2006-01-02 15:04:05"),
 		})
-
-		if index >= limit {
-			break
-		}
-	}
-	err = tx.Commit()
-	if err != nil {
-		return nil, err
 	}
 
 	return &pb.MessageListReply{
@@ -68,51 +49,32 @@ func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 }
 
 func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	tx, err := m.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket(utils.StringToByte("message"))
-	v := b.Get(utils.StringToByte(payload.Uuid))
-	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	var find model.Message
-	err = json.Unmarshal(v, &find)
+	var message model.Message
+	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.Uuid)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.TextReply{
-		Text: find.Text,
+		Text: message.Text,
 	}, nil
 }
 
 func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var payload model.Message
-	payload.Time = time.Now().Format("2006-01-02 15:04:05")
+	payload.Time = time.Now()
 	payload.UUID = in.GetUuid()
 	payload.Type = model.MessageTypeText
 	payload.Text = strings.TrimSpace(in.GetText())
 
 	// check
-	tx, err := m.db.Begin(true)
-	if err != nil {
+	var find model.Message
+	err := m.db.Get(&find, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.UUID)
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("message"))
-	if err != nil {
-		return nil, err
-	}
-	v := b.Get(utils.StringToByte(payload.UUID))
-	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-	if v != nil {
+	if find.ID > 0 {
 		return &pb.MessageReply{
 			Uuid: payload.UUID,
 		}, nil
@@ -144,37 +106,23 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 	}
 
 	// insert
-	err = m.db.Update(func(tx *bbolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists(utils.StringToByte("message"))
-		if err != nil {
-			return err
-		}
-		data, err := json.Marshal(payload)
-		if err != nil {
-			return err
-		}
-		return b.Put(utils.StringToByte(payload.UUID), data)
-	})
+	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", payload)
+	if err != nil {
+		return nil, err
+	}
+	id, err := res.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.MessageReply{
+		Id:   id,
 		Uuid: payload.UUID,
 	}, nil
 }
 
 func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	tx, err := m.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket(utils.StringToByte("message"))
-	err = b.Delete(utils.StringToByte(payload.Uuid))
-	if err != nil {
-		return nil, err
-	}
-	err = tx.Commit()
+	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.Uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -205,36 +153,24 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.TextReply
 	var reply string
 	var payload model.Message
 
-	tx, err := m.db.Begin(false)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket(utils.StringToByte("message"))
-	v := b.Get(utils.StringToByte(payload.UUID))
-	err = tx.Commit()
+	err := m.db.Get(&payload, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", in.Uuid)
 	if err != nil {
 		return nil, err
 	}
 
-	var find model.Message
-	err = json.Unmarshal(v, &find)
-	if err != nil {
-		return nil, err
-	}
-
-	if find.UUID == "" {
+	if payload.UUID == "" {
 		return &pb.TextReply{
 			Text: "Not message",
 		}, nil
 	}
 
-	switch find.Text {
+	switch payload.Text {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch model.MessageScriptKind(find.Text) {
+		switch model.MessageScriptKind(payload.Text) {
 		case model.MessageScriptOfFlowscript:
-			txt := strings.ReplaceAll(find.Text, "#!script:flowscript", "")
+			txt := strings.ReplaceAll(payload.Text, "#!script:flowscript", "")
 			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
 				Text: txt,
 			})

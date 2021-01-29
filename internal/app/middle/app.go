@@ -2,12 +2,12 @@ package middle
 
 import (
 	"errors"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/bbolt"
 	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 // FIXME rename
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *bbolt.DB, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
 	// service
 	mid := service.NewMiddle(db, etcd, o.webURL)
 	err := rs.Register(func(gs *grpc.Server) error {

@@ -1,15 +1,14 @@
 package service
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"go.etcd.io/bbolt"
 	"go.etcd.io/etcd/clientv3"
 	"net/url"
 	"strings"
@@ -17,12 +16,12 @@ import (
 )
 
 type Middle struct {
-	db     *bbolt.DB
+	db     *sqlx.DB
 	etcd   *clientv3.Client
 	webURL string
 }
 
-func NewMiddle(db *bbolt.DB, etcd *clientv3.Client, webURL string) *Middle {
+func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, webURL string) *Middle {
 	return &Middle{db: db, etcd: etcd, webURL: webURL}
 }
 
@@ -39,23 +38,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 		Time:    time.Now(),
 	}
 
-	tx, err := s.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
-	if err != nil {
-		return nil, err
-	}
-	data, err := json.Marshal(page)
-	if err != nil {
-		return nil, err
-	}
-	err = b.Put(utils.StringToByte(page.UUID), data)
-	if err != nil {
-		return nil, err
-	}
-	err = tx.Commit()
+	_, err = s.db.NamedExec("INSERT INTO `pages` (`uuid`, `title`, `content`, `time`) VALUES (:uuid, :title, :content, :time)", page)
 	if err != nil {
 		return nil, err
 	}
@@ -66,23 +49,8 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 }
 
 func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
-	// TODO cache
-	tx, err := s.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
-	if err != nil {
-		return nil, err
-	}
-	v := b.Get(utils.StringToByte(payload.Uuid))
-
 	var find model.Page
-	err = json.Unmarshal(v, &find)
-	if err != nil {
-		return nil, err
-	}
-	err = tx.Commit()
+	err := s.db.Get(&find, "SELECT * FROM `pages` WHERE `uuid` = ?", payload.Uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -109,22 +77,17 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.TextRequest) (*p
 }
 
 func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.CredentialReply, error) {
-	tx, err := s.db.Begin(true)
+	var items []model.Credential
+	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
 	if err != nil {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
-	if err != nil {
-		return nil, err
-	}
-	c := b.Cursor()
 
 	var kvs []*pb.KV
-	prefix := utils.StringToByte("credential:")
-	for k, v := c.Seek(prefix); k != nil && bytes.HasPrefix(k, prefix); k, v = c.Next() {
+	for _, item := range items {
 		kvs = append(kvs, &pb.KV{
-			Key:   utils.ByteToString(bytes.ReplaceAll(k, prefix, []byte(""))),
-			Value: utils.ByteToString(v),
+			Key:   item.Name,
+			Value: item.Content,
 		})
 	}
 
@@ -134,15 +97,6 @@ func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*
 }
 
 func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
-	tx, err := s.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b, err := tx.CreateBucketIfNotExists(utils.StringToByte("middle"))
-	if err != nil {
-		return nil, err
-	}
-
 	name := ""
 	m := make(map[string]string)
 	for _, item := range payload.Kvs {
@@ -161,11 +115,10 @@ func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (
 		return nil, err
 	}
 
-	err = b.Put(utils.StringToByte("credential:"+name), data)
+	_, err = s.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)", name, "", utils.ByteToString(data), time.Now())
 	if err != nil {
 		return nil, err
 	}
-	err = tx.Commit()
 
 	return &pb.TextReply{}, nil
 }

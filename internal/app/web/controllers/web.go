@@ -78,9 +78,9 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	}
 
 	comp := components.Html{
-		Title: reply.Title,
+		Title: reply.GetTitle(),
 		Page: &components.Page{
-			Title: reply.Title,
+			Title: reply.GetTitle(),
 			Content: &components.List{
 				Items: items,
 			},
@@ -160,7 +160,7 @@ func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	for _, item := range reply.Messages {
+	for _, item := range reply.GetMessages() {
 		items = append(items, &components.Memo{
 			Time: item.GetTime(),
 			Content: &components.Text{
@@ -192,7 +192,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	for _, item := range reply.Items {
+	for _, item := range reply.GetItems() {
 		items = append(items, &components.Link{
 			Title: item.Key,
 			Name:  item.Value,
@@ -280,7 +280,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	for _, item := range reply.Items {
+	for _, item := range reply.GetItems() {
 		items = append(items, &components.Text{
 			Title: fmt.Sprintf("%s: %s", item.Key, item.Value),
 		})
