@@ -120,21 +120,26 @@ func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
 
 func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
 	var items []components.Component
-	items = append(items, &components.App{
-		Name: "Pocket",
-		Icon: "get-pocket",
-		Text: "Authorized",
-	})
-	items = append(items, &components.App{
-		Name: "Github",
-		Icon: "github",
-		Text: "Unauthorized",
-	})
-	items = append(items, &components.App{
-		Name: "Facebook",
-		Icon: "facebook",
-		Text: "Unauthorized",
-	})
+
+	reply, err := wc.midClient.Apps(context.Background(), &pb.TextRequest{})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Response.SetStatusCode(http.StatusNotFound)
+		return
+	}
+
+	for _, app := range reply.GetApps() {
+		authStr := "Unauthorized"
+		if app.GetIsAuthorized() {
+			authStr = "Authorized"
+		}
+		items = append(items, &components.App{
+			Name: app.GetTitle(),
+			Icon: "rocket",
+			Text: authStr,
+		})
+	}
+
 	comp := components.Html{
 		Title:   "Apps",
 		UseIcon: true,

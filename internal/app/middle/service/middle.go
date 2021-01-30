@@ -50,7 +50,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 
 func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	var find model.Page
-	err := s.db.Get(&find, "SELECT * FROM `pages` WHERE `uuid` = ?", payload.Uuid)
+	err := s.db.Get(&find, "SELECT * FROM `pages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +69,35 @@ func (s *Middle) Qr(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply
 }
 
 func (s *Middle) Apps(ctx context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
-	return nil, nil
+	var apps []model.App
+	err := s.db.Select(&apps, "SELECT * FROM `apps` ORDER BY `time` DESC")
+	if err != nil {
+		return nil, err
+	}
+
+	var res []*pb.App
+	for _, app := range apps {
+		res = append(res, &pb.App{
+			Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type),
+			IsAuthorized: app.Token != "",
+		})
+	}
+
+	return &pb.AppReply{
+		Apps: res,
+	}, nil
 }
 
-func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return nil, nil
+func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
+	_, err := s.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
+		payload.GetName(), payload.GetType(), payload.GetToken(), payload.GetExtra())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{
+		State: true,
+	}, nil
 }
 
 func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.CredentialReply, error) {
@@ -99,7 +123,7 @@ func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*
 func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
 	name := ""
 	m := make(map[string]string)
-	for _, item := range payload.Kvs {
+	for _, item := range payload.GetKvs() {
 		if item.Key == "name" {
 			name = item.Value
 		} else {
@@ -115,7 +139,8 @@ func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (
 		return nil, err
 	}
 
-	_, err = s.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)", name, "", utils.ByteToString(data), time.Now())
+	_, err = s.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)",
+		name, "", utils.ByteToString(data), time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +166,7 @@ func (s *Middle) GetSetting(ctx context.Context, payload *pb.TextRequest) (*pb.S
 }
 
 func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.TextReply, error) {
-	_, err := s.etcd.Put(context.Background(), "setting/"+payload.Key, payload.Value)
+	_, err := s.etcd.Put(context.Background(), "setting/"+payload.GetKey(), payload.GetValue())
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +209,7 @@ func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*p
 	}
 
 	return &pb.StateReply{
-		State: payload.Text == utils.ByteToString(resp.Kvs[0].Value),
+		State: payload.GetText() == utils.ByteToString(resp.Kvs[0].Value),
 	}, nil
 }
 

@@ -18,7 +18,7 @@ func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient) *Workflow {
 }
 
 func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	p, err := interpreter.NewParser(interpreter.NewLexer([]rune(payload.Text)))
+	p, err := interpreter.NewParser(interpreter.NewLexer([]rune(payload.GetText())))
 	if err != nil {
 		return nil, err
 	}

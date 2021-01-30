@@ -50,7 +50,7 @@ func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 
 func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var message model.Message
-	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.Uuid)
+	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
@@ -60,40 +60,40 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	}, nil
 }
 
-func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
-	var payload model.Message
-	payload.Time = time.Now()
-	payload.UUID = in.GetUuid()
-	payload.Type = model.MessageTypeText
-	payload.Text = strings.TrimSpace(in.GetText())
+	var message model.Message
+	message.Time = time.Now()
+	message.UUID = payload.GetUuid()
+	message.Type = model.MessageTypeText
+	message.Text = strings.TrimSpace(payload.GetText())
 
 	// check
 	var find model.Message
-	err := m.db.Get(&find, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.UUID)
+	err := m.db.Get(&find, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", message.UUID)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 	if find.ID > 0 {
 		return &pb.MessageReply{
-			Uuid: payload.UUID,
+			Uuid: message.UUID,
 		}, nil
 	}
 
 	// parse type
-	payload.Text = strings.TrimSpace(payload.Text)
-	if utils.IsUrl(payload.Text) {
-		payload.Type = model.MessageTypeLink
+	message.Text = strings.TrimSpace(message.Text)
+	if utils.IsUrl(message.Text) {
+		message.Type = model.MessageTypeLink
 	}
-	if model.IsMessageOfAction(payload.Text) {
-		payload.Type = model.MessageTypeAction
+	if model.IsMessageOfAction(message.Text) {
+		message.Type = model.MessageTypeAction
 	}
-	if model.IsMessageOfScript(payload.Text) {
-		payload.Type = model.MessageTypeScript
+	if model.IsMessageOfScript(message.Text) {
+		message.Type = model.MessageTypeScript
 	}
 
-	if payload.Type == model.MessageTypeText {
-		out := m.bot.Process(payload).MessageProviderOut()
+	if message.Type == model.MessageTypeText {
+		out := m.bot.Process(message).MessageProviderOut()
 		if len(out) > 0 {
 			var reply []string
 			for _, item := range out {
@@ -106,7 +106,7 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 	}
 
 	// insert
-	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", payload)
+	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", message)
 	if err != nil {
 		return nil, err
 	}
@@ -117,12 +117,12 @@ func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.Messag
 
 	return &pb.MessageReply{
 		Id:   id,
-		Uuid: payload.UUID,
+		Uuid: message.UUID,
 	}, nil
 }
 
 func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.Uuid)
+	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
@@ -148,29 +148,29 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}, nil
 }
 
-func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// check uuid
 	var reply string
-	var payload model.Message
+	var message model.Message
 
-	err := m.db.Get(&payload, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", in.Uuid)
+	err := m.db.Get(&message, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
 
-	if payload.UUID == "" {
+	if message.UUID == "" {
 		return &pb.TextReply{
 			Text: "Not message",
 		}, nil
 	}
 
-	switch payload.Text {
+	switch message.Text {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch model.MessageScriptKind(payload.Text) {
+		switch model.MessageScriptKind(message.Text) {
 		case model.MessageScriptOfFlowscript:
-			txt := strings.ReplaceAll(payload.Text, "#!script:flowscript", "")
+			txt := strings.ReplaceAll(message.Text, "#!script:flowscript", "")
 			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
 				Text: txt,
 			})

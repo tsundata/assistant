@@ -10,7 +10,7 @@ service Middle {
   rpc GetPage(PageRequest) returns (PageReply) {}
   rpc Qr(TextRequest) returns (TextReply) {}
   rpc Apps(TextRequest) returns (AppReply) {}
-  rpc StoreAppOAuth(TextRequest) returns (TextReply) {}
+  rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialReply) {}
   rpc CreateCredential(KVsRequest) returns (TextReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
@@ -29,6 +29,13 @@ message PageReply {
   string uuid = 1;
   string title = 2;
   string content = 3;
+}
+
+message AppRequest {
+  string name = 1;
+  string type = 2;
+  string token = 3;
+  string extra = 4;
 }
 
 message AppReply {
