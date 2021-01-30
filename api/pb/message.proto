@@ -1,15 +1,17 @@
 syntax = "proto3";
 package pb;
 
+import "base.proto";
+
 option go_package = "api/pb";
 
 service Message {
-  rpc List(MessageRequest) returns (MessageList) {}
-  rpc Get(MessageRequest) returns (MessageReply) {}
-  rpc Create(MessageRequest) returns (MessageList) {}
-  rpc Delete(MessageRequest) returns (MessageReply) {}
-  rpc Send(MessageRequest) returns (MessageReply) {}
-  rpc Run(MessageRequest) returns (MessageReply) {}
+  rpc List(MessageRequest) returns (MessageListReply) {}
+  rpc Get(MessageRequest) returns (TextReply) {}
+  rpc Create(MessageRequest) returns (MessageReply) {}
+  rpc Delete(MessageRequest) returns (TextReply) {}
+  rpc Send(MessageRequest) returns (TextReply) {}
+  rpc Run(MessageRequest) returns (TextReply) {}
 }
 
 message MessageRequest {
@@ -21,10 +23,17 @@ message MessageRequest {
 message MessageReply {
   int64 id = 1;
   string uuid = 2;
-  string text = 3;
+  repeated string text = 3;
 }
 
-message MessageList {
-  string uuid = 1;
-  repeated string text = 2;
+message MessageListReply {
+  repeated MessageItem messages = 2;
+}
+
+message MessageItem {
+  int64 id = 1;
+  string uuid = 2;
+  string text = 3;
+  string type = 4;
+  string time = 5;
 }

@@ -12,6 +12,22 @@ import (
 
 var rules = []Rule{
 	{
+		Regex:       `menu`,
+		HelpMessage: `Show menu`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			reply, err := b.MidClient.GetMenu(context.Background(), &pb.TextRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			if reply.GetText() == "" {
+				return []string{"empty subscript"}
+			}
+
+			return []string{reply.GetText()}
+		},
+	},
+	{
 		Regex:       `qr (.*)`,
 		HelpMessage: `Generate QR code`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
@@ -20,7 +36,7 @@ var rules = []Rule{
 			}
 
 			txt := args[1]
-			reply, err := b.MidClient.Qr(context.Background(), &pb.Text{
+			reply, err := b.MidClient.Qr(context.Background(), &pb.TextRequest{
 				Text: txt,
 			})
 			if err != nil {
@@ -131,7 +147,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			if reply.State {
+			if reply.GetState() {
 				return []string{"success"}
 			}
 
@@ -152,7 +168,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			if reply.State {
+			if reply.GetState() {
 				return []string{"success"}
 			}
 

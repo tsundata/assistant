@@ -1,21 +1,18 @@
-program : "program" variable ";" package? block "."
+program : node workflow
 
-package : "import" variable ";" ( "import" variable ";" )*
+workflow : "workflow" ID ":" block "end" ( workflow )*
+
+node : "node" ID "(" ID ")" ":" "with" ":" DICT ( "secret" ":" ID )? "end" ( node )*
 
 block : declarations compound_statement
 
-declarations : ( "var" ( variable_declaration ";" )+ )* function_declaration*
+declarations : ( "var" ( variable_declaration ";" )+ )*
 
 variable_declaration : ID ( "," ID )* type_spec
 
-function_declaration : "func" ID ( "(" formal_parameter_list ")" )? ( ":" type_spec )? ";" block ";"
-
-formal_params_list : formal_parameters
-				   | formal_parameters ";" formal_parameter_list
-
 formal_parameters : ID ( "," ID )* ":" type_spec
 
-type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT | MESSAGE
+type_spec : INTEGER | FLOAT | STRING | BOOLEAN | LIST | DICT | MESSAGE | NODE
 
 INTEGER : "int"
 FLOAT   : "float"
@@ -24,28 +21,28 @@ BOOLEAN : "bool"
 LIST    : "list"
 DICT    : "dict"
 MESSAGE : "message"
-
-compound_statement : "begin" statement_list "end"
-
-statement_list : statement
-			   | statement ";" statement_list
+NODE    : "node"
 
 statement : compound_statement
-		  | function_call_statement
 		  | assignment_statement
+		  | flow_statement
 		  | print_statement
-		  | return_statement
 		  | if_statement
 		  | while_statement
 		  | empty
 
-return_statement : "return" expression?
+compound_statement : statement_list
+
+statement_list : statement
+			   | statement ";" statement_list
+
+flow_statement : NODE_CONST ( "<-" NODE_CONST )*
 
 print_statement : "print" expression
 
-while_statement : "while" expression "do" statement_list "end"
+while_statement : "while" expression ":" statement_list "end"
 
-if_statement : "if" expression "then" statement_list ( "else" statement_list )? "end"
+if_statement : "if" expression ":" statement_list ( "else" statement_list )? "end"
 
 expression : logic_or
 
@@ -57,15 +54,11 @@ equality : comparison ( ( "!=" | "==" ) comparison )*
 
 comparison : expr ( ( ">" | ">=" | "<" | "<=" ) expr )*
 
-function_call_statement : ( ID "." )? ID "(" ( expr ( "," expr )* )? ")"
-
-function_reference : "@" ( ID "." )? ID
-
 assignment_statement : variable ":=" expr
 
 empty :
 
-expr : term ( ( "+" | "-" ) term )*
+expr : term ( ( "+" | "-" | "<-" ) term )*
 
 term : factor ( ( "*" | "DIV" | "/" ) factor )*
 
@@ -80,12 +73,11 @@ factor : "+" factor
        | BOOLEAN_CONST
        | "(" expr ")"
        | variable
-       | function_call_statement
-       | function_reference
 
 variable : ID
 
 MESSAGE_CONST : "#" DIGIT+
+NODE_CONST    : "@" DIGIT+
 BOOLEAN_CONST : "true" | "false"
 NUMBER        : DIGIT+ ( "." DIGIT+ )?
 STRING_CONST  : "\"" <any char except "\"">* "\""

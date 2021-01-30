@@ -1,12 +1,22 @@
 syntax = "proto3";
 package pb;
 
+import "base.proto";
+
 option go_package = "api/pb";
 
 service Middle {
-  rpc CreatePage(PageRequest) returns (Text) {}
+  rpc CreatePage(PageRequest) returns (TextReply) {}
   rpc GetPage(PageRequest) returns (PageReply) {}
-  rpc Qr(Text) returns (Text) {}
+  rpc Qr(TextRequest) returns (TextReply) {}
+  rpc Apps(TextRequest) returns (AppReply) {}
+  rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
+  rpc GetCredentials(TextRequest) returns (CredentialReply) {}
+  rpc CreateCredential(KVsRequest) returns (TextReply) {}
+  rpc GetSetting(TextRequest) returns (SettingReply) {}
+  rpc CreateSetting(KVRequest) returns (TextReply) {}
+  rpc GetMenu(TextRequest) returns (TextReply) {}
+  rpc Authorization(TextRequest) returns (StateReply) {}
 }
 
 message PageRequest {
@@ -21,6 +31,40 @@ message PageReply {
   string content = 3;
 }
 
-message Text {
-  string text = 1;
+message AppRequest {
+  string name = 1;
+  string type = 2;
+  string token = 3;
+  string extra = 4;
+}
+
+message AppReply {
+  repeated App apps = 1;
+}
+
+message App {
+  string title = 1;
+  bool isAuthorized = 2;
+}
+
+message CredentialReply {
+  repeated KV items = 1;
+}
+
+message SettingReply {
+  repeated KV items = 1;
+}
+
+message KVRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message KVsRequest {
+  repeated KV kvs = 1;
+}
+
+message KV {
+  string key = 1;
+  string value = 2;
 }

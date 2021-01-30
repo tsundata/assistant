@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 )
 
@@ -19,9 +20,9 @@ func (c *Client) PostJSON(url string, body interface{}) (*fasthttp.Response, err
 
 	req := fasthttp.AcquireRequest()
 	req.SetBody(j)
-	req.Header.SetMethodBytes([]byte("POST"))
+	req.Header.SetMethodBytes(utils.StringToByte("POST"))
 	req.Header.SetContentType("application/json")
-	req.SetRequestURIBytes([]byte(url))
+	req.SetRequestURIBytes(utils.StringToByte(url))
 	res := fasthttp.AcquireResponse()
 	err = fasthttp.Do(req, res)
 	if err != nil {

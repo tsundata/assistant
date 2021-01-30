@@ -1,0 +1,16 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "api/pb";
+
+service Workflow {
+  rpc Run(WorkflowRequest) returns (WorkflowReply) {}
+}
+
+message WorkflowRequest {
+  string text = 1;
+}
+
+message WorkflowReply {
+  string text = 1;
+}

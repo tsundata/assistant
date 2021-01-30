@@ -16,6 +16,7 @@ const (
 	UnexpectedToken   ErrorCode = "Unexpected token"
 	IdNotFound        ErrorCode = "Identifier not found"
 	DuplicateId       ErrorCode = "Duplicate id found"
+	NoMainWorkflow    ErrorCode = "No main workflow"
 	WrongParamsNum    ErrorCode = "Wrong number of arguments"
 	UndefinedFunction ErrorCode = "Undefined function"
 )

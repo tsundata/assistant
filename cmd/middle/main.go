@@ -69,7 +69,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := middle.NewApp(appOptions, log, server, db)
+	application, err := middle.NewApp(appOptions, log, server, db, e)
 	if err != nil {
 		return nil, err
 	}

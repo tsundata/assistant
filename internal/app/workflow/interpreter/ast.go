@@ -13,13 +13,13 @@ func NewBinOp(left Ast, op *Token, right Ast) *BinOp {
 	return &BinOp{Left: left, Token: op, Op: op, Right: right}
 }
 
-type Number struct {
+type NumberConst struct {
 	Token *Token
 	Value float64
 }
 
-func NewNumber(token *Token) *Number {
-	ret := &Number{Token: token}
+func NewNumberConst(token *Token) *NumberConst {
+	ret := &NumberConst{Token: token}
 
 	if v, ok := token.Value.(int); ok {
 		ret.Value = float64(v)
@@ -30,22 +30,22 @@ func NewNumber(token *Token) *Number {
 	return ret
 }
 
-type String struct {
+type StringConst struct {
 	Token *Token
 	Value string
 }
 
-func NewString(token *Token) *String {
-	return &String{Token: token, Value: token.Value.(string)}
+func NewStringConst(token *Token) *StringConst {
+	return &StringConst{Token: token, Value: token.Value.(string)}
 }
 
-type Boolean struct {
+type BooleanConst struct {
 	Token *Token
 	Value bool
 }
 
-func NewBoolean(token *Token) *Boolean {
-	return &Boolean{Token: token, Value: token.Value.(bool)}
+func NewBooleanConst(token *Token) *BooleanConst {
+	return &BooleanConst{Token: token, Value: token.Value.(bool)}
 }
 
 type List struct {
@@ -66,13 +66,30 @@ func NewDict(token *Token) *Dict {
 	return &Dict{Token: token, Value: token.Value.(map[string]Ast)}
 }
 
-type Message struct {
+type MessageConst struct {
 	Token *Token
 	Value interface{}
 }
 
-func NewMessage(token *Token) *Message {
-	return &Message{Token: token, Value: token.Value.(int)}
+func NewMessageConst(token *Token) *MessageConst {
+	return &MessageConst{Token: token, Value: token.Value.(int)}
+}
+
+type NodeConst struct {
+	Token *Token
+	Value interface{}
+}
+
+func NewNodeConst(token *Token) *NodeConst {
+	return &NodeConst{Token: token, Value: token.Value.(string)}
+}
+
+type Flow struct {
+	Nodes []Ast
+}
+
+func NewFlow(nodes []Ast) *Flow {
+	return &Flow{Nodes: nodes}
 }
 
 type UnaryOp struct {
@@ -118,21 +135,34 @@ func NewNoOp() *NoOp {
 }
 
 type Program struct {
-	Name     string
-	Block    Ast
-	Packages []Ast
+	Name      string
+	Nodes     map[string]Ast
+	Workflows map[string]Ast
 }
 
-func NewProgram(name string, packages []Ast, block Ast) *Program {
-	return &Program{Name: name, Packages: packages, Block: block}
+func NewProgram(name string, nodes map[string]Ast, workflows map[string]Ast) *Program {
+	return &Program{Name: name, Nodes: nodes, Workflows: workflows}
 }
 
-type Package struct {
-	Name string
+type Node struct {
+	Name       string
+	Regular    string
+	With       Ast
+	Parameters map[string]interface{}
+	Secret     string
 }
 
-func NewPackage(name string) *Package {
-	return &Package{Name: name}
+func NewNode(name string, regular string, with Ast, secret string) *Node {
+	return &Node{Name: name, Regular: regular, With: with, Secret: secret}
+}
+
+type Workflow struct {
+	Name      string
+	Scenarios Ast
+}
+
+func NewWorkflow(name string, scenarios Ast) *Workflow {
+	return &Workflow{Name: name, Scenarios: scenarios}
 }
 
 type Block struct {
@@ -171,30 +201,6 @@ func NewParam(varNode Ast, typeNode Ast) *Param {
 	return &Param{VarNode: varNode, TypeNode: typeNode}
 }
 
-type FunctionDecl struct {
-	PackageName  string
-	FuncName     string
-	FormalParams []Ast
-	BlockNode    Ast
-	ReturnType   Ast
-}
-
-func NewFunctionDecl(funcName string, formalParams []Ast, blockNode Ast, returnType Ast) *FunctionDecl {
-	return &FunctionDecl{PackageName: "", FuncName: funcName, FormalParams: formalParams, BlockNode: blockNode, ReturnType: returnType}
-}
-
-type FunctionCall struct {
-	PackageName  string
-	FuncName     string
-	ActualParams []Ast
-	Token        *Token
-	FuncSymbol   Symbol
-}
-
-func NewFunctionCall(packageName string, funcName string, actualParams []Ast, token *Token) *FunctionCall {
-	return &FunctionCall{PackageName: packageName, FuncName: funcName, ActualParams: actualParams, Token: token}
-}
-
 type If struct {
 	Condition  Ast
 	ThenBranch []Ast
@@ -230,22 +236,4 @@ type Print struct {
 
 func NewPrint(statement Ast) *Print {
 	return &Print{Statement: statement}
-}
-
-type Return struct {
-	Statement Ast
-}
-
-func NewReturn(statement Ast) *Return {
-	return &Return{Statement: statement}
-}
-
-type FunctionRef struct {
-	PackageName string
-	FuncName    string
-	Token       *Token
-}
-
-func NewFunctionRef(packageName string, funcName string, token *Token) *FunctionRef {
-	return &FunctionRef{PackageName: packageName, FuncName: funcName, Token: token}
 }

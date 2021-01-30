@@ -2,12 +2,13 @@ package database
 
 import (
 	"errors"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
-	"go.etcd.io/bbolt"
 )
 
 type Options struct {
-	Path string `yaml:"path"`
+	URL string `yaml:"url"`
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -20,8 +21,8 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func New(o *Options) (*bbolt.DB, error) {
-	db, err := bbolt.Open(o.Path, 0600, nil)
+func New(o *Options) (*sqlx.DB, error) {
+	db, err := sqlx.Connect("mysql", o.URL)
 	if err != nil {
 		return nil, err
 	}

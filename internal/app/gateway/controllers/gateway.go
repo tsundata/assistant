@@ -3,11 +3,13 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	slackVendor "github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
@@ -30,7 +32,7 @@ func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *zap.L
 }
 
 func (gc *GatewayController) Index(c *fasthttp.RequestCtx) {
-	c.Response.SetBody([]byte("Gateway"))
+	c.Response.SetBody(utils.StringToByte("Gateway"))
 }
 
 func (gc *GatewayController) Apps(c *fasthttp.RequestCtx) {
@@ -119,7 +121,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		if reply.GetId() > 0 {
+		if reply.GetText() != "" {
 			err = slackVendor.ResponseText(s.ResponseURL, reply.GetText())
 			if err != nil {
 				gc.logger.Error(err.Error())
@@ -150,7 +152,7 @@ func (gc *GatewayController) SlackCommand(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		if reply.GetId() > 0 {
+		if reply.GetText() != "" {
 			r, err := gc.msgClient.Run(context.Background(), &pb.MessageRequest{
 				Text: reply.GetText(),
 			})
@@ -216,8 +218,8 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 					return
 				}
 
-				if reply.GetUuid() != "" {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(reply.GetUuid(), false))
+				if reply.GetId() > 0 {
+					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", reply.GetId()), false))
 				} else {
 					for _, item := range reply.GetText() {
 						_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))

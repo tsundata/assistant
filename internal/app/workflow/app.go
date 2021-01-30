@@ -1,11 +1,10 @@
-package middle
+package workflow
 
 import (
 	"errors"
-	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/middle/service"
+	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/etcd/clientv3"
@@ -14,8 +13,7 @@ import (
 )
 
 type Options struct {
-	Name   string
-	webURL string
+	Name string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -26,18 +24,14 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, errors.New("unmarshal app option error")
 	}
 
-	web := v.GetStringMapString("web")
-	o.webURL = web["url"]
-
 	return o, err
 }
 
-// FIXME rename
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client, midClient pb.MiddleClient) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(db, etcd, o.webURL)
+	subscribe := service.NewWorkflow(etcd, midClient)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterMiddleServer(gs, mid)
+		pb.RegisterWorkflowServer(gs, subscribe)
 		return nil
 	})
 	if err != nil {
