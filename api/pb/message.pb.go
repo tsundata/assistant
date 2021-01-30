@@ -81,7 +81,7 @@ func (m *MessageRequest) GetText() string {
 type MessageReply struct {
 	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	Text                 []string `protobuf:"bytes,3,rep,name=text,proto3" json:"text,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -125,84 +125,151 @@ func (m *MessageReply) GetUuid() string {
 	return ""
 }
 
-func (m *MessageReply) GetText() string {
-	if m != nil {
-		return m.Text
-	}
-	return ""
-}
-
-type MessageList struct {
-	Uuid                 string   `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Text                 []string `protobuf:"bytes,2,rep,name=text,proto3" json:"text,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *MessageList) Reset()         { *m = MessageList{} }
-func (m *MessageList) String() string { return proto.CompactTextString(m) }
-func (*MessageList) ProtoMessage()    {}
-func (*MessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{2}
-}
-func (m *MessageList) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MessageList.Unmarshal(m, b)
-}
-func (m *MessageList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MessageList.Marshal(b, m, deterministic)
-}
-func (m *MessageList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MessageList.Merge(m, src)
-}
-func (m *MessageList) XXX_Size() int {
-	return xxx_messageInfo_MessageList.Size(m)
-}
-func (m *MessageList) XXX_DiscardUnknown() {
-	xxx_messageInfo_MessageList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MessageList proto.InternalMessageInfo
-
-func (m *MessageList) GetUuid() string {
-	if m != nil {
-		return m.Uuid
-	}
-	return ""
-}
-
-func (m *MessageList) GetText() []string {
+func (m *MessageReply) GetText() []string {
 	if m != nil {
 		return m.Text
 	}
 	return nil
 }
 
+type MessageListReply struct {
+	Messages             []*MessageItem `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *MessageListReply) Reset()         { *m = MessageListReply{} }
+func (m *MessageListReply) String() string { return proto.CompactTextString(m) }
+func (*MessageListReply) ProtoMessage()    {}
+func (*MessageListReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_33c57e4bae7b9afd, []int{2}
+}
+func (m *MessageListReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MessageListReply.Unmarshal(m, b)
+}
+func (m *MessageListReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MessageListReply.Marshal(b, m, deterministic)
+}
+func (m *MessageListReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessageListReply.Merge(m, src)
+}
+func (m *MessageListReply) XXX_Size() int {
+	return xxx_messageInfo_MessageListReply.Size(m)
+}
+func (m *MessageListReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessageListReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MessageListReply proto.InternalMessageInfo
+
+func (m *MessageListReply) GetMessages() []*MessageItem {
+	if m != nil {
+		return m.Messages
+	}
+	return nil
+}
+
+type MessageItem struct {
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Time                 string   `protobuf:"bytes,5,opt,name=time,proto3" json:"time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MessageItem) Reset()         { *m = MessageItem{} }
+func (m *MessageItem) String() string { return proto.CompactTextString(m) }
+func (*MessageItem) ProtoMessage()    {}
+func (*MessageItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_33c57e4bae7b9afd, []int{3}
+}
+func (m *MessageItem) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MessageItem.Unmarshal(m, b)
+}
+func (m *MessageItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MessageItem.Marshal(b, m, deterministic)
+}
+func (m *MessageItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessageItem.Merge(m, src)
+}
+func (m *MessageItem) XXX_Size() int {
+	return xxx_messageInfo_MessageItem.Size(m)
+}
+func (m *MessageItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessageItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MessageItem proto.InternalMessageInfo
+
+func (m *MessageItem) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *MessageItem) GetUuid() string {
+	if m != nil {
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *MessageItem) GetText() string {
+	if m != nil {
+		return m.Text
+	}
+	return ""
+}
+
+func (m *MessageItem) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *MessageItem) GetTime() string {
+	if m != nil {
+		return m.Time
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*MessageRequest)(nil), "pb.MessageRequest")
 	proto.RegisterType((*MessageReply)(nil), "pb.MessageReply")
-	proto.RegisterType((*MessageList)(nil), "pb.MessageList")
+	proto.RegisterType((*MessageListReply)(nil), "pb.MessageListReply")
+	proto.RegisterType((*MessageItem)(nil), "pb.MessageItem")
 }
 
 func init() { proto.RegisterFile("message.proto", fileDescriptor_33c57e4bae7b9afd) }
 
 var fileDescriptor_33c57e4bae7b9afd = []byte{
-	// 233 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcd, 0x4d, 0x2d, 0x2e,
-	0x4e, 0x4c, 0x4f, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0xf2, 0xe0,
-	0xe2, 0xf3, 0x85, 0x08, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0xf1, 0x71, 0x31, 0x65,
-	0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x30, 0x07, 0x31, 0x65, 0xa6, 0x08, 0x09, 0x71, 0xb1, 0x94,
-	0x96, 0x66, 0xa6, 0x48, 0x30, 0x29, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x20, 0xb1, 0x92, 0xd4,
-	0x8a, 0x12, 0x09, 0x66, 0x88, 0x18, 0x88, 0xad, 0xe4, 0xc6, 0xc5, 0x03, 0x37, 0xa9, 0x20, 0xa7,
-	0x92, 0x6c, 0x73, 0x4c, 0xb9, 0xb8, 0xa1, 0xe6, 0xf8, 0x64, 0x16, 0x97, 0xc0, 0xb5, 0x31, 0x62,
-	0xd1, 0xc6, 0xa4, 0xc0, 0x0c, 0xd3, 0x66, 0xb4, 0x92, 0x89, 0x8b, 0x1d, 0xaa, 0x4f, 0x48, 0x97,
-	0x8b, 0x05, 0xa2, 0x57, 0xaf, 0x20, 0x49, 0x0f, 0xd5, 0x7b, 0x52, 0xfc, 0x48, 0x62, 0x20, 0x45,
-	0x4a, 0x0c, 0x42, 0xba, 0x5c, 0xcc, 0xee, 0xa9, 0xd8, 0x55, 0x0b, 0xa0, 0x88, 0x15, 0xe4, 0x54,
-	0x2a, 0x31, 0x08, 0xe9, 0x73, 0xb1, 0x39, 0x17, 0xa5, 0x26, 0x96, 0xa4, 0x12, 0x6b, 0xbe, 0x01,
-	0x17, 0x9b, 0x4b, 0x6a, 0x4e, 0x2a, 0x0e, 0x0d, 0xd8, 0xac, 0xd0, 0xe3, 0x62, 0x09, 0x4e, 0xcd,
-	0x4b, 0x21, 0x5a, 0xbd, 0x2e, 0x17, 0x73, 0x50, 0x69, 0x1e, 0xb1, 0xca, 0x9d, 0x38, 0xa2, 0xd8,
-	0x12, 0x0b, 0x32, 0xf5, 0x0b, 0x92, 0x92, 0xd8, 0xc0, 0x29, 0xc1, 0x18, 0x10, 0x00, 0x00, 0xff,
-	0xff, 0x05, 0x34, 0x18, 0x66, 0x1a, 0x02, 0x00, 0x00,
+	// 290 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xcf, 0x4a, 0xc3, 0x40,
+	0x10, 0x87, 0xcd, 0x6e, 0x8c, 0x75, 0x6a, 0x6b, 0x59, 0x3c, 0x2c, 0x3d, 0x85, 0x9c, 0x42, 0x8b,
+	0x51, 0xe2, 0x03, 0x08, 0x2a, 0xfe, 0x01, 0xbd, 0x44, 0x4f, 0xde, 0x12, 0x32, 0xc8, 0x42, 0xb7,
+	0x5d, 0xbb, 0x1b, 0x68, 0x9e, 0xc7, 0x17, 0x95, 0x24, 0xcb, 0x12, 0xb1, 0x42, 0xed, 0x6d, 0xf2,
+	0xe5, 0x9b, 0xdf, 0xcc, 0x84, 0xc0, 0x48, 0xa2, 0xd6, 0xf9, 0x07, 0x26, 0x6a, 0xbd, 0x32, 0x2b,
+	0x46, 0x54, 0x31, 0x85, 0x22, 0xd7, 0xf6, 0x39, 0x7a, 0x84, 0xf1, 0x4b, 0x27, 0x64, 0xf8, 0x59,
+	0xa1, 0x36, 0x6c, 0x0c, 0x44, 0x94, 0xdc, 0x0b, 0xbd, 0x98, 0x66, 0x44, 0x94, 0x8c, 0x81, 0x5f,
+	0x55, 0xa2, 0xe4, 0x24, 0xf4, 0xe2, 0xe3, 0xac, 0xad, 0x1b, 0x66, 0x70, 0x63, 0x38, 0xed, 0x58,
+	0x53, 0x47, 0xf7, 0x70, 0xe2, 0x92, 0xd4, 0xa2, 0xfe, 0x67, 0x0e, 0x75, 0x39, 0xd7, 0x30, 0xb1,
+	0x39, 0xcf, 0x42, 0x9b, 0x2e, 0x6b, 0x0e, 0x03, 0x7b, 0x86, 0xe6, 0x24, 0xa4, 0xf1, 0x30, 0x3d,
+	0x4d, 0x54, 0x91, 0x58, 0xef, 0xc9, 0xa0, 0xcc, 0x9c, 0x10, 0x49, 0x18, 0xf6, 0x5e, 0xec, 0x7b,
+	0x4f, 0xcb, 0x6a, 0x85, 0xdc, 0xb7, 0xac, 0x56, 0xd8, 0x32, 0x21, 0x91, 0x1f, 0x5a, 0x26, 0x24,
+	0xa6, 0x5f, 0x04, 0x8e, 0xec, 0x3c, 0x96, 0x82, 0xdf, 0x2c, 0xcd, 0x58, 0x6f, 0x3b, 0xfb, 0x5d,
+	0xa7, 0x67, 0x3d, 0xe6, 0x2e, 0x8b, 0x0e, 0xd8, 0x0c, 0xe8, 0x03, 0x6e, 0x6f, 0x19, 0x35, 0xec,
+	0x0d, 0x37, 0xce, 0xbd, 0x84, 0xe0, 0x76, 0x8d, 0xb9, 0xc1, 0xad, 0xfa, 0xe4, 0x07, 0xeb, 0x3a,
+	0xce, 0x21, 0xb8, 0xc3, 0x05, 0xfe, 0xd1, 0xf1, 0x6b, 0xc0, 0x1c, 0xfc, 0x57, 0x5c, 0x96, 0xbb,
+	0xc9, 0x33, 0xa0, 0x59, 0xb5, 0xdc, 0xc9, 0xbd, 0x19, 0xbc, 0x07, 0xb9, 0x12, 0x17, 0xaa, 0x28,
+	0x82, 0xf6, 0xc7, 0xbb, 0xfa, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x24, 0x00, 0x07, 0xe8, 0x99, 0x02,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -217,12 +284,12 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MessageClient interface {
-	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageList, error)
-	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
-	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageList, error)
-	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
-	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
-	Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageListReply, error)
+	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
+	Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
 }
 
 type messageClient struct {
@@ -233,8 +300,8 @@ func NewMessageClient(cc *grpc.ClientConn) MessageClient {
 	return &messageClient{cc}
 }
 
-func (c *messageClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageList, error) {
-	out := new(MessageList)
+func (c *messageClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageListReply, error) {
+	out := new(MessageListReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/List", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -242,8 +309,8 @@ func (c *messageClient) List(ctx context.Context, in *MessageRequest, opts ...gr
 	return out, nil
 }
 
-func (c *messageClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
-	out := new(MessageReply)
+func (c *messageClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -251,8 +318,8 @@ func (c *messageClient) Get(ctx context.Context, in *MessageRequest, opts ...grp
 	return out, nil
 }
 
-func (c *messageClient) Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageList, error) {
-	out := new(MessageList)
+func (c *messageClient) Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
+	out := new(MessageReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -260,8 +327,8 @@ func (c *messageClient) Create(ctx context.Context, in *MessageRequest, opts ...
 	return out, nil
 }
 
-func (c *messageClient) Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
-	out := new(MessageReply)
+func (c *messageClient) Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -269,8 +336,8 @@ func (c *messageClient) Delete(ctx context.Context, in *MessageRequest, opts ...
 	return out, nil
 }
 
-func (c *messageClient) Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
-	out := new(MessageReply)
+func (c *messageClient) Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/Send", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -278,8 +345,8 @@ func (c *messageClient) Send(ctx context.Context, in *MessageRequest, opts ...gr
 	return out, nil
 }
 
-func (c *messageClient) Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
-	out := new(MessageReply)
+func (c *messageClient) Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
 	err := c.cc.Invoke(ctx, "/pb.Message/Run", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -289,34 +356,34 @@ func (c *messageClient) Run(ctx context.Context, in *MessageRequest, opts ...grp
 
 // MessageServer is the server API for Message service.
 type MessageServer interface {
-	List(context.Context, *MessageRequest) (*MessageList, error)
-	Get(context.Context, *MessageRequest) (*MessageReply, error)
-	Create(context.Context, *MessageRequest) (*MessageList, error)
-	Delete(context.Context, *MessageRequest) (*MessageReply, error)
-	Send(context.Context, *MessageRequest) (*MessageReply, error)
-	Run(context.Context, *MessageRequest) (*MessageReply, error)
+	List(context.Context, *MessageRequest) (*MessageListReply, error)
+	Get(context.Context, *MessageRequest) (*TextReply, error)
+	Create(context.Context, *MessageRequest) (*MessageReply, error)
+	Delete(context.Context, *MessageRequest) (*TextReply, error)
+	Send(context.Context, *MessageRequest) (*TextReply, error)
+	Run(context.Context, *MessageRequest) (*TextReply, error)
 }
 
 // UnimplementedMessageServer can be embedded to have forward compatible implementations.
 type UnimplementedMessageServer struct {
 }
 
-func (*UnimplementedMessageServer) List(ctx context.Context, req *MessageRequest) (*MessageList, error) {
+func (*UnimplementedMessageServer) List(ctx context.Context, req *MessageRequest) (*MessageListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (*UnimplementedMessageServer) Get(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageServer) Get(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedMessageServer) Create(ctx context.Context, req *MessageRequest) (*MessageList, error) {
+func (*UnimplementedMessageServer) Create(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (*UnimplementedMessageServer) Delete(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageServer) Delete(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (*UnimplementedMessageServer) Send(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageServer) Send(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Send not implemented")
 }
-func (*UnimplementedMessageServer) Run(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageServer) Run(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
 }
 

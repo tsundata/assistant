@@ -1,4 +1,4 @@
-apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron'
+apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron' 'workflow'
 agents = 'server' 'redis'
 
 .PHONY: build
@@ -14,7 +14,7 @@ build:
 
 .PHONY: lint
 lint:
-	golangci-lint run ./...
+	golangci-lint run ./... --timeout=1m
 
 .PHONY: docker
 docker-compose: build
@@ -22,7 +22,9 @@ docker-compose: build
 
 .PHONY: proto
 proto:
+	rm api/pb/*.pb.go
 	protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
+	git add api/pb/*.pb.go
 all: lint build
 
 .PHONY: release

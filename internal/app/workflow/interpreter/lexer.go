@@ -131,11 +131,23 @@ func (l *Lexer) Message() (*Token, error) {
 	return &Token{Type: TokenMessageConst, Value: i, LineNo: l.LineNo, Column: l.Column}, nil
 }
 
+func (l *Lexer) Node() (*Token, error) {
+	l.Advance()
+
+	var result []rune
+	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar) || l.CurrentChar == '_') {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	return &Token{Type: TokenNodeConst, Value: string(result), LineNo: l.LineNo, Column: l.Column}, nil
+}
+
 func (l *Lexer) Id() (*Token, error) {
 	token := &Token{Type: "", Value: nil, LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
-	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar)) {
+	for l.CurrentChar > 0 && (unicode.IsLetter(l.CurrentChar) || unicode.IsDigit(l.CurrentChar) || l.CurrentChar == '_') {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -176,6 +188,9 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '#' {
 			return l.Message()
 		}
+		if l.CurrentChar == '@' {
+			return l.Node()
+		}
 		if l.CurrentChar == ':' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
@@ -191,23 +206,23 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.Advance()
 			return &Token{Type: TokenNotEqual, Value: TokenNotEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
-		if l.CurrentChar == '>' {
-			l.Advance()
-			return &Token{Type: TokenGreater, Value: TokenGreater, LineNo: l.LineNo, Column: l.Column}, nil
-		}
 		if l.CurrentChar == '>' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
 			return &Token{Type: TokenGreaterEqual, Value: TokenNotEqual, LineNo: l.LineNo, Column: l.Column}, nil
 		}
-		if l.CurrentChar == '<' {
+		if l.CurrentChar == '>' {
 			l.Advance()
-			return &Token{Type: TokenLess, Value: TokenLess, LineNo: l.LineNo, Column: l.Column}, nil
+			return &Token{Type: TokenGreater, Value: TokenGreater, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '<' && l.Peek() == '=' {
 			l.Advance()
 			l.Advance()
 			return &Token{Type: TokenLessEqual, Value: TokenLessEqual, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '<' {
+			l.Advance()
+			return &Token{Type: TokenLess, Value: TokenLess, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == ';' {
 			l.Advance()
@@ -224,6 +239,11 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '+' {
 			l.Advance()
 			return &Token{Type: TokenPlus, Value: TokenPlus, LineNo: l.LineNo, Column: l.Column}, nil
+		}
+		if l.CurrentChar == '-' && l.Peek() == '>' {
+			l.Advance()
+			l.Advance()
+			return &Token{Type: TokenFlow, Value: TokenFlow, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		if l.CurrentChar == '-' {
 			l.Advance()
@@ -264,10 +284,6 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if l.CurrentChar == '}' {
 			l.Advance()
 			return &Token{Type: TokenRCurly, Value: TokenRCurly, LineNo: l.LineNo, Column: l.Column}, nil
-		}
-		if l.CurrentChar == '@' {
-			l.Advance()
-			return &Token{Type: TokenAt, Value: TokenAt, LineNo: l.LineNo, Column: l.Column}, nil
 		}
 		return nil, l.error()
 	}

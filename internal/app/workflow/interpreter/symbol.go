@@ -37,22 +37,33 @@ func (s *BuiltinTypeSymbol) String() string {
 	return fmt.Sprintf("<BuiltinTypeSymbol(name=%s)>", s.Name)
 }
 
-type FunctionSymbol struct {
-	Package      string
-	Name         string
-	FormalParams []Ast
-	ReturnType   Ast
-	BlockAst     Ast
-	ScopeLevel   int
-	Call         CallFunc
+type NodeSymbol struct {
+	Name       string
+	Parameters []Ast
+	BlockAst   Ast
+	ScopeLevel int
 }
 
-func NewFunctionSymbol(name string) *FunctionSymbol {
-	return &FunctionSymbol{Name: name, ScopeLevel: 0}
+func NewNodeSymbol(name string) *NodeSymbol {
+	return &NodeSymbol{Name: name, ScopeLevel: 0}
 }
 
-func (s *FunctionSymbol) String() string {
-	return fmt.Sprintf("<FunctionSymbol(name=%s, package=%v, parameters=%v, return=%v)>", s.Name, s.Package, s.FormalParams, s.ReturnType)
+func (s *NodeSymbol) String() string {
+	return fmt.Sprintf("<NodeSymbol(name=%s, parameters=%v)>", s.Name, s.Parameters)
+}
+
+type WorkflowSymbol struct {
+	Name       string
+	Scenarios  Ast
+	ScopeLevel int
+}
+
+func NewWorkflowSymbol(name string) *WorkflowSymbol {
+	return &WorkflowSymbol{Name: name, ScopeLevel: 0}
+}
+
+func (s *WorkflowSymbol) String() string {
+	return fmt.Sprintf("<WorkflowSymbol(name=%s)>", s.Name)
 }
 
 type ScopedSymbolTable struct {
@@ -75,6 +86,8 @@ func NewScopedSymbolTable(scopeName string, scopeLevel int, enclosingScope *Scop
 	table.Insert(NewBuiltinTypeSymbol("STRING"))
 	table.Insert(NewBuiltinTypeSymbol("LIST"))
 	table.Insert(NewBuiltinTypeSymbol("DICT"))
+	table.Insert(NewBuiltinTypeSymbol("MESSAGE"))
+	table.Insert(NewBuiltinTypeSymbol("NODE"))
 	return table
 }
 
@@ -119,14 +132,16 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 		t.symbols.Set(name, s)
 		return
 	}
-	if s, ok := symbol.(*FunctionSymbol); ok {
+	if s, ok := symbol.(*NodeSymbol); ok {
 		name = s.Name
 		s.ScopeLevel = t.ScopeLevel
-		if s.Package != "" {
-			t.symbols.Set(fmt.Sprintf("%s.%s", s.Package, s.Name), s)
-		} else {
-			t.symbols.Set(name, s)
-		}
+		t.symbols.Set(name, s)
+		return
+	}
+	if s, ok := symbol.(*WorkflowSymbol); ok {
+		name = s.Name
+		s.ScopeLevel = t.ScopeLevel
+		t.symbols.Set(name, s)
 		return
 	}
 }
@@ -169,8 +184,12 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitProgram(n)
 		return
 	}
-	if n, ok := node.(*Package); ok {
-		b.VisitPackage(n)
+	if n, ok := node.(*Node); ok {
+		b.VisitNode(n)
+		return
+	}
+	if n, ok := node.(*Workflow); ok {
+		b.VisitWorkflow(n)
 		return
 	}
 	if n, ok := node.(*Block); ok {
@@ -189,16 +208,24 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitBinOp(n)
 		return
 	}
-	if n, ok := node.(*Number); ok {
-		b.VisitNumber(n)
+	if n, ok := node.(*NumberConst); ok {
+		b.VisitNumberConst(n)
 		return
 	}
-	if n, ok := node.(*String); ok {
-		b.VisitString(n)
+	if n, ok := node.(*StringConst); ok {
+		b.VisitStringConst(n)
 		return
 	}
-	if n, ok := node.(*Boolean); ok {
-		b.VisitBoolean(n)
+	if n, ok := node.(*BooleanConst); ok {
+		b.VisitBooleanConst(n)
+		return
+	}
+	if n, ok := node.(*MessageConst); ok {
+		b.VisitMessageConst(n)
+		return
+	}
+	if n, ok := node.(*NodeConst); ok {
+		b.VisitNodeConst(n)
 		return
 	}
 	if n, ok := node.(*List); ok {
@@ -207,10 +234,6 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 	}
 	if n, ok := node.(*Dict); ok {
 		b.VisitDict(n)
-		return
-	}
-	if n, ok := node.(*Message); ok {
-		b.VisitMessage(n)
 		return
 	}
 	if n, ok := node.(*UnaryOp); ok {
@@ -233,22 +256,6 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitNoOp(n)
 		return
 	}
-	if n, ok := node.(*FunctionDecl); ok {
-		b.VisitFunctionDecl(n)
-		return
-	}
-	if n, ok := node.(*FunctionCall); ok {
-		b.VisitFunctionCall(n)
-		return
-	}
-	if n, ok := node.(*FunctionRef); ok {
-		b.VisitFunctionRef(n)
-		return
-	}
-	if n, ok := node.(*Return); ok {
-		b.VisitReturn(n)
-		return
-	}
 	if n, ok := node.(*Print); ok {
 		b.VisitPrint(n)
 		return
@@ -265,6 +272,10 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 		b.VisitLogical(n)
 		return
 	}
+	if n, ok := node.(*Flow); ok {
+		b.VisitFlow(n)
+		return
+	}
 }
 
 func (b *SemanticAnalyzer) VisitProgram(node *Program) {
@@ -272,21 +283,17 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
-	// builtin function
-	for _, f := range functions {
-		b.CurrentScope.Insert(f)
+	// nodes
+	for _, item := range node.Nodes {
+		b.Visit(item)
 	}
-	for _, f := range iteration {
-		b.CurrentScope.Insert(f)
+	// workflows
+	if _, ok := node.Workflows["main"]; !ok {
+		panic(b.error(NoMainWorkflow, nil))
 	}
-
-	// import package
-	for _, p := range node.Packages {
-		b.Visit(p)
+	for _, item := range node.Workflows {
+		b.Visit(item)
 	}
-
-	// visit subtree
-	b.Visit(node.Block)
 
 	log.Println(globalScope.String())
 
@@ -294,10 +301,24 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 	log.Println("LEAVE scope: global")
 }
 
-func (b *SemanticAnalyzer) VisitPackage(node *Package) {
-	log.Println("Import package:", node.Name)
-	for _, call := range packages[node.Name] {
-		b.CurrentScope.Insert(call)
+func (b *SemanticAnalyzer) VisitNode(node *Node) {
+	nodeSymbol := NewNodeSymbol(node.Name)
+	b.CurrentScope.Insert(nodeSymbol)
+}
+
+func (b *SemanticAnalyzer) VisitWorkflow(node *Workflow) {
+	workflowSymbol := NewWorkflowSymbol(node.Name)
+	workflowSymbol.Scenarios = node.Scenarios
+	b.CurrentScope.Insert(workflowSymbol)
+	b.Visit(node.Scenarios)
+}
+
+func (b *SemanticAnalyzer) VisitFlow(node *Flow) {
+	for _, item := range node.Nodes {
+		s := b.CurrentScope.Lookup(item.(*Token).Value.(string), false)
+		if s == nil {
+			panic(b.error(IdNotFound, item.(*Token)))
+		}
 	}
 }
 
@@ -330,18 +351,22 @@ func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
 	b.Visit(node.Right)
 }
 
-func (b *SemanticAnalyzer) VisitNumber(node *Number) {
+func (b *SemanticAnalyzer) VisitNumberConst(node *NumberConst) {
 	// pass
 }
 
-func (b *SemanticAnalyzer) VisitString(node *String) {
+func (b *SemanticAnalyzer) VisitStringConst(node *StringConst) {
 	// pass
 }
-func (b *SemanticAnalyzer) VisitMessage(node *Message) {
+func (b *SemanticAnalyzer) VisitMessageConst(node *MessageConst) {
 	// pass
 }
 
-func (b *SemanticAnalyzer) VisitBoolean(node *Boolean) {
+func (b *SemanticAnalyzer) VisitBooleanConst(node *BooleanConst) {
+	// pass
+}
+
+func (b *SemanticAnalyzer) VisitNodeConst(node *NodeConst) {
 	// pass
 }
 
@@ -383,92 +408,6 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 
 func (b *SemanticAnalyzer) VisitNoOp(node *NoOp) {
 	// pass
-}
-
-func (b *SemanticAnalyzer) VisitFunctionDecl(node *FunctionDecl) {
-	funcName := node.FuncName
-	funcSymbol := NewFunctionSymbol(funcName)
-	b.CurrentScope.Insert(funcSymbol)
-
-	log.Printf("ENTER scope: %s\n", funcName)
-	functionScope := NewScopedSymbolTable(funcName, b.CurrentScope.ScopeLevel+1, b.CurrentScope)
-	b.CurrentScope = functionScope
-
-	for _, param := range node.FormalParams {
-		paramType := b.CurrentScope.Lookup(param.(*Param).TypeNode.(*Type).Value.(string), false)
-		paramName := param.(*Param).VarNode.(*Var).Value.(string)
-		varSymbol := NewVarSymbol(paramName, paramType)
-		b.CurrentScope.Insert(varSymbol)
-		funcSymbol.FormalParams = append(funcSymbol.FormalParams, varSymbol)
-	}
-
-	b.Visit(node.BlockNode)
-
-	log.Println(functionScope.String())
-
-	b.CurrentScope = b.CurrentScope.EnclosingScope
-	log.Printf("LEAVE scope: %s\n", funcName)
-
-	funcSymbol.BlockAst = node.BlockNode
-	funcSymbol.ReturnType = node.ReturnType
-}
-
-func (b *SemanticAnalyzer) VisitFunctionCall(node *FunctionCall) {
-	var funcName string
-	if node.PackageName != "" {
-		funcName = fmt.Sprintf("%s.%s", node.PackageName, node.FuncName)
-	} else {
-		funcName = node.FuncName
-	}
-	funcSymbol := b.CurrentScope.Lookup(funcName, false)
-	var formalParams []Ast
-	if funcSymbol != nil {
-		formalParams = funcSymbol.(*FunctionSymbol).FormalParams
-	} else {
-		// builtin
-		funcSymbol = b.CurrentScope.Lookup(fmt.Sprintf("builtin.%s", node.FuncName), false)
-		if funcSymbol == nil {
-			panic(b.error(UndefinedFunction, node.Token))
-		}
-	}
-	actualParams := node.ActualParams
-
-	if funcSymbol.(*FunctionSymbol).Package == "" {
-		if len(actualParams) != len(formalParams) {
-			panic(b.error(WrongParamsNum, node.Token))
-		}
-	} else {
-		_ = funcSymbol.(*FunctionSymbol).Package
-		// TODO
-	}
-
-	for _, paramNode := range node.ActualParams {
-		b.Visit(paramNode)
-	}
-
-	node.FuncSymbol = funcSymbol
-}
-
-func (b *SemanticAnalyzer) VisitFunctionRef(node *FunctionRef) {
-	var funcName string
-	if node.PackageName != "" {
-		funcName = fmt.Sprintf("%s.%s", node.PackageName, node.FuncName)
-	} else {
-		funcName = node.FuncName
-	}
-	funcSymbol := b.CurrentScope.Lookup(funcName, false)
-	if funcSymbol != nil {
-		// pass
-	} else {
-		funcSymbol = b.CurrentScope.Lookup(fmt.Sprintf("builtin.%s", node.FuncName), false)
-		if funcSymbol == nil {
-			panic(b.error(UndefinedFunction, node.Token))
-		}
-	}
-}
-
-func (b *SemanticAnalyzer) VisitReturn(node *Return) {
-	b.Visit(node.Statement)
 }
 
 func (b *SemanticAnalyzer) VisitPrint(node *Print) {

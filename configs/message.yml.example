@@ -8,7 +8,7 @@ influx:
     bucket:
     url:
 db:
-    path: message.db
+    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
 slack:
     webhook:
 jaeger:

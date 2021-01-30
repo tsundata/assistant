@@ -2,166 +2,127 @@ package service
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/robertkrimen/otto"
+	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/interpreter"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
-	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"strings"
+	"time"
 )
 
 type Message struct {
-	db      *bbolt.DB
-	logger  *zap.Logger
-	bot     *rulebot.RuleBot
-	webhook string
+	webhook  string
+	db       *sqlx.DB
+	logger   *zap.Logger
+	bot      *rulebot.RuleBot
+	wfClient pb.WorkflowClient
 }
 
-func NewManage(db *bbolt.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string) *Message {
-	return &Message{db: db, logger: logger, bot: bot, webhook: webhook}
+func NewManage(db *sqlx.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
+	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 
-func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageList, error) {
-	tx, err := m.db.Begin(false)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket([]byte("message"))
-	c := b.Cursor()
-	limit := 10
-
-	index := 0
-	var reply []string
-	for k, v := c.First(); k != nil; k, v = c.Next() {
-		index++
-		reply = append(reply, utils.ByteToString(v)) // FIXME
-		if index >= limit {
-			break
-		}
-	}
-	err = tx.Commit()
+func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageListReply, error) {
+	var messages []model.Message
+	err := m.db.Select(&messages, "SELECT * FROM `messages` ORDER BY `id` DESC")
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.MessageList{
-		Text: reply,
+	var reply []*pb.MessageItem
+	for _, item := range messages {
+		reply = append(reply, &pb.MessageItem{
+			Uuid: item.UUID,
+			Text: item.Text,
+			Time: item.Time.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &pb.MessageListReply{
+		Messages: reply,
 	}, nil
 }
 
-func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	tx, err := m.db.Begin(false)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket([]byte("message"))
-	v := b.Get([]byte(payload.Uuid))
-	err = tx.Commit()
+func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+	var message model.Message
+	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
 
-	var find model.Message
-	err = json.Unmarshal(v, &find)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.MessageReply{
-		Text: find.Text,
+	return &pb.TextReply{
+		Text: message.Text,
 	}, nil
 }
 
-func (m *Message) Create(ctx context.Context, in *pb.MessageRequest) (*pb.MessageList, error) {
+func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
-	var payload model.Message
-	payload.UUID = in.GetUuid()
-	payload.Type = model.MessageTypeText
-	payload.Text = strings.TrimSpace(in.GetText())
+	var message model.Message
+	message.Time = time.Now()
+	message.UUID = payload.GetUuid()
+	message.Type = model.MessageTypeText
+	message.Text = strings.TrimSpace(payload.GetText())
 
 	// check
-	tx, err := m.db.Begin(true)
-	if err != nil {
+	var find model.Message
+	err := m.db.Get(&find, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", message.UUID)
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
-	b, err := tx.CreateBucketIfNotExists([]byte("message"))
-	if err != nil {
-		return nil, err
-	}
-	v := b.Get([]byte(payload.UUID))
-	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-	if v != nil {
-		return &pb.MessageList{
-			Uuid: payload.UUID,
+	if find.ID > 0 {
+		return &pb.MessageReply{
+			Uuid: message.UUID,
 		}, nil
 	}
 
 	// parse type
-	payload.Text = strings.TrimSpace(payload.Text)
-	if utils.IsUrl(payload.Text) {
-		payload.Type = model.MessageTypeLink
+	message.Text = strings.TrimSpace(message.Text)
+	if utils.IsUrl(message.Text) {
+		message.Type = model.MessageTypeLink
 	}
-	if model.IsMessageOfAction(payload.Text) {
-		payload.Type = model.MessageTypeAction
+	if model.IsMessageOfAction(message.Text) {
+		message.Type = model.MessageTypeAction
 	}
-	if model.IsMessageOfScript(payload.Text) {
-		payload.Type = model.MessageTypeScript
+	if model.IsMessageOfScript(message.Text) {
+		message.Type = model.MessageTypeScript
 	}
 
-	if payload.Type == model.MessageTypeText {
-		out := m.bot.Process(payload).MessageProviderOut()
+	if message.Type == model.MessageTypeText {
+		out := m.bot.Process(message).MessageProviderOut()
 		if len(out) > 0 {
 			var reply []string
 			for _, item := range out {
 				reply = append(reply, item.Text)
 			}
-			return &pb.MessageList{
+			return &pb.MessageReply{
 				Text: reply,
 			}, nil
 		}
 	}
 
 	// insert
-	err = m.db.Update(func(tx *bbolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("message"))
-		if err != nil {
-			return err
-		}
-		data, err := json.Marshal(payload)
-		if err != nil {
-			return err
-		}
-		return b.Put([]byte(payload.UUID), data)
-	})
+	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", message)
+	if err != nil {
+		return nil, err
+	}
+	id, err := res.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.MessageList{
-		Uuid: payload.UUID,
+	return &pb.MessageReply{
+		Id:   id,
+		Uuid: message.UUID,
 	}, nil
 }
 
-func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	tx, err := m.db.Begin(true)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket([]byte("message"))
-	err = b.Delete([]byte(payload.Uuid))
-	if err != nil {
-		return nil, err
-	}
-	err = tx.Commit()
+func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +130,7 @@ func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	return nil, nil
 }
 
-func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
@@ -182,71 +143,44 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 	reply := utils.ByteToString(resp.Body())
 	fasthttp.ReleaseResponse(resp)
 
-	return &pb.MessageReply{
+	return &pb.TextReply{
 		Text: reply,
 	}, nil
 }
 
-func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// check uuid
 	var reply string
-	var payload model.Message
+	var message model.Message
 
-	tx, err := m.db.Begin(false)
-	if err != nil {
-		return nil, err
-	}
-	b := tx.Bucket([]byte("message"))
-	v := b.Get([]byte(payload.UUID))
-	err = tx.Commit()
+	err := m.db.Get(&message, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
 	if err != nil {
 		return nil, err
 	}
 
-	var find model.Message
-	err = json.Unmarshal(v, &find)
-	if err != nil {
-		return nil, err
-	}
-
-	if find.UUID == "" {
-		return &pb.MessageReply{
+	if message.UUID == "" {
+		return &pb.TextReply{
 			Text: "Not message",
 		}, nil
 	}
 
-	switch find.Text {
+	switch message.Text {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
-		switch model.MessageScriptKind(find.Text) {
+		switch model.MessageScriptKind(message.Text) {
 		case model.MessageScriptOfFlowscript:
-			text := strings.Replace(find.Text, "#!script:flowscript", "", -1)
-			p, err := interpreter.NewParser(interpreter.NewLexer([]rune(text)))
+			txt := strings.ReplaceAll(message.Text, "#!script:flowscript", "")
+			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
+				Text: txt,
+			})
+			reply = "run error"
 			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
+				reply = err.Error()
 			}
-			tree, err := p.Parse()
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
+			if r != nil {
+				reply = r.Text
 			}
-			i := interpreter.NewInterpreter(tree)
-			_, err = i.Interpret()
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
-			}
-			reply = i.Stdout()
-		case model.MessageScriptOfJavascript:
-			vm := otto.New()
-			v, err := vm.Run(strings.Replace(find.Text, "#!script:javascript", "", -1))
-			if err != nil {
-				m.logger.Error(err.Error())
-				return nil, err
-			}
-			reply = v.String()
 		case model.MessageScriptOfUndefined:
 			reply = "MessageScriptOfUndefined"
 		default:
@@ -256,7 +190,7 @@ func (m *Message) Run(ctx context.Context, in *pb.MessageRequest) (*pb.MessageRe
 		reply = "Not running"
 	}
 
-	return &pb.MessageReply{
+	return &pb.TextReply{
 		Text: reply,
 	}, nil
 }

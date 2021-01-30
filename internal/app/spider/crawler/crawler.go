@@ -220,6 +220,9 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	}
 	s.rdb.Expire(ctx, sentKey, 7*24*time.Hour)
 
+	// clear to do
+	s.rdb.Del(ctx, todoKey)
+
 	return diff
 }
 
@@ -247,7 +250,7 @@ func (s *Crawler) send(name string, out []string) {
 		}
 
 		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
-			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now()),
+			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
 			Content: utils.ByteToString(j),
 		})
 		if err != nil {

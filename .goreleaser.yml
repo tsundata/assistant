@@ -67,6 +67,16 @@ builds:
     env:
       - CGO_ENABLED=0
 
+  - main: ./cmd/workflow
+    id: "workflow"
+    binary: "workflow"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
   - main: ./cmd/web
     id: "web"
     binary: "web"
@@ -81,6 +91,16 @@ builds:
   - main: ./cmd/agent/server
     id: "server-agent"
     binary: "server-agent"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+  - main: ./cmd/agent/redis
+    id: "redis-agent"
+    binary: "redis-agent"
     goos:
       - linux
     goarch:
