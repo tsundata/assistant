@@ -14,7 +14,7 @@ build:
 
 .PHONY: lint
 lint:
-	golangci-lint run ./...
+	golangci-lint run ./... --timeout=1m
 
 .PHONY: docker
 docker-compose: build
