@@ -175,7 +175,7 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	// sent
 	smembers := s.rdb.SMembers(ctx, sentKey)
 	old, err := smembers.Result()
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		s.logger.Error(err.Error())
 		return []string{}
 	}
@@ -183,7 +183,7 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	// to do
 	smembers = s.rdb.SMembers(ctx, todoKey)
 	todo, err := smembers.Result()
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		s.logger.Error(err.Error())
 		return []string{}
 	}
