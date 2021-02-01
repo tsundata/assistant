@@ -12,13 +12,5 @@ type Link struct {
 }
 
 func (c *Link) GetContent() template.HTML {
-	return template.HTML(fmt.Sprintf(`<h2>%s</h2>
-            <p class="link">
-                <a href="%s">
-                    <span class="link-block">
-                        <span class="link-icon"></span>
-                        <span class="link-text">%s</span>
-                    </span>
-                </a>
-            </p>`, c.Title, c.URL, c.Name))
+	return template.HTML(fmt.Sprintf(`<a href="%s" class="link">%s</a>`, c.URL, c.Title))
 }

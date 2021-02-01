@@ -27,7 +27,8 @@ func (c *Html) GetContent() template.HTML {
 	if c.UseIcon {
 		iconLink = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">`
 	}
-	return template.HTML(fmt.Sprintf(`<html lang="en">
+	return template.HTML(fmt.Sprintf(`
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -38,32 +39,33 @@ func (c *Html) GetContent() template.HTML {
 		a {
 			text-decoration: none;
 			color: #003C97;
+			word-break: break-all;
 		}
-		form {
+		.form {
 			width: 100%%;
 			margin-top: 50px;
 		}
-		form button {
+		.form button {
 			width: 100%%;
 			height: 50px;
 			border: none;
 			margin: 10px;
 			border-radius: 5px;
 		}
-		form .button {
+		.form .button {
 			width: 100%%;
 			display: flex;
 			flex-direction: row;
 		}
-		form .input {
+		.form .input {
 			display: flex;
 			flex-direction: column;
 			margin-bottom: 20px;
 		}
-		form .input label {
+		.form .input label {
 			margin-bottom: 10px;
 		}
-		form .input input {
+		.form .input input {
 			height: 50px;
 			padding-left: 20px;
 		}
@@ -87,20 +89,20 @@ func (c *Html) GetContent() template.HTML {
 			flex-direction: row;
 			flex-wrap: wrap;
 		}
-        .content h2 {
+        .content .text {
             font-size: 18px;
             margin-top: 25px;
             margin-bottom: 15px;
 			width: 100%%;
         }
-		.link {
+		.link-button {
 			width: 100%%;
 		}
-        .link .link-block {
+        .link-button .link-content {
             background-color: #f7f7f7;
 			padding: 10px;
         }
-        .link a {
+        .link-button a {
             width: 305px;
             height: 60px;
             border: 1px solid #ececed;
@@ -116,8 +118,6 @@ func (c *Html) GetContent() template.HTML {
             width: 30px;
             height: 30px;
         }
-		.button {
-		}
 		.app {
 			display: flex;
 			flex-direction: column;
@@ -163,7 +163,7 @@ func (c *Html) GetContent() template.HTML {
 		.memo .content {
 			font-size: 15px;
 		}
-		.memo .content h2 {
+		.memo .content .text {
 			font-weight: normal;
 		}
 		%s

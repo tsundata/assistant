@@ -22,5 +22,5 @@ func (c *Text) GetContent() template.HTML {
 	}
 	c.Title = strings.ReplaceAll(c.Title, "\n", "<br>")
 
-	return template.HTML(fmt.Sprintf(`<h2>%s</h2>`, c.Title))
+	return template.HTML(fmt.Sprintf(`<div class="text">%s</div>`, c.Title))
 }

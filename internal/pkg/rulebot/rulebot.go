@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/valyala/fasthttp"
 	"log"
+	"strings"
 )
 
 type RuleBot struct {
@@ -43,7 +44,7 @@ func (s *RuleBot) Process(in model.Message) *RuleBot {
 
 	s.providerIn = in
 	s.providerOut = []model.Message{}
-	if in.Text == "help" {
+	if strings.ToLower(in.Text) == "help" {
 		helpMsg := fmt.Sprintln("available commands:")
 		for _, rule := range s.rules {
 			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))

@@ -18,7 +18,7 @@ func (c *Form) GetContent() template.HTML {
 	for _, item := range c.Inputs {
 		buf.WriteString(string(item.GetContent()))
 	}
-	return template.HTML(fmt.Sprintf(`<form action="%s" method="%s">
+	return template.HTML(fmt.Sprintf(`<form action="%s" method="%s" class="form">
 %s
 <div class="button">
 	<button type="submit">Submit</button>

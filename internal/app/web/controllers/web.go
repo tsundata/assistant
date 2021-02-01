@@ -198,7 +198,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 	}
 
 	for _, item := range reply.GetItems() {
-		items = append(items, &components.Link{
+		items = append(items, &components.LinkButton{
 			Title: item.Key,
 			Name:  item.Value,
 			URL:   "javascript:void(0)",
@@ -210,7 +210,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 		UseIcon: true,
 		Page: &components.Page{
 			Title: "Credentials",
-			Action: &components.Button{
+			Action: &components.Link{
 				Title: "Add Credentials",
 				URL:   fmt.Sprintf("/credentials/%s/create", extractUUID(c.Path())),
 			},
@@ -241,7 +241,7 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 		UseIcon: true,
 		Page: &components.Page{
 			Title: "Create Credentials",
-			Action: &components.Button{
+			Action: &components.Link{
 				Title: "Go Back",
 				URL:   fmt.Sprintf("/credentials/%s", extractUUID(c.Path())),
 			},
@@ -296,7 +296,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 		UseIcon: true,
 		Page: &components.Page{
 			Title: "Setting",
-			Action: &components.Button{
+			Action: &components.Link{
 				Title: "Add Setting",
 				URL:   fmt.Sprintf("/setting/%s/create", extractUUID(c.Path())),
 			},
@@ -328,7 +328,7 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 		UseIcon: true,
 		Page: &components.Page{
 			Title: "Create Setting",
-			Action: &components.Button{
+			Action: &components.Link{
 				Title: "Go Back",
 				URL:   fmt.Sprintf("/setting/%s", uuid),
 			},
