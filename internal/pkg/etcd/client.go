@@ -25,6 +25,8 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 func New(o *Options) (*clientv3.Client, error) {
 	return clientv3.New(clientv3.Config{
 		Endpoints:   []string{o.URL},
+		Username:    o.Username,
+		Password:    o.Password,
 		DialTimeout: 0,
 	})
 }

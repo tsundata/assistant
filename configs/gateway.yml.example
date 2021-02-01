@@ -6,6 +6,8 @@ http:
     port: 7000
 etcd:
     url: http://127.0.0.1:2379
+    username:
+    password:
 slack:
     token:
     verification:
