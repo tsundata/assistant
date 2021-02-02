@@ -15,7 +15,7 @@ const (
 )
 
 func IsUrl(text string) bool {
-	re := regexp.MustCompile(UrlRegex)
+	re := regexp.MustCompile("^" + UrlRegex + "$")
 	return re.MatchString(text)
 }
 

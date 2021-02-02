@@ -15,7 +15,9 @@ import (
 	"go.uber.org/zap"
 	"html/template"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -208,6 +210,15 @@ func (gc *GatewayController) SlackEvent(c *fasthttp.RequestCtx) {
 					return
 				}
 				gc.rdb.Set(context.Background(), rKey, time.Now().Unix(), 7*24*time.Hour)
+
+				// special <url>, utf8 whitespace
+				re := regexp.MustCompile("<" + utils.UrlRegex + ">")
+				urls := re.FindAllString(ev.Text, -1)
+				for _, url := range urls {
+					ev.Text = strings.ReplaceAll(ev.Text, url, strings.TrimRight(strings.TrimLeft(url, "<"), ">"))
+				}
+				re = regexp.MustCompile(`[\s\p{Zs}]+`)
+				ev.Text = re.ReplaceAllString(ev.Text, " ")
 
 				reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,

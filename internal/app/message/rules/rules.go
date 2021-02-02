@@ -28,7 +28,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `qr (.*)`,
+		Regex:       `qr\s+(.*)`,
 		HelpMessage: `Generate QR code`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
@@ -49,7 +49,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `ut (\d+)`,
+		Regex:       `ut\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
@@ -70,7 +70,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `rand (\d+) (\d+)`,
+		Regex:       `rand\s+(\d+)\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 3 {
@@ -97,7 +97,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `pwd (\d+)`,
+		Regex:       `pwd\s+(\d+)`,
 		HelpMessage: `Generate Password`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
@@ -118,7 +118,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `subs list`,
+		Regex:       `subs\s+list`,
 		HelpMessage: `List subscribe`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			reply, err := b.SubClient.List(context.Background(), &pb.SubscribeRequest{})
@@ -134,7 +134,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `subs open (.*)`,
+		Regex:       `subs\s+open\s+(.*)`,
 		HelpMessage: `Open subscribe`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
@@ -155,7 +155,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `subs close (.*)`,
+		Regex:       `subs\s+close\s+(.*)`,
 		HelpMessage: `Close subscribe`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {

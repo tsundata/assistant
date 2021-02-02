@@ -80,6 +80,18 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		}, nil
 	}
 
+	// process rule
+	out := m.bot.Process(message).MessageProviderOut()
+	if len(out) > 0 {
+		var reply []string
+		for _, item := range out {
+			reply = append(reply, item.Text)
+		}
+		return &pb.MessageReply{
+			Text: reply,
+		}, nil
+	}
+
 	// parse type
 	message.Text = strings.TrimSpace(message.Text)
 	if utils.IsUrl(message.Text) {
@@ -92,20 +104,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		message.Type = model.MessageTypeScript
 	}
 
-	if message.Type == model.MessageTypeText {
-		out := m.bot.Process(message).MessageProviderOut()
-		if len(out) > 0 {
-			var reply []string
-			for _, item := range out {
-				reply = append(reply, item.Text)
-			}
-			return &pb.MessageReply{
-				Text: reply,
-			}, nil
-		}
-	}
-
-	// insert
+	// store
 	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", message)
 	if err != nil {
 		return nil, err
