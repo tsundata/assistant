@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,10 +11,14 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/components"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/renderer/html"
 	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 )
 
 type WebController struct {
@@ -71,8 +76,14 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 	var items []components.Component
 
 	for _, item := range list {
+		re, _ := regexp.Compile(utils.UrlRegex)
+		s := re.FindString(item)
+		if s != "" {
+			item = strings.ReplaceAll(item, s, fmt.Sprintf(`<a href="%s" target="_blank">%s</a>`, s, s))
+		}
+		item = strings.ReplaceAll(item, "\n", "<br>")
+
 		items = append(items, &components.Text{
-			Name:  item,
 			Title: item,
 		})
 	}
@@ -165,11 +176,34 @@ func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
 		return
 	}
 
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.Linkify,
+			extension.Table,
+			extension.TaskList,
+		),
+		goldmark.WithRendererOptions(
+			html.WithHardWraps(),
+			html.WithXHTML(),
+		),
+	)
+
+	var buf bytes.Buffer
 	for _, item := range reply.GetMessages() {
+		// markdown
+		text := item.GetText()
+		buf.Reset()
+		err := md.Convert(utils.StringToByte(item.GetText()), &buf)
+		if err != nil {
+			wc.logger.Error(err.Error())
+		} else {
+			text = buf.String()
+		}
+
 		items = append(items, &components.Memo{
 			Time: item.GetTime(),
 			Content: &components.Text{
-				Title: item.GetText(),
+				Title: text,
 			},
 		})
 	}
