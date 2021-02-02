@@ -14,22 +14,24 @@ import (
 )
 
 type HttpNode struct {
-	name string
+	name        string
+	properties  map[string]interface{}
+	credentials map[string]interface{}
 }
 
-func (n HttpNode) Execute(properties map[string]interface{}, credentials map[string]interface{}, input []map[string]interface{}) ([]map[string]interface{}, error) {
-	method := properties["method"].(string)
-	url := properties["url"].(string)
-	responseFormat := properties["response_format"].(string)
+func (n *HttpNode) Execute(input []map[string]interface{}) ([]map[string]interface{}, error) {
+	method := n.properties["method"].(string)
+	url := n.properties["url"].(string)
+	responseFormat := n.properties["response_format"].(string)
 	headers := make(map[string]interface{})
-	if _, ok := properties["headers"]; ok {
-		headers = properties["headers"].(map[string]interface{})
+	if _, ok := n.properties["headers"]; ok {
+		headers = n.properties["headers"].(map[string]interface{})
 	}
 	query := make(map[string]interface{})
-	if _, ok := properties["query"]; ok {
-		query = properties["query"].(map[string]interface{})
+	if _, ok := n.properties["query"]; ok {
+		query = n.properties["query"].(map[string]interface{})
 	}
-	extract := properties["extract"].(map[string]interface{})
+	extract := n.properties["extract"].(map[string]interface{})
 
 	client := &http.Client{
 		Timeout: 30 * time.Second,

@@ -1,35 +1,53 @@
 package nodes
 
 import (
+	"context"
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 )
 
 type Node interface {
-	Execute(properties map[string]interface{}, credentials map[string]interface{}, input []map[string]interface{}) ([]map[string]interface{}, error)
+	Execute(input []map[string]interface{}) ([]map[string]interface{}, error)
 }
 
-func Execute(name string, regular string, parameters map[string]interface{}, secret string, input []map[string]interface{}, midClient pb.MiddleClient) ([]map[string]interface{}, error) {
-	var node Node
+type Actuator struct {
+	midClient pb.MiddleClient
 
-	switch regular {
-	case "http":
-		node = HttpNode{name: name}
-	case "cron":
-		node = CronNode{name: name}
-	default:
-		return nil, errors.New("node name error: " + regular)
-	}
+	name       string
+	regular    string
+	parameters map[string]interface{}
+	secret     string
+}
 
-	/*
-		reply, err := midClient.GetCredential(context.Background(), &pb.Text{
-			Text: secret,
+func Construct(midClient pb.MiddleClient, name string, regular string, parameters map[string]interface{}, secret string) *Actuator {
+	return &Actuator{midClient, name, regular, parameters, secret}
+}
+
+func (a *Actuator) Execute(input []map[string]interface{}) ([]map[string]interface{}, error) {
+	// credentials
+	credentials := make(map[string]interface{})
+	if a.midClient != nil {
+		reply, err := a.midClient.GetCredentials(context.Background(), &pb.TextRequest{
+			Text: a.secret,
 		})
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		reply.GetText()
-	*/
 
-	return node.Execute(parameters, nil, input)
+		for _, kv := range reply.GetItems() {
+			credentials[kv.Key] = kv.Value
+		}
+	}
+
+	var node Node
+	switch a.regular {
+	case "http":
+		node = &HttpNode{a.name, a.parameters, credentials}
+	case "cron":
+		node = &CronNode{a.name, a.parameters, credentials}
+	default:
+		return nil, errors.New("node name error: " + a.regular)
+	}
+
+	return node.Execute(input)
 }

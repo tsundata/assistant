@@ -224,11 +224,8 @@ func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	for _, item := range node.Nodes {
 		nodeName := item.(*Token).Value.(string)
 		if item, ok := i.nodes[nodeName]; ok {
-			parameters := i.Visit(item).(map[string]interface{})
-
 			// execute
-			input, err = nodes.Execute(nodeName, item.(*Node).Regular, parameters, item.(*Node).Secret, input, i.midClient)
-			fmt.Println(input)
+			input, err = nodes.Construct(i.midClient, nodeName, item.(*Node).Regular, i.Visit(item).(map[string]interface{}), item.(*Node).Secret).Execute(input)
 			if err != nil {
 				panic(err)
 			}
