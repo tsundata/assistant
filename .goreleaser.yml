@@ -122,6 +122,8 @@ changelog:
       - '^docs:'
       - '^test:'
       - '^merge:'
+      - '^Merge pull request'
+      - '^Merge branch'
 env_files:
   github_token: ~/.gh_token
 release:
