@@ -19,7 +19,9 @@ func (c *Html) SetCss(css template.CSS) {
 }
 
 func (c *Html) SetJs(js template.JS) {
-	c.js = js
+	if js != "" {
+		c.js = `<script>` + js + `</script>`
+	}
 }
 
 func (c *Html) GetContent() template.HTML {
@@ -66,6 +68,18 @@ func (c *Html) GetContent() template.HTML {
 			margin-bottom: 10px;
 		}
 		.form .input input {
+			height: 50px;
+			padding-left: 20px;
+		}
+		.form .select {
+			display: flex;
+			flex-direction: column;
+			margin-bottom: 20px;
+		}
+		.form .select label {
+			margin-bottom: 10px;
+		}
+		.form .select select {
 			height: 50px;
 			padding-left: 20px;
 		}

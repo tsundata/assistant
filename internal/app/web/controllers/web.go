@@ -15,6 +15,7 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.uber.org/zap"
+	"html/template"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -265,10 +266,14 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 		Title: "Name",
 		Type:  "text",
 	})
-	items = append(items, &components.Input{
-		Name:  "k1",
-		Title: "App Key",
-		Type:  "text",
+	items = append(items, &components.Select{
+		Name:  "type",
+		Title: "Type",
+		Value: map[string]string{
+			"":       "-",
+			"github": "Github",
+			"pocket": "Pocket",
+		},
 	})
 	comp := components.Html{
 		Title:   "Create Credentials",
@@ -286,6 +291,32 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 			},
 		},
 	}
+
+	options := map[string]interface{}{
+		"github": map[string]string{
+			"id":     "Client ID",
+			"secret": "Client secrets",
+		},
+		"pocket": map[string]string{
+			"consumer_key": "Consumer Key",
+		},
+	}
+	d, _ := json.Marshal(options)
+	h := "`<div class='input option-input'>\n<label for='input-${key}'>${options[e.target.value][key]}:</label>\n<input type='text' id='input-${key}' name='${key}'>\n</div>`"
+
+	comp.SetJs(template.JS(fmt.Sprintf(`const options = %s
+    document.querySelector("select[name=type]").addEventListener("change", function (e) {
+        if (e.target.value !== "") {
+            let o = ""
+            Object.keys(options[e.target.value]).forEach(function (key) {
+                o += %s
+            })
+            document.querySelectorAll(".option-input").forEach(function (e) {
+                e.parentNode.removeChild(e)
+            })
+            document.querySelector(".button").insertAdjacentHTML("beforebegin", o)
+        }
+    })`, d, h)))
 
 	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 	c.Response.SetBody([]byte(comp.GetContent()))
