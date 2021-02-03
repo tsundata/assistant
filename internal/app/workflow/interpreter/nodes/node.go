@@ -45,6 +45,10 @@ func (a *Actuator) Execute(input []map[string]interface{}) ([]map[string]interfa
 		node = &HttpNode{a.name, a.parameters, credentials}
 	case "cron":
 		node = &CronNode{a.name, a.parameters, credentials}
+	case "webhook":
+		node = &WebhookNode{a.name, a.parameters, credentials}
+	case "execute":
+		node = &ExecuteNode{a.name, a.parameters, credentials}
 	default:
 		return nil, errors.New("node name error: " + a.regular)
 	}
