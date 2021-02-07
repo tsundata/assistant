@@ -17,5 +17,5 @@ for app in 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron' 'workf
 
 for agent in 'server' 'redis' ;\
 	do \
-		GOOS=linux GOARCH="amd64" go build -v -ldflags "${LDFlags}" -o dist/${agent}-linux-amd64 ./cmd/${agent}/; \
+		GOOS=linux GOARCH="amd64" go build -v -ldflags "${LDFlags}" -o dist/${agent}-linux-amd64 ./cmd/agent/${agent}/; \
 	done
