@@ -25,8 +25,8 @@ jobs:
         with:
           version: latest
           install-only: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       -
         name: Release
         run: GOVERSION=$(go version) goreleaser release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
