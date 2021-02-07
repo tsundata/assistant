@@ -16,6 +16,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/gateway
     id: "gateway"
@@ -26,6 +31,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/message
     id: "message"
@@ -36,6 +46,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/middle
     id: "middle"
@@ -46,6 +61,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/spider
     id: "spider"
@@ -56,6 +76,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/subscribe
     id: "subscribe"
@@ -66,6 +91,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/workflow
     id: "workflow"
@@ -76,6 +106,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/web
     id: "web"
@@ -86,6 +121,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   # agent
   - main: ./cmd/agent/server
@@ -97,6 +137,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
   - main: ./cmd/agent/redis
     id: "redis-agent"
@@ -107,6 +152,11 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
 
 archives:
   - format: binary
@@ -114,7 +164,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "SNAPSHOT-{{.ShortCommit}}"
+  name_template: "SNAPSHOT-{{ .ShortCommit }}"
 changelog:
   sort: desc
   filters:

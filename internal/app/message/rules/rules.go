@@ -5,12 +5,20 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"math/rand"
 	"strconv"
 	"time"
 )
 
 var rules = []Rule{
+	{
+		Regex:       `version`,
+		HelpMessage: `Show version`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			return []string{version.Info()}
+		},
+	},
 	{
 		Regex:       `menu`,
 		HelpMessage: `Show menu`,

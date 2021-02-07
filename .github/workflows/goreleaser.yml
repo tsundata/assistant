@@ -20,10 +20,13 @@ jobs:
         with:
           go-version: ^1.15
       -
-        name: Run GoReleaser
+        name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --rm-dist
+          install-only: true
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      -
+        name: Release
+        run: GOVERSION=$(go version) goreleaser release --rm-dist

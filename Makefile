@@ -3,14 +3,7 @@ agents = 'server' 'redis'
 
 .PHONY: build
 build:
-	for app in $(apps) ;\
-	do \
-		GOOS=linux GOARCH="amd64" go build -o dist/$$app-linux-amd64 ./cmd/$$app/; \
-	done
-	for agent in $(agents) ;\
-	do \
-	    GOOS=linux GOARCH="amd64" go build -o dist/$$agent-agent-linux-amd64 ./cmd/agent/$$agent/; \
-    done
+	./scripts/build.sh
 
 .PHONY: lint
 lint:
