@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"github.com/valyala/fasthttp"
 	"log"
 	"strings"
@@ -45,7 +46,7 @@ func (s *RuleBot) Process(in model.Message) *RuleBot {
 	s.providerIn = in
 	s.providerOut = []model.Message{}
 	if strings.ToLower(in.Text) == "help" {
-		helpMsg := fmt.Sprintln("available commands:")
+		helpMsg := fmt.Sprintf("available commands (v%s):", version.Version)
 		for _, rule := range s.rules {
 			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
 		}

@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
@@ -192,7 +193,7 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	tobeCompared := append(old, todo...)
 
 	// diff
-	diff := utils.StringSliceDiff(tobeCompared, latest)
+	diff := utils.StringSliceDiff(latest, tobeCompared)
 
 	if instant {
 		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
@@ -241,7 +242,7 @@ func (s *Crawler) send(name string, out []string) {
 	// simplify
 	text := ""
 	if len(out) <= 5 {
-		text = fmt.Sprintf("Channel %s\n%s", name, strings.Join(out, "\n"))
+		text = fmt.Sprintf("Channel %s (v%s)\n%s", name, version.Version, strings.Join(out, "\n"))
 	} else {
 		// web page display
 		j, err := json.Marshal(out)
@@ -257,7 +258,7 @@ func (s *Crawler) send(name string, out []string) {
 			return
 		}
 
-		text = fmt.Sprintf("Channel %s\n%s\n %s", name, strings.Join(out[:5], "\n"), reply.GetText())
+		text = fmt.Sprintf("Channel %s (v%s)\n%s\n %s", name, version.Version, strings.Join(out[:5], "\n"), reply.GetText())
 	}
 
 	// send

@@ -14,7 +14,7 @@ import (
 var rules = []Rule{
 	{
 		Regex:       `version`,
-		HelpMessage: `Show version`,
+		HelpMessage: `Version info`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			return []string{version.Info()}
 		},

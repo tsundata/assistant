@@ -2,6 +2,7 @@ package components
 
 import (
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"html/template"
 )
 
@@ -25,6 +26,7 @@ func (c *Html) SetJs(js template.JS) {
 }
 
 func (c *Html) GetContent() template.HTML {
+	title := fmt.Sprintf("%s (v%s)", c.Title, version.Version)
 	iconLink := ""
 	if c.UseIcon {
 		iconLink = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">`
@@ -191,5 +193,5 @@ func (c *Html) GetContent() template.HTML {
 
 %s
 </body>
-</html>`, c.Title, iconLink, c.css, c.Page.GetContent(), c.js))
+</html>`, title, iconLink, c.css, c.Page.GetContent(), c.js))
 }
