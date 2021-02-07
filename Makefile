@@ -3,7 +3,7 @@ agents = 'server' 'redis'
 
 .PHONY: build
 build:
-	./scripts/build.sh
+	GOVERSION=`go version` goreleaser --snapshot --skip-publish --rm-dist
 
 .PHONY: lint
 lint:

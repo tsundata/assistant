@@ -8,7 +8,7 @@ for app in 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron'
 		chmod +x ./dist/$app-linux-amd64
   done
 # agents
-for agent in 'server'
+for agent in 'server' 'redis'
 	do
 	  echo "\n downloading... $agent\n"
 		curl -L https://github.com/tsundata/assistant/releases/download/v$1/$agent-agent-linux-amd64 --output ./dist/$agent-agent-linux-amd64

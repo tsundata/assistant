@@ -17,7 +17,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/gateway
     id: "gateway"
@@ -29,7 +32,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/message
     id: "message"
@@ -41,7 +47,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/middle
     id: "middle"
@@ -53,7 +62,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/spider
     id: "spider"
@@ -65,7 +77,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/subscribe
     id: "subscribe"
@@ -77,7 +92,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/workflow
     id: "workflow"
@@ -89,7 +107,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/web
     id: "web"
@@ -101,7 +122,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   # agent
   - main: ./cmd/agent/server
@@ -114,7 +138,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
   - main: ./cmd/agent/redis
     id: "redis-agent"
@@ -126,7 +153,10 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }} -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }} -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }} -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ .Env.GOVERSION }}
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
 archives:
   - format: binary
