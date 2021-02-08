@@ -22,7 +22,7 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.19.0
-	github.com/yuin/goldmark v1.3.1
+	github.com/yuin/goldmark v1.3.2
 	go.etcd.io/etcd v0.0.0-20201125193152-8a03d2e9614b
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.35.0
