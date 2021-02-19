@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"time"
 )
@@ -9,11 +8,17 @@ import (
 var rules = map[string]Rule{
 	"heartbeat": {
 		When: "0 0 * * *",
-		Action: func() []model.Message {
-			return []model.Message{
-				{
-					Text: "Plugin Cron Heartbeat: " + time.Now().String(),
-				},
+		Action: func(b *rulebot.RuleBot) []string {
+			return []string{
+				"Plugin Cron Heartbeat: " + time.Now().String(),
+			}
+		},
+	},
+	"pocket": {
+		When: "* * * * *",
+		Action: func(b *rulebot.RuleBot) []string {
+			return []string{
+				time.Now().String(),
 			}
 		},
 	},

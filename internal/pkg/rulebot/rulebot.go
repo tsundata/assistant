@@ -28,14 +28,14 @@ func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb
 		name: name,
 	}
 
-	for _, opt := range opts {
-		opt(s)
-	}
-
 	slack := v.GetStringMapString("slack")
 	s.webhook = slack["webhook"]
 	s.SubClient = SubClient
 	s.MidClient = MidClient
+
+	for _, opt := range opts {
+		opt(s)
+	}
 
 	return s
 }
@@ -77,10 +77,10 @@ func (s *RuleBot) MessageProviderOut() []model.Message {
 	return s.providerOut
 }
 
-func (s *RuleBot) Send(out model.Message) {
+func (s *RuleBot) Send(out string) {
 	client := http.NewClient()
 	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
-		"text": out.Text,
+		"text": out,
 	})
 
 	if err != nil {
