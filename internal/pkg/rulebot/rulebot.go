@@ -40,6 +40,10 @@ func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb
 	return s
 }
 
+func (s *RuleBot) Name() string {
+	return s.name
+}
+
 func (s *RuleBot) Process(in model.Message) *RuleBot {
 	log.Println("plugin process event")
 
@@ -71,10 +75,6 @@ func (s *RuleBot) Process(in model.Message) *RuleBot {
 
 func (s *RuleBot) MessageProviderOut() []model.Message {
 	return s.providerOut
-}
-
-func (s *RuleBot) Name() string {
-	return s.name
 }
 
 func (s *RuleBot) Send(out model.Message) {

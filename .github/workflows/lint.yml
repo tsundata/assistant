@@ -14,6 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Count Lines of Code (cloc)
+        uses: djdefi/cloc-action@main
+
+      - name: Upload cloc output as a build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: cloc
+          path: cloc.txt
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
