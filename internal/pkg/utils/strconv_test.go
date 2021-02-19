@@ -1,18 +1,14 @@
 package utils
 
 import (
-	"bytes"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestByteToString(t *testing.T) {
-	if ByteToString([]byte("Test")) != "Test" {
-		t.Error("error ByteToString")
-	}
+	require.Equal(t, ByteToString([]byte("Test")), "Test")
 }
 
 func TestStringToByte(t *testing.T) {
-	if b := StringToByte("Test"); !bytes.Equal(b, []byte("Test")) {
-		t.Error("error StringToByte")
-	}
+	require.Equal(t, StringToByte("Test"), []byte("Test"))
 }

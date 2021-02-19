@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -8,13 +9,9 @@ func TestSliceDiff(t *testing.T) {
 	s1 := []string{"a", "b", "c"}
 	s2 := []string{"c", "d", "a"}
 	diff := StringSliceDiff(s1, s2)
-	if len(diff) != 1 && diff[0] != "b" {
-		t.Fatal("error: slice diff")
-	}
+	require.False(t, len(diff) != 1 && diff[0] != "b")
 
 	var s3 []string
 	diff = StringSliceDiff(s1, s3)
-	if len(diff) != 3 {
-		t.Fatal("error: slice diff")
-	}
+	require.Len(t, diff, 3)
 }

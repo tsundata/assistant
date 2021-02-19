@@ -1,20 +1,16 @@
 package utils
 
 import (
-	"log"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestGetLocalIP4(t *testing.T) {
 	ip := GetLocalIP4()
-	if !IsIPv4(ip) {
-		log.Println("error: GetLocalIP4")
-	}
+	require.True(t, IsIPv4(ip))
 }
 
 func TestGetAvailablePort(t *testing.T) {
 	port := GetAvailablePort()
-	if port <= 0 {
-		log.Println("error: GetAvailablePort")
-	}
+	require.GreaterOrEqual(t, port, 0)
 }

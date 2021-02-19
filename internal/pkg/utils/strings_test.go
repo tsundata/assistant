@@ -1,27 +1,22 @@
 package utils
 
-import "testing"
+import (
+	"github.com/stretchr/testify/require"
+	"testing"
+)
 
 func TestIsUrl(t *testing.T) {
-	if !IsUrl("https://github.com/tsundata/assistant") {
-		t.Fatal("error: don't match url")
-	}
+	require.True(t, IsUrl("https://github.com/tsundata/assistant"))
 }
 
 func TestIsIPv4(t *testing.T) {
-	if !IsIPv4("127.0.0.1") {
-		t.Fatal("error: don't match ip")
-	}
-	if IsIPv4("172.888.2.1") {
-		t.Fatal("error: match ip")
-	}
+	require.True(t, IsIPv4("127.0.0.1"))
+	require.False(t, IsIPv4("172.888.2.1"))
 }
 
 func TestGeneratePassword(t *testing.T) {
 	pwd := GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
-	if len(pwd) != 32 {
-		t.Fatal("error: generate password")
-	}
+	require.Len(t, pwd, 32)
 }
 
 func BenchmarkGeneratePassword(b *testing.B) {
