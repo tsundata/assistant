@@ -18,7 +18,7 @@ func NewSubscribe(etcd *clientv3.Client) *Subscribe {
 	return &Subscribe{etcd: etcd}
 }
 
-func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
+func (s *Subscribe) List(_ context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "subscribe_",
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -42,7 +42,7 @@ func (s *Subscribe) List(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	}, nil
 }
 
-func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+func (s *Subscribe) Register(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	key := "subscribe_" + payload.GetText()
 	resp, err := s.etcd.Get(context.Background(), key)
 	if err != nil {
@@ -66,7 +66,7 @@ func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) 
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+func (s *Subscribe) Open(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+func (s *Subscribe) Close(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "false")
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*p
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+func (s *Subscribe) Status(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
 	key := "subscribe_" + payload.GetText()
 	resp, err := s.etcd.Get(context.Background(), key)
 	if err != nil {

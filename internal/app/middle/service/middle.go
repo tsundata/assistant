@@ -25,7 +25,7 @@ func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, webURL string) *Middle {
 	return &Middle{db: db, etcd: etcd, webURL: webURL}
 }
 
-func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
+func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
 	uuid, err := utils.GenerateUUID()
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.T
 	}, nil
 }
 
-func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
+func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	var find model.Page
 	err := s.db.Get(&find, "SELECT * FROM `pages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil {
@@ -62,13 +62,13 @@ func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.Page
 	}, nil
 }
 
-func (s *Middle) Qr(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+func (s *Middle) Qr(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil
 }
 
-func (s *Middle) Apps(ctx context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
+func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error) {
 	var apps []model.App
 	err := s.db.Select(&apps, "SELECT * FROM `apps` ORDER BY `time` DESC")
 	if err != nil {
@@ -88,7 +88,7 @@ func (s *Middle) Apps(ctx context.Context, payload *pb.TextRequest) (*pb.AppRepl
 	}, nil
 }
 
-func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
+func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
 	_, err := s.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
 		payload.GetName(), payload.GetType(), payload.GetToken(), payload.GetExtra())
 	if err != nil {
@@ -100,7 +100,7 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb
 	}, nil
 }
 
-func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*pb.CredentialReply, error) {
+func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialReply, error) {
 	var items []model.Credential
 	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
 	if err != nil {
@@ -120,7 +120,7 @@ func (s *Middle) GetCredentials(ctx context.Context, payload *pb.TextRequest) (*
 	}, nil
 }
 
-func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
+func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
 	name := ""
 	m := make(map[string]string)
 	for _, item := range payload.GetKvs() {
@@ -148,7 +148,7 @@ func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (
 	return &pb.TextReply{}, nil
 }
 
-func (s *Middle) GetSetting(ctx context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
+func (s *Middle) GetSetting(_ context.Context, _ *pb.TextRequest) (*pb.SettingReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "setting/",
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -165,7 +165,7 @@ func (s *Middle) GetSetting(ctx context.Context, payload *pb.TextRequest) (*pb.S
 	return &reply, nil
 }
 
-func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.TextReply, error) {
+func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.TextReply, error) {
 	_, err := s.etcd.Put(context.Background(), "setting/"+payload.GetKey(), payload.GetValue())
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.
 	}, nil
 }
 
-func (s *Middle) GetMenu(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
 	uuid, err := authUUID(s.etcd)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ Setting
 	}, nil
 }
 
-func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+func (s *Middle) Authorization(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "user/auth_uuid")
 	if err != nil {
 		return nil, err

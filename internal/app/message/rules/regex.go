@@ -28,7 +28,7 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, in model.Message) string {
+func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Message) string {
 	botName := b.Name()
 	var helpMsg string
 	for _, rule := range r.rules {

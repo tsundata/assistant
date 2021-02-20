@@ -27,7 +27,7 @@ func NewManage(db *sqlx.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook st
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 
-func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageListReply, error) {
+func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
 	var messages []model.Message
 	err := m.db.Select(&messages, "SELECT * FROM `messages` ORDER BY `id` DESC")
 	if err != nil {
@@ -48,7 +48,7 @@ func (m *Message) List(ctx context.Context, payload *pb.MessageRequest) (*pb.Mes
 	}, nil
 }
 
-func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var message model.Message
 	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
 	if err != nil {
@@ -60,7 +60,7 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	}, nil
 }
 
-func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var message model.Message
 	message.Time = time.Now()
@@ -120,7 +120,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}, nil
 }
 
-func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.T
 	return nil, nil
 }
 
-func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
@@ -147,7 +147,7 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}, nil
 }
 
-func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Run(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	// check uuid
 	var reply string
 	var message model.Message

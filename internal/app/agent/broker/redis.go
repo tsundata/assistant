@@ -90,7 +90,7 @@ func (b *Redis) Run() {
 }
 
 func writeSection(b *Redis, writeAPI api.WriteAPI, section string) error {
-	re, err := regexp.Compile(`^\-?\d+(?:\.\d+)?$`)
+	re, err := regexp.Compile(`^-?\d+(?:\.\d+)?$`)
 	if err != nil {
 		b.broker.logger.Error(err.Error())
 		return err
