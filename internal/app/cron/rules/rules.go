@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"github.com/tsundata/assistant/internal/app/cron/agent"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"time"
 )
@@ -17,9 +18,7 @@ var rules = map[string]Rule{
 	"pocket": {
 		When: "* * * * *",
 		Action: func(b *rulebot.RuleBot) []string {
-			return []string{
-				time.Now().String(),
-			}
+			return agent.NewPocket().Fetch(b)
 		},
 	},
 }
