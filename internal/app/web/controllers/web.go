@@ -247,7 +247,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 			Title: "Credentials",
 			Action: &components.Link{
 				Title: "Add Credentials",
-				URL:   fmt.Sprintf("/credentials/%s/create", extractUUID(c.Path())),
+				URL:   fmt.Sprintf("/credentials/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
 			},
 			Content: &components.List{
 				Items: items,
@@ -260,6 +260,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
 	var items []components.Component
 	items = append(items, &components.Input{
 		Name:  "name",
@@ -282,10 +283,10 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 			Title: "Create Credentials",
 			Action: &components.Link{
 				Title: "Go Back",
-				URL:   fmt.Sprintf("/credentials/%s", extractUUID(c.Path())),
+				URL:   fmt.Sprintf("/credentials/%s", uuid),
 			},
 			Content: &components.Form{
-				Action: fmt.Sprintf("/credentials/%s/store", extractUUID(c.Path())),
+				Action: fmt.Sprintf("/credentials/%s/store", uuid),
 				Method: "POST",
 				Inputs: items,
 			},
@@ -338,7 +339,7 @@ func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	c.Redirect(fmt.Sprintf("/credentials/%s", extractUUID(c.Path())), http.StatusFound)
+	c.Redirect(fmt.Sprintf("/credentials/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
 }
 
 func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
@@ -363,7 +364,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 			Title: "Setting",
 			Action: &components.Link{
 				Title: "Add Setting",
-				URL:   fmt.Sprintf("/setting/%s/create", extractUUID(c.Path())),
+				URL:   fmt.Sprintf("/setting/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
 			},
 			Content: &components.List{
 				Items: items,
@@ -376,7 +377,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
-	uuid := extractUUID(c.Path())
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
 	var items []components.Component
 	items = append(items, &components.Input{
 		Name:  "key",
@@ -422,5 +423,5 @@ func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	c.Redirect(fmt.Sprintf("/setting/%s", extractUUID(c.Path())), http.StatusFound)
+	c.Redirect(fmt.Sprintf("/setting/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
 }
