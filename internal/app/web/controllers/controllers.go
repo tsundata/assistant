@@ -109,7 +109,7 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 }
 
 func checkUUID(path []byte, midClient pb.MiddleClient) bool {
-	uuid := extractUUID(path)
+	uuid := utils.ExtractUUID(utils.ByteToString(path))
 	if uuid == "" {
 		return false
 	}
@@ -122,9 +122,4 @@ func checkUUID(path []byte, midClient pb.MiddleClient) bool {
 	}
 
 	return reply.GetState()
-}
-
-func extractUUID(path []byte) string {
-	re := regexp.MustCompile(`(\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12})`)
-	return re.FindString(utils.ByteToString(path))
 }

@@ -2,6 +2,7 @@ package rule
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
 )
@@ -20,31 +21,38 @@ func TestParseFun(t *testing.T) {
 	}
 
 	sel := doc.First()
-	// text
-	f := ParseFun(sel, `$("a.storylink").text`)
-	r, err := f.Invoke()
-	if err != nil {
-		t.Fatal(err)
+	t.Parallel()
+	tests := []struct {
+		name   string
+		fun    string
+		expect string
+	}{
+		{
+			"text",
+			`$("a.storylink").text`,
+			"demo",
+		},
+		{
+			"expand",
+			`$(".rank").text.expand("(\d+)", "#$1")`,
+			"#3",
+		},
+		{
+			"match",
+			`$(".rank").text.match("(\d+)")`,
+			"3",
+		},
 	}
-	if r != "demo" {
-		t.Fatal("error ParseFun")
-	}
-	// expand
-	f = ParseFun(sel, `$(".rank").text.expand("(\d+)", "#$1")`)
-	r, err = f.Invoke()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != "#3" {
-		t.Fatal("error ParseFun")
-	}
-	// match
-	f = ParseFun(sel, `$(".rank").text.match("(\d+)")`)
-	r, err = f.Invoke()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r != "3" {
-		t.Fatal("error ParseFun")
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			f := ParseFun(sel, tt.fun)
+			r, err := f.Invoke()
+			if err != nil {
+				t.Fatal(err)
+			}
+			require.Equal(t, r, tt.expect)
+		})
 	}
 }

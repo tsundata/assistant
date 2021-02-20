@@ -24,3 +24,38 @@ func BenchmarkGeneratePassword(b *testing.B) {
 		GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
 	}
 }
+
+func TestExtractUUID(t *testing.T) {
+	tests := []struct {
+		name   string
+		path   string
+		expect string
+	}{
+		{
+			"case1",
+			"/page/b58ca090-06cf-4593-812a-9992a5bec526",
+			"b58ca090-06cf-4593-812a-9992a5bec526",
+		},
+		{
+			"case2",
+			"/page/b58ca090-06cf-4593-812a-9992a5bec526/create",
+			"b58ca090-06cf-4593-812a-9992a5bec526",
+		},
+		{
+			"case3",
+			"/page/b58ca090-06cf-4593-812a-9992a5",
+			"",
+		},
+		{
+			"case4",
+			"b58ca090-06cf-4593-812a-9992a5bec526",
+			"b58ca090-06cf-4593-812a-9992a5bec526",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, ExtractUUID(tt.path), tt.expect)
+		})
+	}
+}
