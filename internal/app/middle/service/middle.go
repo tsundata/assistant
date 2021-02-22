@@ -90,7 +90,7 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error
 		})
 	}
 
-	for k, _ := range systemApps {
+	for k := range systemApps {
 		if _, ok := haveApps[k]; !ok {
 			res = append(res, &pb.App{
 				Title:        fmt.Sprintf("%s (%s)", k, k),
