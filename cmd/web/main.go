@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/controllers"
 	"github.com/tsundata/assistant/internal/app/web/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/cache"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
@@ -60,11 +61,13 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	inMemoryCache := cache.NewInMemoryCache()
+
 	webOptions, err := web.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, log, midClient, msgClient)
+	webController := controllers.NewWebController(webOptions, inMemoryCache, log, midClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {

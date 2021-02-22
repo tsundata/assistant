@@ -75,12 +75,29 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error
 		return nil, err
 	}
 
+	systemApps := map[string]bool{
+		"pocket": true,
+	}
+
+	haveApps := make(map[string]bool)
 	var res []*pb.App
 	for _, app := range apps {
+		haveApps[app.Type] = true
 		res = append(res, &pb.App{
 			Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type),
 			IsAuthorized: app.Token != "",
+			Type:         app.Type,
 		})
+	}
+
+	for k, _ := range systemApps {
+		if _, ok := haveApps[k]; !ok {
+			res = append(res, &pb.App{
+				Title:        fmt.Sprintf("%s (%s)", k, k),
+				IsAuthorized: false,
+				Type:         k,
+			})
+		}
 	}
 
 	return &pb.AppReply{
@@ -89,10 +106,23 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error
 }
 
 func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
-	_, err := s.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
-		payload.GetName(), payload.GetType(), payload.GetToken(), payload.GetExtra())
+	var app model.App
+	err := s.db.Get(&app, "SELECT * FROM apps WHERE type = ? LIMIT 1", payload.GetType())
 	if err != nil {
 		return nil, err
+	}
+
+	if app.ID > 0 {
+		_, err = s.db.Exec("UPDATE apps SET `token` = ?, `extra` = ?, `time` = ? WHERE id = ?", payload.GetToken(), payload.GetExtra(), time.Now(), app.ID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		_, err = s.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
+			payload.GetName(), payload.GetType(), payload.GetToken(), payload.GetExtra())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &pb.StateReply{
@@ -100,7 +130,37 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 	}, nil
 }
 
-func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialReply, error) {
+func (s *Middle) GetCredential(_ context.Context, payload *pb.TextRequest) (*pb.CredentialReply, error) {
+	var find model.Credential
+	err := s.db.Get(&find, "SELECT * FROM credentials WHERE type = ? LIMIT 1", payload.GetText())
+	if err != nil {
+		return nil, err
+	}
+
+	var kvs []*pb.KV
+
+	if find.ID > 0 {
+		var data map[string]string
+		err = json.Unmarshal(utils.StringToByte(find.Content), &data)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range data {
+			kvs = append(kvs, &pb.KV{
+				Key:   k,
+				Value: v,
+			})
+		}
+	}
+
+	return &pb.CredentialReply{
+		Name:    find.Name,
+		Type:    find.Type,
+		Content: kvs,
+	}, nil
+}
+
+func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
 	var items []model.Credential
 	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
 	if err != nil {
@@ -109,26 +169,46 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 
 	var kvs []*pb.KV
 	for _, item := range items {
+		// Data masking
+		var data map[string]string
+		err := json.Unmarshal(utils.StringToByte(item.Content), &data)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range data {
+			if k != "type" {
+				data[k] = utils.DataMasking(v)
+			} else {
+				data[k] = v
+			}
+		}
+		content, err := json.Marshal(data)
+		if err != nil {
+			return nil, err
+		}
+
 		kvs = append(kvs, &pb.KV{
 			Key:   item.Name,
-			Value: item.Content,
+			Value: utils.ByteToString(content),
 		})
 	}
 
-	return &pb.CredentialReply{
+	return &pb.CredentialsReply{
 		Items: kvs,
 	}, nil
 }
 
 func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
 	name := ""
+	category := ""
 	m := make(map[string]string)
 	for _, item := range payload.GetKvs() {
 		if item.Key == "name" {
 			name = item.Value
-		} else {
-			m[item.Key] = item.Value
+		} else if item.Key == "type" {
+			category = item.Value
 		}
+		m[item.Key] = item.Value
 	}
 	if name == "" {
 		return nil, errors.New("name key error")
@@ -140,7 +220,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 	}
 
 	_, err = s.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)",
-		name, "", utils.ByteToString(data), time.Now())
+		name, category, utils.ByteToString(data), time.Now())
 	if err != nil {
 		return nil, err
 	}

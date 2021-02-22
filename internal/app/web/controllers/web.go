@@ -9,7 +9,9 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
+	"github.com/tsundata/assistant/internal/pkg/cache"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 	"github.com/valyala/fasthttp"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -24,14 +26,15 @@ import (
 
 type WebController struct {
 	opt       *web.Options
+	cache     *cache.InMemoryCache
 	logger    *zap.Logger
 	midClient pb.MiddleClient
 	msgClient pb.MessageClient
 }
 
-func NewWebController(opt *web.Options, logger *zap.Logger,
+func NewWebController(opt *web.Options, cache *cache.InMemoryCache, logger *zap.Logger,
 	midClient pb.MiddleClient, msgClient pb.MessageClient) *WebController {
-	return &WebController{opt: opt, logger: logger, midClient: midClient, msgClient: msgClient}
+	return &WebController{opt: opt, cache: cache, logger: logger, midClient: midClient, msgClient: msgClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
@@ -131,6 +134,7 @@ func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
 	var items []components.Component
 
 	reply, err := wc.midClient.Apps(context.Background(), &pb.TextRequest{})
@@ -142,13 +146,16 @@ func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
 
 	for _, app := range reply.GetApps() {
 		authStr := "Unauthorized"
+		authorizedURL := fmt.Sprintf("/app/%s?uuid=%s", app.GetType(), uuid)
 		if app.GetIsAuthorized() {
 			authStr = "Authorized"
+			authorizedURL = "javascript:void(0);"
 		}
 		items = append(items, &components.App{
 			Name: app.GetTitle(),
 			Icon: "rocket",
-			Text: authStr,
+			Text: fmt.Sprintf("%s (%s)", app.GetType(), authStr),
+			URL:  authorizedURL,
 		})
 	}
 
@@ -228,6 +235,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 
 	reply, err := wc.midClient.GetCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Error(err.Error(), fasthttp.StatusBadRequest)
 		return
 	}
@@ -335,6 +343,7 @@ func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
 		Kvs: kvs,
 	})
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Error(err.Error(), fasthttp.StatusBadRequest)
 		return
 	}
@@ -347,6 +356,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 
 	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Error(err.Error(), fasthttp.StatusBadRequest)
 		return
 	}
@@ -419,9 +429,107 @@ func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
 		Value: utils.ByteToString(value),
 	})
 	if err != nil {
+		wc.logger.Error(err.Error())
 		c.Error(err.Error(), fasthttp.StatusBadRequest)
 		return
 	}
 
 	c.Redirect(fmt.Sprintf("/setting/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+}
+
+func (wc *WebController) App(c *fasthttp.RequestCtx) {
+	uuid := c.FormValue("uuid")
+	typeRe := regexp.MustCompile(`^/app/(\w+)$`)
+	t := typeRe.FindString(utils.ByteToString(c.Path()))
+	category := strings.ReplaceAll(t, "/app/", "")
+
+	switch category {
+	case "pocket":
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		consumerKey := ""
+		for _, item := range reply.GetContent() {
+			if item.Key == "consumer_key" {
+				consumerKey = item.Value
+			}
+		}
+
+		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
+		client := pocket.NewPocket(consumerKey)
+		code, err := client.GetCode(redirectURI, "")
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+
+		wc.cache.Set("pocket:code", code.Code)
+		wc.cache.Set("auth:uuid", utils.ByteToString(uuid))
+
+		pocketRedirectURI := client.AuthorizeURL(code.Code, redirectURI)
+		c.Redirect(pocketRedirectURI, http.StatusFound)
+		return
+	}
+
+	c.Response.SetBodyString(category)
+}
+
+func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
+	typeRe := regexp.MustCompile(`^/oauth/(\w+)$`)
+	t := typeRe.FindString(utils.ByteToString(c.Path()))
+	category := strings.ReplaceAll(t, "/oauth/", "")
+
+	switch category {
+	case "pocket":
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		consumerKey := ""
+		for _, item := range reply.GetContent() {
+			if item.Key == "consumer_key" {
+				consumerKey = item.Value
+			}
+		}
+
+		if code, exists := wc.cache.Get("pocket:code"); exists {
+			client := pocket.NewPocket(consumerKey)
+			tokenResp, err := client.GetAccessToken(code.(string))
+			if err != nil {
+				wc.logger.Error(err.Error())
+				c.Response.SetStatusCode(http.StatusBadRequest)
+				return
+			}
+
+			extra, err := json.Marshal(&tokenResp)
+			if err != nil {
+				wc.logger.Error(err.Error())
+				c.Response.SetStatusCode(http.StatusBadRequest)
+				return
+			}
+			reply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
+				Name:  "pocket",
+				Type:  "pocket",
+				Token: tokenResp.AccessToken,
+				Extra: utils.ByteToString(extra),
+			})
+			if err != nil {
+				wc.logger.Error(err.Error())
+				c.Response.SetStatusCode(http.StatusBadRequest)
+				return
+			}
+			if reply.GetState() {
+				if uuid, exists := wc.cache.Get("auth:uuid"); exists {
+					c.Redirect(fmt.Sprintf("%s/apps/%s", wc.opt.URL, uuid), http.StatusFound)
+					return
+				}
+			}
+		}
+	}
 }

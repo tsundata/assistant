@@ -59,3 +59,43 @@ func TestExtractUUID(t *testing.T) {
 		})
 	}
 }
+
+func TestDataMasking(t *testing.T) {
+	tests := []struct {
+		name   string
+		data   string
+		expect string
+	}{
+		{
+			"case1",
+			"b58ca090-06cf-4593-812a-9992a5bec526",
+			"b58******526",
+		},
+		{
+			"case2",
+			"b58",
+			"b******8",
+		},
+		{
+			"case2",
+			"c",
+			"c******c",
+		},
+		{
+			"case2",
+			"",
+			"",
+		},
+		{
+			"case2",
+			"1234",
+			"123******234",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, DataMasking(tt.data), tt.expect)
+		})
+	}
+}

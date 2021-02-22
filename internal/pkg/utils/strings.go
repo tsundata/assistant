@@ -94,3 +94,22 @@ func ExtractUUID(path string) string {
 	re := regexp.MustCompile(`(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})`)
 	return re.FindString(path)
 }
+
+// DataMasking Data Masking
+func DataMasking(data string) string {
+	if len(data) > 3 {
+		var res strings.Builder
+		res.WriteString(data[:3])
+		res.WriteString("******")
+		res.WriteString(data[len(data)-3:])
+		return res.String()
+	} else if len(data) >= 1 {
+		var res strings.Builder
+		res.WriteString(data[:1])
+		res.WriteString("******")
+		res.WriteString(data[len(data)-1:])
+		return res.String()
+	} else {
+		return ""
+	}
+}

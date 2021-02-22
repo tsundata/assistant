@@ -10,6 +10,7 @@ import (
 
 type Options struct {
 	Name string
+	URL  string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -18,6 +19,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 	if err = v.UnmarshalKey("app", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
+	}
+
+	if err = v.UnmarshalKey("web", o); err != nil {
+		return nil, errors.New("unmarshal web option error")
 	}
 
 	return o, err
