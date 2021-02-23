@@ -68,7 +68,7 @@ func (s *Middle) Qr(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, 
 	}, nil
 }
 
-func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error) {
+func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
 	var apps []model.App
 	err := s.db.Select(&apps, "SELECT * FROM `apps` ORDER BY `time` DESC")
 	if err != nil {
@@ -100,8 +100,39 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppReply, error
 		}
 	}
 
-	return &pb.AppReply{
+	return &pb.AppsReply{
 		Apps: res,
+	}, nil
+}
+
+func (s *Middle) GetApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
+	var find model.App
+	err := s.db.Get(&find, "SELECT * FROM apps WHERE `type` = ? LIMIT 1", payload.GetText())
+	if err != nil {
+		return nil, err
+	}
+
+	var kvs []*pb.KV
+
+	if find.ID > 0 {
+		var extra map[string]string
+		err = json.Unmarshal(utils.StringToByte(find.Extra), &extra)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range extra {
+			kvs = append(kvs, &pb.KV{
+				Key:   k,
+				Value: v,
+			})
+		}
+	}
+
+	return &pb.AppReply{
+		Name:  find.Name,
+		Type:  find.Type,
+		Token: find.Token,
+		Extra: kvs,
 	}, nil
 }
 

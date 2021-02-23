@@ -9,7 +9,8 @@ service Middle {
   rpc CreatePage(PageRequest) returns (TextReply) {}
   rpc GetPage(PageRequest) returns (PageReply) {}
   rpc Qr(TextRequest) returns (TextReply) {}
-  rpc Apps(TextRequest) returns (AppReply) {}
+  rpc Apps(TextRequest) returns (AppsReply) {}
+  rpc GetApp(TextRequest) returns (AppReply) {}
   rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialsReply) {}
   rpc GetCredential(TextRequest) returns (CredentialReply) {}
@@ -39,8 +40,15 @@ message AppRequest {
   string extra = 4;
 }
 
-message AppReply {
+message AppsReply {
   repeated App apps = 1;
+}
+
+message AppReply {
+  string name = 1;
+  string type = 2;
+  string token = 3;
+  repeated KV extra = 4;
 }
 
 message App {

@@ -17,6 +17,32 @@ type TokenResponse struct {
 	Username    string `json:"username"`
 }
 
+type ListResponse struct {
+	Status int             `json:"status"`
+	List   map[string]Item `json:"list"`
+}
+
+type Item struct {
+	Id            string `json:"item_id"`
+	ResolvedId    string `json:"resolved_id"`
+	GivenUrl      string `json:"given_url"`
+	GivenTitle    string `json:"given_title"`
+	Favorite      string `json:"favorite"`
+	Status        string `json:"status"`
+	TimeAdded     string `json:"time_added"`
+	TimeUpdated   string `json:"time_updated"`
+	TimeRead      string `json:"time_read"`
+	TimeFavorited string `json:"time_favorited"`
+	ResolvedTitle string `json:"resolved_title"`
+	ResolvedUrl   string `json:"resolved_url"`
+	Excerpt       string `json:"excerpt"`
+	IsArticle     string `json:"is_article"`
+	IsIndex       string `json:"is_index"`
+	HasVideo      string `json:"has_video"`
+	HasImage      string `json:"has_image"`
+	WordCount     string `json:"word_count"`
+}
+
 type Pocket struct {
 	c           *resty.Client
 	ConsumerKey string
@@ -65,6 +91,29 @@ func (p *Pocket) GetAccessToken(code string) (*TokenResponse, error) {
 
 	if resp.StatusCode() == http.StatusOK {
 		return resp.Result().(*TokenResponse), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}
+
+func (p *Pocket) Retrieve(accessToken string, count int) (*ListResponse, error) {
+	resp, err := p.c.R().
+		SetResult(&ListResponse{}).
+		SetBody(map[string]interface{}{
+			"consumer_key": p.ConsumerKey,
+			"access_token": accessToken,
+			"count":        count,
+			"detailType":   "simple",
+			"state":        "all",
+			"sort":         "newest",
+		}).
+		Post("/v3/get")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Result().(*ListResponse), nil
 	} else {
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}
