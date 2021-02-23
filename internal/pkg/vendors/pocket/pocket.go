@@ -49,20 +49,20 @@ type Pocket struct {
 }
 
 func NewPocket(consumerKey string) *Pocket {
-	p := &Pocket{ConsumerKey: consumerKey}
+	v := &Pocket{ConsumerKey: consumerKey}
 
-	p.c = resty.New()
-	p.c.SetHostURL("https://getpocket.com")
-	p.c.SetTimeout(time.Minute)
+	v.c = resty.New()
+	v.c.SetHostURL("https://getpocket.com")
+	v.c.SetTimeout(time.Minute)
 
-	return p
+	return v
 }
 
-func (p *Pocket) GetCode(redirectURI, state string) (*CodeResponse, error) {
-	resp, err := p.c.R().
+func (v *Pocket) GetCode(redirectURI, state string) (*CodeResponse, error) {
+	resp, err := v.c.R().
 		SetResult(&CodeResponse{}).
 		SetHeader("X-Accept", "application/json").
-		SetBody(map[string]interface{}{"consumer_key": p.ConsumerKey, "redirect_uri": redirectURI, "state": state}).
+		SetBody(map[string]interface{}{"consumer_key": v.ConsumerKey, "redirect_uri": redirectURI, "state": state}).
 		Post("/v3/oauth/request")
 	if err != nil {
 		return nil, err
@@ -75,15 +75,15 @@ func (p *Pocket) GetCode(redirectURI, state string) (*CodeResponse, error) {
 	}
 }
 
-func (p *Pocket) AuthorizeURL(code, redirectURI string) string {
+func (v *Pocket) AuthorizeURL(code, redirectURI string) string {
 	return fmt.Sprintf("https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s", code, redirectURI)
 }
 
-func (p *Pocket) GetAccessToken(code string) (*TokenResponse, error) {
-	resp, err := p.c.R().
+func (v *Pocket) GetAccessToken(code string) (*TokenResponse, error) {
+	resp, err := v.c.R().
 		SetResult(&TokenResponse{}).
 		SetHeader("X-Accept", "application/json").
-		SetBody(map[string]interface{}{"consumer_key": p.ConsumerKey, "code": code}).
+		SetBody(map[string]interface{}{"consumer_key": v.ConsumerKey, "code": code}).
 		Post("/v3/oauth/authorize")
 	if err != nil {
 		return nil, err
@@ -96,11 +96,11 @@ func (p *Pocket) GetAccessToken(code string) (*TokenResponse, error) {
 	}
 }
 
-func (p *Pocket) Retrieve(accessToken string, count int) (*ListResponse, error) {
-	resp, err := p.c.R().
+func (v *Pocket) Retrieve(accessToken string, count int) (*ListResponse, error) {
+	resp, err := v.c.R().
 		SetResult(&ListResponse{}).
 		SetBody(map[string]interface{}{
-			"consumer_key": p.ConsumerKey,
+			"consumer_key": v.ConsumerKey,
 			"access_token": accessToken,
 			"count":        count,
 			"detailType":   "simple",

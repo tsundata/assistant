@@ -6,11 +6,11 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/controllers"
 	"github.com/tsundata/assistant/internal/app/web/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/cache"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
@@ -61,13 +61,20 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	inMemoryCache := cache.NewInMemoryCache()
+	redisOption, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rdb, err := redis.New(redisOption)
+	if err != nil {
+		return nil, err
+	}
 
 	webOptions, err := web.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, inMemoryCache, log, midClient, msgClient)
+	webController := controllers.NewWebController(webOptions, rdb, log, midClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {

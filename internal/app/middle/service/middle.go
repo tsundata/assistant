@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -77,6 +78,7 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, erro
 
 	systemApps := map[string]bool{
 		"pocket": true,
+		"github": true,
 	}
 
 	haveApps := make(map[string]bool)
@@ -137,9 +139,15 @@ func (s *Middle) GetApp(_ context.Context, payload *pb.TextRequest) (*pb.AppRepl
 }
 
 func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
+	if payload.GetToken() == "" {
+		return &pb.StateReply{
+			State: false,
+		}, nil
+	}
+
 	var app model.App
-	err := s.db.Get(&app, "SELECT * FROM apps WHERE type = ? LIMIT 1", payload.GetType())
-	if err != nil {
+	err := s.db.Get(&app, "SELECT * FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", payload.GetType())
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 

@@ -35,7 +35,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	r, err := redis.New(redisOption)
+	rdb, err := redis.New(redisOption)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	b, err := broker.NewRedis(br, r)
+	b, err := broker.NewRedis(br, rdb)
 	if err != nil {
 		return nil, err
 	}

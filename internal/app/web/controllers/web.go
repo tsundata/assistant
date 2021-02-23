@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
-	"github.com/tsundata/assistant/internal/pkg/cache"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 	"github.com/valyala/fasthttp"
 	"github.com/yuin/goldmark"
@@ -22,19 +23,20 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type WebController struct {
 	opt       *web.Options
-	cache     *cache.InMemoryCache
+	rdb       *redis.Client
 	logger    *zap.Logger
 	midClient pb.MiddleClient
 	msgClient pb.MessageClient
 }
 
-func NewWebController(opt *web.Options, cache *cache.InMemoryCache, logger *zap.Logger,
+func NewWebController(opt *web.Options, rdb *redis.Client, logger *zap.Logger,
 	midClient pb.MiddleClient, msgClient pb.MessageClient) *WebController {
-	return &WebController{opt: opt, cache: cache, logger: logger, midClient: midClient, msgClient: msgClient}
+	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
@@ -303,8 +305,8 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 
 	options := map[string]interface{}{
 		"github": map[string]string{
-			"id":     "Client ID",
-			"secret": "Client secrets",
+			"client_id":     "Client ID",
+			"client_secret": "Client secrets",
 		},
 		"pocket": map[string]string{
 			"consumer_key": "Consumer Key",
@@ -438,7 +440,6 @@ func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
 }
 
 func (wc *WebController) App(c *fasthttp.RequestCtx) {
-	uuid := c.FormValue("uuid")
 	typeRe := regexp.MustCompile(`^/app/(\w+)$`)
 	t := typeRe.FindString(utils.ByteToString(c.Path()))
 	category := strings.ReplaceAll(t, "/app/", "")
@@ -467,11 +468,28 @@ func (wc *WebController) App(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		wc.cache.Set("pocket:code", code.Code)
-		wc.cache.Set("auth:uuid", utils.ByteToString(uuid))
+		wc.rdb.Set(context.Background(), "pocket:code", code.Code, time.Hour)
 
 		pocketRedirectURI := client.AuthorizeURL(code.Code, redirectURI)
 		c.Redirect(pocketRedirectURI, http.StatusFound)
+		return
+	case "github":
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		clientId := ""
+		for _, item := range reply.GetContent() {
+			if item.Key == "client_id" {
+				clientId = item.Value
+			}
+		}
+
+		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
+		githubRedirectURI := github.NewGithub(clientId).AuthorizeURL(redirectURI)
+		c.Redirect(githubRedirectURI, http.StatusFound)
 		return
 	}
 
@@ -498,9 +516,15 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 			}
 		}
 
-		if code, exists := wc.cache.Get("pocket:code"); exists {
+		code, err := wc.rdb.Get(context.Background(), "pocket:code").Result()
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		if code != "" {
 			client := pocket.NewPocket(consumerKey)
-			tokenResp, err := client.GetAccessToken(code.(string))
+			tokenResp, err := client.GetAccessToken(code)
 			if err != nil {
 				wc.logger.Error(err.Error())
 				c.Response.SetStatusCode(http.StatusBadRequest)
@@ -525,11 +549,57 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 				return
 			}
 			if reply.GetState() {
-				if uuid, exists := wc.cache.Get("auth:uuid"); exists {
-					c.Redirect(fmt.Sprintf("%s/apps/%s", wc.opt.URL, uuid), http.StatusFound)
-					return
-				}
+				c.Response.SetBodyString("success")
+				return
 			}
+		}
+	case "github":
+		code := utils.ByteToString(c.FormValue("code"))
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		clientId := ""
+		clientSecret := ""
+		for _, item := range reply.GetContent() {
+			if item.Key == "client_id" {
+				clientId = item.Value
+			}
+			if item.Key == "client_secret" {
+				clientSecret = item.Value
+			}
+		}
+
+		client := github.NewGithub(clientId)
+		tokenResp, err := client.GetAccessToken(clientSecret, code)
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+
+		extra, err := json.Marshal(&tokenResp)
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		appReply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
+			Name:  "github",
+			Type:  "github",
+			Token: tokenResp.AccessToken,
+			Extra: utils.ByteToString(extra),
+		})
+		if err != nil {
+			wc.logger.Error(err.Error())
+			c.Response.SetStatusCode(http.StatusBadRequest)
+			return
+		}
+		if appReply.GetState() {
+			c.Response.SetBodyString("success")
+			return
 		}
 	}
 }

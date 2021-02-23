@@ -65,7 +65,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	r, err := redis.New(redisOption)
+	rdb, err := redis.New(redisOption)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controllers.NewGatewayController(gatewayOptions, r, log, subClient, msgClient)
+	gatewayController := controllers.NewGatewayController(gatewayOptions, rdb, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
 	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {

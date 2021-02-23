@@ -8,6 +8,9 @@ etcd:
     url: http://127.0.0.1:2379
     username:
     password:
+redis:
+    addr: 127.0.0.1:6379
+    password:
 web:
     url: http://127.0.0.1:7007
 jaeger:
