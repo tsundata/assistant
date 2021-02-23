@@ -1,22 +1,34 @@
 package rules
 
 import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
-	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
 
 type Rule struct {
+	Name   string
 	When   string
 	Action func(b *rulebot.RuleBot) []string
 }
 
+type Result struct {
+	Name   string
+	Result []string
+}
+
 type cronRuleset struct {
-	outCh     chan string
-	cronRules map[string]Rule
+	outCh     chan Result
+	cronRules []Rule
 
 	mu       sync.Mutex
 	stopChan []chan struct{}
@@ -29,30 +41,15 @@ func (r *cronRuleset) Name() string {
 
 // Boot runs preparatory steps for ruleset execution
 func (r *cronRuleset) Boot(b *rulebot.RuleBot) {
-	r.start(b)
-	r.send(b)
+	r.daemon(b)
 }
 
-func (r *cronRuleset) HelpMessage(_ *rulebot.RuleBot, _ model.Message) string {
+func (r *cronRuleset) HelpMessage(_ *rulebot.RuleBot, _ string) string {
 	return ""
 }
 
-func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ model.Message) []model.Message {
-	return []model.Message{}
-}
-
-func (r *cronRuleset) start(b *rulebot.RuleBot) {
-	r.stop()
-
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	// process cron
-	for rule := range r.cronRules {
-		c := make(chan struct{})
-		r.stopChan = append(r.stopChan, c)
-		go processCronRule(b, r.cronRules[rule], c, r.outCh)
-	}
+func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ string) []string {
+	return []string{}
 }
 
 func (r *cronRuleset) stop() {
@@ -65,16 +62,87 @@ func (r *cronRuleset) stop() {
 	r.stopChan = []chan struct{}{}
 }
 
-// send message
-func (r *cronRuleset) send(b *rulebot.RuleBot) {
+func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
+	r.stop()
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// process cron
+	for rule := range r.cronRules {
+		c := make(chan struct{})
+		r.stopChan = append(r.stopChan, c)
+		go processCronRule(b, r.cronRules[rule], c, r.outCh)
+	}
+
+	// send message
 	go func() {
 		for out := range r.outCh {
-			b.Send(out)
+			// filter
+			diff := r.filter(b, out.Name, out.Result)
+			// send
+			r.send(b, out.Name, diff)
 		}
 	}()
 }
 
-func processCronRule(b *rulebot.RuleBot, rule Rule, stop chan struct{}, outCh chan string) {
+func (r *cronRuleset) filter(b *rulebot.RuleBot, name string, latest []string) []string {
+	ctx := context.Background()
+	sentKey := fmt.Sprintf("cron:%s:sent", name)
+	todoKey := fmt.Sprintf("cron:%s:todo", name)
+	sendTimeKey := fmt.Sprintf("cron:%s:sendtime", name)
+
+	// sent
+	smembers := b.RDB.SMembers(ctx, sentKey)
+	old, err := smembers.Result()
+	if err != nil && err != redis.Nil {
+		return []string{}
+	}
+
+	// to do
+	smembers = b.RDB.SMembers(ctx, todoKey)
+	todo, err := smembers.Result()
+	if err != nil && err != redis.Nil {
+		return []string{}
+	}
+
+	// merge
+	tobeCompared := append(old, todo...)
+
+	// diff
+	diff := utils.StringSliceDiff(latest, tobeCompared)
+
+	// record
+	b.RDB.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
+
+	// add data
+	for _, item := range diff {
+		b.RDB.SAdd(ctx, sentKey, item)
+	}
+	b.RDB.Expire(ctx, sentKey, 7*24*time.Hour)
+
+	// clear to do
+	b.RDB.Del(ctx, todoKey)
+
+	return diff
+}
+
+func (r *cronRuleset) send(b *rulebot.RuleBot, name string, out []string) {
+	if len(out) == 0 {
+		return
+	}
+
+	text := fmt.Sprintf("Cron %s (v%s)\n%s", name, version.Version, strings.Join(out, "\n"))
+
+	_, err := b.MsgClient.Send(context.Background(), &pb.MessageRequest{
+		Text: text,
+	})
+	if err != nil {
+		return
+	}
+}
+
+func processCronRule(b *rulebot.RuleBot, rule Rule, stop chan struct{}, outCh chan Result) {
 	p, err := cron.ParseUTC(rule.When)
 	if err != nil {
 		log.Println(err)
@@ -92,8 +160,11 @@ func processCronRule(b *rulebot.RuleBot, rule Rule, stop chan struct{}, outCh ch
 		default:
 			if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
 				msgs := rule.Action(b)
-				for _, msg := range msgs {
-					outCh <- msg
+				if len(msgs) > 0 {
+					outCh <- Result{
+						Name:   rule.Name,
+						Result: msgs,
+					}
 				}
 			}
 			nextTime, err = p.Next(time.Now())
@@ -107,10 +178,10 @@ func processCronRule(b *rulebot.RuleBot, rule Rule, stop chan struct{}, outCh ch
 }
 
 // New returns a cron rule set
-func New(rules map[string]Rule) *cronRuleset {
+func New(rules []Rule) *cronRuleset {
 	r := &cronRuleset{
 		cronRules: rules,
-		outCh:     make(chan string, 10),
+		outCh:     make(chan Result, 10),
 	}
 	return r
 }

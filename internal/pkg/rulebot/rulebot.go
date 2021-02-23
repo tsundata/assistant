@@ -2,36 +2,34 @@ package rulebot
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"github.com/valyala/fasthttp"
 	"log"
 	"strings"
 )
 
 type RuleBot struct {
 	name        string
-	providerIn  model.Message
-	providerOut []model.Message
+	providerIn  string
+	providerOut []string
 	rules       []RuleParser
 
-	webhook   string
+	RDB       *redis.Client
 	SubClient pb.SubscribeClient
 	MidClient pb.MiddleClient
+	MsgClient pb.MessageClient
 }
 
-func New(name string, v *viper.Viper, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, opts ...Option) *RuleBot {
+func New(name string, RDB *redis.Client, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient, opts ...Option) *RuleBot {
 	s := &RuleBot{
 		name: name,
 	}
 
-	slack := v.GetStringMapString("slack")
-	s.webhook = slack["webhook"]
+	s.RDB = RDB
 	s.SubClient = SubClient
 	s.MidClient = MidClient
+	s.MsgClient = MsgClient
 
 	for _, opt := range opts {
 		opt(s)
@@ -44,20 +42,17 @@ func (s *RuleBot) Name() string {
 	return s.name
 }
 
-func (s *RuleBot) Process(in model.Message) *RuleBot {
+func (s *RuleBot) Process(in string) *RuleBot {
 	log.Println("plugin process event")
 
 	s.providerIn = in
-	s.providerOut = []model.Message{}
-	if strings.ToLower(in.Text) == "help" {
+	s.providerOut = []string{}
+	if strings.ToLower(in) == "help" {
 		helpMsg := fmt.Sprintf("available commands (v%s):", version.Version)
 		for _, rule := range s.rules {
 			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
 		}
-		s.providerOut = append(s.providerOut, model.Message{
-			Type: model.MessageTypeText,
-			Text: helpMsg,
-		})
+		s.providerOut = append(s.providerOut, helpMsg)
 		return s
 	}
 
@@ -73,22 +68,8 @@ func (s *RuleBot) Process(in model.Message) *RuleBot {
 	return s
 }
 
-func (s *RuleBot) MessageProviderOut() []model.Message {
+func (s *RuleBot) MessageProviderOut() []string {
 	return s.providerOut
-}
-
-func (s *RuleBot) Send(out string) {
-	client := http.NewClient()
-	resp, err := client.PostJSON(s.webhook, map[string]interface{}{
-		"text": out,
-	})
-
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	fasthttp.ReleaseResponse(resp)
 }
 
 type Option func(*RuleBot)
@@ -96,8 +77,8 @@ type Option func(*RuleBot)
 type RuleParser interface {
 	Name() string
 	Boot(*RuleBot)
-	ParseMessage(*RuleBot, model.Message) []model.Message
-	HelpMessage(*RuleBot, model.Message) string
+	ParseMessage(*RuleBot, string) []string
+	HelpMessage(*RuleBot, string) string
 }
 
 func RegisterRuleset(rule RuleParser) Option {

@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
@@ -39,6 +40,15 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	redisOption, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rdb, err := redis.New(redisOption)
+	if err != nil {
+		return nil, err
+	}
+
 	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
@@ -55,12 +65,16 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	msgClient, err := rpcclients.NewMessageClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	appOptions, err := cron.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	b := rulebot.New("cron", viper, subClient, midClient, rules.Options...)
+	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, rules.Options...)
 	application, err := cron.NewApp(appOptions, log, b)
 	if err != nil {
 		return nil, err

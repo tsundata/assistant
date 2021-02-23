@@ -3,7 +3,6 @@ package rules
 import (
 	"bytes"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"regexp"
 	"strings"
@@ -28,7 +27,7 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Message) string {
+func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, _ string) string {
 	botName := b.Name()
 	var helpMsg string
 	for _, rule := range r.rules {
@@ -40,7 +39,7 @@ func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, _ model.Message) string {
 	return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 }
 
-func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Message) []model.Message {
+func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in string) []string {
 	for _, rule := range r.rules {
 		botName := b.Name()
 		var finalRegex bytes.Buffer
@@ -50,24 +49,18 @@ func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in model.Message) []model
 		_ = r.regexes[rule.Regex].Execute(&finalRegex, struct{ RobotName string }{botName})
 		sanitizedRegex := strings.TrimSpace(finalRegex.String())
 		re := regexp.MustCompile(sanitizedRegex)
-		matched := re.MatchString(in.Text)
+		matched := re.MatchString(in)
 		if !matched {
 			continue
 		}
 
-		args := re.FindStringSubmatch(in.Text)
-		if ret := rule.ParseMessage(b, in.Text, args); len(ret) > 0 {
-			var retMsgs []model.Message
-			for _, m := range ret {
-				retMsgs = append(retMsgs, model.Message{
-					Text: m,
-				})
-			}
-			return retMsgs
+		args := re.FindStringSubmatch(in)
+		if ret := rule.ParseMessage(b, in, args); len(ret) > 0 {
+			return ret
 		}
 	}
 
-	return []model.Message{}
+	return []string{}
 }
 
 func New(rules []Rule) *regexRuleset {

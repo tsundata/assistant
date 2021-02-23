@@ -6,8 +6,9 @@ import (
 	"time"
 )
 
-var rules = map[string]Rule{
-	"heartbeat": {
+var rules = []Rule{
+	{
+		Name: "heartbeat",
 		When: "0 0 * * *",
 		Action: func(b *rulebot.RuleBot) []string {
 			return []string{
@@ -15,7 +16,8 @@ var rules = map[string]Rule{
 			}
 		},
 	},
-	"pocket": {
+	{
+		Name: "pocket",
 		When: "* * * * *",
 		Action: func(b *rulebot.RuleBot) []string {
 			return agent.NewPocket().Fetch(b)

@@ -92,7 +92,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := rulebot.New("ts", viper, subClient, midClient, rules.Options...)
+	b := rulebot.New("ts", nil, subClient, midClient, nil, rules.Options...)
 	application, err := message.NewApp(appOptions, log, server, db, b, wfClient)
 	if err != nil {
 		return nil, err

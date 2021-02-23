@@ -81,14 +81,10 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 	}
 
 	// process rule
-	out := m.bot.Process(message).MessageProviderOut()
+	out := m.bot.Process(message.Text).MessageProviderOut()
 	if len(out) > 0 {
-		var reply []string
-		for _, item := range out {
-			reply = append(reply, item.Text)
-		}
 		return &pb.MessageReply{
-			Text: reply,
+			Text: out,
 		}, nil
 	}
 
