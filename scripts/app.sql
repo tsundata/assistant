@@ -29,7 +29,8 @@ CREATE TABLE `credentials`
     `type`    varchar(12)      NOT NULL DEFAULT '',
     `content` varchar(2048)    NOT NULL DEFAULT '',
     `time`    timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `name` (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -47,7 +48,8 @@ CREATE TABLE `messages`
     `type` varchar(12)      NOT NULL DEFAULT '',
     `text` varchar(2048)    NOT NULL DEFAULT '',
     `time` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -66,7 +68,7 @@ CREATE TABLE `pages`
     `content` text CHARACTER SET utf8mb4         NOT NULL,
     `time`    timestamp                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    KEY `uuid` (`uuid`)
+    UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
