@@ -7,6 +7,10 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/tsundata/assistant)
 ![GitHub](https://img.shields.io/github/license/tsundata/assistant)
 
+## Architecture
+
+<img src="./doc/architecture.png" alt="Architecture" align="center" width="100%" /> 
+
 ## Requirements
 
 This project requires Go 1.16 or newer
