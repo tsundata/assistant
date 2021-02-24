@@ -7,6 +7,8 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/tsundata/assistant)
 ![GitHub](https://img.shields.io/github/license/tsundata/assistant)
 
+Assistant Bot is a conversational dialog engine for chat bots
+
 ## Architecture
 
 <img src="./doc/architecture.png" alt="Architecture" align="center" width="100%" /> 
