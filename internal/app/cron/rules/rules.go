@@ -20,7 +20,14 @@ var rules = []Rule{
 		Name: "pocket",
 		When: "* * * * *",
 		Action: func(b *rulebot.RuleBot) []string {
-			return agent.NewPocket().Fetch(b)
+			return agent.FetchPocket(b)
+		},
+	},
+	{
+		Name: "github_starred",
+		When: "* * * * *",
+		Action: func(b *rulebot.RuleBot) []string {
+			return agent.FetchGithubStarred(b)
 		},
 	},
 }

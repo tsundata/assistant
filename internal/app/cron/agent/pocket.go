@@ -8,14 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
-type Pocket struct {
-}
-
-func NewPocket() *Pocket {
-	return &Pocket{}
-}
-
-func (a *Pocket) Fetch(b *rulebot.RuleBot) []string {
+func FetchPocket(b *rulebot.RuleBot) []string {
 	// get consumer key
 	reply, err := b.MidClient.GetCredential(context.Background(), &pb.TextRequest{Text: "pocket"})
 	if err != nil {
