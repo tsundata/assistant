@@ -20,33 +20,33 @@ type HttpNode struct {
 }
 
 func (n *HttpNode) Execute(input interface{}) (interface{}, error) {
-	method := n.properties["method"].(string)
-	url := n.properties["url"].(string)
-	responseFormat := n.properties["response_format"].(string)
+	method := extractProperties(input, n.properties, "method").(string)
+	url := extractProperties(input, n.properties, "url").(string)
+	responseFormat := extractProperties(input, n.properties, "response_format").(string)
+	extract := extractProperties(input, n.properties, "extract").(map[string]interface{})
 	headers := make(map[string]interface{})
 	if _, ok := n.properties["headers"]; ok {
-		headers = n.properties["headers"].(map[string]interface{})
+		headers = extractProperties(input, n.properties, "headers").(map[string]interface{})
 	}
 	query := make(map[string]interface{})
 	if _, ok := n.properties["query"]; ok {
-		query = n.properties["query"].(map[string]interface{})
+		query = extractProperties(input, n.properties, "query").(map[string]interface{})
 	}
-	extract := n.properties["extract"].(map[string]interface{})
 
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-
 	var body io.Reader
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 
+	// set header
 	for k, v := range headers {
 		req.Header.Add(k, v.(string))
 	}
-
+	// set query
 	for k, v := range query {
 		req.URL.Query().Set(k, v.(string))
 	}

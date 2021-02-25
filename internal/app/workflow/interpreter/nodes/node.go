@@ -74,7 +74,7 @@ func extractProperties(input interface{}, properties map[string]interface{}, key
 	}
 	value, ok := data.(string)
 	if !ok {
-		return nil
+		return data
 	}
 
 	inputJson, err := json.Marshal(input)
