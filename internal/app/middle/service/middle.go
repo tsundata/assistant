@@ -323,6 +323,9 @@ func (s *Middle) CreateScript(_ context.Context, payload *pb.TextRequest) (*pb.S
 		return &pb.StateReply{State: false}, nil
 	}
 	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
 	_, err = s.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
 		uuid, model.MessageTypeScript, payload.GetText(), time.Now())
 	if err != nil {

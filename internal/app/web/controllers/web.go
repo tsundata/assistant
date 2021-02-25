@@ -464,7 +464,7 @@ func (wc *WebController) Scripts(c *fasthttp.RequestCtx) {
 		items = append(items, &components.Script{
 			ID:      int(item.GetId()),
 			UUID:    uuid,
-			Content: fmt.Sprintf("%s", item.GetText()),
+			Content: item.GetText(),
 		})
 	}
 
