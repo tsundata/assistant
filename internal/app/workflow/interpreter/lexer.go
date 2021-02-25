@@ -170,7 +170,7 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.SkipWhitespace()
 			continue
 		}
-		if l.CurrentChar == '/' && l.Peek() == '/' {
+		if (l.CurrentChar == '/' && l.Peek() == '/') || (l.CurrentChar == '#' && l.Peek() == '!') {
 			l.Advance()
 			l.Advance()
 			l.SkipComment()

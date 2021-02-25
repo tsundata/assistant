@@ -74,7 +74,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, rules.Options...)
+	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, nil, rules.Options...)
 	application, err := cron.NewApp(appOptions, log, b)
 	if err != nil {
 		return nil, err

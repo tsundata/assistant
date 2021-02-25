@@ -13,7 +13,7 @@ service Middle {
   rpc GetAvailableApp(TextRequest) returns (AppReply) {}
   rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialsReply) {}
-  rpc GetCredential(TextRequest) returns (CredentialReply) {}
+  rpc GetCredential(CredentialRequest) returns (CredentialReply) {}
   rpc CreateCredential(KVsRequest) returns (TextReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
   rpc CreateSetting(KVRequest) returns (TextReply) {}
@@ -59,6 +59,11 @@ message App {
 
 message CredentialsReply {
   repeated KV items = 1;
+}
+
+message CredentialRequest {
+  string name = 1;
+  string type = 2;
 }
 
 message CredentialReply {

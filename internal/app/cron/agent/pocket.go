@@ -10,7 +10,7 @@ import (
 
 func FetchPocket(b *rulebot.RuleBot) []string {
 	// get consumer key
-	reply, err := b.MidClient.GetCredential(context.Background(), &pb.TextRequest{Text: "pocket"})
+	reply, err := b.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: "pocket"})
 	if err != nil {
 		return []string{}
 	}

@@ -64,8 +64,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			utArg := args[1]
-			tt, err := strconv.ParseInt(utArg, 10, 64)
+			tt, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -181,6 +180,51 @@ var rules = []Rule{
 			}
 
 			return []string{"failed"}
+		},
+	},
+	{
+		Regex:       `view\s+(\d+)`,
+		HelpMessage: `View message`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			id, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return []string{"error args"}
+			}
+			messageReply, err := b.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			return []string{messageReply.GetText()}
+		},
+	},
+	{
+		Regex:       `run\s+(\d+)`,
+		HelpMessage: `Run workflow script`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			id, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return []string{"error args"}
+			}
+			messageReply, err := b.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			_, err = b.WfClient.Run(context.Background(), &pb.WorkflowRequest{Text: messageReply.GetText()})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			return []string{"success"}
 		},
 	},
 }

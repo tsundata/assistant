@@ -271,6 +271,26 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 
 func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+	options := map[string]interface{}{
+		"github": map[string]string{
+			"client_id":     "Client ID",
+			"client_secret": "Client secrets",
+		},
+		"pocket": map[string]string{
+			"consumer_key": "Consumer Key",
+		},
+		"pushover": map[string]string{
+			"token": "API Token",
+			"user": "User Key",
+		},
+	}
+
+	selectOption := make(map[string]string)
+	selectOption[""] = "-"
+	for k := range options {
+		selectOption[k] = strings.Title(k)
+	}
+
 	var items []components.Component
 	items = append(items, &components.Input{
 		Name:  "name",
@@ -280,11 +300,7 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 	items = append(items, &components.Select{
 		Name:  "type",
 		Title: "Type",
-		Value: map[string]string{
-			"":       "-",
-			"github": "Github",
-			"pocket": "Pocket",
-		},
+		Value: selectOption,
 	})
 	comp := components.Html{
 		Title:   "Create Credentials",
@@ -303,15 +319,6 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	options := map[string]interface{}{
-		"github": map[string]string{
-			"client_id":     "Client ID",
-			"client_secret": "Client secrets",
-		},
-		"pocket": map[string]string{
-			"consumer_key": "Consumer Key",
-		},
-	}
 	d, _ := json.Marshal(options)
 	h := "`<div class='input option-input'>\n<label for='input-${key}'>${options[e.target.value][key]}:</label>\n<input type='text' id='input-${key}' name='${key}'>\n</div>`"
 
@@ -446,7 +453,7 @@ func (wc *WebController) App(c *fasthttp.RequestCtx) {
 
 	switch category {
 	case "pocket":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
 			c.Response.SetStatusCode(http.StatusBadRequest)
@@ -474,7 +481,7 @@ func (wc *WebController) App(c *fasthttp.RequestCtx) {
 		c.Redirect(pocketRedirectURI, http.StatusFound)
 		return
 	case "github":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
 			c.Response.SetStatusCode(http.StatusBadRequest)
@@ -503,7 +510,7 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 
 	switch category {
 	case "pocket":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
 			c.Response.SetStatusCode(http.StatusBadRequest)
@@ -555,7 +562,7 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 		}
 	case "github":
 		code := utils.ByteToString(c.FormValue("code"))
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.TextRequest{Text: category})
+		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
 			c.Response.SetStatusCode(http.StatusBadRequest)

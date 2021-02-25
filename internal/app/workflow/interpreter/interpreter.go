@@ -220,12 +220,14 @@ func (i *Interpreter) VisitBlock(node *Block) float64 {
 
 func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	var err error
-	var input []map[string]interface{}
+	var input interface{}
 	for _, item := range node.Nodes {
 		nodeName := item.(*Token).Value.(string)
 		if item, ok := i.nodes[nodeName]; ok {
 			// execute
-			input, err = nodes.Construct(i.midClient, nodeName, item.(*Node).Regular, i.Visit(item).(map[string]interface{}), item.(*Node).Secret).Execute(input)
+			input, err = nodes.
+				Construct(i.midClient, nodeName, item.(*Node).Regular, i.Visit(item).(map[string]interface{}), item.(*Node).Secret).
+				Execute(input)
 			if err != nil {
 				panic(err)
 			}

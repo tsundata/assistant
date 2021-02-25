@@ -1,0 +1,18 @@
+app:
+    name: workflow
+etcd:
+    url: http://127.0.0.1:2379
+    username:
+    password:
+influx:
+    token:
+    org:
+    bucket:
+    url:
+jaeger:
+  serviceName: workflow
+  reporter:
+    localAgentHostPort: "127.0.0.1:6831"
+  sampler:
+    type: const
+    param: 1

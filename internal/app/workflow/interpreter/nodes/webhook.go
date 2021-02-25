@@ -6,6 +6,6 @@ type WebhookNode struct {
 	credentials map[string]interface{}
 }
 
-func (n *WebhookNode) Execute(input []map[string]interface{}) ([]map[string]interface{}, error) {
+func (n *WebhookNode) Execute(input interface{}) (interface{}, error) {
 	return nil, nil
 }

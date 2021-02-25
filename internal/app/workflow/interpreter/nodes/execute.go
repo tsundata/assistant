@@ -6,6 +6,6 @@ type ExecuteNode struct {
 	credentials map[string]interface{}
 }
 
-func (n *ExecuteNode) Execute(input []map[string]interface{}) ([]map[string]interface{}, error) {
+func (n *ExecuteNode) Execute(input interface{}) (interface{}, error) {
 	return nil, nil
 }

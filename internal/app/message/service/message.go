@@ -50,8 +50,8 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 
 func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var message model.Message
-	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
-	if err != nil {
+	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
@@ -149,7 +149,7 @@ func (m *Message) Run(_ context.Context, payload *pb.MessageRequest) (*pb.TextRe
 	var message model.Message
 
 	err := m.db.Get(&message, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 

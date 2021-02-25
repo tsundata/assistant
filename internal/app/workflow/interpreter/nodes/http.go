@@ -19,7 +19,7 @@ type HttpNode struct {
 	credentials map[string]interface{}
 }
 
-func (n *HttpNode) Execute(input []map[string]interface{}) ([]map[string]interface{}, error) {
+func (n *HttpNode) Execute(input interface{}) (interface{}, error) {
 	method := n.properties["method"].(string)
 	url := n.properties["url"].(string)
 	responseFormat := n.properties["response_format"].(string)

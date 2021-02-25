@@ -19,9 +19,13 @@ type RuleBot struct {
 	SubClient pb.SubscribeClient
 	MidClient pb.MiddleClient
 	MsgClient pb.MessageClient
+	WfClient  pb.WorkflowClient
 }
 
-func New(name string, RDB *redis.Client, SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient, opts ...Option) *RuleBot {
+func New(name string, RDB *redis.Client,
+	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient, WfClient pb.WorkflowClient,
+	opts ...Option) *RuleBot {
+
 	s := &RuleBot{
 		name: name,
 	}
@@ -30,6 +34,7 @@ func New(name string, RDB *redis.Client, SubClient pb.SubscribeClient, MidClient
 	s.SubClient = SubClient
 	s.MidClient = MidClient
 	s.MsgClient = MsgClient
+	s.WfClient = WfClient
 
 	for _, opt := range opts {
 		opt(s)
@@ -48,7 +53,7 @@ func (s *RuleBot) Process(in string) *RuleBot {
 	s.providerIn = in
 	s.providerOut = []string{}
 	if strings.ToLower(in) == "help" {
-		helpMsg := fmt.Sprintf("available commands (v%s):", version.Version)
+		helpMsg := fmt.Sprintf("available commands (v%s):\n", version.Version)
 		for _, rule := range s.rules {
 			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
 		}
