@@ -25,7 +25,7 @@ func FetchPocket(b *rulebot.RuleBot) []string {
 	}
 
 	// get access token
-	app, err := b.MidClient.GetApp(context.Background(), &pb.TextRequest{Text: "pocket"})
+	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: "pocket"})
 	if err != nil {
 		return []string{}
 	}

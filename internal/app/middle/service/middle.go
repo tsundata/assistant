@@ -107,9 +107,9 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, erro
 	}, nil
 }
 
-func (s *Middle) GetApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
+func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
 	var find model.App
-	err := s.db.Get(&find, "SELECT * FROM apps WHERE `type` = ? LIMIT 1", payload.GetText())
+	err := s.db.Get(&find, "SELECT * FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", payload.GetText())
 	if err != nil {
 		return nil, err
 	}

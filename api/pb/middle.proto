@@ -10,7 +10,7 @@ service Middle {
   rpc GetPage(PageRequest) returns (PageReply) {}
   rpc Qr(TextRequest) returns (TextReply) {}
   rpc Apps(TextRequest) returns (AppsReply) {}
-  rpc GetApp(TextRequest) returns (AppReply) {}
+  rpc GetAvailableApp(TextRequest) returns (AppReply) {}
   rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialsReply) {}
   rpc GetCredential(TextRequest) returns (CredentialReply) {}
