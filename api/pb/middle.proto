@@ -14,9 +14,11 @@ service Middle {
   rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialsReply) {}
   rpc GetCredential(CredentialRequest) returns (CredentialReply) {}
-  rpc CreateCredential(KVsRequest) returns (TextReply) {}
+  rpc CreateCredential(KVsRequest) returns (StateReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
-  rpc CreateSetting(KVRequest) returns (TextReply) {}
+  rpc CreateSetting(KVRequest) returns (StateReply) {}
+  rpc GetScripts(TextRequest) returns (ScriptsReply) {}
+  rpc CreateScript(TextRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc Authorization(TextRequest) returns (StateReply) {}
 }
@@ -74,6 +76,15 @@ message CredentialReply {
 
 message SettingReply {
   repeated KV items = 1;
+}
+
+message Script {
+  int64 id = 1;
+  string text = 2;
+}
+
+message ScriptsReply {
+  repeated Script items = 1;
 }
 
 message KVRequest {

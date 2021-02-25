@@ -9,16 +9,28 @@ import (
 )
 
 type Workflow struct {
-	etcd *clientv3.Client
+	etcd      *clientv3.Client
 	midClient pb.MiddleClient
+	msgClient pb.MessageClient
 }
 
-func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient) *Workflow {
-	return &Workflow{etcd: etcd, midClient: midClient}
+func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient, msgClient pb.MessageClient) *Workflow {
+	return &Workflow{etcd: etcd, midClient: midClient, msgClient: msgClient}
 }
 
 func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	p, err := interpreter.NewParser(interpreter.NewLexer([]rune(payload.GetText())))
+	var script []rune
+	if payload.GetId() > 0 {
+		reply, err := s.msgClient.Get(context.Background(), &pb.MessageRequest{Id: payload.GetId()})
+		if err != nil {
+			return nil, err
+		}
+		script = []rune(reply.GetText())
+	} else if payload.GetText() != "" {
+		script = []rune(payload.GetText())
+	}
+
+	p, err := interpreter.NewParser(interpreter.NewLexer(script))
 	if err != nil {
 		return nil, err
 	}

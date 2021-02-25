@@ -7,12 +7,13 @@ import (
 )
 
 type Html struct {
-	Name    string
-	Title   string
-	UseIcon bool
-	Page    Component
-	css     template.CSS
-	js      template.JS
+	Name          string
+	Title         string
+	UseIcon       bool
+	UseCodeEditor bool
+	Page          Component
+	css           template.CSS
+	js            template.JS
 }
 
 func (c *Html) SetCss(css template.CSS) {
@@ -31,6 +32,22 @@ func (c *Html) GetContent() template.HTML {
 	if c.UseIcon {
 		iconLink = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">`
 	}
+	codeEditorLink := ""
+	codeEditorScript := ""
+	if c.UseCodeEditor {
+		codeEditorLink = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.59.4/lib/codemirror.css">`
+		codeEditorScript = `<script src="https://cdn.jsdelivr.net/npm/codemirror@5.59.4/lib/codemirror.js"></script>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        lineNumbers: true,
+        tabSize: 4,
+        indentUnit: 4,
+        indentWithTabs: true,
+        mode: "text/x-go"
+    });
+</script>
+`
+	}
 	return template.HTML(fmt.Sprintf(`
 <html lang="en">
 <head>
@@ -38,6 +55,7 @@ func (c *Html) GetContent() template.HTML {
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no">
 	<title>%s</title>
+	%s
 	%s
     <style>
 		a {
@@ -182,6 +200,36 @@ func (c *Html) GetContent() template.HTML {
 		.memo .content .text {
 			font-weight: normal;
 		}
+		.script {
+            width: 100%%;
+        }
+        .script .title {
+            font-size: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .script .id {
+            width: 20%%;
+        }
+        .script .run-btn {
+            width: 20%%;
+            height: 40px;
+			text-align: center;
+			line-height: 40px;
+			background-color: #efefef;
+			border-radius: 5px;
+        }
+        .script div {
+            font-size: 20px;
+            padding: 10px;
+        }
+        .script pre {
+            background-color: #FAFAFAFF;
+            padding: 25px;
+            overflow: scroll;
+        }
 		%s
     </style>
 </head>
@@ -192,6 +240,7 @@ func (c *Html) GetContent() template.HTML {
 </div>
 
 %s
+%s
 </body>
-</html>`, title, iconLink, c.css, c.Page.GetContent(), c.js))
+</html>`, title, iconLink, codeEditorLink, c.css, c.Page.GetContent(), codeEditorScript, c.js))
 }

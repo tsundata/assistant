@@ -243,7 +243,7 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 	}, nil
 }
 
-func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*pb.TextReply, error) {
+func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*pb.StateReply, error) {
 	name := ""
 	category := ""
 	m := make(map[string]string)
@@ -270,7 +270,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	return &pb.TextReply{}, nil
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Middle) GetSetting(_ context.Context, _ *pb.TextRequest) (*pb.SettingReply, error) {
@@ -290,14 +290,46 @@ func (s *Middle) GetSetting(_ context.Context, _ *pb.TextRequest) (*pb.SettingRe
 	return &reply, nil
 }
 
-func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.TextReply, error) {
+func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {
 	_, err := s.etcd.Put(context.Background(), "setting/"+payload.GetKey(), payload.GetValue())
 	if err != nil {
 		return nil, err
 	}
-	return &pb.TextReply{
-		Text: "ok",
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetScripts(_ context.Context, _ *pb.TextRequest) (*pb.ScriptsReply, error) {
+	var items []model.Message
+	err := s.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeScript)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	var kvs []*pb.Script
+	for _, item := range items {
+		kvs = append(kvs, &pb.Script{
+			Id:   int64(item.ID),
+			Text: item.Text,
+		})
+	}
+
+	return &pb.ScriptsReply{
+		Items: kvs,
 	}, nil
+}
+
+func (s *Middle) CreateScript(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	if payload.GetText() == "" {
+		return &pb.StateReply{State: false}, nil
+	}
+	uuid, err := utils.GenerateUUID()
+	_, err = s.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+		uuid, model.MessageTypeScript, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
@@ -318,7 +350,10 @@ Credentials
 
 Setting
 %s/setting/%s
-`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
+
+Scripts
+%s/scripts/%s
+`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
 	}, nil
 }
 

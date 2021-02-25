@@ -24,6 +24,8 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 			switch utils.ByteToString(path) {
 			case "/":
 				wc.Index(ctx)
+			case "/echo":
+				wc.Echo(ctx)
 			case "/Robots.txt":
 				wc.Robots(ctx)
 			default:
@@ -82,6 +84,21 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 						wc.SettingCreate(ctx)
 						return
 					}
+					scriptsRe := regexp.MustCompile(`^/scripts/[\w\-]+$`)
+					if scriptsRe.Match(path) {
+						wc.Scripts(ctx)
+						return
+					}
+					scriptCreateRe := regexp.MustCompile(`^/script/[\w\-]+/create$`)
+					if scriptCreateRe.Match(path) {
+						wc.ScriptCreate(ctx)
+						return
+					}
+					scriptRunRe := regexp.MustCompile(`^/script/[\w\-]+/run$`)
+					if scriptRunRe.Match(path) {
+						wc.ScriptRun(ctx)
+						return
+					}
 				} else {
 					ctx.Error("Forbidden", fasthttp.StatusForbidden)
 					return
@@ -106,6 +123,11 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 					settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/store$`)
 					if settingCreateRe.Match(path) {
 						wc.SettingStore(ctx)
+						return
+					}
+					scriptCreateRe := regexp.MustCompile(`^/script/[\w\-]+/store$`)
+					if scriptCreateRe.Match(path) {
+						wc.ScriptStore(ctx)
 						return
 					}
 				} else {

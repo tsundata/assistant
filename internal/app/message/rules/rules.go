@@ -214,12 +214,8 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error args"}
 			}
-			messageReply, err := b.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
-			if err != nil {
-				return []string{"error call: " + err.Error()}
-			}
 
-			_, err = b.WfClient.Run(context.Background(), &pb.WorkflowRequest{Text: messageReply.GetText()})
+			_, err = b.WfClient.Run(context.Background(), &pb.WorkflowRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

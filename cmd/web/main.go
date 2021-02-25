@@ -60,6 +60,10 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	wfClient, err := rpcclients.NewWorkflowClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	redisOption, err := redis.NewOptions(viper)
 	if err != nil {
@@ -74,7 +78,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(webOptions, rdb, log, midClient, msgClient)
+	webController := controllers.NewWebController(webOptions, rdb, log, midClient, msgClient, wfClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
 	server, err := http.New(httpOptions, &initControllers)
 	if err != nil {

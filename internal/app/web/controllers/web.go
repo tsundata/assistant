@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -32,15 +33,21 @@ type WebController struct {
 	logger    *zap.Logger
 	midClient pb.MiddleClient
 	msgClient pb.MessageClient
+	wfClient  pb.WorkflowClient
 }
 
 func NewWebController(opt *web.Options, rdb *redis.Client, logger *zap.Logger,
-	midClient pb.MiddleClient, msgClient pb.MessageClient) *WebController {
-	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient}
+	midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient) *WebController {
+	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient, wfClient: wfClient}
 }
 
 func (wc *WebController) Index(c *fasthttp.RequestCtx) {
 	c.Response.SetBody([]byte("Web"))
+}
+
+func (wc *WebController) Echo(c *fasthttp.RequestCtx) {
+	text := c.FormValue("text")
+	c.Response.SetBody(text)
 }
 
 func (wc *WebController) Robots(c *fasthttp.RequestCtx) {
@@ -244,15 +251,14 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 
 	for _, item := range reply.GetItems() {
 		items = append(items, &components.LinkButton{
-			Title: item.Key,
-			Name:  item.Value,
+			Title: item.GetKey(),
+			Name:  item.GetValue(),
 			URL:   "javascript:void(0)",
 		})
 	}
 
 	comp := components.Html{
-		Title:   "Credentials",
-		UseIcon: true,
+		Title: "Credentials",
 		Page: &components.Page{
 			Title: "Credentials",
 			Action: &components.Link{
@@ -281,7 +287,7 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 		},
 		"pushover": map[string]string{
 			"token": "API Token",
-			"user": "User Key",
+			"user":  "User Key",
 		},
 	}
 
@@ -303,8 +309,7 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
 		Value: selectOption,
 	})
 	comp := components.Html{
-		Title:   "Create Credentials",
-		UseIcon: true,
+		Title: "Create Credentials",
 		Page: &components.Page{
 			Title: "Create Credentials",
 			Action: &components.Link{
@@ -372,13 +377,12 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 
 	for _, item := range reply.GetItems() {
 		items = append(items, &components.Text{
-			Title: fmt.Sprintf("%s: %s", item.Key, item.Value),
+			Title: fmt.Sprintf("%s: %s", item.GetKey(), item.GetValue()),
 		})
 	}
 
 	comp := components.Html{
-		Title:   "Setting",
-		UseIcon: true,
+		Title: "Setting",
 		Page: &components.Page{
 			Title: "Setting",
 			Action: &components.Link{
@@ -409,8 +413,7 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 		Type:  "text",
 	})
 	comp := components.Html{
-		Title:   "Create Setting",
-		UseIcon: true,
+		Title: "Create Setting",
 		Page: &components.Page{
 			Title: "Create Setting",
 			Action: &components.Link{
@@ -444,6 +447,102 @@ func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
 	}
 
 	c.Redirect(fmt.Sprintf("/setting/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+}
+
+func (wc *WebController) Scripts(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+	var items []components.Component
+
+	reply, err := wc.midClient.GetScripts(context.Background(), &pb.TextRequest{})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	for _, item := range reply.GetItems() {
+		items = append(items, &components.Script{
+			ID:      int(item.GetId()),
+			UUID:    uuid,
+			Content: fmt.Sprintf("%s", item.GetText()),
+		})
+	}
+
+	comp := components.Html{
+		Title: "Scripts",
+		Page: &components.Page{
+			Title: "Scripts",
+			Action: &components.Link{
+				Title: "Add Script",
+				URL:   fmt.Sprintf("/script/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+			},
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) ScriptCreate(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+	var items []components.Component
+	items = append(items, &components.CodeEditor{
+		Name: "script",
+	})
+	comp := components.Html{
+		Title:         "Create Script",
+		UseCodeEditor: true,
+		Page: &components.Page{
+			Title: "Create Script",
+			Action: &components.Link{
+				Title: "Go Back",
+				URL:   fmt.Sprintf("/scripts/%s", uuid),
+			},
+			Content: &components.Form{
+				Action: fmt.Sprintf("/script/%s/store", uuid),
+				Method: "POST",
+				Inputs: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) ScriptRun(c *fasthttp.RequestCtx) {
+	id, err := strconv.ParseInt(utils.ByteToString(c.FormValue("id")), 10, 64)
+	if err != nil {
+		c.Response.SetBody([]byte("error id"))
+		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
+		return
+	}
+
+	_, err = wc.wfClient.Run(context.Background(), &pb.WorkflowRequest{Id: id})
+	if err != nil {
+		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "failed"), http.StatusFound)
+		return
+	}
+
+	c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+}
+
+func (wc *WebController) ScriptStore(c *fasthttp.RequestCtx) {
+	script := c.FormValue("script")
+
+	_, err := wc.midClient.CreateScript(context.Background(), &pb.TextRequest{
+		Text: utils.ByteToString(script),
+	})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	c.Redirect(fmt.Sprintf("/scripts/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
 }
 
 func (wc *WebController) App(c *fasthttp.RequestCtx) {
