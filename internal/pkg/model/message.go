@@ -44,7 +44,7 @@ type Message struct {
 func IsMessageOfScript(text string) bool {
 	lines := strings.Split(text, "\n")
 	if len(lines) >= 1 {
-		re := regexp.MustCompile(`^#!/usr/bin/env\s+\w+\s+$`)
+		re := regexp.MustCompile(`^#!/usr/bin/env\s+\w+\s*$`)
 		return re.MatchString(strings.TrimSpace(lines[0]))
 	}
 	return false

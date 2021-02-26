@@ -227,6 +227,7 @@ func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	for _, item := range node.Nodes {
 		nodeName := item.(*Token).Value.(string)
 		if item, ok := i.nodes[nodeName]; ok {
+			i.stdout = append(i.stdout, input)
 			// execute
 			input, err = nodes.
 				Construct(i.midClient, nodeName, item.(*Node).Regular, i.Visit(item).(map[string]interface{}), item.(*Node).Secret).
@@ -430,7 +431,7 @@ func (i *Interpreter) Interpret() (float64, error) {
 func (i *Interpreter) Stdout() string {
 	var out strings.Builder
 	for _, line := range i.stdout {
-		out.WriteString(fmt.Sprintf("> %v", line))
+		out.WriteString(fmt.Sprintf("> %v \n", line))
 	}
 	return out.String()
 }

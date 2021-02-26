@@ -8,8 +8,7 @@ service Workflow {
 }
 
 message WorkflowRequest {
-  int64  id = 1;
-  string text = 2;
+  string text = 1;
 }
 
 message WorkflowReply {

@@ -18,19 +18,8 @@ func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient, msgClient pb.
 	return &Workflow{etcd: etcd, midClient: midClient, msgClient: msgClient}
 }
 
-func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	var script []rune
-	if payload.GetId() > 0 {
-		reply, err := s.msgClient.Get(context.Background(), &pb.MessageRequest{Id: payload.GetId()})
-		if err != nil {
-			return nil, err
-		}
-		script = []rune(reply.GetText())
-	} else if payload.GetText() != "" {
-		script = []rune(payload.GetText())
-	}
-
-	p, err := interpreter.NewParser(interpreter.NewLexer(script))
+func (s *Workflow) Run(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	p, err := interpreter.NewParser(interpreter.NewLexer([]rune(payload.GetText())))
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +33,12 @@ func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.Wo
 
 	i := interpreter.NewInterpreter(tree)
 	i.SetClient(s.midClient)
-	r, err := i.Interpret()
+	_, err = i.Interpret()
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.WorkflowReply{
-		Text: fmt.Sprintf("%f", r),
+		Text: fmt.Sprintf("Tracing\n-------\n %s", i.Stdout()),
 	}, nil
 }

@@ -143,39 +143,25 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.TextR
 	}, nil
 }
 
-func (m *Message) Run(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	// check uuid
+func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
 	var message model.Message
-
-	err := m.db.Get(&message, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", payload.GetUuid())
+	err := m.db.Get(&message, "SELECT * FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
-	if message.UUID == "" {
-		return &pb.TextReply{
-			Text: "Not message",
-		}, nil
-	}
-
-	switch message.Text {
+	switch message.Type {
 	case model.MessageTypeAction:
 		// TODO action
 	case model.MessageTypeScript:
 		switch model.MessageScriptKind(message.Text) {
 		case model.MessageScriptOfFlowscript:
-			txt := strings.ReplaceAll(message.Text, "#!script:flowscript", "")
-			r, err := m.wfClient.Run(context.Background(), &pb.WorkflowRequest{
-				Text: txt,
-			})
-			reply = "run error"
+			wfReply, err := m.wfClient.Run(ctx, &pb.WorkflowRequest{Text: message.Text})
 			if err != nil {
-				reply = err.Error()
+				return nil, err
 			}
-			if r != nil {
-				reply = r.Text
-			}
+			reply = wfReply.GetText()
 		case model.MessageScriptOfUndefined:
 			reply = "MessageScriptOfUndefined"
 		default:

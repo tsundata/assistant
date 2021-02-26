@@ -204,7 +204,7 @@ var rules = []Rule{
 	},
 	{
 		Regex:       `run\s+(\d+)`,
-		HelpMessage: `Run workflow script`,
+		HelpMessage: `Run message`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
@@ -215,12 +215,12 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			_, err = b.WfClient.Run(context.Background(), &pb.WorkflowRequest{Id: id})
+			reply, err := b.MsgClient.Run(context.Background(), &pb.MessageRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
 
-			return []string{"success"}
+			return []string{reply.GetText()}
 		},
 	},
 }
