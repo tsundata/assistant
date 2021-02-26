@@ -53,7 +53,7 @@ func IsMessageOfScript(text string) bool {
 func IsMessageOfAction(text string) bool {
 	lines := strings.Split(text, "\n")
 	if len(lines) >= 1 {
-		re := regexp.MustCompile(`^#!action$`)
+		re := regexp.MustCompile(`^#!action\s*$`)
 		return re.MatchString(strings.TrimSpace(lines[0]))
 	}
 	return false
