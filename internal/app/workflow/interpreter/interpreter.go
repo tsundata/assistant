@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/interpreter/nodes"
-	"log"
 	"strings"
 )
 
@@ -91,8 +90,12 @@ type Interpreter struct {
 	midClient pb.MiddleClient
 }
 
-func NewInterpreter(tree Ast, midClient pb.MiddleClient) *Interpreter {
-	return &Interpreter{tree: tree, callStack: NewCallStack(), midClient: midClient}
+func NewInterpreter(tree Ast) *Interpreter {
+	return &Interpreter{tree: tree, callStack: NewCallStack()}
+}
+
+func (i *Interpreter) SetClient(midClient pb.MiddleClient) {
+	i.midClient = midClient
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -174,7 +177,7 @@ func (i *Interpreter) Visit(node Ast) interface{} {
 
 func (i *Interpreter) VisitProgram(node *Program) float64 {
 	programName := node.Name
-	log.Printf("ENTER: PROGRAM %s\n", programName)
+	debugLog(fmt.Sprintf("ENTER: PROGRAM %s\n", programName))
 
 	i.nodes = node.Nodes
 	i.workflow = node.Workflows
@@ -185,8 +188,8 @@ func (i *Interpreter) VisitProgram(node *Program) float64 {
 		result = i.Visit(item).(float64)
 	}
 
-	log.Printf("LEAVE: PROGRAM %s\n", programName)
-	log.Println(i.callStack)
+	debugLog(fmt.Sprintf("LEAVE: PROGRAM %s\n", programName))
+	debugLog(i.callStack.String())
 
 	i.callStack.Pop()
 
@@ -200,11 +203,11 @@ func (i *Interpreter) VisitNode(node *Node) map[string]interface{} {
 func (i *Interpreter) VisitWorkflow(node *Workflow) float64 {
 	ar := NewActivationRecord(node.Name, ARTypeWorkflow, 1)
 	i.callStack.Push(ar)
-	log.Printf("ENTER: WORKFLOW %s\n", node.Name)
+	debugLog(fmt.Sprintf("ENTER: WORKFLOW %s\n", node.Name))
 
 	r := i.Visit(node.Scenarios).(float64)
 
-	log.Printf("LEAVE: WORKFLOW %s\n", node.Name)
+	debugLog(fmt.Sprintf("LEAVE: WORKFLOW %s\n", node.Name))
 	return r
 }
 
@@ -237,11 +240,11 @@ func (i *Interpreter) VisitFlow(node *Flow) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitVarDecl(node *VarDecl) float64 {
+func (i *Interpreter) VisitVarDecl(_ *VarDecl) float64 {
 	return 0
 }
 
-func (i *Interpreter) VisitType(node *Type) float64 {
+func (i *Interpreter) VisitType(_ *Type) float64 {
 	return 0
 }
 
@@ -357,7 +360,7 @@ func (i *Interpreter) VisitVar(node *Var) interface{} {
 	return nil
 }
 
-func (i *Interpreter) VisitNoOp(node *NoOp) float64 {
+func (i *Interpreter) VisitNoOp(_ *NoOp) float64 {
 	return 0
 }
 
@@ -425,9 +428,9 @@ func (i *Interpreter) Interpret() (float64, error) {
 }
 
 func (i *Interpreter) Stdout() string {
-	var out []string
+	var out strings.Builder
 	for _, line := range i.stdout {
-		out = append(out, fmt.Sprintf("> %v", line))
+		out.WriteString(fmt.Sprintf("> %v", line))
 	}
-	return strings.Join(out, "\n")
+	return out.String()
 }

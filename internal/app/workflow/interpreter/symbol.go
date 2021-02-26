@@ -3,7 +3,6 @@ package interpreter
 import (
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/utils/collection"
-	"log"
 	"strings"
 )
 
@@ -118,7 +117,8 @@ func (t *ScopedSymbolTable) String() string {
 }
 
 func (t *ScopedSymbolTable) Insert(symbol Symbol) {
-	log.Printf("Insert: %s\n", symbol)
+	debugLog(fmt.Sprintf("Insert: %s\n", symbol))
+
 	var name string
 	if s, ok := symbol.(*VarSymbol); ok {
 		name = s.Name
@@ -147,7 +147,8 @@ func (t *ScopedSymbolTable) Insert(symbol Symbol) {
 }
 
 func (t *ScopedSymbolTable) Lookup(name string, currentScopeOnly bool) Symbol {
-	log.Printf("Lookup: %s. (Scope name: %s)\n", name, t.ScopeName)
+	debugLog(fmt.Sprintf("Lookup: %s. (Scope name: %s)\n", name, t.ScopeName))
+
 	s := t.symbols.Get(name)
 	if s != nil {
 		return s.(Symbol)
@@ -279,7 +280,7 @@ func (b *SemanticAnalyzer) Visit(node Ast) {
 }
 
 func (b *SemanticAnalyzer) VisitProgram(node *Program) {
-	log.Println("ENTER scope: global")
+	debugLog("ENTER scope: global")
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
@@ -295,10 +296,10 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) {
 		b.Visit(item)
 	}
 
-	log.Println(globalScope.String())
+	debugLog(globalScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
-	log.Println("LEAVE scope: global")
+	debugLog("LEAVE scope: global")
 }
 
 func (b *SemanticAnalyzer) VisitNode(node *Node) {
@@ -342,7 +343,7 @@ func (b *SemanticAnalyzer) VisitVarDecl(node *VarDecl) {
 	b.CurrentScope.Insert(varSymbol)
 }
 
-func (b *SemanticAnalyzer) VisitType(node *Type) {
+func (b *SemanticAnalyzer) VisitType(_ *Type) {
 	// pass
 }
 
@@ -351,22 +352,22 @@ func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
 	b.Visit(node.Right)
 }
 
-func (b *SemanticAnalyzer) VisitNumberConst(node *NumberConst) {
+func (b *SemanticAnalyzer) VisitNumberConst(_ *NumberConst) {
 	// pass
 }
 
-func (b *SemanticAnalyzer) VisitStringConst(node *StringConst) {
+func (b *SemanticAnalyzer) VisitStringConst(_ *StringConst) {
 	// pass
 }
-func (b *SemanticAnalyzer) VisitMessageConst(node *MessageConst) {
-	// pass
-}
-
-func (b *SemanticAnalyzer) VisitBooleanConst(node *BooleanConst) {
+func (b *SemanticAnalyzer) VisitMessageConst(_ *MessageConst) {
 	// pass
 }
 
-func (b *SemanticAnalyzer) VisitNodeConst(node *NodeConst) {
+func (b *SemanticAnalyzer) VisitBooleanConst(_ *BooleanConst) {
+	// pass
+}
+
+func (b *SemanticAnalyzer) VisitNodeConst(_ *NodeConst) {
 	// pass
 }
 
@@ -382,7 +383,7 @@ func (b *SemanticAnalyzer) VisitDict(node *Dict) {
 	}
 }
 
-func (b *SemanticAnalyzer) VisitUnaryOp(node *UnaryOp) {
+func (b *SemanticAnalyzer) VisitUnaryOp(_ *UnaryOp) {
 	// pass
 }
 
@@ -406,7 +407,7 @@ func (b *SemanticAnalyzer) VisitVar(node *Var) {
 	}
 }
 
-func (b *SemanticAnalyzer) VisitNoOp(node *NoOp) {
+func (b *SemanticAnalyzer) VisitNoOp(_ *NoOp) {
 	// pass
 }
 

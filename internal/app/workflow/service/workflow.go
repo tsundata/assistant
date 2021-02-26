@@ -42,7 +42,8 @@ func (s *Workflow) Run(ctx context.Context, payload *pb.WorkflowRequest) (*pb.Wo
 	sa := interpreter.NewSemanticAnalyzer()
 	sa.Visit(tree)
 
-	i := interpreter.NewInterpreter(tree, s.midClient)
+	i := interpreter.NewInterpreter(tree)
+	i.SetClient(s.midClient)
 	r, err := i.Interpret()
 	if err != nil {
 		return nil, err
