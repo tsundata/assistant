@@ -45,6 +45,7 @@ func (c *Html) GetContent() template.HTML {
         indentWithTabs: true,
         mode: "text/x-go"
     });
+	editor.setSize(null, 800);
 </script>
 `
 	}

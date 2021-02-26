@@ -521,9 +521,13 @@ func (wc *WebController) ScriptRun(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	_, err = wc.wfClient.Run(context.Background(), &pb.WorkflowRequest{Id: id})
+	clientDeadline := time.Now().Add(time.Minute)
+	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+	defer cancel()
+
+	_, err = wc.wfClient.Run(ctx, &pb.WorkflowRequest{Id: id})
 	if err != nil {
-		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "failed"), http.StatusFound)
+		c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
 		return
 	}
 

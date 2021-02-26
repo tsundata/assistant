@@ -41,6 +41,7 @@ func (n *HttpNode) Execute(input interface{}) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Close = true
 
 	// set header
 	for k, v := range headers {
