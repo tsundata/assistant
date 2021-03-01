@@ -1,0 +1,30 @@
+program : statement_list
+
+statement : opcode_statement
+		  | empty
+
+statement_list : statement
+			   | statement "\n" statement_list
+
+opcode_statement: opcode expression
+
+opcode : ID
+
+expression : factor ( " " factor )*
+
+factor : INTEGER_CONST
+       | FLOAT_CONST
+       | STRING_CONST
+       | MESSAGE_CONST
+       | BOOLEAN_CONST
+       | variable
+
+variable : ID
+
+MESSAGE_CONST : "#" DIGIT+
+BOOLEAN_CONST : "true" | "false"
+NUMBER        : DIGIT+ ( "." DIGIT+ )?
+STRING_CONST  : "\"" <any char except "\"">* "\""
+ID            : ALPHA ( ALPHA | DIGIT )*
+ALPHA         : "a" ... "z" | "A" ... "Z" | "_"
+DIGIT         : "0" ... "9"
