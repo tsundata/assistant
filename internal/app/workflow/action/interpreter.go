@@ -22,6 +22,8 @@ func runOpcode(ctx *context.Context, name string, params []interface{}) (interfa
 		o = opcode.NewGet()
 	case "count":
 		o = opcode.NewCount()
+	case "send":
+		o = opcode.NewSend()
 	default:
 		return nil, errors.New("not opcode")
 	}
@@ -29,8 +31,9 @@ func runOpcode(ctx *context.Context, name string, params []interface{}) (interfa
 }
 
 type Interpreter struct {
-	tree Ast
-	ctx  *context.Context
+	tree   Ast
+	stdout []interface{}
+	ctx    *context.Context
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
@@ -93,7 +96,10 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	// Run
 	debugLog(fmt.Sprintf("Run: Opecode %v", node.ID))
 	debugLog(fmt.Sprintf("%+v", params))
-	res, err := runOpcode(i.ctx, node.ID.(*Token).Value.(string), params)
+	name := node.ID.(*Token).Value.(string)
+	input := i.ctx.Value
+	res, err := runOpcode(i.ctx, name, params)
+	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
 		log.Println(err)
 		return -1
@@ -144,4 +150,12 @@ func (i *Interpreter) Interpret() (interface{}, error) {
 		return 0, errors.New("error ast tree")
 	}
 	return i.Visit(i.tree), nil
+}
+
+func (i *Interpreter) Stdout() string {
+	var out strings.Builder
+	for _, line := range i.stdout {
+		out.WriteString(fmt.Sprintf("%v\n", line))
+	}
+	return out.String()
 }

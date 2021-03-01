@@ -551,6 +551,108 @@ func (wc *WebController) ScriptStore(c *fasthttp.RequestCtx) {
 	c.Redirect(fmt.Sprintf("/scripts/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
 }
 
+func (wc *WebController) Action(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+	var items []components.Component
+
+	reply, err := wc.midClient.GetAction(context.Background(), &pb.TextRequest{})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	for _, item := range reply.GetItems() {
+		items = append(items, &components.Script{
+			ID:      int(item.GetId()),
+			UUID:    uuid,
+			Content: item.GetText(),
+		})
+	}
+
+	comp := components.Html{
+		Title: "Action",
+		Page: &components.Page{
+			Title: "Action",
+			Action: &components.Link{
+				Title: "Add Action",
+				URL:   fmt.Sprintf("/action/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+			},
+			Content: &components.List{
+				Items: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) ActionCreate(c *fasthttp.RequestCtx) {
+	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+	var items []components.Component
+	items = append(items, &components.CodeEditor{
+		Name: "action",
+	})
+	comp := components.Html{
+		Title:         "Create Action",
+		UseCodeEditor: true,
+		Page: &components.Page{
+			Title: "Create Action",
+			Action: &components.Link{
+				Title: "Go Back",
+				URL:   fmt.Sprintf("/action/%s", uuid),
+			},
+			Content: &components.Form{
+				Action: fmt.Sprintf("/action/%s/store", uuid),
+				Method: "POST",
+				Inputs: items,
+			},
+		},
+	}
+
+	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+	c.Response.SetBody([]byte(comp.GetContent()))
+}
+
+func (wc *WebController) ActionRun(c *fasthttp.RequestCtx) {
+	id, err := strconv.ParseInt(utils.ByteToString(c.FormValue("id")), 10, 64)
+	if err != nil {
+		c.Response.SetBody([]byte("error id"))
+		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
+		return
+	}
+
+	clientDeadline := time.Now().Add(time.Minute)
+	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+	defer cancel()
+
+	reply, err := wc.msgClient.Run(ctx, &pb.MessageRequest{Id: id})
+	if err != nil {
+		c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
+		return
+	}
+
+	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
+
+	c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+}
+
+func (wc *WebController) ActionStore(c *fasthttp.RequestCtx) {
+	script := c.FormValue("action")
+
+	_, err := wc.midClient.CreateAction(context.Background(), &pb.TextRequest{
+		Text: utils.ByteToString(script),
+	})
+	if err != nil {
+		wc.logger.Error(err.Error())
+		c.Error(err.Error(), fasthttp.StatusBadRequest)
+		return
+	}
+
+	c.Redirect(fmt.Sprintf("/action/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+}
+
 func (wc *WebController) App(c *fasthttp.RequestCtx) {
 	typeRe := regexp.MustCompile(`^/app/(\w+)$`)
 	t := typeRe.FindString(utils.ByteToString(c.Path()))

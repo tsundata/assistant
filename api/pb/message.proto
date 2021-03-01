@@ -10,7 +10,7 @@ service Message {
   rpc Get(MessageRequest) returns (TextReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}
-  rpc Send(MessageRequest) returns (TextReply) {}
+  rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}
 }
 

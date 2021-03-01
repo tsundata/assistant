@@ -99,6 +99,21 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 						wc.ScriptRun(ctx)
 						return
 					}
+					actionRe := regexp.MustCompile(`^/action/[\w\-]+$`)
+					if actionRe.Match(path) {
+						wc.Action(ctx)
+						return
+					}
+					actionCreateRe := regexp.MustCompile(`^/action/[\w\-]+/create$`)
+					if actionCreateRe.Match(path) {
+						wc.ActionCreate(ctx)
+						return
+					}
+					actionRunRe := regexp.MustCompile(`^/action/[\w\-]+/run$`)
+					if actionRunRe.Match(path) {
+						wc.ActionRun(ctx)
+						return
+					}
 				} else {
 					ctx.Error("Forbidden", fasthttp.StatusForbidden)
 					return
@@ -128,6 +143,11 @@ func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
 					scriptCreateRe := regexp.MustCompile(`^/script/[\w\-]+/store$`)
 					if scriptCreateRe.Match(path) {
 						wc.ScriptStore(ctx)
+						return
+					}
+					actionCreateRe := regexp.MustCompile(`^/action/[\w\-]+/store$`)
+					if actionCreateRe.Match(path) {
+						wc.ActionStore(ctx)
 						return
 					}
 				} else {

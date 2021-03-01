@@ -59,6 +59,11 @@ func IsMessageOfAction(text string) bool {
 	return false
 }
 
+func RemoveActionFlag(text string) string {
+	re := regexp.MustCompile(`^#!action\s*$`)
+	return re.ReplaceAllString(text, "")
+}
+
 func MessageScriptKind(text string) string {
 	if !IsMessageOfScript(text) {
 		return MessageScriptOfUndefined

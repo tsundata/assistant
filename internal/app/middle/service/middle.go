@@ -335,6 +335,43 @@ func (s *Middle) CreateScript(_ context.Context, payload *pb.TextRequest) (*pb.S
 	return &pb.StateReply{State: true}, nil
 }
 
+func (s *Middle) GetAction(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
+	var items []model.Message
+	err := s.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeAction)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	var kvs []*pb.Action
+	for _, item := range items {
+		kvs = append(kvs, &pb.Action{
+			Id:   int64(item.ID),
+			Text: item.Text,
+		})
+	}
+
+	return &pb.ActionReply{
+		Items: kvs,
+	}, nil
+}
+
+func (s *Middle) CreateAction(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	if payload.GetText() == "" {
+		return &pb.StateReply{State: false}, nil
+	}
+	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+		uuid, model.MessageTypeAction, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
 	uuid, err := authUUID(s.etcd)
 	if err != nil {
@@ -354,9 +391,12 @@ Credentials
 Setting
 %s/setting/%s
 
+Action
+%s/action/%s
+
 Scripts
 %s/scripts/%s
-`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
+`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
 	}, nil
 }
 

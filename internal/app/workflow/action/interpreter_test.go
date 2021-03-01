@@ -27,11 +27,20 @@ func run(t *testing.T, text string) {
 
 func TestInterpreter(t *testing.T) {
 	text := `
-get "https://example.com/"
+get "https://httpbin.org/get"
+json
 count
 pdf
 send "success"
 echo 1 1.2 "hi" #1
+`
+	run(t, text)
+}
+
+func TestInterpreter2(t *testing.T) {
+	text := `get "https://httpbin.org/get"
+count
+send "hello world"
 `
 	run(t, text)
 }

@@ -4,7 +4,8 @@ package pb;
 option go_package = "api/pb";
 
 service Workflow {
-  rpc Run(WorkflowRequest) returns (WorkflowReply) {}
+  rpc RunAction(WorkflowRequest) returns (WorkflowReply) {}
+  rpc RunScript(WorkflowRequest) returns (WorkflowReply) {}
 }
 
 message WorkflowRequest {

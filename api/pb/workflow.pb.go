@@ -108,16 +108,17 @@ func init() {
 func init() { proto.RegisterFile("workflow.proto", fileDescriptor_892c7f566756b0be) }
 
 var fileDescriptor_892c7f566756b0be = []byte{
-	// 131 bytes of a gzipped FileDescriptorProto
+	// 148 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2b, 0xcf, 0x2f, 0xca,
 	0x4e, 0xcb, 0xc9, 0x2f, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x52,
 	0xe5, 0xe2, 0x0f, 0x87, 0x8a, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x09, 0x71, 0xb1,
 	0x94, 0xa4, 0x56, 0x94, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0xca, 0x5c,
-	0xbc, 0x08, 0x65, 0x05, 0x39, 0x95, 0xd8, 0x14, 0x19, 0x59, 0x73, 0x71, 0xc0, 0x14, 0x09, 0xe9,
-	0x73, 0x31, 0x07, 0x95, 0xe6, 0x09, 0x09, 0xeb, 0x15, 0x24, 0xe9, 0xa1, 0x59, 0x20, 0x25, 0x88,
-	0x2a, 0x58, 0x90, 0x53, 0xa9, 0xc4, 0xe0, 0xc4, 0x11, 0xc5, 0x96, 0x58, 0x90, 0xa9, 0x5f, 0x90,
-	0x94, 0xc4, 0x06, 0x76, 0x9d, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x49, 0x19, 0x39, 0x53, 0xaf,
-	0x00, 0x00, 0x00,
+	0xbc, 0x08, 0x65, 0x05, 0x39, 0x95, 0xd8, 0x14, 0x19, 0x55, 0x70, 0x71, 0xc0, 0x14, 0x09, 0x99,
+	0x72, 0x71, 0x06, 0x95, 0xe6, 0x39, 0x26, 0x97, 0x64, 0xe6, 0xe7, 0x09, 0x09, 0xeb, 0x15, 0x24,
+	0xe9, 0xa1, 0x59, 0x23, 0x25, 0x88, 0x2a, 0x58, 0x90, 0x53, 0xa9, 0xc4, 0x00, 0xd5, 0x16, 0x9c,
+	0x5c, 0x94, 0x59, 0x50, 0x42, 0xbc, 0x36, 0x27, 0x8e, 0x28, 0xb6, 0xc4, 0x82, 0x4c, 0xfd, 0x82,
+	0xa4, 0x24, 0x36, 0xb0, 0xd7, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xbd, 0x2e, 0x5f, 0xa6,
+	0xec, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -132,7 +133,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type WorkflowClient interface {
-	Run(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	RunScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 }
 
 type workflowClient struct {
@@ -143,9 +145,18 @@ func NewWorkflowClient(cc *grpc.ClientConn) WorkflowClient {
 	return &workflowClient{cc}
 }
 
-func (c *workflowClient) Run(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *workflowClient) RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/Run", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.Workflow/RunAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowClient) RunScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.Workflow/RunScript", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,35 +165,57 @@ func (c *workflowClient) Run(ctx context.Context, in *WorkflowRequest, opts ...g
 
 // WorkflowServer is the server API for Workflow service.
 type WorkflowServer interface {
-	Run(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	RunScript(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 }
 
 // UnimplementedWorkflowServer can be embedded to have forward compatible implementations.
 type UnimplementedWorkflowServer struct {
 }
 
-func (*UnimplementedWorkflowServer) Run(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
+func (*UnimplementedWorkflowServer) RunAction(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunAction not implemented")
+}
+func (*UnimplementedWorkflowServer) RunScript(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunScript not implemented")
 }
 
 func RegisterWorkflowServer(s *grpc.Server, srv WorkflowServer) {
 	s.RegisterService(&_Workflow_serviceDesc, srv)
 }
 
-func _Workflow_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Workflow_RunAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkflowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).Run(ctx, in)
+		return srv.(WorkflowServer).RunAction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/Run",
+		FullMethod: "/pb.Workflow/RunAction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).Run(ctx, req.(*WorkflowRequest))
+		return srv.(WorkflowServer).RunAction(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Workflow_RunScript_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServer).RunScript(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Workflow/RunScript",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServer).RunScript(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -192,8 +225,12 @@ var _Workflow_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*WorkflowServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Run",
-			Handler:    _Workflow_Run_Handler,
+			MethodName: "RunAction",
+			Handler:    _Workflow_RunAction_Handler,
+		},
+		{
+			MethodName: "RunScript",
+			Handler:    _Workflow_RunScript_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

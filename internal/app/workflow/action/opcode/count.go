@@ -8,9 +8,11 @@ func NewCount() *Count {
 	return &Count{}
 }
 
-func (c Count) Run(ctx *context.Context, _ []interface{}) (interface{}, error) {
+func (c *Count) Run(ctx *context.Context, _ []interface{}) (interface{}, error) {
 	if text, ok := ctx.Value.(string); ok {
-		return len(text), nil
+		result := len(text)
+		ctx.SetValue(result)
+		return result, nil
 	}
 	return 0, nil
 }

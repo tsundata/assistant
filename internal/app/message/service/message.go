@@ -125,7 +125,7 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	return nil, nil
 }
 
-func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
 	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
@@ -135,11 +135,11 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.TextR
 		return nil, err
 	}
 
-	reply := utils.ByteToString(resp.Body())
+	_ = utils.ByteToString(resp.Body())
 	fasthttp.ReleaseResponse(resp)
 
-	return &pb.TextReply{
-		Text: reply,
+	return &pb.StateReply{
+		State: true,
 	}, nil
 }
 
@@ -153,19 +153,21 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 	switch message.Type {
 	case model.MessageTypeAction:
-		// TODO action
+		wfReply, err := m.wfClient.RunAction(ctx, &pb.WorkflowRequest{Text: model.RemoveActionFlag(message.Text)})
+		if err != nil {
+			return nil, err
+		}
+		reply = wfReply.GetText()
 	case model.MessageTypeScript:
 		switch model.MessageScriptKind(message.Text) {
 		case model.MessageScriptOfFlowscript:
-			wfReply, err := m.wfClient.Run(ctx, &pb.WorkflowRequest{Text: message.Text})
+			wfReply, err := m.wfClient.RunScript(ctx, &pb.WorkflowRequest{Text: message.Text})
 			if err != nil {
 				return nil, err
 			}
 			reply = wfReply.GetText()
-		case model.MessageScriptOfUndefined:
-			reply = "MessageScriptOfUndefined"
 		default:
-			reply = "MessageScriptOfUndefined"
+			reply = model.MessageScriptOfUndefined
 		}
 	default:
 		reply = "Not running"

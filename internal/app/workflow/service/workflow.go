@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/script"
 	"go.etcd.io/etcd/clientv3"
 )
@@ -18,7 +19,7 @@ func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient, msgClient pb.
 	return &Workflow{etcd: etcd, midClient: midClient, msgClient: msgClient}
 }
 
-func (s *Workflow) Run(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+func (s *Workflow) RunScript(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	p, err := script.NewParser(script.NewLexer([]rune(payload.GetText())))
 	if err != nil {
 		return nil, err
@@ -33,6 +34,28 @@ func (s *Workflow) Run(_ context.Context, payload *pb.WorkflowRequest) (*pb.Work
 
 	i := script.NewInterpreter(tree)
 	i.SetClient(s.midClient)
+	_, err = i.Interpret()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.WorkflowReply{
+		Text: fmt.Sprintf("Tracing\n-------\n %s", i.Stdout()),
+	}, nil
+}
+
+func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	p, err := action.NewParser(action.NewLexer([]rune(payload.GetText())))
+	if err != nil {
+		return nil, err
+	}
+	tree, err := p.Parse()
+	if err != nil {
+		return nil, err
+	}
+
+	i := action.NewInterpreter(tree)
+	i.SetClient(s.midClient, s.msgClient)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err

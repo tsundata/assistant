@@ -63,7 +63,6 @@ func (l *Lexer) SkipComment() {
 }
 
 func (l *Lexer) CarriageReturn() (*Token, error) {
-	l.Advance()
 	return &Token{Type: TokenCarriageReturn, Value: TokenCarriageReturn, LineNo: l.LineNo, Column: l.Column}, nil
 }
 
@@ -159,6 +158,12 @@ func (l *Lexer) Id() (*Token, error) {
 func (l *Lexer) GetNextToken() (*Token, error) {
 	for l.CurrentChar > 0 {
 		if l.CurrentChar == '\n' {
+			l.Advance()
+			return l.CarriageReturn()
+		}
+		if l.CurrentChar == '\r' && l.Peek() == '\n' {
+			l.Advance()
+			l.Advance()
 			return l.CarriageReturn()
 		}
 		if unicode.IsSpace(l.CurrentChar) {

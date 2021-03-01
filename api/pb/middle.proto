@@ -19,6 +19,8 @@ service Middle {
   rpc CreateSetting(KVRequest) returns (StateReply) {}
   rpc GetScripts(TextRequest) returns (ScriptsReply) {}
   rpc CreateScript(TextRequest) returns (StateReply) {}
+  rpc GetAction(TextRequest) returns (ActionReply) {}
+  rpc CreateAction(TextRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc Authorization(TextRequest) returns (StateReply) {}
 }
@@ -85,6 +87,15 @@ message Script {
 
 message ScriptsReply {
   repeated Script items = 1;
+}
+
+message Action {
+  int64 id = 1;
+  string text = 2;
+}
+
+message ActionReply {
+  repeated Action items = 1;
 }
 
 message KVRequest {
