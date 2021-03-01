@@ -1,10 +1,10 @@
-package interpreter
+package script
 
 import (
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/interpreter/nodes"
+	"github.com/tsundata/assistant/internal/app/workflow/script/nodes"
 	"strings"
 )
 

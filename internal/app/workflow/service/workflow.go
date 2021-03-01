@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/interpreter"
+	"github.com/tsundata/assistant/internal/app/workflow/script"
 	"go.etcd.io/etcd/clientv3"
 )
 
@@ -19,7 +19,7 @@ func NewWorkflow(etcd *clientv3.Client, midClient pb.MiddleClient, msgClient pb.
 }
 
 func (s *Workflow) Run(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	p, err := interpreter.NewParser(interpreter.NewLexer([]rune(payload.GetText())))
+	p, err := script.NewParser(script.NewLexer([]rune(payload.GetText())))
 	if err != nil {
 		return nil, err
 	}
@@ -28,10 +28,10 @@ func (s *Workflow) Run(_ context.Context, payload *pb.WorkflowRequest) (*pb.Work
 		return nil, err
 	}
 
-	sa := interpreter.NewSemanticAnalyzer()
+	sa := script.NewSemanticAnalyzer()
 	sa.Visit(tree)
 
-	i := interpreter.NewInterpreter(tree)
+	i := script.NewInterpreter(tree)
 	i.SetClient(s.midClient)
 	_, err = i.Interpret()
 	if err != nil {

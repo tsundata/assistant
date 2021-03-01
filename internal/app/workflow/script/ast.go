@@ -1,4 +1,4 @@
-package interpreter
+package script
 
 type Ast interface{}
 
