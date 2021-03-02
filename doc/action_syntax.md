@@ -1,4 +1,4 @@
-# Workflow Action (syntax)[./internal/app/workflow/action/grammar]
+# Workflow Action syntax
 
 > opcode param1 param2 ...
 

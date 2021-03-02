@@ -1,4 +1,4 @@
-# Workflow Flowscript (syntax)[./internal/app/workflow/script/grammar]
+# Workflow Flowscript syntax
 
 # Type
 
