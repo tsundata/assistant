@@ -7,7 +7,15 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/tsundata/assistant)
 ![GitHub](https://img.shields.io/github/license/tsundata/assistant)
 
-Assistant Bot is a conversational dialog engine for chat bots
+Assistant Bot is a workflow engine for chatbot
+
+## Features
+
+- Chat bot
+- Message publish/subscribe hub
+- Message Cron
+- Workflow Action ([Syntax](./doc/action_syntax.md))
+- Workflow Script ([Syntax](./doc/script_syntax.md))
 
 ## Architecture
 

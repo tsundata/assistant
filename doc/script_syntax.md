@@ -1,41 +1,37 @@
-package script
+# Workflow Flowscript (syntax)[./internal/app/workflow/script/grammar]
 
-import (
-	"log"
-	"testing"
-)
+# Type
 
-func run(t *testing.T, text string) {
-	p, err := NewParser(NewLexer([]rune(text)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		t.Fatal(err)
-	}
+- Integer
+- Float
+- String
+- Boolean
+- List
+- Dict
+- Message
+- Node
+- Workflow
 
-	Debug = true
-	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
-	if Debug {
-		log.Println(symbolTable.CurrentScope)
-	}
+# Statements
 
-	i := NewInterpreter(tree)
-	r, err := i.Interpret()
-	if err != nil {
-		 t.Fatal(err)
-	}
-	if r != 0 {
-		 t.Fatal("error expr")
-	}
-	log.Println(i.callStack)
-	log.Println(i.Stdout())
-}
+- if
+- while
+- print
+- assignment
+- flow
 
-func TestInterpreter(t *testing.T) {
-	text := `
+# Operators
+
+- and
+- or
+- +, -, *, /
+- >, >=, <, <=
+- !=, ==
+- #
+- @
+
+## Example
+```Flowscript
 #!/usr/bin/env flowscript
 
 node abc (cron):
@@ -112,6 +108,4 @@ workflow main:
     @abc -> @xkcd -> @httpbin -> @hi -> @notice;
 	@xkcd -> @notice
 end
-`
-	run(t, text)
-}
+```
