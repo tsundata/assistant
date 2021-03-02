@@ -2,6 +2,10 @@
 
 > opcode param1 param2 ...
 
+# Grammar
+
+> /internal/app/workflow/action/grammar
+
 # Type
 
 - Integer

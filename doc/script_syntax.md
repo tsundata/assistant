@@ -1,5 +1,9 @@
 # Workflow Flowscript syntax
 
+# Grammar
+
+> /internal/app/workflow/action/grammar
+
 # Type
 
 - Integer

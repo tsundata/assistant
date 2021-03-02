@@ -14,8 +14,8 @@ Assistant Bot is a workflow engine for chatbot
 - Chat bot
 - Message publish/subscribe hub
 - Message Cron
-- Workflow Action ([Syntax](./doc/action_syntax.md)) (Grammar)[./internal/app/workflow/action/grammar]
-- Workflow Script ([Syntax](./doc/script_syntax.md)) (Grammar)[./internal/app/workflow/script/grammar]
+- Workflow Action ([Syntax](./doc/action_syntax.md))
+- Workflow Script ([Syntax](./doc/script_syntax.md))
 
 ## Architecture
 
