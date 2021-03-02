@@ -15,7 +15,7 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.2.2
 	github.com/jmoiron/sqlx v1.3.1
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/shirou/gopsutil/v3 v3.21.1
+	github.com/shirou/gopsutil/v3 v3.21.2
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.8.1
 	github.com/spf13/viper v1.7.1
