@@ -24,7 +24,7 @@ func PushGoServerMetrics(in influxdb2.Client, service, org, bucket string) {
 			PauseQuantiles: make([]time.Duration, numPauseQuantiles),
 		}
 		debug.ReadGCStats(gcStats)
-		duration := time.Now().Sub(start)
+		duration := time.Since(start)
 
 		metricsCostNs := uint64(duration.Nanoseconds())
 		goroutineNum := uint64(numGoroutines)
