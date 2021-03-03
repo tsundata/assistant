@@ -21,7 +21,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcOptions, err := rpc.NewServerOptions(viper)
+	rpcOptions, err := rpc.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +49,12 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	i, err := influx.New(influxOptions)
+	in, err := influx.New(influxOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	server, err := rpc.NewServer(rpcOptions, log, j, e, i)
+	server, err := rpc.NewServer(rpcOptions, log, j, e, in)
 	if err != nil {
 		return nil, err
 	}

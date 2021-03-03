@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/etcd"
+	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/redis"
@@ -44,6 +45,15 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 
+	influxOptions, err := influx.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	in, err := influx.New(influxOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	clientOptions, err := rpc.NewClientOptions(viper, j)
 	if err != nil {
 		return nil, err
@@ -76,7 +86,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	gatewayController := controllers.NewGatewayController(gatewayOptions, rdb, log, subClient, msgClient)
 	initControllers := controllers.CreateInitControllersFn(gatewayController)
-	server, err := http.New(httpOptions, &initControllers)
+	server, err := http.New(httpOptions, &initControllers, in)
 	if err != nil {
 		return nil, err
 	}

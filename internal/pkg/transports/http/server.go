@@ -3,7 +3,9 @@ package http
 import (
 	"errors"
 	"fmt"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"log"
@@ -15,12 +17,9 @@ type Options struct {
 	Host string
 	Port int
 	Mode string
-}
 
-type Server struct {
-	o          *Options
-	router     *fasthttp.RequestHandler
-	httpServer *fasthttp.Server
+	Org    string
+	Bucket string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -33,13 +32,25 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 		return nil, err
 	}
 
+	if err = v.UnmarshalKey("influx", o); err != nil {
+		return nil, errors.New("unmarshal influx option error")
+	}
+
 	return o, err
 }
 
-func New(o *Options, router *fasthttp.RequestHandler) (*Server, error) {
+type Server struct {
+	o          *Options
+	router     *fasthttp.RequestHandler
+	httpServer *fasthttp.Server
+	in         influxdb2.Client
+}
+
+func New(o *Options, router *fasthttp.RequestHandler, in influxdb2.Client) (*Server, error) {
 	var s = &Server{
-		router: router,
 		o:      o,
+		router: router,
+		in:     in,
 	}
 	return s, nil
 }
@@ -76,6 +87,10 @@ func (s *Server) Start() error {
 	if err := s.register(); err != nil {
 		log.Fatal("register http server error")
 	}
+
+	// metrics
+	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Org, s.o.Bucket)
+
 	return nil
 }
 

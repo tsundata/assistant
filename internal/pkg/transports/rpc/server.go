@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
-	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/opentracing/opentracing-go"
@@ -30,7 +30,7 @@ func (*alwaysPassLimiter) Limit() bool {
 	return false
 }
 
-type ServerOptions struct {
+type Options struct {
 	Name string
 	Host string
 	Port int
@@ -39,10 +39,10 @@ type ServerOptions struct {
 	Bucket string
 }
 
-func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
+func NewOptions(v *viper.Viper) (*Options, error) {
 	var (
 		err error
-		o   = new(ServerOptions)
+		o   = new(Options)
 	)
 
 	if err = v.UnmarshalKey("rpc", o); err != nil {
@@ -57,18 +57,19 @@ func NewServerOptions(v *viper.Viper) (*ServerOptions, error) {
 }
 
 type Server struct {
-	o        *ServerOptions
+	o        *Options
 	logger   *zap.Logger
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
+	in       influxdb2.Client
 }
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(opt *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
+func NewServer(opt *Options, logger *zap.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
 	// recovery
-	recoveryOpts := []grpc_recovery.Option{
-		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+	recoveryOpts := []grpcrecovery.Option{
+		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
 			return status.Errorf(codes.Unknown, "panic triggered: %v", p)
 		}),
 	}
@@ -81,19 +82,19 @@ func NewServer(opt *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer
 
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
-			grpc_middleware.ChainStreamServer(
+			grpcmiddleware.ChainStreamServer(
 				influx.StreamServerInterceptor(in, opt.Org, opt.Bucket),
-				grpc_zap.StreamServerInterceptor(logger),
-				grpc_recovery.StreamServerInterceptor(recoveryOpts...),
+				grpczap.StreamServerInterceptor(logger),
+				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 			),
 		),
 		grpc.UnaryInterceptor(
-			grpc_middleware.ChainUnaryServer(
+			grpcmiddleware.ChainUnaryServer(
 				influx.UnaryServerInterceptor(in, opt.Org, opt.Bucket),
-				grpc_zap.UnaryServerInterceptor(logger),
-				grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
+				grpczap.UnaryServerInterceptor(logger),
+				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 			),
@@ -105,6 +106,7 @@ func NewServer(opt *ServerOptions, logger *zap.Logger, tracer opentracing.Tracer
 		logger:   logger,
 		resolver: resolver,
 		server:   gs,
+		in:       in,
 	}, nil
 }
 
@@ -147,6 +149,9 @@ func (s *Server) Start() error {
 			s.logger.Error(err.Error())
 		}
 	}()
+
+	// metrics
+	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Org, s.o.Bucket)
 
 	return nil
 }

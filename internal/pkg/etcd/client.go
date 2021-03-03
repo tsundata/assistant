@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/spf13/viper"
 	"go.etcd.io/etcd/clientv3"
+	"time"
 )
 
 type Options struct {
@@ -27,6 +28,6 @@ func New(o *Options) (*clientv3.Client, error) {
 		Endpoints:   []string{o.URL},
 		Username:    o.Username,
 		Password:    o.Password,
-		DialTimeout: 0,
+		DialTimeout: time.Minute,
 	})
 }
