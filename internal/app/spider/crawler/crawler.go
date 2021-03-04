@@ -97,7 +97,7 @@ func (s *Crawler) LoadRule(p string) error {
 }
 
 func (s *Crawler) Daemon() {
-	s.logger.Info("subscribe spider cron starting...")
+	s.logger.Info("subscribe spider starting...")
 
 	for name, job := range s.jobs {
 		s.logger.Info("spider " + name + ": crawl...")

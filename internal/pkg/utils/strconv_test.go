@@ -6,9 +6,9 @@ import (
 )
 
 func TestByteToString(t *testing.T) {
-	require.Equal(t, ByteToString([]byte("Test")), "Test")
+	require.Equal(t, "Test", ByteToString([]byte("Test")))
 }
 
 func TestStringToByte(t *testing.T) {
-	require.Equal(t, StringToByte("Test"), []byte("Test"))
+	require.Equal(t, []byte("Test"), StringToByte("Test"))
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -28,7 +27,6 @@ type Result struct {
 
 type cronRuleset struct {
 	outCh     chan Result
-	mu        sync.Mutex
 	cronRules []Rule
 }
 
@@ -60,11 +58,11 @@ func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ string) []string {
 }
 
 func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	log.Println("cron starting...")
 
 	// process cron
 	for rule := range r.cronRules {
+		log.Println("cron " + r.cronRules[rule].Name + ": start...")
 		go r.ruleWorker(b, r.cronRules[rule])
 	}
 

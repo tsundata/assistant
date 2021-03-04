@@ -55,7 +55,7 @@ func TestExtractUUID(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			require.Equal(t, ExtractUUID(tt.path), tt.expect)
+			require.Equal(t, tt.expect, ExtractUUID(tt.path))
 		})
 	}
 }
@@ -95,7 +95,7 @@ func TestDataMasking(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			require.Equal(t, DataMasking(tt.data), tt.expect)
+			require.Equal(t, tt.expect, DataMasking(tt.data))
 		})
 	}
 }
