@@ -22,8 +22,8 @@ import (
 )
 
 type Crawler struct {
-	jobs  map[string]rule.Rule
 	outCh chan rule.Result
+	jobs  map[string]rule.Rule
 
 	rdb       *redis.Client
 	logger    *zap.Logger
@@ -32,17 +32,20 @@ type Crawler struct {
 	subClient pb.SubscribeClient
 }
 
-func New(rdb *redis.Client, logger *zap.Logger,
-	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) *Crawler {
+func New() *Crawler {
 	return &Crawler{
-		jobs:      make(map[string]rule.Rule),
-		outCh:     make(chan rule.Result),
-		rdb:       rdb,
-		logger:    logger,
-		msgClient: msgClient,
-		midClient: midClient,
-		subClient: subClient,
+		jobs:  make(map[string]rule.Rule),
+		outCh: make(chan rule.Result, 10),
 	}
+}
+
+func (s *Crawler) SetService(rdb *redis.Client, logger *zap.Logger,
+	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) {
+	s.rdb = rdb
+	s.logger = logger
+	s.msgClient = msgClient
+	s.midClient = midClient
+	s.subClient = subClient
 }
 
 func (s *Crawler) LoadRule(p string) error {
@@ -98,13 +101,13 @@ func (s *Crawler) Daemon() {
 
 	for name, job := range s.jobs {
 		s.logger.Info("spider " + name + ": crawl...")
-		go s.ruleWorker(name, job, s.outCh)
+		go s.ruleWorker(name, job)
 	}
 
 	go s.resultWorker()
 }
 
-func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
+func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
 		s.logger.Error(err.Error())
@@ -142,7 +145,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule, outCh chan rule.Result) {
 				return rule.RunRule(r)
 			}()
 			if len(result) > 0 {
-				outCh <- rule.Result{
+				s.outCh <- rule.Result{
 					Name:    name,
 					Instant: r.Instant,
 					Result:  result,

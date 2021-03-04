@@ -33,9 +33,10 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
 	go func() {
-		// FIXME
+		// Delayed loading
 		time.Sleep(10 * time.Second)
-		s := crawler.New(rdb, logger, msgClient, midClient, subClient)
+		s := crawler.New()
+		s.SetService(rdb, logger, msgClient, midClient, subClient)
 		err := s.LoadRule(o.Path)
 		if err != nil {
 			logger.Error(err.Error())

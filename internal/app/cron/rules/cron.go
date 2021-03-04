@@ -28,10 +28,17 @@ type Result struct {
 
 type cronRuleset struct {
 	outCh     chan Result
+	mu        sync.Mutex
 	cronRules []Rule
+}
 
-	mu       sync.Mutex
-	stopChan []chan struct{}
+// New returns a cron rule set
+func New(rules []Rule) *cronRuleset {
+	r := &cronRuleset{
+		cronRules: rules,
+		outCh:     make(chan Result, 10),
+	}
+	return r
 }
 
 // Name returns this rules name - meant for debugging.
@@ -52,38 +59,56 @@ func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ string) []string {
 	return []string{}
 }
 
-func (r *cronRuleset) stop() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	for _, c := range r.stopChan {
-		c <- struct{}{}
-	}
-	r.stopChan = []chan struct{}{}
-}
-
 func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
-	r.stop()
-
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	// process cron
 	for rule := range r.cronRules {
-		c := make(chan struct{})
-		r.stopChan = append(r.stopChan, c)
-		go processCronRule(b, r.cronRules[rule], c, r.outCh)
+		go r.ruleWorker(b, r.cronRules[rule])
 	}
 
 	// send message
-	go func() {
-		for out := range r.outCh {
-			// filter
-			diff := r.filter(b, out.Name, out.Result)
-			// send
-			r.send(b, out.Name, diff)
+	go r.resultWorker(b)
+}
+
+func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
+	p, err := cron.ParseUTC(rule.When)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	nextTime, err := p.Next(time.Now())
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	for {
+		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			msgs := rule.Action(b)
+			if len(msgs) > 0 {
+				r.outCh <- Result{
+					Name:   rule.Name,
+					Result: msgs,
+				}
+			}
 		}
-	}()
+		nextTime, err = p.Next(time.Now())
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		time.Sleep(2 * time.Second)
+	}
+}
+
+func (r *cronRuleset) resultWorker(b *rulebot.RuleBot) {
+	for out := range r.outCh {
+		// filter
+		diff := r.filter(b, out.Name, out.Result)
+		// send
+		r.send(b, out.Name, diff)
+	}
 }
 
 func (r *cronRuleset) filter(b *rulebot.RuleBot, name string, latest []string) []string {
@@ -140,48 +165,4 @@ func (r *cronRuleset) send(b *rulebot.RuleBot, name string, out []string) {
 	if err != nil {
 		return
 	}
-}
-
-func processCronRule(b *rulebot.RuleBot, rule Rule, stop chan struct{}, outCh chan Result) {
-	p, err := cron.ParseUTC(rule.When)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	nextTime, err := p.Next(time.Now())
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	for {
-		select {
-		case <-stop:
-			return
-		default:
-			if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-				msgs := rule.Action(b)
-				if len(msgs) > 0 {
-					outCh <- Result{
-						Name:   rule.Name,
-						Result: msgs,
-					}
-				}
-			}
-			nextTime, err = p.Next(time.Now())
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-			time.Sleep(2 * time.Second)
-		}
-	}
-}
-
-// New returns a cron rule set
-func New(rules []Rule) *cronRuleset {
-	r := &cronRuleset{
-		cronRules: rules,
-		outCh:     make(chan Result, 10),
-	}
-	return r
 }

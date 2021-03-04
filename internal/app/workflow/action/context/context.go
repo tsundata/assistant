@@ -6,7 +6,7 @@ import (
 )
 
 type Context struct {
-	mu *sync.RWMutex
+	mu sync.Mutex
 
 	Value     interface{}
 	MidClient pb.MiddleClient
@@ -14,7 +14,7 @@ type Context struct {
 }
 
 func NewContext() *Context {
-	return &Context{mu: &sync.RWMutex{}}
+	return &Context{mu: sync.Mutex{}}
 }
 
 func (c *Context) SetValue(v interface{}) {
