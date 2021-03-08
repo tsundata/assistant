@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"github.com/go-ping/ping"
 	"net"
 	"strings"
+	"time"
 )
 
 // GetAvailablePort returns a port at random
@@ -74,4 +76,19 @@ func isIntranetIpv4(ip string) bool {
 		return true
 	}
 	return false
+}
+
+func Ping(host string) bool {
+	p, err := ping.NewPinger(host)
+	if err != nil {
+		return false
+	}
+	p.Count = 3
+	p.Timeout = time.Minute
+	err = p.Run()
+	if err != nil {
+		return false
+	}
+
+	return p.Statistics().PacketLoss == 0
 }
