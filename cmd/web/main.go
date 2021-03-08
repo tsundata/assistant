@@ -90,7 +90,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	}
 	webController := controllers.NewWebController(webOptions, rdb, log, midClient, msgClient, wfClient)
 	initControllers := controllers.CreateInitControllersFn(webController)
-	server, err := http.New(httpOptions, &initControllers, in)
+	server, err := http.New(httpOptions, initControllers, in)
 	if err != nil {
 		return nil, err
 	}

@@ -1,46 +1,26 @@
 package controllers
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/valyala/fasthttp"
+	"github.com/gofiber/fiber/v2"
 	"log"
+	"net/http"
 )
 
-func CreateInitControllersFn(gc *GatewayController) fasthttp.RequestHandler {
-	requestHandler := func(ctx *fasthttp.RequestCtx) {
+func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
+
+	requestHandler := func(router fiber.Router) {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Println("recover", err)
 			}
 		}()
 
-		path := ctx.URI().PathOriginal()
+		router.Get("/", gc.Index)
+		router.Post("/slack/event", gc.SlackEvent)
 
-		// GET
-		if ctx.IsGet() {
-			switch utils.ByteToString(path) {
-			case "/":
-				gc.Index(ctx)
-			case "/apps":
-				gc.Apps(ctx)
-			default:
-				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
-			}
-		}
-
-		// POST
-		if ctx.IsPost() {
-			switch utils.ByteToString(path) {
-			case "/slack/shortcut":
-				gc.SlackShortcut(ctx)
-			case "/slack/command":
-				gc.SlackCommand(ctx)
-			case "/slack/event":
-				gc.SlackEvent(ctx)
-			default:
-				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
-			}
-		}
+		router.Use(func(c *fiber.Ctx) error {
+			return c.Status(http.StatusNotFound).SendString("Unsupported path")
+		})
 	}
 
 	return requestHandler

@@ -3,11 +3,11 @@ package http
 import (
 	"errors"
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
 )
@@ -41,12 +41,12 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 type Server struct {
 	o          *Options
-	router     *fasthttp.RequestHandler
-	httpServer *fasthttp.Server
+	router     func (router fiber.Router)
+	httpServer *fiber.App
 	in         influxdb2.Client
 }
 
-func New(o *Options, router *fasthttp.RequestHandler, in influxdb2.Client) (*Server, error) {
+func New(o *Options, router func (router fiber.Router), in influxdb2.Client) (*Server, error) {
 	var s = &Server{
 		o:      o,
 		router: router,
@@ -75,10 +75,14 @@ func (s *Server) Start() error {
 
 	log.Println("start http server ", addr)
 
-	s.httpServer = &fasthttp.Server{Handler: *s.router}
+	// server
+	s.httpServer = fiber.New()
+
+	// init router
+	s.router(s.httpServer)
 
 	go func() {
-		if err := s.httpServer.ListenAndServe(addr); err != nil && err != http.ErrServerClosed {
+		if err := s.httpServer.Listen(addr); err != nil && err != http.ErrServerClosed {
 			log.Fatal("start http server err", err)
 			return
 		}

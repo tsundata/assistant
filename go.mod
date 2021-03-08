@@ -5,10 +5,11 @@ go 1.16
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1
-	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb // indirect
+	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
 	github.com/go-redis/redis/v8 v8.6.0
 	github.com/go-resty/resty/v2 v2.5.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gofiber/fiber/v2 v2.5.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645

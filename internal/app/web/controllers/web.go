@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
@@ -13,7 +14,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
-	"github.com/valyala/fasthttp"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
@@ -41,49 +41,40 @@ func NewWebController(opt *web.Options, rdb *redis.Client, logger *zap.Logger,
 	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient, wfClient: wfClient}
 }
 
-func (wc *WebController) Index(c *fasthttp.RequestCtx) {
-	c.Response.SetBody([]byte("Web"))
+func (wc *WebController) Index(c *fiber.Ctx) error {
+	return c.SendString("Web")
 }
 
-func (wc *WebController) Echo(c *fasthttp.RequestCtx) {
-	text := c.FormValue("text")
-	c.Response.SetBody(text)
+func (wc *WebController) Echo(c *fiber.Ctx) error {
+	return c.SendString(c.FormValue("text"))
 }
 
-func (wc *WebController) Robots(c *fasthttp.RequestCtx) {
+func (wc *WebController) Robots(c *fiber.Ctx) error {
 	txt := `User-agent: *
 Disallow: /`
 
-	c.Response.SetBody(utils.StringToByte(txt))
+	return c.SendString(txt)
 }
 
-func (wc *WebController) Page(c *fasthttp.RequestCtx) {
-	pageRe := regexp.MustCompile(`([\w\-]+)$`)
-	r := pageRe.FindSubmatch(c.Path())
-	if len(r) < 1 {
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
-	}
+func (wc *WebController) Page(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 
 	reply, err := wc.midClient.GetPage(context.Background(), &pb.PageRequest{
-		Uuid: utils.ByteToString(r[0]),
+		Uuid: uuid,
 	})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 	if reply.GetContent() == "" {
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	var list []string
 	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	var items []components.Component
@@ -111,46 +102,40 @@ func (wc *WebController) Page(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) Qr(c *fasthttp.RequestCtx) {
-	path := c.URI().PathOriginal()
-	qrRe := regexp.MustCompile(`^/qr/(.*)$`)
-	r := qrRe.FindSubmatch(path)
-	if len(r) < 1 {
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+func (wc *WebController) Qr(c *fiber.Ctx) error {
+	text := c.Params("text", "")
+	if text == "" {
+		return c.SendStatus(http.StatusNotFound)
 	}
 
-	txt, err := url.QueryUnescape(utils.ByteToString(r[1]))
+	txt, err := url.QueryUnescape(text)
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetBodyString("error text")
-		return
+		return c.Status(http.StatusNotFound).SendString("error text")
 	}
 
 	png, err := qrcode.Encode(txt, qrcode.Medium, 512)
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetBodyString("error qr")
-		return
+		return c.Status(http.StatusNotFound).SendString("error qr")
 	}
 
-	c.Response.Header.Set("Content-Type", "image/png")
-	c.Response.SetBody(png)
+	c.Response().Header.Set("Content-Type", "image/png")
+	return c.Send(png)
 }
 
-func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) Apps(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 
 	reply, err := wc.midClient.Apps(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	for _, app := range reply.GetApps() {
@@ -179,18 +164,17 @@ func (wc *WebController) Apps(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
+func (wc *WebController) Memo(c *fiber.Ctx) error {
 	var items []components.Component
 
 	reply, err := wc.msgClient.List(context.Background(), &pb.MessageRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Response.SetStatusCode(http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	md := goldmark.New(
@@ -235,18 +219,17 @@ func (wc *WebController) Memo(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
+func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	var items []components.Component
 
 	reply, err := wc.midClient.GetCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	for _, item := range reply.GetItems() {
@@ -263,7 +246,7 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 			Title: "Credentials",
 			Action: &components.Link{
 				Title: "Add Credentials",
-				URL:   fmt.Sprintf("/credentials/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+				URL:   fmt.Sprintf("/credentials/%s/create", c.Params("uuid")),
 			},
 			Content: &components.List{
 				Items: items,
@@ -271,12 +254,12 @@ func (wc *WebController) Credentials(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) CredentialsCreate(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	options := map[string]interface{}{
 		"github": map[string]string{
 			"client_id":     "Client ID",
@@ -341,13 +324,13 @@ func (wc *WebController) CredentialsCreate(c *fasthttp.RequestCtx) {
         }
     })`, d, h)))
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
+func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 	var kvs []*pb.KV
-	c.Request.PostArgs().VisitAll(func(k, v []byte) {
+	c.Request().PostArgs().VisitAll(func(k, v []byte) {
 		kvs = append(kvs, &pb.KV{
 			Key:   utils.ByteToString(k),
 			Value: utils.ByteToString(v),
@@ -358,21 +341,19 @@ func (wc *WebController) CredentialsStore(c *fasthttp.RequestCtx) {
 	})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	c.Redirect(fmt.Sprintf("/credentials/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("/credentials/%s", c.Params("uuid")), http.StatusFound)
 }
 
-func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
+func (wc *WebController) Setting(c *fiber.Ctx) error {
 	var items []components.Component
 
 	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	for _, item := range reply.GetItems() {
@@ -387,7 +368,7 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 			Title: "Setting",
 			Action: &components.Link{
 				Title: "Add Setting",
-				URL:   fmt.Sprintf("/setting/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+				URL:   fmt.Sprintf("/setting/%s/create", c.Params("uuid")),
 			},
 			Content: &components.List{
 				Items: items,
@@ -395,12 +376,12 @@ func (wc *WebController) Setting(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) SettingCreate(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 	items = append(items, &components.Input{
 		Name:  "key",
@@ -428,36 +409,34 @@ func (wc *WebController) SettingCreate(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) SettingStore(c *fasthttp.RequestCtx) {
+func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 	key := c.FormValue("key")
 	value := c.FormValue("value")
 
 	_, err := wc.midClient.CreateSetting(context.Background(), &pb.KVRequest{
-		Key:   utils.ByteToString(key),
-		Value: utils.ByteToString(value),
+		Key:   key,
+		Value: value,
 	})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	c.Redirect(fmt.Sprintf("/setting/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("/setting/%s", c.Params("uuid")), http.StatusFound)
 }
 
-func (wc *WebController) Scripts(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) Scripts(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 
 	reply, err := wc.midClient.GetScripts(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	for _, item := range reply.GetItems() {
@@ -474,7 +453,7 @@ func (wc *WebController) Scripts(c *fasthttp.RequestCtx) {
 			Title: "Scripts",
 			Action: &components.Link{
 				Title: "Add Script",
-				URL:   fmt.Sprintf("/script/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+				URL:   fmt.Sprintf("/script/%s/create", c.Params("uuid")),
 			},
 			Content: &components.List{
 				Items: items,
@@ -482,12 +461,12 @@ func (wc *WebController) Scripts(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) ScriptCreate(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) ScriptCreate(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 	items = append(items, &components.CodeEditor{
 		Name: "script",
@@ -509,16 +488,14 @@ func (wc *WebController) ScriptCreate(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) ScriptRun(c *fasthttp.RequestCtx) {
-	id, err := strconv.ParseInt(utils.ByteToString(c.FormValue("id")), 10, 64)
+func (wc *WebController) ScriptRun(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		c.Response.SetBody([]byte("error id"))
-		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
-		return
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
 	}
 
 	clientDeadline := time.Now().Add(time.Minute)
@@ -527,39 +504,36 @@ func (wc *WebController) ScriptRun(c *fasthttp.RequestCtx) {
 
 	reply, err := wc.msgClient.Run(ctx, &pb.MessageRequest{Id: id})
 	if err != nil {
-		c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
-		return
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
 	}
 
 	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
 
-	c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
 }
 
-func (wc *WebController) ScriptStore(c *fasthttp.RequestCtx) {
+func (wc *WebController) ScriptStore(c *fiber.Ctx) error {
 	script := c.FormValue("script")
 
 	_, err := wc.midClient.CreateScript(context.Background(), &pb.TextRequest{
-		Text: utils.ByteToString(script),
+		Text: script,
 	})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	c.Redirect(fmt.Sprintf("/scripts/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("/scripts/%s", c.Params("uuid")), http.StatusFound)
 }
 
-func (wc *WebController) Action(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) Action(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 
 	reply, err := wc.midClient.GetAction(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	for _, item := range reply.GetItems() {
@@ -576,7 +550,7 @@ func (wc *WebController) Action(c *fasthttp.RequestCtx) {
 			Title: "Action",
 			Action: &components.Link{
 				Title: "Add Action",
-				URL:   fmt.Sprintf("/action/%s/create", utils.ExtractUUID(utils.ByteToString(c.Path()))),
+				URL:   fmt.Sprintf("/action/%s/create", c.Params("uuid")),
 			},
 			Content: &components.List{
 				Items: items,
@@ -584,12 +558,12 @@ func (wc *WebController) Action(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) ActionCreate(c *fasthttp.RequestCtx) {
-	uuid := utils.ExtractUUID(utils.ByteToString(c.Path()))
+func (wc *WebController) ActionCreate(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
 	var items []components.Component
 	items = append(items, &components.CodeEditor{
 		Name: "action",
@@ -611,16 +585,14 @@ func (wc *WebController) ActionCreate(c *fasthttp.RequestCtx) {
 		},
 	}
 
-	c.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-	c.Response.SetBody([]byte(comp.GetContent()))
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(string(comp.GetContent()))
 }
 
-func (wc *WebController) ActionRun(c *fasthttp.RequestCtx) {
-	id, err := strconv.ParseInt(utils.ByteToString(c.FormValue("id")), 10, 64)
+func (wc *WebController) ActionRun(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		c.Response.SetBody([]byte("error id"))
-		c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
-		return
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
 	}
 
 	clientDeadline := time.Now().Add(time.Minute)
@@ -629,42 +601,37 @@ func (wc *WebController) ActionRun(c *fasthttp.RequestCtx) {
 
 	reply, err := wc.msgClient.Run(ctx, &pb.MessageRequest{Id: id})
 	if err != nil {
-		c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
-		return
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
 	}
 
 	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
 
-	c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
 }
 
-func (wc *WebController) ActionStore(c *fasthttp.RequestCtx) {
-	script := c.FormValue("action")
+func (wc *WebController) ActionStore(c *fiber.Ctx) error {
+	action := c.FormValue("action")
 
 	_, err := wc.midClient.CreateAction(context.Background(), &pb.TextRequest{
-		Text: utils.ByteToString(script),
+		Text: action,
 	})
 	if err != nil {
 		wc.logger.Error(err.Error())
-		c.Error(err.Error(), fasthttp.StatusBadRequest)
-		return
+		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	c.Redirect(fmt.Sprintf("/action/%s", utils.ExtractUUID(utils.ByteToString(c.Path()))), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("/action/%s", c.Params("uuid")), http.StatusFound)
 }
 
-func (wc *WebController) App(c *fasthttp.RequestCtx) {
-	typeRe := regexp.MustCompile(`^/app/(\w+)$`)
-	t := typeRe.FindString(utils.ByteToString(c.Path()))
-	category := strings.ReplaceAll(t, "/app/", "")
+func (wc *WebController) App(c *fiber.Ctx) error {
+	category := c.Params("category")
 
 	switch category {
 	case "pocket":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		consumerKey := ""
 		for _, item := range reply.GetContent() {
@@ -678,21 +645,18 @@ func (wc *WebController) App(c *fasthttp.RequestCtx) {
 		code, err := client.GetCode(redirectURI, "")
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 
 		wc.rdb.Set(context.Background(), "pocket:code", code.Code, time.Hour)
 
 		pocketRedirectURI := client.AuthorizeURL(code.Code, redirectURI)
-		c.Redirect(pocketRedirectURI, http.StatusFound)
-		return
+		return c.Redirect(pocketRedirectURI, http.StatusFound)
 	case "github":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		clientId := ""
 		for _, item := range reply.GetContent() {
@@ -703,25 +667,20 @@ func (wc *WebController) App(c *fasthttp.RequestCtx) {
 
 		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
 		githubRedirectURI := github.NewGithub(clientId).AuthorizeURL(redirectURI)
-		c.Redirect(githubRedirectURI, http.StatusFound)
-		return
+		return c.Redirect(githubRedirectURI, http.StatusFound)
 	}
-
-	c.Response.SetBodyString(category)
+	return c.SendString("error")
 }
 
-func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
-	typeRe := regexp.MustCompile(`^/oauth/(\w+)$`)
-	t := typeRe.FindString(utils.ByteToString(c.Path()))
-	category := strings.ReplaceAll(t, "/oauth/", "")
+func (wc *WebController) OAuth(c *fiber.Ctx) error {
+	category := c.Params("category")
 
 	switch category {
 	case "pocket":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		consumerKey := ""
 		for _, item := range reply.GetContent() {
@@ -733,23 +692,20 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 		code, err := wc.rdb.Get(context.Background(), "pocket:code").Result()
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		if code != "" {
 			client := pocket.NewPocket(consumerKey)
 			tokenResp, err := client.GetAccessToken(code)
 			if err != nil {
 				wc.logger.Error(err.Error())
-				c.Response.SetStatusCode(http.StatusBadRequest)
-				return
+				return c.SendStatus(http.StatusBadRequest)
 			}
 
 			extra, err := json.Marshal(&tokenResp)
 			if err != nil {
 				wc.logger.Error(err.Error())
-				c.Response.SetStatusCode(http.StatusBadRequest)
-				return
+				return c.SendStatus(http.StatusBadRequest)
 			}
 			reply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
 				Name:  "pocket",
@@ -759,21 +715,18 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 			})
 			if err != nil {
 				wc.logger.Error(err.Error())
-				c.Response.SetStatusCode(http.StatusBadRequest)
-				return
+				return c.SendStatus(http.StatusBadRequest)
 			}
 			if reply.GetState() {
-				c.Response.SetBodyString("success")
-				return
+				return c.SendString("Success")
 			}
 		}
 	case "github":
-		code := utils.ByteToString(c.FormValue("code"))
+		code := c.FormValue("code")
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		clientId := ""
 		clientSecret := ""
@@ -790,15 +743,13 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 		tokenResp, err := client.GetAccessToken(clientSecret, code)
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 
 		extra, err := json.Marshal(&tokenResp)
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		appReply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
 			Name:  "github",
@@ -808,12 +759,11 @@ func (wc *WebController) OAuth(c *fasthttp.RequestCtx) {
 		})
 		if err != nil {
 			wc.logger.Error(err.Error())
-			c.Response.SetStatusCode(http.StatusBadRequest)
-			return
+			return c.SendStatus(http.StatusBadRequest)
 		}
 		if appReply.GetState() {
-			c.Response.SetBodyString("success")
-			return
+			return c.SendString("Success")
 		}
 	}
+	return c.SendString("error")
 }
