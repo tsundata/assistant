@@ -12,17 +12,12 @@ import (
 )
 
 type Options struct {
-	Name string
 	Path string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
-
-	if err = v.UnmarshalKey("app", o); err != nil {
-		return nil, errors.New("unmarshal app option error")
-	}
 
 	if err = v.UnmarshalKey("plugin", o); err != nil {
 		return nil, errors.New("unmarshal plugin option error")
@@ -31,7 +26,8 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(o *Options, rdb *redis.Client, logger *zap.Logger, msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
+func NewApp(name string, o *Options, rdb *redis.Client, logger *zap.Logger,
+	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
 	go func() {
 		// Delayed loading
 		time.Sleep(10 * time.Second)
@@ -45,7 +41,7 @@ func NewApp(o *Options, rdb *redis.Client, logger *zap.Logger, msgClient pb.Mess
 		s.Daemon()
 	}()
 
-	a, err := app.New(o.Name, logger)
+	a, err := app.New(name, logger)
 	if err != nil {
 		return nil, err
 	}
