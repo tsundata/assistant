@@ -14,26 +14,22 @@ import (
 )
 
 type Options struct {
-	Name    string
-	webhook string
+	Webhook string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
 
-	if err = v.UnmarshalKey("app", o); err != nil {
+	if err = v.UnmarshalKey("slack", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
 	}
-
-	slack := v.GetStringMapString("slack")
-	o.webhook = slack["webhook"]
 
 	return o, err
 }
 
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, b *rulebot.RuleBot, wfClient pb.WorkflowClient) (*app.Application, error) {
-	message := service.NewManage(db, logger, b, o.webhook, wfClient)
+func NewApp(name string, o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, b *rulebot.RuleBot, wfClient pb.WorkflowClient) (*app.Application, error) {
+	message := service.NewManage(db, logger, b, o.Webhook, wfClient)
 	err := rs.Register(func(s *grpc.Server) error {
 		pb.RegisterMessageServer(s, message)
 		return nil
@@ -42,7 +38,7 @@ func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, b *rule
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
+	a, err := app.New(name, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

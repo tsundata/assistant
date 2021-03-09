@@ -26,6 +26,40 @@ func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, webURL string) *Middle {
 	return &Middle{db: db, etcd: etcd, webURL: webURL}
 }
 
+func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
+	uuid, err := authUUID(s.etcd)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TextReply{
+		Text: fmt.Sprintf(`
+Memo
+%s/memo/%s
+
+Apps
+%s/apps/%s
+
+Credentials
+%s/credentials/%s
+
+Setting
+%s/setting/%s
+
+Action
+%s/action/%s
+
+Scripts
+%s/scripts/%s
+`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
+	}, nil
+}
+
+func (s *Middle) Qr(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	return &pb.TextReply{
+		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
+	}, nil
+}
+
 func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
 	uuid, err := utils.GenerateUUID()
 	if err != nil {
@@ -60,12 +94,6 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 		Uuid:    find.UUID,
 		Title:   find.Title,
 		Content: find.Content,
-	}, nil
-}
-
-func (s *Middle) Qr(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
-	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil
 }
 
@@ -370,34 +398,6 @@ func (s *Middle) CreateAction(_ context.Context, payload *pb.TextRequest) (*pb.S
 	}
 
 	return &pb.StateReply{State: true}, nil
-}
-
-func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	uuid, err := authUUID(s.etcd)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.TextReply{
-		Text: fmt.Sprintf(`
-Memo
-%s/memo/%s
-
-Apps
-%s/apps/%s
-
-Credentials
-%s/credentials/%s
-
-Setting
-%s/setting/%s
-
-Action
-%s/action/%s
-
-Scripts
-%s/scripts/%s
-`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
-	}, nil
 }
 
 func (s *Middle) Authorization(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {

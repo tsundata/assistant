@@ -2,178 +2,88 @@ package controllers
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/valyala/fasthttp"
 	"log"
-	"regexp"
+	"net/http"
+	"time"
 )
 
-func CreateInitControllersFn(wc *WebController) fasthttp.RequestHandler {
-	requestHandler := func(ctx *fasthttp.RequestCtx) {
+func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
+	requestHandler := func(router fiber.Router) {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Println("recover", err)
 			}
 		}()
 
-		path := ctx.URI().PathOriginal()
+		router.Get("/", wc.Index)
+		router.Get("/echo", wc.Echo)
+		router.Get("/Robots.txt", wc.Robots)
+		router.Get("/page/:uuid", wc.Page)
+		router.Get("/app/:category", wc.App)
+		router.Get("/oauth/:category", wc.OAuth)
+		router.Get("/qr/:text", wc.Qr)
 
-		// GET
-		if ctx.IsGet() {
-			switch utils.ByteToString(path) {
-			case "/":
-				wc.Index(ctx)
-			case "/echo":
-				wc.Echo(ctx)
-			case "/Robots.txt":
-				wc.Robots(ctx)
-			default:
-				pageRe := regexp.MustCompile(`^/page/[\w\-]+$`)
-				if pageRe.Match(path) {
-					wc.Page(ctx)
-					return
-				}
-
-				appRe := regexp.MustCompile(`^/app/\w+$`)
-				if appRe.Match(path) {
-					wc.App(ctx)
-					return
-				}
-
-				oauthRe := regexp.MustCompile(`^/oauth/\w+$`)
-				if oauthRe.Match(path) {
-					wc.OAuth(ctx)
-					return
-				}
-
-				qrRe := regexp.MustCompile(`^/qr/(.*)$`)
-				if qrRe.Match(path) {
-					wc.Qr(ctx)
-					return
-				}
-				// auth
-				if checkUUID(ctx.Path(), wc.midClient) {
-					memoRe := regexp.MustCompile(`^/memo/[\w\-]+$`)
-					if memoRe.Match(path) {
-						wc.Memo(ctx)
-						return
-					}
-					appsRe := regexp.MustCompile(`^/apps/[\w\-]+$`)
-					if appsRe.Match(path) {
-						wc.Apps(ctx)
-						return
-					}
-					credentialsRe := regexp.MustCompile(`^/credentials/[\w\-]+$`)
-					if credentialsRe.Match(path) {
-						wc.Credentials(ctx)
-						return
-					}
-					credentialsCreateRe := regexp.MustCompile(`^/credentials/[\w\-]+/create$`)
-					if credentialsCreateRe.Match(path) {
-						wc.CredentialsCreate(ctx)
-						return
-					}
-					settingRe := regexp.MustCompile(`^/setting/[\w\-]+$`)
-					if settingRe.Match(path) {
-						wc.Setting(ctx)
-						return
-					}
-					settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/create$`)
-					if settingCreateRe.Match(path) {
-						wc.SettingCreate(ctx)
-						return
-					}
-					scriptsRe := regexp.MustCompile(`^/scripts/[\w\-]+$`)
-					if scriptsRe.Match(path) {
-						wc.Scripts(ctx)
-						return
-					}
-					scriptCreateRe := regexp.MustCompile(`^/script/[\w\-]+/create$`)
-					if scriptCreateRe.Match(path) {
-						wc.ScriptCreate(ctx)
-						return
-					}
-					scriptRunRe := regexp.MustCompile(`^/script/[\w\-]+/run$`)
-					if scriptRunRe.Match(path) {
-						wc.ScriptRun(ctx)
-						return
-					}
-					actionRe := regexp.MustCompile(`^/action/[\w\-]+$`)
-					if actionRe.Match(path) {
-						wc.Action(ctx)
-						return
-					}
-					actionCreateRe := regexp.MustCompile(`^/action/[\w\-]+/create$`)
-					if actionCreateRe.Match(path) {
-						wc.ActionCreate(ctx)
-						return
-					}
-					actionRunRe := regexp.MustCompile(`^/action/[\w\-]+/run$`)
-					if actionRunRe.Match(path) {
-						wc.ActionRun(ctx)
-						return
-					}
-				} else {
-					ctx.Error("Forbidden", fasthttp.StatusForbidden)
-					return
-				}
-				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
+		// auth middleware
+		auth := func(c *fiber.Ctx) error {
+			uuid := utils.ExtractUUID(c.Path())
+			if uuid == "" {
+				return errors.New("error param")
 			}
+
+			// cache
+			key := fmt.Sprintf("web:auth:%s", uuid)
+			s := wc.rdb.Get(context.Background(), key)
+			r, err := s.Result()
+			var reply *pb.StateReply
+			if err != nil && err == redis.Nil {
+				reply, err = wc.midClient.Authorization(context.Background(), &pb.TextRequest{
+					Text: uuid,
+				})
+				if err != nil {
+					wc.logger.Error(err.Error())
+					wc.rdb.Set(context.Background(), key, "0", time.Hour)
+					return c.SendStatus(http.StatusForbidden)
+				}
+			}
+			if r == "1" {
+				return c.Next()
+			}
+
+			if reply.GetState() {
+				wc.rdb.Set(context.Background(), key, "1", time.Hour)
+				return c.Next()
+			}
+
+			wc.rdb.Set(context.Background(), key, "0", time.Hour)
+			return c.SendStatus(http.StatusForbidden)
 		}
 
-		// POST
-		if ctx.IsPost() {
-			switch utils.ByteToString(path) {
-			case "/":
-				wc.Index(ctx)
-			default:
-				// auth
-				if checkUUID(ctx.Path(), wc.midClient) {
-					credentialsCreateRe := regexp.MustCompile(`^/credentials/[\w\-]+/store$`)
-					if credentialsCreateRe.Match(path) {
-						wc.CredentialsStore(ctx)
-						return
-					}
-					settingCreateRe := regexp.MustCompile(`^/setting/[\w\-]+/store$`)
-					if settingCreateRe.Match(path) {
-						wc.SettingStore(ctx)
-						return
-					}
-					scriptCreateRe := regexp.MustCompile(`^/script/[\w\-]+/store$`)
-					if scriptCreateRe.Match(path) {
-						wc.ScriptStore(ctx)
-						return
-					}
-					actionCreateRe := regexp.MustCompile(`^/action/[\w\-]+/store$`)
-					if actionCreateRe.Match(path) {
-						wc.ActionStore(ctx)
-						return
-					}
-				} else {
-					ctx.Error("Forbidden", fasthttp.StatusForbidden)
-					return
-				}
-				ctx.Error("Unsupported path", fasthttp.StatusNotFound)
-			}
-		}
+		router.Get("/memo/:uuid", auth, wc.Memo)
+		router.Get("/apps/:uuid", auth, wc.Apps)
+
+		router.Get("/credentials/:uuid", auth, wc.Credentials)
+		router.Get("/credentials/:uuid/create", auth, wc.CredentialsCreate)
+		router.Post("/credentials/:uuid/store", auth, wc.CredentialsStore)
+
+		router.Get("/setting/:uuid", auth, wc.Setting)
+		router.Get("/setting/:uuid/create", auth, wc.SettingCreate)
+		router.Post("/setting/:uuid/store", auth, wc.SettingStore)
+
+		router.Get("/scripts/:uuid", auth, wc.Scripts)
+		router.Get("/scripts/:uuid/create", auth, wc.ScriptCreate)
+		router.Post("/script/:uuid/store", auth, wc.ScriptStore)
+
+		router.Get("/action/:uuid", auth, wc.Action)
+		router.Get("/action/:uuid/create", auth, wc.ActionCreate)
+		router.Get("/action/:uuid/run", auth, wc.ActionRun)
+		router.Post("/action/:uuid/store", auth, wc.ActionStore)
 	}
 
 	return requestHandler
-}
-
-func checkUUID(path []byte, midClient pb.MiddleClient) bool {
-	uuid := utils.ExtractUUID(utils.ByteToString(path))
-	if uuid == "" {
-		return false
-	}
-
-	reply, err := midClient.Authorization(context.Background(), &pb.TextRequest{
-		Text: uuid,
-	})
-	if err != nil {
-		return false
-	}
-
-	return reply.GetState()
 }

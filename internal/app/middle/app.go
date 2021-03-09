@@ -14,28 +14,23 @@ import (
 )
 
 type Options struct {
-	Name   string
-	webURL string
+	URL string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
 
-	if err = v.UnmarshalKey("app", o); err != nil {
+	if err = v.UnmarshalKey("web", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
 	}
-
-	web := v.GetStringMapString("web")
-	o.webURL = web["url"]
 
 	return o, err
 }
 
-// FIXME rename
-func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(name string, o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(db, etcd, o.webURL)
+	mid := service.NewMiddle(db, etcd, o.URL)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, mid)
 		return nil
@@ -44,7 +39,7 @@ func NewApp(o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *c
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
+	a, err := app.New(name, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

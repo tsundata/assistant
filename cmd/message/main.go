@@ -16,7 +16,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
-func CreateApp(cf string) (*app.Application, error) {
+func CreateApp(name, cf string) (*app.Application, error) {
 	viper, err := config.New(cf)
 	if err != nil {
 		return nil, err
@@ -97,19 +97,20 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	b := rulebot.New("message", nil, subClient, midClient, msgClient, wfClient, rules.Options...)
-	application, err := message.NewApp(appOptions, log, server, db, b, wfClient)
+	application, err := message.NewApp(name, appOptions, log, server, db, b, wfClient)
 	if err != nil {
 		return nil, err
 	}
 	return application, nil
 }
 
+var appName = flag.String("n", "appName", "set app name")
 var configFile = flag.String("f", "message.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()
 
-	a, err := CreateApp(*configFile)
+	a, err := CreateApp(*appName, *configFile)
 	if err != nil {
 		panic(err)
 	}

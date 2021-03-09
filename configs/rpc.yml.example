@@ -1,5 +1,3 @@
-app:
-    name: subscribe
 etcd:
     url: http://127.0.0.1:2379
     username:
@@ -9,11 +7,17 @@ influx:
     org:
     bucket:
     url:
+db:
+    url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
 redis:
     addr: 127.0.0.1:6379
     password:
+slack:
+    webhook:
+web:
+    url: http://127.0.0.1:7007
 jaeger:
-  serviceName: subscribe
+  serviceName: message
   reporter:
     localAgentHostPort: "127.0.0.1:6831"
   sampler:
