@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/etcd"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/redis"
+	"github.com/tsundata/assistant/internal/pkg/machinery"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
@@ -38,11 +38,11 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	redisOption, err := redis.NewOptions(viper)
+	machineryOption, err := machinery.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	rdb, err := redis.New(redisOption)
+	ms, err := machinery.New(machineryOption)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	application, err := worker.NewApp(name, log, rdb, msgClient)
+	application, err := worker.NewApp(name, log, ms, msgClient)
 	if err != nil {
 		return nil, err
 	}

@@ -1,19 +1,18 @@
 package task
 
 import (
-	"github.com/go-redis/redis/v8"
+	"github.com/RichardKnop/machinery/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/task/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
-func NewApp(name string, logger *zap.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client) (*app.Application, error) {
+func NewApp(name string, logger *zap.Logger, rs *rpc.Server, ms *machinery.Server) (*app.Application, error) {
 	// service
-	task := service.NewTask(etcd)
+	task := service.NewTask(ms)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterTaskServer(gs, task)
 		return nil

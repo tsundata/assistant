@@ -223,6 +223,18 @@ var rules = []Rule{
 			return []string{reply.GetText()}
 		},
 	},
+	{
+		Regex:       `test`,
+		HelpMessage: `Test`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			_, err := b.TaskClient.Send(context.Background(), &pb.JobRequest{Text: ""})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			return []string{"test done"}
+		},
+	},
 }
 
 var Options = []rulebot.Option{

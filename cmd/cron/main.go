@@ -15,7 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
-func CreateApp(name,cf string) (*app.Application, error) {
+func CreateApp(name, cf string) (*app.Application, error) {
 	viper, err := config.New(cf)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func CreateApp(name,cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, nil, rules.Options...)
+	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, nil, nil, rules.Options...)
 	application, err := cron.NewApp(name, log, b)
 	if err != nil {
 		return nil, err

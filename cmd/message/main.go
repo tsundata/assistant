@@ -83,6 +83,10 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	taskClient, err := rpcclients.NewTaskClient(client)
+	if err != nil {
+		return nil, err
+	}
 
 	dbOptions, err := database.NewOptions(viper)
 	if err != nil {
@@ -96,7 +100,7 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := rulebot.New("message", nil, subClient, midClient, msgClient, wfClient, rules.Options...)
+	b := rulebot.New("message", nil, subClient, midClient, msgClient, wfClient, taskClient, rules.Options...)
 	application, err := message.NewApp(name, appOptions, log, server, db, b, wfClient)
 	if err != nil {
 		return nil, err

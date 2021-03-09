@@ -15,15 +15,17 @@ type RuleBot struct {
 	providerOut []string
 	rules       []RuleParser
 
-	RDB       *redis.Client
-	SubClient pb.SubscribeClient
-	MidClient pb.MiddleClient
-	MsgClient pb.MessageClient
-	WfClient  pb.WorkflowClient
+	RDB        *redis.Client
+	SubClient  pb.SubscribeClient
+	MidClient  pb.MiddleClient
+	MsgClient  pb.MessageClient
+	WfClient   pb.WorkflowClient
+	TaskClient pb.TaskClient
 }
 
 func New(name string, RDB *redis.Client,
-	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient, WfClient pb.WorkflowClient,
+	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
+	WfClient pb.WorkflowClient, TaskClient pb.TaskClient,
 	opts ...Option) *RuleBot {
 
 	s := &RuleBot{
@@ -35,6 +37,7 @@ func New(name string, RDB *redis.Client,
 	s.MidClient = MidClient
 	s.MsgClient = MsgClient
 	s.WfClient = WfClient
+	s.TaskClient = TaskClient
 
 	for _, opt := range opts {
 		opt(s)
