@@ -15,9 +15,11 @@ func NewApp(name string, logger *zap.Logger, server *machinery.Server, msgClient
 		return nil, err
 	}
 
+	// worker
 	go func() {
+		workflowTask := tasks.NewWorkflowTask(msgClient)
 		err = server.RegisterTasks(map[string]interface{}{
-			"run": tasks.RunWorkflow,
+			"run": workflowTask.Run,
 		})
 		if err != nil {
 			logger.Error(err.Error())
