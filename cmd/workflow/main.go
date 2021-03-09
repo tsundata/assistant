@@ -81,7 +81,7 @@ func CreateApp(name, cf string) (*app.Application, error) {
 }
 
 var appName = flag.String("n", "appName", "set app name")
-var configFile = flag.String("f", "workflow.yml", "set config file which will loading")
+var configFile = flag.String("f", "rpc.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()

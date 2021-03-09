@@ -1,0 +1,14 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service Task {
+  rpc Send(JobRequest) returns (StateReply) {}
+}
+
+message JobRequest {
+  string text = 1;
+}

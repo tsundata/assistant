@@ -2,26 +2,19 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/internal/app/message"
-	"github.com/tsundata/assistant/internal/app/message/rpcclients"
-	"github.com/tsundata/assistant/internal/app/message/rules"
+	"github.com/tsundata/assistant/internal/app/worker"
+	"github.com/tsundata/assistant/internal/app/worker/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/database"
 	"github.com/tsundata/assistant/internal/pkg/etcd"
-	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
 func CreateApp(name, cf string) (*app.Application, error) {
 	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	rpcOptions, err := rpc.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
@@ -45,16 +38,11 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	influxOptions, err := influx.NewOptions(viper)
+	redisOption, err := redis.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	in, err := influx.New(influxOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	server, err := rpc.NewServer(rpcOptions, log, j, e, in)
+	rdb, err := redis.New(redisOption)
 	if err != nil {
 		return nil, err
 	}
@@ -67,37 +55,12 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	subClient, err := rpcclients.NewSubscribeClient(client)
-	if err != nil {
-		return nil, err
-	}
-	midClient, err := rpcclients.NewMiddleClient(client)
-	if err != nil {
-		return nil, err
-	}
-	wfClient, err := rpcclients.NewWorkflowClient(client)
-	if err != nil {
-		return nil, err
-	}
 	msgClient, err := rpcclients.NewMessageClient(client)
 	if err != nil {
 		return nil, err
 	}
 
-	dbOptions, err := database.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	db, err := database.New(dbOptions)
-	if err != nil {
-		return nil, err
-	}
-	appOptions, err := message.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	b := rulebot.New("message", nil, subClient, midClient, msgClient, wfClient, rules.Options...)
-	application, err := message.NewApp(name, appOptions, log, server, db, b, wfClient)
+	application, err := worker.NewApp(name, log, rdb, msgClient)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +68,7 @@ func CreateApp(name, cf string) (*app.Application, error) {
 }
 
 var appName = flag.String("n", "appName", "set app name")
-var configFile = flag.String("f", "rpc.yml", "set config file which will loading")
+var configFile = flag.String("f", "worker.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()
