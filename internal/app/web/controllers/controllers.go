@@ -3,11 +3,14 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
+	"time"
 )
 
 func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
@@ -26,44 +29,60 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		router.Get("/oauth/:category", wc.OAuth)
 		router.Get("/qr/:text", wc.Qr)
 
-		// auth
-		authMiddleware := func(c *fiber.Ctx) error {
+		// auth middleware
+		auth := func(c *fiber.Ctx) error {
 			uuid := utils.ExtractUUID(c.Path())
 			if uuid == "" {
 				return errors.New("error param")
 			}
 
-			reply, err := wc.midClient.Authorization(context.Background(), &pb.TextRequest{
-				Text: uuid,
-			})
-			if err != nil {
-				return err
+			// cache
+			key := fmt.Sprintf("web:auth:%s", uuid)
+			s := wc.rdb.Get(context.Background(), key)
+			r, err := s.Result()
+			var reply *pb.StateReply
+			if err != nil && err == redis.Nil {
+				reply, err = wc.midClient.Authorization(context.Background(), &pb.TextRequest{
+					Text: uuid,
+				})
+				if err != nil {
+					wc.logger.Error(err.Error())
+					wc.rdb.Set(context.Background(), key, "0", time.Hour)
+					return c.SendStatus(http.StatusForbidden)
+				}
+			}
+			if r == "1" {
+				return c.Next()
 			}
 
 			if reply.GetState() {
+				wc.rdb.Set(context.Background(), key, "1", time.Hour)
 				return c.Next()
 			}
+
+			wc.rdb.Set(context.Background(), key, "0", time.Hour)
 			return c.SendStatus(http.StatusForbidden)
 		}
-		router.Get("/memo/:uuid", authMiddleware, wc.Memo)
-		router.Get("/apps/:uuid", authMiddleware, wc.Apps)
 
-		router.Get("/credentials/:uuid", authMiddleware, wc.Credentials)
-		router.Get("/credentials/:uuid/create", authMiddleware, wc.CredentialsCreate)
-		router.Post("/credentials/:uuid/store", authMiddleware, wc.CredentialsStore)
+		router.Get("/memo/:uuid", auth, wc.Memo)
+		router.Get("/apps/:uuid", auth, wc.Apps)
 
-		router.Get("/setting/:uuid", authMiddleware, wc.Setting)
-		router.Get("/setting/:uuid/create", authMiddleware, wc.SettingCreate)
-		router.Post("/setting/:uuid/store", authMiddleware, wc.SettingStore)
+		router.Get("/credentials/:uuid", auth, wc.Credentials)
+		router.Get("/credentials/:uuid/create", auth, wc.CredentialsCreate)
+		router.Post("/credentials/:uuid/store", auth, wc.CredentialsStore)
 
-		router.Get("/scripts/:uuid", authMiddleware, wc.Scripts)
-		router.Get("/scripts/:uuid/create", authMiddleware, wc.ScriptCreate)
-		router.Post("/script/:uuid/store", authMiddleware, wc.ScriptStore)
+		router.Get("/setting/:uuid", auth, wc.Setting)
+		router.Get("/setting/:uuid/create", auth, wc.SettingCreate)
+		router.Post("/setting/:uuid/store", auth, wc.SettingStore)
 
-		router.Get("/action/:uuid", authMiddleware, wc.Action)
-		router.Get("/action/:uuid/create", authMiddleware, wc.ActionCreate)
-		router.Get("/action/:uuid/run", authMiddleware, wc.ActionRun)
-		router.Post("/action/:uuid/store", authMiddleware, wc.ActionStore)
+		router.Get("/scripts/:uuid", auth, wc.Scripts)
+		router.Get("/scripts/:uuid/create", auth, wc.ScriptCreate)
+		router.Post("/script/:uuid/store", auth, wc.ScriptStore)
+
+		router.Get("/action/:uuid", auth, wc.Action)
+		router.Get("/action/:uuid/create", auth, wc.ActionCreate)
+		router.Get("/action/:uuid/run", auth, wc.ActionRun)
+		router.Post("/action/:uuid/store", auth, wc.ActionStore)
 	}
 
 	return requestHandler
