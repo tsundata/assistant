@@ -15,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.etcd.io/etcd/clientv3"
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"google.golang.org/grpc"
@@ -83,6 +84,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
+				rollbar.StreamServerInterceptor(),
 				influx.StreamServerInterceptor(in, opt.Org, opt.Bucket),
 				grpczap.StreamServerInterceptor(logger.Zap),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
@@ -92,6 +94,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 		),
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
+				rollbar.UnaryServerInterceptor(),
 				influx.UnaryServerInterceptor(in, opt.Org, opt.Bucket),
 				grpczap.UnaryServerInterceptor(logger.Zap),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
