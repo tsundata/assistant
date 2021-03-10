@@ -105,8 +105,9 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, erro
 	}
 
 	systemApps := map[string]bool{
-		"pocket": true,
-		"github": true,
+		"pocket":  true,
+		"github":  true,
+		"dropbox": true,
 	}
 
 	haveApps := make(map[string]bool)
