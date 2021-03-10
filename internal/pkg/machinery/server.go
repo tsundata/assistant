@@ -20,7 +20,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
 	if err = v.UnmarshalKey("redis", o); err != nil {
-		return nil, errors.New("unmarshal redis option error")
+		return nil, errors.New("unmarshal machinery redis option error")
 	}
 
 	return o, err

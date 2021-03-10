@@ -3,10 +3,10 @@ package agent
 import (
 	"github.com/tsundata/assistant/internal/app/agent/broker"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"go.uber.org/zap"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 )
 
-func NewApp(name string, logger *zap.Logger, b broker.Runner) (*app.Application, error) {
+func NewApp(name string, logger *logger.Logger, b broker.Runner) (*app.Application, error) {
 	logger.Info("start agent " + name)
 
 	a, err := app.New(name, logger)

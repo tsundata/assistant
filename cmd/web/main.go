@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 func CreateApp(name, cf string) (*app.Application, error) {
@@ -22,6 +23,13 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	rollbarOptions, err := rollbar.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rollbar.Config(rollbarOptions)
+
 	httpOptions, err := http.NewOptions(viper)
 	if err != nil {
 		return nil, err

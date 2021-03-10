@@ -7,9 +7,9 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/etcd/clientv3"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -28,7 +28,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(name string, o *Options, logger *zap.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(name string, o *Options, logger *logger.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client) (*app.Application, error) {
 	// service
 	mid := service.NewMiddle(db, etcd, o.URL)
 	err := rs.Register(func(gs *grpc.Server) error {

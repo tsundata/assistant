@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/machinery"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 func CreateApp(name, cf string) (*app.Application, error) {
@@ -19,6 +20,12 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 	log := logger.NewLogger()
+
+	rollbarOptions, err := rollbar.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rollbar.Config(rollbarOptions)
 
 	t, err := jaeger.NewConfiguration(viper, log)
 	if err != nil {

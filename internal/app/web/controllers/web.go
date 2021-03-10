@@ -11,13 +11,13 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
-	"go.uber.org/zap"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -30,13 +30,13 @@ import (
 type WebController struct {
 	opt       *web.Options
 	rdb       *redis.Client
-	logger    *zap.Logger
+	logger    *logger.Logger
 	midClient pb.MiddleClient
 	msgClient pb.MessageClient
 	wfClient  pb.WorkflowClient
 }
 
-func NewWebController(opt *web.Options, rdb *redis.Client, logger *zap.Logger,
+func NewWebController(opt *web.Options, rdb *redis.Client, logger *logger.Logger,
 	midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient) *WebController {
 	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient, wfClient: wfClient}
 }
@@ -63,7 +63,7 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 		Uuid: uuid,
 	})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 	if reply.GetContent() == "" {
@@ -73,7 +73,7 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 	var list []string
 	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -114,13 +114,13 @@ func (wc *WebController) Qr(c *fiber.Ctx) error {
 
 	txt, err := url.QueryUnescape(text)
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.Status(http.StatusNotFound).SendString("error text")
 	}
 
 	png, err := qrcode.Encode(txt, qrcode.Medium, 512)
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.Status(http.StatusNotFound).SendString("error qr")
 	}
 
@@ -134,7 +134,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 
 	reply, err := wc.midClient.Apps(context.Background(), &pb.TextRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -173,7 +173,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 
 	reply, err := wc.msgClient.List(context.Background(), &pb.MessageRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -196,7 +196,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 		buf.Reset()
 		err := md.Convert(utils.StringToByte(item.GetText()), &buf)
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 		} else {
 			text = buf.String()
 		}
@@ -228,7 +228,7 @@ func (wc *WebController) Credentials(c *fiber.Ctx) error {
 
 	reply, err := wc.midClient.GetCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -340,7 +340,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 		Kvs: kvs,
 	})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -352,7 +352,7 @@ func (wc *WebController) Setting(c *fiber.Ctx) error {
 
 	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -422,7 +422,7 @@ func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 		Value: value,
 	})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -435,7 +435,7 @@ func (wc *WebController) Scripts(c *fiber.Ctx) error {
 
 	reply, err := wc.midClient.GetScripts(context.Background(), &pb.TextRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -519,7 +519,7 @@ func (wc *WebController) ScriptStore(c *fiber.Ctx) error {
 		Text: script,
 	})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -532,7 +532,7 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 
 	reply, err := wc.midClient.GetAction(context.Background(), &pb.TextRequest{})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -616,7 +616,7 @@ func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 		Text: action,
 	})
 	if err != nil {
-		wc.logger.Error(err.Error())
+		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -630,7 +630,7 @@ func (wc *WebController) App(c *fiber.Ctx) error {
 	case "pocket":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		consumerKey := ""
@@ -644,7 +644,7 @@ func (wc *WebController) App(c *fiber.Ctx) error {
 		client := pocket.NewPocket(consumerKey)
 		code, err := client.GetCode(redirectURI, "")
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 
@@ -655,7 +655,7 @@ func (wc *WebController) App(c *fiber.Ctx) error {
 	case "github":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		clientId := ""
@@ -679,7 +679,7 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 	case "pocket":
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		consumerKey := ""
@@ -691,20 +691,20 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 
 		code, err := wc.rdb.Get(context.Background(), "pocket:code").Result()
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		if code != "" {
 			client := pocket.NewPocket(consumerKey)
 			tokenResp, err := client.GetAccessToken(code)
 			if err != nil {
-				wc.logger.Error(err.Error())
+				wc.logger.Error(err)
 				return c.SendStatus(http.StatusBadRequest)
 			}
 
 			extra, err := json.Marshal(&tokenResp)
 			if err != nil {
-				wc.logger.Error(err.Error())
+				wc.logger.Error(err)
 				return c.SendStatus(http.StatusBadRequest)
 			}
 			reply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
@@ -714,7 +714,7 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 				Extra: utils.ByteToString(extra),
 			})
 			if err != nil {
-				wc.logger.Error(err.Error())
+				wc.logger.Error(err)
 				return c.SendStatus(http.StatusBadRequest)
 			}
 			if reply.GetState() {
@@ -725,7 +725,7 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 		code := c.FormValue("code")
 		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		clientId := ""
@@ -742,13 +742,13 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 		client := github.NewGithub(clientId)
 		tokenResp, err := client.GetAccessToken(clientSecret, code)
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 
 		extra, err := json.Marshal(&tokenResp)
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		appReply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
@@ -758,7 +758,7 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 			Extra: utils.ByteToString(extra),
 		})
 		if err != nil {
-			wc.logger.Error(err.Error())
+			wc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		if appReply.GetState() {

@@ -5,12 +5,12 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/task/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
-func NewApp(name string, logger *zap.Logger, rs *rpc.Server, ms *machinery.Server) (*app.Application, error) {
+func NewApp(name string, logger *logger.Logger, rs *rpc.Server, ms *machinery.Server) (*app.Application, error) {
 	// service
 	task := service.NewTask(ms)
 	err := rs.Register(func(gs *grpc.Server) error {

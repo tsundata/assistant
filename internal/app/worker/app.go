@@ -5,13 +5,13 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/worker/tasks"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"go.uber.org/zap"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 )
 
-func NewApp(name string, logger *zap.Logger, server *machinery.Server, msgClient pb.MessageClient) (*app.Application, error) {
+func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgClient pb.MessageClient) (*app.Application, error) {
 	a, err := app.New(name, logger)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -22,17 +22,17 @@ func NewApp(name string, logger *zap.Logger, server *machinery.Server, msgClient
 			"run": workflowTask.Run,
 		})
 		if err != nil {
-			logger.Error(err.Error())
+			logger.Error(err)
 			return
 		}
 
 		worker := server.NewWorker(name, 0)
 		worker.SetErrorHandler(func(err error) {
-			logger.Error(err.Error())
+			logger.Error(err)
 		})
 		err = worker.Launch()
 		if err != nil {
-			logger.Error(err.Error())
+			logger.Error(err)
 			return
 		}
 	}()

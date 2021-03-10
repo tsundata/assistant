@@ -24,7 +24,7 @@ func (b *Server) Run() {
 	// host
 	h, err := host.Info()
 	if err != nil {
-		b.broker.logger.Error(err.Error())
+		b.broker.logger.Error(err)
 		return
 	}
 	writeAPI := b.broker.influx.WriteAPI(b.broker.Org, b.broker.Bucket)
@@ -32,25 +32,25 @@ func (b *Server) Run() {
 		// mem
 		v, err := mem.VirtualMemory()
 		if err != nil {
-			b.broker.logger.Error(err.Error())
+			b.broker.logger.Error(err)
 			continue
 		}
 		// swap
 		s, err := mem.SwapMemory()
 		if err != nil {
-			b.broker.logger.Error(err.Error())
+			b.broker.logger.Error(err)
 			continue
 		}
 		// cpu
 		c, err := cpu.Percent(time.Second, false)
 		if err != nil {
-			b.broker.logger.Error(err.Error())
+			b.broker.logger.Error(err)
 			continue
 		}
 		// disk
 		d, err := disk.Usage("/")
 		if err != nil {
-			b.broker.logger.Error(err.Error())
+			b.broker.logger.Error(err)
 			continue
 		}
 

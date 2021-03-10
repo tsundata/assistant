@@ -46,7 +46,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 					Text: uuid,
 				})
 				if err != nil {
-					wc.logger.Error(err.Error())
+					wc.logger.Error(err)
 					wc.rdb.Set(context.Background(), key, "0", time.Hour)
 					return c.SendStatus(http.StatusForbidden)
 				}

@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
-	"go.uber.org/zap"
 	"strings"
 	"time"
 )
@@ -18,12 +18,12 @@ import (
 type Message struct {
 	webhook  string
 	db       *sqlx.DB
-	logger   *zap.Logger
+	logger   *logger.Logger
 	bot      *rulebot.RuleBot
 	wfClient pb.WorkflowClient
 }
 
-func NewManage(db *sqlx.DB, logger *zap.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
+func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
 	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
 }
 

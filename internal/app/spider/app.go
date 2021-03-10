@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/crawler"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"go.uber.org/zap"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(name string, o *Options, rdb *redis.Client, logger *zap.Logger,
+func NewApp(name string, o *Options, rdb *redis.Client, logger *logger.Logger,
 	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
 	go func() {
 		// Delayed loading
@@ -35,7 +35,7 @@ func NewApp(name string, o *Options, rdb *redis.Client, logger *zap.Logger,
 		s.SetService(rdb, logger, msgClient, midClient, subClient)
 		err := s.LoadRule(o.Path)
 		if err != nil {
-			logger.Error(err.Error())
+			logger.Error(err)
 			return
 		}
 		s.Daemon()

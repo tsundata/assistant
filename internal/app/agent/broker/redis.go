@@ -92,13 +92,13 @@ func (b *Redis) Run() {
 func writeSection(b *Redis, writeAPI api.WriteAPI, section string) error {
 	re, err := regexp.Compile(`^-?\d+(?:\.\d+)?$`)
 	if err != nil {
-		b.broker.logger.Error(err.Error())
+		b.broker.logger.Error(err)
 		return err
 	}
 	var line strings.Builder
 	str, err := b.rdb.Info(context.Background(), section).Result()
 	if err != nil {
-		b.broker.logger.Error(err.Error())
+		b.broker.logger.Error(err)
 		return err
 	}
 	rows := strings.Split(str, "\r\n")

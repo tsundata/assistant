@@ -4,17 +4,17 @@ import (
 	"errors"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 )
 
 type Broker struct {
 	Org    string
 	Bucket string
-	logger *zap.Logger
+	logger *logger.Logger
 	influx influxdb2.Client
 }
 
-func NewBroker(v *viper.Viper, logger *zap.Logger, influx influxdb2.Client) (*Broker, error) {
+func NewBroker(v *viper.Viper, logger *logger.Logger, influx influxdb2.Client) (*Broker, error) {
 	var err error
 	o := new(Broker)
 	o.logger = logger

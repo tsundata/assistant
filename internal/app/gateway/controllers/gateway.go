@@ -10,8 +10,8 @@ import (
 	"github.com/slack-go/slack/slackevents"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"go.uber.org/zap"
 	"net/http"
 	"regexp"
 	"strings"
@@ -21,12 +21,12 @@ import (
 type GatewayController struct {
 	opt       *gateway.Options
 	rdb       *redis.Client
-	logger    *zap.Logger
+	logger    *logger.Logger
 	subClient pb.SubscribeClient
 	msgClient pb.MessageClient
 }
 
-func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *zap.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
+func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *logger.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
 	return &GatewayController{opt: opt, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 
@@ -40,7 +40,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 	api := slack.New(gc.opt.Token)
 	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.opt.Verification}))
 	if err != nil {
-		gc.logger.Error(err.Error())
+		gc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -48,7 +48,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 		var r *slackevents.ChallengeResponse
 		err := json.Unmarshal(body, &r)
 		if err != nil {
-			gc.logger.Error(err.Error())
+			gc.logger.Error(err)
 			return c.SendStatus(http.StatusBadRequest)
 		}
 		return c.SendString(r.Challenge)
@@ -82,7 +82,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 					Text: ev.Text,
 				})
 				if err != nil {
-					gc.logger.Error(err.Error())
+					gc.logger.Error(err)
 					return c.SendStatus(http.StatusBadRequest)
 				}
 
@@ -94,7 +94,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 					}
 				}
 				if err != nil {
-					gc.logger.Error(err.Error())
+					gc.logger.Error(err)
 					return c.SendStatus(http.StatusBadRequest)
 				}
 			}

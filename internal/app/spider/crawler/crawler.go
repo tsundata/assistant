@@ -9,9 +9,9 @@ import (
 	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
@@ -26,7 +26,7 @@ type Crawler struct {
 	jobs  map[string]rule.Rule
 
 	rdb       *redis.Client
-	logger    *zap.Logger
+	logger    *logger.Logger
 	msgClient pb.MessageClient
 	midClient pb.MiddleClient
 	subClient pb.SubscribeClient
@@ -39,7 +39,7 @@ func New() *Crawler {
 	}
 }
 
-func (s *Crawler) SetService(rdb *redis.Client, logger *zap.Logger,
+func (s *Crawler) SetService(rdb *redis.Client, logger *logger.Logger,
 	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) {
 	s.rdb = rdb
 	s.logger = logger
@@ -110,12 +110,12 @@ func (s *Crawler) Daemon() {
 func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return
 	}
 	for {
@@ -124,7 +124,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 				Text: name,
 			})
 			if err != nil {
-				s.logger.Error(err.Error())
+				s.logger.Error(err)
 				continue
 			}
 			// unsubscribe
@@ -136,9 +136,9 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {
-						s.logger.Error("processSpiderRule recover " + name)
+						s.logger.Warn("processSpiderRule recover " + name)
 						if v, ok := r.(error); ok {
-							s.logger.Error(v.Error())
+							s.logger.Error(v)
 						}
 					}
 				}()
@@ -154,7 +154,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			s.logger.Error(err.Error())
+			s.logger.Error(err)
 			continue
 		}
 		time.Sleep(2 * time.Second)
@@ -180,7 +180,7 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	smembers := s.rdb.SMembers(ctx, sentKey)
 	old, err := smembers.Result()
 	if err != nil && err != redis.Nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return []string{}
 	}
 
@@ -188,7 +188,7 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	smembers = s.rdb.SMembers(ctx, todoKey)
 	todo, err := smembers.Result()
 	if err != nil && err != redis.Nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return []string{}
 	}
 
@@ -269,7 +269,7 @@ func (s *Crawler) send(name string, out []string) {
 		Text: text,
 	})
 	if err != nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return
 	}
 }

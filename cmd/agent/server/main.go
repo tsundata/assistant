@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 func CreateApp(name, cf string) (*app.Application, error) {
@@ -16,6 +17,12 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 	log := logger.NewLogger()
+
+	rollbarOptions, err := rollbar.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rollbar.Config(rollbarOptions)
 
 	influxOptions, err := influx.NewOptions(viper)
 	if err != nil {

@@ -3,11 +3,11 @@ package jaeger
 import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/uber/jaeger-client-go/config"
-	"go.uber.org/zap"
 )
 
-func NewConfiguration(v *viper.Viper, logger *zap.Logger) (*config.Configuration, error) {
+func NewConfiguration(v *viper.Viper, logger *logger.Logger) (*config.Configuration, error) {
 	var (
 		err error
 		c   = new(config.Configuration)

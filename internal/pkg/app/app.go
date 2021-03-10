@@ -2,7 +2,7 @@ package app
 
 import (
 	"errors"
-	"go.uber.org/zap"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +13,7 @@ import (
 
 type Application struct {
 	name       string
-	logger     *zap.Logger
+	logger     *logger.Logger
 	httpServer *http.Server
 	rpcServer  *rpc.Server
 }
@@ -38,7 +38,7 @@ func RPCServerOption(svr *rpc.Server) Option {
 	}
 }
 
-func New(name string, logger *zap.Logger, options ...Option) (*Application, error) {
+func New(name string, logger *logger.Logger, options ...Option) (*Application, error) {
 	app := &Application{
 		name:   name,
 		logger: logger,
@@ -78,13 +78,13 @@ func (a *Application) AwaitSignal() {
 
 	if a.httpServer != nil {
 		if err := a.httpServer.Stop(); err != nil {
-			a.logger.Error("stop http server error " + err.Error())
+			a.logger.Error(err)
 		}
 	}
 
 	if a.rpcServer != nil {
 		if err := a.rpcServer.Stop(); err != nil {
-			a.logger.Error("stop rpc server error " + err.Error())
+			a.logger.Error(err)
 		}
 	}
 

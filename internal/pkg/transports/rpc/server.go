@@ -13,10 +13,10 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/influx"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/naming"
@@ -58,7 +58,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 type Server struct {
 	o        *Options
-	logger   *zap.Logger
+	logger   *logger.Logger
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
 	in       influxdb2.Client
@@ -66,7 +66,7 @@ type Server struct {
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(opt *Options, logger *zap.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
+func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -84,7 +84,7 @@ func NewServer(opt *Options, logger *zap.Logger, tracer opentracing.Tracer, etcd
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
 				influx.StreamServerInterceptor(in, opt.Org, opt.Bucket),
-				grpczap.StreamServerInterceptor(logger),
+				grpczap.StreamServerInterceptor(logger.Zap),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
@@ -93,7 +93,7 @@ func NewServer(opt *Options, logger *zap.Logger, tracer opentracing.Tracer, etcd
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
 				influx.UnaryServerInterceptor(in, opt.Org, opt.Bucket),
-				grpczap.UnaryServerInterceptor(logger),
+				grpczap.UnaryServerInterceptor(logger.Zap),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
@@ -132,7 +132,7 @@ func (s *Server) Start() error {
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 		return err
 	}
 
@@ -146,7 +146,7 @@ func (s *Server) Start() error {
 	go func() {
 		err = s.server.Serve(lis)
 		if err != nil {
-			s.logger.Error(err.Error())
+			s.logger.Error(err)
 		}
 	}()
 
@@ -164,7 +164,7 @@ func (s *Server) Stop() error {
 	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
 	err := s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
-		s.logger.Error(err.Error())
+		s.logger.Error(err)
 	}
 	s.server.Stop()
 	return err

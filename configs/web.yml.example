@@ -20,3 +20,6 @@ jaeger:
   sampler:
     type: const
     param: 1
+rollbar:
+    token:
+    environment: # production development
