@@ -1,5 +1,3 @@
-app:
-    name: web
 http:
     mode: release
     host: 127.0.0.1
