@@ -39,6 +39,7 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 		reply = append(reply, &pb.MessageItem{
 			Uuid: item.UUID,
 			Text: item.Text,
+			Type: item.Type,
 			Time: item.Time.Format("2006-01-02 15:04:05"),
 		})
 	}

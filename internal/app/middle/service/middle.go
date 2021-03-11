@@ -54,7 +54,7 @@ Scripts
 	}, nil
 }
 
-func (s *Middle) Qr(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
 	}, nil
@@ -97,7 +97,7 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 	}, nil
 }
 
-func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
+func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
 	var apps []model.App
 	err := s.db.Select(&apps, "SELECT * FROM `apps` ORDER BY `time` DESC")
 	if err != nil && err != sql.ErrNoRows {
@@ -118,6 +118,10 @@ func (s *Middle) Apps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, erro
 			Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type),
 			IsAuthorized: app.Token != "",
 			Type:         app.Type,
+			Name:         app.Name,
+			Token:        app.Token,
+			Extra:        app.Extra,
+			Time:         app.Time.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -241,6 +245,28 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 		return nil, err
 	}
 
+	var credentials []*pb.Credential
+	for _, item := range items {
+		credentials = append(credentials, &pb.Credential{
+			Name:    item.Name,
+			Type:    item.Type,
+			Content: item.Content,
+			Time:    item.Time.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &pb.CredentialsReply{
+		Credentials: credentials,
+	}, nil
+}
+
+func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
+	var items []model.Credential
+	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
 	var kvs []*pb.KV
 	for _, item := range items {
 		// Data masking
@@ -267,7 +293,7 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 		})
 	}
 
-	return &pb.CredentialsReply{
+	return &pb.MaskingReply{
 		Items: kvs,
 	}, nil
 }

@@ -1,19 +1,21 @@
 package dropbox
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/tsundata/assistant/internal/pkg/utils"
+	"io"
 	"net/http"
 	"time"
 )
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
-	Scope       string `json:"scope"`
 	TokenType   string `json:"token_type"`
-	ExpiresIn   string `json:"expires_in"`
-	AccountID   string `json:"account_id"`
 	UID         string `json:"uid"`
+	AccountID   string `json:"account_id"`
+	Scope       string `json:"scope"`
 }
 
 type Dropbox struct {
@@ -37,7 +39,6 @@ func (v *Dropbox) AuthorizeURL(redirectURI string) string {
 
 func (v *Dropbox) GetAccessToken(clientSecret, redirectURI, code string) (*TokenResponse, error) {
 	resp, err := v.c.R().
-		SetResult(&TokenResponse{}).
 		SetBasicAuth(v.ClientId, clientSecret).
 		SetFormData(map[string]string{
 			"code":         code,
@@ -50,8 +51,42 @@ func (v *Dropbox) GetAccessToken(clientSecret, redirectURI, code string) (*Token
 	}
 
 	if resp.StatusCode() == http.StatusOK {
-		return resp.Result().(*TokenResponse), nil
+		var result TokenResponse
+		err = json.Unmarshal(resp.Body(), &result)
+		if err != nil {
+			return nil, err
+		}
+		return &result, nil
 	} else {
-		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+		return nil, fmt.Errorf("%d, %s", resp.StatusCode(), utils.ByteToString(resp.Body()))
+	}
+}
+
+func (v *Dropbox) Upload(accessToken string, path string, content io.Reader) error {
+	apiArg, err := json.Marshal(map[string]interface{}{
+		"path":            path,
+		"mode":            "add",
+		"autorename":      true,
+		"mute":            false,
+		"strict_conflict": false,
+	})
+	if err != nil {
+		return err
+	}
+	resp, err := v.c.R().
+		SetAuthToken(accessToken).
+		SetHeader("Content-Type", "application/octet-stream").
+		SetHeader("Dropbox-API-Arg", utils.ByteToString(apiArg)).
+		SetContentLength(true).
+		SetBody(content).
+		Post("https://content.dropboxapi.com/2/files/upload")
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		return nil
+	} else {
+		return fmt.Errorf("%d, %s", resp.StatusCode(), utils.ByteToString(resp.Body()))
 	}
 }

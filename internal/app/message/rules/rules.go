@@ -44,7 +44,7 @@ var rules = []Rule{
 			}
 
 			txt := args[1]
-			reply, err := b.MidClient.Qr(context.Background(), &pb.TextRequest{
+			reply, err := b.MidClient.GetQrUrl(context.Background(), &pb.TextRequest{
 				Text: txt,
 			})
 			if err != nil {
@@ -227,11 +227,6 @@ var rules = []Rule{
 		Regex:       `test`,
 		HelpMessage: `Test`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			_, err := b.TaskClient.Send(context.Background(), &pb.JobRequest{Text: ""})
-			if err != nil {
-				return []string{"error call: " + err.Error()}
-			}
-
 			return []string{"test done"}
 		},
 	},

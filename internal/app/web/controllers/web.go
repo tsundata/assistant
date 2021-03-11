@@ -133,7 +133,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := wc.midClient.Apps(context.Background(), &pb.TextRequest{})
+	reply, err := wc.midClient.GetApps(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
@@ -227,7 +227,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := wc.midClient.GetCredentials(context.Background(), &pb.TextRequest{})
+	reply, err := wc.midClient.GetMaskingCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)

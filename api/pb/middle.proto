@@ -8,11 +8,12 @@ option go_package = "api/pb";
 service Middle {
   rpc CreatePage(PageRequest) returns (TextReply) {}
   rpc GetPage(PageRequest) returns (PageReply) {}
-  rpc Qr(TextRequest) returns (TextReply) {}
-  rpc Apps(TextRequest) returns (AppsReply) {}
+  rpc GetQrUrl(TextRequest) returns (TextReply) {}
+  rpc GetApps(TextRequest) returns (AppsReply) {}
   rpc GetAvailableApp(TextRequest) returns (AppReply) {}
   rpc StoreAppOAuth(AppRequest) returns (StateReply) {}
   rpc GetCredentials(TextRequest) returns (CredentialsReply) {}
+  rpc GetMaskingCredentials(TextRequest) returns (MaskingReply) {}
   rpc GetCredential(CredentialRequest) returns (CredentialReply) {}
   rpc CreateCredential(KVsRequest) returns (StateReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
@@ -59,9 +60,24 @@ message App {
   string title = 1;
   bool isAuthorized = 2;
   string type = 3;
+  string name = 4;
+  string token = 5;
+  string extra = 6;
+  string time = 7;
 }
 
 message CredentialsReply {
+  repeated Credential credentials = 1;
+}
+
+message Credential {
+  string name = 1;
+  string type = 2;
+  string content = 3;
+  string time = 4;
+}
+
+message MaskingReply {
   repeated KV items = 1;
 }
 

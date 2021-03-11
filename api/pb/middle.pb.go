@@ -298,6 +298,10 @@ type App struct {
 	Title                string   `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
 	IsAuthorized         bool     `protobuf:"varint,2,opt,name=isAuthorized,proto3" json:"isAuthorized,omitempty"`
 	Type                 string   `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Name                 string   `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Token                string   `protobuf:"bytes,5,opt,name=token,proto3" json:"token,omitempty"`
+	Extra                string   `protobuf:"bytes,6,opt,name=extra,proto3" json:"extra,omitempty"`
+	Time                 string   `protobuf:"bytes,7,opt,name=time,proto3" json:"time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -348,11 +352,39 @@ func (m *App) GetType() string {
 	return ""
 }
 
+func (m *App) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *App) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+func (m *App) GetExtra() string {
+	if m != nil {
+		return m.Extra
+	}
+	return ""
+}
+
+func (m *App) GetTime() string {
+	if m != nil {
+		return m.Time
+	}
+	return ""
+}
+
 type CredentialsReply struct {
-	Items                []*KV    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Credentials          []*Credential `protobuf:"bytes,1,rep,name=credentials,proto3" json:"credentials,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
 func (m *CredentialsReply) Reset()         { *m = CredentialsReply{} }
@@ -379,7 +411,107 @@ func (m *CredentialsReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CredentialsReply proto.InternalMessageInfo
 
-func (m *CredentialsReply) GetItems() []*KV {
+func (m *CredentialsReply) GetCredentials() []*Credential {
+	if m != nil {
+		return m.Credentials
+	}
+	return nil
+}
+
+type Credential struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Content              string   `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	Time                 string   `protobuf:"bytes,4,opt,name=time,proto3" json:"time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Credential) Reset()         { *m = Credential{} }
+func (m *Credential) String() string { return proto.CompactTextString(m) }
+func (*Credential) ProtoMessage()    {}
+func (*Credential) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{7}
+}
+func (m *Credential) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Credential.Unmarshal(m, b)
+}
+func (m *Credential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Credential.Marshal(b, m, deterministic)
+}
+func (m *Credential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Credential.Merge(m, src)
+}
+func (m *Credential) XXX_Size() int {
+	return xxx_messageInfo_Credential.Size(m)
+}
+func (m *Credential) XXX_DiscardUnknown() {
+	xxx_messageInfo_Credential.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Credential proto.InternalMessageInfo
+
+func (m *Credential) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Credential) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *Credential) GetContent() string {
+	if m != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func (m *Credential) GetTime() string {
+	if m != nil {
+		return m.Time
+	}
+	return ""
+}
+
+type MaskingReply struct {
+	Items                []*KV    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MaskingReply) Reset()         { *m = MaskingReply{} }
+func (m *MaskingReply) String() string { return proto.CompactTextString(m) }
+func (*MaskingReply) ProtoMessage()    {}
+func (*MaskingReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{8}
+}
+func (m *MaskingReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MaskingReply.Unmarshal(m, b)
+}
+func (m *MaskingReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MaskingReply.Marshal(b, m, deterministic)
+}
+func (m *MaskingReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MaskingReply.Merge(m, src)
+}
+func (m *MaskingReply) XXX_Size() int {
+	return xxx_messageInfo_MaskingReply.Size(m)
+}
+func (m *MaskingReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_MaskingReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MaskingReply proto.InternalMessageInfo
+
+func (m *MaskingReply) GetItems() []*KV {
 	if m != nil {
 		return m.Items
 	}
@@ -398,7 +530,7 @@ func (m *CredentialRequest) Reset()         { *m = CredentialRequest{} }
 func (m *CredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*CredentialRequest) ProtoMessage()    {}
 func (*CredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{7}
+	return fileDescriptor_492fc6d32fb115aa, []int{9}
 }
 func (m *CredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CredentialRequest.Unmarshal(m, b)
@@ -445,7 +577,7 @@ func (m *CredentialReply) Reset()         { *m = CredentialReply{} }
 func (m *CredentialReply) String() string { return proto.CompactTextString(m) }
 func (*CredentialReply) ProtoMessage()    {}
 func (*CredentialReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{8}
+	return fileDescriptor_492fc6d32fb115aa, []int{10}
 }
 func (m *CredentialReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CredentialReply.Unmarshal(m, b)
@@ -497,7 +629,7 @@ func (m *SettingReply) Reset()         { *m = SettingReply{} }
 func (m *SettingReply) String() string { return proto.CompactTextString(m) }
 func (*SettingReply) ProtoMessage()    {}
 func (*SettingReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{9}
+	return fileDescriptor_492fc6d32fb115aa, []int{11}
 }
 func (m *SettingReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SettingReply.Unmarshal(m, b)
@@ -536,7 +668,7 @@ func (m *Script) Reset()         { *m = Script{} }
 func (m *Script) String() string { return proto.CompactTextString(m) }
 func (*Script) ProtoMessage()    {}
 func (*Script) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{10}
+	return fileDescriptor_492fc6d32fb115aa, []int{12}
 }
 func (m *Script) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Script.Unmarshal(m, b)
@@ -581,7 +713,7 @@ func (m *ScriptsReply) Reset()         { *m = ScriptsReply{} }
 func (m *ScriptsReply) String() string { return proto.CompactTextString(m) }
 func (*ScriptsReply) ProtoMessage()    {}
 func (*ScriptsReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{11}
+	return fileDescriptor_492fc6d32fb115aa, []int{13}
 }
 func (m *ScriptsReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ScriptsReply.Unmarshal(m, b)
@@ -620,7 +752,7 @@ func (m *Action) Reset()         { *m = Action{} }
 func (m *Action) String() string { return proto.CompactTextString(m) }
 func (*Action) ProtoMessage()    {}
 func (*Action) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{12}
+	return fileDescriptor_492fc6d32fb115aa, []int{14}
 }
 func (m *Action) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Action.Unmarshal(m, b)
@@ -665,7 +797,7 @@ func (m *ActionReply) Reset()         { *m = ActionReply{} }
 func (m *ActionReply) String() string { return proto.CompactTextString(m) }
 func (*ActionReply) ProtoMessage()    {}
 func (*ActionReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{13}
+	return fileDescriptor_492fc6d32fb115aa, []int{15}
 }
 func (m *ActionReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ActionReply.Unmarshal(m, b)
@@ -704,7 +836,7 @@ func (m *KVRequest) Reset()         { *m = KVRequest{} }
 func (m *KVRequest) String() string { return proto.CompactTextString(m) }
 func (*KVRequest) ProtoMessage()    {}
 func (*KVRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{14}
+	return fileDescriptor_492fc6d32fb115aa, []int{16}
 }
 func (m *KVRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_KVRequest.Unmarshal(m, b)
@@ -749,7 +881,7 @@ func (m *KVsRequest) Reset()         { *m = KVsRequest{} }
 func (m *KVsRequest) String() string { return proto.CompactTextString(m) }
 func (*KVsRequest) ProtoMessage()    {}
 func (*KVsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{15}
+	return fileDescriptor_492fc6d32fb115aa, []int{17}
 }
 func (m *KVsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_KVsRequest.Unmarshal(m, b)
@@ -788,7 +920,7 @@ func (m *KV) Reset()         { *m = KV{} }
 func (m *KV) String() string { return proto.CompactTextString(m) }
 func (*KV) ProtoMessage()    {}
 func (*KV) Descriptor() ([]byte, []int) {
-	return fileDescriptor_492fc6d32fb115aa, []int{16}
+	return fileDescriptor_492fc6d32fb115aa, []int{18}
 }
 func (m *KV) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_KV.Unmarshal(m, b)
@@ -830,6 +962,8 @@ func init() {
 	proto.RegisterType((*AppReply)(nil), "pb.AppReply")
 	proto.RegisterType((*App)(nil), "pb.App")
 	proto.RegisterType((*CredentialsReply)(nil), "pb.CredentialsReply")
+	proto.RegisterType((*Credential)(nil), "pb.Credential")
+	proto.RegisterType((*MaskingReply)(nil), "pb.MaskingReply")
 	proto.RegisterType((*CredentialRequest)(nil), "pb.CredentialRequest")
 	proto.RegisterType((*CredentialReply)(nil), "pb.CredentialReply")
 	proto.RegisterType((*SettingReply)(nil), "pb.SettingReply")
@@ -845,50 +979,55 @@ func init() {
 func init() { proto.RegisterFile("middle.proto", fileDescriptor_492fc6d32fb115aa) }
 
 var fileDescriptor_492fc6d32fb115aa = []byte{
-	// 675 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x4f, 0x6f, 0xda, 0x4e,
-	0x10, 0x05, 0x4c, 0x48, 0x98, 0xf0, 0x27, 0xbf, 0xfd, 0xa5, 0x92, 0x95, 0xe6, 0x80, 0xf6, 0x10,
-	0x21, 0x35, 0x22, 0x09, 0xe9, 0xa5, 0xaa, 0x7a, 0xa0, 0x39, 0x70, 0x40, 0x51, 0x1a, 0xa8, 0x38,
-	0xb4, 0x97, 0x2e, 0x61, 0x9a, 0x5a, 0x71, 0xec, 0xad, 0x3d, 0x44, 0xd0, 0x0f, 0xdb, 0xcf, 0x52,
-	0xed, 0x1f, 0x1b, 0x83, 0x45, 0x4b, 0xd4, 0xde, 0x76, 0x86, 0x79, 0xef, 0xcd, 0x8e, 0xe7, 0x2d,
-	0x50, 0x7b, 0xf4, 0xa6, 0x53, 0x1f, 0x3b, 0x32, 0x0a, 0x29, 0x64, 0x25, 0x39, 0x39, 0x82, 0x89,
-	0x88, 0x6d, 0xcc, 0x6f, 0x61, 0xff, 0x83, 0xb8, 0xc7, 0x21, 0x7e, 0x9f, 0x61, 0x4c, 0x8c, 0x41,
-	0x79, 0x36, 0xf3, 0xa6, 0x6e, 0xb1, 0x55, 0x6c, 0x57, 0x87, 0xfa, 0xcc, 0x0e, 0x61, 0x87, 0x3c,
-	0xf2, 0xd1, 0x2d, 0xe9, 0xa4, 0x09, 0x98, 0x0b, 0xbb, 0x77, 0x61, 0x40, 0x18, 0x90, 0xeb, 0xe8,
-	0x7c, 0x12, 0xf2, 0x1b, 0xa8, 0x1a, 0x4a, 0xe9, 0x2f, 0xfe, 0x09, 0xe1, 0x17, 0x80, 0x9e, 0x94,
-	0x99, 0x16, 0x03, 0xf1, 0x88, 0x09, 0xa3, 0x3a, 0xab, 0x1c, 0x2d, 0x64, 0x42, 0xa8, 0xcf, 0x5a,
-	0x25, 0x7c, 0xc0, 0xc0, 0xb2, 0x99, 0x40, 0x65, 0x71, 0x4e, 0x91, 0x70, 0xcb, 0x26, 0xab, 0x03,
-	0xde, 0x86, 0x6a, 0x4f, 0xca, 0xd8, 0xb4, 0xfc, 0x12, 0xca, 0x42, 0xca, 0xd8, 0x2d, 0xb6, 0x9c,
-	0xf6, 0x7e, 0x77, 0xb7, 0x23, 0x27, 0x1d, 0x25, 0xaf, 0x93, 0xfc, 0x2b, 0xec, 0xe9, 0x5e, 0xec,
-	0xdd, 0xfe, 0xa2, 0x93, 0xe3, 0x65, 0x27, 0x4a, 0xa7, 0xa2, 0x74, 0x06, 0xe3, 0xa4, 0xa3, 0x11,
-	0x38, 0x3d, 0x29, 0x97, 0xa3, 0x2a, 0x66, 0x47, 0xc5, 0xa1, 0xe6, 0xc5, 0xbd, 0x19, 0x7d, 0x0b,
-	0x23, 0xef, 0x07, 0x4e, 0xb5, 0xd8, 0xde, 0x70, 0x25, 0x97, 0x36, 0xe2, 0x2c, 0x1b, 0xe1, 0xe7,
-	0x70, 0x70, 0x15, 0xe1, 0x14, 0x03, 0xf2, 0x84, 0x6f, 0x6f, 0x7b, 0x0c, 0x3b, 0x1e, 0xe1, 0x63,
-	0x72, 0xdd, 0xb4, 0x0d, 0x9d, 0xe4, 0x6f, 0xe1, 0xbf, 0x25, 0xe2, 0x99, 0x5f, 0x80, 0x7f, 0x86,
-	0x66, 0x16, 0xfc, 0x9c, 0x91, 0xb5, 0xb2, 0xcb, 0x90, 0xed, 0x2b, 0x5d, 0x8a, 0x53, 0xa8, 0x8d,
-	0x90, 0xc8, 0x0b, 0xee, 0xb7, 0xb9, 0xc7, 0x29, 0x54, 0x46, 0x77, 0x91, 0x27, 0x89, 0x35, 0xa0,
-	0x64, 0xd7, 0xd1, 0x19, 0x96, 0x3c, 0x33, 0x27, 0x9c, 0x53, 0xaa, 0x8e, 0x73, 0xe2, 0xe7, 0x50,
-	0x33, 0xd5, 0x76, 0x46, 0xad, 0x55, 0x6e, 0x50, 0xdc, 0xa6, 0x20, 0xc3, 0xdf, 0xbb, 0x23, 0x2f,
-	0x0c, 0xb6, 0xe2, 0x3f, 0x83, 0x7d, 0x53, 0xbd, 0x99, 0xde, 0xfe, 0x6e, 0xe9, 0x2f, 0xa1, 0x3a,
-	0x18, 0x27, 0xe3, 0x3f, 0x00, 0xe7, 0x01, 0x17, 0x76, 0x84, 0xea, 0xa8, 0xb6, 0xe4, 0x49, 0xf8,
-	0xb3, 0xd4, 0x50, 0x3a, 0xe0, 0x27, 0x00, 0x83, 0x71, 0x9c, 0xa0, 0x5c, 0x70, 0x1e, 0x9e, 0xd6,
-	0xa7, 0xa3, 0x52, 0xfc, 0x14, 0x4a, 0x83, 0xf1, 0xb6, 0xac, 0xdd, 0x9f, 0x15, 0xa8, 0x5c, 0xeb,
-	0x17, 0x85, 0x75, 0x00, 0xae, 0x22, 0x14, 0x84, 0xca, 0xee, 0xac, 0xa9, 0x38, 0x33, 0x6f, 0xc9,
-	0x51, 0x5d, 0x25, 0x3e, 0xe2, 0x9c, 0xf4, 0x2d, 0x79, 0x81, 0xbd, 0x82, 0xdd, 0x3e, 0xd2, 0x6f,
-	0x8a, 0xd3, 0x67, 0x83, 0x17, 0xd8, 0x09, 0x94, 0x6e, 0x23, 0x53, 0x67, 0x38, 0x36, 0x90, 0xb6,
-	0xa1, 0xac, 0xac, 0xbb, 0xa1, 0x32, 0x75, 0x35, 0x2f, 0xb0, 0x2e, 0x34, 0xfb, 0x48, 0xbd, 0x27,
-	0xe1, 0xf9, 0x62, 0xe2, 0xa3, 0xb2, 0x57, 0x0e, 0x54, 0x4b, 0xdc, 0x6e, 0x31, 0x17, 0x50, 0x1f,
-	0x51, 0x18, 0xa9, 0xe2, 0x1b, 0x65, 0x2e, 0xd6, 0x48, 0x0b, 0x0c, 0x40, 0xc7, 0x23, 0x12, 0x94,
-	0x36, 0xfe, 0x06, 0x1a, 0x7d, 0xa4, 0x8c, 0xcf, 0xf2, 0x2a, 0x87, 0x2a, 0xb1, 0xee, 0x44, 0x5e,
-	0x60, 0xef, 0xa0, 0xbe, 0x02, 0x65, 0x2f, 0x56, 0x0b, 0x13, 0xfc, 0xff, 0xeb, 0x69, 0x03, 0x7f,
-	0xad, 0xed, 0x2d, 0x08, 0x33, 0x0c, 0x0d, 0xf3, 0xa5, 0xe3, 0xcd, 0xfd, 0x5e, 0x00, 0xf4, 0x91,
-	0xac, 0x97, 0xf2, 0xbd, 0x1e, 0x68, 0x40, 0xc6, 0x69, 0xbc, 0xc0, 0xce, 0xa1, 0x6e, 0x84, 0x12,
-	0x54, 0xdd, 0xee, 0xd3, 0x9f, 0x44, 0x8c, 0xa9, 0x36, 0x89, 0x64, 0x2c, 0xa7, 0x21, 0x35, 0x2b,
-	0x62, 0x8c, 0x9b, 0x03, 0xe5, 0x55, 0xce, 0xa0, 0xaa, 0xbe, 0xb0, 0x31, 0x62, 0xae, 0xbe, 0x99,
-	0xf1, 0xd5, 0xba, 0xc6, 0x26, 0x4c, 0x5e, 0xc3, 0x2c, 0xf1, 0x35, 0x06, 0xb3, 0x2d, 0x96, 0xb3,
-	0x0b, 0xf5, 0xe4, 0x49, 0x16, 0x5b, 0x0a, 0xbc, 0xdf, 0xfb, 0x54, 0x11, 0xd2, 0x3b, 0x93, 0x93,
-	0x49, 0x45, 0xff, 0x45, 0x5f, 0xfe, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x57, 0xbf, 0x86, 0x81, 0xc2,
-	0x07, 0x00, 0x00,
+	// 754 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0x4b, 0x6f, 0x1a, 0x49,
+	0x10, 0xe6, 0x65, 0x1e, 0xc5, 0xcb, 0xdb, 0x6b, 0x4b, 0x23, 0xaf, 0x0f, 0xa8, 0x0f, 0x2b, 0x4b,
+	0x8b, 0xb0, 0x8d, 0xf7, 0xb2, 0xda, 0xe4, 0x40, 0x12, 0x89, 0x03, 0xb2, 0x1c, 0x43, 0xc2, 0x21,
+	0xb9, 0xa4, 0x81, 0x8a, 0xd3, 0x62, 0x18, 0x3a, 0x33, 0x8d, 0x85, 0xf3, 0x7f, 0xa2, 0xfc, 0xcd,
+	0xa8, 0x1f, 0x33, 0x34, 0x10, 0x1c, 0xac, 0xe4, 0xd6, 0x5d, 0x54, 0x7d, 0xdf, 0xd7, 0x35, 0x55,
+	0x9f, 0x0d, 0x95, 0x19, 0x9f, 0x4c, 0x7c, 0x6c, 0x89, 0x70, 0x2e, 0xe7, 0x24, 0x23, 0x46, 0x27,
+	0x30, 0x62, 0x91, 0xbd, 0xd3, 0x5b, 0x28, 0xbf, 0x66, 0x77, 0xd8, 0xc7, 0xcf, 0x0b, 0x8c, 0x24,
+	0x21, 0x90, 0x5b, 0x2c, 0xf8, 0xc4, 0x4b, 0x37, 0xd2, 0x67, 0xa5, 0xbe, 0x3e, 0x93, 0x23, 0x38,
+	0x90, 0x5c, 0xfa, 0xe8, 0x65, 0x74, 0xd0, 0x5c, 0x88, 0x07, 0x85, 0xf1, 0x3c, 0x90, 0x18, 0x48,
+	0x2f, 0xab, 0xe3, 0xf1, 0x95, 0xde, 0x40, 0xc9, 0x40, 0x0a, 0xff, 0xe1, 0xb7, 0x00, 0x7e, 0x00,
+	0xe8, 0x08, 0xe1, 0x48, 0x0c, 0xd8, 0x0c, 0x63, 0x44, 0x75, 0x56, 0x31, 0xf9, 0x20, 0x62, 0x40,
+	0x7d, 0xd6, 0x2c, 0xf3, 0x29, 0x06, 0x16, 0xcd, 0x5c, 0x54, 0x14, 0x97, 0x32, 0x64, 0x5e, 0xce,
+	0x44, 0xf5, 0x85, 0x9e, 0x41, 0xa9, 0x23, 0x44, 0x64, 0x24, 0xff, 0x05, 0x39, 0x26, 0x44, 0xe4,
+	0xa5, 0x1b, 0xd9, 0xb3, 0x72, 0xbb, 0xd0, 0x12, 0xa3, 0x96, 0xa2, 0xd7, 0x41, 0xfa, 0x11, 0x8a,
+	0x5a, 0x8b, 0x7d, 0xdb, 0x2f, 0x28, 0x39, 0x5d, 0x29, 0x51, 0x3c, 0x79, 0xc5, 0xd3, 0x1b, 0xc6,
+	0x8a, 0xbe, 0xa5, 0x21, 0xdb, 0x11, 0x62, 0xd5, 0xab, 0xb4, 0xdb, 0x2b, 0x0a, 0x15, 0x1e, 0x75,
+	0x16, 0xf2, 0xd3, 0x3c, 0xe4, 0x5f, 0x70, 0xa2, 0xd9, 0x8a, 0xfd, 0xb5, 0x58, 0xa2, 0x24, 0xeb,
+	0x28, 0x89, 0x15, 0xe7, 0x1c, 0xc5, 0x89, 0xba, 0x83, 0x1f, 0xf6, 0x29, 0xef, 0xf4, 0x49, 0x63,
+	0xf2, 0x19, 0x7a, 0x05, 0x8b, 0xc9, 0x67, 0x48, 0x5f, 0xc1, 0xe1, 0xcb, 0x10, 0x27, 0x18, 0x48,
+	0xce, 0x7c, 0xdb, 0xc2, 0x0b, 0x28, 0x8f, 0x57, 0x31, 0xdb, 0xc9, 0x9a, 0x7a, 0xe1, 0x2a, 0xb5,
+	0xef, 0xa6, 0xd0, 0x11, 0xc0, 0xea, 0xa7, 0xbd, 0x3b, 0xbb, 0x73, 0x66, 0x12, 0xa5, 0x39, 0x47,
+	0x69, 0x13, 0x2a, 0xd7, 0x2c, 0x9a, 0xf2, 0xe0, 0xce, 0xa8, 0x3c, 0x85, 0x03, 0x2e, 0x71, 0x16,
+	0xeb, 0x4b, 0xbe, 0x80, 0x0e, 0xd2, 0xff, 0xe1, 0x0f, 0x47, 0xec, 0xd3, 0x86, 0x8f, 0xbe, 0x87,
+	0xba, 0x5b, 0xfc, 0x94, 0x69, 0x69, 0xb8, 0x6f, 0x72, 0x75, 0x25, 0xfb, 0xd0, 0x84, 0xca, 0x00,
+	0xa5, 0xdc, 0xf3, 0x1d, 0x4d, 0xc8, 0x0f, 0xc6, 0x21, 0x17, 0x92, 0xd4, 0x20, 0x63, 0x37, 0x31,
+	0xdb, 0xcf, 0x70, 0x33, 0x21, 0xb8, 0x94, 0x09, 0x3b, 0x2e, 0x25, 0xbd, 0x80, 0x8a, 0xc9, 0xb6,
+	0x5f, 0xb2, 0xb1, 0x8e, 0x0d, 0x0a, 0xdb, 0x24, 0x38, 0xf8, 0x9d, 0xb1, 0xe4, 0xf3, 0x60, 0x2f,
+	0xfc, 0x73, 0x28, 0x9b, 0xec, 0xdd, 0xf0, 0xf6, 0x77, 0x0b, 0x7f, 0x05, 0xa5, 0xde, 0x30, 0x6e,
+	0xff, 0x21, 0x64, 0xa7, 0xf8, 0x60, 0x5b, 0xa8, 0x8e, 0x6a, 0x4e, 0xef, 0x99, 0xbf, 0x48, 0xbc,
+	0x44, 0x5f, 0xe8, 0xdf, 0x00, 0xbd, 0x61, 0x14, 0x57, 0x79, 0x90, 0x9d, 0xde, 0x6f, 0x76, 0x47,
+	0x85, 0x68, 0x13, 0x32, 0xbd, 0xe1, 0xbe, 0xa8, 0xed, 0xaf, 0x05, 0xc8, 0x5f, 0x6b, 0x33, 0x25,
+	0x2d, 0x3d, 0xae, 0x4c, 0xa2, 0x72, 0x3a, 0x52, 0x57, 0x98, 0x8e, 0x8d, 0x9e, 0x54, 0x55, 0xe0,
+	0x0d, 0x2e, 0xa5, 0x7e, 0x25, 0x4d, 0x91, 0x7f, 0xa0, 0xd0, 0x45, 0xf9, 0x48, 0x72, 0xe2, 0x98,
+	0x34, 0x45, 0x9a, 0x50, 0xec, 0xa2, 0xbc, 0x0d, 0xdf, 0x86, 0xbe, 0xc9, 0x36, 0x48, 0x8f, 0x42,
+	0x2b, 0xfb, 0xda, 0x91, 0x9c, 0x38, 0x1b, 0x4d, 0x91, 0x36, 0xd4, 0x55, 0xf2, 0x3d, 0xe3, 0x3e,
+	0x1b, 0xf9, 0xa8, 0x1c, 0x66, 0xab, 0xa8, 0x12, 0x3b, 0x9e, 0xad, 0xb9, 0x84, 0xea, 0x40, 0xce,
+	0x43, 0x95, 0x7c, 0xa3, 0xfc, 0x85, 0xd4, 0x92, 0x04, 0x53, 0xa0, 0xef, 0x03, 0xc9, 0x64, 0xf2,
+	0x82, 0xff, 0xa0, 0xd6, 0x45, 0xe9, 0xd8, 0xc2, 0x36, 0xcb, 0xd1, 0xba, 0x1b, 0x24, 0x0a, 0x9f,
+	0xc1, 0x71, 0x17, 0xa5, 0xdd, 0xd3, 0x47, 0x11, 0x0e, 0x55, 0xc0, 0x5d, 0x68, 0x9a, 0x22, 0xcf,
+	0xa1, 0xba, 0x46, 0x4c, 0x8e, 0x37, 0x4c, 0xc7, 0xd6, 0xfe, 0xb9, 0x19, 0x36, 0xe5, 0xff, 0x6a,
+	0x2f, 0x63, 0x12, 0x1d, 0x84, 0x9a, 0x19, 0x98, 0x68, 0xf7, 0x6b, 0x2f, 0x01, 0xba, 0x28, 0xed,
+	0x4a, 0xee, 0xd0, 0xe9, 0x2e, 0x2c, 0x4d, 0x91, 0x0b, 0xa8, 0x1a, 0xa2, 0xb8, 0xaa, 0x6a, 0xc7,
+	0xf2, 0x67, 0x24, 0x66, 0x37, 0x77, 0x91, 0x38, 0x9b, 0xab, 0x4b, 0x2a, 0x96, 0xc4, 0xec, 0xff,
+	0x56, 0xd1, 0x36, 0xcb, 0x39, 0x94, 0xd4, 0x7c, 0x98, 0x7d, 0xde, 0xca, 0xaf, 0x3b, 0xeb, 0xb9,
+	0xc9, 0xb1, 0xab, 0x66, 0x9b, 0xc3, 0x0c, 0xec, 0x35, 0x06, 0x8b, 0x3d, 0xa6, 0xbb, 0x0d, 0xd5,
+	0xf8, 0x6f, 0x1a, 0xdb, 0x93, 0xe0, 0x45, 0xf1, 0x5d, 0x9e, 0x09, 0x7e, 0x2e, 0x46, 0xa3, 0xbc,
+	0xfe, 0x27, 0xe7, 0xea, 0x7b, 0x00, 0x00, 0x00, 0xff, 0xff, 0x80, 0xe0, 0xad, 0x3c, 0x04, 0x09,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -905,11 +1044,12 @@ const _ = grpc.SupportPackageIsVersion4
 type MiddleClient interface {
 	CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageReply, error)
-	Qr(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
-	Apps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error)
+	GetQrUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	GetApps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error)
 	GetAvailableApp(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppReply, error)
 	StoreAppOAuth(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*CredentialsReply, error)
+	GetMaskingCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MaskingReply, error)
 	GetCredential(ctx context.Context, in *CredentialRequest, opts ...grpc.CallOption) (*CredentialReply, error)
 	CreateCredential(ctx context.Context, in *KVsRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetSetting(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingReply, error)
@@ -948,18 +1088,18 @@ func (c *middleClient) GetPage(ctx context.Context, in *PageRequest, opts ...grp
 	return out, nil
 }
 
-func (c *middleClient) Qr(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+func (c *middleClient) GetQrUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
 	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.Middle/Qr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.Middle/GetQrUrl", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *middleClient) Apps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error) {
+func (c *middleClient) GetApps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error) {
 	out := new(AppsReply)
-	err := c.cc.Invoke(ctx, "/pb.Middle/Apps", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.Middle/GetApps", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -987,6 +1127,15 @@ func (c *middleClient) StoreAppOAuth(ctx context.Context, in *AppRequest, opts .
 func (c *middleClient) GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*CredentialsReply, error) {
 	out := new(CredentialsReply)
 	err := c.cc.Invoke(ctx, "/pb.Middle/GetCredentials", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleClient) GetMaskingCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MaskingReply, error) {
+	out := new(MaskingReply)
+	err := c.cc.Invoke(ctx, "/pb.Middle/GetMaskingCredentials", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1087,11 +1236,12 @@ func (c *middleClient) Authorization(ctx context.Context, in *TextRequest, opts 
 type MiddleServer interface {
 	CreatePage(context.Context, *PageRequest) (*TextReply, error)
 	GetPage(context.Context, *PageRequest) (*PageReply, error)
-	Qr(context.Context, *TextRequest) (*TextReply, error)
-	Apps(context.Context, *TextRequest) (*AppsReply, error)
+	GetQrUrl(context.Context, *TextRequest) (*TextReply, error)
+	GetApps(context.Context, *TextRequest) (*AppsReply, error)
 	GetAvailableApp(context.Context, *TextRequest) (*AppReply, error)
 	StoreAppOAuth(context.Context, *AppRequest) (*StateReply, error)
 	GetCredentials(context.Context, *TextRequest) (*CredentialsReply, error)
+	GetMaskingCredentials(context.Context, *TextRequest) (*MaskingReply, error)
 	GetCredential(context.Context, *CredentialRequest) (*CredentialReply, error)
 	CreateCredential(context.Context, *KVsRequest) (*StateReply, error)
 	GetSetting(context.Context, *TextRequest) (*SettingReply, error)
@@ -1114,11 +1264,11 @@ func (*UnimplementedMiddleServer) CreatePage(ctx context.Context, req *PageReque
 func (*UnimplementedMiddleServer) GetPage(ctx context.Context, req *PageRequest) (*PageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
 }
-func (*UnimplementedMiddleServer) Qr(ctx context.Context, req *TextRequest) (*TextReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Qr not implemented")
+func (*UnimplementedMiddleServer) GetQrUrl(ctx context.Context, req *TextRequest) (*TextReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetQrUrl not implemented")
 }
-func (*UnimplementedMiddleServer) Apps(ctx context.Context, req *TextRequest) (*AppsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Apps not implemented")
+func (*UnimplementedMiddleServer) GetApps(ctx context.Context, req *TextRequest) (*AppsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApps not implemented")
 }
 func (*UnimplementedMiddleServer) GetAvailableApp(ctx context.Context, req *TextRequest) (*AppReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableApp not implemented")
@@ -1128,6 +1278,9 @@ func (*UnimplementedMiddleServer) StoreAppOAuth(ctx context.Context, req *AppReq
 }
 func (*UnimplementedMiddleServer) GetCredentials(ctx context.Context, req *TextRequest) (*CredentialsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCredentials not implemented")
+}
+func (*UnimplementedMiddleServer) GetMaskingCredentials(ctx context.Context, req *TextRequest) (*MaskingReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMaskingCredentials not implemented")
 }
 func (*UnimplementedMiddleServer) GetCredential(ctx context.Context, req *CredentialRequest) (*CredentialReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCredential not implemented")
@@ -1200,38 +1353,38 @@ func _Middle_GetPage_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Middle_Qr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Middle_GetQrUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MiddleServer).Qr(ctx, in)
+		return srv.(MiddleServer).GetQrUrl(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Middle/Qr",
+		FullMethod: "/pb.Middle/GetQrUrl",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Qr(ctx, req.(*TextRequest))
+		return srv.(MiddleServer).GetQrUrl(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Middle_Apps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Middle_GetApps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MiddleServer).Apps(ctx, in)
+		return srv.(MiddleServer).GetApps(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Middle/Apps",
+		FullMethod: "/pb.Middle/GetApps",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleServer).Apps(ctx, req.(*TextRequest))
+		return srv.(MiddleServer).GetApps(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1286,6 +1439,24 @@ func _Middle_GetCredentials_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MiddleServer).GetCredentials(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Middle_GetMaskingCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleServer).GetMaskingCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Middle/GetMaskingCredentials",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleServer).GetMaskingCredentials(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1483,12 +1654,12 @@ var _Middle_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Middle_GetPage_Handler,
 		},
 		{
-			MethodName: "Qr",
-			Handler:    _Middle_Qr_Handler,
+			MethodName: "GetQrUrl",
+			Handler:    _Middle_GetQrUrl_Handler,
 		},
 		{
-			MethodName: "Apps",
-			Handler:    _Middle_Apps_Handler,
+			MethodName: "GetApps",
+			Handler:    _Middle_GetApps_Handler,
 		},
 		{
 			MethodName: "GetAvailableApp",
@@ -1501,6 +1672,10 @@ var _Middle_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCredentials",
 			Handler:    _Middle_GetCredentials_Handler,
+		},
+		{
+			MethodName: "GetMaskingCredentials",
+			Handler:    _Middle_GetMaskingCredentials_Handler,
 		},
 		{
 			MethodName: "GetCredential",

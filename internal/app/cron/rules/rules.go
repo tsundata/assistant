@@ -3,19 +3,9 @@ package rules
 import (
 	"github.com/tsundata/assistant/internal/app/cron/agent"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"time"
 )
 
 var rules = []Rule{
-	{
-		Name: "heartbeat",
-		When: "0 0 * * *",
-		Action: func(b *rulebot.RuleBot) []string {
-			return []string{
-				"Plugin Cron Heartbeat: " + time.Now().String(),
-			}
-		},
-	},
 	{
 		Name: "pocket",
 		When: "* * * * *",
@@ -28,6 +18,13 @@ var rules = []Rule{
 		When: "* * * * *",
 		Action: func(b *rulebot.RuleBot) []string {
 			return agent.FetchGithubStarred(b)
+		},
+	},
+	{
+		Name: "backup",
+		When: "0 0 * * *",
+		Action: func(b *rulebot.RuleBot) []string {
+			return agent.Backup(b)
 		},
 	},
 }
