@@ -20,13 +20,13 @@ func FetchGithubStarred(b *rulebot.RuleBot) []string {
 	}
 
 	// data
-	client := github.NewGithub("")
-	user, err := client.GetUser(accessToken)
+	client := github.NewGithub("", "", "", accessToken)
+	user, err := client.GetUser()
 	if err != nil {
 		return []string{}
 	}
 	if *user.Login != "" {
-		repos, err := client.GetStarred(accessToken, *user.Login)
+		repos, err := client.GetStarred(*user.Login)
 		if err != nil {
 			return []string{}
 		}

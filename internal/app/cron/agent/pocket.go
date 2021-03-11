@@ -35,8 +35,8 @@ func FetchPocket(b *rulebot.RuleBot) []string {
 	}
 
 	// data
-	client := pocket.NewPocket(consumerKey)
-	resp, err := client.Retrieve(accessToken, 10)
+	client := pocket.NewPocket(consumerKey, "", "", accessToken)
+	resp, err := client.Retrieve(10)
 	if err != nil {
 		return []string{}
 	}

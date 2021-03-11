@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"go.etcd.io/etcd/clientv3"
 	"net/url"
 	"strings"
@@ -104,10 +105,9 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 		return nil, err
 	}
 
-	systemApps := map[string]bool{
-		"pocket":  true,
-		"github":  true,
-		"dropbox": true,
+	providerApps := map[string]bool{}
+	for _, provider := range vendors.OAuthProviders {
+		providerApps[provider] = true
 	}
 
 	haveApps := make(map[string]bool)
@@ -125,7 +125,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 		})
 	}
 
-	for k := range systemApps {
+	for k := range providerApps {
 		if _, ok := haveApps[k]; !ok {
 			res = append(res, &pb.App{
 				Title:        fmt.Sprintf("%s (%s)", k, k),

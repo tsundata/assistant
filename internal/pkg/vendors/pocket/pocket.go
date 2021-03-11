@@ -1,11 +1,20 @@
 package pocket
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/go-resty/resty/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"net/http"
 	"time"
 )
+
+const ID = "pocket"
 
 type CodeResponse struct {
 	Code  string `json:"code"`
@@ -44,12 +53,17 @@ type Item struct {
 }
 
 type Pocket struct {
-	c           *resty.Client
-	ConsumerKey string
+	c            *resty.Client
+	clientId     string // ConsumerKey
+	clientSecret string
+	redirectURI  string
+	accessToken  string
+	code         string
+	rdb          *redis.Client
 }
 
-func NewPocket(consumerKey string) *Pocket {
-	v := &Pocket{ConsumerKey: consumerKey}
+func NewPocket(clientId, clientSecret, redirectURI, accessToken string) *Pocket {
+	v := &Pocket{clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI, accessToken: accessToken}
 
 	v.c = resty.New()
 	v.c.SetHostURL("https://getpocket.com")
@@ -58,50 +72,125 @@ func NewPocket(consumerKey string) *Pocket {
 	return v
 }
 
-func (v *Pocket) GetCode(redirectURI, state string) (*CodeResponse, error) {
+func (v *Pocket) SetRDB(rdb *redis.Client) {
+	v.rdb = rdb
+}
+
+func (v *Pocket) GetCode(state string) (*CodeResponse, error) {
 	resp, err := v.c.R().
 		SetResult(&CodeResponse{}).
 		SetHeader("X-Accept", "application/json").
-		SetBody(map[string]interface{}{"consumer_key": v.ConsumerKey, "redirect_uri": redirectURI, "state": state}).
+		SetBody(map[string]interface{}{"consumer_key": v.clientId, "redirect_uri": v.redirectURI, "state": state}).
 		Post("/v3/oauth/request")
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.StatusCode() == http.StatusOK {
-		return resp.Result().(*CodeResponse), nil
+		result := resp.Result().(*CodeResponse)
+		v.code = result.Code
+		return result, nil
 	} else {
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}
 }
 
-func (v *Pocket) AuthorizeURL(code, redirectURI string) string {
-	return fmt.Sprintf("https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s", code, redirectURI)
+func (v *Pocket) AuthorizeURL() string {
+	return fmt.Sprintf("https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s", v.code, v.redirectURI)
 }
 
-func (v *Pocket) GetAccessToken(code string) (*TokenResponse, error) {
+func (v *Pocket) GetAccessToken(code string) (interface{}, error) {
 	resp, err := v.c.R().
 		SetResult(&TokenResponse{}).
 		SetHeader("X-Accept", "application/json").
-		SetBody(map[string]interface{}{"consumer_key": v.ConsumerKey, "code": code}).
+		SetBody(map[string]interface{}{"consumer_key": v.clientId, "code": code}).
 		Post("/v3/oauth/authorize")
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.StatusCode() == http.StatusOK {
-		return resp.Result().(*TokenResponse), nil
+		result := resp.Result().(*TokenResponse)
+		v.accessToken = result.AccessToken
+		return result, nil
 	} else {
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}
 }
 
-func (v *Pocket) Retrieve(accessToken string, count int) (*ListResponse, error) {
+func (v *Pocket) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return err
+	}
+	clientId := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "consumer_key" {
+			clientId = item.Value
+		}
+	}
+	v.clientId = clientId
+
+	_, err = v.GetCode("")
+	if err != nil {
+		return err
+	}
+
+	v.rdb.Set(context.Background(), "pocket:code", v.code, time.Hour)
+
+	appRedirectURI := v.AuthorizeURL()
+	return c.Redirect(appRedirectURI, http.StatusFound)
+}
+
+func (v *Pocket) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return err
+	}
+	clientId := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "consumer_key" {
+			clientId = item.Value
+		}
+	}
+	v.clientId = clientId
+
+	code, err := v.rdb.Get(context.Background(), "pocket:code").Result()
+	if err != nil {
+		return err
+	}
+	if code != "" {
+		tokenResp, err := v.GetAccessToken(code)
+		if err != nil {
+			return err
+		}
+
+		extra, err := json.Marshal(&tokenResp)
+		if err != nil {
+			return err
+		}
+		appReply, err := mid.StoreAppOAuth(context.Background(), &pb.AppRequest{
+			Name:  "pocket",
+			Type:  "pocket",
+			Token: v.accessToken,
+			Extra: utils.ByteToString(extra),
+		})
+		if err != nil {
+			return err
+		}
+		if appReply.GetState() {
+			return c.SendString("Success")
+		}
+	}
+	return errors.New("error")
+}
+
+func (v *Pocket) Retrieve(count int) (*ListResponse, error) {
 	resp, err := v.c.R().
 		SetResult(&ListResponse{}).
 		SetBody(map[string]interface{}{
-			"consumer_key": v.ConsumerKey,
-			"access_token": accessToken,
+			"consumer_key": v.clientId,
+			"access_token": v.accessToken,
 			"count":        count,
 			"detailType":   "simple",
 			"state":        "all",

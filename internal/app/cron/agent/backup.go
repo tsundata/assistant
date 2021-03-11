@@ -51,9 +51,9 @@ func Backup(b *rulebot.RuleBot) []string {
 	}
 
 	// upload
-	client := dropbox.NewDropbox("")
+	client := dropbox.NewDropbox("", "", "", accessToken)
 	path := fmt.Sprintf("/backup/assistant_%s.json", time.Now().Format("2006-01-02_15:04:05"))
-	err = client.Upload(accessToken, path, bytes.NewReader(d))
+	err = client.Upload(path, bytes.NewReader(d))
 	if err != nil {
 		return []string{err.Error()}
 	}

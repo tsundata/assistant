@@ -1,14 +1,20 @@
 package dropbox
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"io"
 	"net/http"
 	"time"
 )
+
+const ID = "dropbox"
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -19,12 +25,15 @@ type TokenResponse struct {
 }
 
 type Dropbox struct {
-	c        *resty.Client
-	ClientId string
+	c            *resty.Client
+	clientId     string
+	clientSecret string
+	redirectURI  string
+	accessToken  string
 }
 
-func NewDropbox(clientId string) *Dropbox {
-	v := &Dropbox{ClientId: clientId}
+func NewDropbox(clientId, clientSecret, redirectURI, accessToken string) *Dropbox {
+	v := &Dropbox{clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI, accessToken: accessToken}
 
 	v.c = resty.New()
 	v.c.SetHostURL("https://api.dropboxapi.com")
@@ -33,17 +42,17 @@ func NewDropbox(clientId string) *Dropbox {
 	return v
 }
 
-func (v *Dropbox) AuthorizeURL(redirectURI string) string {
-	return fmt.Sprintf("https://www.dropbox.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s", v.ClientId, redirectURI)
+func (v *Dropbox) AuthorizeURL() string {
+	return fmt.Sprintf("https://www.dropbox.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s", v.clientId, v.redirectURI)
 }
 
-func (v *Dropbox) GetAccessToken(clientSecret, redirectURI, code string) (*TokenResponse, error) {
+func (v *Dropbox) GetAccessToken(code string) (interface{}, error) {
 	resp, err := v.c.R().
-		SetBasicAuth(v.ClientId, clientSecret).
+		SetBasicAuth(v.clientId, v.clientSecret).
 		SetFormData(map[string]string{
 			"code":         code,
 			"grant_type":   "authorization_code",
-			"redirect_uri": redirectURI,
+			"redirect_uri": v.redirectURI,
 		}).
 		Post("/oauth2/token")
 	if err != nil {
@@ -56,13 +65,74 @@ func (v *Dropbox) GetAccessToken(clientSecret, redirectURI, code string) (*Token
 		if err != nil {
 			return nil, err
 		}
+		v.accessToken = result.AccessToken
 		return &result, nil
 	} else {
 		return nil, fmt.Errorf("%d, %s", resp.StatusCode(), utils.ByteToString(resp.Body()))
 	}
 }
 
-func (v *Dropbox) Upload(accessToken string, path string, content io.Reader) error {
+func (v *Dropbox) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return c.SendStatus(http.StatusBadRequest)
+	}
+	clientId := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "key" {
+			clientId = item.Value
+		}
+	}
+	v.clientId = clientId
+
+	appRedirectURI := v.AuthorizeURL()
+	return c.Redirect(appRedirectURI, http.StatusFound)
+}
+
+func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
+	code := c.FormValue("code")
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return err
+	}
+	clientId := ""
+	clientSecret := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "key" {
+			clientId = item.Value
+		}
+		if item.Key == "secret" {
+			clientSecret = item.Value
+		}
+	}
+	v.clientId = clientId
+	v.clientSecret = clientSecret
+
+	tokenResp, err := v.GetAccessToken(code)
+	if err != nil {
+		return err
+	}
+
+	extra, err := json.Marshal(&tokenResp)
+	if err != nil {
+		return err
+	}
+	appReply, err := mid.StoreAppOAuth(context.Background(), &pb.AppRequest{
+		Name:  ID,
+		Type:  ID,
+		Token: v.accessToken,
+		Extra: utils.ByteToString(extra),
+	})
+	if err != nil {
+		return err
+	}
+	if appReply.GetState() {
+		return nil
+	}
+	return errors.New("error")
+}
+
+func (v *Dropbox) Upload(path string, content io.Reader) error {
 	apiArg, err := json.Marshal(map[string]interface{}{
 		"path":            path,
 		"mode":            "add",
@@ -74,7 +144,7 @@ func (v *Dropbox) Upload(accessToken string, path string, content io.Reader) err
 		return err
 	}
 	resp, err := v.c.R().
-		SetAuthToken(accessToken).
+		SetAuthToken(v.accessToken).
 		SetHeader("Content-Type", "application/octet-stream").
 		SetHeader("Dropbox-API-Arg", utils.ByteToString(apiArg)).
 		SetContentLength(true).

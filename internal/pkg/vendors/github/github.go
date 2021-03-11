@@ -1,11 +1,19 @@
 package github
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"net/http"
 	"time"
 )
+
+const ID = "github"
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -152,12 +160,15 @@ type Repository struct {
 }
 
 type Github struct {
-	c        *resty.Client
-	ClientId string
+	c            *resty.Client
+	clientId     string
+	clientSecret string
+	redirectURI  string
+	accessToken  string
 }
 
-func NewGithub(clientId string) *Github {
-	v := &Github{ClientId: clientId}
+func NewGithub(clientId, clientSecret, redirectURI, accessToken string) *Github {
+	v := &Github{clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI, accessToken: accessToken}
 
 	v.c = resty.New()
 	v.c.SetHostURL("https://api.github.com")
@@ -166,17 +177,17 @@ func NewGithub(clientId string) *Github {
 	return v
 }
 
-func (v *Github) AuthorizeURL(redirectURI string) string {
-	return fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s", v.ClientId, redirectURI)
+func (v *Github) AuthorizeURL() string {
+	return fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s", v.clientId, v.redirectURI)
 }
 
-func (v *Github) GetAccessToken(clientSecret, code string) (*TokenResponse, error) {
+func (v *Github) GetAccessToken(code string) (interface{}, error) {
 	resp, err := v.c.R().
 		SetResult(&TokenResponse{}).
 		SetHeader("Accept", "application/vnd.github.v3+json").
 		SetBody(map[string]interface{}{
-			"client_id":     v.ClientId,
-			"client_secret": clientSecret,
+			"client_id":     v.clientId,
+			"client_secret": v.clientSecret,
 			"code":          code,
 		}).
 		Post("https://github.com/login/oauth/access_token")
@@ -185,17 +196,79 @@ func (v *Github) GetAccessToken(clientSecret, code string) (*TokenResponse, erro
 	}
 
 	if resp.StatusCode() == http.StatusOK {
-		return resp.Result().(*TokenResponse), nil
+		result := resp.Result().(*TokenResponse)
+		v.accessToken = result.AccessToken
+		return result, nil
 	} else {
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}
 }
 
-func (v *Github) GetUser(accessToken string) (*User, error) {
+func (v *Github) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return err
+	}
+	clientId := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "client_id" {
+			clientId = item.Value
+		}
+	}
+	v.clientId = clientId
+
+	appRedirectURI := v.AuthorizeURL()
+	return c.Redirect(appRedirectURI, http.StatusFound)
+}
+
+func (v *Github) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
+	code := c.FormValue("code")
+	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	if err != nil {
+		return err
+	}
+	clientId := ""
+	clientSecret := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == "client_id" {
+			clientId = item.Value
+		}
+		if item.Key == "client_secret" {
+			clientSecret = item.Value
+		}
+	}
+	v.clientId = clientId
+	v.clientSecret = clientSecret
+
+	tokenResp, err := v.GetAccessToken(code)
+	if err != nil {
+		return err
+	}
+
+	extra, err := json.Marshal(&tokenResp)
+	if err != nil {
+		return err
+	}
+	appReply, err := mid.StoreAppOAuth(context.Background(), &pb.AppRequest{
+		Name:  ID,
+		Type:  ID,
+		Token: v.accessToken,
+		Extra: utils.ByteToString(extra),
+	})
+	if err != nil {
+		return err
+	}
+	if appReply.GetState() {
+		return nil
+	}
+	return errors.New("error")
+}
+
+func (v *Github) GetUser() (*User, error) {
 	resp, err := v.c.R().
 		SetResult(&User{}).
 		SetHeader("Accept", "application/vnd.github.v3+json").
-		SetHeader("Authorization", fmt.Sprintf("token %s", accessToken)).
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
 		Get("/user")
 	if err != nil {
 		return nil, err
@@ -208,11 +281,11 @@ func (v *Github) GetUser(accessToken string) (*User, error) {
 	}
 }
 
-func (v *Github) GetStarred(accessToken, username string) (*[]Repository, error) {
+func (v *Github) GetStarred(username string) (*[]Repository, error) {
 	resp, err := v.c.R().
 		SetResult(&[]Repository{}).
 		SetHeader("Accept", "application/vnd.github.v3+json").
-		SetHeader("Authorization", fmt.Sprintf("token %s", accessToken)).
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
 		Get(fmt.Sprintf("/users/%s/starred", username))
 	if err != nil {
 		return nil, err
@@ -225,11 +298,11 @@ func (v *Github) GetStarred(accessToken, username string) (*[]Repository, error)
 	}
 }
 
-func (v *Github) GetFollowers(accessToken string) (*[]User, error) {
+func (v *Github) GetFollowers() (*[]User, error) {
 	resp, err := v.c.R().
 		SetResult(&[]User{}).
 		SetHeader("Accept", "application/vnd.github.v3+json").
-		SetHeader("Authorization", fmt.Sprintf("token %s", accessToken)).
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
 		Get("/user/followers")
 	if err != nil {
 		return nil, err

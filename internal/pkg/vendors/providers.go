@@ -1,0 +1,65 @@
+package vendors
+
+import (
+	"fmt"
+	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/fiber/v2"
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
+	"github.com/tsundata/assistant/internal/pkg/vendors/github"
+	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
+	"github.com/tsundata/assistant/internal/pkg/vendors/pushover"
+)
+
+var OAuthProviders = []string{
+	github.ID,
+	pocket.ID,
+	pushover.ID,
+	dropbox.ID,
+}
+
+var OAuthProvidersOptions = map[string]interface{}{
+	github.ID: map[string]string{
+		"client_id":     "Client ID",
+		"client_secret": "Client secrets",
+	},
+	pocket.ID: map[string]string{
+		"consumer_key": "Consumer Key",
+	},
+	pushover.ID: map[string]string{
+		"token": "API Token",
+		"user":  "User Key",
+	},
+	dropbox.ID: map[string]string{
+		"key":    "App key",
+		"secret": "App secret",
+	},
+}
+
+type OAuthProvider interface {
+	AuthorizeURL() string
+	GetAccessToken(code string) (interface{}, error)
+	Redirect(c *fiber.Ctx, mid pb.MiddleClient) error
+	StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error
+}
+
+func NewOAuthProvider(rdb *redis.Client, c *fiber.Ctx, url string) OAuthProvider {
+	category := c.Params("category")
+	redirectURI := fmt.Sprintf("%s/oauth/%s", url, category)
+	var provider OAuthProvider
+
+	switch category {
+	case pocket.ID:
+		p := pocket.NewPocket("", "", redirectURI, "")
+		p.SetRDB(rdb)
+		provider = p
+	case github.ID:
+		provider = github.NewGithub("", "", redirectURI, "")
+	case dropbox.ID:
+		provider = dropbox.NewDropbox("", "", redirectURI, "")
+	default:
+		return nil
+	}
+
+	return provider
+}

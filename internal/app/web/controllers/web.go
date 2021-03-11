@@ -13,9 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/components"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
-	"github.com/tsundata/assistant/internal/pkg/vendors/github"
-	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
+	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
@@ -261,23 +259,7 @@ func (wc *WebController) Credentials(c *fiber.Ctx) error {
 
 func (wc *WebController) CredentialsCreate(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	options := map[string]interface{}{
-		"github": map[string]string{
-			"client_id":     "Client ID",
-			"client_secret": "Client secrets",
-		},
-		"pocket": map[string]string{
-			"consumer_key": "Consumer Key",
-		},
-		"pushover": map[string]string{
-			"token": "API Token",
-			"user":  "User Key",
-		},
-		"dropbox": map[string]string{
-			"key":    "App key",
-			"secret": "App secret",
-		},
-	}
+	options := vendors.OAuthProvidersOptions
 
 	selectOption := make(map[string]string)
 	selectOption[""] = "-"
@@ -629,206 +611,15 @@ func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
-	category := c.Params("category")
-
-	switch category {
-	case "pocket":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		consumerKey := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "consumer_key" {
-				consumerKey = item.Value
-			}
-		}
-
-		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
-		client := pocket.NewPocket(consumerKey)
-		code, err := client.GetCode(redirectURI, "")
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-
-		wc.rdb.Set(context.Background(), "pocket:code", code.Code, time.Hour)
-
-		appRedirectURI := client.AuthorizeURL(code.Code, redirectURI)
-		return c.Redirect(appRedirectURI, http.StatusFound)
-	case "github":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		clientId := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "client_id" {
-				clientId = item.Value
-			}
-		}
-
-		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
-		appRedirectURI := github.NewGithub(clientId).AuthorizeURL(redirectURI)
-		return c.Redirect(appRedirectURI, http.StatusFound)
-	case "dropbox":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		clientId := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "key" {
-				clientId = item.Value
-			}
-		}
-
-		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
-		appRedirectURI := dropbox.NewDropbox(clientId).AuthorizeURL(redirectURI)
-		return c.Redirect(appRedirectURI, http.StatusFound)
-	}
-	return c.SendString("error")
+	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.URL)
+	return provider.Redirect(c, wc.midClient)
 }
 
 func (wc *WebController) OAuth(c *fiber.Ctx) error {
-	category := c.Params("category")
-
-	switch category {
-	case "pocket":
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		consumerKey := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "consumer_key" {
-				consumerKey = item.Value
-			}
-		}
-
-		code, err := wc.rdb.Get(context.Background(), "pocket:code").Result()
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		if code != "" {
-			client := pocket.NewPocket(consumerKey)
-			tokenResp, err := client.GetAccessToken(code)
-			if err != nil {
-				wc.logger.Error(err)
-				return c.SendStatus(http.StatusBadRequest)
-			}
-
-			extra, err := json.Marshal(&tokenResp)
-			if err != nil {
-				wc.logger.Error(err)
-				return c.SendStatus(http.StatusBadRequest)
-			}
-			reply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
-				Name:  "pocket",
-				Type:  "pocket",
-				Token: tokenResp.AccessToken,
-				Extra: utils.ByteToString(extra),
-			})
-			if err != nil {
-				wc.logger.Error(err)
-				return c.SendStatus(http.StatusBadRequest)
-			}
-			if reply.GetState() {
-				return c.SendString("Success")
-			}
-		}
-	case "github":
-		code := c.FormValue("code")
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		clientId := ""
-		clientSecret := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "client_id" {
-				clientId = item.Value
-			}
-			if item.Key == "client_secret" {
-				clientSecret = item.Value
-			}
-		}
-
-		client := github.NewGithub(clientId)
-		tokenResp, err := client.GetAccessToken(clientSecret, code)
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-
-		extra, err := json.Marshal(&tokenResp)
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		appReply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
-			Name:  "github",
-			Type:  "github",
-			Token: tokenResp.AccessToken,
-			Extra: utils.ByteToString(extra),
-		})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		if appReply.GetState() {
-			return c.SendString("Success")
-		}
-	case "dropbox":
-		code := c.FormValue("code")
-		reply, err := wc.midClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: category})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		clientId := ""
-		clientSecret := ""
-		for _, item := range reply.GetContent() {
-			if item.Key == "key" {
-				clientId = item.Value
-			}
-			if item.Key == "secret" {
-				clientSecret = item.Value
-			}
-		}
-
-		client := dropbox.NewDropbox(clientId)
-		redirectURI := fmt.Sprintf("%s/oauth/%s", wc.opt.URL, category)
-		tokenResp, err := client.GetAccessToken(clientSecret, redirectURI, code)
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-
-		extra, err := json.Marshal(&tokenResp)
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		appReply, err := wc.midClient.StoreAppOAuth(context.Background(), &pb.AppRequest{
-			Name:  "dropbox",
-			Type:  "dropbox",
-			Token: tokenResp.AccessToken,
-			Extra: utils.ByteToString(extra),
-		})
-		if err != nil {
-			wc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
-		}
-		if appReply.GetState() {
-			return c.SendString("Success")
-		}
+	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.URL)
+	err := provider.StoreAccessToken(c, wc.midClient)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	return c.SendString("error")
+	return c.SendString("Success")
 }
