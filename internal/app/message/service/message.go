@@ -178,3 +178,77 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 		Text: reply,
 	}, nil
 }
+
+func (m *Message) GetScriptMessages(_ context.Context, _ *pb.TextRequest) (*pb.ScriptsReply, error) {
+	var items []model.Message
+	err := m.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeScript)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	var kvs []*pb.Script
+	for _, item := range items {
+		kvs = append(kvs, &pb.Script{
+			Id:   int64(item.ID),
+			Text: item.Text,
+		})
+	}
+
+	return &pb.ScriptsReply{
+		Items: kvs,
+	}, nil
+}
+
+func (m *Message) CreateScriptMessage(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	if payload.GetText() == "" {
+		return &pb.StateReply{State: false}, nil
+	}
+	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
+	_, err = m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+		uuid, model.MessageTypeScript, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
+	var items []model.Message
+	err := m.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeAction)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	var kvs []*pb.Action
+	for _, item := range items {
+		kvs = append(kvs, &pb.Action{
+			Id:   int64(item.ID),
+			Text: item.Text,
+		})
+	}
+
+	return &pb.ActionReply{
+		Items: kvs,
+	}, nil
+}
+
+func (m *Message) CreateActionMessage(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	if payload.GetText() == "" {
+		return &pb.StateReply{State: false}, nil
+	}
+	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
+	_, err = m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+		uuid, model.MessageTypeAction, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}

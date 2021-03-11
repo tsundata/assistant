@@ -438,7 +438,7 @@ func (wc *WebController) Scripts(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := wc.midClient.GetScripts(context.Background(), &pb.TextRequest{})
+	reply, err := wc.msgClient.GetScriptMessages(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
@@ -520,7 +520,7 @@ func (wc *WebController) ScriptRun(c *fiber.Ctx) error {
 func (wc *WebController) ScriptStore(c *fiber.Ctx) error {
 	script := c.FormValue("script")
 
-	_, err := wc.midClient.CreateScript(context.Background(), &pb.TextRequest{
+	_, err := wc.msgClient.CreateScriptMessage(context.Background(), &pb.TextRequest{
 		Text: script,
 	})
 	if err != nil {
@@ -535,7 +535,7 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := wc.midClient.GetAction(context.Background(), &pb.TextRequest{})
+	reply, err := wc.msgClient.GetActionMessages(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.SendStatus(http.StatusBadRequest)
@@ -617,7 +617,7 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 	action := c.FormValue("action")
 
-	_, err := wc.midClient.CreateAction(context.Background(), &pb.TextRequest{
+	_, err := wc.msgClient.CreateActionMessage(context.Background(), &pb.TextRequest{
 		Text: action,
 	})
 	if err != nil {
