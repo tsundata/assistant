@@ -127,6 +127,36 @@ builds:
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
+  - main: ./cmd/task
+    id: "task"
+    binary: "task"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
+  - main: ./cmd/worker
+    id: "worker"
+    binary: "worker"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
   # agent
   - main: ./cmd/agent/server
     id: "server-agent"

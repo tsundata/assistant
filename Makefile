@@ -1,4 +1,4 @@
-apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron' 'workflow'
+apps = 'gateway' 'message' 'subscribe' 'web' 'middle' 'spider' 'cron' 'workflow' 'task' 'worker'
 agents = 'server' 'redis'
 
 .PHONY: build
