@@ -14,7 +14,11 @@ import (
 	"time"
 )
 
-const ID = "dropbox"
+const (
+	ID              = "dropbox"
+	ClientIdKey     = "key"
+	ClientSecretKey = "secret"
+)
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -79,7 +83,7 @@ func (v *Dropbox) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
 	}
 	clientId := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "key" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
 	}
@@ -98,10 +102,10 @@ func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
 	clientId := ""
 	clientSecret := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "key" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
-		if item.Key == "secret" {
+		if item.Key == ClientSecretKey {
 			clientSecret = item.Value
 		}
 	}

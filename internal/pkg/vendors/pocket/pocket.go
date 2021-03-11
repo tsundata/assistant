@@ -14,7 +14,10 @@ import (
 	"time"
 )
 
-const ID = "pocket"
+const (
+	ID              = "pocket"
+	ClientIdKey     = "consumer_key"
+)
 
 type CodeResponse struct {
 	Code  string `json:"code"`
@@ -125,7 +128,7 @@ func (v *Pocket) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
 	}
 	clientId := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "consumer_key" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
 	}
@@ -149,7 +152,7 @@ func (v *Pocket) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
 	}
 	clientId := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "consumer_key" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
 	}

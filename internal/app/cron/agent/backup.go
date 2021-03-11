@@ -13,7 +13,7 @@ import (
 
 func Backup(b *rulebot.RuleBot) []string {
 	ctx := context.Background()
-	app, err := b.MidClient.GetAvailableApp(ctx, &pb.TextRequest{Text: "dropbox"})
+	app, err := b.MidClient.GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
 	if err != nil {
 		return []string{err.Error()}
 	}

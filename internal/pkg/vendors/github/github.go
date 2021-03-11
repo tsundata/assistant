@@ -13,7 +13,11 @@ import (
 	"time"
 )
 
-const ID = "github"
+const (
+	ID              = "github"
+	ClientIdKey     = "client_id"
+	ClientSecretKey = "client_secret"
+)
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -211,7 +215,7 @@ func (v *Github) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
 	}
 	clientId := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "client_id" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
 	}
@@ -230,10 +234,10 @@ func (v *Github) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
 	clientId := ""
 	clientSecret := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "client_id" {
+		if item.Key == ClientIdKey {
 			clientId = item.Value
 		}
-		if item.Key == "client_secret" {
+		if item.Key == ClientSecretKey {
 			clientSecret = item.Value
 		}
 	}

@@ -20,19 +20,19 @@ var OAuthProviders = []string{
 
 var OAuthProvidersOptions = map[string]interface{}{
 	github.ID: map[string]string{
-		"client_id":     "Client ID",
-		"client_secret": "Client secrets",
+		github.ClientIdKey:     "Client ID",
+		github.ClientSecretKey: "Client secrets",
 	},
 	pocket.ID: map[string]string{
-		"consumer_key": "Consumer Key",
+		pocket.ClientIdKey: "Consumer Key",
 	},
 	pushover.ID: map[string]string{
-		"token": "API Token",
-		"user":  "User Key",
+		pushover.TokenKey: "API Token",
+		pushover.UserKey:  "User Key",
 	},
 	dropbox.ID: map[string]string{
-		"key":    "App key",
-		"secret": "App secret",
+		dropbox.ClientIdKey:     "App key",
+		dropbox.ClientSecretKey: "App secret",
 	},
 }
 

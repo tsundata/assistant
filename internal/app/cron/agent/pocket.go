@@ -10,13 +10,13 @@ import (
 
 func FetchPocket(b *rulebot.RuleBot) []string {
 	// get consumer key
-	reply, err := b.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: "pocket"})
+	reply, err := b.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
 		return []string{}
 	}
 	consumerKey := ""
 	for _, item := range reply.GetContent() {
-		if item.Key == "consumer_key" {
+		if item.Key == pocket.ClientIdKey {
 			consumerKey = item.Value
 		}
 	}
@@ -25,7 +25,7 @@ func FetchPocket(b *rulebot.RuleBot) []string {
 	}
 
 	// get access token
-	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: "pocket"})
+	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: pocket.ID})
 	if err != nil {
 		return []string{}
 	}

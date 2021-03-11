@@ -10,7 +10,7 @@ import (
 
 func FetchGithubStarred(b *rulebot.RuleBot) []string {
 	// get access token
-	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: "github"})
+	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		return []string{}
 	}
