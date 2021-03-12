@@ -27,6 +27,13 @@ var rules = []Rule{
 			return agent.Backup(b)
 		},
 	},
+	{
+		Name: "workflow_cron",
+		When: "* * * * *",
+		Action: func(b *rulebot.RuleBot) []string {
+			return agent.WorkflowCron(b)
+		},
+	},
 }
 
 var Options = []rulebot.Option{

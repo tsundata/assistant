@@ -8,6 +8,7 @@ type Trigger struct {
 	Kind      string    `db:"kind"`
 	Flag      string    `db:"flag"`
 	Secret    string    `db:"secret"`
+	When      string    `db:"when"`
 	MessageID int       `db:"message_id"`
 	Time      time.Time `db:"time"`
 }

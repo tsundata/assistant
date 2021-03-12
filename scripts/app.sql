@@ -77,6 +77,7 @@ CREATE TABLE `triggers`
     `kind`       varchar(16)      NOT NULL DEFAULT '',
     `flag`       varchar(128)     NOT NULL DEFAULT '',
     `secret`     varchar(128)     NOT NULL DEFAULT '',
+    `when`       varchar(128)     NOT NULL DEFAULT '',
     `message_id` int(11)          NOT NULL,
     `time`       timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

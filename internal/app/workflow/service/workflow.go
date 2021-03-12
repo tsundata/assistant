@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/influxdata/cron"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
@@ -112,12 +113,51 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	}, nil
 }
 
+func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+	var triggers []model.Trigger
+	err := s.db.Select(&triggers, "SELECT * FROM `triggers` WHERE `type` = ?", "cron")
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	for _, trigger := range triggers {
+		p, err := cron.ParseUTC(trigger.When)
+		if err != nil {
+			return nil, err
+		}
+		nextTime, err := p.Next(time.Now())
+		if err != nil {
+			return nil, err
+		}
+
+		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			// push task
+			j, err := json.Marshal(map[string]string{
+				"type": trigger.Kind,
+				"id":   strconv.Itoa(trigger.MessageID),
+			})
+			if err != nil {
+				return nil, err
+			}
+			_, err = s.taskClient.Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return &pb.WorkflowReply{
+		Text: "",
+	}, nil
+}
+
 func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
 	var trigger model.Trigger
 	trigger.Type = payload.GetType()
 	trigger.Kind = payload.GetKind()
-	trigger.Flag = payload.GetFlag()
-	trigger.Secret = payload.GetSecret()
 	trigger.MessageID = int(payload.GetMessageId())
 	trigger.Time = time.Now()
 
@@ -140,11 +180,18 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 
 		if symbolTable.Webhook == nil {
 			return nil, nil
+		} else {
+			trigger.Type = "webhook"
+			trigger.Flag = symbolTable.Webhook.Flag
+			trigger.Secret = symbolTable.Webhook.Secret
 		}
 
-		trigger.Type = "webhook"
-		trigger.Flag = symbolTable.Webhook.Flag
-		trigger.Secret = symbolTable.Webhook.Secret
+		if symbolTable.Cron == nil {
+			return nil, nil
+		} else {
+			trigger.Type = "cron"
+			trigger.When = symbolTable.Cron.When
+		}
 	case model.MessageTypeScript:
 		// TODO
 		return nil, nil

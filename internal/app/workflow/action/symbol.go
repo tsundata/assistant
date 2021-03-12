@@ -48,6 +48,18 @@ func (s *WebhookSymbol) String() string {
 	return fmt.Sprintf("<WebhookSymbol(flag=%s)>", s.Flag)
 }
 
+type CronSymbol struct {
+	When string
+}
+
+func NewCronSymbol(when string) *CronSymbol {
+	return &CronSymbol{When: when}
+}
+
+func (s *CronSymbol) String() string {
+	return fmt.Sprintf("<CronSymbol(when=%s)>", s.When)
+}
+
 type ScopedSymbolTable struct {
 	symbols        *collection.OrderedDict
 	ScopeName      string
@@ -134,6 +146,7 @@ func (t *ScopedSymbolTable) Lookup(name string, currentScopeOnly bool) Symbol {
 type SemanticAnalyzer struct {
 	CurrentScope *ScopedSymbolTable
 	Webhook      *WebhookSymbol
+	Cron         *CronSymbol
 }
 
 func NewSemanticAnalyzer() *SemanticAnalyzer {
@@ -201,7 +214,7 @@ func (b *SemanticAnalyzer) VisitOpcode(node *Opcode) error {
 	name := node.ID.(*Token).Value.(string)
 
 	// Special opcode
-	if name == "webhook" {
+	if name == "webhook" || name == "cron" {
 		s := b.CurrentScope.Lookup(name, true)
 		if s != nil {
 			return b.error(RepeatOpcode, node.Token)
@@ -214,10 +227,17 @@ func (b *SemanticAnalyzer) VisitOpcode(node *Opcode) error {
 			}
 		}
 
-		if len(args) >= 2 {
-			b.Webhook = NewWebhookSymbol(args[0], args[1])
-		} else if len(args) >= 1 {
-			b.Webhook = NewWebhookSymbol(args[0], "")
+		if name == "webhook" {
+			if len(args) >= 2 {
+				b.Webhook = NewWebhookSymbol(args[0], args[1])
+			} else if len(args) >= 1 {
+				b.Webhook = NewWebhookSymbol(args[0], "")
+			}
+		}
+		if name == "cron" {
+			if len(args) >= 1 {
+				b.Cron = NewCronSymbol(args[0])
+			}
 		}
 	}
 
