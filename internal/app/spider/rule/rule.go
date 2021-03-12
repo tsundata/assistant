@@ -47,8 +47,6 @@ func RunRule(r Rule) []string {
 	}
 
 	doc.Find(r.Page.List).Each(func(i int, s *goquery.Selection) {
-		txt := strings.Builder{}
-
 		// sort keys
 		keys := make([]string, 0, len(r.Page.Item))
 		for k := range r.Page.Item {
@@ -56,17 +54,27 @@ func RunRule(r Rule) []string {
 		}
 		sort.Strings(keys)
 
+		txt := strings.Builder{}
 		for _, k := range keys {
 			f := ParseFun(s, r.Page.Item[k])
-			c, err := f.Invoke()
+			v, err := f.Invoke()
 			if err != nil {
 				log.Println(err)
 				continue
 			}
+			v = strings.TrimSpace(v)
+			v = strings.ReplaceAll(v, "\n", "")
+			v = strings.ReplaceAll(v, "\r\n", "")
+			if v == "" {
+				continue
+			}
 			txt.WriteString(k)
 			txt.WriteString(": ")
-			txt.WriteString(c)
+			txt.WriteString(v)
 			txt.WriteString("\n")
+		}
+		if txt.Len() == 0 {
+			return
 		}
 		result = append(result, txt.String())
 	})
