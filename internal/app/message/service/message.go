@@ -199,7 +199,7 @@ func (m *Message) GetScriptMessages(_ context.Context, _ *pb.TextRequest) (*pb.S
 	}, nil
 }
 
-func (m *Message) CreateScriptMessage(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+func (m *Message) CreateScriptMessage(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
 	if payload.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
@@ -207,8 +207,22 @@ func (m *Message) CreateScriptMessage(_ context.Context, payload *pb.TextRequest
 	if err != nil {
 		return nil, err
 	}
-	_, err = m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+	result, err := m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
 		uuid, model.MessageTypeScript, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	// check trigger
+	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
+		Kind:        model.MessageTypeScript,
+		MessageId:   id,
+		MessageText: payload.GetText(),
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +250,7 @@ func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.A
 	}, nil
 }
 
-func (m *Message) CreateActionMessage(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
 	if payload.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
@@ -244,8 +258,22 @@ func (m *Message) CreateActionMessage(_ context.Context, payload *pb.TextRequest
 	if err != nil {
 		return nil, err
 	}
-	_, err = m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
+	result, err := m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
 		uuid, model.MessageTypeAction, payload.GetText(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	// check trigger
+	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
+		Kind:        model.MessageTypeAction,
+		MessageId:   id,
+		MessageText: payload.GetText(),
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 )
 
-func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgClient pb.MessageClient) (*app.Application, error) {
+func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgClient pb.MessageClient, wfClient pb.WorkflowClient) (*app.Application, error) {
 	a, err := app.New(name, logger)
 	if err != nil {
 		logger.Error(err)
@@ -17,7 +17,7 @@ func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgCli
 
 	// worker
 	go func() {
-		workflowTask := tasks.NewWorkflowTask(msgClient)
+		workflowTask := tasks.NewWorkflowTask(msgClient, wfClient)
 		err = server.RegisterTasks(map[string]interface{}{
 			"run": workflowTask.Run,
 		})

@@ -93,10 +93,15 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 		params = append(params, i.Visit(item))
 	}
 
+	name := node.ID.(*Token).Value.(string)
+	// Special opcode
+	if name == "webhook" || name == "cron" {
+		return 0
+	}
+
 	// Run
 	debugLog(fmt.Sprintf("Run: Opecode %v", node.ID))
 	debugLog(fmt.Sprintf("%+v", params))
-	name := node.ID.(*Token).Value.(string)
 	input := i.ctx.Value
 	res, err := runOpcode(i.ctx, name, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))

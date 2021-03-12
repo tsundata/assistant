@@ -15,22 +15,18 @@ func NewTask(server *machinery.Server) *Task {
 	return &Task{server: server}
 }
 
-func (s *Task) Send(ctx context.Context, _ *pb.JobRequest) (*pb.StateReply, error) {
-	runTask := tasks.Signature{
-		Name: "run",
+func (s *Task) Send(ctx context.Context, payload *pb.JobRequest) (*pb.StateReply, error) {
+	task := tasks.Signature{
+		Name: payload.GetName(),
 		Args: []tasks.Arg{
 			{
-				Type:  "int64",
-				Value: 1,
-			},
-			{
-				Type:  "int64",
-				Value: 1,
+				Type:  "string",
+				Value: payload.GetArgs(),
 			},
 		},
 	}
 
-	_, err := s.server.SendTaskWithContext(ctx, &runTask)
+	_, err := s.server.SendTaskWithContext(ctx, &task)
 	if err != nil {
 		return nil, err
 	}

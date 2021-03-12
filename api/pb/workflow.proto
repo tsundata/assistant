@@ -1,11 +1,15 @@
 syntax = "proto3";
 package pb;
 
+import "base.proto";
+
 option go_package = "api/pb";
 
 service Workflow {
   rpc RunAction(WorkflowRequest) returns (WorkflowReply) {}
   rpc RunScript(WorkflowRequest) returns (WorkflowReply) {}
+  rpc WebhookTrigger(TriggerRequest) returns (WorkflowReply) {}
+  rpc CreateTrigger(TriggerRequest) returns (StateReply) {}
 }
 
 message WorkflowRequest {
@@ -14,4 +18,15 @@ message WorkflowRequest {
 
 message WorkflowReply {
   string text = 1;
+}
+
+message TriggerRequest {
+  string type = 1;
+  string kind = 2;
+  string flag = 3;
+  string secret = 4;
+  string header = 5;
+  string body = 6;
+  int64 messageId = 7;
+  string messageText = 8;
 }

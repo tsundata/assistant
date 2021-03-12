@@ -74,8 +74,9 @@ func NewProgram(name string, statements []Ast) *Program {
 type Opcode struct {
 	ID          Ast
 	Expressions []Ast
+	Token       *Token
 }
 
-func NewOpcode(ID Ast, expressions []Ast) *Opcode {
-	return &Opcode{ID: ID, Expressions: expressions}
+func NewOpcode(ID Ast, expressions []Ast, token *Token) *Opcode {
+	return &Opcode{ID: ID, Expressions: expressions, Token: token}
 }

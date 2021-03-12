@@ -90,7 +90,7 @@ func (p *Parser) OpcodeStatement() (Ast, error) {
 		return nil, err
 	}
 
-	return NewOpcode(token, expressions), nil
+	return NewOpcode(token, expressions, token), nil
 }
 
 func (p *Parser) Expression() ([]Ast, error) {

@@ -35,6 +35,19 @@ func (s *OpcodeSymbol) String() string {
 	return fmt.Sprintf("<OpcodeSymbol(name=%s)>", s.Name)
 }
 
+type WebhookSymbol struct {
+	Flag   string
+	Secret string
+}
+
+func NewWebhookSymbol(flag string, secret string) *WebhookSymbol {
+	return &WebhookSymbol{Flag: flag, Secret: secret}
+}
+
+func (s *WebhookSymbol) String() string {
+	return fmt.Sprintf("<WebhookSymbol(flag=%s)>", s.Flag)
+}
+
 type ScopedSymbolTable struct {
 	symbols        *collection.OrderedDict
 	ScopeName      string
@@ -120,6 +133,7 @@ func (t *ScopedSymbolTable) Lookup(name string, currentScopeOnly bool) Symbol {
 
 type SemanticAnalyzer struct {
 	CurrentScope *ScopedSymbolTable
+	Webhook      *WebhookSymbol
 }
 
 func NewSemanticAnalyzer() *SemanticAnalyzer {
@@ -138,6 +152,12 @@ func (b *SemanticAnalyzer) error(errorCode ErrorCode, token *Token) error {
 func (b *SemanticAnalyzer) Visit(node Ast) error {
 	if n, ok := node.(*Program); ok {
 		return b.VisitProgram(n)
+	}
+	if n, ok := node.(*Opcode); ok {
+		return b.VisitOpcode(n)
+	}
+	if n, ok := node.(*IntegerConst); ok {
+		return b.VisitIntegerConst(n)
 	}
 	if n, ok := node.(*StringConst); ok {
 		return b.VisitStringConst(n)
@@ -178,7 +198,30 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) error {
 }
 
 func (b *SemanticAnalyzer) VisitOpcode(node *Opcode) error {
-	nodeSymbol := NewOpcodeSymbol(node.ID.(*Token).Value.(string))
+	name := node.ID.(*Token).Value.(string)
+
+	// Special opcode
+	if name == "webhook" {
+		s := b.CurrentScope.Lookup(name, true)
+		if s != nil {
+			return b.error(RepeatOpcode, node.Token)
+		}
+
+		var args []string
+		for _, item := range node.Expressions {
+			if s, ok := item.(*StringConst); ok {
+				args = append(args, s.Value)
+			}
+		}
+
+		if len(args) >= 2 {
+			b.Webhook = NewWebhookSymbol(args[0], args[1])
+		} else if len(args) >= 1 {
+			b.Webhook = NewWebhookSymbol(args[0], "")
+		}
+	}
+
+	nodeSymbol := NewOpcodeSymbol(name)
 	b.CurrentScope.Insert(nodeSymbol)
 	return nil
 }

@@ -83,6 +83,10 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		router.Get("/action/:uuid/create", auth, wc.ActionCreate)
 		router.Get("/action/:uuid/run", auth, wc.ActionRun)
 		router.Post("/action/:uuid/store", auth, wc.ActionStore)
+
+		// webhook
+		router.Get("/webhook/:flag", wc.Webhook)
+		router.Post("/webhook/:flag", wc.Webhook)
 	}
 
 	return requestHandler

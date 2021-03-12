@@ -100,25 +100,130 @@ func (m *WorkflowReply) GetText() string {
 	return ""
 }
 
+type TriggerRequest struct {
+	Type                 string   `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Kind                 string   `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	Flag                 string   `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
+	Secret               string   `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
+	Header               string   `protobuf:"bytes,5,opt,name=header,proto3" json:"header,omitempty"`
+	Body                 string   `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
+	MessageId            int64    `protobuf:"varint,7,opt,name=messageId,proto3" json:"messageId,omitempty"`
+	MessageText          string   `protobuf:"bytes,8,opt,name=messageText,proto3" json:"messageText,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TriggerRequest) Reset()         { *m = TriggerRequest{} }
+func (m *TriggerRequest) String() string { return proto.CompactTextString(m) }
+func (*TriggerRequest) ProtoMessage()    {}
+func (*TriggerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_892c7f566756b0be, []int{2}
+}
+func (m *TriggerRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TriggerRequest.Unmarshal(m, b)
+}
+func (m *TriggerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TriggerRequest.Marshal(b, m, deterministic)
+}
+func (m *TriggerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TriggerRequest.Merge(m, src)
+}
+func (m *TriggerRequest) XXX_Size() int {
+	return xxx_messageInfo_TriggerRequest.Size(m)
+}
+func (m *TriggerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TriggerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TriggerRequest proto.InternalMessageInfo
+
+func (m *TriggerRequest) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetKind() string {
+	if m != nil {
+		return m.Kind
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetFlag() string {
+	if m != nil {
+		return m.Flag
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetSecret() string {
+	if m != nil {
+		return m.Secret
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetHeader() string {
+	if m != nil {
+		return m.Header
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetBody() string {
+	if m != nil {
+		return m.Body
+	}
+	return ""
+}
+
+func (m *TriggerRequest) GetMessageId() int64 {
+	if m != nil {
+		return m.MessageId
+	}
+	return 0
+}
+
+func (m *TriggerRequest) GetMessageText() string {
+	if m != nil {
+		return m.MessageText
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*WorkflowRequest)(nil), "pb.WorkflowRequest")
 	proto.RegisterType((*WorkflowReply)(nil), "pb.WorkflowReply")
+	proto.RegisterType((*TriggerRequest)(nil), "pb.TriggerRequest")
 }
 
 func init() { proto.RegisterFile("workflow.proto", fileDescriptor_892c7f566756b0be) }
 
 var fileDescriptor_892c7f566756b0be = []byte{
-	// 148 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2b, 0xcf, 0x2f, 0xca,
-	0x4e, 0xcb, 0xc9, 0x2f, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x52,
-	0xe5, 0xe2, 0x0f, 0x87, 0x8a, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x09, 0x71, 0xb1,
-	0x94, 0xa4, 0x56, 0x94, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0xca, 0x5c,
-	0xbc, 0x08, 0x65, 0x05, 0x39, 0x95, 0xd8, 0x14, 0x19, 0x55, 0x70, 0x71, 0xc0, 0x14, 0x09, 0x99,
-	0x72, 0x71, 0x06, 0x95, 0xe6, 0x39, 0x26, 0x97, 0x64, 0xe6, 0xe7, 0x09, 0x09, 0xeb, 0x15, 0x24,
-	0xe9, 0xa1, 0x59, 0x23, 0x25, 0x88, 0x2a, 0x58, 0x90, 0x53, 0xa9, 0xc4, 0x00, 0xd5, 0x16, 0x9c,
-	0x5c, 0x94, 0x59, 0x50, 0x42, 0xbc, 0x36, 0x27, 0x8e, 0x28, 0xb6, 0xc4, 0x82, 0x4c, 0xfd, 0x82,
-	0xa4, 0x24, 0x36, 0xb0, 0xd7, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xbd, 0x2e, 0x5f, 0xa6,
-	0xec, 0x00, 0x00, 0x00,
+	// 306 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0x4b, 0xc3, 0x30,
+	0x14, 0xc6, 0xed, 0x36, 0xeb, 0xf6, 0x64, 0x15, 0x23, 0x48, 0x18, 0x1e, 0x46, 0x45, 0xd8, 0xa9,
+	0x82, 0xe2, 0xc1, 0xa3, 0x7a, 0xf2, 0xda, 0x0d, 0x06, 0xde, 0x92, 0xf6, 0xad, 0x2b, 0xad, 0x4d,
+	0x4c, 0x33, 0x66, 0xff, 0x4b, 0xff, 0x0e, 0xff, 0x0a, 0x49, 0x13, 0xdd, 0x26, 0x2a, 0x78, 0xfb,
+	0xbe, 0x1f, 0xdf, 0xf7, 0xc2, 0x7b, 0x04, 0x82, 0xb5, 0x50, 0xc5, 0xa2, 0x14, 0xeb, 0x48, 0x2a,
+	0xa1, 0x05, 0xe9, 0x48, 0x3e, 0x02, 0xce, 0x6a, 0xb4, 0x3e, 0xbc, 0x80, 0xa3, 0xb9, 0x4b, 0xc4,
+	0xf8, 0xb2, 0xc2, 0x5a, 0x13, 0x02, 0x3d, 0x8d, 0xaf, 0x9a, 0x7a, 0x63, 0x6f, 0x32, 0x88, 0x5b,
+	0x1d, 0x9e, 0xc3, 0x70, 0x13, 0x93, 0x65, 0xf3, 0x63, 0xe8, 0xcd, 0x83, 0x60, 0xa6, 0xf2, 0x2c,
+	0x43, 0xb5, 0x3d, 0xab, 0x91, 0xf8, 0x15, 0x6b, 0x24, 0x1a, 0x56, 0xe4, 0x55, 0x4a, 0x3b, 0x96,
+	0x19, 0x6d, 0xd8, 0xa2, 0x64, 0x19, 0xed, 0x5a, 0x66, 0x34, 0x39, 0x05, 0xbf, 0xc6, 0x44, 0xa1,
+	0xa6, 0xbd, 0x96, 0x3a, 0x67, 0xf8, 0x12, 0x59, 0x8a, 0x8a, 0xee, 0x5b, 0x6e, 0x9d, 0x99, 0xc1,
+	0x45, 0xda, 0x50, 0xdf, 0xce, 0x30, 0x9a, 0x9c, 0xc1, 0xe0, 0x19, 0xeb, 0x9a, 0x65, 0xf8, 0x98,
+	0xd2, 0x83, 0xb1, 0x37, 0xe9, 0xc6, 0x1b, 0x40, 0xc6, 0x70, 0xe8, 0xcc, 0xcc, 0xec, 0xd2, 0x6f,
+	0x8b, 0xdb, 0xe8, 0xea, 0xdd, 0x83, 0xfe, 0xe7, 0xe2, 0xe4, 0x06, 0x06, 0xf1, 0xaa, 0xba, 0x4b,
+	0x74, 0x2e, 0x2a, 0x72, 0x12, 0x49, 0x1e, 0x7d, 0x3b, 0xdd, 0xe8, 0x78, 0x17, 0xca, 0xb2, 0x09,
+	0xf7, 0x5c, 0x6d, 0x9a, 0xa8, 0x5c, 0xea, 0x7f, 0xd4, 0x6e, 0x21, 0x98, 0x23, 0x5f, 0x0a, 0x51,
+	0xb8, 0x9b, 0x12, 0x62, 0x62, 0xbb, 0x07, 0xfe, 0xed, 0xc5, 0xe1, 0x83, 0x42, 0xa6, 0xf1, 0xaf,
+	0x66, 0x60, 0xd8, 0x54, 0x33, 0x8d, 0xae, 0x76, 0xdf, 0x7f, 0xf2, 0x99, 0xcc, 0x2f, 0x25, 0xe7,
+	0x7e, 0xfb, 0x39, 0xae, 0x3f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x50, 0x96, 0x9f, 0x88, 0x3e, 0x02,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -135,6 +240,8 @@ const _ = grpc.SupportPackageIsVersion4
 type WorkflowClient interface {
 	RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	RunScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type workflowClient struct {
@@ -163,10 +270,30 @@ func (c *workflowClient) RunScript(ctx context.Context, in *WorkflowRequest, opt
 	return out, nil
 }
 
+func (c *workflowClient) WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.Workflow/WebhookTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowClient) CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.Workflow/CreateTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkflowServer is the server API for Workflow service.
 type WorkflowServer interface {
 	RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 	RunScript(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
+	CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error)
 }
 
 // UnimplementedWorkflowServer can be embedded to have forward compatible implementations.
@@ -178,6 +305,12 @@ func (*UnimplementedWorkflowServer) RunAction(ctx context.Context, req *Workflow
 }
 func (*UnimplementedWorkflowServer) RunScript(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunScript not implemented")
+}
+func (*UnimplementedWorkflowServer) WebhookTrigger(ctx context.Context, req *TriggerRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WebhookTrigger not implemented")
+}
+func (*UnimplementedWorkflowServer) CreateTrigger(ctx context.Context, req *TriggerRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTrigger not implemented")
 }
 
 func RegisterWorkflowServer(s *grpc.Server, srv WorkflowServer) {
@@ -220,6 +353,42 @@ func _Workflow_RunScript_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Workflow_WebhookTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServer).WebhookTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Workflow/WebhookTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServer).WebhookTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Workflow_CreateTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServer).CreateTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Workflow/CreateTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServer).CreateTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Workflow_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.Workflow",
 	HandlerType: (*WorkflowServer)(nil),
@@ -231,6 +400,14 @@ var _Workflow_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RunScript",
 			Handler:    _Workflow_RunScript_Handler,
+		},
+		{
+			MethodName: "WebhookTrigger",
+			Handler:    _Workflow_WebhookTrigger_Handler,
+		},
+		{
+			MethodName: "CreateTrigger",
+			Handler:    _Workflow_CreateTrigger_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

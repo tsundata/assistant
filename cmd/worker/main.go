@@ -66,8 +66,12 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	wfClient, err := rpcclients.NewWorkflowClient(client)
+	if err != nil {
+		return nil, err
+	}
 
-	application, err := worker.NewApp(name, log, ms, msgClient)
+	application, err := worker.NewApp(name, log, ms, msgClient, wfClient)
 	if err != nil {
 		return nil, err
 	}

@@ -10,5 +10,6 @@ service Task {
 }
 
 message JobRequest {
-  string text = 1;
+  string name = 1;
+  string args = 2;
 }

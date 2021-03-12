@@ -1,8 +1,6 @@
 # Dump of table apps
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `apps`;
-
 CREATE TABLE `apps`
 (
     `id`    int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -19,8 +17,6 @@ CREATE TABLE `apps`
 
 # Dump of table credentials
 # ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `credentials`;
 
 CREATE TABLE `credentials`
 (
@@ -39,8 +35,6 @@ CREATE TABLE `credentials`
 # Dump of table messages
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `messages`;
-
 CREATE TABLE `messages`
 (
     `id`   int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -58,8 +52,6 @@ CREATE TABLE `messages`
 # Dump of table pages
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `pages`;
-
 CREATE TABLE `pages`
 (
     `id`      int(11) unsigned                   NOT NULL AUTO_INCREMENT,
@@ -72,3 +64,22 @@ CREATE TABLE `pages`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+
+
+# Dump of table triggers
+# ------------------------------------------------------------
+
+CREATE TABLE `triggers`
+(
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `type`       varchar(16)      NOT NULL DEFAULT '',
+    `kind`       varchar(16)      NOT NULL DEFAULT '',
+    `flag`       varchar(128)     NOT NULL DEFAULT '',
+    `secret`     varchar(128)     NOT NULL DEFAULT '',
+    `message_id` int(11)          NOT NULL,
+    `time`       timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `flag` (`flag`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

@@ -54,3 +54,10 @@ send "hello world"
 `
 	run(t, text)
 }
+
+func TestInterpreter3(t *testing.T) {
+	text := `webhook "foo" "bar"
+webhook "repeat"
+`
+	run(t, text)
+}

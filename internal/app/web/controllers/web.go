@@ -623,3 +623,19 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 	}
 	return c.SendString("Success")
 }
+
+func (wc *WebController) Webhook(c *fiber.Ctx) error {
+	flag := c.Params("flag")
+	_, err := wc.wfClient.WebhookTrigger(context.Background(), &pb.TriggerRequest{
+		Type:   "webhook",
+		Flag:   flag,
+		Secret: "", // TODO Authorization
+		Header: c.Request().Header.String(),
+		Body:   utils.ByteToString(c.Request().Body()),
+	})
+	if err != nil {
+		return err
+	}
+
+	return c.SendString("")
+}

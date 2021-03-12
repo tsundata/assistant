@@ -13,8 +13,9 @@ const (
 type ErrorCode string
 
 const (
-	UnexpectedToken   ErrorCode = "Unexpected token"
-	IdNotFound        ErrorCode = "Identifier not found"
+	UnexpectedToken ErrorCode = "Unexpected token"
+	IdNotFound      ErrorCode = "Identifier not found"
+	RepeatOpcode    ErrorCode = "Repeat opcode"
 )
 
 type Error struct {
