@@ -180,259 +180,294 @@ func (b *SemanticAnalyzer) error(errorCode ErrorCode, token *Token) error {
 	}
 }
 
-func (b *SemanticAnalyzer) Visit(node Ast) {
+func (b *SemanticAnalyzer) Visit(node Ast) error {
 	if n, ok := node.(*Program); ok {
-		b.VisitProgram(n)
-		return
+		return b.VisitProgram(n)
 	}
 	if n, ok := node.(*Node); ok {
-		b.VisitNode(n)
-		return
+		return b.VisitNode(n)
 	}
 	if n, ok := node.(*Workflow); ok {
-		b.VisitWorkflow(n)
-		return
+		return b.VisitWorkflow(n)
 	}
 	if n, ok := node.(*Block); ok {
-		b.VisitBlock(n)
-		return
+		return b.VisitBlock(n)
 	}
 	if n, ok := node.(*VarDecl); ok {
-		b.VisitVarDecl(n)
-		return
+		return b.VisitVarDecl(n)
 	}
 	if n, ok := node.(*Type); ok {
-		b.VisitType(n)
-		return
+		return b.VisitType(n)
 	}
 	if n, ok := node.(*BinOp); ok {
-		b.VisitBinOp(n)
-		return
+		return b.VisitBinOp(n)
 	}
 	if n, ok := node.(*NumberConst); ok {
-		b.VisitNumberConst(n)
-		return
+		return b.VisitNumberConst(n)
 	}
 	if n, ok := node.(*StringConst); ok {
-		b.VisitStringConst(n)
-		return
+		return b.VisitStringConst(n)
 	}
 	if n, ok := node.(*BooleanConst); ok {
-		b.VisitBooleanConst(n)
-		return
+		return b.VisitBooleanConst(n)
 	}
 	if n, ok := node.(*MessageConst); ok {
-		b.VisitMessageConst(n)
-		return
+		return b.VisitMessageConst(n)
 	}
 	if n, ok := node.(*NodeConst); ok {
-		b.VisitNodeConst(n)
-		return
+		return b.VisitNodeConst(n)
 	}
 	if n, ok := node.(*List); ok {
-		b.VisitList(n)
-		return
+		return b.VisitList(n)
 	}
 	if n, ok := node.(*Dict); ok {
-		b.VisitDict(n)
-		return
+		return b.VisitDict(n)
 	}
 	if n, ok := node.(*UnaryOp); ok {
-		b.VisitUnaryOp(n)
-		return
+		return b.VisitUnaryOp(n)
 	}
 	if n, ok := node.(*Compound); ok {
-		b.VisitCompound(n)
-		return
+		return b.VisitCompound(n)
 	}
 	if n, ok := node.(*Assign); ok {
-		b.VisitAssign(n)
-		return
+		return b.VisitAssign(n)
 	}
 	if n, ok := node.(*Var); ok {
-		b.VisitVar(n)
-		return
+		return b.VisitVar(n)
 	}
 	if n, ok := node.(*NoOp); ok {
-		b.VisitNoOp(n)
-		return
+		return b.VisitNoOp(n)
 	}
 	if n, ok := node.(*Print); ok {
-		b.VisitPrint(n)
-		return
+		return b.VisitPrint(n)
 	}
 	if n, ok := node.(*While); ok {
-		b.VisitWhile(n)
-		return
+		return b.VisitWhile(n)
 	}
 	if n, ok := node.(*If); ok {
-		b.VisitIf(n)
-		return
+		return b.VisitIf(n)
 	}
 	if n, ok := node.(*Logical); ok {
-		b.VisitLogical(n)
-		return
+		return b.VisitLogical(n)
 	}
 	if n, ok := node.(*Flow); ok {
-		b.VisitFlow(n)
-		return
+		return b.VisitFlow(n)
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitProgram(node *Program) {
+func (b *SemanticAnalyzer) VisitProgram(node *Program) error {
 	debugLog("ENTER scope: global")
 	globalScope := NewScopedSymbolTable("global", 1, b.CurrentScope)
 	b.CurrentScope = globalScope
 
 	// nodes
 	for _, item := range node.Nodes {
-		b.Visit(item)
+		err := b.Visit(item)
+		if err != nil {
+			return err
+		}
 	}
 	// workflows
 	if _, ok := node.Workflows["main"]; !ok {
 		panic(b.error(NoMainWorkflow, nil))
 	}
 	for _, item := range node.Workflows {
-		b.Visit(item)
+		err := b.Visit(item)
+		if err != nil {
+			return err
+		}
 	}
 
 	debugLog(globalScope.String())
 
 	b.CurrentScope = b.CurrentScope.EnclosingScope
 	debugLog("LEAVE scope: global")
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitNode(node *Node) {
+func (b *SemanticAnalyzer) VisitNode(node *Node) error {
 	nodeSymbol := NewNodeSymbol(node.Name)
 	b.CurrentScope.Insert(nodeSymbol)
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitWorkflow(node *Workflow) {
+func (b *SemanticAnalyzer) VisitWorkflow(node *Workflow) error {
 	workflowSymbol := NewWorkflowSymbol(node.Name)
 	workflowSymbol.Scenarios = node.Scenarios
 	b.CurrentScope.Insert(workflowSymbol)
-	b.Visit(node.Scenarios)
+	return b.Visit(node.Scenarios)
 }
 
-func (b *SemanticAnalyzer) VisitFlow(node *Flow) {
+func (b *SemanticAnalyzer) VisitFlow(node *Flow) error {
 	for _, item := range node.Nodes {
 		s := b.CurrentScope.Lookup(item.(*Token).Value.(string), false)
 		if s == nil {
-			panic(b.error(IdNotFound, item.(*Token)))
+			return b.error(IdNotFound, item.(*Token))
 		}
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitBlock(node *Block) {
+func (b *SemanticAnalyzer) VisitBlock(node *Block) error {
 	for _, declaration := range node.Declarations {
 		for _, decl := range declaration {
-			b.Visit(decl)
+			err := b.Visit(decl)
+			if err != nil {
+				return err
+			}
 		}
 	}
-	b.Visit(node.CompoundStatement)
+	return b.Visit(node.CompoundStatement)
 }
 
-func (b *SemanticAnalyzer) VisitVarDecl(node *VarDecl) {
+func (b *SemanticAnalyzer) VisitVarDecl(node *VarDecl) error {
 	typeName := node.TypeNode.(*Type).Value.(string)
 	typeSymbol := b.CurrentScope.Lookup(typeName, false)
 	varName := node.VarNode.(*Var).Value.(string)
 	varSymbol := NewVarSymbol(varName, typeSymbol)
 	if b.CurrentScope.Lookup(varName, true) != nil {
-		panic(b.error(DuplicateId, node.VarNode.(*Var).Token))
+		return b.error(DuplicateId, node.VarNode.(*Var).Token)
 	}
 	b.CurrentScope.Insert(varSymbol)
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitType(_ *Type) {
+func (b *SemanticAnalyzer) VisitType(_ *Type) error {
 	// pass
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) {
-	b.Visit(node.Left)
-	b.Visit(node.Right)
-}
-
-func (b *SemanticAnalyzer) VisitNumberConst(_ *NumberConst) {
-	// pass
-}
-
-func (b *SemanticAnalyzer) VisitStringConst(_ *StringConst) {
-	// pass
-}
-func (b *SemanticAnalyzer) VisitMessageConst(_ *MessageConst) {
-	// pass
-}
-
-func (b *SemanticAnalyzer) VisitBooleanConst(_ *BooleanConst) {
-	// pass
-}
-
-func (b *SemanticAnalyzer) VisitNodeConst(_ *NodeConst) {
-	// pass
-}
-
-func (b *SemanticAnalyzer) VisitList(node *List) {
-	for _, item := range node.Value {
-		b.Visit(item)
+func (b *SemanticAnalyzer) VisitBinOp(node *BinOp) error {
+	err := b.Visit(node.Left)
+	if err != nil {
+		return err
 	}
+	return b.Visit(node.Right)
 }
 
-func (b *SemanticAnalyzer) VisitDict(node *Dict) {
-	for _, item := range node.Value {
-		b.Visit(item)
-	}
-}
-
-func (b *SemanticAnalyzer) VisitUnaryOp(_ *UnaryOp) {
+func (b *SemanticAnalyzer) VisitNumberConst(_ *NumberConst) error {
 	// pass
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitCompound(node *Compound) {
+func (b *SemanticAnalyzer) VisitStringConst(_ *StringConst) error {
+	// pass
+	return nil
+}
+func (b *SemanticAnalyzer) VisitMessageConst(_ *MessageConst) error {
+	// pass
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitBooleanConst(_ *BooleanConst) error {
+	// pass
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitNodeConst(_ *NodeConst) error {
+	// pass
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitList(node *List) error {
+	for _, item := range node.Value {
+		err := b.Visit(item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitDict(node *Dict) error {
+	for _, item := range node.Value {
+		err := b.Visit(item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitUnaryOp(_ *UnaryOp) error {
+	// pass
+	return nil
+}
+
+func (b *SemanticAnalyzer) VisitCompound(node *Compound) error {
 	for _, child := range node.Children {
-		b.Visit(child)
+		err := b.Visit(child)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitAssign(node *Assign) {
-	b.Visit(node.Right)
-	b.Visit(node.Left)
+func (b *SemanticAnalyzer) VisitAssign(node *Assign) error {
+	err := b.Visit(node.Right)
+	if err != nil {
+		return err
+	}
+	return b.Visit(node.Left)
 }
 
-func (b *SemanticAnalyzer) VisitVar(node *Var) {
+func (b *SemanticAnalyzer) VisitVar(node *Var) error {
 	varName := node.Value.(string)
 	varSymbol := b.CurrentScope.Lookup(varName, false)
 
 	if varSymbol == nil {
-		panic(b.error(IdNotFound, node.Token))
+		return b.error(IdNotFound, node.Token)
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitNoOp(_ *NoOp) {
+func (b *SemanticAnalyzer) VisitNoOp(_ *NoOp) error {
 	// pass
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitPrint(node *Print) {
-	b.Visit(node.Statement)
+func (b *SemanticAnalyzer) VisitPrint(node *Print) error {
+	err := b.Visit(node.Statement)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitWhile(node *While) {
+func (b *SemanticAnalyzer) VisitWhile(node *While) error {
 	// TODO scope
 	for _, node := range node.DoBranch {
-		b.Visit(node)
+		err := b.Visit(node)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitIf(node *If) {
+func (b *SemanticAnalyzer) VisitIf(node *If) error {
 	// TODO scope
 	for _, node := range node.ThenBranch {
-		b.Visit(node)
+		err := b.Visit(node)
+		if err != nil {
+			return err
+		}
 	}
 	for _, node := range node.ElseBranch {
-		b.Visit(node)
+		err := b.Visit(node)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (b *SemanticAnalyzer) VisitLogical(node *Logical) {
-	b.Visit(node.Left)
-	b.Visit(node.Right)
+func (b *SemanticAnalyzer) VisitLogical(node *Logical) error {
+	err := b.Visit(node.Left)
+	if err != nil {
+		return err
+	}
+	return b.Visit(node.Right)
 }

@@ -1,6 +1,7 @@
 package action
 
 import (
+	"log"
 	"testing"
 )
 
@@ -15,6 +16,15 @@ func run(t *testing.T, text string) {
 	}
 
 	Debug = true
+	symbolTable := NewSemanticAnalyzer()
+	err = symbolTable.Visit(tree)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if Debug {
+		log.Println(symbolTable.CurrentScope)
+	}
+
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
 	if err != nil {

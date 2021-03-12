@@ -30,7 +30,10 @@ func (s *Workflow) RunScript(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	sa := script.NewSemanticAnalyzer()
-	sa.Visit(tree)
+	err = sa.Visit(tree)
+	if err != nil {
+		return nil, err
+	}
 
 	i := script.NewInterpreter(tree)
 	i.SetClient(s.midClient)
@@ -50,6 +53,12 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 		return nil, err
 	}
 	tree, err := p.Parse()
+	if err != nil {
+		return nil, err
+	}
+
+	symbolTable := action.NewSemanticAnalyzer()
+	err = symbolTable.Visit(tree)
 	if err != nil {
 		return nil, err
 	}

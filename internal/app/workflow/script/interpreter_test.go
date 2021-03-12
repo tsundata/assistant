@@ -17,7 +17,10 @@ func run(t *testing.T, text string) {
 
 	Debug = true
 	symbolTable := NewSemanticAnalyzer()
-	symbolTable.Visit(tree)
+	err = symbolTable.Visit(tree)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if Debug {
 		log.Println(symbolTable.CurrentScope)
 	}
@@ -25,10 +28,10 @@ func run(t *testing.T, text string) {
 	i := NewInterpreter(tree)
 	r, err := i.Interpret()
 	if err != nil {
-		 t.Fatal(err)
+		t.Fatal(err)
 	}
 	if r != 0 {
-		 t.Fatal("error expr")
+		t.Fatal("error expr")
 	}
 	log.Println(i.callStack)
 	log.Println(i.Stdout())
