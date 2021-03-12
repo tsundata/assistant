@@ -136,7 +136,7 @@ func (r *cronRuleset) filter(b *rulebot.RuleBot, name string, latest []string) [
 	diff := utils.StringSliceDiff(latest, tobeCompared)
 
 	// record
-	b.RDB.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
+	b.RDB.Set(ctx, sendTimeKey, time.Now().Unix(), 0)
 
 	// add data
 	for _, item := range diff {

@@ -1,6 +1,6 @@
 name: example
 when: "* * * * *"
-instant: true
+mode: instant # instant, daily
 page:
   url: "https://news.ycombinator.com/news"
   list: "tr.athing"

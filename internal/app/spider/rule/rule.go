@@ -9,10 +9,10 @@ import (
 )
 
 type Rule struct {
-	Name    string `yaml:"name"`
-	When    string `yaml:"when"`
-	Instant bool   `yaml:"instant"`
-	Page    struct {
+	Name string `yaml:"name"`
+	When string `yaml:"when"`
+	Mode string `yaml:"mode"`
+	Page struct {
 		URL  string            `yaml:"url"`
 		List string            `yaml:"list"`
 		Item map[string]string `yaml:"item"`
@@ -20,9 +20,9 @@ type Rule struct {
 }
 
 type Result struct {
-	Name    string
-	Instant bool
-	Result  []string
+	Name   string
+	Mode   string
+	Result []string
 }
 
 func document(url string) (*goquery.Document, error) {

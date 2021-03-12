@@ -146,9 +146,9 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			}()
 			if len(result) > 0 {
 				s.outCh <- rule.Result{
-					Name:    name,
-					Instant: r.Instant,
-					Result:  result,
+					Name:   name,
+					Mode:   r.Mode,
+					Result: result,
 				}
 			}
 		}
@@ -164,13 +164,13 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 func (s *Crawler) resultWorker() {
 	for out := range s.outCh {
 		// filter
-		diff := s.filter(out.Name, out.Instant, out.Result)
+		diff := s.filter(out.Name, out.Mode, out.Result)
 		// send
 		s.send(out.Name, diff)
 	}
 }
 
-func (s *Crawler) filter(name string, instant bool, latest []string) []string {
+func (s *Crawler) filter(name, mode string, latest []string) []string {
 	ctx := context.Background()
 	sentKey := fmt.Sprintf("spider:%s:sent", name)
 	todoKey := fmt.Sprintf("spider:%s:todo", name)
@@ -198,9 +198,10 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 	// diff
 	diff := utils.StringSliceDiff(latest, tobeCompared)
 
-	if instant {
-		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
-	} else {
+	switch mode {
+	case "instant":
+		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), 0)
+	case "daily":
 		sendString := s.rdb.Get(ctx, sendTimeKey).Val()
 		oldSend := int64(0)
 		if sendString != "" {
@@ -215,7 +216,9 @@ func (s *Crawler) filter(name string, instant bool, latest []string) []string {
 			return []string{}
 		}
 
-		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), redis.KeepTTL)
+		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), 0)
+	default:
+		return []string{}
 	}
 
 	// add data
