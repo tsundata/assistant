@@ -80,7 +80,6 @@ CREATE TABLE `triggers`
     `when`       varchar(128)     NOT NULL DEFAULT '',
     `message_id` int(11)          NOT NULL,
     `time`       timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `flag` (`flag`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

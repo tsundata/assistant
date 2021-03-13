@@ -118,7 +118,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 }
 
 func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	_, err := m.db.Exec("DELETE FROM `messages` WHERE `uuid` = ?", payload.GetUuid())
+	_, err := m.db.Exec("DELETE FROM `messages` WHERE `id` = ?", payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -203,6 +203,17 @@ func (m *Message) CreateScriptMessage(ctx context.Context, payload *pb.TextReque
 	if payload.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
+
+	// check syntax
+	_, err := m.wfClient.SyntaxCheck(ctx, &pb.WorkflowRequest{
+		Text: payload.GetText(),
+		Type: model.MessageTypeScript,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// store message
 	uuid, err := utils.GenerateUUID()
 	if err != nil {
 		return nil, err
@@ -217,7 +228,7 @@ func (m *Message) CreateScriptMessage(ctx context.Context, payload *pb.TextReque
 		return nil, err
 	}
 
-	// check trigger
+	// check/store trigger
 	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
 		Kind:        model.MessageTypeScript,
 		MessageId:   id,
@@ -254,6 +265,17 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	if payload.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
+
+	// check syntax
+	_, err := m.wfClient.SyntaxCheck(ctx, &pb.WorkflowRequest{
+		Text: payload.GetText(),
+		Type: model.MessageTypeAction,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// store message
 	uuid, err := utils.GenerateUUID()
 	if err != nil {
 		return nil, err
@@ -268,12 +290,26 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 		return nil, err
 	}
 
-	// check trigger
+	// check/create trigger
 	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
 		Kind:        model.MessageTypeAction,
 		MessageId:   id,
 		MessageText: payload.GetText(),
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
+	_, err := m.db.Exec("DELETE FROM `messages` WHERE `id` = ?", payload.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = m.wfClient.DeleteTrigger(ctx, &pb.TriggerRequest{MessageId: payload.GetId()})
 	if err != nil {
 		return nil, err
 	}

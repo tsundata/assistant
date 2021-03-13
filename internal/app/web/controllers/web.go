@@ -63,17 +63,17 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 	if reply.GetContent() == "" {
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString("content empty")
 	}
 
 	var list []string
 	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	var items []components.Component
@@ -134,7 +134,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 	reply, err := wc.midClient.GetApps(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	for _, app := range reply.GetApps() {
@@ -173,7 +173,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 	reply, err := wc.msgClient.List(context.Background(), &pb.MessageRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	md := goldmark.New(
@@ -228,7 +228,7 @@ func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	reply, err := wc.midClient.GetMaskingCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	for _, item := range reply.GetItems() {
@@ -328,7 +328,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	return c.Redirect(fmt.Sprintf("/credentials/%s", c.Params("uuid")), http.StatusFound)
@@ -340,7 +340,7 @@ func (wc *WebController) Setting(c *fiber.Ctx) error {
 	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	for _, item := range reply.GetItems() {
@@ -410,7 +410,7 @@ func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	return c.Redirect(fmt.Sprintf("/setting/%s", c.Params("uuid")), http.StatusFound)
@@ -423,7 +423,7 @@ func (wc *WebController) Scripts(c *fiber.Ctx) error {
 	reply, err := wc.msgClient.GetScriptMessages(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	for _, item := range reply.GetItems() {
@@ -507,7 +507,7 @@ func (wc *WebController) ScriptStore(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	return c.Redirect(fmt.Sprintf("/scripts/%s", c.Params("uuid")), http.StatusFound)
@@ -520,11 +520,11 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 	reply, err := wc.msgClient.GetActionMessages(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	for _, item := range reply.GetItems() {
-		items = append(items, &components.Script{
+		items = append(items, &components.Action{
 			ID:      int(item.GetId()),
 			UUID:    uuid,
 			Content: item.GetText(),
@@ -604,10 +604,24 @@ func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		wc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	return c.Redirect(fmt.Sprintf("/action/%s", c.Params("uuid")), http.StatusFound)
+}
+
+func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
+	if err != nil {
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
+	}
+
+	_, err = wc.msgClient.DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Id: id})
+	if err != nil {
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
+	}
+
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
@@ -619,6 +633,7 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.URL)
 	err := provider.StoreAccessToken(c, wc.midClient)
 	if err != nil {
+		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 	return c.SendString("Success")
@@ -634,7 +649,8 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 		Body:   utils.ByteToString(c.Request().Body()),
 	})
 	if err != nil {
-		return err
+		wc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	return c.SendString("")

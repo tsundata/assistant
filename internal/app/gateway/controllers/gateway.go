@@ -41,7 +41,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.opt.Verification}))
 	if err != nil {
 		gc.logger.Error(err)
-		return c.SendStatus(http.StatusBadRequest)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	if eventsAPIEvent.Type == slackevents.URLVerification {
@@ -49,7 +49,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 		err := json.Unmarshal(body, &r)
 		if err != nil {
 			gc.logger.Error(err)
-			return c.SendStatus(http.StatusBadRequest)
+			return c.Status(http.StatusBadRequest).SendString(err.Error())
 		}
 		return c.SendString(r.Challenge)
 	}
@@ -64,7 +64,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				rKey := "message:repeated:" + ev.ClientMsgID
 				isRepeated := gc.rdb.Get(context.Background(), rKey).Val()
 				if len(isRepeated) > 0 {
-					return c.SendStatus(http.StatusBadRequest)
+					return c.Status(http.StatusBadRequest).SendString("repeat message")
 				}
 				gc.rdb.Set(context.Background(), rKey, time.Now().Unix(), 7*24*time.Hour)
 
@@ -83,7 +83,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				})
 				if err != nil {
 					gc.logger.Error(err)
-					return c.SendStatus(http.StatusBadRequest)
+					return c.Status(http.StatusBadRequest).SendString(err.Error())
 				}
 
 				if reply.GetId() > 0 {
@@ -95,7 +95,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				}
 				if err != nil {
 					gc.logger.Error(err)
-					return c.SendStatus(http.StatusBadRequest)
+					return c.Status(http.StatusBadRequest).SendString(err.Error())
 				}
 			}
 		}

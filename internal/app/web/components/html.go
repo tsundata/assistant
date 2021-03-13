@@ -214,7 +214,7 @@ func (c *Html) GetContent() template.HTML {
         .script .id {
             width: 20%%;
         }
-        .script .run-btn {
+        .script .action-btn {
             width: 20%%;
             height: 40px;
 			text-align: center;
@@ -243,5 +243,18 @@ func (c *Html) GetContent() template.HTML {
 %s
 %s
 </body>
+<script>
+	function post(url) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.send("");
+		xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                location.reload()
+            }
+        }
+	}
+</script>
 </html>`, title, iconLink, codeEditorLink, c.css, c.Page.GetContent(), codeEditorScript, c.js))
 }

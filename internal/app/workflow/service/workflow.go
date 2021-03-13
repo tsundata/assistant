@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/influxdata/cron"
 	"github.com/jmoiron/sqlx"
@@ -27,6 +28,47 @@ type Workflow struct {
 
 func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
 	return &Workflow{etcd: etcd, db: db, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
+}
+
+func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
+	switch payload.Type {
+	case model.MessageTypeAction:
+		p, err := action.NewParser(action.NewLexer([]rune(payload.GetText())))
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+		tree, err := p.Parse()
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+
+		symbolTable := action.NewSemanticAnalyzer()
+		err = symbolTable.Visit(tree)
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+
+		return &pb.StateReply{State: true}, nil
+	case model.MessageTypeScript:
+		p, err := script.NewParser(script.NewLexer([]rune(payload.GetText())))
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+		tree, err := p.Parse()
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+
+		sa := script.NewSemanticAnalyzer()
+		err = sa.Visit(tree)
+		if err != nil {
+			return &pb.StateReply{State: false}, err
+		}
+
+		return &pb.StateReply{State: true}, nil
+	}
+
+	return &pb.StateReply{State: false}, nil
 }
 
 func (s *Workflow) RunScript(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
@@ -178,38 +220,63 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			return nil, err
 		}
 
-		if symbolTable.Webhook == nil {
-			return nil, nil
-		} else {
+		if symbolTable.Cron == nil && symbolTable.Webhook == nil {
+			return &pb.StateReply{State: false}, nil
+		}
+
+		if symbolTable.Cron != nil {
+			trigger.Type = "cron"
+			trigger.When = symbolTable.Cron.When
+
+			// store
+			_, err := s.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`, `time`) VALUES (:type, :kind, :when, :message_id, :time)", trigger)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if symbolTable.Webhook != nil {
 			trigger.Type = "webhook"
 			trigger.Flag = symbolTable.Webhook.Flag
 			trigger.Secret = symbolTable.Webhook.Secret
-		}
 
-		if symbolTable.Cron == nil {
-			return nil, nil
-		} else {
-			trigger.Type = "cron"
-			trigger.When = symbolTable.Cron.When
+			var find model.Trigger
+			err = s.db.Get(&find, "SELECT id  FROM `triggers` WHERE `type` = ? AND `flag` = ?", trigger.Type, trigger.Flag)
+			if err != nil && err != sql.ErrNoRows {
+				return nil, err
+			}
+
+			if find.ID > 0 {
+				return nil, errors.New("exist flag: " + trigger.Flag)
+			}
+
+			// store
+			_, err = s.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `flag`, `secret`, `message_id`, `time`) VALUES (:type, :kind, :flag, :secret, :message_id, :time)", trigger)
+			if err != nil {
+				return nil, err
+			}
 		}
-	case model.MessageTypeScript:
-		// TODO
-		return nil, nil
+	case model.MessageTypeScript: // TODO
+		return &pb.StateReply{State: false}, nil
 	default:
-		return nil, nil
+		return &pb.StateReply{State: false}, nil
 	}
 
-	// store
-	res, err := s.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `flag`, `secret`, `message_id`, `time`) VALUES (:type, :kind, :flag, :secret, :message_id, :time)", trigger)
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
+	result, err := s.db.Exec("DELETE FROM triggers WHERE message_id = ?", payload.MessageId)
 	if err != nil {
 		return nil, err
 	}
-	_, err = res.LastInsertId()
+	rows, err := result.RowsAffected()
 	if err != nil {
 		return nil, err
 	}
+	if rows > 0 {
+		return &pb.StateReply{State: true}, nil
+	}
 
-	return &pb.StateReply{
-		State: true,
-	}, nil
+	return &pb.StateReply{State: false}, nil
 }

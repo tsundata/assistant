@@ -16,6 +16,7 @@ service Message {
   rpc CreateScriptMessage(TextRequest) returns (StateReply) {}
   rpc GetActionMessages(TextRequest) returns (ActionReply) {}
   rpc CreateActionMessage(TextRequest) returns (StateReply) {}
+  rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
 }
 
 message MessageRequest {
