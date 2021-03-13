@@ -76,8 +76,12 @@ func CreateApp(name, cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	wfClient, err := rpcclients.NewWorkflowClient(client)
+	if err != nil {
+		return nil, err
+	}
 
-	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, nil, nil, rules.Options...)
+	b := rulebot.New("cron", rdb, subClient, midClient, msgClient, wfClient, nil, rules.Options...)
 	application, err := cron.NewApp(name, log, b)
 	if err != nil {
 		return nil, err

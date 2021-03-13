@@ -29,7 +29,8 @@ func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook
 
 func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
 	var messages []model.Message
-	err := m.db.Select(&messages, "SELECT * FROM `messages` ORDER BY `id` DESC")
+	err := m.db.Select(&messages, "SELECT * FROM `messages` WHERE `type` <> ? AND `type` <> ? ORDER BY `id` DESC",
+		model.MessageTypeAction, model.MessageTypeScript)
 	if err != nil {
 		return nil, err
 	}

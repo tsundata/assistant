@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
@@ -21,13 +22,14 @@ import (
 type Workflow struct {
 	etcd       *clientv3.Client
 	db         *sqlx.DB
+	rdb        *redis.Client
 	midClient  pb.MiddleClient
 	msgClient  pb.MessageClient
 	taskClient pb.TaskClient
 }
 
-func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
-	return &Workflow{etcd: etcd, db: db, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
+func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
+	return &Workflow{etcd: etcd, db: db, rdb: rdb, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -166,16 +168,32 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 	}
 
 	for _, trigger := range triggers {
+		var lastTime time.Time
+		key := fmt.Sprintf("workflow:cron:%d:time", trigger.MessageID)
+		t := s.rdb.Get(ctx, key).Val()
+		if t == "" {
+			lastTime = time.Time{}
+		} else {
+			lastTime, err = time.ParseInLocation("2006-01-02 15:04:05", t, time.Local)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		p, err := cron.ParseUTC(trigger.When)
 		if err != nil {
 			return nil, err
 		}
-		nextTime, err := p.Next(time.Now())
+		nextTime, err := p.Next(lastTime)
 		if err != nil {
 			return nil, err
 		}
 
-		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+		now := time.Now()
+		if nextTime.Before(now) {
+			// time
+			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
+
 			// push task
 			j, err := json.Marshal(map[string]string{
 				"type": trigger.Kind,

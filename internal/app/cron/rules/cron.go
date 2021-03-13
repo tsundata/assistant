@@ -83,7 +83,17 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			msgs := rule.Action(b)
+			msgs := func() []string {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Println("ruleWorker recover ", rule.Name)
+						if v, ok := r.(error); ok {
+							log.Println(v)
+						}
+					}
+				}()
+				return rule.Action(b)
+			}()
 			if len(msgs) > 0 {
 				r.outCh <- Result{
 					Name:   rule.Name,

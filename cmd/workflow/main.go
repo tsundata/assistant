@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -94,7 +95,16 @@ func CreateApp(name, cf string) (*app.Application, error) {
 		return nil, err
 	}
 
-	application, err := workflow.NewApp(name, log, server, e, db, midClient, msgClient, taskClient)
+	redisOption, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rdb, err := redis.New(redisOption)
+	if err != nil {
+		return nil, err
+	}
+
+	application, err := workflow.NewApp(name, log, server, e, db, rdb, midClient, msgClient, taskClient)
 	if err != nil {
 		return nil, err
 	}

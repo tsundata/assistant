@@ -136,7 +136,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {
-						s.logger.Warn("processSpiderRule recover " + name)
+						s.logger.Warn("ruleWorker recover " + name)
 						if v, ok := r.(error); ok {
 							s.logger.Error(v)
 						}
