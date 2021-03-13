@@ -1,4 +1,4 @@
-package context
+package inside
 
 import (
 	"github.com/tsundata/assistant/api/pb"
@@ -8,9 +8,11 @@ import (
 type Context struct {
 	mu sync.Mutex
 
-	Value     interface{}
-	MidClient pb.MiddleClient
-	MsgClient pb.MessageClient
+	Value      interface{}
+	MidClient  pb.MiddleClient
+	MsgClient  pb.MessageClient
+	WfClient   pb.WorkflowClient
+	TaskClient pb.TaskClient
 }
 
 func NewContext() *Context {

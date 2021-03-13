@@ -118,7 +118,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.midClient, s.msgClient)
+	i.SetClient(s.midClient, s.msgClient, nil, s.taskClient)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err

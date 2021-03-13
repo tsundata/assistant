@@ -1,10 +1,10 @@
 package opcode
 
 import (
-	cContext "context"
+	"context"
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/action/context"
+	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
 
 type Send struct{}
@@ -13,7 +13,7 @@ func NewSend() *Send {
 	return &Send{}
 }
 
-func (c *Send) Run(ctx *context.Context, params []interface{}) (interface{}, error) {
+func (c *Send) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}
@@ -22,7 +22,7 @@ func (c *Send) Run(ctx *context.Context, params []interface{}) (interface{}, err
 		if ctx.MsgClient == nil {
 			return false, nil
 		}
-		state, err := ctx.MsgClient.Send(cContext.Background(), &pb.MessageRequest{Text: text})
+		state, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: text})
 		if err != nil {
 			return false, err
 		}

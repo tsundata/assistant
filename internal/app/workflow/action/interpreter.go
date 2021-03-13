@@ -1,21 +1,21 @@
 package action
 
 import (
-	ctx "context"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/action/context"
+	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"log"
 	"strings"
 )
 
 type Opcoder interface {
-	Run(*context.Context, []interface{}) (interface{}, error)
+	Run(ctx *inside.Context, params []interface{}) (interface{}, error)
 }
 
-func runOpcode(ctx *context.Context, name string, params []interface{}) (interface{}, error) {
+func runOpcode(ctx *inside.Context, name string, params []interface{}) (interface{}, error) {
 	var o Opcoder
 	switch strings.ToLower(name) {
 	case "get":
@@ -24,6 +24,8 @@ func runOpcode(ctx *context.Context, name string, params []interface{}) (interfa
 		o = opcode.NewCount()
 	case "send":
 		o = opcode.NewSend()
+	case "task":
+		o = opcode.NewTask()
 	default:
 		return nil, errors.New("not opcode")
 	}
@@ -33,16 +35,18 @@ func runOpcode(ctx *context.Context, name string, params []interface{}) (interfa
 type Interpreter struct {
 	tree   Ast
 	stdout []interface{}
-	ctx    *context.Context
+	ctx    *inside.Context
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
-	return &Interpreter{tree: tree, ctx: context.NewContext()}
+	return &Interpreter{tree: tree, ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(midClient pb.MiddleClient, msgClient pb.MessageClient) {
+func (i *Interpreter) SetClient(midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient, taskClient pb.TaskClient) {
 	i.ctx.MidClient = midClient
 	i.ctx.MsgClient = msgClient
+	i.ctx.WfClient = wfClient
+	i.ctx.TaskClient = taskClient
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -132,7 +136,7 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
 	if i.ctx.MsgClient != nil {
-		reply, err := i.ctx.MsgClient.Get(ctx.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
+		reply, err := i.ctx.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
 		if err != nil {
 			log.Println(err)
 			return ""

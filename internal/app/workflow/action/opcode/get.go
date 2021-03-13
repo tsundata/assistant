@@ -3,7 +3,7 @@ package opcode
 import (
 	"errors"
 	"github.com/go-resty/resty/v2"
-	"github.com/tsundata/assistant/internal/app/workflow/action/context"
+	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"time"
 )
@@ -14,7 +14,7 @@ func NewGet() *Get {
 	return &Get{}
 }
 
-func (o *Get) Run(ctx *context.Context, params []interface{}) (interface{}, error) {
+func (o *Get) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}

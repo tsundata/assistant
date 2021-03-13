@@ -50,19 +50,23 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 	}, nil
 }
 
-func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	var message model.Message
-	err := m.db.Get(&message, "SELECT text FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
+	err := m.db.Get(&message, "SELECT * FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
-	return &pb.TextReply{
+	return &pb.MessageReply{
+		Id:   int64(message.ID),
+		Uuid: message.UUID,
 		Text: message.Text,
+		Type: message.Type,
+		Time: message.Time.Format("2006-01-02 15:04:05"),
 	}, nil
 }
 
-func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.TextsReply, error) {
 	// check uuid
 	var message model.Message
 	message.Time = time.Now()
@@ -77,7 +81,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 		return nil, err
 	}
 	if find.ID > 0 {
-		return &pb.MessageReply{
+		return &pb.TextsReply{
 			Uuid: message.UUID,
 		}, nil
 	}
@@ -85,7 +89,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 	// process rule
 	out := m.bot.Process(message.Text).MessageProviderOut()
 	if len(out) > 0 {
-		return &pb.MessageReply{
+		return &pb.TextsReply{
 			Text: out,
 		}, nil
 	}
@@ -112,7 +116,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 		return nil, err
 	}
 
-	return &pb.MessageReply{
+	return &pb.TextsReply{
 		Id:   id,
 		Uuid: message.UUID,
 	}, nil
