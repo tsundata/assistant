@@ -77,12 +77,14 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 
 		router.Get("/scripts/:uuid", auth, wc.Scripts)
 		router.Get("/scripts/:uuid/create", auth, wc.ScriptCreate)
+		router.Get("/script/:uuid/run", auth, wc.ScriptRun)
 		router.Post("/script/:uuid/store", auth, wc.ScriptStore)
 
 		router.Get("/action/:uuid", auth, wc.Action)
 		router.Get("/action/:uuid/create", auth, wc.ActionCreate)
 		router.Get("/action/:uuid/run", auth, wc.ActionRun)
 		router.Post("/action/:uuid/store", auth, wc.ActionStore)
+
 		router.Post("/workflow/:uuid/delete", auth, wc.WorkflowDelete)
 
 		// webhook

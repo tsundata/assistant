@@ -8,6 +8,7 @@ import (
 type Context struct {
 	mu sync.Mutex
 
+	Debug      bool
 	Value      interface{}
 	MidClient  pb.MiddleClient
 	MsgClient  pb.MessageClient

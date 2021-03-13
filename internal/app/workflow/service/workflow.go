@@ -124,8 +124,13 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 		return nil, err
 	}
 
+	var result string
+	if i.Ctx.Debug {
+		result = fmt.Sprintf("Tracing\n-------\n %s", i.Stdout())
+	}
+
 	return &pb.WorkflowReply{
-		Text: fmt.Sprintf("Tracing\n-------\n %s", i.Stdout()),
+		Text: result,
 	}, nil
 }
 

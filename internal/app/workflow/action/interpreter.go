@@ -11,42 +11,21 @@ import (
 	"strings"
 )
 
-type Opcoder interface {
-	Run(ctx *inside.Context, params []interface{}) (interface{}, error)
-}
-
-func runOpcode(ctx *inside.Context, name string, params []interface{}) (interface{}, error) {
-	var o Opcoder
-	switch strings.ToLower(name) {
-	case "get":
-		o = opcode.NewGet()
-	case "count":
-		o = opcode.NewCount()
-	case "send":
-		o = opcode.NewSend()
-	case "task":
-		o = opcode.NewTask()
-	default:
-		return nil, errors.New("not opcode")
-	}
-	return o.Run(ctx, params)
-}
-
 type Interpreter struct {
 	tree   Ast
 	stdout []interface{}
-	ctx    *inside.Context
+	Ctx    *inside.Context
 }
 
 func NewInterpreter(tree Ast) *Interpreter {
-	return &Interpreter{tree: tree, ctx: inside.NewContext()}
+	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
 func (i *Interpreter) SetClient(midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient, taskClient pb.TaskClient) {
-	i.ctx.MidClient = midClient
-	i.ctx.MsgClient = msgClient
-	i.ctx.WfClient = wfClient
-	i.ctx.TaskClient = taskClient
+	i.Ctx.MidClient = midClient
+	i.Ctx.MsgClient = msgClient
+	i.Ctx.WfClient = wfClient
+	i.Ctx.TaskClient = taskClient
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -106,8 +85,8 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	// Run
 	debugLog(fmt.Sprintf("Run: Opecode %v", node.ID))
 	debugLog(fmt.Sprintf("%+v", params))
-	input := i.ctx.Value
-	res, err := runOpcode(i.ctx, name, params)
+	input := i.Ctx.Value
+	res, err := opcode.RunOpcode(i.Ctx, name, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
 		log.Println(err)
@@ -135,8 +114,8 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 }
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
-	if i.ctx.MsgClient != nil {
-		reply, err := i.ctx.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
+	if i.Ctx.MsgClient != nil {
+		reply, err := i.Ctx.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
 		if err != nil {
 			log.Println(err)
 			return ""
