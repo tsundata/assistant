@@ -19,15 +19,17 @@ func (o *Get) Run(ctx *inside.Context, params []interface{}) (interface{}, error
 		return nil, errors.New("error params")
 	}
 	if text, ok := params[0].(string); ok {
-		client := resty.New()
-		client.SetTimeout(time.Minute)
-		resp, err := client.R().Get(text)
-		if err != nil {
-			return nil, err
+		if utils.IsUrl(text) {
+			client := resty.New()
+			client.SetTimeout(time.Minute)
+			resp, err := client.R().Get(text)
+			if err != nil {
+				return nil, err
+			}
+			result := utils.ByteToString(resp.Body())
+			ctx.SetValue(result)
+			return result, nil
 		}
-		result := utils.ByteToString(resp.Body())
-		ctx.SetValue(result)
-		return result, nil
 	}
-	return "", nil
+	return nil, nil
 }

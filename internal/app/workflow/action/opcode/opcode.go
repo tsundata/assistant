@@ -25,6 +25,12 @@ func RunOpcode(ctx *inside.Context, name string, params []interface{}) (interfac
 		o = NewDebug()
 	case "json":
 		o = NewJson()
+	case "if":
+		o = NewIf()
+	case "else":
+		o = NewElse()
+	case "set":
+		o = NewSet()
 	default:
 		return nil, errors.New("not opcode")
 	}

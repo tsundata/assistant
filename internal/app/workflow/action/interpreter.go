@@ -81,6 +81,11 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	if name == "webhook" || name == "cron" {
 		return 0
 	}
+	// Control opcode
+	if !(name == "if" || name == "else") && !i.Ctx.Continue {
+		debugLog(fmt.Sprintf("skip: %s", name))
+		return 0
+	}
 
 	// Run
 	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))

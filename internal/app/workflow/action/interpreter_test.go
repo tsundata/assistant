@@ -57,8 +57,37 @@ send "hello world"
 }
 
 func TestInterpreter3(t *testing.T) {
-	text := `webhook "foo" "bar"
-webhook "repeat"
+	text := `
+set "[1, 2]"
+json
+if
+send "success"
+else
+send "error"
+
+set 1
+if
+send "success"
+else
+send "error"
+
+set "a"
+if
+send "success"
+else
+send "error"
+
+set 1.2
+if
+send "success"
+else
+send "error"
+
+set true
+if
+send "success"
+else
+send "error"
 `
 	run(t, text)
 }

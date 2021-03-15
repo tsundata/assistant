@@ -14,17 +14,17 @@ func (c *Count) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
 	if text, ok := ctx.Value.(string); ok {
 		result := len(text)
 		ctx.SetValue(result)
-		return result, nil
+		return int64(result), nil
 	}
 	if objects, ok := ctx.Value.(map[string]interface{}); ok {
 		result := len(objects)
 		ctx.SetValue(result)
-		return result, nil
+		return int64(result), nil
 	}
 	if arrays, ok := ctx.Value.([]interface{}); ok {
 		result := len(arrays)
 		ctx.SetValue(result)
-		return result, nil
+		return int64(result), nil
 	}
-	return 0, nil
+	return int64(0), nil
 }
