@@ -49,6 +49,7 @@ echo 1 1.2 "hi" #1
 
 func TestInterpreter2(t *testing.T) {
 	text := `get "https://httpbin.org/get"
+json
 count
 send "hello world"
 `

@@ -83,16 +83,17 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	}
 
 	// Run
-	debugLog(fmt.Sprintf("Run: Opecode %v", node.ID))
-	debugLog(fmt.Sprintf("%+v", params))
+	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))
+	debugLog(fmt.Sprintf("params: %+v", params))
 	input := i.Ctx.Value
+	debugLog(fmt.Sprintf("context: %+v", input))
 	res, err := opcode.RunOpcode(i.Ctx, name, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
 		log.Println(err)
 		return -1
 	}
-	debugLog(fmt.Sprintf("%+v\n", res))
+	debugLog(fmt.Sprintf("result: %+v\n", res))
 
 	return 0
 }
