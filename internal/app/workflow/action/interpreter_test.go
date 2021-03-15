@@ -91,3 +91,13 @@ send "error"
 `
 	run(t, text)
 }
+
+func TestInterpreter4(t *testing.T) {
+	text := `
+status "http" "https://www.example.com"
+status "tcp" "www.example.com:80"
+status "dns" "8.8.8.8:53"
+status "tls" "www.example.com:443"
+`
+	run(t, text)
+}

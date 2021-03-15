@@ -31,6 +31,8 @@ func RunOpcode(ctx *inside.Context, name string, params []interface{}) (interfac
 		o = NewElse()
 	case "set":
 		o = NewSet()
+	case "status":
+		o = NewStatus()
 	default:
 		return nil, errors.New("not opcode")
 	}
