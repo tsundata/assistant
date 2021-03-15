@@ -106,7 +106,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 	}
 
 	providerApps := map[string]bool{}
-	for _, provider := range vendors.OAuthProviders {
+	for _, provider := range vendors.OAuthProviderApps {
 		providerApps[provider] = true
 	}
 

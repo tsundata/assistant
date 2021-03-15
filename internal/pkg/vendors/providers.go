@@ -11,14 +11,13 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/pushover"
 )
 
-var OAuthProviders = []string{
+var OAuthProviderApps = []string{
 	github.ID,
 	pocket.ID,
-	pushover.ID,
 	dropbox.ID,
 }
 
-var OAuthProvidersOptions = map[string]interface{}{
+var ProviderCredentialOptions = map[string]interface{}{
 	github.ID: map[string]string{
 		github.ClientIdKey:     "Client ID",
 		github.ClientSecretKey: "Client secrets",
