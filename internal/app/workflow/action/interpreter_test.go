@@ -102,7 +102,20 @@ status "tls" "www.example.com:443"
 
 func TestInterpreter5(t *testing.T) {
 	text := `set "aaa"
-message
-aaa`
+message`
+	run(t, text)
+}
+
+func TestInterpreter6(t *testing.T) {
+	text := `
+get "https://httpbin.org/html"
+query "css" "h1" "text"
+
+get "https://httpbin.org/get"
+query "json" "headers.Host"
+
+get "https://httpbin.org/robots.txt"
+query "regex" "^Disallow: .*$"
+`
 	run(t, text)
 }
