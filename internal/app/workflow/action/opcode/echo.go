@@ -7,21 +7,21 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
 
-type Send struct{}
+type Echo struct{}
 
-func NewSend() *Send {
-	return &Send{}
+func NewEcho() *Echo {
+	return &Echo{}
 }
 
-func (o *Send) Type() int {
+func (o *Echo) Type() int {
 	return TypeOp
 }
 
-func (o *Send) Doc() string {
+func (o *Echo) Doc() string {
 	return "send [any] : (nil -> bool)"
 }
 
-func (o *Send) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Echo) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}

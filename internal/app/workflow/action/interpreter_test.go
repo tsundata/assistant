@@ -38,7 +38,7 @@ get "https://httpbin.org/get"
 json
 count
 pdf
-send "success"
+echo "success"
 echo 1 1.2 "hi" #1
 `
 	run(t, text)
@@ -48,7 +48,7 @@ func TestInterpreter2(t *testing.T) {
 	text := `get "https://httpbin.org/get"
 json
 count
-send "hello world"
+echo "hello world"
 `
 	run(t, text)
 }
@@ -58,33 +58,33 @@ func TestInterpreter3(t *testing.T) {
 set "[1, 2]"
 json
 if
-send "success"
+echo "success"
 else
-send "error"
+echo "error"
 
 set 1
 if
-send "success"
+echo "success"
 else
-send "error"
+echo "error"
 
 set "a"
 if
-send "success"
+echo "success"
 else
-send "error"
+echo "error"
 
 set 1.2
 if
-send "success"
+echo "success"
 else
-send "error"
+echo "error"
 
 set true
 if
-send "success"
+echo "success"
 else
-send "error"
+echo "error"
 `
 	run(t, text)
 }

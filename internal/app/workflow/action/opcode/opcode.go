@@ -25,7 +25,7 @@ var opcodes = map[string]Opcoder{
 	"else":    NewElse(),
 	"get":     NewGet(),
 	"count":   NewCount(),
-	"send":    NewSend(),
+	"echo":    NewEcho(),
 	"task":    NewTask(),
 	"debug":   NewDebug(),
 	"json":    NewJson(),
