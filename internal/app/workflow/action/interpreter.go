@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
@@ -21,7 +22,8 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient, taskClient pb.TaskClient) {
+func (i *Interpreter) SetClient(rdb *redis.Client, midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient, taskClient pb.TaskClient) {
+	i.Ctx.RDB = rdb
 	i.Ctx.MidClient = midClient
 	i.Ctx.MsgClient = msgClient
 	i.Ctx.WfClient = wfClient

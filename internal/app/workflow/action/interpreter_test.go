@@ -101,7 +101,8 @@ status "tls" "www.example.com:443"
 }
 
 func TestInterpreter5(t *testing.T) {
-	text := `set "aaa"
+	text := `set "aaa" "bbb" "ccc" "aaa" "ccc"
+dedupe
 message`
 	run(t, text)
 }

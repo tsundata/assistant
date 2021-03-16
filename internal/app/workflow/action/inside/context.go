@@ -1,6 +1,7 @@
 package inside
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
 	"sync"
 )
@@ -12,6 +13,7 @@ type Context struct {
 	Continue bool
 	Value    interface{}
 
+	RDB        *redis.Client
 	MidClient  pb.MiddleClient
 	MsgClient  pb.MessageClient
 	WfClient   pb.WorkflowClient
