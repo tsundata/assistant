@@ -19,11 +19,6 @@ const (
 	TokenDot            = "."
 	TokenColon          = ":"
 	TokenComma          = ","
-	TokenInteger        = "INTEGER"
-	TokenFloat          = "FLOAT"
-	TokenString         = "STRING"
-	TokenBoolean        = "BOOLEAN"
-	TokenMessage        = "MESSAGE"
 	TokenID             = "ID"
 	TokenIntegerConst   = "INTEGER_CONST"
 	TokenFloatConst     = "FLOAT_CONST"
@@ -47,11 +42,6 @@ func (t *Token) String() string {
 }
 
 var ReservedKeywords = map[string]Token{
-	"INT":     {Type: TokenInteger, Value: TokenInteger},
-	"FLOAT":   {Type: TokenFloat, Value: TokenFloat},
-	"STRING":  {Type: TokenString, Value: TokenString},
-	"BOOL":    {Type: TokenBoolean, Value: TokenBoolean},
 	"TRUE":    {Type: TokenTrue, Value: true},
 	"FALSE":   {Type: TokenFalse, Value: false},
-	"MESSAGE": {Type: TokenMessage, Value: TokenMessage},
 }

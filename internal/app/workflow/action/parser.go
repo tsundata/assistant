@@ -97,6 +97,9 @@ func (p *Parser) Expression() ([]Ast, error) {
 	if p.CurrentToken.Type == TokenCarriageReturn {
 		return []Ast{}, nil
 	}
+	if p.CurrentToken.Type == TokenEOF {
+		return []Ast{}, nil
+	}
 
 	node, err := p.Factor()
 	if err != nil {

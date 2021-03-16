@@ -26,12 +26,9 @@ func run(t *testing.T, text string) {
 	}
 
 	i := NewInterpreter(tree)
-	r, err := i.Interpret()
+	_, err = i.Interpret()
 	if err != nil {
 		t.Fatal(err)
-	}
-	if r != 0 {
-		t.Fatal("error expr")
 	}
 }
 
@@ -100,5 +97,12 @@ status "tcp" "www.example.com:80"
 status "dns" "8.8.8.8:53"
 status "tls" "www.example.com:443"
 `
+	run(t, text)
+}
+
+func TestInterpreter5(t *testing.T) {
+	text := `set "aaa"
+message
+aaa`
 	run(t, text)
 }

@@ -82,6 +82,9 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	input := i.Ctx.Value
 	debugLog(fmt.Sprintf("context: %+v", input))
 	op := opcode.NewOpcode(name)
+	if op == nil {
+		return 0
+	}
 
 	// Async opcode
 	if op.Type() == opcode.TypeAsync {
