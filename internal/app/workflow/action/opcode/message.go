@@ -39,6 +39,9 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 	if num, ok := ctx.Value.(int64); ok {
 		text = fmt.Sprintf("%d", num)
 	}
+	if boolean, ok := ctx.Value.(bool); ok {
+		text = fmt.Sprintf("%v", boolean)
+	}
 
 	v := reflect.ValueOf(ctx.Value)
 	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
