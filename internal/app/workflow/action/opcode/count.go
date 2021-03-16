@@ -10,7 +10,15 @@ func NewCount() *Count {
 	return &Count{}
 }
 
-func (c *Count) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
+func (o *Count) Type() int {
+	return TypeOp
+}
+
+func (o *Count) Doc() string {
+	return "count : (any -> integer)"
+}
+
+func (o *Count) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
 	if text, ok := ctx.Value.(string); ok {
 		result := len(text)
 		ctx.SetValue(result)

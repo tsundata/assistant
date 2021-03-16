@@ -11,7 +11,15 @@ func NewSet() *Set {
 	return &Set{}
 }
 
-func (s *Set) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Set) Type() int {
+	return TypeOp
+}
+
+func (o *Set) Doc() string {
+	return "set [any] : (nil -> any)"
+}
+
+func (o *Set) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}

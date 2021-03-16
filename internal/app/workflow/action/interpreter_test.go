@@ -94,6 +94,7 @@ send "error"
 
 func TestInterpreter4(t *testing.T) {
 	text := `
+// status 
 status "http" "https://www.example.com"
 status "tcp" "www.example.com:80"
 status "dns" "8.8.8.8:53"

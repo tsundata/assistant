@@ -11,11 +11,13 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
+	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/app/workflow/script"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -302,4 +304,16 @@ func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) 
 	}
 
 	return &pb.StateReply{State: false}, nil
+}
+
+func (s *Workflow) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	var docs string
+	if payload.GetText() == "" {
+		docs = strings.Join(opcode.Docs(), "\n")
+	} else {
+		docs = opcode.Doc(payload.GetText())
+	}
+	return &pb.WorkflowReply{
+		Text: docs,
+	}, nil
 }

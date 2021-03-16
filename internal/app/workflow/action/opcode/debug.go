@@ -11,7 +11,15 @@ func NewDebug() *Debug {
 	return &Debug{}
 }
 
-func (d *Debug) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Debug) Type() int {
+	return TypeOp
+}
+
+func (o *Debug) Doc() string {
+	return "debug [bool]"
+}
+
+func (o *Debug) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return false, errors.New("error params")
 	}

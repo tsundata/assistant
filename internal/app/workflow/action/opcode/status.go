@@ -16,7 +16,15 @@ func NewStatus() *Status {
 	return &Status{}
 }
 
-func (s *Status) Run(_ *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Status) Type() int {
+	return TypeOp
+}
+
+func (o *Status) Doc() string {
+	return "status [string:(http|tcp|dns|tls)] [string] : (nil -> bool)"
+}
+
+func (o *Status) Run(_ *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 2 {
 		return false, errors.New("error params")
 	}

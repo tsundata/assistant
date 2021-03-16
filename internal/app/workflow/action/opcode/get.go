@@ -14,6 +14,14 @@ func NewGet() *Get {
 	return &Get{}
 }
 
+func (o *Get) Type() int {
+	return TypeOp
+}
+
+func (o *Get) Doc() string {
+	return "get [any] : (nil -> any)"
+}
+
 func (o *Get) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")

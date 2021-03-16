@@ -77,22 +77,24 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	}
 
 	name := node.ID.(*Token).Value.(string)
-	// Special opcode
-	if name == "webhook" || name == "cron" {
+	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))
+	debugLog(fmt.Sprintf("params: %+v", params))
+	input := i.Ctx.Value
+	debugLog(fmt.Sprintf("context: %+v", input))
+	op := opcode.NewOpcode(name)
+
+	// Async opcode
+	if op.Type() == opcode.TypeAsync {
 		return 0
 	}
-	// Control opcode
-	if !(name == "if" || name == "else") && !i.Ctx.Continue {
+	// Cond opcode
+	if op.Type() != opcode.TypeCond && !i.Ctx.Continue {
 		debugLog(fmt.Sprintf("skip: %s", name))
 		return 0
 	}
 
 	// Run
-	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))
-	debugLog(fmt.Sprintf("params: %+v", params))
-	input := i.Ctx.Value
-	debugLog(fmt.Sprintf("context: %+v", input))
-	res, err := opcode.RunOpcode(i.Ctx, name, params)
+	res, err := op.Run(i.Ctx, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
 		log.Println(err)

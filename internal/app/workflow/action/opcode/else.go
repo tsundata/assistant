@@ -10,7 +10,15 @@ func NewElse() *Else {
 	return &Else{}
 }
 
-func (e *Else) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
+func (o *Else) Type() int {
+	return TypeCond
+}
+
+func (o *Else) Doc() string {
+	return "else"
+}
+
+func (o *Else) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
 	ctx.SetContinue(!ctx.Continue)
 	return nil, nil
 }

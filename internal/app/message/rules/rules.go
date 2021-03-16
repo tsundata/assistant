@@ -224,6 +224,17 @@ var rules = []Rule{
 		},
 	},
 	{
+		Regex:       `doc`,
+		HelpMessage: `Show action docs`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			reply, err := b.WfClient.ActionDoc(context.Background(), &pb.WorkflowRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			return []string{reply.GetText()}
+		},
+	},
+	{
 		Regex:       `test`,
 		HelpMessage: `Test`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {

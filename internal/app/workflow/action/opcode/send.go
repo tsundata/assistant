@@ -13,7 +13,15 @@ func NewSend() *Send {
 	return &Send{}
 }
 
-func (c *Send) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Send) Type() int {
+	return TypeOp
+}
+
+func (o *Send) Doc() string {
+	return "send [any] : (nil -> bool)"
+}
+
+func (o *Send) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}

@@ -213,7 +213,7 @@ func (b *SemanticAnalyzer) VisitProgram(node *Program) error {
 func (b *SemanticAnalyzer) VisitOpcode(node *Opcode) error {
 	name := node.ID.(*Token).Value.(string)
 
-	// Special opcode
+	// Async opcode
 	if name == "webhook" || name == "cron" {
 		s := b.CurrentScope.Lookup(name, true)
 		if s != nil {

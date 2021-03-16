@@ -16,7 +16,15 @@ func NewTask() *Task {
 	return &Task{}
 }
 
-func (t *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Task) Type() int {
+	return TypeOp
+}
+
+func (o *Task) Doc() string {
+	return "task [integer] : (nil -> bool)"
+}
+
+func (o *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return false, errors.New("error params")
 	}

@@ -8,7 +8,15 @@ func NewIf() *If {
 	return &If{}
 }
 
-func (e *If) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
+func (o *If) Type() int {
+	return TypeCond
+}
+
+func (o *If) Doc() string {
+	return "if"
+}
+
+func (o *If) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
 	if integer, ok := ctx.Value.(int64); ok {
 		ctx.SetContinue(integer >= 0)
 		return nil, nil

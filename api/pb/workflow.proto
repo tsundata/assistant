@@ -13,6 +13,7 @@ service Workflow {
   rpc CronTrigger(TriggerRequest) returns (WorkflowReply) {}
   rpc CreateTrigger(TriggerRequest) returns (StateReply) {}
   rpc DeleteTrigger(TriggerRequest) returns (StateReply) {}
+  rpc ActionDoc(WorkflowRequest) returns (WorkflowReply) {}
 }
 
 message WorkflowRequest {
