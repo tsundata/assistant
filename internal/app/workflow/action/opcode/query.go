@@ -80,7 +80,9 @@ func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, err
 			if text, ok := ctx.Value.(string); ok {
 				j := gjson.Parse(text)
 				value := j.Get(expression)
-				return value.Value(), nil
+				result := value.Value()
+				ctx.SetValue(result)
+				return result, nil
 			}
 		case "regex":
 			if text, ok := ctx.Value.(string); ok {
@@ -88,7 +90,9 @@ func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, err
 				if err != nil {
 					return nil, err
 				}
-				return re.FindAllString(text, -1), nil
+				result := re.FindAllString(text, -1)
+				ctx.SetValue(result)
+				return result, nil
 			}
 		default:
 			return false, errors.New("error type")

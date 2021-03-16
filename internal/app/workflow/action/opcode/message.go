@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"reflect"
 )
 
 type Message struct{}
@@ -38,15 +39,10 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 	if num, ok := ctx.Value.(int64); ok {
 		text = fmt.Sprintf("%d", num)
 	}
-	if objects, ok := ctx.Value.(map[string]interface{}); ok {
-		b, err := json.Marshal(objects)
-		if err != nil {
-			return false, nil
-		}
-		text = utils.ByteToString(b)
-	}
-	if arrays, ok := ctx.Value.([]interface{}); ok {
-		b, err := json.Marshal(arrays)
+
+	v := reflect.ValueOf(ctx.Value)
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
+		b, err := json.Marshal(ctx.Value)
 		if err != nil {
 			return false, nil
 		}

@@ -2,6 +2,7 @@ package opcode
 
 import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"reflect"
 )
 
 type Count struct{}
@@ -24,15 +25,11 @@ func (o *Count) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
 		ctx.SetValue(result)
 		return int64(result), nil
 	}
-	if objects, ok := ctx.Value.(map[string]interface{}); ok {
-		result := len(objects)
+	v := reflect.ValueOf(ctx.Value)
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
+		result := int64(v.Len())
 		ctx.SetValue(result)
-		return int64(result), nil
-	}
-	if arrays, ok := ctx.Value.([]interface{}); ok {
-		result := len(arrays)
-		ctx.SetValue(result)
-		return int64(result), nil
+		return result, nil
 	}
 	return int64(0), nil
 }
