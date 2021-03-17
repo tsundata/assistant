@@ -24,14 +24,6 @@ jobs:
           name: cloc
           path: cloc.txt
 
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
-        with:
-          go-version: ^1.16
-
-      - name: Get dependencies
-        run: go mod vendor
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
@@ -42,7 +34,7 @@ jobs:
           # working-directory: somedir
 
           # Optional: golangci-lint command line arguments.
-          args: --timeout=5m --modules-download-mode=vendor
+          args: --timeout=5m
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true

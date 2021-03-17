@@ -7,7 +7,7 @@ build:
 
 .PHONY: lint
 lint:
-	golangci-lint run ./... --timeout=5m --modules-download-mode=vendor
+	golangci-lint run ./... --timeout=5m
 
 .PHONY: docker
 docker-compose: build
