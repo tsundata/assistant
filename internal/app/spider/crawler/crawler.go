@@ -216,6 +216,8 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 			return []string{}
 		}
 
+		diff = append(diff, todo...)
+
 		s.rdb.Set(ctx, sendTimeKey, time.Now().Unix(), 0)
 	default:
 		return []string{}
