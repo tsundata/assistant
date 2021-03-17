@@ -1,10 +1,10 @@
 package utils
 
 import (
-	cRand "crypto/rand"
+	"crypto/rand"
 	"fmt"
 	"io"
-	"math/rand"
+	"math/big"
 	"net"
 	"regexp"
 	"strings"
@@ -69,8 +69,12 @@ func GeneratePassword(length int, containChars string) string {
 	charsStrLength := len(charsStrSlice)
 	var password strings.Builder
 	for i := 0; i < length; i++ {
-		randNumber := rand.Intn(charsStrLength)
-		password.WriteByte(charsStrSlice[randNumber])
+		randNumber, err := rand.Int(rand.Reader, big.NewInt(int64(charsStrLength)))
+		if err != nil {
+			return ""
+		}
+
+		password.WriteByte(charsStrSlice[randNumber.Int64()])
 	}
 	return password.String()
 }
@@ -78,7 +82,7 @@ func GeneratePassword(length int, containChars string) string {
 // GenerateUUID generates a random ID for a message
 func GenerateUUID() (string, error) {
 	uuid := make([]byte, 16)
-	n, err := io.ReadFull(cRand.Reader, uuid)
+	n, err := io.ReadFull(rand.Reader, uuid)
 	if n != len(uuid) || err != nil {
 		return "", err
 	}
