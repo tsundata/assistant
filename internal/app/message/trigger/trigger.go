@@ -8,5 +8,8 @@ type Trigger interface {
 func Triggers() []Trigger {
 	return []Trigger{
 		NewUrl(),
+		NewEmail(),
+		NewTag(),
+		NewUser(),
 	}
 }

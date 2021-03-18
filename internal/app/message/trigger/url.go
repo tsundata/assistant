@@ -2,7 +2,9 @@ package trigger
 
 import "fmt"
 
-type Url struct{}
+type Url struct{
+	text string
+}
 
 func NewUrl() *Url {
 	return &Url{}
