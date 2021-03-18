@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const DefaultQueue = "assistant_tasks"
+
 type Options struct {
 	Addr     string `yaml:"addr"`
 	Password string `yaml:"password"`
@@ -28,7 +30,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func New(o *Options) (*machinery.Server, error) {
 	cnf := &config.Config{
-		DefaultQueue:    "assistant_tasks",
+		DefaultQueue:    DefaultQueue,
 		ResultsExpireIn: 3600,
 		Redis: &config.RedisConfig{
 			MaxIdle:                3,
