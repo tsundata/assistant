@@ -163,6 +163,139 @@ type Repository struct {
 	TeamsURL         *string `json:"teams_url,omitempty"`
 }
 
+// Issue represents a GitHub issue on a repository.
+type Issue struct {
+	ID                *int64            `json:"id,omitempty"`
+	Number            *int              `json:"number,omitempty"`
+	State             *string           `json:"state,omitempty"`
+	Locked            *bool             `json:"locked,omitempty"`
+	Title             *string           `json:"title,omitempty"`
+	Body              *string           `json:"body,omitempty"`
+	AuthorAssociation *string           `json:"author_association,omitempty"`
+	User              *User             `json:"user,omitempty"`
+	Labels            []*Label          `json:"labels,omitempty"`
+	Assignee          *User             `json:"assignee,omitempty"`
+	Comments          *int              `json:"comments,omitempty"`
+	ClosedAt          *time.Time        `json:"closed_at,omitempty"`
+	CreatedAt         *time.Time        `json:"created_at,omitempty"`
+	UpdatedAt         *time.Time        `json:"updated_at,omitempty"`
+	ClosedBy          *User             `json:"closed_by,omitempty"`
+	URL               *string           `json:"url,omitempty"`
+	HTMLURL           *string           `json:"html_url,omitempty"`
+	CommentsURL       *string           `json:"comments_url,omitempty"`
+	EventsURL         *string           `json:"events_url,omitempty"`
+	LabelsURL         *string           `json:"labels_url,omitempty"`
+	RepositoryURL     *string           `json:"repository_url,omitempty"`
+	Milestone         *Milestone        `json:"milestone,omitempty"`
+	PullRequestLinks  *PullRequestLinks `json:"pull_request,omitempty"`
+	Repository        *Repository       `json:"repository,omitempty"`
+	Reactions         *Reactions        `json:"reactions,omitempty"`
+	Assignees         []*User           `json:"assignees,omitempty"`
+	NodeID            *string           `json:"node_id,omitempty"`
+}
+
+// Label represents a GitHub label on an Issue
+type Label struct {
+	ID          *int64  `json:"id,omitempty"`
+	URL         *string `json:"url,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Color       *string `json:"color,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Default     *bool   `json:"default,omitempty"`
+	NodeID      *string `json:"node_id,omitempty"`
+}
+
+// Milestone represents a GitHub repository milestone.
+type Milestone struct {
+	URL          *string    `json:"url,omitempty"`
+	HTMLURL      *string    `json:"html_url,omitempty"`
+	LabelsURL    *string    `json:"labels_url,omitempty"`
+	ID           *int64     `json:"id,omitempty"`
+	Number       *int       `json:"number,omitempty"`
+	State        *string    `json:"state,omitempty"`
+	Title        *string    `json:"title,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	Creator      *User      `json:"creator,omitempty"`
+	OpenIssues   *int       `json:"open_issues,omitempty"`
+	ClosedIssues *int       `json:"closed_issues,omitempty"`
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
+	ClosedAt     *time.Time `json:"closed_at,omitempty"`
+	DueOn        *time.Time `json:"due_on,omitempty"`
+	NodeID       *string    `json:"node_id,omitempty"`
+}
+
+// Reactions represents a summary of GitHub reactions.
+type Reactions struct {
+	TotalCount *int    `json:"total_count,omitempty"`
+	PlusOne    *int    `json:"+1,omitempty"`
+	MinusOne   *int    `json:"-1,omitempty"`
+	Laugh      *int    `json:"laugh,omitempty"`
+	Confused   *int    `json:"confused,omitempty"`
+	Heart      *int    `json:"heart,omitempty"`
+	Hooray     *int    `json:"hooray,omitempty"`
+	Rocket     *int    `json:"rocket,omitempty"`
+	Eyes       *int    `json:"eyes,omitempty"`
+	URL        *string `json:"url,omitempty"`
+}
+
+// PullRequestLinks object is added to the Issue object when it's an issue included
+// in the IssueCommentEvent webhook payload, if the webhook is fired by a comment on a PR.
+type PullRequestLinks struct {
+	URL      *string `json:"url,omitempty"`
+	HTMLURL  *string `json:"html_url,omitempty"`
+	DiffURL  *string `json:"diff_url,omitempty"`
+	PatchURL *string `json:"patch_url,omitempty"`
+}
+
+// Project represents a GitHub Project.
+type Project struct {
+	ID         *int64  `json:"id,omitempty"`
+	URL        *string `json:"url,omitempty"`
+	HTMLURL    *string `json:"html_url,omitempty"`
+	ColumnsURL *string `json:"columns_url,omitempty"`
+	OwnerURL   *string `json:"owner_url,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Body       *string `json:"body,omitempty"`
+	Number     *int    `json:"number,omitempty"`
+	State      *string `json:"state,omitempty"`
+	NodeID     *string `json:"node_id,omitempty"`
+
+	// The User object that generated the project.
+	Creator *User `json:"creator,omitempty"`
+}
+
+// ProjectColumn represents a column of a GitHub Project.
+type ProjectColumn struct {
+	ID         *int64  `json:"id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	URL        *string `json:"url,omitempty"`
+	ProjectURL *string `json:"project_url,omitempty"`
+	CardsURL   *string `json:"cards_url,omitempty"`
+	NodeID     *string `json:"node_id,omitempty"`
+}
+
+// ProjectCard represents a card in a column of a GitHub Project.
+type ProjectCard struct {
+	URL        *string `json:"url,omitempty"`
+	ColumnURL  *string `json:"column_url,omitempty"`
+	ContentURL *string `json:"content_url,omitempty"`
+	ID         *int64  `json:"id,omitempty"`
+	Note       *string `json:"note,omitempty"`
+	Creator    *User   `json:"creator,omitempty"`
+	NodeID     *string `json:"node_id,omitempty"`
+	Archived   *bool   `json:"archived,omitempty"`
+
+	// The following fields are only populated by Webhook events.
+	ColumnID *int64 `json:"column_id,omitempty"`
+
+	// The following fields are only populated by Events API.
+	ProjectID          *int64  `json:"project_id,omitempty"`
+	ProjectURL         *string `json:"project_url,omitempty"`
+	ColumnName         *string `json:"column_name,omitempty"`
+	PreviousColumnName *string `json:"previous_column_name,omitempty"` // Populated in "moved_columns_in_project" event deliveries.
+}
+
 type Github struct {
 	c            *resty.Client
 	clientId     string
@@ -182,7 +315,7 @@ func NewGithub(clientId, clientSecret, redirectURI, accessToken string) *Github 
 }
 
 func (v *Github) AuthorizeURL() string {
-	return fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s", v.clientId, v.redirectURI)
+	return fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=repo", v.clientId, v.redirectURI)
 }
 
 func (v *Github) GetAccessToken(code string) (interface{}, error) {
@@ -314,6 +447,76 @@ func (v *Github) GetFollowers() (*[]User, error) {
 
 	if resp.StatusCode() == http.StatusOK {
 		return resp.Result().(*[]User), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}
+
+func (v *Github) CreateIssue(owner, repo string, issue Issue) (*Issue, error) {
+	resp, err := v.c.R().
+		SetResult(&Issue{}).
+		SetHeader("Accept", "application/vnd.github.v3+json").
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
+		SetBody(issue).
+		Post(fmt.Sprintf("/repos/%s/%s/issues", owner, repo))
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusCreated {
+		return resp.Result().(*Issue), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}
+
+func (v *Github) GetUserProjects(username string) (*[]Project, error) {
+	resp, err := v.c.R().
+		SetResult(&[]Project{}).
+		SetHeader("Accept", "application/vnd.github.inertia-preview+json").
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
+		Get(fmt.Sprintf("/users/%s/projects", username))
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Result().(*[]Project), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}
+
+func (v *Github) GetProjectColumns(projectID int64) (*[]ProjectColumn, error) {
+	resp, err := v.c.R().
+		SetResult(&[]ProjectColumn{}).
+		SetHeader("Accept", "application/vnd.github.inertia-preview+json").
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
+		Get(fmt.Sprintf("/projects/%d/columns", projectID))
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Result().(*[]ProjectColumn), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}
+
+func (v *Github) CreateCard(columnID int64, card ProjectCard) (*ProjectCard, error) {
+	resp, err := v.c.R().
+		SetResult(&ProjectCard{}).
+		SetHeader("Accept", "application/vnd.github.inertia-preview+json").
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
+		SetBody(card).
+		Post(fmt.Sprintf("/projects/columns/%d/cards", columnID))
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusCreated {
+		return resp.Result().(*ProjectCard), nil
 	} else {
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
@@ -102,5 +101,3 @@ func (s *Subscribe) Status(_ context.Context, payload *pb.SubscribeRequest) (*pb
 		State: false,
 	}, nil
 }
-
-var ProviderSet = wire.NewSet(NewSubscribe)

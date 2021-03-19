@@ -1,8 +1,10 @@
 package trigger
 
 import (
+	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/app/message/trigger/tags"
 	"regexp"
+	"strings"
 )
 
 type Tag struct {
@@ -19,7 +21,12 @@ func (t *Tag) Cond(text string) bool {
 	ts := re.FindAllString(text, -1)
 
 	if len(ts) > 0 {
+		t.text = text
 		for _, item := range ts {
+			t.text = strings.ReplaceAll(t.text, item, "")
+			item = strings.TrimSpace(item)
+			item = strings.ReplaceAll(item, "#", "")
+			item = strings.ToLower(item)
 			mt := tags.MapTagger(item)
 			if mt != nil {
 				t.t = append(t.t, mt)
@@ -31,8 +38,8 @@ func (t *Tag) Cond(text string) bool {
 	return false
 }
 
-func (t *Tag) Handle() {
+func (t *Tag) Handle(ctx *ctx.Context) {
 	for _, item := range t.t {
-		item.Handle(t.text)
+		item.Handle(ctx, t.text)
 	}
 }

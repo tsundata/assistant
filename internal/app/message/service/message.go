@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"database/sql"
-	"github.com/google/wire"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/message/trigger"
+	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -13,19 +14,22 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"strings"
+	"sync"
 	"time"
 )
 
 type Message struct {
-	webhook  string
-	db       *sqlx.DB
-	logger   *logger.Logger
-	bot      *rulebot.RuleBot
-	wfClient pb.WorkflowClient
+	webhook   string
+	db        *sqlx.DB
+	logger    *logger.Logger
+	bot       *rulebot.RuleBot
+	wfClient  pb.WorkflowClient
+	msgClient pb.MessageClient
+	midClient pb.MiddleClient
 }
 
-func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient) *Message {
-	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient}
+func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *Message {
+	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient, msgClient: msgClient, midClient: midClient}
 }
 
 func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
@@ -118,18 +122,22 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 
 	// trigger
-	//triggers := trigger.Triggers()
-	//wg := sync.WaitGroup{}
-	//for _, item := range triggers {
-	//	wg.Add(1)
-	//	go func(t trigger.Trigger) {
-	//		defer wg.Done()
-	//		if t.Cond(message.Text) {
-	//			t.Handle()
-	//		}
-	//	}(item)
-	//}
-	//wg.Done()
+	c := ctx.NewContext()
+	c.Logger = m.logger
+	c.MsgClient = m.msgClient
+	c.MidClient = m.midClient
+	triggers := trigger.Triggers()
+	wg := sync.WaitGroup{}
+	for _, item := range triggers {
+		wg.Add(1)
+		go func(t trigger.Trigger) {
+			defer wg.Done()
+			if t.Cond(message.Text) {
+				t.Handle(c)
+			}
+		}(item)
+	}
+	wg.Wait()
 
 	return &pb.TextsReply{
 		Id:   id,
@@ -336,5 +344,3 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 
 	return &pb.StateReply{State: true}, nil
 }
-
-var ProviderSet = wire.NewSet(NewManage)

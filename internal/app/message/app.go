@@ -40,7 +40,7 @@ func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server, db *sqlx.DB,
 
 	b := rulebot.New(nil, subClient, midClient, msgClient, wfClient, taskClient, rules.Options...)
 
-	message := service.NewManage(db, logger, b, o.Webhook, wfClient)
+	message := service.NewManage(db, logger, b, o.Webhook, wfClient, msgClient, midClient)
 	err := rs.Register(func(s *grpc.Server) error {
 		pb.RegisterMessageServer(s, message)
 		return nil

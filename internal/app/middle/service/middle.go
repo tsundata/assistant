@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/wire"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -396,5 +395,3 @@ func authUUID(etcd *clientv3.Client) (string, error) {
 
 	return uuid, nil
 }
-
-var ProviderSet = wire.NewSet(NewMiddle)

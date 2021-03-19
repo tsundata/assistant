@@ -1,7 +1,9 @@
 package tags
 
+import "github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+
 type Tagger interface {
-	Handle(text string)
+	Handle(ctx *ctx.Context, text string)
 }
 
 func MapTagger(text string) Tagger {
