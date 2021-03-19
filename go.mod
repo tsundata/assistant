@@ -12,6 +12,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gofiber/fiber/v2 v2.6.0
 	github.com/gogo/protobuf v1.3.2
+	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
@@ -24,6 +25,7 @@ require (
 	github.com/slack-go/slack v0.8.2
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.6.8

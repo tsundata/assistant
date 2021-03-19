@@ -2,6 +2,7 @@ package influx
 
 import (
 	"errors"
+	"github.com/google/wire"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/spf13/viper"
 )
@@ -26,3 +27,5 @@ func New(o *Options) (influxdb2.Client, error) {
 	client := influxdb2.NewClient(o.Url, o.Token)
 	return client, nil
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)

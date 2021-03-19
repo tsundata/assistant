@@ -15,5 +15,5 @@ func (t *User) Cond(text string) bool {
 }
 
 func (t *User) Handle() {
-	fmt.Println("User handle")
+	fmt.Println("User handle", t.text)
 }

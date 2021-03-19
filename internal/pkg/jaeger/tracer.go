@@ -1,6 +1,7 @@
 package jaeger
 
 import (
+	"github.com/google/wire"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -31,3 +32,5 @@ func New(c *config.Configuration) (opentracing.Tracer, error) {
 
 	return tracer, nil
 }
+
+var ProviderSet = wire.NewSet(New, NewConfiguration)

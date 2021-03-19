@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/google/wire"
 	"github.com/influxdata/cron"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
@@ -317,3 +318,5 @@ func (s *Workflow) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*p
 		Text: docs,
 	}, nil
 }
+
+var ProviderSet = wire.NewSet(NewWorkflow)

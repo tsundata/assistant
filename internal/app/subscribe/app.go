@@ -1,6 +1,7 @@
 package subscribe
 
 import (
+	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -28,3 +29,5 @@ func NewApp(name string, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.C
 
 	return a, nil
 }
+
+var ProviderSet = wire.NewSet(NewApp)

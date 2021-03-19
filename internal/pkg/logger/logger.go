@@ -1,7 +1,9 @@
 package logger
 
 import (
+	"github.com/google/wire"
 	"github.com/rollbar/rollbar-go"
+	rb "github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 	"log"
 )
@@ -10,7 +12,9 @@ type Logger struct {
 	Zap *zap.Logger
 }
 
-func NewLogger() *Logger {
+func NewLogger(r *rb.Rollbar) *Logger {
+	r.Config()
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("can't initialize logger: %v", err)
@@ -31,3 +35,5 @@ func (l *Logger) Info(msg string, fields ...zap.Field) {
 func (l *Logger) Warn(msg string, fields ...zap.Field) {
 	l.Zap.Warn(msg, fields...)
 }
+
+var ProviderSet = wire.NewSet(NewLogger)

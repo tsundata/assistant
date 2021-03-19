@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"github.com/go-redis/redis/v8"
+	"github.com/google/wire"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
@@ -10,9 +11,13 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
+	"os"
 )
 
-func NewApp(name string, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) (*app.Application, error) {
+func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client,
+	midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) (*app.Application, error) {
+	name := os.Getenv("APP_NAME")
+
 	// service
 	subscribe := service.NewWorkflow(etcd, db, rdb, midClient, msgClient, taskClient)
 	err := rs.Register(func(gs *grpc.Server) error {
@@ -30,3 +35,5 @@ func NewApp(name string, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.C
 
 	return a, nil
 }
+
+var ProviderSet = wire.NewSet(NewApp)

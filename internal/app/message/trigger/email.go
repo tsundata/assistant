@@ -15,5 +15,5 @@ func (t *Email) Cond(text string) bool {
 }
 
 func (t *Email) Handle() {
-	fmt.Println("Email handle")
+	fmt.Println("Email handle", t.text)
 }

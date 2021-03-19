@@ -2,13 +2,17 @@ package worker
 
 import (
 	"github.com/RichardKnop/machinery/v2"
+	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/worker/tasks"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"os"
 )
 
-func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgClient pb.MessageClient, wfClient pb.WorkflowClient) (*app.Application, error) {
+func NewApp(logger *logger.Logger, server *machinery.Server, msgClient pb.MessageClient, wfClient pb.WorkflowClient) (*app.Application, error) {
+	name := os.Getenv("APP_NAME")
+
 	a, err := app.New(name, logger)
 	if err != nil {
 		logger.Error(err)
@@ -39,3 +43,5 @@ func NewApp(name string, logger *logger.Logger, server *machinery.Server, msgCli
 
 	return a, nil
 }
+
+var ProviderSet = wire.NewSet(NewApp)

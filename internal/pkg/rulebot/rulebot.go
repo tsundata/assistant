@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -23,10 +24,12 @@ type RuleBot struct {
 	TaskClient pb.TaskClient
 }
 
-func New(name string, RDB *redis.Client,
+func New(RDB *redis.Client,
 	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
 	WfClient pb.WorkflowClient, TaskClient pb.TaskClient,
 	opts ...Option) *RuleBot {
+
+	name := os.Getenv("APP_NAME")
 
 	s := &RuleBot{
 		name: name,

@@ -3,21 +3,26 @@ package spider
 import (
 	"errors"
 	"github.com/go-redis/redis/v8"
+	"github.com/google/wire"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/crawler"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"os"
 	"time"
 )
 
 type Options struct {
+	Name string
 	Path string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
 	var err error
 	o := new(Options)
+
+	o.Name = os.Getenv("APP_NAME")
 
 	if err = v.UnmarshalKey("plugin", o); err != nil {
 		return nil, errors.New("unmarshal plugin option error")
@@ -26,7 +31,7 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func NewApp(name string, o *Options, rdb *redis.Client, logger *logger.Logger,
+func NewApp(o *Options, rdb *redis.Client, logger *logger.Logger,
 	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) (*app.Application, error) {
 	go func() {
 		// Delayed loading
@@ -41,10 +46,13 @@ func NewApp(name string, o *Options, rdb *redis.Client, logger *logger.Logger,
 		s.Daemon()
 	}()
 
-	a, err := app.New(name, logger)
+	a, err := app.New(o.Name, logger)
 	if err != nil {
 		return nil, err
 	}
 
 	return a, nil
 }
+
+var ProviderSet = wire.NewSet(NewApp, NewOptions)
+

@@ -2,6 +2,7 @@ package rollbar
 
 import (
 	"errors"
+	"github.com/google/wire"
 	"github.com/rollbar/rollbar-go"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/version"
@@ -22,9 +23,19 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 	return o, err
 }
 
-func Config(o *Options) {
-	rollbar.SetToken(o.Token)
-	rollbar.SetEnvironment(o.Environment)
+type Rollbar struct {
+	o *Options
+}
+
+func New(o *Options) *Rollbar {
+	return &Rollbar{o: o}
+}
+
+func (r *Rollbar) Config() {
+	rollbar.SetToken(r.o.Token)
+	rollbar.SetEnvironment(r.o.Environment)
 	rollbar.SetCodeVersion(version.Version)
 	rollbar.SetServerRoot("github.com/tsundata/assistant")
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)

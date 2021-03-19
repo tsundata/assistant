@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/google/wire"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 )
@@ -28,3 +29,5 @@ func New(o *Options) (*sqlx.DB, error) {
 	}
 	return db, nil
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)

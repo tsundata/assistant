@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"database/sql"
+	"github.com/google/wire"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/message/trigger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -13,7 +13,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/valyala/fasthttp"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -119,18 +118,18 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 
 	// trigger
-	triggers := trigger.Triggers()
-	wg := sync.WaitGroup{}
-	for _, item := range triggers {
-		wg.Add(1)
-		go func(t trigger.Trigger) {
-			defer wg.Done()
-			if t.Cond(message.Text) {
-				t.Handle()
-			}
-		}(item)
-	}
-	wg.Done()
+	//triggers := trigger.Triggers()
+	//wg := sync.WaitGroup{}
+	//for _, item := range triggers {
+	//	wg.Add(1)
+	//	go func(t trigger.Trigger) {
+	//		defer wg.Done()
+	//		if t.Cond(message.Text) {
+	//			t.Handle()
+	//		}
+	//	}(item)
+	//}
+	//wg.Done()
 
 	return &pb.TextsReply{
 		Id:   id,
@@ -337,3 +336,5 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 
 	return &pb.StateReply{State: true}, nil
 }
+
+var ProviderSet = wire.NewSet(NewManage)

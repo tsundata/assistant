@@ -2,120 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/tsundata/assistant/internal/app/web"
-	"github.com/tsundata/assistant/internal/app/web/controllers"
-	"github.com/tsundata/assistant/internal/app/web/rpcclients"
-	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/etcd"
-	"github.com/tsundata/assistant/internal/pkg/influx"
-	"github.com/tsundata/assistant/internal/pkg/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/redis"
-	"github.com/tsundata/assistant/internal/pkg/transports/http"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
-func CreateApp(name, cf string) (*app.Application, error) {
-	log := logger.NewLogger()
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-
-	rollbarOptions, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbar.Config(rollbarOptions)
-
-	httpOptions, err := http.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-
-	t, err := jaeger.NewConfiguration(viper, log)
-	if err != nil {
-		return nil, err
-	}
-	j, err := jaeger.New(t)
-	if err != nil {
-		return nil, err
-	}
-
-	etcdOption, err := etcd.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	e, err := etcd.New(etcdOption)
-	if err != nil {
-		return nil, err
-	}
-
-	influxOptions, err := influx.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	in, err := influx.New(influxOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	clientOptions, err := rpc.NewClientOptions(viper, j)
-	if err != nil {
-		return nil, err
-	}
-	client, err := rpc.NewClient(clientOptions, e)
-	if err != nil {
-		return nil, err
-	}
-	midClient, err := rpcclients.NewMiddleClient(client)
-	if err != nil {
-		return nil, err
-	}
-	msgClient, err := rpcclients.NewMessageClient(client)
-	if err != nil {
-		return nil, err
-	}
-	wfClient, err := rpcclients.NewWorkflowClient(client)
-	if err != nil {
-		return nil, err
-	}
-
-	redisOption, err := redis.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rdb, err := redis.New(redisOption)
-	if err != nil {
-		return nil, err
-	}
-
-	webOptions, err := web.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	webController := controllers.NewWebController(webOptions, rdb, log, midClient, msgClient, wfClient)
-	initControllers := controllers.CreateInitControllersFn(webController)
-	server, err := http.New(httpOptions, initControllers, in)
-	if err != nil {
-		return nil, err
-	}
-	application, err := web.NewApp(name, log, server)
-	if err != nil {
-		return nil, err
-	}
-	return application, nil
-}
-
-var appName = flag.String("n", "appName", "set app name")
 var configFile = flag.String("f", "web.yml", "set config file which will loading")
 
 func main() {
 	flag.Parse()
 
-	a, err := CreateApp(*appName, *configFile)
+	a, err := CreateApp(*configFile)
 	if err != nil {
 		panic(err)
 	}

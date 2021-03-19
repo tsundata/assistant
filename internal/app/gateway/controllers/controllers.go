@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/wire"
 	"log"
 	"net/http"
 )
@@ -25,3 +26,5 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 	return requestHandler
 }
+
+var ProviderSet = wire.NewSet(CreateInitControllersFn, NewGatewayController)

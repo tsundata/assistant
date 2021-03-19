@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/google/wire"
 	"log"
 
 	"github.com/spf13/viper"
@@ -22,3 +23,5 @@ func New(path string) (*viper.Viper, error) {
 
 	return v, err
 }
+
+var ProviderSet = wire.NewSet(New)

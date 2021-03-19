@@ -8,6 +8,7 @@ import (
 	redisbroker "github.com/RichardKnop/machinery/v2/brokers/redis"
 	"github.com/RichardKnop/machinery/v2/config"
 	eagerlock "github.com/RichardKnop/machinery/v2/locks/eager"
+	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
@@ -49,3 +50,5 @@ func New(o *Options) (*machinery.Server, error) {
 	server := machinery.NewServer(cnf, broker, backend, lock)
 	return server, nil
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)

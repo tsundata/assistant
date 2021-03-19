@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-redis/redis/v8"
+	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
@@ -38,3 +39,5 @@ func New(o *Options) (*redis.Client, error) {
 	}
 	return r, nil
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)

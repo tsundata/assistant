@@ -15,5 +15,5 @@ func (t *Url) Cond(text string) bool {
 }
 
 func (t *Url) Handle() {
-	fmt.Println("url handle")
+	fmt.Println("url handle", t.text)
 }

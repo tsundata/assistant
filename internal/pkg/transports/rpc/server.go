@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/google/wire"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
@@ -172,3 +173,5 @@ func (s *Server) Stop() error {
 	s.server.Stop()
 	return err
 }
+
+var ProviderSet = wire.NewSet(NewServer, NewOptions, NewClient, NewClientOptions)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
@@ -94,3 +95,5 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 
 	return requestHandler
 }
+
+var ProviderSet = wire.NewSet(CreateInitControllersFn, NewWebController)

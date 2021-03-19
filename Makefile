@@ -23,3 +23,7 @@ all: lint build
 .PHONY: release
 release:
 	goreleaser release --snapshot --rm-dist
+
+.PHONY: wire
+wire:
+	wire ./...

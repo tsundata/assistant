@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/RichardKnop/machinery/v2"
 	"github.com/RichardKnop/machinery/v2/tasks"
+	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"time"
 )
@@ -62,3 +63,5 @@ func (s *Task) Delay(ctx context.Context, payload *pb.JobRequest) (*pb.StateRepl
 		State: true,
 	}, nil
 }
+
+var ProviderSet = wire.NewSet(NewTask)

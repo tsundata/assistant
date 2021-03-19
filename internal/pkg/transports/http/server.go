@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/wire"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/influx"
@@ -41,12 +42,12 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 type Server struct {
 	o          *Options
-	router     func (router fiber.Router)
+	router     func(router fiber.Router)
 	httpServer *fiber.App
 	in         influxdb2.Client
 }
 
-func New(o *Options, router func (router fiber.Router), in influxdb2.Client) (*Server, error) {
+func New(o *Options, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
 	var s = &Server{
 		o:      o,
 		router: router,
@@ -109,3 +110,5 @@ func (s *Server) Stop() error {
 
 	return nil
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions, NewClient)

@@ -2,6 +2,7 @@ package etcd
 
 import (
 	"errors"
+	"github.com/google/wire"
 	"github.com/spf13/viper"
 	"go.etcd.io/etcd/clientv3"
 	"time"
@@ -31,3 +32,5 @@ func New(o *Options) (*clientv3.Client, error) {
 		DialTimeout: time.Minute,
 	})
 }
+
+var ProviderSet = wire.NewSet(New, NewOptions)
