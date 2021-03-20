@@ -69,12 +69,13 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 
 	page := model.Page{
 		UUID:    uuid,
+		Type:    payload.GetType(),
 		Title:   payload.GetTitle(),
 		Content: payload.GetContent(),
 		Time:    time.Now(),
 	}
 
-	_, err = s.db.NamedExec("INSERT INTO `pages` (`uuid`, `title`, `content`, `time`) VALUES (:uuid, :title, :content, :time)", page)
+	_, err = s.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`, `time`) VALUES (:uuid, :type, :title, :content, :time)", page)
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +94,7 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 
 	return &pb.PageReply{
 		Uuid:    find.UUID,
+		Type:    find.Type,
 		Title:   find.Title,
 		Content: find.Content,
 	}, nil

@@ -281,8 +281,6 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 				return nil, err
 			}
 		}
-	case model.MessageTypeScript: // TODO
-		return &pb.StateReply{State: false}, nil
 	default:
 		return &pb.StateReply{State: false}, nil
 	}

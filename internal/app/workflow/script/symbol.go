@@ -437,7 +437,6 @@ func (b *SemanticAnalyzer) VisitPrint(node *Print) error {
 }
 
 func (b *SemanticAnalyzer) VisitWhile(node *While) error {
-	// TODO scope
 	for _, node := range node.DoBranch {
 		err := b.Visit(node)
 		if err != nil {
@@ -448,7 +447,6 @@ func (b *SemanticAnalyzer) VisitWhile(node *While) error {
 }
 
 func (b *SemanticAnalyzer) VisitIf(node *If) error {
-	// TODO scope
 	for _, node := range node.ThenBranch {
 		err := b.Visit(node)
 		if err != nil {

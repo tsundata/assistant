@@ -69,6 +69,15 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString("content empty")
 	}
 
+	if reply.GetType() == "html" {
+		c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+		return c.SendString(reply.GetContent())
+	}
+
+	if reply.GetType() != "json" {
+		return c.Status(http.StatusBadRequest).SendString("error type")
+	}
+
 	var list []string
 	err = json.Unmarshal([]byte(reply.GetContent()), &list)
 	if err != nil {

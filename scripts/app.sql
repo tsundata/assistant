@@ -54,11 +54,12 @@ CREATE TABLE `messages`
 
 CREATE TABLE `pages`
 (
-    `id`      int(11) unsigned                   NOT NULL AUTO_INCREMENT,
-    `uuid`    varchar(36) CHARACTER SET utf8mb4  NOT NULL DEFAULT '',
-    `title`   varchar(256) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
-    `content` text CHARACTER SET utf8mb4         NOT NULL,
-    `time`    timestamp                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `id`      int(11) unsigned                       NOT NULL AUTO_INCREMENT,
+    `uuid`    varchar(36) CHARACTER SET utf8mb4      NOT NULL DEFAULT '',
+    `type`    varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    `title`   varchar(256) CHARACTER SET utf8mb4     NOT NULL DEFAULT '',
+    `content` text CHARACTER SET utf8mb4             NOT NULL,
+    `time`    timestamp                              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB

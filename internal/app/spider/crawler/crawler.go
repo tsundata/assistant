@@ -259,6 +259,7 @@ func (s *Crawler) send(name string, out []string) {
 		}
 
 		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
+			Type:    "json",
 			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
 			Content: utils.ByteToString(j),
 		})

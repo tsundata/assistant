@@ -351,7 +351,6 @@ func (p *Parser) StatementList() ([]Ast, error) {
 }
 
 func (p *Parser) Statement() (Ast, error) {
-	// FIXME
 	if p.CurrentToken.Type == TokenLCurly {
 		return p.CompoundStatement()
 	} else if p.CurrentToken.Type == TokenNodeConst {

@@ -103,7 +103,6 @@ func (l *Lexer) Number() (*Token, error) {
 func (l *Lexer) String() (*Token, error) {
 	l.Advance()
 
-	// TODO Escape
 	var result []rune
 	for l.CurrentChar != '"' {
 		result = append(result, l.CurrentChar)

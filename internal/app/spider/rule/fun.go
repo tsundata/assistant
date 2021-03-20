@@ -79,8 +79,6 @@ func (f *Fun) Invoke() (string, error) {
 		f.Result, _ = f.PrevFun.Selection.Attr("class")
 	case "id":
 		f.Result, _ = f.PrevFun.Selection.Attr("id")
-	case "calc":
-		// TODO
 	case "expand":
 		rx, err := regexp.Compile(f.Params[0])
 		if err != nil {

@@ -351,7 +351,6 @@ func (i *Interpreter) VisitVar(node *Var) interface{} {
 	if varName, ok := node.Value.(string); ok {
 		ar := i.callStack.Peek()
 		if ar != nil {
-			// TODO var nil
 			val := ar.Get(varName)
 			if val != nil {
 				return val

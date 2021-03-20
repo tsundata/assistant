@@ -155,7 +155,6 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 }
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
-	// TODO switch service
 	client := http.NewClient()
 	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
 		"text": payload.GetText(),

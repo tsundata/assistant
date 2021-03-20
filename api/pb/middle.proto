@@ -26,12 +26,14 @@ message PageRequest {
   string uuid = 1;
   string title = 2;
   string content = 3;
+  string type = 4;
 }
 
 message PageReply {
   string uuid = 1;
   string title = 2;
   string content = 3;
+  string type = 4;
 }
 
 message AppRequest {
