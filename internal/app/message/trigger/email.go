@@ -2,10 +2,13 @@ package trigger
 
 import (
 	"context"
+	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -29,6 +32,7 @@ func (t *Email) Cond(text string) bool {
 	t.text = text
 	for _, item := range ts {
 		t.text = strings.ReplaceAll(t.text, item, "")
+		t.text = strings.ReplaceAll(t.text, "<mailto:|>", "") // special
 		t.email = append(t.email, item)
 	}
 
@@ -38,8 +42,54 @@ func (t *Email) Cond(text string) bool {
 }
 
 func (t *Email) Handle(ctx *ctx.Context) {
-	for _, email := range t.email {
-		_, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: "Email: " + email})
+	reply, err := ctx.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: email.ID})
+	if err != nil {
+		return
+	}
+	host := ""
+	port := ""
+	username := ""
+	password := ""
+	for _, item := range reply.GetContent() {
+		if item.Key == email.Host {
+			host = item.Value
+		}
+		if item.Key == email.Port {
+			port = item.Value
+		}
+		if item.Key == email.Username {
+			username = item.Value
+		}
+		if item.Key == email.Password {
+			password = item.Value
+		}
+	}
+	if host == "" || port == "" || username == "" || password == "" {
+		return
+	}
+
+	p, err := strconv.Atoi(port)
+	if err != nil {
+		return
+	}
+
+	config := email.Config{
+		Host:     host,
+		Port:     p,
+		Username: username,
+		Password: password,
+	}
+
+	for _, mail := range t.email {
+		err = email.SendEmail(&config, mail, t.text, fmt.Sprintf(`%s <br>
+---------------- <br>
+Sended by Assistant
+`, t.text))
+		if err != nil {
+			ctx.Logger.Error(err)
+			return
+		}
+		_, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
 		if err != nil {
 			return
 		}

@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
+	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pushover"
@@ -32,6 +33,12 @@ var ProviderCredentialOptions = map[string]interface{}{
 	dropbox.ID: map[string]string{
 		dropbox.ClientIdKey:     "App key",
 		dropbox.ClientSecretKey: "App secret",
+	},
+	email.ID: map[string]string{
+		email.Host:     "SMTP Host",
+		email.Port:     "SMTP Port",
+		email.Username: "Username Mail",
+		email.Password: "Password",
 	},
 }
 
