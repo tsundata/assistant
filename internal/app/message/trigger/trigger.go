@@ -15,3 +15,20 @@ func Triggers() []Trigger {
 		NewUser(),
 	}
 }
+
+func clear(arr []string) []string {
+	keys := make(map[string]struct{})
+	var result []string
+
+	for _, item := range arr {
+		if item == "" {
+			continue
+		}
+		if _, value := keys[item]; !value {
+			keys[item] = struct{}{}
+			result = append(result, item)
+		}
+	}
+
+	return result
+}

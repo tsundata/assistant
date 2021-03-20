@@ -17,25 +17,32 @@ func NewTag() *Tag {
 }
 
 func (t *Tag) Cond(text string) bool {
-	re := regexp.MustCompile(`(?m)#(\w+)(\s+)?`)
+	re := regexp.MustCompile(`(?m)#(\w+)(\s+)`)
 	ts := re.FindAllString(text, -1)
 
-	if len(ts) > 0 {
-		t.text = text
-		for _, item := range ts {
-			t.text = strings.ReplaceAll(t.text, item, "")
-			item = strings.TrimSpace(item)
-			item = strings.ReplaceAll(item, "#", "")
-			item = strings.ToLower(item)
-			mt := tags.MapTagger(item)
-			if mt != nil {
-				t.t = append(t.t, mt)
-			}
-		}
-		return true
+	if len(ts) == 0 {
+		return false
 	}
 
-	return false
+	t.text = text
+	var items []string
+	for _, item := range ts {
+		t.text = strings.ReplaceAll(t.text, item, "")
+		item = strings.TrimSpace(item)
+		item = strings.ReplaceAll(item, "#", "")
+		item = strings.ToLower(item)
+		items = append(items, item)
+	}
+
+	items = clear(items)
+	for _, item := range items {
+		mt := tags.MapTagger(item)
+		if mt != nil {
+			t.t = append(t.t, mt)
+		}
+	}
+
+	return true
 }
 
 func (t *Tag) Handle(ctx *ctx.Context) {
