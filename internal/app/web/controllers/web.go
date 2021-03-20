@@ -449,7 +449,7 @@ func (wc *WebController) Scripts(c *fiber.Ctx) error {
 			Title: "Scripts",
 			Action: &components.Link{
 				Title: "Add Script",
-				URL:   fmt.Sprintf("/script/%s/create", c.Params("uuid")),
+				URL:   fmt.Sprintf("/scripts/%s/create", c.Params("uuid")),
 			},
 			Content: &components.List{
 				Items: items,
