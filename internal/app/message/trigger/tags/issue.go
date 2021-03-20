@@ -26,24 +26,30 @@ func (t *Issue) Handle(ctx *ctx.Context, text string) {
 		return
 	}
 
-	// data
+	// get user
 	client := github.NewGithub("", "", "", accessToken)
 	user, err := client.GetUser()
 	if err != nil {
 		return
 	}
-	if *user.Login != "" {
-		issue, err := client.CreateIssue(*user.Login, "assistant", github.Issue{Title: &text})
-		if err != nil {
-			ctx.Logger.Error(err)
-			return
-		}
-		if *issue.ID > 0 {
-			_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
-			if err != nil {
-				ctx.Logger.Error(err)
-				return
-			}
-		}
+	if *user.Login == "" {
+		return
+	}
+
+	// create issue
+	issue, err := client.CreateIssue(*user.Login, "assistant", github.Issue{Title: &text})
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if *issue.ID == 0 {
+		return
+	}
+
+	// send message
+	_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
 	}
 }

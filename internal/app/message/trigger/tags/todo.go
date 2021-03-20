@@ -26,41 +26,50 @@ func (t *Todo) Handle(ctx *ctx.Context, text string) {
 		return
 	}
 
-	// data
+	// get user
 	client := github.NewGithub("", "", "", accessToken)
 	user, err := client.GetUser()
 	if err != nil {
 		return
 	}
-	if *user.Login != "" {
-		projects, err := client.GetUserProjects(*user.Login)
-		if err != nil {
-			ctx.Logger.Error(err)
-			return
-		}
+	if *user.Login == "" {
+		return
+	}
 
-		if len(*projects) > 0 {
-			columns, err := client.GetProjectColumns(*(*projects)[0].ID)
-			if err != nil {
-				ctx.Logger.Error(err)
-				return
-			}
+	// get projects
+	projects, err := client.GetUserProjects(*user.Login)
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if len(*projects) == 0 {
+		return
+	}
 
-			if len(*columns) > 0 {
-				card, err := client.CreateCard(*(*columns)[0].ID, github.ProjectCard{Note: &text})
-				if err != nil {
-					ctx.Logger.Error(err)
-					return
-				}
-				if *card.ID > 0 {
-					_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Todo Card #%d", *card.ID)})
-					if err != nil {
-						ctx.Logger.Error(err)
-						return
-					}
-				}
-			}
-		}
+	// get columns
+	columns, err := client.GetProjectColumns(*(*projects)[0].ID)
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if len(*columns) == 0 {
+		return
+	}
 
+	// create card
+	card, err := client.CreateCard(*(*columns)[0].ID, github.ProjectCard{Note: &text})
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if *card.ID == 0 {
+		return
+	}
+
+	// send message
+	_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Todo Card #%d", *card.ID)})
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
 	}
 }
