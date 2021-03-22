@@ -59,7 +59,8 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 		go r.ruleWorker(b, r.cronRules[rule])
 	}
 
-	// send message
+	// result pipeline
+	go r.resultWorker(b)
 	go r.resultWorker(b)
 }
 
@@ -106,7 +107,7 @@ func (r *cronRuleset) resultWorker(b *rulebot.RuleBot) {
 	for out := range r.outCh {
 		// filter
 		res := r.filter(b, out)
-		// send
+		// pipeline
 		r.pipeline(b, res)
 	}
 }
