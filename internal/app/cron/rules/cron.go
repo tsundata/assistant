@@ -5,28 +5,21 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
-	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/cron/pipeline"
+	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/utils"
-	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
-	"strings"
 	"time"
 )
 
 type Rule struct {
 	Name   string
 	When   string
-	Action func(b *rulebot.RuleBot) []string
-}
-
-type Result struct {
-	Name   string
-	Result []string
+	Action func(b *rulebot.RuleBot) []result.Result
 }
 
 type cronRuleset struct {
-	outCh     chan Result
+	outCh     chan result.Result
 	cronRules []Rule
 }
 
@@ -34,7 +27,7 @@ type cronRuleset struct {
 func New(rules []Rule) *cronRuleset {
 	r := &cronRuleset{
 		cronRules: rules,
-		outCh:     make(chan Result, 10),
+		outCh:     make(chan result.Result, 100),
 	}
 	return r
 }
@@ -83,7 +76,7 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			msgs := func() []string {
+			msgs := func() []result.Result {
 				defer func() {
 					if r := recover(); r != nil {
 						log.Println("ruleWorker recover ", rule.Name)
@@ -95,9 +88,8 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 				return rule.Action(b)
 			}()
 			if len(msgs) > 0 {
-				r.outCh <- Result{
-					Name:   rule.Name,
-					Result: msgs,
+				for _, item := range msgs {
+					r.outCh <- item
 				}
 			}
 		}
@@ -113,64 +105,35 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 func (r *cronRuleset) resultWorker(b *rulebot.RuleBot) {
 	for out := range r.outCh {
 		// filter
-		diff := r.filter(b, out.Name, out.Result)
+		res := r.filter(b, out)
 		// send
-		r.send(b, out.Name, diff)
+		r.pipeline(b, res)
 	}
 }
 
-func (r *cronRuleset) filter(b *rulebot.RuleBot, name string, latest []string) []string {
+func (r *cronRuleset) filter(b *rulebot.RuleBot, res result.Result) result.Result {
 	ctx := context.Background()
-	sentKey := fmt.Sprintf("cron:%s:sent", name)
-	todoKey := fmt.Sprintf("cron:%s:todo", name)
-	sendTimeKey := fmt.Sprintf("cron:%s:sendtime", name)
+	filterKey := fmt.Sprintf("cron:%d:filter", res.Kind)
 
-	// sent
-	smembers := b.RDB.SMembers(ctx, sentKey)
-	old, err := smembers.Result()
+	// filter
+	state := b.RDB.SIsMember(ctx, filterKey, res.ID)
+	ex, err := state.Result()
 	if err != nil && err != redis.Nil {
-		return []string{}
+		return result.EmptyResult()
+	}
+	if ex {
+		return result.EmptyResult()
 	}
 
-	// to do
-	smembers = b.RDB.SMembers(ctx, todoKey)
-	todo, err := smembers.Result()
-	if err != nil && err != redis.Nil {
-		return []string{}
-	}
+	// add
+	b.RDB.SAdd(ctx, filterKey, res.ID)
 
-	// merge
-	tobeCompared := append(old, todo...)
-
-	// diff
-	diff := utils.StringSliceDiff(latest, tobeCompared)
-
-	// record
-	b.RDB.Set(ctx, sendTimeKey, time.Now().Unix(), 0)
-
-	// add data
-	for _, item := range diff {
-		b.RDB.SAdd(ctx, sentKey, item)
-	}
-	b.RDB.Expire(ctx, sentKey, 7*24*time.Hour)
-
-	// clear to do
-	b.RDB.Del(ctx, todoKey)
-
-	return diff
+	return res
 }
 
-func (r *cronRuleset) send(b *rulebot.RuleBot, name string, out []string) {
-	if len(out) == 0 {
+func (r *cronRuleset) pipeline(b *rulebot.RuleBot, res result.Result) {
+	if res.ID == "" {
 		return
 	}
-
-	text := fmt.Sprintf("Cron %s (v%s)\n%s", name, version.Version, strings.Join(out, "\n"))
-
-	_, err := b.MsgClient.Send(context.Background(), &pb.MessageRequest{
-		Text: text,
-	})
-	if err != nil {
-		return
-	}
+	pipeline.Workflow(b, res)
 }

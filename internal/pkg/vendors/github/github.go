@@ -521,3 +521,20 @@ func (v *Github) CreateCard(columnID int64, card ProjectCard) (*ProjectCard, err
 		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
 	}
 }
+
+func (v *Github) GetRepository(owner, repo string) (*Repository, error) {
+	resp, err := v.c.R().
+		SetResult(&Repository{}).
+		SetHeader("Accept", "application/vnd.github.v3+json").
+		SetHeader("Authorization", fmt.Sprintf("token %s", v.accessToken)).
+		Get(fmt.Sprintf("/repos/%s/%s", owner, repo))
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Result().(*Repository), nil
+	} else {
+		return nil, fmt.Errorf("%d, %s (%s)", resp.StatusCode(), resp.Header().Get("X-Error-Code"), resp.Header().Get("X-Error"))
+	}
+}

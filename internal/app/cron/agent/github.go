@@ -2,40 +2,50 @@ package agent
 
 import (
 	"context"
-	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func FetchGithubStarred(b *rulebot.RuleBot) []string {
+func FetchGithubStarred(b *rulebot.RuleBot) []result.Result {
 	// get access token
 	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {
-		return []string{}
+		return []result.Result{result.ErrorResult(err)}
 	}
 	accessToken := app.GetToken()
 	if accessToken == "" {
-		return []string{}
+		return []result.Result{result.EmptyResult()}
 	}
 
 	// data
 	client := github.NewGithub("", "", "", accessToken)
 	user, err := client.GetUser()
 	if err != nil {
-		return []string{}
+		return []result.Result{result.ErrorResult(err)}
 	}
 	if *user.Login != "" {
 		repos, err := client.GetStarred(*user.Login)
 		if err != nil {
-			return []string{}
+			return []result.Result{result.ErrorResult(err)}
 		}
-		var result []string
+		var r []result.Result
 		for _, item := range *repos {
-			result = append(result, fmt.Sprintf("%s (%s)", *item.FullName, *item.HTMLURL))
+			r = append(r, result.Result{
+				ID:   utils.SHA1(*item.HTMLURL),
+				Kind: result.Repos,
+				Content: map[string]string{
+					"name":  *item.FullName,
+					"owner": *item.Owner.Login,
+					"repo":  *item.Name,
+					"url":   *item.HTMLURL,
+				},
+			})
 		}
-		return result
+		return r
 	}
 
-	return []string{}
+	return []result.Result{result.EmptyResult()}
 }

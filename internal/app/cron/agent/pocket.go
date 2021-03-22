@@ -2,17 +2,18 @@ package agent
 
 import (
 	"context"
-	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
-func FetchPocket(b *rulebot.RuleBot) []string {
+func FetchPocket(b *rulebot.RuleBot) []result.Result {
 	// get consumer key
 	reply, err := b.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
-		return []string{}
+		return []result.Result{result.ErrorResult(err)}
 	}
 	consumerKey := ""
 	for _, item := range reply.GetContent() {
@@ -21,33 +22,40 @@ func FetchPocket(b *rulebot.RuleBot) []string {
 		}
 	}
 	if consumerKey == "" {
-		return []string{}
+		return []result.Result{result.EmptyResult()}
 	}
 
 	// get access token
 	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: pocket.ID})
 	if err != nil {
-		return []string{}
+		return []result.Result{result.ErrorResult(err)}
 	}
 	accessToken := app.GetToken()
 	if accessToken == "" {
-		return []string{}
+		return []result.Result{result.EmptyResult()}
 	}
 
 	// data
 	client := pocket.NewPocket(consumerKey, "", "", accessToken)
 	resp, err := client.Retrieve(10)
 	if err != nil {
-		return []string{}
+		return []result.Result{result.ErrorResult(err)}
 	}
 
 	if resp.Status > 0 {
-		var result []string
+		var r []result.Result
 		for _, item := range resp.List {
-			result = append(result, fmt.Sprintf("%s (%s)", item.ResolvedTitle, item.ResolvedUrl))
+			r = append(r, result.Result{
+				ID:   utils.SHA1(item.ResolvedUrl),
+				Kind: result.Url,
+				Content: map[string]string{
+					"title": item.ResolvedTitle,
+					"url":   item.ResolvedUrl,
+				},
+			})
 		}
-		return result
+		return r
 	}
 
-	return []string{}
+	return []result.Result{result.EmptyResult()}
 }
