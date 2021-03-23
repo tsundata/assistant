@@ -12,7 +12,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
-	"github.com/tsundata/assistant/internal/app/workflow/script"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
@@ -53,54 +52,9 @@ func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (
 		}
 
 		return &pb.StateReply{State: true}, nil
-	case model.MessageTypeScript:
-		p, err := script.NewParser(script.NewLexer([]rune(payload.GetText())))
-		if err != nil {
-			return &pb.StateReply{State: false}, err
-		}
-		tree, err := p.Parse()
-		if err != nil {
-			return &pb.StateReply{State: false}, err
-		}
-
-		sa := script.NewSemanticAnalyzer()
-		err = sa.Visit(tree)
-		if err != nil {
-			return &pb.StateReply{State: false}, err
-		}
-
-		return &pb.StateReply{State: true}, nil
 	}
 
 	return &pb.StateReply{State: false}, nil
-}
-
-func (s *Workflow) RunScript(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	p, err := script.NewParser(script.NewLexer([]rune(payload.GetText())))
-	if err != nil {
-		return nil, err
-	}
-	tree, err := p.Parse()
-	if err != nil {
-		return nil, err
-	}
-
-	sa := script.NewSemanticAnalyzer()
-	err = sa.Visit(tree)
-	if err != nil {
-		return nil, err
-	}
-
-	i := script.NewInterpreter(tree)
-	i.SetClient(s.midClient)
-	_, err = i.Interpret()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.WorkflowReply{
-		Text: fmt.Sprintf("Tracing\n-------\n %s", i.Stdout()),
-	}, nil
 }
 
 func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {

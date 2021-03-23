@@ -16,17 +16,21 @@ func (o *Debug) Type() int {
 }
 
 func (o *Debug) Doc() string {
-	return "debug [bool]"
+	return "debug [bool]? : (nil -> bool)"
 }
 
 func (o *Debug) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
-	if len(params) != 1 {
+	if len(params) == 1 {
+		if state, ok := params[0].(bool); ok {
+			ctx.Debug = state
+			return state, nil
+		}
+	} else if len(params) == 0 {
+		ctx.Debug = true
+		return true, nil
+	} else {
 		return false, errors.New("error params")
 	}
 
-	if state, ok := params[0].(bool); ok {
-		ctx.Debug = state
-		return true, nil
-	}
 	return false, nil
 }

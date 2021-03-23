@@ -8,7 +8,6 @@ option go_package = "api/pb";
 service Workflow {
   rpc SyntaxCheck(WorkflowRequest) returns (StateReply) {}
   rpc RunAction(WorkflowRequest) returns (WorkflowReply) {}
-  rpc RunScript(WorkflowRequest) returns (WorkflowReply) {}
   rpc WebhookTrigger(TriggerRequest) returns (WorkflowReply) {}
   rpc CronTrigger(TriggerRequest) returns (WorkflowReply) {}
   rpc CreateTrigger(TriggerRequest) returns (StateReply) {}

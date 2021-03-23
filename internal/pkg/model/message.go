@@ -23,7 +23,7 @@ const (
 )
 
 const (
-	MessageScriptOfFlowscript = "flowscript"
+	MessageScriptOfJavascript = "javascript"
 	MessageScriptOfUndefined  = "undefined"
 )
 

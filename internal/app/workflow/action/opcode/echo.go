@@ -18,7 +18,7 @@ func (o *Echo) Type() int {
 }
 
 func (o *Echo) Doc() string {
-	return "send [any] : (nil -> bool)"
+	return "echo [any] : (nil -> bool)"
 }
 
 func (o *Echo) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {

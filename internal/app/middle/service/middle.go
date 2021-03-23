@@ -48,10 +48,7 @@ Setting
 
 Action
 %s/action/%s
-
-Scripts
-%s/scripts/%s
-`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
+`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
 	}, nil
 }
 

@@ -188,12 +188,6 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 		reply = wfReply.GetText()
 	case model.MessageTypeScript:
 		switch model.MessageScriptKind(message.Text) {
-		case model.MessageScriptOfFlowscript:
-			wfReply, err := m.wfClient.RunScript(ctx, &pb.WorkflowRequest{Text: message.Text})
-			if err != nil {
-				return nil, err
-			}
-			reply = wfReply.GetText()
 		default:
 			reply = model.MessageScriptOfUndefined
 		}
@@ -204,68 +198,6 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	return &pb.TextReply{
 		Text: reply,
 	}, nil
-}
-
-func (m *Message) GetScriptMessages(_ context.Context, _ *pb.TextRequest) (*pb.ScriptsReply, error) {
-	var items []model.Message
-	err := m.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeScript)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	var kvs []*pb.Script
-	for _, item := range items {
-		kvs = append(kvs, &pb.Script{
-			Id:   int64(item.ID),
-			Text: item.Text,
-		})
-	}
-
-	return &pb.ScriptsReply{
-		Items: kvs,
-	}, nil
-}
-
-func (m *Message) CreateScriptMessage(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	if payload.GetText() == "" {
-		return &pb.StateReply{State: false}, nil
-	}
-
-	// check syntax
-	_, err := m.wfClient.SyntaxCheck(ctx, &pb.WorkflowRequest{
-		Text: payload.GetText(),
-		Type: model.MessageTypeScript,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// store message
-	uuid, err := utils.GenerateUUID()
-	if err != nil {
-		return nil, err
-	}
-	result, err := m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
-		uuid, model.MessageTypeScript, payload.GetText(), time.Now())
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	// check/store trigger
-	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
-		Kind:        model.MessageTypeScript,
-		MessageId:   id,
-		MessageText: payload.GetText(),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.StateReply{State: true}, nil
 }
 
 func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {

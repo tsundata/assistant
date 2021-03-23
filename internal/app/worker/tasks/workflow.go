@@ -51,11 +51,6 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-	case model.MessageTypeScript:
-		_, err := t.wfClient.RunScript(context.Background(), &pb.WorkflowRequest{Text: message.GetText()})
-		if err != nil {
-			return false, err
-		}
 	default:
 		return false, errors.New("error type")
 	}

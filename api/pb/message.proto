@@ -12,8 +12,6 @@ service Message {
   rpc Delete(MessageRequest) returns (TextReply) {}
   rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}
-  rpc GetScriptMessages(TextRequest) returns (ScriptsReply) {}
-  rpc CreateScriptMessage(TextRequest) returns (StateReply) {}
   rpc GetActionMessages(TextRequest) returns (ActionReply) {}
   rpc CreateActionMessage(TextRequest) returns (StateReply) {}
   rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
@@ -49,15 +47,6 @@ message MessageItem {
   string text = 3;
   string type = 4;
   string time = 5;
-}
-
-message Script {
-  int64 id = 1;
-  string text = 2;
-}
-
-message ScriptsReply {
-  repeated Script items = 1;
 }
 
 message Action {

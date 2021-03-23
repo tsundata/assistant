@@ -16,9 +16,23 @@
 
 # Opcode
 
-- get (string|message)
-- count
-- send (string|message)
+```
+count : (any -> integer)
+cron [string]
+debug [bool]? : (nil -> bool)
+dedupe [string]? : (any -> any)
+echo [any] : (nil -> bool)
+else
+get [any] : (nil -> any)
+if
+json : (string -> any)
+message : (any -> bool)
+query [string:(css|json|regex)] [string] [string]? : (any -> any)
+set [any]... : (nil -> any)
+status [string:(http|tcp|dns|tls)] [string] : (nil -> bool)
+task [integer] : (nil -> bool)
+webhook [string] [string]?
+```
 
 ## Example
 
