@@ -327,14 +327,14 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Middle) GetSetting(_ context.Context, _ *pb.TextRequest) (*pb.SettingReply, error) {
+func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.SettingsReply, error) {
 	resp, err := s.etcd.Get(context.Background(), "setting/",
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	if err != nil {
 		return nil, err
 	}
-	var reply pb.SettingReply
+	var reply pb.SettingsReply
 	for _, ev := range resp.Kvs {
 		reply.Items = append(reply.Items, &pb.KV{
 			Key:   strings.ReplaceAll(utils.ByteToString(ev.Key), "setting/", ""),
@@ -342,6 +342,20 @@ func (s *Middle) GetSetting(_ context.Context, _ *pb.TextRequest) (*pb.SettingRe
 		})
 	}
 	return &reply, nil
+}
+
+func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
+	resp, err := s.etcd.Get(context.Background(), "setting/"+payload.GetText())
+	if err != nil {
+		return nil, err
+	}
+	if len(resp.Kvs) == 1 {
+		return &pb.SettingReply{
+			Key:   payload.GetText(),
+			Value: utils.ByteToString(resp.Kvs[0].Value),
+		}, nil
+	}
+	return &pb.SettingReply{}, nil
 }
 
 func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {

@@ -16,6 +16,7 @@ service Middle {
   rpc GetMaskingCredentials(TextRequest) returns (MaskingReply) {}
   rpc GetCredential(CredentialRequest) returns (CredentialReply) {}
   rpc CreateCredential(KVsRequest) returns (StateReply) {}
+  rpc GetSettings(TextRequest) returns (SettingsReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
   rpc CreateSetting(KVRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
@@ -90,8 +91,13 @@ message CredentialReply {
   repeated KV content = 3;
 }
 
-message SettingReply {
+message SettingsReply {
   repeated KV items = 1;
+}
+
+message SettingReply {
+  string key = 1;
+  string value = 2;
 }
 
 message KVRequest {

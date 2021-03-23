@@ -346,7 +346,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 func (wc *WebController) Setting(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := wc.midClient.GetSetting(context.Background(), &pb.TextRequest{})
+	reply, err := wc.midClient.GetSettings(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
