@@ -9,9 +9,10 @@ import (
 type Context struct {
 	mu sync.Mutex
 
-	Debug    bool
-	Continue bool
-	Value    interface{}
+	Debug      bool
+	Continue   bool
+	Value      interface{}
+	Credential map[string]string
 
 	RDB        *redis.Client
 	MidClient  pb.MiddleClient
@@ -34,4 +35,10 @@ func (c *Context) SetContinue(b bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.Continue = b
+}
+
+func (c *Context) SetCredential(v map[string]string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.Credential = v
 }

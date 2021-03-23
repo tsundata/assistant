@@ -28,6 +28,7 @@ if
 json : (string -> any)
 message : (any -> bool)
 query [string:(css|json|regex)] [string] [string]? : (any -> any)
+secret [string] : (nil -> any)
 set [any]... : (nil -> any)
 status [string:(http|tcp|dns|tls)] [string] : (nil -> bool)
 task [integer] : (nil -> bool)

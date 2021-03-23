@@ -34,6 +34,7 @@ var opcodes = map[string]Opcoder{
 	"message": NewMessage(),
 	"query":   NewQuery(),
 	"dedupe":  NewDedupe(),
+	"secret":  NewSecret(),
 }
 
 func NewOpcode(name string) Opcoder {
