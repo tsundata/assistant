@@ -35,6 +35,13 @@ var rules = []Rule{
 			return agent.WorkflowCron(b)
 		},
 	},
+	{
+		Name: "cloudflare_report",
+		When: "0 0 * * 0",
+		Action: func(b *rulebot.RuleBot) []result.Result {
+			return agent.DomainAnalyticsReport(b)
+		},
+	},
 }
 
 var Options = []rulebot.Option{
