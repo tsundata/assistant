@@ -28,11 +28,15 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	options, err := rollbar.NewOptions(viper)
+	options, err := subscribe.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	rollbarRollbar := rollbar.New(options)
+	rollbarOptions, err := rollbar.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	rollbarRollbar := rollbar.New(rollbarOptions)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
 	rpcOptions, err := rpc.NewOptions(viper)
 	if err != nil {
@@ -66,7 +70,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := subscribe.NewApp(cf, loggerLogger, server, client)
+	application, err := subscribe.NewApp(options, loggerLogger, server, client)
 	if err != nil {
 		return nil, err
 	}
