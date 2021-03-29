@@ -19,26 +19,7 @@ type Rule struct {
 	}
 }
 
-type Result struct {
-	Name   string
-	Mode   string
-	Result []string
-}
-
-func document(url string) (*goquery.Document, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return nil, err
-	}
-
-	return goquery.NewDocumentFromReader(res.Body)
-}
-
-func RunRule(r Rule) []string {
+func (r Rule) Run() []string {
 	var result []string
 
 	doc, err := document(r.Page.URL)
@@ -79,4 +60,23 @@ func RunRule(r Rule) []string {
 		result = append(result, txt.String())
 	})
 	return result
+}
+
+type Result struct {
+	Name   string
+	Mode   string
+	Result []string
+}
+
+func document(url string) (*goquery.Document, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		return nil, err
+	}
+
+	return goquery.NewDocumentFromReader(res.Body)
 }

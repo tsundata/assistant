@@ -142,7 +142,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 						}
 					}
 				}()
-				return rule.RunRule(r)
+				return r.Run()
 			}()
 			if len(result) > 0 {
 				s.outCh <- rule.Result{
