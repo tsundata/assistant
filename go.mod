@@ -10,7 +10,7 @@ require (
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-resty/resty/v2 v2.5.0
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/gofiber/fiber/v2 v2.6.0
+	github.com/gofiber/fiber/v2 v2.7.1
 	github.com/gogo/protobuf v1.3.2
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
