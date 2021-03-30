@@ -23,3 +23,5 @@ jaeger:
 rollbar:
     token:
     environment: # production development
+telegram:
+    token:

@@ -11,10 +11,13 @@ import (
 )
 
 type Options struct {
-	Name         string
+	Name string
+	// slack
 	Token        string
 	Verification string
 	Signing      string
+	// telegram
+	TelegramToken string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -25,6 +28,11 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 	if err = v.UnmarshalKey("slack", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
+	}
+
+	telegram := v.GetStringMapString("telegram")
+	if token, ok := telegram["token"]; ok {
+		o.TelegramToken = token
 	}
 
 	return o, err

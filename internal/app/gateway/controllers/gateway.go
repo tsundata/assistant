@@ -12,6 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
 	"net/http"
 	"regexp"
 	"strings"
@@ -61,7 +62,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 			// ignore bot message
 			if ev.ClientMsgID != "" {
 				// ignore repeated message
-				rKey := "message:repeated:" + ev.ClientMsgID
+				rKey := "message:repeated:slack:" + ev.ClientMsgID
 				isRepeated := gc.rdb.Get(context.Background(), rKey).Val()
 				if len(isRepeated) > 0 {
 					return c.Status(http.StatusBadRequest).SendString("repeat message")
@@ -104,4 +105,61 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 	}
 
 	return c.SendString("OK")
+}
+
+func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
+	var incoming telegram.IncomingRequest
+	err := json.Unmarshal(c.Request().Body(), &incoming)
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	// todo auth
+
+	// ignore repeated message
+	rKey := fmt.Sprintf("message:repeated:telegram:%d", incoming.UpdateId)
+	isRepeated := gc.rdb.Get(context.Background(), rKey).Val()
+	if len(isRepeated) > 0 {
+		return c.Status(http.StatusBadRequest).SendString("repeat message")
+	}
+	gc.rdb.Set(context.Background(), rKey, time.Now().Unix(), 7*24*time.Hour)
+
+	// empty message
+	if incoming.Message.Text == "" {
+		return c.SendStatus(http.StatusBadRequest)
+	}
+
+	// handle message
+	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+	reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
+		Uuid: uuid,
+		Text: incoming.Message.Text,
+	})
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	// reply message
+	api := telegram.NewTelegram(gc.opt.TelegramToken)
+	if reply.GetId() > 0 {
+		_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", reply.GetId()))
+	} else {
+		for _, item := range reply.GetText() {
+			if item != "" {
+				_, err = api.SendMessage(incoming.Message.Chat.Id, item)
+			}
+		}
+	}
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	return c.SendStatus(http.StatusOK)
 }
