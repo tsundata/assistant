@@ -35,7 +35,7 @@ require (
 	github.com/yuin/goldmark v1.3.4
 	go.etcd.io/etcd v0.0.0-20201125193152-8a03d2e9614b
 	go.uber.org/zap v1.16.0
-	google.golang.org/grpc v1.35.0
+	google.golang.org/grpc v1.37.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
