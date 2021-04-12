@@ -34,7 +34,7 @@ func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook
 
 func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
 	var messages []model.Message
-	err := m.db.Select(&messages, "SELECT * FROM `messages` WHERE `type` <> ? AND `type` <> ? ORDER BY `id` DESC",
+	err := m.db.Select(&messages, "SELECT uuid, text, `type`, `time` FROM `messages` WHERE `type` <> ? AND `type` <> ? ORDER BY `id` DESC",
 		model.MessageTypeAction, model.MessageTypeScript)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 
 func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	var message model.Message
-	err := m.db.Get(&message, "SELECT * FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
+	err := m.db.Get(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
 	var message model.Message
-	err := m.db.Get(&message, "SELECT * FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
+	err := m.db.Get(&message, "SELECT `type` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
 	var items []model.Message
-	err := m.db.Select(&items, "SELECT * FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeAction)
+	err := m.db.Select(&items, "SELECT id, text FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeAction)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

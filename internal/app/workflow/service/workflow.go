@@ -92,7 +92,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 
 func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.WorkflowReply, error) {
 	var trigger model.Trigger
-	err := s.db.Get(&trigger, "SELECT * FROM `triggers` WHERE `type` = ? AND `flag` = ?", payload.Type, payload.Flag)
+	err := s.db.Get(&trigger, "SELECT message_id, kind FROM `triggers` WHERE `type` = ? AND `flag` = ?", payload.Type, payload.Flag)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -120,7 +120,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 
 func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
 	var triggers []model.Trigger
-	err := s.db.Select(&triggers, "SELECT * FROM `triggers` WHERE `type` = ?", "cron")
+	err := s.db.Select(&triggers, "SELECT message_id, kind, `when` FROM `triggers` WHERE `type` = ?", "cron")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

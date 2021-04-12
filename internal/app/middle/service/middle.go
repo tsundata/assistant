@@ -84,7 +84,7 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 
 func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
 	var find model.Page
-	err := s.db.Get(&find, "SELECT * FROM `pages` WHERE `uuid` = ?", payload.GetUuid())
+	err := s.db.Get(&find, "SELECT uuid, `type`, title, content FROM `pages` WHERE `uuid` = ?", payload.GetUuid())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 
 func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
 	var apps []model.App
-	err := s.db.Select(&apps, "SELECT * FROM `apps` ORDER BY `time` DESC")
+	err := s.db.Select(&apps, "SELECT name, `type`, token, extra, `time` FROM `apps` ORDER BY `time` DESC")
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 
 func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
 	var find model.App
-	err := s.db.Get(&find, "SELECT * FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", payload.GetText())
+	err := s.db.Get(&find, "SELECT id, name, `type`, token FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", payload.GetText())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 	}
 
 	var app model.App
-	err := s.db.Get(&app, "SELECT * FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", payload.GetType())
+	err := s.db.Get(&app, "SELECT id FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", payload.GetType())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -204,12 +204,12 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
 	var find model.Credential
 	if payload.GetName() != "" {
-		err := s.db.Get(&find, "SELECT * FROM credentials WHERE name = ? LIMIT 1", payload.GetName())
+		err := s.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE name = ? LIMIT 1", payload.GetName())
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 	} else if payload.GetType() != "" {
-		err := s.db.Get(&find, "SELECT * FROM credentials WHERE type = ? LIMIT 1", payload.GetType())
+		err := s.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE type = ? LIMIT 1", payload.GetType())
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
@@ -239,7 +239,7 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 
 func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
 	var items []model.Credential
-	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
+	err := s.db.Select(&items, "SELECT name, `type`, content, `time` FROM `credentials` ORDER BY `id` DESC")
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -261,7 +261,7 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 
 func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
 	var items []model.Credential
-	err := s.db.Select(&items, "SELECT * FROM `credentials` ORDER BY `id` DESC")
+	err := s.db.Select(&items, "SELECT name, content FROM `credentials` ORDER BY `id` DESC")
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
