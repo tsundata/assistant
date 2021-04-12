@@ -41,21 +41,20 @@ func FetchPocket(b *rulebot.RuleBot) []result.Result {
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
-
-	if resp.Status > 0 {
-		var r []result.Result
-		for _, item := range resp.List {
-			r = append(r, result.Result{
-				ID:   utils.SHA1(item.ResolvedUrl),
-				Kind: result.Url,
-				Content: map[string]string{
-					"title": item.ResolvedTitle,
-					"url":   item.ResolvedUrl,
-				},
-			})
-		}
-		return r
+	if resp.Status == 0 {
+		return []result.Result{result.EmptyResult()}
 	}
 
-	return []result.Result{result.EmptyResult()}
+	var r []result.Result
+	for _, item := range resp.List {
+		r = append(r, result.Result{
+			ID:   utils.SHA1(item.ResolvedUrl),
+			Kind: result.Url,
+			Content: map[string]string{
+				"title": item.ResolvedTitle,
+				"url":   item.ResolvedUrl,
+			},
+		})
+	}
+	return r
 }

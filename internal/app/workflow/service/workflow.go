@@ -52,9 +52,9 @@ func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (
 		}
 
 		return &pb.StateReply{State: true}, nil
+	default:
+		return &pb.StateReply{State: false}, nil
 	}
-
-	return &pb.StateReply{State: false}, nil
 }
 
 func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
@@ -235,11 +235,11 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 				return nil, err
 			}
 		}
+
+		return &pb.StateReply{State: true}, nil
 	default:
 		return &pb.StateReply{State: false}, nil
 	}
-
-	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {

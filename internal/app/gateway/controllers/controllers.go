@@ -8,7 +8,6 @@ import (
 )
 
 func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
-
 	requestHandler := func(router fiber.Router) {
 		defer func() {
 			if err := recover(); err != nil {

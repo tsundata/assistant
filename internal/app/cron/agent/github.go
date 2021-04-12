@@ -26,26 +26,26 @@ func FetchGithubStarred(b *rulebot.RuleBot) []result.Result {
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
-	if *user.Login != "" {
-		repos, err := client.GetStarred(*user.Login)
-		if err != nil {
-			return []result.Result{result.ErrorResult(err)}
-		}
-		var r []result.Result
-		for _, item := range *repos {
-			r = append(r, result.Result{
-				ID:   utils.SHA1(*item.HTMLURL),
-				Kind: result.Repos,
-				Content: map[string]string{
-					"name":  *item.FullName,
-					"owner": *item.Owner.Login,
-					"repo":  *item.Name,
-					"url":   *item.HTMLURL,
-				},
-			})
-		}
-		return r
+	if *user.Login == "" {
+		return []result.Result{result.EmptyResult()}
 	}
 
-	return []result.Result{result.EmptyResult()}
+	repos, err := client.GetStarred(*user.Login)
+	if err != nil {
+		return []result.Result{result.ErrorResult(err)}
+	}
+	var r []result.Result
+	for _, item := range *repos {
+		r = append(r, result.Result{
+			ID:   utils.SHA1(*item.HTMLURL),
+			Kind: result.Repos,
+			Content: map[string]string{
+				"name":  *item.FullName,
+				"owner": *item.Owner.Login,
+				"repo":  *item.Name,
+				"url":   *item.HTMLURL,
+			},
+		})
+	}
+	return r
 }

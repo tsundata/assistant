@@ -51,9 +51,8 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		return true, nil
 	default:
 		return false, errors.New("error type")
 	}
-
-	return true, nil
 }
