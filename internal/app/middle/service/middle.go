@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -20,11 +21,12 @@ import (
 type Middle struct {
 	db     *sqlx.DB
 	etcd   *clientv3.Client
+	rdb    *redis.Client
 	webURL string
 }
 
-func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, webURL string) *Middle {
-	return &Middle{db: db, etcd: etcd, webURL: webURL}
+func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client, webURL string) *Middle {
+	return &Middle{db: db, etcd: etcd, webURL: webURL, rdb: rdb}
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
@@ -380,6 +382,42 @@ func (s *Middle) Authorization(_ context.Context, payload *pb.TextRequest) (*pb.
 	return &pb.StateReply{
 		State: payload.GetText() == utils.ByteToString(resp.Kvs[0].Value),
 	}, nil
+}
+
+func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
+	var result []string
+
+	// count
+	keys, _, err := s.rdb.Scan(ctx, 0, "stats:count:*", 1000).Result()
+	if err != nil {
+		return nil, err
+	}
+	values, err := s.rdb.MGet(ctx, keys...).Result()
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(keys); i++ {
+		result = append(result, fmt.Sprintf("%s: %s", strings.ReplaceAll(keys[i], "stats:count:", ""), values[i]))
+	}
+
+	// month
+	keys, _, err = s.rdb.Scan(ctx, 0, "stats:month:*", 1000).Result()
+	if err != nil {
+		return nil, err
+	}
+	values, err = s.rdb.MGet(ctx, keys...).Result()
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(keys); i++ {
+		binString := ""
+		for _, c := range values[i].(string) {
+			binString = fmt.Sprintf("%s%.8b", binString, c)
+		}
+		result = append(result, fmt.Sprintf("%s: %s", strings.ReplaceAll(keys[i], "stats:month:", ""), binString))
+	}
+
+	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
 }
 
 func authUUID(etcd *clientv3.Client) (string, error) {

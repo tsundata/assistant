@@ -241,6 +241,17 @@ var rules = []Rule{
 			return []string{"test done"}
 		},
 	},
+	{
+		Regex:       `stats`,
+		HelpMessage: `Stats Info`,
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			reply, err := b.MidClient.GetStats(context.Background(), &pb.TextRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			return []string{reply.GetText()}
+		},
+	},
 }
 
 var Options = []rulebot.Option{

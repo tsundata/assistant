@@ -66,7 +66,15 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(rpcOptions, loggerLogger, tracer, client, influxdb2Client)
+	redisOptions, err := redis.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis.New(redisOptions)
+	if err != nil {
+		return nil, err
+	}
+	server, err := rpc.NewServer(rpcOptions, loggerLogger, tracer, client, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}

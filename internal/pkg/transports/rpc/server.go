@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -15,6 +16,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	redisPkg "github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.etcd.io/etcd/clientv3"
@@ -64,11 +66,12 @@ type Server struct {
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
 	in       influxdb2.Client
+	rdb      *redis.Client
 }
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client) (*Server, error) {
+func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client, rdb *redis.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -91,6 +94,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
+				redisPkg.StatsStreamServerInterceptor(rdb),
 			),
 		),
 		grpc.UnaryInterceptor(
@@ -101,6 +105,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
+				redisPkg.StatsUnaryServerInterceptor(rdb),
 			),
 		),
 	)

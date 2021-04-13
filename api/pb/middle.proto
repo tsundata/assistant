@@ -21,6 +21,7 @@ service Middle {
   rpc CreateSetting(KVRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc Authorization(TextRequest) returns (StateReply) {}
+  rpc GetStats(TextRequest) returns (TextReply) {}
 }
 
 message PageRequest {
