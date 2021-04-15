@@ -43,6 +43,15 @@ services:
     ports:
       - "8086:8086"
 
+  rabbitmq:
+    image: rabbitmq:3.8.14-management
+    volumes:
+      - /tmp/rabbitmq/data/:/var/lib/rabbitmq/
+      - /tmp/rabbitmq/log/:/var/log/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   ### jaeger ###
 
   jaeger-collector:
