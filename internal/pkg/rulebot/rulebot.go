@@ -3,7 +3,6 @@ package rulebot
 import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/streadway/amqp"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
@@ -18,7 +17,6 @@ type RuleBot struct {
 	rules       []RuleParser
 
 	RDB *redis.Client
-	MQ  *amqp.Connection
 
 	SubClient  pb.SubscribeClient
 	MidClient  pb.MiddleClient
@@ -27,7 +25,7 @@ type RuleBot struct {
 	TaskClient pb.TaskClient
 }
 
-func New(RDB *redis.Client, MQ *amqp.Connection,
+func New(RDB *redis.Client,
 	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
 	WfClient pb.WorkflowClient, TaskClient pb.TaskClient,
 	opts ...Option) *RuleBot {
@@ -39,7 +37,6 @@ func New(RDB *redis.Client, MQ *amqp.Connection,
 	}
 
 	s.RDB = RDB
-	s.MQ = MQ
 	s.SubClient = SubClient
 	s.MidClient = MidClient
 	s.MsgClient = MsgClient

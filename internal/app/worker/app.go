@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/worker/tasks"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"log"
 	"os"
 )
 
@@ -43,32 +42,6 @@ func NewApp(logger *logger.Logger, server *machinery.Server, mq *amqp.Connection
 			logger.Error(err)
 			return
 		}
-	}()
-
-	// mq
-	go func() {
-		ch, err := mq.Channel()
-		if err != nil {
-			logger.Error(err)
-			return
-		}
-		q, err := ch.QueueDeclare("hello", false, false, false, false, nil)
-		if err != nil {
-			logger.Error(err)
-			return
-		}
-
-		msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
-		if err != nil {
-			logger.Error(err)
-			return
-		}
-
-		go func() {
-			for d := range msgs {
-				log.Printf("Received a message: %s", d.Body)
-			}
-		}()
 	}()
 
 	return a, nil

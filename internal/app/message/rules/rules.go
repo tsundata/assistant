@@ -2,8 +2,6 @@ package rules
 
 import (
 	"context"
-	"fmt"
-	"github.com/streadway/amqp"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -241,35 +239,12 @@ var rules = []Rule{
 		HelpMessage: `Test`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			// task
-
 			_, err := b.TaskClient.Send(context.Background(), &pb.JobRequest{
 				Name: "echo",
 				Args: time.Now().String(),
 			})
 			if err != nil {
 				return []string{"error: " + err.Error()}
-			}
-
-			// mq
-
-			ch, err := b.MQ.Channel()
-			if err != nil {
-				return []string{"error: " + err.Error()}
-			}
-			defer ch.Close()
-
-			q, err := ch.QueueDeclare("hello", false, false, false, false, nil)
-			if err != nil {
-				return []string{"error call: " + err.Error()}
-			}
-
-			body := fmt.Sprintf("Hello World %d", time.Now().Unix())
-			err = ch.Publish("", q.Name, false, false, amqp.Publishing{
-				ContentType: "text/plain",
-				Body:        []byte(body),
-			})
-			if err != nil {
-				return []string{"error call: " + err.Error()}
 			}
 
 			return []string{"test done"}

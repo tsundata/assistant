@@ -43,14 +43,6 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rabbitmqOptions, err := rabbitmq.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	connection, err := rabbitmq.New(rabbitmqOptions)
-	if err != nil {
-		return nil, err
-	}
 	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
 	if err != nil {
 		return nil, err
@@ -91,7 +83,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := cron.NewApp(loggerLogger, client, connection, subscribeClient, middleClient, messageClient, workflowClient)
+	application, err := cron.NewApp(loggerLogger, client, subscribeClient, middleClient, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}

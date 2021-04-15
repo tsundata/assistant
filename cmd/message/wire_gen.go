@@ -88,14 +88,6 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rabbitmqOptions, err := rabbitmq.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	connection, err := rabbitmq.New(rabbitmqOptions)
-	if err != nil {
-		return nil, err
-	}
 	clientOptions, err := rpc.NewClientOptions(viper, tracer)
 	if err != nil {
 		return nil, err
@@ -124,7 +116,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(options, loggerLogger, server, db, connection, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
+	application, err := message.NewApp(options, loggerLogger, server, db, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}
