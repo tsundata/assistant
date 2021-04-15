@@ -16,6 +16,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/machinery"
+	"github.com/tsundata/assistant/internal/pkg/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -40,6 +41,14 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	server, err := machinery.New(machineryOptions)
+	if err != nil {
+		return nil, err
+	}
+	rabbitmqOptions, err := rabbitmq.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	connection, err := rabbitmq.New(rabbitmqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +84,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := worker.NewApp(loggerLogger, server, messageClient, workflowClient)
+	application, err := worker.NewApp(loggerLogger, server, connection, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}
@@ -84,4 +93,4 @@ func CreateApp(cf string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, rpcclients.ProviderSet, machinery.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, rpcclients.ProviderSet, machinery.ProviderSet, rollbar.ProviderSet, rabbitmq.ProviderSet)

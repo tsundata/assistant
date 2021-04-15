@@ -16,6 +16,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -87,6 +88,14 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	rabbitmqOptions, err := rabbitmq.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
+	connection, err := rabbitmq.New(rabbitmqOptions)
+	if err != nil {
+		return nil, err
+	}
 	clientOptions, err := rpc.NewClientOptions(viper, tracer)
 	if err != nil {
 		return nil, err
@@ -115,7 +124,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(options, loggerLogger, server, db, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
+	application, err := message.NewApp(options, loggerLogger, server, db, connection, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}
@@ -124,4 +133,4 @@ func CreateApp(cf string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, message.ProviderSet, database.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, message.ProviderSet, database.ProviderSet, rollbar.ProviderSet, rabbitmq.ProviderSet)
