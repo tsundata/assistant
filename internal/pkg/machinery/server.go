@@ -9,7 +9,7 @@ import (
 	amqpBroker "github.com/RichardKnop/machinery/v2/brokers/amqp"
 	redisBroker "github.com/RichardKnop/machinery/v2/brokers/redis"
 	"github.com/RichardKnop/machinery/v2/config"
-	eagerlock "github.com/RichardKnop/machinery/v2/locks/eager"
+	eagerLock "github.com/RichardKnop/machinery/v2/locks/eager"
 	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
@@ -55,7 +55,7 @@ func New(o *Options) (*machinery.Server, error) {
 			},
 		}
 
-		server := machinery.NewServer(cnf, amqpBroker.New(cnf), amqpBackend.New(cnf), eagerlock.New())
+		server := machinery.NewServer(cnf, amqpBroker.New(cnf), amqpBackend.New(cnf), eagerLock.New())
 		return server, nil
 	} else {
 		cnf := &config.Config{
@@ -73,7 +73,7 @@ func New(o *Options) (*machinery.Server, error) {
 		}
 		broker := redisBroker.NewGR(cnf, []string{fmt.Sprintf("%s@%s", o.Password, o.Addr)}, 0)
 		backend := redisBackend.NewGR(cnf, []string{fmt.Sprintf("%s@%s", o.Password, o.Addr)}, 0)
-		lock := eagerlock.New()
+		lock := eagerLock.New()
 
 		server := machinery.NewServer(cnf, broker, backend, lock)
 		return server, nil
