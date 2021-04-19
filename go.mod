@@ -7,7 +7,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/RichardKnop/machinery/v2 v2.0.10
 	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
-	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-redis/redis/v8 v8.8.2
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.7.1
@@ -27,7 +27,7 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
-	github.com/streadway/amqp v1.0.0 // indirect
+	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.7.4
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
