@@ -22,7 +22,7 @@ require (
 	github.com/rollbar/rollbar-go v1.3.0
 	github.com/shirou/gopsutil/v3 v3.21.3
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/slack-go/slack v0.8.2
+	github.com/slack-go/slack v0.9.0
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
 	github.com/spf13/pflag v1.0.5 // indirect
