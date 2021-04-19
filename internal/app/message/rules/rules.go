@@ -155,7 +155,7 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 			if reply.GetState() {
-				return []string{"success"}
+				return []string{"ok"}
 			}
 
 			return []string{"failed"}
@@ -176,7 +176,7 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 			if reply.GetState() {
-				return []string{"success"}
+				return []string{"ok"}
 			}
 
 			return []string{"failed"}

@@ -100,6 +100,11 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 		return nil, err
 	}
 
+	// Authorization
+	if trigger.Secret != "" && payload.GetSecret() != trigger.Secret {
+		return nil, errors.New("error secret")
+	}
+
 	// push task
 	j, err := json.Marshal(map[string]string{
 		"type": trigger.Kind,

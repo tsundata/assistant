@@ -505,7 +505,7 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 
 	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
@@ -533,7 +533,7 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
 	}
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "success"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
@@ -548,15 +548,23 @@ func (wc *WebController) OAuth(c *fiber.Ctx) error {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	return c.SendString("Success")
+	return c.SendString("ok")
 }
 
 func (wc *WebController) Webhook(c *fiber.Ctx) error {
-	flag := c.Params("flag")
+	flag := c.Params("flag", "")
+
+	// Headers(Authorization: Base ?) -> query(secret)
+	secret := c.Get("Authorization", "")
+	secret = strings.ReplaceAll(secret, "Base ", "")
+	if secret == "" {
+		secret = c.Query("secret", "")
+	}
+
 	_, err := wc.wfClient.WebhookTrigger(context.Background(), &pb.TriggerRequest{
 		Type:   "webhook",
 		Flag:   flag,
-		Secret: "", // TODO Authorization
+		Secret: secret,
 		Header: c.Request().Header.String(),
 		Body:   utils.ByteToString(c.Request().Body()),
 	})
@@ -565,5 +573,5 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	return c.SendString("")
+	return c.SendString("ok")
 }
