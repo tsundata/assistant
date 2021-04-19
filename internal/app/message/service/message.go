@@ -174,7 +174,7 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
 	var message model.Message
-	err := m.db.Get(&message, "SELECT `type` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
+	err := m.db.Get(&message, "SELECT `type`, `text` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

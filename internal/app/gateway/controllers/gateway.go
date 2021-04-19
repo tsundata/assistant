@@ -27,7 +27,8 @@ type GatewayController struct {
 	msgClient pb.MessageClient
 }
 
-func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *logger.Logger, subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
+func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *logger.Logger,
+	subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
 	return &GatewayController{opt: opt, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
 

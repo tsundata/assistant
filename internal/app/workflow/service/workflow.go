@@ -36,6 +36,9 @@ func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, midClien
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
 	switch payload.Type {
 	case model.MessageTypeAction:
+		if payload.GetText() == "" {
+			return nil, errors.New("empty action")
+		}
 		p, err := action.NewParser(action.NewLexer([]rune(payload.GetText())))
 		if err != nil {
 			return &pb.StateReply{State: false}, err
@@ -58,6 +61,9 @@ func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (
 }
 
 func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	if payload.GetText() == "" {
+		return nil, errors.New("empty action")
+	}
 	p, err := action.NewParser(action.NewLexer([]rune(payload.GetText())))
 	if err != nil {
 		return nil, err
@@ -189,6 +195,9 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 
 	switch payload.GetKind() {
 	case model.MessageTypeAction:
+		if payload.GetMessageText() == "" {
+			return nil, errors.New("empty action")
+		}
 		p, err := action.NewParser(action.NewLexer([]rune(payload.GetMessageText())))
 		if err != nil {
 			return nil, err
