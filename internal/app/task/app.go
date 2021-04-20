@@ -16,9 +16,9 @@ func NewApp(logger *logger.Logger, rs *rpc.Server, ms *machinery.Server) (*app.A
 	name := os.Getenv("APP_NAME")
 
 	// service
-	task := service.NewTask(ms)
+	s := service.NewTask(ms)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterTaskServer(gs, task)
+		pb.RegisterTaskServer(gs, s)
 		return nil
 	})
 	if err != nil {

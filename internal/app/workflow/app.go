@@ -19,9 +19,9 @@ func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sq
 	name := os.Getenv("APP_NAME")
 
 	// service
-	subscribe := service.NewWorkflow(etcd, db, rdb, midClient, msgClient, taskClient)
+	s := service.NewWorkflow(etcd, db, rdb, midClient, msgClient, taskClient)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterWorkflowServer(gs, subscribe)
+		pb.RegisterWorkflowServer(gs, s)
 		return nil
 	})
 	if err != nil {

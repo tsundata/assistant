@@ -7,8 +7,7 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/message"
-	"github.com/tsundata/assistant/internal/app/message/rpcclients"
+	"github.com/tsundata/assistant/internal/app/storage"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
@@ -16,7 +15,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -30,7 +28,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	options, err := message.NewOptions(viper)
+	options, err := workflow.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
@@ -88,39 +86,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper, tracer)
-	if err != nil {
-		return nil, err
-	}
-	rpcClient, err := rpc.NewClient(clientOptions, client)
-	if err != nil {
-		return nil, err
-	}
-	subscribeClient, err := rpcclients.NewSubscribeClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	middleClient, err := rpcclients.NewMiddleClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	messageClient, err := rpcclients.NewMessageClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	taskClient, err := rpcclients.NewTaskClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	workflowClient, err := rpcclients.NewWorkflowClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	storageClient, err := rpcclients.NewStorageClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	application, err := message.NewApp(options, loggerLogger, server, db, subscribeClient, middleClient, messageClient, taskClient, workflowClient, storageClient)
+	application, err := workflow.NewApp(options, loggerLogger, server, client, db, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -129,4 +95,4 @@ func CreateApp(cf string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, message.ProviderSet, database.ProviderSet, rollbar.ProviderSet, rabbitmq.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, database.ProviderSet, rollbar.ProviderSet)

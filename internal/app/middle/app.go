@@ -36,9 +36,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server, db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(db, etcd, rdb, o.URL)
+	s := service.NewMiddle(db, etcd, rdb, o.URL)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterMiddleServer(gs, mid)
+		pb.RegisterMiddleServer(gs, s)
 		return nil
 	})
 	if err != nil {
