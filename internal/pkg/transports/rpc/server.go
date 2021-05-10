@@ -66,7 +66,6 @@ type Server struct {
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
 	in       influxdb2.Client
-	rdb      *redis.Client
 }
 
 type InitServers func(s *grpc.Server)

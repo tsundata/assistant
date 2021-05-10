@@ -244,6 +244,9 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 		Text: payload.GetText(),
 		Time: time.Now(),
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	// check/create trigger
 	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
