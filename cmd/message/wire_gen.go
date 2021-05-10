@@ -118,7 +118,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(options, loggerLogger, server, db, messageRepository, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
+	application, err := message.NewApp(options, loggerLogger, server, messageRepository, subscribeClient, middleClient, messageClient, taskClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}

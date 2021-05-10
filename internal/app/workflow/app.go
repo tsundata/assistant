@@ -3,7 +3,6 @@ package workflow
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
@@ -15,12 +14,12 @@ import (
 	"os"
 )
 
-func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, repo repository.WorkflowRepository,
+func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository,
 	midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) (*app.Application, error) {
 	name := os.Getenv("APP_NAME")
 
 	// service
-	subscribe := service.NewWorkflow(etcd, db, rdb, repo, midClient, msgClient, taskClient)
+	subscribe := service.NewWorkflow(etcd, rdb, repo, midClient, msgClient, taskClient)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterWorkflowServer(gs, subscribe)
 		return nil

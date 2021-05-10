@@ -105,7 +105,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(loggerLogger, server, client, db, redisClient, workflowRepository, middleClient, messageClient, taskClient)
+	application, err := workflow.NewApp(loggerLogger, server, client, redisClient, workflowRepository, middleClient, messageClient, taskClient)
 	if err != nil {
 		return nil, err
 	}

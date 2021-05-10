@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -19,15 +18,14 @@ import (
 )
 
 type Middle struct {
-	db     *sqlx.DB
 	etcd   *clientv3.Client
 	rdb    *redis.Client
 	webURL string
 	repo   repository.MiddleRepository
 }
 
-func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
-	return &Middle{db: db, etcd: etcd, webURL: webURL, rdb: rdb, repo: repo}
+func NewMiddle(etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
+	return &Middle{etcd: etcd, webURL: webURL, rdb: rdb, repo: repo}
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {

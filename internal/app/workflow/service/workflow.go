@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
-	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
@@ -22,7 +21,6 @@ import (
 
 type Workflow struct {
 	etcd       *clientv3.Client
-	db         *sqlx.DB
 	rdb        *redis.Client
 	repo       repository.WorkflowRepository
 	midClient  pb.MiddleClient
@@ -30,8 +28,8 @@ type Workflow struct {
 	taskClient pb.TaskClient
 }
 
-func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, repo repository.WorkflowRepository, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
-	return &Workflow{etcd: etcd, db: db, rdb: rdb, repo: repo, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
+func NewWorkflow(etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
+	return &Workflow{etcd: etcd, rdb: rdb, repo: repo, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {

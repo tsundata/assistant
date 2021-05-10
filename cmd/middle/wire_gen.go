@@ -88,7 +88,7 @@ func CreateApp(cf string) (*app.Application, error) {
 		return nil, err
 	}
 	middleRepository := repository.NewMysqlMiddleRepository(loggerLogger, db)
-	application, err := middle.NewApp(options, loggerLogger, server, db, client, redisClient, middleRepository)
+	application, err := middle.NewApp(options, loggerLogger, server, client, redisClient, middleRepository)
 	if err != nil {
 		return nil, err
 	}

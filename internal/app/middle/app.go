@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
@@ -36,9 +35,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server,
-	db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
+	etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
 	// service
-	mid := service.NewMiddle(db, etcd, rdb, repo, o.URL)
+	mid := service.NewMiddle(etcd, rdb, repo, o.URL)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, mid)
 		return nil

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/app/message/trigger"
@@ -20,7 +19,6 @@ import (
 
 type Message struct {
 	webhook   string
-	db        *sqlx.DB
 	logger    *logger.Logger
 	bot       *rulebot.RuleBot
 	repo      repository.MessageRepository
@@ -29,10 +27,9 @@ type Message struct {
 	midClient pb.MiddleClient
 }
 
-func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, repo repository.MessageRepository,
+func NewManage(logger *logger.Logger, bot *rulebot.RuleBot, webhook string, repo repository.MessageRepository,
 	wfClient pb.WorkflowClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *Message {
 	return &Message{
-		db:        db,
 		logger:    logger,
 		bot:       bot,
 		webhook:   webhook,
