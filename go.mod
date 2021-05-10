@@ -10,7 +10,7 @@ require (
 	github.com/go-redis/redis/v8 v8.8.2
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.8.0
+	github.com/gofiber/fiber/v2 v2.9.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
@@ -19,7 +19,7 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.3.0
 	github.com/jmoiron/sqlx v1.3.3
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/rollbar/rollbar-go v1.3.0
+	github.com/rollbar/rollbar-go v1.4.0
 	github.com/shirou/gopsutil/v3 v3.21.4
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.0
@@ -32,7 +32,7 @@ require (
 	github.com/tidwall/gjson v1.7.5
 	github.com/uber/jaeger-client-go v2.28.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.23.0
+	github.com/valyala/fasthttp v1.24.0
 	github.com/yuin/goldmark v1.3.5
 	go.etcd.io/etcd v0.0.0-20201125193152-8a03d2e9614b
 	go.uber.org/zap v1.16.0
