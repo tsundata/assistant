@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/app/message/trigger"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -23,19 +23,28 @@ type Message struct {
 	db        *sqlx.DB
 	logger    *logger.Logger
 	bot       *rulebot.RuleBot
+	repo      repository.MessageRepository
 	wfClient  pb.WorkflowClient
 	msgClient pb.MessageClient
 	midClient pb.MiddleClient
 }
 
-func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, wfClient pb.WorkflowClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *Message {
-	return &Message{db: db, logger: logger, bot: bot, webhook: webhook, wfClient: wfClient, msgClient: msgClient, midClient: midClient}
+func NewManage(db *sqlx.DB, logger *logger.Logger, bot *rulebot.RuleBot, webhook string, repo repository.MessageRepository,
+	wfClient pb.WorkflowClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *Message {
+	return &Message{
+		db:        db,
+		logger:    logger,
+		bot:       bot,
+		webhook:   webhook,
+		repo:      repo,
+		wfClient:  wfClient,
+		msgClient: msgClient,
+		midClient: midClient,
+	}
 }
 
 func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
-	var messages []model.Message
-	err := m.db.Select(&messages, "SELECT uuid, text, `type`, `time` FROM `messages` WHERE `type` <> ? AND `type` <> ? ORDER BY `id` DESC",
-		model.MessageTypeAction, model.MessageTypeScript)
+	messages, err := m.repo.List()
 	if err != nil {
 		return nil, err
 	}
@@ -56,9 +65,8 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 }
 
 func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	var message model.Message
-	err := m.db.Get(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
-	if err != nil && err != sql.ErrNoRows {
+	message, err := m.repo.GetByID(payload.GetId())
+	if err != nil {
 		return nil, err
 	}
 
@@ -80,9 +88,8 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	message.Text = strings.TrimSpace(payload.GetText())
 
 	// check
-	var find model.Message
-	err := m.db.Get(&find, "SELECT id FROM `messages` WHERE `uuid` = ? LIMIT 1", message.UUID)
-	if err != nil && err != sql.ErrNoRows {
+	find, err := m.repo.GetByUUID(message.UUID)
+	if err != nil {
 		return nil, err
 	}
 	if find.ID > 0 {
@@ -112,11 +119,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 
 	// store
-	res, err := m.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", message)
-	if err != nil {
-		return nil, err
-	}
-	id, err := res.LastInsertId()
+	id, err := m.repo.Create(message)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +149,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 }
 
 func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	_, err := m.db.Exec("DELETE FROM `messages` WHERE `id` = ?", payload.GetId())
+	err := m.repo.Delete(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -173,9 +176,8 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 
 func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
-	var message model.Message
-	err := m.db.Get(&message, "SELECT `type`, `text` FROM `messages` WHERE `id` = ? LIMIT 1", payload.GetId())
-	if err != nil && err != sql.ErrNoRows {
+	message, err := m.repo.GetByID(payload.GetId())
+	if err != nil {
 		return nil, err
 	}
 
@@ -202,8 +204,8 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
 	var items []model.Message
-	err := m.db.Select(&items, "SELECT id, text FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", model.MessageTypeAction)
-	if err != nil && err != sql.ErrNoRows {
+	items, err := m.repo.ListByType(model.MessageTypeAction)
+	if err != nil {
 		return nil, err
 	}
 
@@ -239,15 +241,12 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	if err != nil {
 		return nil, err
 	}
-	result, err := m.db.Exec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (?, ?, ?, ?)",
-		uuid, model.MessageTypeAction, payload.GetText(), time.Now())
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
+	id, err := m.repo.Create(model.Message{
+		UUID: uuid,
+		Type: model.MessageTypeAction,
+		Text: payload.GetText(),
+		Time: time.Now(),
+	})
 
 	// check/create trigger
 	_, err = m.wfClient.CreateTrigger(ctx, &pb.TriggerRequest{
@@ -263,7 +262,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 }
 
 func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
-	_, err := m.db.Exec("DELETE FROM `messages` WHERE `id` = ?", payload.GetId())
+	err := m.repo.Delete(payload.GetId())
 	if err != nil {
 		return nil, err
 	}

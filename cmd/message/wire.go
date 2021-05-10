@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/message"
+	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/app/message/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -34,6 +35,7 @@ var providerSet = wire.NewSet(
 	database.ProviderSet,
 	rollbar.ProviderSet,
 	rabbitmq.ProviderSet,
+	repository.ProviderSet,
 )
 
 func CreateApp(cf string) (*app.Application, error) {
