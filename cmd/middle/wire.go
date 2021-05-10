@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/middle"
+	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
@@ -30,6 +31,7 @@ var providerSet = wire.NewSet(
 	middle.ProviderSet,
 	database.ProviderSet,
 	rollbar.ProviderSet,
+	repository.ProviderSet,
 )
 
 func CreateApp(cf string) (*app.Application, error) {

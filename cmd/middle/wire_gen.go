@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/middle"
+	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/database"
@@ -86,7 +87,8 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := middle.NewApp(options, loggerLogger, server, db, client, redisClient)
+	middleRepository := repository.NewMysqlMiddleRepository(loggerLogger, db)
+	application, err := middle.NewApp(options, loggerLogger, server, db, client, redisClient, middleRepository)
 	if err != nil {
 		return nil, err
 	}
@@ -95,4 +97,4 @@ func CreateApp(cf string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, database.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, database.ProviderSet, rollbar.ProviderSet, repository.ProviderSet)

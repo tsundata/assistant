@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -23,10 +23,11 @@ type Middle struct {
 	etcd   *clientv3.Client
 	rdb    *redis.Client
 	webURL string
+	repo   repository.MiddleRepository
 }
 
-func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client, webURL string) *Middle {
-	return &Middle{db: db, etcd: etcd, webURL: webURL, rdb: rdb}
+func NewMiddle(db *sqlx.DB, etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
+	return &Middle{db: db, etcd: etcd, webURL: webURL, rdb: rdb, repo: repo}
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
@@ -74,7 +75,7 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 		Time:    time.Now(),
 	}
 
-	_, err = s.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`, `time`) VALUES (:uuid, :type, :title, :content, :time)", page)
+	_, err = s.repo.CreatePage(page)
 	if err != nil {
 		return nil, err
 	}
@@ -85,9 +86,8 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 }
 
 func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
-	var find model.Page
-	err := s.db.Get(&find, "SELECT uuid, `type`, title, content FROM `pages` WHERE `uuid` = ?", payload.GetUuid())
-	if err != nil && err != sql.ErrNoRows {
+	find, err := s.repo.GetPageByUUID(payload.GetUuid())
+	if err != nil {
 		return nil, err
 	}
 
@@ -100,9 +100,8 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 }
 
 func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
-	var apps []model.App
-	err := s.db.Select(&apps, "SELECT name, `type`, token, extra, `time` FROM `apps` ORDER BY `time` DESC")
-	if err != nil && err != sql.ErrNoRows {
+	apps, err := s.repo.ListApps()
+	if err != nil {
 		return nil, err
 	}
 
@@ -142,9 +141,8 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 }
 
 func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
-	var find model.App
-	err := s.db.Get(&find, "SELECT id, name, `type`, token FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", payload.GetText())
-	if err != nil && err != sql.ErrNoRows {
+	find, err := s.repo.GetAvailableAppByType(payload.GetText())
+	if err != nil {
 		return nil, err
 	}
 
@@ -179,20 +177,23 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 		}, nil
 	}
 
-	var app model.App
-	err := s.db.Get(&app, "SELECT id FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", payload.GetType())
-	if err != nil && err != sql.ErrNoRows {
+	app, err := s.repo.GetAppByType(payload.GetType())
+	if err != nil {
 		return nil, err
 	}
 
 	if app.ID > 0 {
-		_, err = s.db.Exec("UPDATE apps SET `token` = ?, `extra` = ?, `time` = ? WHERE id = ?", payload.GetToken(), payload.GetExtra(), time.Now(), app.ID)
+		err = s.repo.UpdateAppByID(int64(app.ID), payload.GetToken(), payload.GetExtra())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		_, err = s.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
-			payload.GetName(), payload.GetType(), payload.GetToken(), payload.GetExtra())
+		_, err = s.repo.CreateApp(model.App{
+			Name:  payload.GetName(),
+			Type:  payload.GetType(),
+			Token: payload.GetToken(),
+			Extra: payload.GetExtra(),
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -205,16 +206,14 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 
 func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
 	var find model.Credential
+	var err error
 	if payload.GetName() != "" {
-		err := s.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE name = ? LIMIT 1", payload.GetName())
-		if err != nil && err != sql.ErrNoRows {
-			return nil, err
-		}
+		find, err = s.repo.GetCredentialByName(payload.GetName())
 	} else if payload.GetType() != "" {
-		err := s.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE type = ? LIMIT 1", payload.GetType())
-		if err != nil && err != sql.ErrNoRows {
-			return nil, err
-		}
+		find, err = s.repo.GetCredentialByType(payload.GetType())
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	var kvs []*pb.KV
@@ -240,9 +239,8 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 }
 
 func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
-	var items []model.Credential
-	err := s.db.Select(&items, "SELECT name, `type`, content, `time` FROM `credentials` ORDER BY `id` DESC")
-	if err != nil && err != sql.ErrNoRows {
+	items, err := s.repo.ListCredentials()
+	if err != nil {
 		return nil, err
 	}
 
@@ -262,9 +260,8 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 }
 
 func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
-	var items []model.Credential
-	err := s.db.Select(&items, "SELECT name, content FROM `credentials` ORDER BY `id` DESC")
-	if err != nil && err != sql.ErrNoRows {
+	items, err := s.repo.ListCredentials()
+	if err != nil {
 		return nil, err
 	}
 
@@ -320,8 +317,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	_, err = s.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)",
-		name, category, utils.ByteToString(data), time.Now())
+	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: utils.ByteToString(data), Time: time.Now()})
 	if err != nil {
 		return nil, err
 	}
