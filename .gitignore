@@ -27,3 +27,4 @@ configs/*.conf
 internal/app/web/templates/
 *.db
 deployments/tmp/
+upload/

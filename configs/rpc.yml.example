@@ -28,3 +28,5 @@ rollbar:
     environment: # production development
 rabbitmq:
     url: amqp://root:123456@localhost:5672/
+storage:
+  path: /upload

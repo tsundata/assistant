@@ -18,16 +18,17 @@ type RuleBot struct {
 
 	RDB *redis.Client
 
-	SubClient  pb.SubscribeClient
-	MidClient  pb.MiddleClient
-	MsgClient  pb.MessageClient
-	WfClient   pb.WorkflowClient
-	TaskClient pb.TaskClient
+	SubClient     pb.SubscribeClient
+	MidClient     pb.MiddleClient
+	MsgClient     pb.MessageClient
+	WfClient      pb.WorkflowClient
+	TaskClient    pb.TaskClient
+	StorageClient pb.StorageClient
 }
 
 func New(RDB *redis.Client,
 	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
-	WfClient pb.WorkflowClient, TaskClient pb.TaskClient,
+	WfClient pb.WorkflowClient, TaskClient pb.TaskClient, StorageClient pb.StorageClient,
 	opts ...Option) *RuleBot {
 
 	name := os.Getenv("APP_NAME")
@@ -42,6 +43,7 @@ func New(RDB *redis.Client,
 	s.MsgClient = MsgClient
 	s.WfClient = WfClient
 	s.TaskClient = TaskClient
+	s.StorageClient = StorageClient
 
 	for _, opt := range opts {
 		opt(s)

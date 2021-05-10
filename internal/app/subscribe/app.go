@@ -28,9 +28,9 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client) (*app.Application, error) {
 	// service
-	subscribe := service.NewSubscribe(etcd)
+	s := service.NewSubscribe(etcd)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterSubscribeServer(gs, subscribe)
+		pb.RegisterSubscribeServer(gs, s)
 		return nil
 	})
 	if err != nil {

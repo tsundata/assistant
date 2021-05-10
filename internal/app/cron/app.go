@@ -15,7 +15,7 @@ func NewApp(logger *logger.Logger, rdb *redis.Client, subClient pb.SubscribeClie
 	midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient) (*app.Application, error) {
 	name := os.Getenv("APP_NAME")
 
-	b := rulebot.New(rdb, subClient, midClient, msgClient, wfClient, nil, rules.Options...)
+	b := rulebot.New(rdb, subClient, midClient, msgClient, wfClient, nil, nil, rules.Options...)
 
 	logger.Info("start cron bot " + b.Name())
 

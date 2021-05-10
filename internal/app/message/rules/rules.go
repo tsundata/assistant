@@ -6,7 +6,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/version"
+	"io"
+	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 )
@@ -246,6 +249,43 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error: " + err.Error()}
 			}
+
+			// upload
+			f, err := os.Open("./README.md")
+			if err != nil {
+				return []string{"error: " + err.Error()}
+			}
+
+			buf := make([]byte, 1024)
+			uc, err := b.StorageClient.UploadFile(context.Background())
+			if err != nil {
+				return []string{"error: " + err.Error()}
+			}
+
+			err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Info{Info: &pb.FileInfo{FileType: "md"}}})
+			if err != nil {
+				return []string{"error: " + err.Error()}
+			}
+
+			for {
+				n, err := f.Read(buf)
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					return []string{"error: " + err.Error()}
+				}
+				err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Chuck{Chuck: buf[:n]}})
+				if err != nil {
+					return []string{"error: " + err.Error()}
+				}
+			}
+
+			state, err := uc.CloseAndRecv()
+			if err != nil {
+				return []string{"error: " + err.Error()}
+			}
+			log.Println(state.GetPath())
 
 			return []string{"test done"}
 		},

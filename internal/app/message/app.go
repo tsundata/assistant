@@ -36,13 +36,13 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server, repo repository.MessageRepository,
 	subClient pb.SubscribeClient, midClient pb.MiddleClient, msgClient pb.MessageClient,
-	taskClient pb.TaskClient, wfClient pb.WorkflowClient) (*app.Application, error) {
+	taskClient pb.TaskClient, wfClient pb.WorkflowClient, storageClient pb.StorageClient) (*app.Application, error) {
 
-	b := rulebot.New(nil, subClient, midClient, msgClient, wfClient, taskClient, rules.Options...)
+	b := rulebot.New(nil, subClient, midClient, msgClient, wfClient, taskClient, storageClient, rules.Options...)
 
-	message := service.NewManage(logger, b, o.Webhook, repo, wfClient, msgClient, midClient)
-	err := rs.Register(func(s *grpc.Server) error {
-		pb.RegisterMessageServer(s, message)
+	s := service.NewManage(logger, b, o.Webhook, repo, wfClient, msgClient, midClient)
+	err := rs.Register(func(gs *grpc.Server) error {
+		pb.RegisterMessageServer(gs, s)
 		return nil
 	})
 	if err != nil {

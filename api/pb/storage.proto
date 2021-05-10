@@ -1,0 +1,25 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service Storage {
+  rpc UploadFile(stream FileRequest) returns (FileReply) {}
+}
+
+message FileRequest {
+  oneof data {
+    FileInfo info = 1;
+    bytes chuck = 2;
+  }
+}
+
+message FileInfo {
+  string fileType = 1;
+}
+
+message FileReply {
+  string path = 1;
+}

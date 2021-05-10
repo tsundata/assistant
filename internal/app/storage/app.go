@@ -1,13 +1,13 @@
-package middle
+package workflow
 
 import (
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/middle/repository"
-	"github.com/tsundata/assistant/internal/app/middle/service"
+	"github.com/tsundata/assistant/internal/app/storage/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -18,7 +18,7 @@ import (
 
 type Options struct {
 	Name string
-	URL  string
+	Path string
 }
 
 func NewOptions(v *viper.Viper) (*Options, error) {
@@ -27,19 +27,18 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 
 	o.Name = os.Getenv("APP_NAME")
 
-	if err = v.UnmarshalKey("web", o); err != nil {
+	if err = v.UnmarshalKey("storage", o); err != nil {
 		return nil, errors.New("unmarshal app option error")
 	}
 
 	return o, err
 }
 
-func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server,
-	etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
+func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client) (*app.Application, error) {
 	// service
-	s := service.NewMiddle(etcd, rdb, repo, o.URL)
+	s := service.NewStorage(o.Path, etcd, db, rdb)
 	err := rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterMiddleServer(gs, s)
+		pb.RegisterStorageServer(gs, s)
 		return nil
 	})
 	if err != nil {
