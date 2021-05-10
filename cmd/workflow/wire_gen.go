@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/workflow"
+	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/app/workflow/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -83,6 +84,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	workflowRepository := repository.NewMysqlWorkflowRepository(loggerLogger, db)
 	clientOptions, err := rpc.NewClientOptions(viper, tracer)
 	if err != nil {
 		return nil, err
@@ -103,7 +105,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(loggerLogger, server, client, db, redisClient, middleClient, messageClient, taskClient)
+	application, err := workflow.NewApp(loggerLogger, server, client, db, redisClient, workflowRepository, middleClient, messageClient, taskClient)
 	if err != nil {
 		return nil, err
 	}
@@ -112,4 +114,4 @@ func CreateApp(cf string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, database.ProviderSet, rpcclients.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, database.ProviderSet, rpcclients.ProviderSet, rollbar.ProviderSet, repository.ProviderSet)

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
+	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
@@ -24,13 +24,14 @@ type Workflow struct {
 	etcd       *clientv3.Client
 	db         *sqlx.DB
 	rdb        *redis.Client
+	repo       repository.WorkflowRepository
 	midClient  pb.MiddleClient
 	msgClient  pb.MessageClient
 	taskClient pb.TaskClient
 }
 
-func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
-	return &Workflow{etcd: etcd, db: db, rdb: rdb, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
+func NewWorkflow(etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client, repo repository.WorkflowRepository, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
+	return &Workflow{etcd: etcd, db: db, rdb: rdb, repo: repo, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -97,12 +98,8 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 }
 
 func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	var trigger model.Trigger
-	err := s.db.Get(&trigger, "SELECT message_id, kind FROM `triggers` WHERE `type` = ? AND `flag` = ?", payload.Type, payload.Flag)
+	trigger, err := s.repo.GetTriggerByFlag(payload.GetType(), payload.GetFlag())
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
 		return nil, err
 	}
 
@@ -130,12 +127,8 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 }
 
 func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	var triggers []model.Trigger
-	err := s.db.Select(&triggers, "SELECT message_id, kind, `when` FROM `triggers` WHERE `type` = ?", "cron")
+	triggers, err := s.repo.ListTriggersByType("cron")
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
 		return nil, err
 	}
 
@@ -222,7 +215,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			trigger.When = symbolTable.Cron.When
 
 			// store
-			_, err := s.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`, `time`) VALUES (:type, :kind, :when, :message_id, :time)", trigger)
+			_, err = s.repo.CreateTrigger(trigger)
 			if err != nil {
 				return nil, err
 			}
@@ -233,9 +226,8 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			trigger.Flag = symbolTable.Webhook.Flag
 			trigger.Secret = symbolTable.Webhook.Secret
 
-			var find model.Trigger
-			err = s.db.Get(&find, "SELECT id  FROM `triggers` WHERE `type` = ? AND `flag` = ?", trigger.Type, trigger.Flag)
-			if err != nil && err != sql.ErrNoRows {
+			find, err := s.repo.GetTriggerByFlag(trigger.Type, trigger.Flag)
+			if err != nil {
 				return nil, err
 			}
 
@@ -244,7 +236,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			}
 
 			// store
-			_, err = s.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `flag`, `secret`, `message_id`, `time`) VALUES (:type, :kind, :flag, :secret, :message_id, :time)", trigger)
+			_, err = s.repo.CreateTrigger(trigger)
 			if err != nil {
 				return nil, err
 			}
@@ -257,15 +249,8 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 }
 
 func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
-	result, err := s.db.Exec("DELETE FROM triggers WHERE message_id = ?", payload.MessageId)
+	err := s.repo.DeleteTriggerByMessageID(payload.GetMessageId())
 	if err != nil {
-		return nil, err
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return nil, err
-	}
-	if rows > 0 {
 		return &pb.StateReply{State: true}, nil
 	}
 
