@@ -25,7 +25,7 @@ func NewRedis(broker *Broker, rdb *redis.Client) (*Redis, error) {
 func (b *Redis) Run() {
 	t := time.NewTicker(time.Second)
 
-	writeAPI := b.broker.influx.WriteAPI(b.broker.Org, b.broker.Bucket)
+	writeAPI := b.broker.influx.WriteAPI(b.broker.c.Influx.Org, b.broker.c.Influx.Bucket)
 	for range t.C {
 		// server
 		err := writeSection(b, writeAPI, "server")

@@ -27,7 +27,7 @@ func (b *Server) Run() {
 		b.broker.logger.Error(err)
 		return
 	}
-	writeAPI := b.broker.influx.WriteAPI(b.broker.Org, b.broker.Bucket)
+	writeAPI := b.broker.influx.WriteAPI(b.broker.c.Influx.Org, b.broker.c.Influx.Bucket)
 	for range t.C {
 		// mem
 		v, err := mem.VirtualMemory()
