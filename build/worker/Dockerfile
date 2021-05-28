@@ -2,5 +2,5 @@ FROM alpine:latest
 
 RUN apk update && apk add bash
 
-ADD ./dist/subscribe-linux-amd64/subscribe app
+ADD ./dist/worker-linux-amd64/worker app
 CMD ["./app"]

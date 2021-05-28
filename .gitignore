@@ -26,5 +26,6 @@ configs/influxdb/
 configs/*.conf
 internal/app/web/templates/
 *.db
-deployments/tmp/
+deployments/docker-compose/tmp
+deployments/docker-compose/.env
 upload/

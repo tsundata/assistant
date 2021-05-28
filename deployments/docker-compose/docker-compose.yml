@@ -65,3 +65,25 @@ services:
       - "9411:9411"
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+
+  xconf:
+    image: xuxu123/xconf-all:latest
+    environment:
+      BROADCAST: broker
+      DATABASE_URL: root:123456@(mysql:3306)/xconf?charset=utf8&parseTime=true&loc=Local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  gateway:
+    image: tsundata/gateway:${APP_VERSION}
+    restart: always
+    environment:
+      XCONF_URL: ${XCONF_URL}
+      XCONF_CLUSTER: dev
+      XCONF_NAMESPACE: gateway
+    ports:
+      - "7000:7000"
+    depends_on:
+      - xconf
