@@ -44,9 +44,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Debug info
-        run: ls -all ./dist
-
       - name: Build and push cron
         uses: docker/build-push-action@v2
         with:

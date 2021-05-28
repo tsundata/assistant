@@ -2,5 +2,5 @@ FROM alpine:latest
 
 RUN apk update && apk add bash
 
-COPY ./dist/message-linux-amd64/message app
+COPY ./dist/message_linux_amd64/message app
 CMD ["./app"]
