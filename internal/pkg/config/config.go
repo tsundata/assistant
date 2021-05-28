@@ -1,27 +1,88 @@
 package config
 
 import (
+	"encoding/json"
 	"github.com/google/wire"
-	"log"
-
-	"github.com/spf13/viper"
+	"github.com/micro-in-cn/XConf/pkg/client/source"
+	"github.com/micro/go-micro/v2/config"
+	"github.com/micro/go-micro/v2/util/log"
+	"os"
 )
 
-func New(path string) (*viper.Viper, error) {
-	var (
-		err error
-		v   = viper.New()
-	)
-	v.AddConfigPath(".")
-	v.SetConfigFile(path)
+type AppConfig struct {
+	c config.Config
 
-	if err := v.ReadInConfig(); err == nil {
-		log.Printf("use config file -> %s\n", v.ConfigFileUsed())
-	} else {
-		return nil, err
-	}
+	Name string `json:"name"`
 
-	return v, err
+	Http    Http    `json:"http"`
+	Rpc     Rpc     `json:"rpc"`
+	Web     Web     `json:"web"`
+	Plugin  Plugin  `json:"plugin"`
+	Storage Storage `json:"storage"`
+
+	Mysql    Mysql    `json:"mysql"`
+	Redis    Redis    `json:"redis"`
+	Etcd     Etcd     `json:"etcd"`
+	Influx   Influx   `json:"influx"`
+	Rabbitmq Rabbitmq `json:"rabbitmq"`
+	Jaeger   Jaeger   `json:"jaeger"`
+
+	Slack    Slack    `json:"slack"`
+	Rollbar  Rollbar  `json:"rollbar"`
+	Telegram Telegram `json:"telegram"`
 }
 
-var ProviderSet = wire.NewSet(New)
+func NewConfig() *AppConfig {
+	xconfCluster := os.Getenv("XCONF_CLUSTER")
+	xconfNamespace := os.Getenv("XCONF_NAMESPACE")
+	xconfURL := os.Getenv("XCONF_URL")
+	if xconfCluster == "" || xconfNamespace == "" || xconfURL == "" {
+		panic("error xconf")
+	}
+
+	c, err := config.NewConfig(
+		config.WithSource(
+			source.NewSource(
+				"assistant",
+				xconfCluster,
+				xconfNamespace,
+				source.WithURL(xconfURL),
+			),
+		),
+	)
+	if err != nil {
+		panic(err)
+	}
+	log.Info("read: ", string(c.Get().Bytes()))
+
+	// Watch
+	w, err := c.Watch()
+	if err != nil {
+		panic(err)
+	}
+
+	var xc AppConfig
+	xc.c = c
+	err = json.Unmarshal(c.Get().Bytes(), &xc)
+	if err != nil {
+		panic(err)
+	}
+
+	go func() {
+		for {
+			v, err := w.Next()
+			if err != nil {
+				log.Info(err)
+			}
+
+			err = json.Unmarshal(v.Bytes(), &xc)
+			if err != nil {
+				log.Info(err)
+			}
+		}
+	}()
+
+	return &xc
+}
+
+var ProviderSet = wire.NewSet(NewConfig)

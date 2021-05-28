@@ -1,36 +1,19 @@
 package etcd
 
 import (
-	"errors"
 	"github.com/google/wire"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"go.etcd.io/etcd/clientv3"
 	"time"
 )
 
-type Options struct {
-	URL      string `yaml:"url"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var err error
-	o := new(Options)
-	if err = v.UnmarshalKey("etcd", o); err != nil {
-		return nil, errors.New("unmarshal etcd option error")
-	}
-
-	return o, err
-}
-
-func New(o *Options) (*clientv3.Client, error) {
+func New(c *config.AppConfig) (*clientv3.Client, error) {
 	return clientv3.New(clientv3.Config{
-		Endpoints:   []string{o.URL},
-		Username:    o.Username,
-		Password:    o.Password,
+		Endpoints:   []string{c.Etcd.Url},
+		Username:    c.Etcd.Username,
+		Password:    c.Etcd.Password,
 		DialTimeout: time.Minute,
 	})
 }
 
-var ProviderSet = wire.NewSet(New, NewOptions)
+var ProviderSet = wire.NewSet(New)

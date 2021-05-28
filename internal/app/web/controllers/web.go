@@ -9,8 +9,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/web"
 	"github.com/tsundata/assistant/internal/app/web/components"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -27,7 +27,7 @@ import (
 )
 
 type WebController struct {
-	opt       *web.Options
+	opt       *config.AppConfig
 	rdb       *redis.Client
 	logger    *logger.Logger
 	midClient pb.MiddleClient
@@ -35,7 +35,7 @@ type WebController struct {
 	wfClient  pb.WorkflowClient
 }
 
-func NewWebController(opt *web.Options, rdb *redis.Client, logger *logger.Logger,
+func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
 	midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient) *WebController {
 	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient, wfClient: wfClient}
 }
@@ -491,7 +491,7 @@ func (wc *WebController) ActionCreate(c *fiber.Ctx) error {
 func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
 	clientDeadline := time.Now().Add(time.Minute)
@@ -500,12 +500,12 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 
 	reply, err := wc.msgClient.Run(ctx, &pb.MessageRequest{Id: id})
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
 	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "ok"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
@@ -525,24 +525,24 @@ func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "error id"), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
 	_, err = wc.msgClient.DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Id: id})
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.URL, err), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.URL, "ok"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
-	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.URL)
+	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
 	return provider.Redirect(c, wc.midClient)
 }
 
 func (wc *WebController) OAuth(c *fiber.Ctx) error {
-	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.URL)
+	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
 	err := provider.StoreAccessToken(c, wc.midClient)
 	if err != nil {
 		wc.logger.Error(err)

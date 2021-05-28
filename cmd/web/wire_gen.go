@@ -24,34 +24,15 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp(cf string) (*app.Application, error) {
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	options, err := web.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarOptions, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarRollbar := rollbar.New(rollbarOptions)
+func CreateApp() (*app.Application, error) {
+	appConfig := config.NewConfig()
+	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	httpOptions, err := http.NewOptions(viper)
+	client, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	redisOptions, err := redis.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	client, err := redis.New(redisOptions)
-	if err != nil {
-		return nil, err
-	}
-	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -59,15 +40,11 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper, tracer)
+	clientOptions, err := rpc.NewClientOptions(appConfig, tracer)
 	if err != nil {
 		return nil, err
 	}
-	etcdOptions, err := etcd.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	clientv3Client, err := etcd.New(etcdOptions)
+	clientv3Client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -87,21 +64,17 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(options, client, loggerLogger, middleClient, messageClient, workflowClient)
+	webController := controllers.NewWebController(appConfig, client, loggerLogger, middleClient, messageClient, workflowClient)
 	v := controllers.CreateInitControllersFn(webController)
-	influxOptions, err := influx.NewOptions(viper)
+	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	influxdb2Client, err := influx.New(influxOptions)
+	server, err := http.New(appConfig, v, influxdb2Client)
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(httpOptions, v, influxdb2Client)
-	if err != nil {
-		return nil, err
-	}
-	application, err := web.NewApp(options, loggerLogger, server)
+	application, err := web.NewApp(appConfig, loggerLogger, server)
 	if err != nil {
 		return nil, err
 	}

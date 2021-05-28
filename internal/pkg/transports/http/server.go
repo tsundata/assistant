@@ -6,50 +6,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
 )
 
-type Options struct {
-	Name string
-	Host string
-	Port int
-	Mode string
-
-	Org    string
-	Bucket string
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var (
-		err error
-		o   = new(Options)
-	)
-
-	if err = v.UnmarshalKey("http", o); err != nil {
-		return nil, err
-	}
-
-	if err = v.UnmarshalKey("influx", o); err != nil {
-		return nil, errors.New("unmarshal influx option error")
-	}
-
-	return o, err
-}
-
 type Server struct {
-	o          *Options
+	c          *config.AppConfig
 	router     func(router fiber.Router)
 	httpServer *fiber.App
 	in         influxdb2.Client
 }
 
-func New(o *Options, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
+func New(c *config.AppConfig, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
 	var s = &Server{
-		o:      o,
+		c:      c,
 		router: router,
 		in:     in,
 	}
@@ -57,22 +30,22 @@ func New(o *Options, router func(router fiber.Router), in influxdb2.Client) (*Se
 }
 
 func (s *Server) Application(name string) {
-	s.o.Name = name
+	// s.c.Name = name fixme
 }
 
 func (s *Server) Start() error {
-	if s.o.Port == 0 {
-		s.o.Port = utils.GetAvailablePort()
+	if s.c.Http.Port == 0 {
+		s.c.Http.Port = utils.GetAvailablePort()
 	}
 
-	if s.o.Host == "" {
-		s.o.Host = utils.GetLocalIP4()
+	if s.c.Http.Host == "" {
+		s.c.Http.Host = utils.GetLocalIP4()
 	}
-	if s.o.Host == "" {
+	if s.c.Http.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
+	addr := fmt.Sprintf("%s:%d", s.c.Http.Host, s.c.Http.Port)
 
 	log.Println("start http server ", addr)
 
@@ -94,7 +67,7 @@ func (s *Server) Start() error {
 	}
 
 	// metrics
-	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Org, s.o.Bucket)
+	go influx.PushGoServerMetrics(s.in, s.c.Name, s.c.Influx.Org, s.c.Influx.Bucket)
 
 	return nil
 }
@@ -111,4 +84,4 @@ func (s *Server) Stop() error {
 	return nil
 }
 
-var ProviderSet = wire.NewSet(New, NewOptions, NewClient)
+var ProviderSet = wire.NewSet(New, NewClient)

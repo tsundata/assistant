@@ -13,7 +13,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/opentracing/opentracing-go"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	redisPkg "github.com/tsundata/assistant/internal/pkg/redis"
@@ -34,34 +34,8 @@ func (*alwaysPassLimiter) Limit() bool {
 	return false
 }
 
-type Options struct {
-	Name string
-	Host string
-	Port int
-
-	Org    string
-	Bucket string
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var (
-		err error
-		o   = new(Options)
-	)
-
-	if err = v.UnmarshalKey("rpc", o); err != nil {
-		return nil, err
-	}
-
-	if err = v.UnmarshalKey("influx", o); err != nil {
-		return nil, errors.New("unmarshal influx option error")
-	}
-
-	return o, err
-}
-
 type Server struct {
-	o        *Options
+	o        *config.AppConfig
 	logger   *logger.Logger
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
@@ -70,7 +44,7 @@ type Server struct {
 
 type InitServers func(s *grpc.Server)
 
-func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client, rdb *redis.Client) (*Server, error) {
+func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.Tracer, etcd *clientv3.Client, in influxdb2.Client, rdb *redis.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -88,7 +62,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
 				rollbar.StreamServerInterceptor(),
-				influx.StreamServerInterceptor(in, opt.Org, opt.Bucket),
+				influx.StreamServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpczap.StreamServerInterceptor(logger.Zap),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
@@ -99,7 +73,7 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
 				rollbar.UnaryServerInterceptor(),
-				influx.UnaryServerInterceptor(in, opt.Org, opt.Bucket),
+				influx.UnaryServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpczap.UnaryServerInterceptor(logger.Zap),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
@@ -118,23 +92,23 @@ func NewServer(opt *Options, logger *logger.Logger, tracer opentracing.Tracer, e
 	}, nil
 }
 
-func (s *Server) Application(name string) {
-	s.o.Name = name
+func (s *Server) Application(_ string) {
+	//s.o.Name = name fixme
 }
 
 func (s *Server) Start() error {
-	if s.o.Port == 0 {
-		s.o.Port = utils.GetAvailablePort()
+	if s.o.Rpc.Port == 0 {
+		s.o.Rpc.Port = utils.GetAvailablePort()
 	}
 
-	if s.o.Host == "" {
-		s.o.Host = utils.GetLocalIP4()
+	if s.o.Rpc.Host == "" {
+		s.o.Rpc.Host = utils.GetLocalIP4()
 	}
-	if s.o.Host == "" {
+	if s.o.Rpc.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
+	addr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
 
 	s.logger.Info("rpc server starting ... " + addr)
 
@@ -144,7 +118,7 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	rpcAddr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
+	rpcAddr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
 	s.logger.Info("register rpc service ... " + rpcAddr)
 	err = s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
 	if err != nil {
@@ -159,7 +133,7 @@ func (s *Server) Start() error {
 	}()
 
 	// metrics
-	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Org, s.o.Bucket)
+	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Influx.Org, s.o.Influx.Bucket)
 
 	return nil
 }
@@ -169,7 +143,7 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 }
 
 func (s *Server) Stop() error {
-	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
+	addr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
 	err := s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
 		s.logger.Error(err)
@@ -178,4 +152,4 @@ func (s *Server) Stop() error {
 	return err
 }
 
-var ProviderSet = wire.NewSet(NewServer, NewOptions, NewClient, NewClientOptions)
+var ProviderSet = wire.NewSet(NewServer, NewClient, NewClientOptions)

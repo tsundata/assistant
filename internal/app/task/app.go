@@ -6,15 +6,13 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/task/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"google.golang.org/grpc"
-	"os"
 )
 
-func NewApp(logger *logger.Logger, rs *rpc.Server, ms *machinery.Server) (*app.Application, error) {
-	name := os.Getenv("APP_NAME")
-
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, ms *machinery.Server) (*app.Application, error) {
 	// service
 	s := service.NewTask(ms)
 	err := rs.Register(func(gs *grpc.Server) error {
@@ -25,7 +23,7 @@ func NewApp(logger *logger.Logger, rs *rpc.Server, ms *machinery.Server) (*app.A
 		return nil, err
 	}
 
-	a, err := app.New(name, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,6 @@
 package machinery
 
 import (
-	"errors"
 	"fmt"
 	"github.com/RichardKnop/machinery/v2"
 	amqpBackend "github.com/RichardKnop/machinery/v2/backends/amqp"
@@ -11,43 +10,21 @@ import (
 	"github.com/RichardKnop/machinery/v2/config"
 	eagerLock "github.com/RichardKnop/machinery/v2/locks/eager"
 	"github.com/google/wire"
-	"github.com/spf13/viper"
+	appConfig "github.com/tsundata/assistant/internal/pkg/config"
 )
 
 const DefaultQueue = "assistant_tasks"
 const AMQPExchange = "machinery_exchange"
 const AMQPBindingKey = "machinery_task"
 
-type Options struct {
-	// amqp
-	URL string `yaml:"url"`
-
-	// redis
-	Addr     string `yaml:"addr"`
-	Password string `yaml:"password"`
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var err error
-	o := new(Options)
-	if err = v.UnmarshalKey("rabbitmq", o); err != nil {
-		return nil, errors.New("unmarshal machinery redis option error")
-	}
-	if err = v.UnmarshalKey("redis", o); err != nil {
-		return nil, errors.New("unmarshal machinery redis option error")
-	}
-
-	return o, err
-}
-
-func New(o *Options) (*machinery.Server, error) {
+func New(c *appConfig.AppConfig) (*machinery.Server, error) {
 	// use rabbitmq or redis
-	if o.URL != "" {
+	if c.Rabbitmq.Url != "" {
 		cnf := &config.Config{
 			DefaultQueue:    DefaultQueue,
 			ResultsExpireIn: 3600,
-			Broker:          o.URL,
-			ResultBackend:   o.URL,
+			Broker:          c.Rabbitmq.Url,
+			ResultBackend:   c.Rabbitmq.Url,
 			AMQP: &config.AMQPConfig{
 				Exchange:     AMQPExchange,
 				ExchangeType: "direct",
@@ -71,8 +48,8 @@ func New(o *Options) (*machinery.Server, error) {
 				DelayedTasksPollPeriod: 500,
 			},
 		}
-		broker := redisBroker.NewGR(cnf, []string{fmt.Sprintf("%s@%s", o.Password, o.Addr)}, 0)
-		backend := redisBackend.NewGR(cnf, []string{fmt.Sprintf("%s@%s", o.Password, o.Addr)}, 0)
+		broker := redisBroker.NewGR(cnf, []string{fmt.Sprintf("%s@%s", c.Redis.Password, c.Redis.Addr)}, 0)
+		backend := redisBackend.NewGR(cnf, []string{fmt.Sprintf("%s@%s", c.Redis.Password, c.Redis.Addr)}, 0)
 		lock := eagerLock.New()
 
 		server := machinery.NewServer(cnf, broker, backend, lock)
@@ -80,4 +57,4 @@ func New(o *Options) (*machinery.Server, error) {
 	}
 }
 
-var ProviderSet = wire.NewSet(New, NewOptions)
+var ProviderSet = wire.NewSet(New)

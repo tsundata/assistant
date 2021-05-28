@@ -26,26 +26,11 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp(cf string) (*app.Application, error) {
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	options, err := message.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarOptions, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarRollbar := rollbar.New(rollbarOptions)
+func CreateApp() (*app.Application, error) {
+	appConfig := config.NewConfig()
+	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	rpcOptions, err := rpc.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -53,44 +38,28 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	etcdOptions, err := etcd.NewOptions(viper)
+	client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	client, err := etcd.New(etcdOptions)
+	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	influxOptions, err := influx.NewOptions(viper)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	influxdb2Client, err := influx.New(influxOptions)
+	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, client, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}
-	redisOptions, err := redis.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	redisClient, err := redis.New(redisOptions)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(rpcOptions, loggerLogger, tracer, client, influxdb2Client, redisClient)
-	if err != nil {
-		return nil, err
-	}
-	databaseOptions, err := database.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	db, err := database.New(databaseOptions)
+	db, err := database.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
 	messageRepository := repository.NewMysqlMessageRepository(loggerLogger, db)
-	clientOptions, err := rpc.NewClientOptions(viper, tracer)
+	clientOptions, err := rpc.NewClientOptions(appConfig, tracer)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +91,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(options, loggerLogger, server, messageRepository, subscribeClient, middleClient, messageClient, taskClient, workflowClient, storageClient)
+	application, err := message.NewApp(appConfig, loggerLogger, server, messageRepository, subscribeClient, middleClient, messageClient, taskClient, workflowClient, storageClient)
 	if err != nil {
 		return nil, err
 	}

@@ -4,16 +4,14 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/agent/broker"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"os"
 )
 
-func NewApp(logger *logger.Logger, b broker.Runner) (*app.Application, error) {
-	name := os.Getenv("APP_NAME")
+func NewApp(c *config.AppConfig, logger *logger.Logger, b broker.Runner) (*app.Application, error) {
+	logger.Info("start agent " + c.Name)
 
-	logger.Info("start agent " + name)
-
-	a, err := app.New(name, logger)
+	a, err := app.New(c, logger)
 	if err != nil {
 		return nil, err
 	}

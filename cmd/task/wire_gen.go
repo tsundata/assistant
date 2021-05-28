@@ -24,22 +24,11 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp(cf string) (*app.Application, error) {
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	options, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarRollbar := rollbar.New(options)
+func CreateApp() (*app.Application, error) {
+	appConfig := config.NewConfig()
+	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	rpcOptions, err := rpc.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -47,43 +36,27 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	etcdOptions, err := etcd.NewOptions(viper)
+	client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	client, err := etcd.New(etcdOptions)
+	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	influxOptions, err := influx.NewOptions(viper)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	influxdb2Client, err := influx.New(influxOptions)
+	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, client, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}
-	redisOptions, err := redis.NewOptions(viper)
+	machineryServer, err := machinery.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(redisOptions)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(rpcOptions, loggerLogger, tracer, client, influxdb2Client, redisClient)
-	if err != nil {
-		return nil, err
-	}
-	machineryOptions, err := machinery.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	machineryServer, err := machinery.New(machineryOptions)
-	if err != nil {
-		return nil, err
-	}
-	application, err := task.NewApp(loggerLogger, server, machineryServer)
+	application, err := task.NewApp(appConfig, loggerLogger, server, machineryServer)
 	if err != nil {
 		return nil, err
 	}

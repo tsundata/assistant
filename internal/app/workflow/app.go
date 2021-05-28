@@ -7,16 +7,15 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
-	"os"
 )
 
-func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository,
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository,
 	midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) (*app.Application, error) {
-	name := os.Getenv("APP_NAME")
 
 	// service
 	s := service.NewWorkflow(etcd, rdb, repo, midClient, msgClient, taskClient)
@@ -28,7 +27,7 @@ func NewApp(logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *r
 		return nil, err
 	}
 
-	a, err := app.New(name, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

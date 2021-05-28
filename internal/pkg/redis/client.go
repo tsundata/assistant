@@ -5,28 +5,13 @@ import (
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 )
 
-type Options struct {
-	Addr     string `yaml:"addr"`
-	Password string `yaml:"password"`
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var err error
-	o := new(Options)
-	if err = v.UnmarshalKey("redis", o); err != nil {
-		return nil, errors.New("unmarshal redis option error")
-	}
-
-	return o, err
-}
-
-func New(o *Options) (*redis.Client, error) {
+func New(c *config.AppConfig) (*redis.Client, error) {
 	r := redis.NewClient(&redis.Options{
-		Addr:     o.Addr,
-		Password: o.Password,
+		Addr:     c.Redis.Addr,
+		Password: c.Redis.Password,
 		DB:       0,
 	})
 	s := r.Ping(context.TODO())
@@ -40,4 +25,4 @@ func New(o *Options) (*redis.Client, error) {
 	return r, nil
 }
 
-var ProviderSet = wire.NewSet(New, NewOptions)
+var ProviderSet = wire.NewSet(New)

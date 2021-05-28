@@ -34,6 +34,6 @@ var providerSet = wire.NewSet(
 	rollbar.ProviderSet,
 )
 
-func CreateApp(cf string) (*app.Application, error) {
+func CreateApp() (*app.Application, error) {
 	panic(wire.Build(providerSet))
 }

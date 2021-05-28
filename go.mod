@@ -18,6 +18,8 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.3.0
 	github.com/jmoiron/sqlx v1.3.4
+	github.com/micro-in-cn/XConf v0.2.1
+	github.com/micro/go-micro/v2 v2.9.1
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/rollbar/rollbar-go v1.4.0
 	github.com/shirou/gopsutil/v3 v3.21.4
@@ -25,7 +27,6 @@ require (
 	github.com/slack-go/slack v0.9.1
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0

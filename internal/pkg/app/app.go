@@ -2,6 +2,7 @@ package app
 
 import (
 	"errors"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"os"
 	"os/signal"
@@ -38,9 +39,9 @@ func RPCServerOption(svr *rpc.Server) Option {
 	}
 }
 
-func New(name string, logger *logger.Logger, options ...Option) (*Application, error) {
+func New(c *config.AppConfig, logger *logger.Logger, options ...Option) (*Application, error) {
 	app := &Application{
-		name:   name,
+		name:   c.Name,
 		logger: logger,
 	}
 

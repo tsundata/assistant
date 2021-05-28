@@ -3,24 +3,26 @@ package jaeger
 import (
 	"github.com/google/wire"
 	"github.com/opentracing/opentracing-go"
-	"github.com/spf13/viper"
+	appConfig "github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/uber/jaeger-client-go/config"
 )
 
-func NewConfiguration(v *viper.Viper, logger *logger.Logger) (*config.Configuration, error) {
-	var (
-		err error
-		c   = new(config.Configuration)
-	)
+func NewConfiguration(c *appConfig.AppConfig, logger *logger.Logger) (*config.Configuration, error) {
+	var cc = new(config.Configuration)
 
-	if err = v.UnmarshalKey("jaeger", c); err != nil {
-		return nil, err
+	cc.ServiceName = c.Jaeger.ServiceName
+	cc.Reporter = &config.ReporterConfig{
+		LocalAgentHostPort: c.Jaeger.Reporter.LocalAgentHostPort,
+	}
+	cc.Sampler = &config.SamplerConfig{
+		Type:  c.Jaeger.Sampler.Type,
+		Param: c.Jaeger.Sampler.Param,
 	}
 
 	logger.Info("load jaeger configuration success")
 
-	return c, nil
+	return cc, nil
 }
 
 func New(c *config.Configuration) (opentracing.Tracer, error) {

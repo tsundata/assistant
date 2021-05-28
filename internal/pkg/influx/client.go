@@ -1,31 +1,14 @@
 package influx
 
 import (
-	"errors"
 	"github.com/google/wire"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 )
 
-type Options struct {
-	Token string
-	Url   string
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var err error
-	o := new(Options)
-
-	if err = v.UnmarshalKey("influx", o); err != nil {
-		return nil, errors.New("unmarshal influx option error")
-	}
-
-	return o, err
-}
-
-func New(o *Options) (influxdb2.Client, error) {
-	client := influxdb2.NewClient(o.Url, o.Token)
+func New(c *config.AppConfig) (influxdb2.Client, error) {
+	client := influxdb2.NewClient(c.Influx.Url, c.Influx.Token)
 	return client, nil
 }
 
-var ProviderSet = wire.NewSet(New, NewOptions)
+var ProviderSet = wire.NewSet(New)

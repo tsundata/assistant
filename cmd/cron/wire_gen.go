@@ -24,26 +24,15 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp(cf string) (*app.Application, error) {
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	options, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarRollbar := rollbar.New(options)
+func CreateApp() (*app.Application, error) {
+	appConfig := config.NewConfig()
+	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	redisOptions, err := redis.NewOptions(viper)
+	client, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	client, err := redis.New(redisOptions)
-	if err != nil {
-		return nil, err
-	}
-	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -51,15 +40,11 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper, tracer)
+	clientOptions, err := rpc.NewClientOptions(appConfig, tracer)
 	if err != nil {
 		return nil, err
 	}
-	etcdOptions, err := etcd.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	clientv3Client, err := etcd.New(etcdOptions)
+	clientv3Client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +68,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := cron.NewApp(loggerLogger, client, subscribeClient, middleClient, messageClient, workflowClient)
+	application, err := cron.NewApp(appConfig, loggerLogger, client, subscribeClient, middleClient, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}

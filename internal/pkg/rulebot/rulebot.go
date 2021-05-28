@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
-	"os"
 	"strings"
 )
 
@@ -26,15 +26,13 @@ type RuleBot struct {
 	StorageClient pb.StorageClient
 }
 
-func New(RDB *redis.Client,
+func New(c *config.AppConfig, RDB *redis.Client,
 	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
 	WfClient pb.WorkflowClient, TaskClient pb.TaskClient, StorageClient pb.StorageClient,
 	opts ...Option) *RuleBot {
 
-	name := os.Getenv("APP_NAME")
-
 	s := &RuleBot{
-		name: name,
+		name: c.Name,
 	}
 
 	s.RDB = RDB

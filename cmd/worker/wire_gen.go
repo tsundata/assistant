@@ -25,34 +25,15 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp(cf string) (*app.Application, error) {
-	viper, err := config.New(cf)
-	if err != nil {
-		return nil, err
-	}
-	options, err := rollbar.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	rollbarRollbar := rollbar.New(options)
+func CreateApp() (*app.Application, error) {
+	appConfig := config.NewConfig()
+	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	machineryOptions, err := machinery.NewOptions(viper)
+	server, err := machinery.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	server, err := machinery.New(machineryOptions)
-	if err != nil {
-		return nil, err
-	}
-	rabbitmqOptions, err := rabbitmq.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	connection, err := rabbitmq.New(rabbitmqOptions)
-	if err != nil {
-		return nil, err
-	}
-	configuration, err := jaeger.NewConfiguration(viper, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -60,15 +41,11 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(viper, tracer)
+	clientOptions, err := rpc.NewClientOptions(appConfig, tracer)
 	if err != nil {
 		return nil, err
 	}
-	etcdOptions, err := etcd.NewOptions(viper)
-	if err != nil {
-		return nil, err
-	}
-	client, err := etcd.New(etcdOptions)
+	client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +61,7 @@ func CreateApp(cf string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := worker.NewApp(loggerLogger, server, connection, messageClient, workflowClient)
+	application, err := worker.NewApp(appConfig, loggerLogger, server, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}

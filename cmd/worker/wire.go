@@ -36,6 +36,6 @@ var providerSet = wire.NewSet(
 	rabbitmq.ProviderSet,
 )
 
-func CreateApp(cf string) (*app.Application, error) {
+func CreateApp() (*app.Application, error) {
 	panic(wire.Build(providerSet))
 }

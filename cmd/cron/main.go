@@ -1,15 +1,7 @@
 package main
 
-import (
-	"flag"
-)
-
-var configFile = flag.String("f", "cron.yml", "set config file which will loading")
-
 func main() {
-	flag.Parse()
-
-	a, err := CreateApp(*configFile)
+	a, err := CreateApp()
 	if err != nil {
 		panic(err)
 	}

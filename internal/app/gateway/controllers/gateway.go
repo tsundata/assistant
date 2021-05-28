@@ -9,7 +9,7 @@ import (
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/gateway"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
@@ -20,14 +20,14 @@ import (
 )
 
 type GatewayController struct {
-	opt       *gateway.Options
+	opt       *config.AppConfig
 	rdb       *redis.Client
 	logger    *logger.Logger
 	subClient pb.SubscribeClient
 	msgClient pb.MessageClient
 }
 
-func NewGatewayController(opt *gateway.Options, rdb *redis.Client, logger *logger.Logger,
+func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
 	subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
 	return &GatewayController{opt: opt, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
 }
@@ -39,8 +39,8 @@ func (gc *GatewayController) Index(c *fiber.Ctx) error {
 func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 	body := c.Request().Body()
 
-	api := slack.New(gc.opt.Token)
-	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.opt.Verification}))
+	api := slack.New(gc.opt.Slack.Token)
+	eventsAPIEvent, err := slackevents.ParseEvent(body, slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: gc.opt.Slack.Verification}))
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -147,7 +147,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	// reply message
-	api := telegram.NewTelegram(gc.opt.TelegramToken)
+	api := telegram.NewTelegram(gc.opt.Telegram.Token)
 	if reply.GetId() > 0 {
 		_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", reply.GetId()))
 	} else {

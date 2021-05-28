@@ -4,7 +4,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
-	"github.com/spf13/viper"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"go.etcd.io/etcd/clientv3"
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"google.golang.org/grpc"
@@ -17,15 +17,11 @@ type ClientOptions struct {
 	GrpcDialOptions []grpc.DialOption
 }
 
-func NewClientOptions(v *viper.Viper, tracer opentracing.Tracer) (*ClientOptions, error) {
+func NewClientOptions(_ *config.AppConfig, tracer opentracing.Tracer) (*ClientOptions, error) {
 	var (
 		err error
-		o   = new(ClientOptions)
+		o   = new(ClientOptions) // Todo rpc config
 	)
-
-	if err = v.UnmarshalKey("rpc", o); err != nil {
-		return nil, err
-	}
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
 		grpc.WithInsecure(),

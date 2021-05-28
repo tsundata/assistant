@@ -1,43 +1,23 @@
 package middle
 
 import (
-	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/spf13/viper"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
-	"os"
 )
 
-type Options struct {
-	Name string
-	URL  string
-}
-
-func NewOptions(v *viper.Viper) (*Options, error) {
-	var err error
-	o := new(Options)
-
-	o.Name = os.Getenv("APP_NAME")
-
-	if err = v.UnmarshalKey("web", o); err != nil {
-		return nil, errors.New("unmarshal app option error")
-	}
-
-	return o, err
-}
-
-func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server,
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server,
 	etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
 	// service
-	s := service.NewMiddle(etcd, rdb, repo, o.URL)
+	s := service.NewMiddle(etcd, rdb, repo, c.Web.Url)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, s)
 		return nil
@@ -46,7 +26,7 @@ func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server,
 		return nil, err
 	}
 
-	a, err := app.New(o.Name, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}
@@ -54,4 +34,4 @@ func NewApp(o *Options, logger *logger.Logger, rs *rpc.Server,
 	return a, nil
 }
 
-var ProviderSet = wire.NewSet(NewApp, NewOptions)
+var ProviderSet = wire.NewSet(NewApp)
