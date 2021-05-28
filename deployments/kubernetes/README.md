@@ -28,7 +28,7 @@ kubectl create -f gateway.yaml
 
 ### Access Admin UI
 
-By default the micro-api will be exposed by LoadBalancer, check service `gateway` under namespace `assistant` for detail.
+By default the gateway will be exposed by LoadBalancer, check service `gateway` under namespace `assistant` for detail.
 
 `kubectl describe --namespace assistant service gateway`
 

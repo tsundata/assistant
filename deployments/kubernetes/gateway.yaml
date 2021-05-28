@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: 'tsundata/gateway:0.0.1'
+          image: 'tsundata/gateway:latest'
           imagePullPolicy: Always
           env:
             - name: XCONF_URL
