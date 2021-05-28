@@ -142,6 +142,21 @@ builds:
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
+  - main: ./cmd/storage
+    id: "storage"
+    binary: "storage"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
   - main: ./cmd/worker
     id: "worker"
     binary: "worker"
