@@ -14,29 +14,27 @@ Create a namespace in the cluster to manage all the resources of Xconf. Edit `na
 
 ### Edit config files
 
-- [ALL Files] Replace `$MICRO_REGISTRY_ADDRESS` to your cluser etcd address or your own etcd service address.
-- [ALL Files] Check the version of image, change if you want.
-- [config-srv.yaml] Replace `$DATABASE_URL` to your own MySQL database url.
-- Change other fields if you know what you are doing.
+### Create ConfigMap
+
+```
+kubectl create -f configmaps.yaml
+```
 
 ### Create Kubernets resources
 
 ```
-kubectl create -f micro.yaml
-kubectl create -f config-srv.yaml
-kubectl create -f agent-api.yaml
-kubectl create -f admin-api.yaml
+kubectl create -f gateway.yaml
 ```
 
 ### Access Admin UI
 
-By default the micro-api will be exposed by LoadBalancer, check service `micro` under namespace `xconf` for detail.
+By default the micro-api will be exposed by LoadBalancer, check service `gateway` under namespace `assistant` for detail.
 
-`kubectl describe --namespace xconf service micro`
+`kubectl describe --namespace assistant service gateway`
 
 You will find the Ingress address and the port.
 
-Use url `http://addr:port/admin/ui/` to access the admin UI.
+Use url `http://addr:port/` to access the web.
 
 ## 2. Update
 

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: xconf-config
+  namespace: assistant
+data:
+  xconf.url: http://127.0.0.1:8080
