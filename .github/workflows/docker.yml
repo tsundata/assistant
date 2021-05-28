@@ -60,7 +60,9 @@ jobs:
           context: .
           push: true
           file: build/gateway/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.sha }}
 
       - name: Build and push message
         uses: docker/build-push-action@v2
@@ -68,7 +70,9 @@ jobs:
           context: .
           push: true
           file: build/message/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/message:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/message:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/message:${{ github.sha }}
 
       - name: Build and push middle
         uses: docker/build-push-action@v2
@@ -76,7 +80,9 @@ jobs:
           context: .
           push: true
           file: build/middle/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/middle:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/middle:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/middle:${{ github.sha }}
 
       - name: Build and push spider
         uses: docker/build-push-action@v2
@@ -84,7 +90,9 @@ jobs:
           context: .
           push: true
           file: build/spider/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/spider:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/spider:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/spider:${{ github.sha }}
 
       - name: Build and push storage
         uses: docker/build-push-action@v2
@@ -92,7 +100,9 @@ jobs:
           context: .
           push: true
           file: build/storage/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/storage:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/storage:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/storage:${{ github.sha }}
 
       - name: Build and push subscribe
         uses: docker/build-push-action@v2
@@ -100,7 +110,9 @@ jobs:
           context: .
           push: true
           file: build/subscribe/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${{ github.sha }}
 
       - name: Build and push task
         uses: docker/build-push-action@v2
@@ -108,7 +120,9 @@ jobs:
           context: .
           push: true
           file: build/task/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/task:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/task:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/task:${{ github.sha }}
 
       - name: Build and push web
         uses: docker/build-push-action@v2
@@ -116,7 +130,9 @@ jobs:
           context: .
           push: true
           file: build/web/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/web:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/web:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/web:${{ github.sha }}
 
       - name: Build and push worker
         uses: docker/build-push-action@v2
@@ -124,7 +140,9 @@ jobs:
           context: .
           push: true
           file: build/worker/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/worker:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ github.sha }}
 
       - name: Build and push workflow
         uses: docker/build-push-action@v2
@@ -132,4 +150,6 @@ jobs:
           context: .
           push: true
           file: build/workflow/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${{ github.sha }}
