@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Debug info
-        run: ls ./dist && ls ./dist/cron-linux-amd64
+        run: ls -all ./dist
 
       - name: Build and push cron
         uses: docker/build-push-action@v2
@@ -53,7 +53,9 @@ jobs:
           context: .
           push: true
           file: build/cron/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cron:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/cron:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cron:${{ github.sha }}
 
       - name: Build and push gateway
         uses: docker/build-push-action@v2

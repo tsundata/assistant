@@ -2,5 +2,5 @@ FROM alpine:latest
 
 RUN apk update && apk add bash
 
-COPY ./dist/cron-linux-amd64/cron app
+COPY ./dist/cron-linux-amd64 app
 CMD ["./app"]
