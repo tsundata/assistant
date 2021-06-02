@@ -1,9 +1,10 @@
-# This is an example .goreleaser.yml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
+# the documentation at http://goreleaser.com
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod download
+
+env:
+  - CGO_ENABLED=0
 
 builds:
   # app
@@ -14,8 +15,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -29,8 +28,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -44,8 +41,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -59,8 +54,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -74,8 +67,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -89,8 +80,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -104,8 +93,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -119,8 +106,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -134,8 +119,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -149,8 +132,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -164,8 +145,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -180,8 +159,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
@@ -195,21 +172,133 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CGO_ENABLED=0
     ldflags:
       - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
         -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
+dockers:
+  - goos: linux
+    goarch: amd64
+    ids:
+      - cron
+    use_buildx: true
+    image_templates:
+      - "tsundata/cron:latest"
+      - "tsundata/cron:{{ .Tag }}"
+    dockerfile: build/cron/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - gateway
+    use_buildx: true
+    image_templates:
+      - "tsundata/gateway:latest"
+      - "tsundata/gateway:{{ .Tag }}"
+    dockerfile: build/gateway/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - message
+    use_buildx: true
+    image_templates:
+      - "tsundata/message:latest"
+      - "tsundata/message:{{ .Tag }}"
+    dockerfile: build/message/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - middle
+    use_buildx: true
+    image_templates:
+      - "tsundata/middle:latest"
+      - "tsundata/middle:{{ .Tag }}"
+    dockerfile: build/middle/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - spider
+    use_buildx: true
+    image_templates:
+      - "tsundata/spider:latest"
+      - "tsundata/spider:{{ .Tag }}"
+    dockerfile: build/spider/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - storage
+    use_buildx: true
+    image_templates:
+      - "tsundata/storage:latest"
+      - "tsundata/storage:{{ .Tag }}"
+    dockerfile: build/storage/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - subscribe
+    use_buildx: true
+    image_templates:
+      - "tsundata/subscribe:latest"
+      - "tsundata/subscribe:{{ .Tag }}"
+    dockerfile: build/subscribe/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - task
+    use_buildx: true
+    image_templates:
+      - "tsundata/task:latest"
+      - "tsundata/task:{{ .Tag }}"
+    dockerfile: build/task/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - web
+    use_buildx: true
+    image_templates:
+      - "tsundata/web:latest"
+      - "tsundata/web:{{ .Tag }}"
+    dockerfile: build/web/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - worker
+    use_buildx: true
+    image_templates:
+      - "tsundata/worker:latest"
+      - "tsundata/worker:{{ .Tag }}"
+    dockerfile: build/worker/Dockerfile
+
+  - goos: linux
+    goarch: amd64
+    ids:
+      - workflow
+    use_buildx: true
+    image_templates:
+      - "tsundata/workflow:latest"
+      - "tsundata/workflow:{{ .Tag }}"
+    dockerfile: build/workflow/Dockerfile
+
 archives:
   - format: binary
     name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
   name_template: "SNAPSHOT-{{ .ShortCommit }}"
+
 changelog:
   sort: desc
   filters:
@@ -219,8 +308,10 @@ changelog:
       - '^merge:'
       - '^Merge pull request'
       - '^Merge branch'
+
 env_files:
   github_token: ~/.gh_token
+
 release:
   github:
     owner: tsundata

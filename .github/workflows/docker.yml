@@ -47,7 +47,7 @@ jobs:
       - name: Build and push cron
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/cron_linux_amd64
           push: true
           file: build/cron/Dockerfile
           tags: |
@@ -57,7 +57,7 @@ jobs:
       - name: Build and push gateway
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/gateway_linux_amd64
           push: true
           file: build/gateway/Dockerfile
           tags: |
@@ -67,7 +67,7 @@ jobs:
       - name: Build and push message
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/message_linux_amd64
           push: true
           file: build/message/Dockerfile
           tags: |
@@ -77,7 +77,7 @@ jobs:
       - name: Build and push middle
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/middle_linux_amd64
           push: true
           file: build/middle/Dockerfile
           tags: |
@@ -87,7 +87,7 @@ jobs:
       - name: Build and push spider
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/spider_linux_amd64
           push: true
           file: build/spider/Dockerfile
           tags: |
@@ -97,7 +97,7 @@ jobs:
       - name: Build and push storage
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/storage_linux_amd64
           push: true
           file: build/storage/Dockerfile
           tags: |
@@ -107,7 +107,7 @@ jobs:
       - name: Build and push subscribe
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/subscribe_linux_amd64
           push: true
           file: build/subscribe/Dockerfile
           tags: |
@@ -117,7 +117,7 @@ jobs:
       - name: Build and push task
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/task_linux_amd64
           push: true
           file: build/task/Dockerfile
           tags: |
@@ -127,7 +127,7 @@ jobs:
       - name: Build and push web
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/web_linux_amd64
           push: true
           file: build/web/Dockerfile
           tags: |
@@ -137,7 +137,7 @@ jobs:
       - name: Build and push worker
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/worker_linux_amd64
           push: true
           file: build/worker/Dockerfile
           tags: |
@@ -147,7 +147,7 @@ jobs:
       - name: Build and push workflow
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./dist/workflow_linux_amd64
           push: true
           file: build/workflow/Dockerfile
           tags: |

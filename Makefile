@@ -1,6 +1,3 @@
-apps = 'gateway' 'web' 'message' 'subscribe' 'middle' 'workflow' 'task' 'spider' 'cron' 'worker' 'storage'
-agents = 'server' 'redis'
-
 .PHONY: build
 build:
 	GOVERSION=`go version` goreleaser --snapshot --skip-publish --rm-dist
@@ -11,7 +8,7 @@ lint:
 
 .PHONY: docker
 docker-compose: build
-	docker-compose -f deployments/docker-compose.yml up --build -d
+	docker-compose -f deployments/docker-compose/docker-compose.yml up --build -d
 
 .PHONY: proto
 proto:

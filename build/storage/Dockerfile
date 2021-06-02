@@ -2,5 +2,5 @@ FROM alpine:latest
 
 RUN apk update && apk add bash
 
-COPY ./dist/storage_linux_amd64/storage app
+COPY storage app
 CMD ["./app"]
