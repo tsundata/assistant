@@ -183,7 +183,6 @@ dockers:
     goarch: amd64
     ids:
       - cron
-    use_buildx: true
     image_templates:
       - "tsundata/cron:latest"
       - "tsundata/cron:{{ .Tag }}"
@@ -193,7 +192,6 @@ dockers:
     goarch: amd64
     ids:
       - gateway
-    use_buildx: true
     image_templates:
       - "tsundata/gateway:latest"
       - "tsundata/gateway:{{ .Tag }}"
@@ -203,7 +201,6 @@ dockers:
     goarch: amd64
     ids:
       - message
-    use_buildx: true
     image_templates:
       - "tsundata/message:latest"
       - "tsundata/message:{{ .Tag }}"
@@ -213,7 +210,6 @@ dockers:
     goarch: amd64
     ids:
       - middle
-    use_buildx: true
     image_templates:
       - "tsundata/middle:latest"
       - "tsundata/middle:{{ .Tag }}"
@@ -223,7 +219,6 @@ dockers:
     goarch: amd64
     ids:
       - spider
-    use_buildx: true
     image_templates:
       - "tsundata/spider:latest"
       - "tsundata/spider:{{ .Tag }}"
@@ -233,7 +228,6 @@ dockers:
     goarch: amd64
     ids:
       - storage
-    use_buildx: true
     image_templates:
       - "tsundata/storage:latest"
       - "tsundata/storage:{{ .Tag }}"
@@ -243,7 +237,6 @@ dockers:
     goarch: amd64
     ids:
       - subscribe
-    use_buildx: true
     image_templates:
       - "tsundata/subscribe:latest"
       - "tsundata/subscribe:{{ .Tag }}"
@@ -253,7 +246,6 @@ dockers:
     goarch: amd64
     ids:
       - task
-    use_buildx: true
     image_templates:
       - "tsundata/task:latest"
       - "tsundata/task:{{ .Tag }}"
@@ -263,7 +255,6 @@ dockers:
     goarch: amd64
     ids:
       - web
-    use_buildx: true
     image_templates:
       - "tsundata/web:latest"
       - "tsundata/web:{{ .Tag }}"
@@ -273,7 +264,6 @@ dockers:
     goarch: amd64
     ids:
       - worker
-    use_buildx: true
     image_templates:
       - "tsundata/worker:latest"
       - "tsundata/worker:{{ .Tag }}"
@@ -283,7 +273,6 @@ dockers:
     goarch: amd64
     ids:
       - workflow
-    use_buildx: true
     image_templates:
       - "tsundata/workflow:latest"
       - "tsundata/workflow:{{ .Tag }}"

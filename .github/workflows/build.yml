@@ -30,14 +30,5 @@ jobs:
           version: latest
           install-only: true
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Debug dist
-        run: ls -all dist
-
       - name: Build
         run: make build
