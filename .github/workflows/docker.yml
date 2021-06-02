@@ -2,11 +2,8 @@ name: docker
 
 on:
   push:
-    tags:
-      - '*'
     branches:
-      - '*'
-  pull_request:
+      - 'main'
 
 jobs:
   docker:
@@ -43,6 +40,9 @@ jobs:
 
       - name: Build
         run: make build
+
+      - name: Debug dist
+        run: ls -all dist
 
       - name: Build and push cron
         uses: docker/build-push-action@v2
