@@ -65,23 +65,26 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 			return c.SendStatus(http.StatusForbidden)
 		}
 
-		router.Get("/memo/:uuid", auth, wc.Memo)
-		router.Get("/apps/:uuid", auth, wc.Apps)
+		// auth Group
+		authR := router.Group("/", auth)
 
-		router.Get("/credentials/:uuid", auth, wc.Credentials)
-		router.Get("/credentials/:uuid/create", auth, wc.CredentialsCreate)
-		router.Post("/credentials/:uuid/store", auth, wc.CredentialsStore)
+		authR.Get("/memo/:uuid", wc.Memo)
+		authR.Get("/apps/:uuid", wc.Apps)
 
-		router.Get("/setting/:uuid", auth, wc.Setting)
-		router.Get("/setting/:uuid/create", auth, wc.SettingCreate)
-		router.Post("/setting/:uuid/store", auth, wc.SettingStore)
+		authR.Get("/credentials/:uuid", wc.Credentials)
+		authR.Get("/credentials/:uuid/create", wc.CredentialsCreate)
+		authR.Post("/credentials/:uuid/store", wc.CredentialsStore)
 
-		router.Get("/action/:uuid", auth, wc.Action)
-		router.Get("/action/:uuid/create", auth, wc.ActionCreate)
-		router.Get("/action/:uuid/run", auth, wc.ActionRun)
-		router.Post("/action/:uuid/store", auth, wc.ActionStore)
+		authR.Get("/setting/:uuid", wc.Setting)
+		authR.Get("/setting/:uuid/create", wc.SettingCreate)
+		authR.Post("/setting/:uuid/store", wc.SettingStore)
 
-		router.Post("/workflow/:uuid/delete", auth, wc.WorkflowDelete)
+		authR.Get("/action/:uuid", wc.Action)
+		authR.Get("/action/:uuid/create", wc.ActionCreate)
+		authR.Get("/action/:uuid/run", wc.ActionRun)
+		authR.Post("/action/:uuid/store", wc.ActionStore)
+
+		authR.Post("/workflow/:uuid/delete", wc.WorkflowDelete)
 
 		// webhook
 		router.Get("/webhook/:flag", wc.Webhook)
