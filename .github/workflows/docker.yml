@@ -1,7 +1,9 @@
-name: docker
+name: Docker
 
 on:
   push:
+    tags:
+      - v*
     branches:
       - 'main'
 
@@ -11,6 +13,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Git tag
+        run: git describe --tags > ${GIT_TAG}
+        env:
+          GIT_TAG: v0.0.0
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -26,6 +33,9 @@ jobs:
           version: latest
           install-only: true
 
+      - name: Build
+        run: make build
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -38,115 +48,123 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build
-        run: make build
-
       - name: Build and push cron
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/cron_linux_amd64
+          context: .
           push: true
           file: build/cron/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cron:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/cron:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cron:${GIT_TAG}
 
       - name: Build and push gateway
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/gateway_linux_amd64
+          context: .
           push: true
           file: build/gateway/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${GIT_TAG}
 
       - name: Build and push message
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/message_linux_amd64
+          context: .
           push: true
           file: build/message/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/message:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/message:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/message:${GIT_TAG}
 
       - name: Build and push middle
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/middle_linux_amd64
+          context: .
           push: true
           file: build/middle/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/middle:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/middle:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/middle:${GIT_TAG}
 
       - name: Build and push spider
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/spider_linux_amd64
+          context: .
           push: true
           file: build/spider/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/spider:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/spider:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/spider:${GIT_TAG}
 
       - name: Build and push storage
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/storage_linux_amd64
+          context: .
           push: true
           file: build/storage/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/storage:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/storage:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/storage:${GIT_TAG}
 
       - name: Build and push subscribe
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/subscribe_linux_amd64
+          context: .
           push: true
           file: build/subscribe/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${GIT_TAG}
 
       - name: Build and push task
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/task_linux_amd64
+          context: .
           push: true
           file: build/task/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/task:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/task:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/task:${GIT_TAG}
 
       - name: Build and push web
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/web_linux_amd64
+          context: .
           push: true
           file: build/web/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/web:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/web:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/web:${GIT_TAG}
 
       - name: Build and push worker
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/worker_linux_amd64
+          context: .
           push: true
           file: build/worker/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/worker:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/worker:${GIT_TAG}
 
       - name: Build and push workflow
         uses: docker/build-push-action@v2
         with:
-          context: ./dist/workflow_linux_amd64
+          context: .
           push: true
           file: build/workflow/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/workflow:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${GIT_TAG}
