@@ -13,19 +13,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: Git tag
-        run: /usr/bin/git describe --tags >> $GIT_TAG
-        env:
-          GIT_TAG: v0.0.0
+      - name: Get Github tag
+        id: meta
+        run: |
+          echo "::set-output name=tag::$(git describe --always)"
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
           go-version: ^1.16
-
-      - name: Get dependencies
-        run: go get -v -t -d ./...
 
       - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -56,8 +55,7 @@ jobs:
           file: build/cron/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cron:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/cron:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/cron:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cron:${{ steps.meta.outputs.tag }}
 
       - name: Build and push gateway
         uses: docker/build-push-action@v2
@@ -67,8 +65,7 @@ jobs:
           file: build/gateway/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ steps.meta.outputs.tag }}
 
       - name: Build and push message
         uses: docker/build-push-action@v2
@@ -78,8 +75,7 @@ jobs:
           file: build/message/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/message:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/message:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/message:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/message:${{ steps.meta.outputs.tag }}
 
       - name: Build and push middle
         uses: docker/build-push-action@v2
@@ -89,8 +85,7 @@ jobs:
           file: build/middle/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/middle:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/middle:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/middle:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/middle:${{ steps.meta.outputs.tag }}
 
       - name: Build and push spider
         uses: docker/build-push-action@v2
@@ -100,8 +95,7 @@ jobs:
           file: build/spider/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/spider:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/spider:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/spider:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/spider:${{ steps.meta.outputs.tag }}
 
       - name: Build and push storage
         uses: docker/build-push-action@v2
@@ -111,8 +105,7 @@ jobs:
           file: build/storage/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/storage:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/storage:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/storage:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/storage:${{ steps.meta.outputs.tag }}
 
       - name: Build and push subscribe
         uses: docker/build-push-action@v2
@@ -122,8 +115,7 @@ jobs:
           file: build/subscribe/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/subscribe:${{ steps.meta.outputs.tag }}
 
       - name: Build and push task
         uses: docker/build-push-action@v2
@@ -133,8 +125,7 @@ jobs:
           file: build/task/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/task:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/task:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/task:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/task:${{ steps.meta.outputs.tag }}
 
       - name: Build and push web
         uses: docker/build-push-action@v2
@@ -144,8 +135,7 @@ jobs:
           file: build/web/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/web:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/web:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/web:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/web:${{ steps.meta.outputs.tag }}
 
       - name: Build and push worker
         uses: docker/build-push-action@v2
@@ -155,8 +145,7 @@ jobs:
           file: build/worker/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/worker:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/worker:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ steps.meta.outputs.tag }}
 
       - name: Build and push workflow
         uses: docker/build-push-action@v2
@@ -166,5 +155,4 @@ jobs:
           file: build/workflow/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/workflow:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${GIT_TAG}
+            ${{ secrets.DOCKERHUB_USERNAME }}/workflow:${{ steps.meta.outputs.tag }}
