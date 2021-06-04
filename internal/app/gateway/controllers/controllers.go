@@ -36,6 +36,10 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Post("/slack/event", gc.SlackEvent)
 		router.Post("/telegram/event", gc.TelegramEvent)
 
+		// internal
+		internal := router.Group("/")
+		internal.Get("page", gc.GetPage)
+
 		router.Use(func(c *fiber.Ctx) error {
 			return c.Status(http.StatusNotFound).SendString("Unsupported path")
 		})

@@ -6,6 +6,7 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/RichardKnop/machinery/v2 v2.0.10
+	github.com/favadi/protoc-go-inject-tag v1.1.0 // indirect
 	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
 	github.com/go-redis/redis/v8 v8.9.0
 	github.com/go-resty/resty/v2 v2.6.0

@@ -25,10 +25,14 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type PageRequest struct {
-	Uuid                 string   `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Title                string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Content              string   `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
-	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	// @inject_tag: query:"uuid"
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty" query:"uuid"`
+	// @inject_tag: query:"title"
+	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty" query:"title"`
+	// @inject_tag: query:"content"
+	Content string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty" query:"content"`
+	// @inject_tag: query:"type"
+	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty" query:"type"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

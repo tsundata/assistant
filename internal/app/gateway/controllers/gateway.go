@@ -25,11 +25,19 @@ type GatewayController struct {
 	logger    *logger.Logger
 	subClient pb.SubscribeClient
 	msgClient pb.MessageClient
+	midClient pb.MiddleClient
 }
 
 func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
-	subClient pb.SubscribeClient, msgClient pb.MessageClient) *GatewayController {
-	return &GatewayController{opt: opt, rdb: rdb, logger: logger, subClient: subClient, msgClient: msgClient}
+	subClient pb.SubscribeClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *GatewayController {
+	return &GatewayController{
+		opt:       opt,
+		rdb:       rdb,
+		logger:    logger,
+		subClient: subClient,
+		msgClient: msgClient,
+		midClient: midClient,
+	}
 }
 
 func (gc *GatewayController) Index(c *fiber.Ctx) error {
@@ -163,4 +171,18 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(http.StatusOK)
+}
+
+func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
+	var in pb.PageRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.midClient.GetPage(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
 }

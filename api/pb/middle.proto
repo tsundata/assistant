@@ -25,9 +25,13 @@ service Middle {
 }
 
 message PageRequest {
+  // @inject_tag: query:"uuid"
   string uuid = 1;
+  // @inject_tag: query:"title"
   string title = 2;
+  // @inject_tag: query:"content"
   string content = 3;
+  // @inject_tag: query:"type"
   string type = 4;
 }
 

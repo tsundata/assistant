@@ -17,6 +17,7 @@ type AppConfig struct {
 	Http    Http    `json:"http"`
 	Rpc     Rpc     `json:"rpc"`
 	Web     Web     `json:"web"`
+	Gateway Gateway `json:"gateway"`
 	Plugin  Plugin  `json:"plugin"`
 	Storage Storage `json:"storage"`
 

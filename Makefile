@@ -14,6 +14,7 @@ docker-compose: build
 proto:
 	rm api/pb/*.pb.go
 	protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
+	protoc-go-inject-tag -input=./api/pb/middle.pb.go
 	git add api/pb/*.pb.go
 all: lint build
 

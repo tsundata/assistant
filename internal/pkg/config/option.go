@@ -20,6 +20,11 @@ type Web struct {
 	Url string `json:"url"`
 }
 
+// Gateway config
+type Gateway struct {
+	Url string `json:"url"`
+}
+
 // Plugin spider config
 type Plugin struct {
 	Path string `json:"path"`
