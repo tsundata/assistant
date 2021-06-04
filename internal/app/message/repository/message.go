@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -28,7 +29,7 @@ func NewMysqlMessageRepository(logger *logger.Logger, db *sqlx.DB) MessageReposi
 func (r *MysqlMessageRepository) GetByID(id int64) (model.Message, error) {
 	var message model.Message
 	err := r.db.Get(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `id` = ? LIMIT 1", id)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Message{}, err
 	}
 
@@ -38,7 +39,7 @@ func (r *MysqlMessageRepository) GetByID(id int64) (model.Message, error) {
 func (r *MysqlMessageRepository) GetByUUID(uuid string) (model.Message, error) {
 	var message model.Message
 	err := r.db.Select(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `uuid` = ? LIMIT 1", uuid)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Message{}, err
 	}
 
@@ -48,7 +49,7 @@ func (r *MysqlMessageRepository) GetByUUID(uuid string) (model.Message, error) {
 func (r *MysqlMessageRepository) ListByType(t string) ([]model.Message, error) {
 	var messages []model.Message
 	err := r.db.Select(&messages, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `type` = ? ORDER BY `id` DESC", t)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return []model.Message{}, err
 	}
 

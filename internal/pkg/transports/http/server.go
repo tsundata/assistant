@@ -56,7 +56,7 @@ func (s *Server) Start() error {
 	s.router(s.httpServer)
 
 	go func() {
-		if err := s.httpServer.Listen(addr); err != nil && err != http.ErrServerClosed {
+		if err := s.httpServer.Listen(addr); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal("start http server err", err)
 			return
 		}

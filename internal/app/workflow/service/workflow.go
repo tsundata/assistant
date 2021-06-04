@@ -249,10 +249,10 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
 	err := s.repo.DeleteTriggerByMessageID(payload.GetMessageId())
 	if err != nil {
-		return &pb.StateReply{State: true}, nil
+		return &pb.StateReply{State: false}, err
 	}
 
-	return &pb.StateReply{State: false}, nil
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Workflow) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {

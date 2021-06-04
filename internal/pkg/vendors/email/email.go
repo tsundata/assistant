@@ -67,7 +67,7 @@ func sendMailUsingTLS(addr string, auth smtp.Auth, from string, to []string, msg
 	if err != nil {
 		return err
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	if auth != nil {
 		if ok, _ := c.Extension("AUTH"); ok {

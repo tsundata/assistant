@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -46,7 +47,7 @@ func (r *MysqlMiddleRepository) CreatePage(page model.Page) (int64, error) {
 func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (model.Page, error) {
 	var find model.Page
 	err := r.db.Get(&find, "SELECT uuid, `type`, title, content FROM `pages` WHERE `uuid` = ?", uuid)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Page{}, err
 	}
 	return find, nil
@@ -55,7 +56,7 @@ func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (model.Page, error) {
 func (r *MysqlMiddleRepository) ListApps() ([]model.App, error) {
 	var apps []model.App
 	err := r.db.Select(&apps, "SELECT name, `type`, token, extra, `time` FROM `apps` ORDER BY `time` DESC")
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	return apps, nil
@@ -64,7 +65,7 @@ func (r *MysqlMiddleRepository) ListApps() ([]model.App, error) {
 func (r *MysqlMiddleRepository) GetAvailableAppByType(t string) (model.App, error) {
 	var find model.App
 	err := r.db.Get(&find, "SELECT id, name, `type`, token FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", t)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.App{}, err
 	}
 	return find, nil
@@ -73,7 +74,7 @@ func (r *MysqlMiddleRepository) GetAvailableAppByType(t string) (model.App, erro
 func (r *MysqlMiddleRepository) GetAppByType(t string) (model.App, error) {
 	var app model.App
 	err := r.db.Get(&app, "SELECT id FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", t)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.App{}, err
 	}
 	return app, nil
@@ -100,7 +101,7 @@ func (r *MysqlMiddleRepository) CreateApp(app model.App) (int64, error) {
 func (r *MysqlMiddleRepository) GetCredentialByName(name string) (model.Credential, error) {
 	var find model.Credential
 	err := r.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE name = ? LIMIT 1", name)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Credential{}, err
 	}
 	return find, nil
@@ -109,7 +110,7 @@ func (r *MysqlMiddleRepository) GetCredentialByName(name string) (model.Credenti
 func (r *MysqlMiddleRepository) GetCredentialByType(t string) (model.Credential, error) {
 	var find model.Credential
 	err := r.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE type = ? LIMIT 1", t)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Credential{}, err
 	}
 	return find, nil
@@ -118,7 +119,7 @@ func (r *MysqlMiddleRepository) GetCredentialByType(t string) (model.Credential,
 func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
 	var items []model.Credential
 	err := r.db.Select(&items, "SELECT name, `type`, content, `time` FROM `credentials` ORDER BY `id` DESC")
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	return items, nil

@@ -2,6 +2,7 @@ package rules
 
 import (
 	"context"
+	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -269,7 +270,7 @@ var rules = []Rule{
 
 			for {
 				n, err := f.Read(buf)
-				if err == io.EOF {
+				if errors.Is(err, io.EOF) {
 					break
 				}
 				if err != nil {

@@ -50,7 +50,7 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 		}
 		b, err := json.Marshal(ctx.Value)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 		text = utils.ByteToString(b)
 	}

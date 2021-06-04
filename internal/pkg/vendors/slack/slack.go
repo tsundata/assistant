@@ -27,8 +27,11 @@ func ResponseText(responseURL, text string) error {
 	if err != nil {
 		return err
 	}
-	_, err = http.Post(responseURL, "application/json", bytes.NewBuffer(j))
-	return err
+	resp, err := http.Post(responseURL, "application/json", bytes.NewBuffer(j))
+	if err != nil {
+		return err
+	}
+	return resp.Body.Close()
 }
 
 // SlashShortcut contains information about a request of the slash command

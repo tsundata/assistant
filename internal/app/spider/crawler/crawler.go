@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
@@ -179,7 +180,7 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 	// sent
 	smembers := s.rdb.SMembers(ctx, sentKey)
 	old, err := smembers.Result()
-	if err != nil && err != redis.Nil {
+	if err != nil && !errors.Is(err, redis.Nil) {
 		s.logger.Error(err)
 		return []string{}
 	}
@@ -187,7 +188,7 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 	// to do
 	smembers = s.rdb.SMembers(ctx, todoKey)
 	todo, err := smembers.Result()
-	if err != nil && err != redis.Nil {
+	if err != nil && !errors.Is(err, redis.Nil) {
 		s.logger.Error(err)
 		return []string{}
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
@@ -35,7 +36,7 @@ func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {
 	fileType := req.GetInfo().GetFileType()
 	for {
 		req, err := stream.Recv()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {

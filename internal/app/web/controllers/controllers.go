@@ -42,7 +42,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 			s := wc.rdb.Get(context.Background(), key)
 			r, err := s.Result()
 			var reply *pb.StateReply
-			if err != nil && err == redis.Nil {
+			if err != nil && errors.Is(err, redis.Nil) {
 				reply, err = wc.midClient.Authorization(context.Background(), &pb.TextRequest{
 					Text: uuid,
 				})

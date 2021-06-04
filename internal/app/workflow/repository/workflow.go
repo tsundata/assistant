@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -27,7 +28,7 @@ func (r *MysqlWorkflowRepository) GetTriggerByFlag(t, flag string) (model.Trigge
 	var trigger model.Trigger
 	err := r.db.Get(&trigger, "SELECT message_id, kind FROM `triggers` WHERE `type` = ? AND `flag` = ?", t, flag)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return model.Trigger{}, nil
 		}
 		return model.Trigger{}, err
@@ -39,7 +40,7 @@ func (r *MysqlWorkflowRepository) ListTriggersByType(t string) ([]model.Trigger,
 	var triggers []model.Trigger
 	err := r.db.Select(&triggers, "SELECT message_id, kind, `when` FROM `triggers` WHERE `type` = ?", t)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, err

@@ -2,6 +2,7 @@ package rules
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
@@ -119,7 +120,7 @@ func (r *cronRuleset) filter(b *rulebot.RuleBot, res result.Result) result.Resul
 	// filter
 	state := b.RDB.SIsMember(ctx, filterKey, res.ID)
 	ex, err := state.Result()
-	if err != nil && err != redis.Nil {
+	if err != nil && !errors.Is(err, redis.Nil) {
 		return result.EmptyResult()
 	}
 	if ex {
