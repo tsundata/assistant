@@ -60,7 +60,11 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controllers.NewGatewayController(appConfig, client, loggerLogger, subscribeClient, messageClient)
+	middleClient, err := rpcclients.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	gatewayController := controllers.NewGatewayController(appConfig, client, loggerLogger, subscribeClient, messageClient, middleClient)
 	v := controllers.CreateInitControllersFn(gatewayController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
