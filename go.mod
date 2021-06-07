@@ -21,6 +21,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/micro-in-cn/XConf v0.2.1
 	github.com/micro/go-micro/v2 v2.9.1
+	github.com/nats-io/nats.go v1.11.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/rollbar/rollbar-go v1.4.0
 	github.com/shirou/gopsutil/v3 v3.21.4
@@ -28,7 +29,6 @@ require (
 	github.com/slack-go/slack v0.9.1
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
-	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.8.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible

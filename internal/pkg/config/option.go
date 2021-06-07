@@ -80,6 +80,11 @@ type Jaeger struct {
 	} `json:"sampler"`
 }
 
+// Nats config
+type Nats struct {
+	Url string `json:"url"`
+}
+
 // === Vendor ===
 
 // Slack config

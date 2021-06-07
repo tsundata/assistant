@@ -27,6 +27,7 @@ type AppConfig struct {
 	Influx   Influx   `json:"influx"`
 	Rabbitmq Rabbitmq `json:"rabbitmq"`
 	Jaeger   Jaeger   `json:"jaeger"`
+	Nats     Nats     `json:"nats"`
 
 	Slack    Slack    `json:"slack"`
 	Rollbar  Rollbar  `json:"rollbar"`
