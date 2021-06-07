@@ -35,7 +35,7 @@ func (*alwaysPassLimiter) Limit() bool {
 }
 
 type Server struct {
-	o        *config.AppConfig
+	conf     *config.AppConfig
 	logger   *logger.Logger
 	resolver *etcdnaming.GRPCResolver
 	server   *grpc.Server
@@ -84,7 +84,7 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 	)
 
 	return &Server{
-		o:        opt,
+		conf:     opt,
 		logger:   logger,
 		resolver: resolver,
 		server:   gs,
@@ -92,23 +92,19 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 	}, nil
 }
 
-func (s *Server) Application(_ string) {
-	//s.o.Name = name fixme
-}
-
 func (s *Server) Start() error {
-	if s.o.Rpc.Port == 0 {
-		s.o.Rpc.Port = utils.GetAvailablePort()
+	if s.conf.Rpc.Port == 0 {
+		s.conf.Rpc.Port = utils.GetAvailablePort()
 	}
 
-	if s.o.Rpc.Host == "" {
-		s.o.Rpc.Host = utils.GetLocalIP4()
+	if s.conf.Rpc.Host == "" {
+		s.conf.Rpc.Host = utils.GetLocalIP4()
 	}
-	if s.o.Rpc.Host == "" {
+	if s.conf.Rpc.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
+	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
 
 	s.logger.Info("rpc server starting ... " + addr)
 
@@ -118,9 +114,9 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	rpcAddr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
+	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
 	s.logger.Info("register rpc service ... " + rpcAddr)
-	err = s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
+	err = s.resolver.Update(context.TODO(), s.conf.Name, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
 	if err != nil {
 		panic(err)
 	}
@@ -133,7 +129,7 @@ func (s *Server) Start() error {
 	}()
 
 	// metrics
-	go influx.PushGoServerMetrics(s.in, s.o.Name, s.o.Influx.Org, s.o.Influx.Bucket)
+	go influx.PushGoServerMetrics(s.in, s.conf.Name, s.conf.Influx.Org, s.conf.Influx.Bucket)
 
 	return nil
 }
@@ -143,8 +139,8 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 }
 
 func (s *Server) Stop() error {
-	addr := fmt.Sprintf("%s:%d", s.o.Rpc.Host, s.o.Rpc.Port)
-	err := s.resolver.Update(context.TODO(), s.o.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
+	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
+	err := s.resolver.Update(context.TODO(), s.conf.Name, naming.Update{Op: naming.Delete, Addr: addr}) // nolint
 	if err != nil {
 		s.logger.Error(err)
 	}

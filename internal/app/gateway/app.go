@@ -10,7 +10,6 @@ import (
 
 func NewApp(c *config.AppConfig, logger *logger.Logger, hs *http.Server) (*app.Application, error) {
 	a, err := app.New(c, logger, app.HTTPServerOption(hs))
-
 	if err != nil {
 		return nil, err
 	}

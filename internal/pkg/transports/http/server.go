@@ -1,11 +1,11 @@
 package http
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	"github.com/influxdata/influxdb-client-go/v2"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -14,38 +14,34 @@ import (
 )
 
 type Server struct {
-	c          *config.AppConfig
+	conf       *config.AppConfig
 	router     func(router fiber.Router)
 	httpServer *fiber.App
 	in         influxdb2.Client
 }
 
-func New(c *config.AppConfig, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
+func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
 	var s = &Server{
-		c:      c,
+		conf:   conf,
 		router: router,
 		in:     in,
 	}
 	return s, nil
 }
 
-func (s *Server) Application(name string) {
-	// s.c.Name = name fixme
-}
-
 func (s *Server) Start() error {
-	if s.c.Http.Port == 0 {
-		s.c.Http.Port = utils.GetAvailablePort()
+	if s.conf.Http.Port == 0 {
+		s.conf.Http.Port = utils.GetAvailablePort()
 	}
 
-	if s.c.Http.Host == "" {
-		s.c.Http.Host = utils.GetLocalIP4()
+	if s.conf.Http.Host == "" {
+		s.conf.Http.Host = utils.GetLocalIP4()
 	}
-	if s.c.Http.Host == "" {
+	if s.conf.Http.Host == "" {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.c.Http.Host, s.c.Http.Port)
+	addr := fmt.Sprintf("%s:%d", s.conf.Http.Host, s.conf.Http.Port)
 
 	log.Println("start http server ", addr)
 
@@ -67,7 +63,7 @@ func (s *Server) Start() error {
 	}
 
 	// metrics
-	go influx.PushGoServerMetrics(s.in, s.c.Name, s.c.Influx.Org, s.c.Influx.Bucket)
+	go influx.PushGoServerMetrics(s.in, s.conf.Name, s.conf.Influx.Org, s.conf.Influx.Bucket)
 
 	return nil
 }
@@ -78,7 +74,7 @@ func (s *Server) register() error {
 
 func (s *Server) Stop() error {
 	if err := s.httpServer.Shutdown(); err != nil {
-		return errors.New("shutdown http server error")
+		return errors.Wrap(err, "shutdown http server error")
 	}
 
 	return nil

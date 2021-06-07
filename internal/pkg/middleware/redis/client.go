@@ -2,9 +2,9 @@ package redis
 
 import (
 	"context"
-	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 )
 
@@ -17,7 +17,7 @@ func New(c *config.AppConfig) (*redis.Client, error) {
 	s := r.Ping(context.TODO())
 	result, err := s.Result()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "redis server error")
 	}
 	if result != "PONG" {
 		return nil, errors.New("redis conn error")

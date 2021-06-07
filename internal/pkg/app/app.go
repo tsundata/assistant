@@ -1,15 +1,14 @@
 package app
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/transports/http"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/tsundata/assistant/internal/pkg/transports/http"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
 type Application struct {
@@ -23,7 +22,6 @@ type Option func(app *Application) error
 
 func HTTPServerOption(svr *http.Server) Option {
 	return func(app *Application) error {
-		svr.Application(app.name)
 		app.httpServer = svr
 
 		return nil
@@ -32,7 +30,6 @@ func HTTPServerOption(svr *http.Server) Option {
 
 func RPCServerOption(svr *rpc.Server) Option {
 	return func(app *Application) error {
-		svr.Application(app.name)
 		app.rpcServer = svr
 
 		return nil
@@ -57,13 +54,13 @@ func New(c *config.AppConfig, logger *logger.Logger, options ...Option) (*Applic
 func (a *Application) Start() error {
 	if a.httpServer != nil {
 		if err := a.httpServer.Start(); err != nil {
-			return errors.New("http server start error " + err.Error())
+			return errors.Wrap(err, "http server start error")
 		}
 	}
 
 	if a.rpcServer != nil {
 		if err := a.rpcServer.Start(); err != nil {
-			return errors.New("rpc server start error " + err.Error())
+			return errors.Wrap(err, "rpc server start error")
 		}
 	}
 

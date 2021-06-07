@@ -6,7 +6,6 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/RichardKnop/machinery/v2 v2.0.10
-	github.com/favadi/protoc-go-inject-tag v1.1.0 // indirect
 	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
 	github.com/go-redis/redis/v8 v8.9.0
 	github.com/go-resty/resty/v2 v2.6.0
@@ -21,8 +20,9 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/micro-in-cn/XConf v0.2.1
 	github.com/micro/go-micro/v2 v2.9.1
-	github.com/nats-io/nats.go v1.11.0 // indirect
+	github.com/nats-io/nats.go v1.11.0
 	github.com/opentracing/opentracing-go v1.2.0
+	github.com/pkg/errors v0.9.1
 	github.com/rollbar/rollbar-go v1.4.0
 	github.com/shirou/gopsutil/v3 v3.21.4
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
