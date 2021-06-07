@@ -12,7 +12,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
@@ -31,7 +30,6 @@ var providerSet = wire.NewSet(
 	redis.ProviderSet,
 	cron.ProviderSet,
 	rollbar.ProviderSet,
-	rabbitmq.ProviderSet,
 )
 
 func CreateApp() (*app.Application, error) {
