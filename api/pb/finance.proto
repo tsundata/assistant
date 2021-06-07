@@ -1,0 +1,30 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service Finance {
+  rpc CreateBill(BillRequest) returns (StateReply) {}
+  rpc GetBill(BillRequest) returns (BillReply) {}
+  rpc GetBills(BillRequest) returns (BillsReply) {}
+  rpc DeleteBill(BillRequest) returns (StateReply) {}
+}
+
+message BillRequest {
+  int64 id = 1;
+  string name = 2;
+}
+
+message BillReply {
+  Bill bill = 1;
+}
+
+message BillsReply {
+  repeated Bill bills = 1;
+}
+
+message Bill {
+  string name = 1;
+}
