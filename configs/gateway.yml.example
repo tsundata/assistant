@@ -6,10 +6,6 @@ etcd:
     url: http://127.0.0.1:2379
     username:
     password:
-slack:
-    token:
-    verification:
-    signing:
 redis:
     addr: 127.0.0.1:6379
     password:
@@ -20,8 +16,12 @@ jaeger:
   sampler:
     type: const
     param: 1
+slack:
+    token:
+    verification:
+    signing:
+telegram:
+    token:
 rollbar:
     token:
     environment: # production development
-telegram:
-    token:

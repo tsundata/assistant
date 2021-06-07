@@ -26,7 +26,7 @@ jaeger:
 rollbar:
     token:
     environment: # production development
-rabbitmq:
-    url: amqp://root:123456@localhost:5672/
+nats:
+    url: nats://localhost:4222
 storage:
   path: /upload
