@@ -36,8 +36,7 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-- install MySQL, Redis, etcd, influx
-- install jaeger (optional)
+- install MySQL, Redis, etcd, influx, jaeger, nats, xconf
 
 - import sql files
 
