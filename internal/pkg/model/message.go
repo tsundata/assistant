@@ -41,8 +41,8 @@ type Message struct {
 	Time time.Time `db:"time"`
 }
 
-func IsMessageOfScript(text string) bool {
-	lines := strings.Split(text, "\n")
+func (m *Message) IsMessageOfScript() bool {
+	lines := strings.Split(m.Text, "\n")
 	if len(lines) >= 1 {
 		re := regexp.MustCompile(`^#!/usr/bin/env\s+\w+\s*$`)
 		return re.MatchString(strings.TrimSpace(lines[0]))
@@ -50,8 +50,8 @@ func IsMessageOfScript(text string) bool {
 	return false
 }
 
-func IsMessageOfAction(text string) bool {
-	lines := strings.Split(text, "\n")
+func (m *Message) IsMessageOfAction() bool {
+	lines := strings.Split(m.Text, "\n")
 	if len(lines) >= 1 {
 		re := regexp.MustCompile(`^#!action\s*$`)
 		return re.MatchString(strings.TrimSpace(lines[0]))
@@ -59,17 +59,17 @@ func IsMessageOfAction(text string) bool {
 	return false
 }
 
-func RemoveActionFlag(text string) string {
+func (m *Message) RemoveActionFlag() string {
 	re := regexp.MustCompile(`^#!action\s*$`)
-	return re.ReplaceAllString(text, "")
+	return re.ReplaceAllString(m.Text, "")
 }
 
-func MessageScriptKind(text string) string {
-	if !IsMessageOfScript(text) {
+func (m *Message) ScriptKind() string {
+	if !m.IsMessageOfScript() {
 		return MessageScriptOfUndefined
 	}
 
-	lines := strings.Split(text, "\n")
+	lines := strings.Split(m.Text, "\n")
 	if len(lines) >= 1 {
 		return strings.TrimSpace(strings.ReplaceAll(lines[0], "#!/usr/bin/env", ""))
 	}

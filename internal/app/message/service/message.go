@@ -108,10 +108,10 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	if utils.IsUrl(message.Text) {
 		message.Type = model.MessageTypeLink
 	}
-	if model.IsMessageOfAction(message.Text) {
+	if message.IsMessageOfAction() {
 		message.Type = model.MessageTypeAction
 	}
-	if model.IsMessageOfScript(message.Text) {
+	if message.IsMessageOfScript() {
 		message.Type = model.MessageTypeScript
 	}
 
@@ -180,13 +180,13 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 	switch message.Type {
 	case model.MessageTypeAction:
-		wfReply, err := m.wfClient.RunAction(ctx, &pb.WorkflowRequest{Text: model.RemoveActionFlag(message.Text)})
+		wfReply, err := m.wfClient.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
 		if err != nil {
 			return nil, err
 		}
 		reply = wfReply.GetText()
 	case model.MessageTypeScript:
-		switch model.MessageScriptKind(message.Text) {
+		switch message.ScriptKind() {
 		default:
 			reply = model.MessageScriptOfUndefined
 		}
