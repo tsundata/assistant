@@ -14,9 +14,9 @@ import (
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/opentracing/opentracing-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/influx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	redisPkg "github.com/tsundata/assistant/internal/pkg/redis"
+	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
+	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.etcd.io/etcd/clientv3"
@@ -67,7 +67,7 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
-				redisPkg.StatsStreamServerInterceptor(rdb),
+				redisMiddle.StatsStreamServerInterceptor(rdb),
 			),
 		),
 		grpc.UnaryInterceptor(
@@ -78,7 +78,7 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
-				redisPkg.StatsUnaryServerInterceptor(rdb),
+				redisMiddle.StatsUnaryServerInterceptor(rdb),
 			),
 		),
 	)
