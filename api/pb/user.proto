@@ -1,0 +1,30 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service User {
+  rpc CreateRole(RoleRequest) returns (StateReply) {}
+  rpc GetRole(RoleRequest) returns (RoleReply) {}
+  rpc GetRoles(RoleRequest) returns (RolesReply) {}
+  rpc UpdateRoles(RoleRequest) returns (StateReply) {}
+}
+
+message RoleRequest {
+  int64 id = 1;
+  string name = 2;
+}
+
+message RoleReply {
+  Role role = 1;
+}
+
+message RolesReply {
+  repeated Role bills = 1;
+}
+
+message Role {
+  string name = 1;
+}
