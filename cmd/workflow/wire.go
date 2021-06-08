@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -34,6 +35,7 @@ var providerSet = wire.NewSet(
 	rpcclients.ProviderSet,
 	rollbar.ProviderSet,
 	repository.ProviderSet,
+	consul.ProviderSet,
 )
 
 func CreateApp() (*app.Application, error) {

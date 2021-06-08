@@ -12,6 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -24,8 +25,12 @@ import (
 // Injectors from wire.go:
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
-	client, err := redis.New(appConfig)
+	client, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(client)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +68,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, client, loggerLogger, messageClient, middleClient, subscribeClient)
+	application, err := spider.NewApp(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient)
 	if err != nil {
 		return nil, err
 	}
@@ -72,4 +77,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rpcclients.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rpcclients.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

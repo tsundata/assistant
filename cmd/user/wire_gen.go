@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -24,7 +25,11 @@ import (
 // Injectors from wire.go:
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
+	client, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
@@ -35,7 +40,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := etcd.New(appConfig)
+	clientv3Client, err := etcd.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +52,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, client, influxdb2Client, redisClient)
+	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, clientv3Client, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +65,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, finance.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, finance.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

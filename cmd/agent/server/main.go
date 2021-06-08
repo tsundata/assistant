@@ -6,12 +6,17 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
+	c, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(c)
 
 	r := rollbar.New(appConfig)
 

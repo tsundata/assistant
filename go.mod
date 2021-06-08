@@ -15,10 +15,10 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
+	github.com/hashicorp/consul/api v1.8.1
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.3.0
 	github.com/jmoiron/sqlx v1.3.4
-	github.com/micro-in-cn/XConf v0.2.1
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/nats-io/nats.go v1.11.0
 	github.com/opentracing/opentracing-go v1.2.0

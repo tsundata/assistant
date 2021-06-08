@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -27,10 +28,14 @@ import (
 // Injectors from wire.go:
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
+	client, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	client, err := redis.New(appConfig)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +71,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controllers.NewGatewayController(appConfig, client, loggerLogger, subscribeClient, messageClient, middleClient)
+	gatewayController := controllers.NewGatewayController(appConfig, redisClient, loggerLogger, subscribeClient, messageClient, middleClient)
 	v := controllers.CreateInitControllersFn(gatewayController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
@@ -85,4 +90,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, controllers.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, controllers.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)

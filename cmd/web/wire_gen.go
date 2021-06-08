@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -25,10 +26,14 @@ import (
 // Injectors from wire.go:
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
+	client, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	client, err := redis.New(appConfig)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +69,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	webController := controllers.NewWebController(appConfig, client, loggerLogger, middleClient, messageClient, workflowClient)
+	webController := controllers.NewWebController(appConfig, redisClient, loggerLogger, middleClient, messageClient, workflowClient)
 	v := controllers.CreateInitControllersFn(webController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
@@ -83,4 +88,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, controllers.ProviderSet, web.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, controllers.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

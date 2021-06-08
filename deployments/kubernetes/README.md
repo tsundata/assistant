@@ -50,4 +50,4 @@ Apply the update:
 
 You can remove all the deployments by deleting the whole namespace.
 
-```kubectl delete namespace xconf```
+```kubectl delete namespace assistant```

@@ -12,6 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -24,10 +25,14 @@ import (
 // Injectors from wire.go:
 
 func CreateApp() (*app.Application, error) {
-	appConfig := config.NewConfig()
+	client, err := consul.New()
+	if err != nil {
+		return nil, err
+	}
+	appConfig := config.NewConfig(client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	client, err := redis.New(appConfig)
+	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +72,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := cron.NewApp(appConfig, loggerLogger, client, subscribeClient, middleClient, messageClient, workflowClient)
+	application, err := cron.NewApp(appConfig, loggerLogger, redisClient, subscribeClient, middleClient, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}
@@ -76,4 +81,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

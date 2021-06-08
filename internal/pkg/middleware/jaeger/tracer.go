@@ -11,7 +11,7 @@ import (
 func NewConfiguration(c *appConfig.AppConfig, logger *logger.Logger) (*config.Configuration, error) {
 	var cc = new(config.Configuration)
 
-	cc.ServiceName = c.Jaeger.ServiceName
+	cc.ServiceName = c.Name
 	cc.Reporter = &config.ReporterConfig{
 		LocalAgentHostPort: c.Jaeger.Reporter.LocalAgentHostPort,
 	}

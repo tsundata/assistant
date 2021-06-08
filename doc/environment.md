@@ -1,13 +1,9 @@
 # Environment
 
-## XCONF_URL
+## CONSUL_ADDRESS
 
-> xconf server url
+> consul server host
 
-## XCONF_CLUSTER
+## CONFIG_NAMESPACE
 
-> xconf cluster name
-
-## XCONF_NAMESPACE
-
-> xconf namespace
+> config namespace

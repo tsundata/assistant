@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -36,6 +37,7 @@ var providerSet = wire.NewSet(
 	rollbar.ProviderSet,
 	nats.ProviderSet,
 	event.ProviderSet,
+	consul.ProviderSet,
 )
 
 func CreateApp() (*app.Application, error) {

@@ -43,15 +43,6 @@ services:
     ports:
       - "8086:8086"
 
-  rabbitmq:
-    image: rabbitmq:3.8.14-management
-    volumes:
-      - ./tmp/rabbitmq/data/:/var/lib/rabbitmq/mnesia
-      - ./tmp/rabbitmq/log/:/var/log/rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   jaeger-collector:
     image: jaegertracing/all-in-one:1.22
     ports:
@@ -66,23 +57,12 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
 
-  xconf:
-    image: xuxu123/xconf-all:latest
-    environment:
-      BROADCAST: broker
-      DATABASE_URL: root:123456@(mysql:3306)/xconf?charset=utf8&parseTime=true&loc=Local
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-
   gateway:
     image: tsundata/gateway:${APP_VERSION}
     restart: always
     environment:
-      XCONF_URL: ${XCONF_URL}
-      XCONF_CLUSTER: dev
-      XCONF_NAMESPACE: gateway
+      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
+      CONFIG_NAMESPACE: gateway
     ports:
       - "7000:7000"
     depends_on:

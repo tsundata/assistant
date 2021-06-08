@@ -1,17 +1,14 @@
 package config
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/google/wire"
-	"github.com/micro-in-cn/XConf/pkg/client/source"
-	"github.com/micro/go-micro/v2/config"
-	"github.com/micro/go-micro/v2/util/log"
+	"github.com/hashicorp/consul/api"
+	"gopkg.in/yaml.v3"
 	"os"
 )
 
 type AppConfig struct {
-	c config.Config
-
 	Name string `json:"name"`
 
 	Http    Http    `json:"http"`
@@ -34,55 +31,24 @@ type AppConfig struct {
 	Telegram Telegram `json:"telegram"`
 }
 
-func NewConfig() *AppConfig {
-	xconfCluster := os.Getenv("XCONF_CLUSTER")
-	xconfNamespace := os.Getenv("XCONF_NAMESPACE")
-	xconfURL := os.Getenv("XCONF_URL")
-	if xconfCluster == "" || xconfNamespace == "" || xconfURL == "" {
-		panic("error xconf")
+func NewConfig(consul *api.Client) *AppConfig {
+	kv := consul.KV()
+	configNamespace := os.Getenv("CONFIG_NAMESPACE")
+	if configNamespace == "" {
+		panic("config namespace error")
 	}
-
-	c, err := config.NewConfig(
-		config.WithSource(
-			source.NewSource(
-				"assistant",
-				xconfCluster,
-				xconfNamespace,
-				source.WithURL(xconfURL),
-			),
-		),
-	)
+	pair, _, err := kv.Get(fmt.Sprintf("config/%s", configNamespace), nil)
 	if err != nil {
 		panic(err)
 	}
-	log.Info("read: ", string(c.Get().Bytes()))
 
-	// Watch
-	w, err := c.Watch()
-	if err != nil {
-		panic(err)
-	}
+	// Watch todo
 
 	var xc AppConfig
-	xc.c = c
-	err = json.Unmarshal(c.Get().Bytes(), &xc)
+	err = yaml.Unmarshal(pair.Value, &xc)
 	if err != nil {
 		panic(err)
 	}
-
-	go func() {
-		for {
-			v, err := w.Next()
-			if err != nil {
-				log.Info(err)
-			}
-
-			err = json.Unmarshal(v.Bytes(), &xc)
-			if err != nil {
-				log.Info(err)
-			}
-		}
-	}()
 
 	return &xc
 }
