@@ -2,7 +2,7 @@ package inside
 
 import (
 	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"sync"
 )
 
@@ -14,11 +14,8 @@ type Context struct {
 	Value      interface{}
 	Credential map[string]string
 
-	RDB        *redis.Client
-	MidClient  pb.MiddleClient
-	MsgClient  pb.MessageClient
-	WfClient   pb.WorkflowClient
-	TaskClient pb.TaskClient
+	RDB    *redis.Client
+	Client *rpc.Client
 }
 
 func NewContext() *Context {

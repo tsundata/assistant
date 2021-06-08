@@ -1,13 +1,16 @@
 package rpc
 
 import (
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"context"
+	"fmt"
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
 	"go.etcd.io/etcd/clientv3"
-	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"google.golang.org/grpc"
+	"os"
 	"time"
 )
 
@@ -24,14 +27,15 @@ func NewClientOptions(_ *config.AppConfig, tracer opentracing.Tracer) (*ClientOp
 	)
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
+		grpc.WithBlock(),
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(
-			grpc_middleware.ChainUnaryClient(
+			grpcMiddleware.ChainUnaryClient(
 				otgrpc.OpenTracingClientInterceptor(tracer),
 			),
 		),
 		grpc.WithStreamInterceptor(
-			grpc_middleware.ChainStreamClient(
+			grpcMiddleware.ChainStreamClient(
 				otgrpc.OpenTracingStreamClientInterceptor(tracer),
 			),
 		),
@@ -76,13 +80,16 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 		option(o)
 	}
 
-	re := &etcdnaming.GRPCResolver{Client: c.e}
-	rr := grpc.RoundRobin(re)                                     // nolint
-	gdOptions := append(o.GrpcDialOptions, grpc.WithBalancer(rr)) // nolint
+	discovery.RegisterBuilder()
+	consulAddress := os.Getenv("CONSUL_ADDRESS")                        // todo
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second) // nolint
 
-	conn, err := grpc.Dial(service, gdOptions...)
+	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
+	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
+	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
+		return nil, nil
 	}
 
 	return conn, nil

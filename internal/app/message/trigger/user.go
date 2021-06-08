@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"regexp"
 	"strings"
 )
@@ -42,7 +43,7 @@ func (t *User) Cond(text string) bool {
 
 func (t *User) Handle(ctx *ctx.Context) {
 	for _, user := range t.user {
-		_, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("User: @%s", user)})
+		_, err := rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("User: @%s", user)})
 		if err != nil {
 			return
 		}

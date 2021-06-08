@@ -5,13 +5,14 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
 func FetchPocket(b *rulebot.RuleBot) []result.Result {
 	// get consumer key
-	reply, err := b.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
+	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -26,7 +27,7 @@ func FetchPocket(b *rulebot.RuleBot) []result.Result {
 	}
 
 	// get access token
-	app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: pocket.ID})
+	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

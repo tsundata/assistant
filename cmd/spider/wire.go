@@ -5,7 +5,6 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/spider"
-	"github.com/tsundata/assistant/internal/app/spider/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -29,7 +28,6 @@ var providerSet = wire.NewSet(
 	influx.ProviderSet,
 	redis.ProviderSet,
 	spider.ProviderSet,
-	rpcclients.ProviderSet,
 	rollbar.ProviderSet,
 	consul.ProviderSet,
 )

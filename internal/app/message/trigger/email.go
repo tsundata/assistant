@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"regexp"
@@ -42,7 +43,7 @@ func (t *Email) Cond(text string) bool {
 }
 
 func (t *Email) Handle(ctx *ctx.Context) {
-	reply, err := ctx.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Type: email.ID})
+	reply, err := rpcclient.GetMiddleClient(ctx.Client).GetCredential(context.Background(), &pb.CredentialRequest{Type: email.ID})
 	if err != nil {
 		return
 	}
@@ -89,7 +90,7 @@ Sended by Assistant
 			ctx.Logger.Error(err)
 			return
 		}
-		_, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
+		_, err := rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
 		if err != nil {
 			return
 		}

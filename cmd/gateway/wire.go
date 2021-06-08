@@ -6,7 +6,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/app/gateway/controllers"
-	"github.com/tsundata/assistant/internal/app/gateway/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -30,7 +29,6 @@ var providerSet = wire.NewSet(
 	jaeger.ProviderSet,
 	etcd.ProviderSet,
 	influx.ProviderSet,
-	rpcclients.ProviderSet,
 	redis.ProviderSet,
 	controllers.ProviderSet,
 	gateway.ProviderSet,

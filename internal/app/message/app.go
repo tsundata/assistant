@@ -16,9 +16,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server, repo repository.MessageRepository,
-	subClient pb.SubscribeClient, midClient pb.MiddleClient, msgClient pb.MessageClient,
-	taskClient pb.TaskClient, wfClient pb.WorkflowClient, storageClient pb.StorageClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server,
+	repo repository.MessageRepository, client *rpc.Client) (*app.Application, error) {
 
 	// event bus register
 	err := listener.RegisterEventHandler(bus)
@@ -27,10 +26,10 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	}
 
 	// rule bot
-	bot := rulebot.New(c, nil, subClient, midClient, msgClient, wfClient, taskClient, storageClient, rules.Options...)
+	bot := rulebot.New(c, nil, client, rules.Options...)
 
 	// rpc service
-	s := service.NewManage(logger, bot, c.Slack.Webhook, repo, wfClient, msgClient, midClient)
+	s := service.NewManage(logger, bot, c.Slack.Webhook, repo, client)
 	err = rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMessageServer(gs, s)
 		return nil

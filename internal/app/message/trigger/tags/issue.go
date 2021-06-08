@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
@@ -16,7 +17,7 @@ func NewIssue() *Issue {
 
 func (t *Issue) Handle(ctx *ctx.Context, text string) {
 	// get access token
-	app, err := ctx.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
+	app, err := rpcclient.GetMiddleClient(ctx.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return
@@ -47,7 +48,7 @@ func (t *Issue) Handle(ctx *ctx.Context, text string) {
 	}
 
 	// send message
-	_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	_, err = rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return

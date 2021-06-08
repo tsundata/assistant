@@ -8,6 +8,8 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"log"
 	"strings"
 )
@@ -22,12 +24,9 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(rdb *redis.Client, midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient, taskClient pb.TaskClient) {
+func (i *Interpreter) SetClient(rdb *redis.Client, client *rpc.Client) {
 	i.Ctx.RDB = rdb
-	i.Ctx.MidClient = midClient
-	i.Ctx.MsgClient = msgClient
-	i.Ctx.WfClient = wfClient
-	i.Ctx.TaskClient = taskClient
+	i.Ctx.Client = client
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -127,8 +126,8 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 }
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
-	if i.Ctx.MsgClient != nil {
-		reply, err := i.Ctx.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
+	if i.Ctx.Client != nil {
+		reply, err := rpcclient.GetMessageClient(i.Ctx.Client).Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
 		if err != nil {
 			log.Println(err)
 			return ""

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"reflect"
 )
@@ -25,7 +26,7 @@ func (o *Message) Doc() string {
 }
 
 func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	if ctx.MsgClient == nil {
+	if ctx.Client == nil {
 		return false, nil
 	}
 	if ctx.Value == nil {
@@ -59,7 +60,7 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 		return false, nil
 	}
 
-	state, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: text})
+	state, err := rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: text})
 	if err != nil {
 		return false, err
 	}

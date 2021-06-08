@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"strconv"
 )
@@ -29,8 +30,12 @@ func (o *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, erro
 		return false, errors.New("error params")
 	}
 
+	if ctx.Client == nil {
+		return false, errors.New("error client")
+	}
+
 	if id, ok := params[0].(int64); ok {
-		reply, err := ctx.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
+		reply, err := rpcclient.GetMessageClient(ctx.Client).Get(context.Background(), &pb.MessageRequest{Id: id})
 		if err != nil {
 			return false, err
 		}
@@ -42,7 +47,7 @@ func (o *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, erro
 		if err != nil {
 			return false, err
 		}
-		_, err = ctx.TaskClient.Send(context.Background(), &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+		_, err = rpcclient.GetTaskClient(ctx.Client).Send(context.Background(), &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
 		if err != nil {
 			return false, err
 		}

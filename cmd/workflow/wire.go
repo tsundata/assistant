@@ -6,7 +6,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/workflow"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
-	"github.com/tsundata/assistant/internal/app/workflow/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -32,7 +31,6 @@ var providerSet = wire.NewSet(
 	redis.ProviderSet,
 	workflow.ProviderSet,
 	mysql.ProviderSet,
-	rpcclients.ProviderSet,
 	rollbar.ProviderSet,
 	repository.ProviderSet,
 	consul.ProviderSet,

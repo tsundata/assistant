@@ -11,6 +11,8 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"gopkg.in/yaml.v3"
@@ -26,11 +28,9 @@ type Crawler struct {
 	outCh chan rule.Result
 	jobs  map[string]rule.Rule
 
-	rdb       *redis.Client
-	logger    *logger.Logger
-	msgClient pb.MessageClient
-	midClient pb.MiddleClient
-	subClient pb.SubscribeClient
+	rdb    *redis.Client
+	logger *logger.Logger
+	client *rpc.Client
 }
 
 func New() *Crawler {
@@ -40,13 +40,10 @@ func New() *Crawler {
 	}
 }
 
-func (s *Crawler) SetService(rdb *redis.Client, logger *logger.Logger,
-	msgClient pb.MessageClient, midClient pb.MiddleClient, subClient pb.SubscribeClient) {
+func (s *Crawler) SetService(rdb *redis.Client, logger *logger.Logger, client *rpc.Client) {
 	s.rdb = rdb
 	s.logger = logger
-	s.msgClient = msgClient
-	s.midClient = midClient
-	s.subClient = subClient
+	s.client = client
 }
 
 func (s *Crawler) LoadRule(p string) error {
@@ -85,7 +82,7 @@ func (s *Crawler) LoadRule(p string) error {
 		}
 
 		// register
-		_, err = s.subClient.Register(ctx, &pb.SubscribeRequest{
+		_, err = rpcclient.GetSubscribeClient(s.client).Register(ctx, &pb.SubscribeRequest{
 			Text: r.Name,
 		})
 		if err != nil {
@@ -121,7 +118,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			state, err := s.subClient.Status(context.Background(), &pb.SubscribeRequest{
+			state, err := rpcclient.GetSubscribeClient(s.client).Status(context.Background(), &pb.SubscribeRequest{
 				Text: name,
 			})
 			if err != nil {
@@ -259,7 +256,7 @@ func (s *Crawler) send(name string, out []string) {
 			return
 		}
 
-		reply, err := s.midClient.CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := rpcclient.GetMiddleClient(s.client).CreatePage(context.Background(), &pb.PageRequest{
 			Type:    "json",
 			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
 			Content: utils.ByteToString(j),
@@ -272,7 +269,7 @@ func (s *Crawler) send(name string, out []string) {
 	}
 
 	// send
-	_, err = s.msgClient.Send(context.Background(), &pb.MessageRequest{
+	_, err = rpcclient.GetMessageClient(s.client).Send(context.Background(), &pb.MessageRequest{
 		Text: text,
 	})
 	if err != nil {

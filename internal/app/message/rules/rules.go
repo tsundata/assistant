@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"io"
@@ -27,7 +28,7 @@ var rules = []Rule{
 		Regex:       `menu`,
 		HelpMessage: `Show menu`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			reply, err := b.MidClient.GetMenu(context.Background(), &pb.TextRequest{})
+			reply, err := rpcclient.GetMiddleClient(b.Client).GetMenu(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -48,7 +49,7 @@ var rules = []Rule{
 			}
 
 			txt := args[1]
-			reply, err := b.MidClient.GetQrUrl(context.Background(), &pb.TextRequest{
+			reply, err := rpcclient.GetMiddleClient(b.Client).GetQrUrl(context.Background(), &pb.TextRequest{
 				Text: txt,
 			})
 			if err != nil {
@@ -132,7 +133,7 @@ var rules = []Rule{
 		Regex:       `subs\s+list`,
 		HelpMessage: `List subscribe`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			reply, err := b.SubClient.List(context.Background(), &pb.SubscribeRequest{})
+			reply, err := rpcclient.GetSubscribeClient(b.Client).List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -152,7 +153,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := b.SubClient.Open(context.Background(), &pb.SubscribeRequest{
+			reply, err := rpcclient.GetSubscribeClient(b.Client).Open(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {
@@ -173,7 +174,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := b.SubClient.Close(context.Background(), &pb.SubscribeRequest{
+			reply, err := rpcclient.GetSubscribeClient(b.Client).Close(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {
@@ -198,7 +199,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error args"}
 			}
-			messageReply, err := b.MsgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
+			messageReply, err := rpcclient.GetMessageClient(b.Client).Get(context.Background(), &pb.MessageRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -219,7 +220,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := b.MsgClient.Run(context.Background(), &pb.MessageRequest{Id: id})
+			reply, err := rpcclient.GetMessageClient(b.Client).Run(context.Background(), &pb.MessageRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -231,7 +232,7 @@ var rules = []Rule{
 		Regex:       `doc`,
 		HelpMessage: `Show action docs`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			reply, err := b.WfClient.ActionDoc(context.Background(), &pb.WorkflowRequest{})
+			reply, err := rpcclient.GetWorkflowClient(b.Client).ActionDoc(context.Background(), &pb.WorkflowRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -243,7 +244,7 @@ var rules = []Rule{
 		HelpMessage: `Test`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
 			// task
-			_, err := b.TaskClient.Send(context.Background(), &pb.JobRequest{
+			_, err := rpcclient.GetTaskClient(b.Client).Send(context.Background(), &pb.JobRequest{
 				Name: "echo",
 				Args: time.Now().String(),
 			})
@@ -258,7 +259,7 @@ var rules = []Rule{
 			}
 
 			buf := make([]byte, 1024)
-			uc, err := b.StorageClient.UploadFile(context.Background())
+			uc, err := rpcclient.GetStorageClient(b.Client).UploadFile(context.Background())
 			if err != nil {
 				return []string{"error: " + err.Error()}
 			}
@@ -295,7 +296,7 @@ var rules = []Rule{
 		Regex:       `stats`,
 		HelpMessage: `Stats Info`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			reply, err := b.MidClient.GetStats(context.Background(), &pb.TextRequest{})
+			reply, err := rpcclient.GetMiddleClient(b.Client).GetStats(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

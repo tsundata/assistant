@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
@@ -13,7 +14,7 @@ func Repos(b *rulebot.RuleBot, r result.Result) result.Result {
 	if r.Kind == result.Repos {
 		if data, ok := r.Content.(map[string]string); ok {
 			// get access token
-			app, err := b.MidClient.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
+			app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 			if err != nil {
 				return result.ErrorResult(err)
 			}

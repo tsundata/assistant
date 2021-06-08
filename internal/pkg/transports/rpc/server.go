@@ -17,12 +17,14 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.etcd.io/etcd/clientv3"
 	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/naming"
 	"google.golang.org/grpc/status"
 	"net"
@@ -116,6 +118,17 @@ func (s *Server) Start() error {
 
 	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
 	s.logger.Info("register rpc service ... " + rpcAddr)
+
+	discovery.RegisterService(rpcAddr, &discovery.ConsulService{
+		IP:   s.conf.Rpc.Host,
+		Port: s.conf.Rpc.Port,
+		Tag:  []string{s.conf.Name},
+		Name: s.conf.Name,
+	})
+
+	// Health Check
+	grpc_health_v1.RegisterHealthServer(s.server, &discovery.HealthImpl{})
+
 	err = s.resolver.Update(context.TODO(), s.conf.Name, naming.Update{Op: naming.Add, Addr: rpcAddr}) // nolint
 	if err != nil {
 		panic(err)

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 )
 
 type Echo struct{}
@@ -27,10 +28,10 @@ func (o *Echo) Run(ctx *inside.Context, params []interface{}) (interface{}, erro
 	}
 
 	if text, ok := params[0].(string); ok {
-		if ctx.MsgClient == nil {
+		if ctx.Client == nil {
 			return false, nil
 		}
-		state, err := ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: text})
+		state, err :=  rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: text})
 		if err != nil {
 			return false, err
 		}

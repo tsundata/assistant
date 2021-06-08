@@ -9,13 +9,14 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"time"
 )
 
 func Backup(b *rulebot.RuleBot) []result.Result {
 	ctx := context.Background()
-	app, err := b.MidClient.GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
+	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -25,19 +26,19 @@ func Backup(b *rulebot.RuleBot) []result.Result {
 	}
 
 	// messages
-	messagesReply, err := b.MsgClient.List(ctx, &pb.MessageRequest{})
+	messagesReply, err := rpcclient.GetMessageClient(b.Client).List(ctx, &pb.MessageRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// apps
-	appsReply, err := b.MidClient.GetApps(ctx, &pb.TextRequest{})
+	appsReply, err := rpcclient.GetMiddleClient(b.Client).GetApps(ctx, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// credentials
-	credentialsReply, err := b.MidClient.GetCredentials(ctx, &pb.TextRequest{})
+	credentialsReply, err := rpcclient.GetMiddleClient(b.Client).GetCredentials(ctx, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

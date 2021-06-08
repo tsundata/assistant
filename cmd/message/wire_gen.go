@@ -9,7 +9,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/message"
 	"github.com/tsundata/assistant/internal/app/message/repository"
-	"github.com/tsundata/assistant/internal/app/message/rpcclients"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -78,31 +77,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	subscribeClient, err := rpcclients.NewSubscribeClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	middleClient, err := rpcclients.NewMiddleClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	messageClient, err := rpcclients.NewMessageClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	taskClient, err := rpcclients.NewTaskClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	workflowClient, err := rpcclients.NewWorkflowClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	storageClient, err := rpcclients.NewStorageClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	application, err := message.NewApp(appConfig, bus, loggerLogger, server, messageRepository, subscribeClient, middleClient, messageClient, taskClient, workflowClient, storageClient)
+	application, err := message.NewApp(appConfig, bus, loggerLogger, server, messageRepository, rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -111,4 +86,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, rpcclients.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)

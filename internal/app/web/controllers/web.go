@@ -12,6 +12,8 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/components"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/yuin/goldmark"
@@ -27,17 +29,14 @@ import (
 )
 
 type WebController struct {
-	opt       *config.AppConfig
-	rdb       *redis.Client
-	logger    *logger.Logger
-	midClient pb.MiddleClient
-	msgClient pb.MessageClient
-	wfClient  pb.WorkflowClient
+	opt    *config.AppConfig
+	rdb    *redis.Client
+	logger *logger.Logger
+	client *rpc.Client
 }
 
-func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
-	midClient pb.MiddleClient, msgClient pb.MessageClient, wfClient pb.WorkflowClient) *WebController {
-	return &WebController{opt: opt, rdb: rdb, logger: logger, midClient: midClient, msgClient: msgClient, wfClient: wfClient}
+func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) *WebController {
+	return &WebController{opt: opt, rdb: rdb, logger: logger, client: client}
 }
 
 func (wc *WebController) Index(c *fiber.Ctx) error {
@@ -58,7 +57,7 @@ Disallow: /`
 func (wc *WebController) Page(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 
-	reply, err := wc.midClient.GetPage(context.Background(), &pb.PageRequest{
+	reply, err := rpcclient.GetMiddleClient(wc.client).GetPage(context.Background(), &pb.PageRequest{
 		Uuid: uuid,
 	})
 	if err != nil {
@@ -140,7 +139,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := wc.midClient.GetApps(context.Background(), &pb.TextRequest{})
+	reply, err := rpcclient.GetMiddleClient(wc.client).GetApps(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -179,7 +178,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 func (wc *WebController) Memo(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := wc.msgClient.List(context.Background(), &pb.MessageRequest{})
+	reply, err := rpcclient.GetMessageClient(wc.client).List(context.Background(), &pb.MessageRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -234,7 +233,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := wc.midClient.GetMaskingCredentials(context.Background(), &pb.TextRequest{})
+	reply, err := rpcclient.GetMiddleClient(wc.client).GetMaskingCredentials(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -332,7 +331,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 			Value: utils.ByteToString(v),
 		})
 	})
-	_, err := wc.midClient.CreateCredential(context.Background(), &pb.KVsRequest{
+	_, err := rpcclient.GetMiddleClient(wc.client).CreateCredential(context.Background(), &pb.KVsRequest{
 		Kvs: kvs,
 	})
 	if err != nil {
@@ -346,7 +345,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 func (wc *WebController) Setting(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := wc.midClient.GetSettings(context.Background(), &pb.TextRequest{})
+	reply, err := rpcclient.GetMiddleClient(wc.client).GetSettings(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -413,7 +412,7 @@ func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 	key := c.FormValue("key")
 	value := c.FormValue("value")
 
-	_, err := wc.midClient.CreateSetting(context.Background(), &pb.KVRequest{
+	_, err := rpcclient.GetMiddleClient(wc.client).CreateSetting(context.Background(), &pb.KVRequest{
 		Key:   key,
 		Value: value,
 	})
@@ -429,7 +428,7 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := wc.msgClient.GetActionMessages(context.Background(), &pb.TextRequest{})
+	reply, err := rpcclient.GetMessageClient(wc.client).GetActionMessages(context.Background(), &pb.TextRequest{})
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -498,12 +497,12 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
 	defer cancel()
 
-	reply, err := wc.msgClient.Run(ctx, &pb.MessageRequest{Id: id})
+	reply, err := rpcclient.GetMessageClient(wc.client).Run(ctx, &pb.MessageRequest{Id: id})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
-	_, _ = wc.msgClient.Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
+	_, _ = rpcclient.GetMessageClient(wc.client).Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
 
 	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
@@ -511,7 +510,7 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 	action := c.FormValue("action")
 
-	_, err := wc.msgClient.CreateActionMessage(context.Background(), &pb.TextRequest{
+	_, err := rpcclient.GetMessageClient(wc.client).CreateActionMessage(context.Background(), &pb.TextRequest{
 		Text: action,
 	})
 	if err != nil {
@@ -528,7 +527,7 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	_, err = wc.msgClient.DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Id: id})
+	_, err = rpcclient.GetMessageClient(wc.client).DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Id: id})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
@@ -538,12 +537,12 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 
 func (wc *WebController) App(c *fiber.Ctx) error {
 	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
-	return provider.Redirect(c, wc.midClient)
+	return provider.Redirect(c, rpcclient.GetMiddleClient(wc.client))
 }
 
 func (wc *WebController) OAuth(c *fiber.Ctx) error {
 	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
-	err := provider.StoreAccessToken(c, wc.midClient)
+	err := provider.StoreAccessToken(c, rpcclient.GetMiddleClient(wc.client))
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -561,7 +560,7 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 		secret = c.Query("secret", "")
 	}
 
-	_, err := wc.wfClient.WebhookTrigger(context.Background(), &pb.TriggerRequest{
+	_, err := rpcclient.GetWorkflowClient(wc.client).WebhookTrigger(context.Background(), &pb.TriggerRequest{
 		Type:   "webhook",
 		Flag:   flag,
 		Secret: secret,

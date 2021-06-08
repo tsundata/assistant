@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 )
 
 type Secret struct{}
@@ -25,12 +26,12 @@ func (o *Secret) Run(ctx *inside.Context, params []interface{}) (interface{}, er
 		return nil, nil
 	}
 
-	if ctx.MidClient == nil {
+	if ctx.Client == nil {
 		return nil, nil
 	}
 
 	if text, ok := params[0].(string); ok {
-		reply, err := ctx.MidClient.GetCredential(context.Background(), &pb.CredentialRequest{Name: text})
+		reply, err := rpcclient.GetMiddleClient(ctx.Client).GetCredential(context.Background(), &pb.CredentialRequest{Name: text})
 		if err != nil {
 			return nil, err
 		}

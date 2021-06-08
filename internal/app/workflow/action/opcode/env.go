@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 )
 
 type Env struct{}
@@ -25,12 +26,12 @@ func (o *Env) Run(ctx *inside.Context, params []interface{}) (interface{}, error
 		return nil, nil
 	}
 
-	if ctx.MidClient == nil {
+	if ctx.Client == nil {
 		return nil, nil
 	}
 
 	if text, ok := params[0].(string); ok {
-		reply, err := ctx.MidClient.GetSetting(context.Background(), &pb.TextRequest{Text: text})
+		reply, err :=  rpcclient.GetMiddleClient(ctx.Client).GetSetting(context.Background(), &pb.TextRequest{Text: text})
 		if err != nil {
 			return nil, err
 		}

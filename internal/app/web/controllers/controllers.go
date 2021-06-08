@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"log"
 	"net/http"
@@ -43,7 +44,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 			r, err := s.Result()
 			var reply *pb.StateReply
 			if err != nil && errors.Is(err, redis.Nil) {
-				reply, err = wc.midClient.Authorization(context.Background(), &pb.TextRequest{
+				reply, err = rpcclient.GetMiddleClient(wc.client).Authorization(context.Background(), &pb.TextRequest{
 					Text: uuid,
 				})
 				if err != nil {

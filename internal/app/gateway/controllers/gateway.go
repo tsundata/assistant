@@ -11,6 +11,8 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
 	"net/http"
@@ -20,23 +22,18 @@ import (
 )
 
 type GatewayController struct {
-	opt       *config.AppConfig
-	rdb       *redis.Client
-	logger    *logger.Logger
-	subClient pb.SubscribeClient
-	msgClient pb.MessageClient
-	midClient pb.MiddleClient
+	opt    *config.AppConfig
+	rdb    *redis.Client
+	logger *logger.Logger
+	client *rpc.Client
 }
 
-func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
-	subClient pb.SubscribeClient, msgClient pb.MessageClient, midClient pb.MiddleClient) *GatewayController {
+func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) *GatewayController {
 	return &GatewayController{
-		opt:       opt,
-		rdb:       rdb,
-		logger:    logger,
-		subClient: subClient,
-		msgClient: msgClient,
-		midClient: midClient,
+		opt:    opt,
+		rdb:    rdb,
+		logger: logger,
+		client: client,
 	}
 }
 
@@ -87,7 +84,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				re = regexp.MustCompile(`[\s\p{Zs}]+`)
 				ev.Text = re.ReplaceAllString(ev.Text, " ")
 
-				reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
+				reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,
 					Text: ev.Text,
 				})
@@ -145,7 +142,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	reply, err := gc.msgClient.Create(context.Background(), &pb.MessageRequest{
+	reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
 		Text: incoming.Message.Text,
 	})
@@ -180,7 +177,7 @@ func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := gc.midClient.GetPage(context.Background(), &in)
+	reply, err := rpcclient.GetMiddleClient(gc.client).GetPage(context.Background(), &in)
 	if err != nil {
 		return err
 	}

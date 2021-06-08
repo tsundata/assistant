@@ -12,6 +12,8 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"go.etcd.io/etcd/clientv3"
 	"strconv"
@@ -20,16 +22,14 @@ import (
 )
 
 type Workflow struct {
-	etcd       *clientv3.Client
-	rdb        *redis.Client
-	repo       repository.WorkflowRepository
-	midClient  pb.MiddleClient
-	msgClient  pb.MessageClient
-	taskClient pb.TaskClient
+	etcd   *clientv3.Client
+	rdb    *redis.Client
+	repo   repository.WorkflowRepository
+	client *rpc.Client
 }
 
-func NewWorkflow(etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository, midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) *Workflow {
-	return &Workflow{etcd: etcd, rdb: rdb, repo: repo, midClient: midClient, msgClient: msgClient, taskClient: taskClient}
+func NewWorkflow(etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
+	return &Workflow{etcd: etcd, rdb: rdb, repo: repo, client: client}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -79,7 +79,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.rdb, s.midClient, s.msgClient, nil, s.taskClient)
+	i.SetClient(s.rdb, s.client)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err
@@ -114,7 +114,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	if err != nil {
 		return nil, err
 	}
-	_, err = s.taskClient.Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+	_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			if err != nil {
 				return nil, err
 			}
-			_, err = s.taskClient.Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+			_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
 			if err != nil {
 				return nil, err
 			}

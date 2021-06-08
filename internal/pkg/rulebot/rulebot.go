@@ -3,8 +3,8 @@ package rulebot
 import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"log"
 	"strings"
@@ -18,30 +18,17 @@ type RuleBot struct {
 
 	RDB *redis.Client
 
-	SubClient     pb.SubscribeClient
-	MidClient     pb.MiddleClient
-	MsgClient     pb.MessageClient
-	WfClient      pb.WorkflowClient
-	TaskClient    pb.TaskClient
-	StorageClient pb.StorageClient
+	Client *rpc.Client
 }
 
-func New(c *config.AppConfig, RDB *redis.Client,
-	SubClient pb.SubscribeClient, MidClient pb.MiddleClient, MsgClient pb.MessageClient,
-	WfClient pb.WorkflowClient, TaskClient pb.TaskClient, StorageClient pb.StorageClient,
-	opts ...Option) *RuleBot {
+func New(c *config.AppConfig, RDB *redis.Client, client *rpc.Client, opts ...Option) *RuleBot {
 
 	s := &RuleBot{
 		name: c.Name,
 	}
 
 	s.RDB = RDB
-	s.SubClient = SubClient
-	s.MidClient = MidClient
-	s.MsgClient = MsgClient
-	s.WfClient = WfClient
-	s.TaskClient = TaskClient
-	s.StorageClient = StorageClient
+	s.Client = client
 
 	for _, opt := range opts {
 		opt(s)

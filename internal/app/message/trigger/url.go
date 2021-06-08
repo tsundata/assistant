@@ -8,6 +8,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"regexp"
 	"strings"
@@ -56,7 +57,7 @@ func (t *Url) Handle(ctx *ctx.Context) {
 		title := doc.Find("title").Text()
 
 		// store
-		reply, err := ctx.MidClient.CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := rpcclient.GetMiddleClient(ctx.Client).CreatePage(context.Background(), &pb.PageRequest{
 			Title:   title,
 			Content: utils.ByteToString(resp.Body()),
 			Type:    "html",
@@ -66,7 +67,7 @@ func (t *Url) Handle(ctx *ctx.Context) {
 		}
 
 		// send message
-		_, err = ctx.MsgClient.Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		_, err = rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
 		if err != nil {
 			return
 		}

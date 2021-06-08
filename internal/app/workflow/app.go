@@ -15,10 +15,10 @@ import (
 )
 
 func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository,
-	midClient pb.MiddleClient, msgClient pb.MessageClient, taskClient pb.TaskClient) (*app.Application, error) {
+	client *rpc.Client) (*app.Application, error) {
 
 	// service
-	s := service.NewWorkflow(etcd, rdb, repo, midClient, msgClient, taskClient)
+	s := service.NewWorkflow(etcd, rdb, repo, client)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterWorkflowServer(gs, s)
 		return nil

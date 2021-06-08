@@ -6,17 +6,18 @@ import (
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"strconv"
 )
 
 type WorkflowTask struct {
-	msgClient pb.MessageClient
-	wfClient  pb.WorkflowClient
+	client *rpc.Client
 }
 
-func NewWorkflowTask(msgClient pb.MessageClient, wfClient pb.WorkflowClient) *WorkflowTask {
-	return &WorkflowTask{msgClient: msgClient, wfClient: wfClient}
+func NewWorkflowTask(client *rpc.Client) *WorkflowTask {
+	return &WorkflowTask{client: client}
 }
 
 func (t *WorkflowTask) Run(data string) (bool, error) {
@@ -40,14 +41,14 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	message, err := t.msgClient.Get(context.Background(), &pb.MessageRequest{Id: id})
+	message, err := rpcclient.GetMessageClient(t.client).Get(context.Background(), &pb.MessageRequest{Id: id})
 	if err != nil {
 		return false, err
 	}
 
 	switch tp {
 	case model.MessageTypeAction:
-		_, err := t.wfClient.RunAction(context.Background(), &pb.WorkflowRequest{Text: message.GetText()})
+		_, err := rpcclient.GetWorkflowClient(t.client).RunAction(context.Background(), &pb.WorkflowRequest{Text: message.GetText()})
 		if err != nil {
 			return false, err
 		}
