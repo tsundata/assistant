@@ -18,7 +18,7 @@ require (
 	github.com/hashicorp/consul/api v1.8.1
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
-	github.com/influxdata/influxdb-client-go/v2 v2.3.0
+	github.com/influxdata/influxdb-client-go/v2 v2.4.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
