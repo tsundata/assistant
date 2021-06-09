@@ -34,7 +34,7 @@ require (
 	github.com/tidwall/gjson v1.8.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.25.0
+	github.com/valyala/fasthttp v1.26.0
 	github.com/yuin/goldmark v1.3.7
 	go.uber.org/zap v1.17.0
 	google.golang.org/grpc v1.37.0
