@@ -17,7 +17,7 @@ var (
 
 	errAddrMisMatch = errors.New("consul resolver: invalied uri")
 
-	errEndsWithColon = errors.New("consul resolver: missing port after port-separator colon")
+	// errEndsWithColon = errors.New("consul resolver: missing port after port-separator colon")
 
 	regexConsul, _ = regexp.Compile("^([A-z0-9.]+)(:[0-9]{1,5})?/([A-z_]+)$")
 )
