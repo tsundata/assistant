@@ -66,10 +66,19 @@ func (cb *consulBuilder) Scheme() string {
 }
 
 func (cr *consulResolver) watcher() {
-	consulAddress := os.Getenv("CONSUL_ADDRESS") // todo
+	consulAddress := os.Getenv("CONSUL_ADDRESS")
+	consulScheme := os.Getenv("CONSUL_SCHEME")
+	consulUsername := os.Getenv("CONSUL_USERNAME")
+	consulPassword := os.Getenv("CONSUL_PASSWORD")
+	consulToken := os.Getenv("CONSUL_TOKEN")
 	client, err := api.NewClient(&api.Config{
 		Address: consulAddress,
-		Scheme:  "http", // todo
+		Scheme:  consulScheme,
+		HttpAuth: &api.HttpBasicAuth{
+			Username: consulUsername,
+			Password: consulPassword,
+		},
+		Token: consulToken,
 	})
 	if err != nil {
 		log.Printf("error create consul client: %v\n", err)
