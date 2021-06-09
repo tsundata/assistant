@@ -7,7 +7,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/RichardKnop/machinery/v2 v2.0.10
 	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
-	github.com/go-redis/redis/v8 v8.9.0
+	github.com/go-redis/redis/v8 v8.10.0
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.10.0
@@ -34,7 +34,7 @@ require (
 	github.com/tidwall/gjson v1.8.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.25.0
+	github.com/valyala/fasthttp v1.26.0
 	github.com/yuin/goldmark v1.3.7
 	go.uber.org/zap v1.17.0
 	google.golang.org/grpc v1.37.0
