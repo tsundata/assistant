@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc/resolver"
+	"log"
 	"os"
 	"regexp"
 	"sync"
@@ -23,7 +24,6 @@ var (
 )
 
 func RegisterBuilder() {
-	fmt.Println("calling consul init")
 	resolver.Register(NewBuilder())
 }
 
@@ -43,8 +43,6 @@ func NewBuilder() resolver.Builder {
 }
 
 func (cb *consulBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
-	fmt.Printf("calling consul build\n")
-	fmt.Printf("target: %v\n", target)
 	host, port, name, err := parseTarget(fmt.Sprintf("%s/%s", target.Authority, target.Endpoint))
 	if err != nil {
 		return nil, err
@@ -68,21 +66,20 @@ func (cb *consulBuilder) Scheme() string {
 }
 
 func (cr *consulResolver) watcher() {
-	fmt.Println("calling consul watcher")
 	consulAddress := os.Getenv("CONSUL_ADDRESS") // todo
 	client, err := api.NewClient(&api.Config{
 		Address: consulAddress,
 		Scheme:  "http", // todo
 	})
 	if err != nil {
-		fmt.Printf("error create consul client: %v\n", err)
+		log.Printf("error create consul client: %v\n", err)
 		return
 	}
 
 	for {
 		services, metaInfo, err := client.Health().Service(cr.name, cr.name, true, &api.QueryOptions{WaitIndex: cr.lastIndex})
 		if err != nil {
-			fmt.Printf("error retrieving instances from Consul: %v\n", err)
+			log.Printf("error retrieving instances from Consul: %v\n", err)
 		}
 
 		cr.lastIndex = metaInfo.LastIndex
@@ -91,21 +88,17 @@ func (cr *consulResolver) watcher() {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
 			newAddr = append(newAddr, resolver.Address{Addr: addr})
 		}
-		fmt.Println("adding service addr")
-		fmt.Printf("newAddrs: %v\n", newAddr)
+		log.Printf("newAddrs: %v\n", newAddr)
 		cr.cc.NewAddress(newAddr)       // nolint
 		cr.cc.NewServiceConfig(cr.name) // nolint
 	}
 }
 
-func (cr *consulResolver) ResolveNow(_ resolver.ResolveNowOptions) {
-}
+func (cr *consulResolver) ResolveNow(_ resolver.ResolveNowOptions) {}
 
-func (cr *consulResolver) Close() {
-}
+func (cr *consulResolver) Close() {}
 
 func parseTarget(target string) (host, port, name string, err error) {
-	fmt.Printf("target uri: %v\n", target)
 	if target == "" {
 		return "", "", "", errMissingAddr
 	}
