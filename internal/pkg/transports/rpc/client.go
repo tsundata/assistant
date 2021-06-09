@@ -8,7 +8,6 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
-	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
 	"os"
 	"time"
@@ -60,13 +59,11 @@ func WithTag(tag string) ClientOptional {
 
 type Client struct {
 	o *ClientOptions
-	e *clientv3.Client
 }
 
-func NewClient(o *ClientOptions, e *clientv3.Client) (*Client, error) {
+func NewClient(o *ClientOptions) (*Client, error) {
 	return &Client{
 		o: o,
-		e: e,
 	}, nil
 }
 
@@ -80,6 +77,7 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 		option(o)
 	}
 
+	// discovery
 	discovery.RegisterBuilder()
 	consulAddress := os.Getenv("CONSUL_ADDRESS")                        // todo
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second) // nolint

@@ -16,10 +16,11 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/hashicorp/consul/api v1.8.1
+	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.3.0
 	github.com/jmoiron/sqlx v1.3.4
-	github.com/micro/go-micro/v2 v2.9.1
+	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
@@ -35,7 +36,6 @@ require (
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.25.0
 	github.com/yuin/goldmark v1.3.7
-	go.etcd.io/etcd v0.0.0-20201125193152-8a03d2e9614b
 	go.uber.org/zap v1.17.0
 	google.golang.org/grpc v1.37.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b

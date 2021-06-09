@@ -10,13 +10,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, db *sqlx.DB, rdb *redis.Client) (*app.Application, error) {
 	// service
-	s := service.NewStorage(c.Storage.Path, etcd, db, rdb)
+	s := service.NewStorage(c.Storage.Path, db, rdb)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterStorageServer(gs, s)
 		return nil

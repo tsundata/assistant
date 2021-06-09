@@ -10,15 +10,14 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository,
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client, repo repository.WorkflowRepository,
 	client *rpc.Client) (*app.Application, error) {
 
 	// service
-	s := service.NewWorkflow(etcd, rdb, repo, client)
+	s := service.NewWorkflow(rdb, repo, client)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterWorkflowServer(gs, s)
 		return nil

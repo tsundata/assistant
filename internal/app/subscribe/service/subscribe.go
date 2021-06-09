@@ -1,39 +1,30 @@
 package service
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/utils"
-	"go.etcd.io/etcd/clientv3"
-	"strings"
 )
 
+const RuleKey = "subscribe:rule"
+
 type Subscribe struct {
-	etcd *clientv3.Client
+	rdb *redis.Client
 }
 
-func NewSubscribe(etcd *clientv3.Client) *Subscribe {
-	return &Subscribe{etcd: etcd}
+func NewSubscribe(rdb *redis.Client) *Subscribe {
+	return &Subscribe{rdb}
 }
 
 func (s *Subscribe) List(_ context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
-	resp, err := s.etcd.Get(context.Background(), "subscribe_",
-		clientv3.WithPrefix(),
-		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	res, err := s.rdb.HGetAll(context.Background(), RuleKey).Result()
 	if err != nil {
 		return nil, err
 	}
 
 	var result []string
-
-	mb := make(map[string]string)
-	for _, ev := range resp.Kvs {
-		mb[strings.ReplaceAll(utils.ByteToString(ev.Key), "subscribe_", "")] = utils.ByteToString(ev.Value)
-	}
-
-	for source, isSubscribe := range mb {
+	for source, isSubscribe := range res {
 		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
 	}
 
@@ -43,21 +34,13 @@ func (s *Subscribe) List(_ context.Context, _ *pb.SubscribeRequest) (*pb.Subscri
 }
 
 func (s *Subscribe) Register(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	key := "subscribe_" + payload.GetText()
-	resp, err := s.etcd.Get(context.Background(), key)
+	resp, err := s.rdb.HMGet(context.Background(), RuleKey, payload.GetText()).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	hasKey := false
-	for _, ev := range resp.Kvs {
-		if key == utils.ByteToString(ev.Key) {
-			hasKey = true
-		}
-	}
-
-	if !hasKey {
-		_, err = s.etcd.Put(context.Background(), key, "true")
+	if len(resp) == 0 {
+		_, err = s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "true").Result()
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +50,7 @@ func (s *Subscribe) Register(_ context.Context, payload *pb.SubscribeRequest) (*
 }
 
 func (s *Subscribe) Open(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "true")
+	_, err := s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "true").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +59,7 @@ func (s *Subscribe) Open(_ context.Context, payload *pb.SubscribeRequest) (*pb.S
 }
 
 func (s *Subscribe) Close(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.etcd.Put(context.Background(), "subscribe_"+payload.GetText(), "false")
+	_, err := s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "false").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -85,15 +68,14 @@ func (s *Subscribe) Close(_ context.Context, payload *pb.SubscribeRequest) (*pb.
 }
 
 func (s *Subscribe) Status(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	key := "subscribe_" + payload.GetText()
-	resp, err := s.etcd.Get(context.Background(), key)
+	resp, err := s.rdb.HGetAll(context.Background(), RuleKey).Result()
 	if err != nil {
 		return nil, err
 	}
-	for _, ev := range resp.Kvs {
-		if utils.ByteToString(ev.Key) == key {
+	for k, v := range resp {
+		if k == payload.GetText() {
 			return &pb.StateReply{
-				State: bytes.Equal(ev.Value, utils.StringToByte("true")),
+				State: v == "true",
 			}, nil
 		}
 	}

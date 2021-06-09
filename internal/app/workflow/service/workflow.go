@@ -15,21 +15,19 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"go.etcd.io/etcd/clientv3"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Workflow struct {
-	etcd   *clientv3.Client
 	rdb    *redis.Client
 	repo   repository.WorkflowRepository
 	client *rpc.Client
 }
 
-func NewWorkflow(etcd *clientv3.Client, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
-	return &Workflow{etcd: etcd, rdb: rdb, repo: repo, client: client}
+func NewWorkflow(rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
+	return &Workflow{rdb: rdb, repo: repo, client: client}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {

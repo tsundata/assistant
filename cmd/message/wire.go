@@ -11,7 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
-	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
@@ -28,7 +27,6 @@ var providerSet = wire.NewSet(
 	http.ProviderSet,
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
-	etcd.ProviderSet,
 	influx.ProviderSet,
 	redis.ProviderSet,
 	message.ProviderSet,

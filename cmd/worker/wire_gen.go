@@ -12,7 +12,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
-	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
@@ -48,11 +47,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientv3Client, err := etcd.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	rpcClient, err := rpc.NewClient(clientOptions, clientv3Client)
+	rpcClient, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -65,4 +60,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

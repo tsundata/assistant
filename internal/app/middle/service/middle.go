@@ -6,30 +6,30 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
-	"go.etcd.io/etcd/clientv3"
 	"net/url"
 	"strings"
 	"time"
 )
 
 type Middle struct {
-	etcd   *clientv3.Client
+	consul *api.Client
 	rdb    *redis.Client
 	webURL string
 	repo   repository.MiddleRepository
 }
 
-func NewMiddle(etcd *clientv3.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
-	return &Middle{etcd: etcd, webURL: webURL, rdb: rdb, repo: repo}
+func NewMiddle(consul *api.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
+	return &Middle{webURL: webURL, rdb: rdb, repo: repo, consul: consul}
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	uuid, err := authUUID(s.etcd)
+	uuid, err := authUUID(s.rdb)
 	if err != nil {
 		return nil, err
 	}
@@ -324,16 +324,15 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 }
 
 func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.SettingsReply, error) {
-	resp, err := s.etcd.Get(context.Background(), "setting/",
-		clientv3.WithPrefix(),
-		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	kv := s.consul.KV()
+	kvs, _, err := kv.List("setting", nil)
 	if err != nil {
 		return nil, err
 	}
 	var reply pb.SettingsReply
-	for _, ev := range resp.Kvs {
+	for _, ev := range kvs {
 		reply.Items = append(reply.Items, &pb.KV{
-			Key:   strings.ReplaceAll(utils.ByteToString(ev.Key), "setting/", ""),
+			Key:   strings.ReplaceAll(ev.Key, "setting/", ""),
 			Value: utils.ByteToString(ev.Value),
 		})
 	}
@@ -341,40 +340,42 @@ func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.Settings
 }
 
 func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
-	resp, err := s.etcd.Get(context.Background(), "setting/"+payload.GetText())
+	kv := s.consul.KV()
+	result, _, err := kv.Get("setting/"+payload.GetText(), nil)
 	if err != nil {
 		return nil, err
 	}
-	if len(resp.Kvs) == 1 {
+	if result != nil {
 		return &pb.SettingReply{
 			Key:   payload.GetText(),
-			Value: utils.ByteToString(resp.Kvs[0].Value),
+			Value: utils.ByteToString(result.Value),
 		}, nil
 	}
 	return &pb.SettingReply{}, nil
 }
 
 func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {
-	_, err := s.etcd.Put(context.Background(), "setting/"+payload.GetKey(), payload.GetValue())
+	kv := s.consul.KV()
+	_, err := kv.Put(&api.KVPair{
+		Key:   "setting/" + payload.GetKey(),
+		Value: utils.StringToByte(payload.GetValue()),
+	}, nil)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Middle) Authorization(_ context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	resp, err := s.etcd.Get(context.Background(), "user/auth_uuid")
-	if err != nil {
-		return nil, err
-	}
-	if len(resp.Kvs) == 0 {
+func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	resp := s.rdb.Get(ctx, "user/auth_uuid") // todo
+	if resp.Err() != nil {
 		return &pb.StateReply{
 			State: false,
 		}, nil
 	}
 
 	return &pb.StateReply{
-		State: payload.GetText() == utils.ByteToString(resp.Kvs[0].Value),
+		State: payload.GetText() == resp.String(),
 	}, nil
 }
 
@@ -414,28 +415,24 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
 }
 
-func authUUID(etcd *clientv3.Client) (string, error) {
+func authUUID(rdb *redis.Client) (string, error) {
 	var uuid string
-	resp, err := etcd.Get(context.Background(), "user/auth_uuid")
-	if err != nil {
-		return "", err
+	resp := rdb.Get(context.Background(), "user/auth_uuid")
+	if resp.Err() != nil {
+		return "", resp.Err()
 	}
-	if len(resp.Kvs) == 0 {
-		uuid, err = utils.GenerateUUID()
+	if len(resp.String()) == 0 {
+		uuid, err := utils.GenerateUUID()
 		if err != nil {
 			return "", err
 		}
 
-		lease, err := etcd.Grant(context.Background(), 3600)
-		if err != nil {
-			return "", err
-		}
-		_, err = etcd.Put(context.Background(), "user/auth_uuid", uuid, clientv3.WithLease(lease.ID))
-		if err != nil {
+		status := rdb.Set(context.Background(), "user/auth_uuid", uuid, 60*time.Minute)
+		if status.Err() != nil {
 			return "", err
 		}
 	} else {
-		uuid = utils.ByteToString(resp.Kvs[0].Value)
+		uuid = resp.String()
 	}
 
 	return uuid, nil

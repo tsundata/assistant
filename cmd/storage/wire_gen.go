@@ -12,7 +12,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
-	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
@@ -40,10 +39,6 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientv3Client, err := etcd.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -52,7 +47,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, clientv3Client, influxdb2Client, redisClient)
+	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +55,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(appConfig, loggerLogger, server, clientv3Client, db, redisClient)
+	application, err := workflow.NewApp(appConfig, loggerLogger, server, db, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -69,4 +64,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)

@@ -8,22 +8,20 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/utils"
-	"go.etcd.io/etcd/clientv3"
 	"io"
 	"io/ioutil"
 )
 
 type Storage struct {
 	path string
-	etcd *clientv3.Client
 	db   *sqlx.DB
 	rdb  *redis.Client
 }
 
 const MaxFileSize = 1 << 20
 
-func NewStorage(path string, etcd *clientv3.Client, db *sqlx.DB, rdb *redis.Client) *Storage {
-	return &Storage{path: path, etcd: etcd, db: db, rdb: rdb}
+func NewStorage(path string, db *sqlx.DB, rdb *redis.Client) *Storage {
+	return &Storage{path: path, db: db, rdb: rdb}
 }
 
 func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {

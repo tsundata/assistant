@@ -2,10 +2,6 @@ http:
     mode: release
     host: 127.0.0.1
     port: 7000
-etcd:
-    url: http://127.0.0.1:2379
-    username:
-    password:
 redis:
     addr: 127.0.0.1:6379
     password:

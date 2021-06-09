@@ -1,6 +1,7 @@
 package subscribe
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/subscribe/service"
@@ -8,13 +9,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, etcd *clientv3.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client) (*app.Application, error) {
 	// service
-	s := service.NewSubscribe(etcd)
+	s := service.NewSubscribe(rdb)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterSubscribeServer(gs, s)
 		return nil

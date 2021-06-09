@@ -20,7 +20,6 @@ type AppConfig struct {
 
 	Mysql    Mysql    `json:"mysql"`
 	Redis    Redis    `json:"redis"`
-	Etcd     Etcd     `json:"etcd"`
 	Influx   Influx   `json:"influx"`
 	Rabbitmq Rabbitmq `json:"rabbitmq"`
 	Jaeger   Jaeger   `json:"jaeger"`

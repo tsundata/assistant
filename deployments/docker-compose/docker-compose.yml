@@ -23,16 +23,6 @@ services:
     ports:
       - "6379:6379"
 
-  etcd:
-    image: docker.io/bitnami/etcd:3-debian-10
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-    volumes:
-      - ./tmp/etcd_data:/bitnami/etcd
-    ports:
-      - "2379:2379"
-      - "2380:2380"
-
   influx:
     image: quay.io/influxdb/influxdb:v2.0.3
     environment:

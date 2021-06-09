@@ -14,7 +14,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
-	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
@@ -48,10 +47,6 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientv3Client, err := etcd.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -60,7 +55,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, clientv3Client, influxdb2Client, redisClient)
+	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, influxdb2Client, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +68,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, clientv3Client)
+	rpcClient, err := rpc.NewClient(clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,4 +81,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, etcd.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)

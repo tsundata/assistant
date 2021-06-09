@@ -48,13 +48,6 @@ type Redis struct {
 	Password string `json:"password" yaml:"password"`
 }
 
-// Etcd config
-type Etcd struct {
-	Url      string `json:"url" yaml:"url"`
-	Username string `json:"username" yaml:"username"`
-	Password string `json:"password" yaml:"password"`
-}
-
 // Influx config
 type Influx struct {
 	Token  string `json:"token" yaml:"token"`
