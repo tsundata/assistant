@@ -185,3 +185,39 @@ jobs:
             ${{ secrets.IMAGE_USER }}/workflow:${{ steps.meta.outputs.tag }}
             ghcr.io/${{ secrets.IMAGE_USER }}/workflow:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/workflow:${{ steps.meta.outputs.tag }}
+
+      - name: Build and push user
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: build/user/Dockerfile
+          tags: |
+            ${{ secrets.IMAGE_USER }}/user:latest
+            ${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/user:latest
+            ghcr.io/${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
+
+      - name: Build and push todo
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: build/todo/Dockerfile
+          tags: |
+            ${{ secrets.IMAGE_USER }}/todo:latest
+            ${{ secrets.IMAGE_USER }}/todo:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/todo:latest
+            ghcr.io/${{ secrets.IMAGE_USER }}/todo:${{ steps.meta.outputs.tag }}
+
+      - name: Build and push finance
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: build/finance/Dockerfile
+          tags: |
+            ${{ secrets.IMAGE_USER }}/finance:latest
+            ${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/finance:latest
+            ghcr.io/${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}

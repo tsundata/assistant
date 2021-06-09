@@ -151,6 +151,45 @@ builds:
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
+  - main: ./cmd/user
+    id: "user"
+    binary: "user"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
+  - main: ./cmd/todo
+    id: "todo"
+    binary: "todo"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
+  - main: ./cmd/finance
+    id: "finance"
+    binary: "finance"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
   # agent
   - main: ./cmd/agent/server
     id: "server-agent"
