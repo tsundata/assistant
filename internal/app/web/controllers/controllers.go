@@ -39,24 +39,24 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 
 			// cache
 			key := fmt.Sprintf("web:auth:%s", uuid)
-			s := wc.rdb.Get(context.Background(), key)
-			r, err := s.Result()
+			r, err := wc.rdb.Get(context.Background(), key).Result()
 			var reply *pb.StateReply
-			if err != nil && errors.Is(err, redis.Nil) {
-				reply, err = wc.gateway.Authorization(&pb.TextRequest{
-					Text: uuid,
-				})
-				if err != nil {
+			if err != nil {
+				if errors.Is(err, redis.Nil) {
+					reply, err = wc.gateway.Authorization(&pb.TextRequest{
+						Text: uuid,
+					})
+				} else {
 					wc.logger.Error(err)
-					wc.rdb.Set(context.Background(), key, "0", time.Hour)
 					return c.SendStatus(http.StatusForbidden)
 				}
 			}
 			if r == "1" {
+				wc.gateway.AuthToken(uuid)
 				return c.Next()
 			}
 
-			if reply.GetState() {
+			if reply != nil && reply.GetState() {
 				wc.gateway.AuthToken(uuid)
 				wc.rdb.Set(context.Background(), key, "1", time.Hour)
 				return c.Next()

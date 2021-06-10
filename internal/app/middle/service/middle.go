@@ -367,15 +367,15 @@ func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.St
 }
 
 func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	resp := s.rdb.Get(ctx, "user/auth_uuid") // todo
-	if resp.Err() != nil {
+	uuid, err := s.rdb.Get(ctx, "user:auth:token").Result()
+	if err != nil {
 		return &pb.StateReply{
 			State: false,
 		}, nil
 	}
 
 	return &pb.StateReply{
-		State: payload.GetText() == resp.String(),
+		State: payload.GetText() == uuid,
 	}, nil
 }
 
@@ -417,22 +417,20 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 
 func authUUID(rdb *redis.Client) (string, error) {
 	var uuid string
-	resp := rdb.Get(context.Background(), "user/auth_uuid")
-	if resp.Err() != nil {
-		return "", resp.Err()
+	uuid, err := rdb.Get(context.Background(), "user:auth:token").Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return "", err
 	}
-	if len(resp.String()) == 0 {
-		uuid, err := utils.GenerateUUID()
+	if errors.Is(err, redis.Nil) {
+		uuid, err = utils.GenerateUUID()
 		if err != nil {
 			return "", err
 		}
 
-		status := rdb.Set(context.Background(), "user/auth_uuid", uuid, 60*time.Minute)
+		status := rdb.Set(context.Background(), "user:auth:token", uuid, 60*time.Minute)
 		if status.Err() != nil {
 			return "", err
 		}
-	} else {
-		uuid = resp.String()
 	}
 
 	return uuid, nil

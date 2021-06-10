@@ -6,7 +6,7 @@ redis:
     addr: 127.0.0.1:6379
     password:
 web:
-    url: http://127.0.0.1:7007
+    url: http://127.0.0.1:7000
 gateway:
     url: http://127.0.0.1:5000
 rollbar:

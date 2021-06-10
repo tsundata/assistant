@@ -38,7 +38,7 @@ func (r *MysqlMessageRepository) GetByID(id int64) (model.Message, error) {
 
 func (r *MysqlMessageRepository) GetByUUID(uuid string) (model.Message, error) {
 	var message model.Message
-	err := r.db.Select(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `uuid` = ? LIMIT 1", uuid)
+	err := r.db.Get(&message, "SELECT id, uuid, text, `type`, `time` FROM `messages` WHERE `uuid` = ? LIMIT 1", uuid)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.Message{}, err
 	}

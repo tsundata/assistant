@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -41,10 +42,11 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
-			token := c.Get("X-Token")
+			token := c.Get("Authorization")
 			if token == "" {
 				return c.SendStatus(http.StatusForbidden)
 			}
+			token = strings.ReplaceAll(token, "Bearer ", "")
 			reply, err := rpcclient.GetMiddleClient(gc.client).Authorization(context.Background(), &pb.TextRequest{Text: token})
 			if err != nil {
 				gc.logger.Error(err)
