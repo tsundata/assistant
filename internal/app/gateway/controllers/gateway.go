@@ -170,6 +170,20 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusOK)
 }
 
+func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).Authorization(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
 func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
 	var in pb.PageRequest
 	err := c.QueryParser(&in)
@@ -178,6 +192,202 @@ func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
 	}
 
 	reply, err := rpcclient.GetMiddleClient(gc.client).GetPage(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) StoreAppOAuth(c *fiber.Ctx) error {
+	var in pb.AppRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).StoreAppOAuth(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetApps(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).GetApps(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetMessages(c *fiber.Ctx) error {
+	var in pb.MessageRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).List(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetMaskingCredentials(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).GetMaskingCredentials(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetCredential(c *fiber.Ctx) error {
+	var in pb.CredentialRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).GetCredential(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) CreateCredential(c *fiber.Ctx) error {
+	var in pb.KVsRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).CreateCredential(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetSettings(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).GetSettings(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) CreateSetting(c *fiber.Ctx) error {
+	var in pb.KVRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMiddleClient(gc.client).CreateSetting(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetActionMessages(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).GetActionMessages(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) CreateActionMessage(c *fiber.Ctx) error {
+	var in pb.TextRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).CreateActionMessage(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) DeleteWorkflowMessage(c *fiber.Ctx) error {
+	var in pb.MessageRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).DeleteWorkflowMessage(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) RunMessage(c *fiber.Ctx) error {
+	var in pb.MessageRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).Run(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) SendMessage(c *fiber.Ctx) error {
+	var in pb.MessageRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetMessageClient(gc.client).Send(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) WebhookTrigger(c *fiber.Ctx) error {
+	var in pb.TriggerRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := rpcclient.GetWorkflowClient(gc.client).WebhookTrigger(context.Background(), &in)
 	if err != nil {
 		return err
 	}

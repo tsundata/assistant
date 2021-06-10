@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
-	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
@@ -51,8 +51,8 @@ var ProviderCredentialOptions = map[string]interface{}{
 type OAuthProvider interface {
 	AuthorizeURL() string
 	GetAccessToken(code string) (interface{}, error)
-	Redirect(c *fiber.Ctx, mid pb.MiddleClient) error
-	StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error
+	Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error
+	StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error
 }
 
 func NewOAuthProvider(rdb *redis.Client, c *fiber.Ctx, url string) OAuthProvider {

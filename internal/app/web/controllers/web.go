@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -12,8 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/components"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/yuin/goldmark"
@@ -25,18 +23,17 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type WebController struct {
-	opt    *config.AppConfig
-	rdb    *redis.Client
-	logger *logger.Logger
-	client *rpc.Client
+	opt     *config.AppConfig
+	rdb     *redis.Client
+	logger  *logger.Logger
+	gateway *sdk.GatewayClient
 }
 
-func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) *WebController {
-	return &WebController{opt: opt, rdb: rdb, logger: logger, client: client}
+func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, gateway *sdk.GatewayClient) *WebController {
+	return &WebController{opt: opt, rdb: rdb, logger: logger, gateway: gateway}
 }
 
 func (wc *WebController) Index(c *fiber.Ctx) error {
@@ -57,9 +54,7 @@ Disallow: /`
 func (wc *WebController) Page(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 
-	reply, err := rpcclient.GetMiddleClient(wc.client).GetPage(context.Background(), &pb.PageRequest{
-		Uuid: uuid,
-	})
+	reply, err := wc.gateway.GetPage(uuid)
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -139,7 +134,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := rpcclient.GetMiddleClient(wc.client).GetApps(context.Background(), &pb.TextRequest{})
+	reply, err := wc.gateway.GetApps()
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -178,7 +173,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 func (wc *WebController) Memo(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := rpcclient.GetMessageClient(wc.client).List(context.Background(), &pb.MessageRequest{})
+	reply, err := wc.gateway.GetMessages()
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -233,7 +228,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := rpcclient.GetMiddleClient(wc.client).GetMaskingCredentials(context.Background(), &pb.TextRequest{})
+	reply, err := wc.gateway.GetMaskingCredentials()
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -331,7 +326,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 			Value: utils.ByteToString(v),
 		})
 	})
-	_, err := rpcclient.GetMiddleClient(wc.client).CreateCredential(context.Background(), &pb.KVsRequest{
+	_, err := wc.gateway.CreateCredential(&pb.KVsRequest{
 		Kvs: kvs,
 	})
 	if err != nil {
@@ -345,7 +340,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 func (wc *WebController) Setting(c *fiber.Ctx) error {
 	var items []components.Component
 
-	reply, err := rpcclient.GetMiddleClient(wc.client).GetSettings(context.Background(), &pb.TextRequest{})
+	reply, err := wc.gateway.GetSettings()
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -412,7 +407,7 @@ func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 	key := c.FormValue("key")
 	value := c.FormValue("value")
 
-	_, err := rpcclient.GetMiddleClient(wc.client).CreateSetting(context.Background(), &pb.KVRequest{
+	_, err := wc.gateway.CreateSetting(&pb.KVRequest{
 		Key:   key,
 		Value: value,
 	})
@@ -428,7 +423,7 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
 	var items []components.Component
 
-	reply, err := rpcclient.GetMessageClient(wc.client).GetActionMessages(context.Background(), &pb.TextRequest{})
+	reply, err := wc.gateway.GetActionMessages()
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -493,16 +488,12 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	clientDeadline := time.Now().Add(time.Minute)
-	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
-	defer cancel()
-
-	reply, err := rpcclient.GetMessageClient(wc.client).Run(ctx, &pb.MessageRequest{Id: id})
+	reply, err := wc.gateway.RunMessage(&pb.MessageRequest{Id: id})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
-	_, _ = rpcclient.GetMessageClient(wc.client).Send(context.Background(), &pb.MessageRequest{Text: reply.Text})
+	_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Text: reply.GetText()})
 
 	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
@@ -510,7 +501,7 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 	action := c.FormValue("action")
 
-	_, err := rpcclient.GetMessageClient(wc.client).CreateActionMessage(context.Background(), &pb.TextRequest{
+	_, err := wc.gateway.CreateActionMessage(&pb.TextRequest{
 		Text: action,
 	})
 	if err != nil {
@@ -527,7 +518,7 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	_, err = rpcclient.GetMessageClient(wc.client).DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Id: id})
+	_, err = wc.gateway.DeleteWorkflowMessage(&pb.MessageRequest{Id: id})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
@@ -537,12 +528,12 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 
 func (wc *WebController) App(c *fiber.Ctx) error {
 	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
-	return provider.Redirect(c, rpcclient.GetMiddleClient(wc.client))
+	return provider.Redirect(c, wc.gateway)
 }
 
 func (wc *WebController) OAuth(c *fiber.Ctx) error {
 	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
-	err := provider.StoreAccessToken(c, rpcclient.GetMiddleClient(wc.client))
+	err := provider.StoreAccessToken(c, wc.gateway)
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -560,7 +551,7 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 		secret = c.Query("secret", "")
 	}
 
-	_, err := rpcclient.GetWorkflowClient(wc.client).WebhookTrigger(context.Background(), &pb.TriggerRequest{
+	_, err := wc.gateway.WebhookTrigger(&pb.TriggerRequest{
 		Type:   "webhook",
 		Flag:   flag,
 		Secret: secret,
