@@ -9,14 +9,15 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"net/http"
 	"time"
 )
 
 const (
-	ID              = "pocket"
-	ClientIdKey     = "consumer_key"
+	ID          = "pocket"
+	ClientIdKey = "consumer_key"
 )
 
 type CodeResponse struct {
@@ -121,8 +122,8 @@ func (v *Pocket) GetAccessToken(code string) (interface{}, error) {
 	}
 }
 
-func (v *Pocket) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
-	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+func (v *Pocket) Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
+	reply, err := gateway.GetCredential(ID)
 	if err != nil {
 		return err
 	}
@@ -145,8 +146,8 @@ func (v *Pocket) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
 	return c.Redirect(appRedirectURI, http.StatusFound)
 }
 
-func (v *Pocket) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
-	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+func (v *Pocket) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
+	reply, err := gateway.GetCredential(ID)
 	if err != nil {
 		return err
 	}
@@ -172,7 +173,7 @@ func (v *Pocket) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
 		if err != nil {
 			return err
 		}
-		appReply, err := mid.StoreAppOAuth(context.Background(), &pb.AppRequest{
+		appReply, err := gateway.StoreAppOAuth(&pb.AppRequest{
 			Name:  "pocket",
 			Type:  "pocket",
 			Token: v.accessToken,

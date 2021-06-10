@@ -1,13 +1,13 @@
 package github
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"net/http"
 	"time"
@@ -341,8 +341,8 @@ func (v *Github) GetAccessToken(code string) (interface{}, error) {
 	}
 }
 
-func (v *Github) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
-	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+func (v *Github) Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
+	reply, err := gateway.GetCredential(ID)
 	if err != nil {
 		return err
 	}
@@ -358,9 +358,9 @@ func (v *Github) Redirect(c *fiber.Ctx, mid pb.MiddleClient) error {
 	return c.Redirect(appRedirectURI, http.StatusFound)
 }
 
-func (v *Github) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
+func (v *Github) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
 	code := c.FormValue("code")
-	reply, err := mid.GetCredential(context.Background(), &pb.CredentialRequest{Type: ID})
+	reply, err := gateway.GetCredential(ID)
 	if err != nil {
 		return err
 	}
@@ -386,7 +386,7 @@ func (v *Github) StoreAccessToken(c *fiber.Ctx, mid pb.MiddleClient) error {
 	if err != nil {
 		return err
 	}
-	appReply, err := mid.StoreAppOAuth(context.Background(), &pb.AppRequest{
+	appReply, err := gateway.StoreAppOAuth(&pb.AppRequest{
 		Name:  ID,
 		Type:  ID,
 		Token: v.accessToken,
