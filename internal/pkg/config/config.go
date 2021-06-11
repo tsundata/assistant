@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/google/wire"
 	"github.com/hashicorp/consul/api"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 	"os"
 )
 

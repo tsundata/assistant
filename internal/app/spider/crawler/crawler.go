@@ -15,7 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
