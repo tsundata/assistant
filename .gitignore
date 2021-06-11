@@ -17,7 +17,6 @@ vendor/
 # Project
 .vscode/
 .idea/
-go.sum
 dist/
 configs/*.yml
 configs/redis/
