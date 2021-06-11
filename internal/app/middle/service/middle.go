@@ -366,19 +366,6 @@ func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.St
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Middle) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	uuid, err := s.rdb.Get(ctx, "user:auth:token").Result()
-	if err != nil {
-		return &pb.StateReply{
-			State: false,
-		}, nil
-	}
-
-	return &pb.StateReply{
-		State: payload.GetText() == uuid,
-	}, nil
-}
-
 func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
 	var result []string
 

@@ -39,6 +39,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)
 		router.Post("/telegram/event", gc.TelegramEvent)
+		router.Post("/debug/event", gc.DebugEvent)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -47,7 +48,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				return c.SendStatus(http.StatusForbidden)
 			}
 			token = strings.ReplaceAll(token, "Bearer ", "")
-			reply, err := rpcclient.GetMiddleClient(gc.client).Authorization(context.Background(), &pb.TextRequest{Text: token})
+			reply, err := rpcclient.GetUserClient(gc.client).Authorization(context.Background(), &pb.TextRequest{Text: token})
 			if err != nil {
 				gc.logger.Error(err)
 				return c.SendStatus(http.StatusForbidden)

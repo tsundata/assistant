@@ -51,7 +51,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := finance.NewApp(appConfig, loggerLogger, server)
+	application, err := finance.NewApp(appConfig, loggerLogger, server, redisClient)
 	if err != nil {
 		return nil, err
 	}

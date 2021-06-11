@@ -1,6 +1,7 @@
 package finance
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/service"
@@ -11,9 +12,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client) (*app.Application, error) {
 	// service
-	s := service.NewUser()
+	s := service.NewUser(rdb)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterUserServer(gs, s)
 		return nil
