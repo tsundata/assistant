@@ -97,7 +97,7 @@ CREATE TABLE `triggers`
 
 CREATE TABLE `todos`
 (
-    `id`                INT(10) UNSIGNED NOT NULL,
+    `id`                INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `content`           VARCHAR(1024)    NOT NULL DEFAULT '',
     `priority`          TINYINT(4)       NOT NULL DEFAULT '0',
     `is_remind_at_time` TINYINT(4)       NOT NULL DEFAULT '0',
