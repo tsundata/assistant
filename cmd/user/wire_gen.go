@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/user"
+	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -51,7 +52,12 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := finance.NewApp(appConfig, loggerLogger, server, redisClient)
+	db, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	userRepository := repository.NewMysqlUserRepository(loggerLogger, db)
+	application, err := finance.NewApp(appConfig, loggerLogger, server, redisClient, userRepository)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +66,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, finance.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, finance.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet)

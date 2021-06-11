@@ -2,8 +2,18 @@ package model
 
 import "time"
 
+const (
+	RoleStrength    = "strength"
+	RoleCulture     = "culture"
+	RoleEnvironment = "environment"
+	RoleCharisma    = "charisma"
+	RoleTalent      = "talent"
+	RoleIntellect   = "intellect"
+)
+
 type Role struct {
 	ID         int    `db:"id"`
+	UserID     int    `db:"user_id"`
 	Profession string `db:"profession"`
 
 	Exp   int `db:"exp"`
