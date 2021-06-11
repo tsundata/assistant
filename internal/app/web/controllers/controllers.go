@@ -46,6 +46,9 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 					reply, err = wc.gateway.Authorization(&pb.TextRequest{
 						Text: uuid,
 					})
+					if err != nil {
+						return err
+					}
 				} else {
 					wc.logger.Error(err)
 					return c.SendStatus(http.StatusForbidden)
