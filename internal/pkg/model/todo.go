@@ -3,6 +3,7 @@ package model
 import "time"
 
 type Todo struct {
+	ID             int       `db:"id"`
 	Content        string    `db:"content"`
 	Priority       int       `db:"priority"`
 	IsRemindAtTime bool      `db:"is_remind_at_time"`

@@ -8,8 +8,9 @@ type Tagger interface {
 
 func MapTagger(text string) Tagger {
 	m := map[string]Tagger{
-		"issue": NewIssue(),
-		"todo":  NewTodo(),
+		"issue":   NewIssue(),
+		"project": NewProject(),
+		"todo":    NewTodo(),
 	}
 	if t, ok := m[text]; ok {
 		return t
