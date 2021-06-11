@@ -43,10 +43,17 @@ func Backup(b *rulebot.RuleBot) []result.Result {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
+	// todos
+	todosReply, err := rpcclient.GetTodoClient(b.Client).GetTodos(ctx, &pb.TodoRequest{})
+	if err != nil {
+		return []result.Result{result.ErrorResult(err)}
+	}
+
 	data := map[string]interface{}{
 		"message":     messagesReply.Messages,
 		"apps":        appsReply.Apps,
 		"credentials": credentialsReply.Credentials,
+		"todos":       todosReply.Todos,
 	}
 	d, err := json.Marshal(data)
 	if err != nil {
