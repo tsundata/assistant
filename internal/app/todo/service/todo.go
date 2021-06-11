@@ -21,13 +21,13 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 		Content:        payload.GetContent(),
 		Priority:       0,
 		IsRemindAtTime: false,
-		RemindAt:       time.Time{},
+		RemindAt:       nil,
 		RepeatMethod:   "",
 		RepeatRule:     "",
 		Category:       "",
 		Remark:         "",
 		Complete:       false,
-		Time:           time.Time{},
+		Time:           time.Now(),
 	}
 	_, err := s.repo.CreateTodo(todo)
 	if err != nil {
