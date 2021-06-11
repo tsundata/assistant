@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
@@ -13,11 +14,12 @@ import (
 )
 
 type WorkflowTask struct {
+	bus    *event.Bus
 	client *rpc.Client
 }
 
-func NewWorkflowTask(client *rpc.Client) *WorkflowTask {
-	return &WorkflowTask{client: client}
+func NewWorkflowTask(bus *event.Bus, client *rpc.Client) *WorkflowTask {
+	return &WorkflowTask{bus: bus, client: client}
 }
 
 func (t *WorkflowTask) Run(data string) (bool, error) {

@@ -1,22 +1,22 @@
 package tasks
 
 import (
-	"context"
-	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 )
 
 type EchoTask struct {
+	bus    *event.Bus
 	client *rpc.Client
 }
 
-func NewEchoTask(client *rpc.Client) *EchoTask {
-	return &EchoTask{client: client}
+func NewEchoTask(bus *event.Bus, client *rpc.Client) *EchoTask {
+	return &EchoTask{bus: bus, client: client}
 }
 
 func (t *EchoTask) Echo(data string) (bool, error) {
-	_, err := rpcclient.GetMessageClient(t.client).Send(context.Background(), &pb.MessageRequest{Text: data})
+	err := t.bus.Publish(event.SendMessageSubject, model.Message{Text: data})
 	if err != nil {
 		return false, err
 	}

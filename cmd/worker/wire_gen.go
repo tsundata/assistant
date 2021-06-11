@@ -10,10 +10,12 @@ import (
 	"github.com/tsundata/assistant/internal/app/worker"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/queue"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
@@ -29,6 +31,11 @@ func CreateApp() (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(client)
+	conn, err := nats.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	bus := event.NewBus(conn)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
 	server, err := queue.New(appConfig)
@@ -51,7 +58,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := worker.NewApp(appConfig, loggerLogger, server, rpcClient)
+	application, err := worker.NewApp(appConfig, bus, loggerLogger, server, rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +67,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, worker.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet)
