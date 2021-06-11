@@ -11,6 +11,8 @@ const (
 	RoleIntellect   = "intellect"
 )
 
+const TodoExp = 1
+
 type Role struct {
 	ID         int    `db:"id"`
 	UserID     int    `db:"user_id"`

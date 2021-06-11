@@ -7,6 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"log"
 	"time"
 )
 
@@ -78,14 +79,13 @@ func (r *MysqlUserRepository) ChangeRoleAttr(userID int, attr string, val int) e
 }
 
 func (r *MysqlUserRepository) roleRecord(userId int, exp int, attr string, val int) {
-	s := ""
-	var args []interface{}
+	var err error
 	if attr != "" {
-		s = fmt.Sprintf("INSERT INTO `role_records` (`user_id`, `exp`, `%s`, `time`) VALUES (?, ?, ?, ?)", attr)
-		args = []interface{}{userId, exp, val, time.Now()}
+		_, err = r.db.Exec(fmt.Sprintf("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `%s`, `time`) VALUES ('', ?, ?, ?, ?)", attr), userId, exp, val, time.Now())
 	} else {
-		s = "INSERT INTO `role_records` (`user_id`, `exp`, `time`) VALUES (?, ?, ?)"
-		args = []interface{}{userId, exp, time.Now()}
+		_, err = r.db.Exec("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `time`) VALUES ('', ?, ?, ?)", userId, exp, time.Now())
 	}
-	_, _ = r.db.Exec(s, args...)
+	if err != nil {
+		log.Println(err)
+	}
 }
