@@ -21,13 +21,13 @@ type RuleBot struct {
 	Client *rpc.Client
 }
 
-func New(c *config.AppConfig, RDB *redis.Client, client *rpc.Client, opts ...Option) *RuleBot {
+func New(c *config.AppConfig, rdb *redis.Client, client *rpc.Client, opts ...Option) *RuleBot {
 
 	s := &RuleBot{
 		name: c.Name,
 	}
 
-	s.RDB = RDB
+	s.RDB = rdb
 	s.Client = client
 
 	for _, opt := range opts {

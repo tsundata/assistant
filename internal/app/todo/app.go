@@ -7,14 +7,15 @@ import (
 	"github.com/tsundata/assistant/internal/app/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, repo repository.TodoRepository) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server, repo repository.TodoRepository) (*app.Application, error) {
 	// service
-	s := service.NewTodo(repo)
+	s := service.NewTodo(bus, repo)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterTodoServer(gs, s)
 		return nil
