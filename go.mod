@@ -6,7 +6,7 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
-	github.com/go-ping/ping v0.0.0-20210216210419-25d1413fb7bb
+	github.com/go-ping/ping v0.0.0-20210506233800-ff8be3320020
 	github.com/go-redis/redis/v8 v8.10.0
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/go-sql-driver/mysql v1.6.0
