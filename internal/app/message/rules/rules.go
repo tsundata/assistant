@@ -303,6 +303,25 @@ var rules = []Rule{
 			return []string{reply.GetText()}
 		},
 	},
+	{
+		Regex:       `todo\s+(.*)`,
+		HelpMessage: "Todo something",
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+			reply, err := rpcclient.GetTodoClient(b.Client).CreateTodo(context.Background(), &pb.TodoRequest{
+				Content: args[1],
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if !reply.GetState() {
+				return []string{"failed"}
+			}
+			return []string{"success"}
+		},
+	},
 }
 
 var Options = []rulebot.Option{

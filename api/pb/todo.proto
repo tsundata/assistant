@@ -16,7 +16,7 @@ service Todo {
 
 message TodoRequest {
   int64 id = 1;
-  string name = 2;
+  string content = 2;
 }
 
 message TodoReply {
@@ -28,5 +28,12 @@ message TodosReply {
 }
 
 message TodoItem {
-  string name = 1;
+  string content = 1;
+  int64 priority = 2;
+  bool IsRemindAtTime = 3;
+  string remindAt = 4;
+  string repeatMethod = 5;
+  string repeatRule = 6;
+  string remark = 7;
+  bool complete = 8;
 }

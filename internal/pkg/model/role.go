@@ -3,6 +3,7 @@ package model
 import "time"
 
 type Role struct {
+	ID         int    `db:"id"`
 	Profession string `db:"profession"`
 
 	Exp   int `db:"exp"`
@@ -23,6 +24,7 @@ type Role struct {
 }
 
 type Equipment struct {
+	ID       int       `db:"id"`
 	Name     string    `db:"name"`
 	Quality  string    `db:"quality"`
 	Level    int       `db:"level"`
@@ -31,6 +33,7 @@ type Equipment struct {
 }
 
 type Quest struct {
+	ID            int       `db:"id"`
 	Title         string    `db:"title"`
 	Exp           int       `db:"exp"`
 	AttrPoints    string    `db:"attr_points"`
