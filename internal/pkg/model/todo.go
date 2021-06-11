@@ -11,6 +11,6 @@ type Todo struct {
 	RepeatRule     string    `db:"repeat_rule"`
 	Category       string    `db:"category"`
 	Remark         string    `db:"remark"`
-	Complete       string    `db:"complete"`
+	Complete       bool      `db:"complete"`
 	Time           time.Time `db:"time"`
 }

@@ -3,6 +3,7 @@ package model
 import "time"
 
 type Bill struct {
+	Date        string    `db:"date"`
 	Payee       string    `db:"payee"`
 	Description string    `db:"description"`
 	Amount      float64   `db:"amount"`
