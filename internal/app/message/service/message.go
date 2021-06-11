@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/app/message/trigger"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -20,20 +21,20 @@ import (
 )
 
 type Message struct {
-	webhook string
-	logger  *logger.Logger
-	bot     *rulebot.RuleBot
-	repo    repository.MessageRepository
-	client  *rpc.Client
+	config *config.AppConfig
+	logger *logger.Logger
+	bot    *rulebot.RuleBot
+	repo   repository.MessageRepository
+	client *rpc.Client
 }
 
-func NewManage(logger *logger.Logger, bot *rulebot.RuleBot, webhook string, repo repository.MessageRepository, client *rpc.Client) *Message {
+func NewManage(logger *logger.Logger, bot *rulebot.RuleBot, config *config.AppConfig, repo repository.MessageRepository, client *rpc.Client) *Message {
 	return &Message{
-		logger:  logger,
-		bot:     bot,
-		webhook: webhook,
-		repo:    repo,
-		client:  client,
+		logger: logger,
+		bot:    bot,
+		config: config,
+		repo:   repo,
+		client: client,
 	}
 }
 
@@ -152,7 +153,7 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
 	client := http.NewClient()
-	resp, err := client.PostJSON(m.webhook, map[string]interface{}{
+	resp, err := client.PostJSON(m.config.Slack.Webhook, map[string]interface{}{
 		"text": payload.GetText(),
 	})
 	if err != nil {

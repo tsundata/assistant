@@ -6,11 +6,12 @@ import (
 	"github.com/tsundata/assistant/internal/app/worker/tasks"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, server *machinery.Server, client *rpc.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, server *machinery.Server, client *rpc.Client) (*app.Application, error) {
 	a, err := app.New(c, logger)
 	if err != nil {
 		logger.Error(err)
@@ -19,8 +20,8 @@ func NewApp(c *config.AppConfig, logger *logger.Logger, server *machinery.Server
 
 	// worker
 	go func() {
-		workflowTask := tasks.NewWorkflowTask(client)
-		echoTask := tasks.NewEchoTask(client)
+		workflowTask := tasks.NewWorkflowTask(bus, client)
+		echoTask := tasks.NewEchoTask(bus, client)
 		err = server.RegisterTasks(map[string]interface{}{
 			"run":  workflowTask.Run,
 			"echo": echoTask.Echo,

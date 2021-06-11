@@ -20,7 +20,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	repo repository.MessageRepository, client *rpc.Client) (*app.Application, error) {
 
 	// event bus register
-	err := listener.RegisterEventHandler(bus)
+	err := listener.RegisterEventHandler(bus, c)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	bot := rulebot.New(c, nil, client, rules.Options...)
 
 	// rpc service
-	s := service.NewManage(logger, bot, c.Slack.Webhook, repo, client)
+	s := service.NewManage(logger, bot, c, repo, client)
 	err = rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMessageServer(gs, s)
 		return nil
