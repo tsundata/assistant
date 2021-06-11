@@ -4,14 +4,16 @@ import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/user/repository"
 )
 
 type User struct {
-	rdb *redis.Client
+	rdb  *redis.Client
+	repo repository.UserRepository
 }
 
-func NewUser(rdb *redis.Client) *User {
-	return &User{rdb: rdb}
+func NewUser(rdb *redis.Client, repo repository.UserRepository) *User {
+	return &User{rdb: rdb, repo: repo}
 }
 
 func (s *User) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
@@ -27,18 +29,20 @@ func (s *User) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.
 	}, nil
 }
 
-func (s *User) CreateRole(ctx context.Context, request *pb.RoleRequest) (*pb.StateReply, error) {
-	panic("implement me")
-}
-
-func (s *User) GetRole(ctx context.Context, request *pb.RoleRequest) (*pb.RoleReply, error) {
-	panic("implement me")
-}
-
-func (s *User) GetRoles(ctx context.Context, request *pb.RoleRequest) (*pb.RolesReply, error) {
-	panic("implement me")
-}
-
-func (s *User) UpdateRoles(ctx context.Context, request *pb.RoleRequest) (*pb.StateReply, error) {
-	panic("implement me")
+func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleReply, error) {
+	find, err := s.repo.GetRole(int(payload.GetId()))
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RoleReply{Role: &pb.Role{
+		Profession:  find.Profession,
+		Exp:         int64(find.Exp),
+		Level:       int64(find.Level),
+		Strength:    int64(find.Strength),
+		Culture:     int64(find.Culture),
+		Environment: int64(find.Environment),
+		Charisma:    int64(find.Charisma),
+		Talent:      int64(find.Talent),
+		Intellect:   int64(find.Intellect),
+	}}, nil
 }

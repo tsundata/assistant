@@ -111,3 +111,62 @@ CREATE TABLE `todos`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+
+#
+# Dump of table roles
+# ------------------------------------------------------------
+
+CREATE TABLE `roles`
+(
+    `id`          INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`     INT(10)          NOT NULL,
+    `profession`  VARCHAR(50)      NOT NULL,
+    `exp`         INT(11)          NOT NULL DEFAULT '0',
+    `level`       INT(11)          NOT NULL DEFAULT '1',
+    `strength`    INT(11)          NOT NULL DEFAULT '0',
+    `culture`     INT(11)          NOT NULL DEFAULT '0',
+    `environment` INT(11)          NOT NULL DEFAULT '0',
+    `charisma`    INT(11)          NOT NULL DEFAULT '0',
+    `talent`      INT(11)          NOT NULL DEFAULT '0',
+    `intellect`   INT(11)          NOT NULL DEFAULT '0',
+    `time`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`) USING BTREE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `roles` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`, `charisma`,
+                     `talent`, `intellect`, `time`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0, '2021-06-01 00:00:00');
+
+
+
+#
+# Dump of table role_records
+# ------------------------------------------------------------
+
+
+CREATE TABLE `role_records`
+(
+    `id`          INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`     INT(10)          NOT NULL,
+    `profession`  VARCHAR(50)      NOT NULL,
+    `exp`         INT(11)          NOT NULL DEFAULT '0',
+    `level`       INT(11)          NOT NULL DEFAULT '0',
+    `strength`    INT(11)          NOT NULL DEFAULT '0',
+    `culture`     INT(11)          NOT NULL DEFAULT '0',
+    `environment` INT(11)          NOT NULL DEFAULT '0',
+    `charisma`    INT(11)          NOT NULL DEFAULT '0',
+    `talent`      INT(11)          NOT NULL DEFAULT '0',
+    `intellect`   INT(11)          NOT NULL DEFAULT '0',
+    `time`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`) USING BTREE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
+                            `charisma`,
+                            `talent`, `intellect`, `time`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0, '2021-06-01 00:00:00');

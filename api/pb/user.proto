@@ -7,15 +7,11 @@ option go_package = "api/pb";
 
 service User {
   rpc Authorization(TextRequest) returns (StateReply) {}
-  rpc CreateRole(RoleRequest) returns (StateReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
-  rpc GetRoles(RoleRequest) returns (RolesReply) {}
-  rpc UpdateRoles(RoleRequest) returns (StateReply) {}
 }
 
 message RoleRequest {
   int64 id = 1;
-  string name = 2;
 }
 
 message RoleReply {
@@ -23,9 +19,18 @@ message RoleReply {
 }
 
 message RolesReply {
-  repeated Role bills = 1;
+  repeated Role roles = 1;
 }
 
 message Role {
-  string name = 1;
+  string profession = 1;
+  int64 exp = 2;
+  int64 level = 3;
+  int64 strength = 4;
+  int64 culture = 5;
+  int64 environment = 6;
+  int64 charisma = 7;
+  int64 talent = 8;
+  int64 intellect = 9;
+  string time = 10;
 }

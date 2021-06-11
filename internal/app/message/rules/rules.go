@@ -3,7 +3,9 @@ package rules
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/utils"
@@ -320,6 +322,20 @@ var rules = []Rule{
 				return []string{"failed"}
 			}
 			return []string{"success"}
+		},
+	},
+	{
+		Regex:       `role`,
+		HelpMessage: "Role info",
+		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+			reply, err := rpcclient.GetUserClient(b.Client).GetRole(context.Background(), &pb.RoleRequest{Id: model.SuperUserID})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetRole().Level <= 0 {
+				return []string{"failed"}
+			}
+			return []string{fmt.Sprintf("%+v", reply.GetRole())}
 		},
 	},
 }

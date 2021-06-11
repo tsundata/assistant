@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/app/user/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -12,9 +13,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client, repo repository.UserRepository) (*app.Application, error) {
 	// service
-	s := service.NewUser(rdb)
+	s := service.NewUser(rdb, repo)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterUserServer(gs, s)
 		return nil

@@ -26,7 +26,6 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type RoleRequest struct {
 	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -61,13 +60,6 @@ func (m *RoleRequest) GetId() int64 {
 		return m.Id
 	}
 	return 0
-}
-
-func (m *RoleRequest) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
 }
 
 type RoleReply struct {
@@ -109,7 +101,7 @@ func (m *RoleReply) GetRole() *Role {
 }
 
 type RolesReply struct {
-	Bills                []*Role  `protobuf:"bytes,1,rep,name=bills,proto3" json:"bills,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -139,15 +131,24 @@ func (m *RolesReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RolesReply proto.InternalMessageInfo
 
-func (m *RolesReply) GetBills() []*Role {
+func (m *RolesReply) GetRoles() []*Role {
 	if m != nil {
-		return m.Bills
+		return m.Roles
 	}
 	return nil
 }
 
 type Role struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Profession           string   `protobuf:"bytes,1,opt,name=profession,proto3" json:"profession,omitempty"`
+	Exp                  int64    `protobuf:"varint,2,opt,name=exp,proto3" json:"exp,omitempty"`
+	Level                int64    `protobuf:"varint,3,opt,name=level,proto3" json:"level,omitempty"`
+	Strength             int64    `protobuf:"varint,4,opt,name=strength,proto3" json:"strength,omitempty"`
+	Culture              int64    `protobuf:"varint,5,opt,name=culture,proto3" json:"culture,omitempty"`
+	Environment          int64    `protobuf:"varint,6,opt,name=environment,proto3" json:"environment,omitempty"`
+	Charisma             int64    `protobuf:"varint,7,opt,name=charisma,proto3" json:"charisma,omitempty"`
+	Talent               int64    `protobuf:"varint,8,opt,name=talent,proto3" json:"talent,omitempty"`
+	Intellect            int64    `protobuf:"varint,9,opt,name=intellect,proto3" json:"intellect,omitempty"`
+	Time                 string   `protobuf:"bytes,10,opt,name=time,proto3" json:"time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -177,9 +178,72 @@ func (m *Role) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Role proto.InternalMessageInfo
 
-func (m *Role) GetName() string {
+func (m *Role) GetProfession() string {
 	if m != nil {
-		return m.Name
+		return m.Profession
+	}
+	return ""
+}
+
+func (m *Role) GetExp() int64 {
+	if m != nil {
+		return m.Exp
+	}
+	return 0
+}
+
+func (m *Role) GetLevel() int64 {
+	if m != nil {
+		return m.Level
+	}
+	return 0
+}
+
+func (m *Role) GetStrength() int64 {
+	if m != nil {
+		return m.Strength
+	}
+	return 0
+}
+
+func (m *Role) GetCulture() int64 {
+	if m != nil {
+		return m.Culture
+	}
+	return 0
+}
+
+func (m *Role) GetEnvironment() int64 {
+	if m != nil {
+		return m.Environment
+	}
+	return 0
+}
+
+func (m *Role) GetCharisma() int64 {
+	if m != nil {
+		return m.Charisma
+	}
+	return 0
+}
+
+func (m *Role) GetTalent() int64 {
+	if m != nil {
+		return m.Talent
+	}
+	return 0
+}
+
+func (m *Role) GetIntellect() int64 {
+	if m != nil {
+		return m.Intellect
+	}
+	return 0
+}
+
+func (m *Role) GetTime() string {
+	if m != nil {
+		return m.Time
 	}
 	return ""
 }
@@ -194,24 +258,29 @@ func init() {
 func init() { proto.RegisterFile("user.proto", fileDescriptor_116e343673f7ffaf) }
 
 var fileDescriptor_116e343673f7ffaf = []byte{
-	// 267 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x51, 0x4f, 0x4b, 0xc3, 0x30,
-	0x1c, 0x5d, 0xba, 0x3a, 0xbb, 0x5f, 0xd9, 0x06, 0x39, 0x95, 0x22, 0x52, 0x72, 0x9a, 0xa8, 0x9d,
-	0xd6, 0x4f, 0xa0, 0x1e, 0xbc, 0x57, 0x77, 0xf1, 0xd6, 0xd0, 0x1f, 0x18, 0xa8, 0x4b, 0x4c, 0x52,
-	0x50, 0xbf, 0xb9, 0x37, 0x49, 0x52, 0x56, 0x04, 0x07, 0xbb, 0xf5, 0xbd, 0xbe, 0x7f, 0x49, 0x00,
-	0x7a, 0x83, 0xba, 0x54, 0x5a, 0x5a, 0x49, 0x23, 0xc5, 0x73, 0xe0, 0x8d, 0xc1, 0x80, 0xd9, 0x2d,
-	0xa4, 0xb5, 0xec, 0xb0, 0xc6, 0x8f, 0x1e, 0x8d, 0xa5, 0x4b, 0x88, 0x44, 0x9b, 0x91, 0x82, 0xac,
-	0xa7, 0x75, 0x24, 0x5a, 0x4a, 0x21, 0xde, 0x35, 0xef, 0x98, 0x45, 0x05, 0x59, 0xcf, 0x6b, 0xff,
-	0xcd, 0x2e, 0x60, 0x1e, 0x2c, 0xaa, 0xfb, 0xa2, 0x67, 0x10, 0x6b, 0xd9, 0xa1, 0xb7, 0xa4, 0x55,
-	0x52, 0x2a, 0x5e, 0xfa, 0x9f, 0x9e, 0x65, 0x57, 0x00, 0x0e, 0x99, 0xa0, 0x3d, 0x87, 0x13, 0x2e,
-	0xba, 0xce, 0x64, 0xa4, 0x98, 0xfe, 0x11, 0x07, 0x9a, 0xe5, 0x10, 0x3b, 0xb8, 0x2f, 0x25, 0x63,
-	0x69, 0xf5, 0x43, 0x20, 0xde, 0x1a, 0xd4, 0xb4, 0x82, 0xc5, 0x7d, 0x6f, 0xdf, 0xa4, 0x16, 0xdf,
-	0x8d, 0x15, 0x72, 0x47, 0x57, 0x2e, 0xe6, 0x05, 0x3f, 0xed, 0x70, 0x86, 0x7c, 0xe9, 0x88, 0x67,
-	0xdb, 0xd8, 0x30, 0x91, 0x4d, 0xe8, 0x06, 0xe0, 0x51, 0xa3, 0x23, 0x5c, 0xfc, 0x6a, 0xdf, 0x7b,
-	0xd0, 0x70, 0x09, 0xa7, 0x4f, 0x68, 0xff, 0x57, 0x2f, 0x46, 0x22, 0x88, 0xaf, 0x21, 0x19, 0xc4,
-	0xe6, 0x40, 0xf6, 0x78, 0x07, 0x6c, 0x42, 0x6f, 0x20, 0xdd, 0xaa, 0x76, 0x18, 0x63, 0x8e, 0x58,
-	0xf3, 0x90, 0xbc, 0xce, 0x1a, 0x25, 0x36, 0x8a, 0xf3, 0x99, 0x7f, 0xb4, 0xbb, 0xdf, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0xf6, 0x89, 0x8d, 0x48, 0xd2, 0x01, 0x00, 0x00,
+	// 344 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x92, 0xcf, 0x8e, 0xda, 0x30,
+	0x10, 0x87, 0x4b, 0x12, 0x42, 0x32, 0x08, 0xa8, 0xac, 0xaa, 0xb2, 0x10, 0x45, 0x28, 0xa7, 0x56,
+	0xad, 0xa8, 0x44, 0x9f, 0xa0, 0xbd, 0xf4, 0x9e, 0xdd, 0xbd, 0xec, 0x2d, 0x81, 0x59, 0xb0, 0x64,
+	0x62, 0xaf, 0x3d, 0x41, 0xec, 0x3e, 0xc3, 0x3e, 0xf4, 0xca, 0x13, 0xfe, 0xed, 0xcd, 0xbf, 0xef,
+	0x9b, 0x8c, 0xe2, 0x19, 0x03, 0xb4, 0x1e, 0xdd, 0xd2, 0x3a, 0x43, 0x46, 0x44, 0xb6, 0x9e, 0x42,
+	0x5d, 0x79, 0xec, 0x72, 0xf1, 0x0d, 0x86, 0xa5, 0xd1, 0x58, 0xe2, 0x73, 0x8b, 0x9e, 0xc4, 0x18,
+	0x22, 0xb5, 0x91, 0xbd, 0x45, 0xef, 0x7b, 0x5c, 0x46, 0x6a, 0x53, 0xfc, 0x80, 0xbc, 0xd3, 0x56,
+	0xbf, 0x88, 0x19, 0x24, 0xce, 0x68, 0x64, 0x3d, 0x5c, 0x65, 0x4b, 0x5b, 0x2f, 0x59, 0x32, 0x2d,
+	0x7e, 0x01, 0x84, 0xe4, 0xbb, 0xda, 0x39, 0xf4, 0x03, 0xf5, 0xb2, 0xb7, 0x88, 0x3f, 0x14, 0x77,
+	0xb8, 0x78, 0x8b, 0x20, 0x09, 0x59, 0xcc, 0x01, 0xac, 0x33, 0x4f, 0xe8, 0xbd, 0x32, 0x0d, 0xb7,
+	0xce, 0xcb, 0x1b, 0x22, 0x3e, 0x43, 0x8c, 0x47, 0x2b, 0x23, 0xfe, 0xa5, 0x70, 0x14, 0x5f, 0xa0,
+	0xaf, 0xf1, 0x80, 0x5a, 0xc6, 0xcc, 0xba, 0x20, 0xa6, 0x90, 0x79, 0x72, 0xd8, 0x6c, 0x69, 0x27,
+	0x13, 0x16, 0x97, 0x2c, 0x24, 0x0c, 0xd6, 0xad, 0xa6, 0xd6, 0xa1, 0xec, 0xb3, 0x3a, 0x47, 0xb1,
+	0x80, 0x21, 0x36, 0x07, 0xe5, 0x4c, 0xb3, 0xc7, 0x86, 0x64, 0xca, 0xf6, 0x16, 0x85, 0xbe, 0xeb,
+	0x5d, 0xe5, 0x94, 0xdf, 0x57, 0x72, 0xd0, 0xf5, 0x3d, 0x67, 0xf1, 0x15, 0x52, 0xaa, 0x74, 0xf8,
+	0x30, 0x63, 0x73, 0x4a, 0x62, 0x06, 0xb9, 0x6a, 0x08, 0xb5, 0xc6, 0x35, 0xc9, 0x9c, 0xd5, 0x15,
+	0x08, 0x01, 0x09, 0xa9, 0x3d, 0x4a, 0xe0, 0xbb, 0xf2, 0x79, 0xb5, 0x85, 0xe4, 0xc1, 0xa3, 0x13,
+	0x2b, 0x18, 0xfd, 0x6d, 0x69, 0x67, 0x9c, 0x7a, 0xad, 0x28, 0x5c, 0x7f, 0x12, 0x06, 0x77, 0x8f,
+	0x47, 0x3a, 0x6d, 0x68, 0x3a, 0x0e, 0xe0, 0x8e, 0x2a, 0xea, 0x96, 0x52, 0x7c, 0x12, 0x3f, 0x61,
+	0xf0, 0x1f, 0x89, 0x87, 0x39, 0xb9, 0x8c, 0xf9, 0x54, 0x3d, 0xba, 0x02, 0x2e, 0xfe, 0x97, 0x3d,
+	0xa6, 0x95, 0x55, 0xbf, 0x6d, 0x5d, 0xa7, 0xfc, 0x00, 0xfe, 0xbc, 0x07, 0x00, 0x00, 0xff, 0xff,
+	0x2d, 0xdb, 0xae, 0xa9, 0x1e, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -227,10 +296,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type UserClient interface {
 	Authorization(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
-	CreateRole(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetRole(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*RoleReply, error)
-	GetRoles(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*RolesReply, error)
-	UpdateRoles(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type userClient struct {
@@ -250,15 +316,6 @@ func (c *userClient) Authorization(ctx context.Context, in *TextRequest, opts ..
 	return out, nil
 }
 
-func (c *userClient) CreateRole(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.User/CreateRole", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userClient) GetRole(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*RoleReply, error) {
 	out := new(RoleReply)
 	err := c.cc.Invoke(ctx, "/pb.User/GetRole", in, out, opts...)
@@ -268,31 +325,10 @@ func (c *userClient) GetRole(ctx context.Context, in *RoleRequest, opts ...grpc.
 	return out, nil
 }
 
-func (c *userClient) GetRoles(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*RolesReply, error) {
-	out := new(RolesReply)
-	err := c.cc.Invoke(ctx, "/pb.User/GetRoles", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UpdateRoles(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.User/UpdateRoles", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServer is the server API for User service.
 type UserServer interface {
 	Authorization(context.Context, *TextRequest) (*StateReply, error)
-	CreateRole(context.Context, *RoleRequest) (*StateReply, error)
 	GetRole(context.Context, *RoleRequest) (*RoleReply, error)
-	GetRoles(context.Context, *RoleRequest) (*RolesReply, error)
-	UpdateRoles(context.Context, *RoleRequest) (*StateReply, error)
 }
 
 // UnimplementedUserServer can be embedded to have forward compatible implementations.
@@ -302,17 +338,8 @@ type UnimplementedUserServer struct {
 func (*UnimplementedUserServer) Authorization(ctx context.Context, req *TextRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authorization not implemented")
 }
-func (*UnimplementedUserServer) CreateRole(ctx context.Context, req *RoleRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
-}
 func (*UnimplementedUserServer) GetRole(ctx context.Context, req *RoleRequest) (*RoleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
-}
-func (*UnimplementedUserServer) GetRoles(ctx context.Context, req *RoleRequest) (*RolesReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRoles not implemented")
-}
-func (*UnimplementedUserServer) UpdateRoles(ctx context.Context, req *RoleRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoles not implemented")
 }
 
 func RegisterUserServer(s *grpc.Server, srv UserServer) {
@@ -337,24 +364,6 @@ func _User_Authorization_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).CreateRole(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.User/CreateRole",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).CreateRole(ctx, req.(*RoleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _User_GetRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RoleRequest)
 	if err := dec(in); err != nil {
@@ -373,42 +382,6 @@ func _User_GetRole_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_GetRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).GetRoles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.User/GetRoles",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetRoles(ctx, req.(*RoleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UpdateRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UpdateRoles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.User/UpdateRoles",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UpdateRoles(ctx, req.(*RoleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _User_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.User",
 	HandlerType: (*UserServer)(nil),
@@ -418,20 +391,8 @@ var _User_serviceDesc = grpc.ServiceDesc{
 			Handler:    _User_Authorization_Handler,
 		},
 		{
-			MethodName: "CreateRole",
-			Handler:    _User_CreateRole_Handler,
-		},
-		{
 			MethodName: "GetRole",
 			Handler:    _User_GetRole_Handler,
-		},
-		{
-			MethodName: "GetRoles",
-			Handler:    _User_GetRoles_Handler,
-		},
-		{
-			MethodName: "UpdateRoles",
-			Handler:    _User_UpdateRoles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
