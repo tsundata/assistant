@@ -170,6 +170,21 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusOK)
 }
 
+func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
+	uuid, err := utils.GenerateUUID()
+	if err != nil {
+		return err
+	}
+	reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
+		Uuid: uuid,
+		Text: utils.ByteToString(c.Body()),
+	})
+	if err != nil {
+		return err
+	}
+	return c.Send(utils.StringToByte(strings.Join(reply.GetText(), "\n")))
+}
+
 func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 	var in pb.TextRequest
 	err := c.BodyParser(&in)
@@ -177,7 +192,7 @@ func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).Authorization(context.Background(), &in)
+	reply, err := rpcclient.GetUserClient(gc.client).Authorization(context.Background(), &in)
 	if err != nil {
 		return err
 	}

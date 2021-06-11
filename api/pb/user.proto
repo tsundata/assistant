@@ -6,6 +6,7 @@ import "base.proto";
 option go_package = "api/pb";
 
 service User {
+  rpc Authorization(TextRequest) returns (StateReply) {}
   rpc CreateRole(RoleRequest) returns (StateReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
   rpc GetRoles(RoleRequest) returns (RolesReply) {}

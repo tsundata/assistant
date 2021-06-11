@@ -20,7 +20,6 @@ service Middle {
   rpc GetSetting(TextRequest) returns (SettingReply) {}
   rpc CreateSetting(KVRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
-  rpc Authorization(TextRequest) returns (StateReply) {}
   rpc GetStats(TextRequest) returns (TextReply) {}
 }
 
