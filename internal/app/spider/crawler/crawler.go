@@ -13,7 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -77,7 +77,7 @@ func (s *Crawler) LoadRule(p string) error {
 		if r.When == "" {
 			return nil
 		}
-		if !utils.IsUrl(r.Page.URL) {
+		if !util.IsUrl(r.Page.URL) {
 			return nil
 		}
 
@@ -194,7 +194,7 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 	tobeCompared := append(old, todo...)
 
 	// diff
-	diff := utils.StringSliceDiff(latest, tobeCompared)
+	diff := util.StringSliceDiff(latest, tobeCompared)
 
 	switch mode {
 	case "instant":
@@ -239,7 +239,7 @@ func (s *Crawler) send(name string, out []string) {
 	}
 
 	// check send
-	key := fmt.Sprintf("spider:send:%x", md5.Sum(utils.StringToByte(strings.Join(out, "\n"))))
+	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n"))))
 	isSet, err := s.rdb.SetNX(context.Background(), key, time.Now().Unix(), 24*time.Hour).Result()
 	if err != nil || !isSet {
 		return
@@ -259,7 +259,7 @@ func (s *Crawler) send(name string, out []string) {
 		reply, err := rpcclient.GetMiddleClient(s.client).CreatePage(context.Background(), &pb.PageRequest{
 			Type:    "json",
 			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
-			Content: utils.ByteToString(j),
+			Content: util.ByteToString(j),
 		})
 		if err != nil {
 			return

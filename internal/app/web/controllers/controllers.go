@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"log"
 	"net/http"
 	"time"
@@ -32,7 +32,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 
 		// auth middleware
 		auth := func(c *fiber.Ctx) error {
-			uuid := utils.ExtractUUID(c.Path())
+			uuid := util.ExtractUUID(c.Path())
 			if uuid == "" {
 				return errors.New("error param")
 			}

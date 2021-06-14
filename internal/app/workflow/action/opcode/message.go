@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"reflect"
 )
 
@@ -53,7 +53,7 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 		if err != nil {
 			return false, err
 		}
-		text = utils.ByteToString(b)
+		text = util.ByteToString(b)
 	}
 
 	if text == "" {

@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
@@ -38,7 +38,7 @@ func FetchGithubStarred(b *rulebot.RuleBot) []result.Result {
 	var r []result.Result
 	for _, item := range *repos {
 		r = append(r, result.Result{
-			ID:   utils.SHA1(*item.HTMLURL),
+			ID:   util.SHA1(*item.HTMLURL),
 			Kind: result.Repos,
 			Content: map[string]string{
 				"name":  *item.FullName,

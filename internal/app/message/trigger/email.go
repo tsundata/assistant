@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"regexp"
 	"strconv"
@@ -23,7 +23,7 @@ func NewEmail() *Email {
 }
 
 func (t *Email) Cond(text string) bool {
-	re := regexp.MustCompile(`(?m)` + utils.EmailRegex)
+	re := regexp.MustCompile(`(?m)` + util.EmailRegex)
 	ts := re.FindAllString(text, -1)
 
 	if len(ts) == 0 {

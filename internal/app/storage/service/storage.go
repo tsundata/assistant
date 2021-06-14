@@ -7,7 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"io"
 	"io/ioutil"
 )
@@ -55,7 +55,7 @@ func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {
 	}
 
 	// store
-	uuid, err := utils.GenerateUUID()
+	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return err
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -82,7 +82,7 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 	var items []components.Component
 
 	for _, item := range list {
-		re, _ := regexp.Compile(utils.UrlRegex)
+		re, _ := regexp.Compile(util.UrlRegex)
 		s := re.FindString(item)
 		if s != "" {
 			item = strings.ReplaceAll(item, s, fmt.Sprintf(`<a href="%s" target="_blank">%s</a>`, s, s))
@@ -196,7 +196,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 		// markdown
 		text := item.GetText()
 		buf.Reset()
-		err := md.Convert(utils.StringToByte(item.GetText()), &buf)
+		err := md.Convert(util.StringToByte(item.GetText()), &buf)
 		if err != nil {
 			wc.logger.Error(err)
 		} else {
@@ -322,8 +322,8 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 	var kvs []*pb.KV
 	c.Request().PostArgs().VisitAll(func(k, v []byte) {
 		kvs = append(kvs, &pb.KV{
-			Key:   utils.ByteToString(k),
-			Value: utils.ByteToString(v),
+			Key:   util.ByteToString(k),
+			Value: util.ByteToString(v),
 		})
 	})
 	_, err := wc.gateway.CreateCredential(&pb.KVsRequest{
@@ -556,7 +556,7 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 		Flag:   flag,
 		Secret: secret,
 		Header: c.Request().Header.String(),
-		Body:   utils.ByteToString(c.Request().Body()),
+		Body:   util.ByteToString(c.Request().Body()),
 	})
 	if err != nil {
 		wc.logger.Error(err)

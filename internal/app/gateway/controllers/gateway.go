@@ -13,7 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
 	"net/http"
 	"regexp"
@@ -76,7 +76,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				gc.rdb.Set(context.Background(), rKey, time.Now().Unix(), 7*24*time.Hour)
 
 				// special <url>, utf8 whitespace
-				re := regexp.MustCompile("<" + utils.UrlRegex + ">")
+				re := regexp.MustCompile("<" + util.UrlRegex + ">")
 				urls := re.FindAllString(ev.Text, -1)
 				for _, url := range urls {
 					ev.Text = strings.ReplaceAll(ev.Text, url, strings.TrimRight(strings.TrimLeft(url, "<"), ">"))
@@ -137,7 +137,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	// handle message
-	uuid, err := utils.GenerateUUID()
+	uuid, err := util.GenerateUUID()
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -171,18 +171,18 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
-	uuid, err := utils.GenerateUUID()
+	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return err
 	}
 	reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
-		Text: utils.ByteToString(c.Body()),
+		Text: util.ByteToString(c.Body()),
 	})
 	if err != nil {
 		return err
 	}
-	return c.Send(utils.StringToByte(strings.Join(reply.GetText(), "\n")))
+	return c.Send(util.StringToByte(strings.Join(reply.GetText(), "\n")))
 }
 
 func (gc *GatewayController) Authorization(c *fiber.Ctx) error {

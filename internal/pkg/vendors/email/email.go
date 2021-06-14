@@ -3,7 +3,7 @@ package email
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"net"
 	"net/smtp"
 )
@@ -46,7 +46,7 @@ func SendEmail(config *Config, toMail string, title, content string) error {
 		auth,
 		config.Username,
 		[]string{toMail},
-		utils.StringToByte(message),
+		util.StringToByte(message),
 	)
 }
 

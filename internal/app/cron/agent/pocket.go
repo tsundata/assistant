@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
@@ -49,7 +49,7 @@ func FetchPocket(b *rulebot.RuleBot) []result.Result {
 	var r []result.Result
 	for _, item := range resp.List {
 		r = append(r, result.Result{
-			ID:   utils.SHA1(item.ResolvedUrl),
+			ID:   util.SHA1(item.ResolvedUrl),
 			Kind: result.Url,
 			Content: map[string]string{
 				"title": item.ResolvedTitle,

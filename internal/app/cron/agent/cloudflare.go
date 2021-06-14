@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"time"
 )
@@ -48,5 +48,5 @@ func DomainAnalyticsReport(b *rulebot.RuleBot) []result.Result {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
-	return []result.Result{result.MessageResult(utils.ByteToString(j))}
+	return []result.Result{result.MessageResult(util.ByteToString(j))}
 }
