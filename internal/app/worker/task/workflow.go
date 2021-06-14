@@ -1,4 +1,4 @@
-package tasks
+package task
 
 import (
 	"context"

@@ -3,7 +3,7 @@ package worker
 import (
 	"github.com/RichardKnop/machinery/v2"
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/worker/tasks"
+	"github.com/tsundata/assistant/internal/app/worker/task"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -20,8 +20,8 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, server *
 
 	// worker
 	go func() {
-		workflowTask := tasks.NewWorkflowTask(bus, client)
-		echoTask := tasks.NewEchoTask(bus, client)
+		workflowTask := task.NewWorkflowTask(bus, client)
+		echoTask := task.NewEchoTask(bus, client)
 		err = server.RegisterTasks(map[string]interface{}{
 			"run":  workflowTask.Run,
 			"echo": echoTask.Echo,
