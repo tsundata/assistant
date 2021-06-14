@@ -3,7 +3,6 @@ package middle
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/app/middle/service"
@@ -14,9 +13,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, consul *api.Client, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
 	// service
-	s := service.NewMiddle(consul, rdb, repo, c.Web.Url)
+	s := service.NewMiddle(c, rdb, repo)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterMiddleServer(gs, s)
 		return nil
