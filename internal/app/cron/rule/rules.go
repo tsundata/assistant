@@ -1,4 +1,4 @@
-package rules
+package rule
 
 import (
 	"github.com/tsundata/assistant/internal/app/cron/agent"
