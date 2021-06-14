@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/web"
-	"github.com/tsundata/assistant/internal/app/web/controllers"
+	"github.com/tsundata/assistant/internal/app/web/controller"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -27,7 +27,7 @@ var providerSet = wire.NewSet(
 	jaeger.ProviderSet,
 	influx.ProviderSet,
 	redis.ProviderSet,
-	controllers.ProviderSet,
+	controller.ProviderSet,
 	web.ProviderSet,
 	rollbar.ProviderSet,
 	consul.ProviderSet,
