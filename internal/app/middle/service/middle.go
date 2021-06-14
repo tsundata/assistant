@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -18,14 +18,13 @@ import (
 )
 
 type Middle struct {
-	consul *api.Client
-	rdb    *redis.Client
-	webURL string
-	repo   repository.MiddleRepository
+	conf *config.AppConfig
+	rdb  *redis.Client
+	repo repository.MiddleRepository
 }
 
-func NewMiddle(consul *api.Client, rdb *redis.Client, repo repository.MiddleRepository, webURL string) *Middle {
-	return &Middle{webURL: webURL, rdb: rdb, repo: repo, consul: consul}
+func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository) *Middle {
+	return &Middle{rdb: rdb, repo: repo, conf: conf}
 }
 
 func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
@@ -49,13 +48,13 @@ Setting
 
 Action
 %s/action/%s
-`, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid, s.webURL, uuid),
+`, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid),
 	}, nil
 }
 
 func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/qr/%s", s.webURL, url.QueryEscape(payload.GetText())),
+		Text: fmt.Sprintf("%s/qr/%s", s.conf.Web.Url, url.QueryEscape(payload.GetText())),
 	}, nil
 }
 
@@ -79,7 +78,7 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 	}
 
 	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/page/%s", s.webURL, page.UUID),
+		Text: fmt.Sprintf("%s/page/%s", s.conf.Web.Url, page.UUID),
 	}, nil
 }
 
@@ -324,42 +323,35 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 }
 
 func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.SettingsReply, error) {
-	kv := s.consul.KV()
-	kvs, _, err := kv.List("setting", nil)
+	result, err := s.conf.GetSettings()
 	if err != nil {
 		return nil, err
 	}
+
 	var reply pb.SettingsReply
-	for _, ev := range kvs {
+	for k, v := range result {
 		reply.Items = append(reply.Items, &pb.KV{
-			Key:   strings.ReplaceAll(ev.Key, "setting/", ""),
-			Value: util.ByteToString(ev.Value),
+			Key:   k,
+			Value: v,
 		})
 	}
 	return &reply, nil
 }
 
 func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
-	kv := s.consul.KV()
-	result, _, err := kv.Get("setting/"+payload.GetText(), nil)
+	result, err := s.conf.GetSetting(payload.GetText())
 	if err != nil {
 		return nil, err
 	}
-	if result != nil {
-		return &pb.SettingReply{
-			Key:   payload.GetText(),
-			Value: util.ByteToString(result.Value),
-		}, nil
-	}
-	return &pb.SettingReply{}, nil
+
+	return &pb.SettingReply{
+		Key:   payload.GetText(),
+		Value: result,
+	}, nil
 }
 
 func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {
-	kv := s.consul.KV()
-	_, err := kv.Put(&api.KVPair{
-		Key:   "setting/" + payload.GetKey(),
-		Value: util.StringToByte(payload.GetValue()),
-	}, nil)
+	err := s.conf.SetSetting(payload.GetKey(), payload.GetValue())
 	if err != nil {
 		return nil, err
 	}
