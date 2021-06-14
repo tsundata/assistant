@@ -10,25 +10,25 @@ import (
 	"strings"
 )
 
+type Context struct {
+	Conf   *config.AppConfig
+	RDB    *redis.Client
+	Client *rpc.Client
+}
+
 type RuleBot struct {
+	Ctx         *Context
 	name        string
 	providerIn  string
 	providerOut []string
 	rules       []RuleParser
-
-	RDB *redis.Client
-
-	Client *rpc.Client
 }
 
-func New(c *config.AppConfig, rdb *redis.Client, client *rpc.Client, opts ...Option) *RuleBot {
-
+func New(ctx *Context, opts ...Option) *RuleBot {
 	s := &RuleBot{
-		name: c.Name,
+		name: ctx.Conf.Name,
+		Ctx:  ctx,
 	}
-
-	s.RDB = rdb
-	s.Client = client
 
 	for _, opt := range opts {
 		opt(s)

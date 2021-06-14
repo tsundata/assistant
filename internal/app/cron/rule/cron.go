@@ -16,7 +16,7 @@ import (
 type Rule struct {
 	Name   string
 	When   string
-	Action func(b *rulebot.RuleBot) []result.Result
+	Action func(b *rulebot.Context) []result.Result
 }
 
 type cronRuleset struct {
@@ -87,7 +87,7 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 						}
 					}
 				}()
-				return rule.Action(b)
+				return rule.Action(b.Ctx)
 			}()
 			if len(msgs) > 0 {
 				for _, item := range msgs {
@@ -107,13 +107,13 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 func (r *cronRuleset) resultWorker(b *rulebot.RuleBot) {
 	for out := range r.outCh {
 		// filter
-		res := r.filter(b, out)
+		res := r.filter(b.Ctx, out)
 		// pipeline
-		r.pipeline(b, res)
+		r.pipeline(b.Ctx, res)
 	}
 }
 
-func (r *cronRuleset) filter(b *rulebot.RuleBot, res result.Result) result.Result {
+func (r *cronRuleset) filter(b *rulebot.Context, res result.Result) result.Result {
 	ctx := context.Background()
 	filterKey := fmt.Sprintf("cron:%d:filter", res.Kind)
 
@@ -133,7 +133,7 @@ func (r *cronRuleset) filter(b *rulebot.RuleBot, res result.Result) result.Resul
 	return res
 }
 
-func (r *cronRuleset) pipeline(b *rulebot.RuleBot, res result.Result) {
+func (r *cronRuleset) pipeline(b *rulebot.Context, res result.Result) {
 	if res.ID == "" {
 		return
 	}

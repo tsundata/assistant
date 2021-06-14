@@ -10,35 +10,35 @@ var rules = []Rule{
 	{
 		Name: "pocket",
 		When: "* * * * *",
-		Action: func(b *rulebot.RuleBot) []result.Result {
+		Action: func(b *rulebot.Context) []result.Result {
 			return agent.FetchPocket(b)
 		},
 	},
 	{
 		Name: "github_starred",
 		When: "* * * * *",
-		Action: func(b *rulebot.RuleBot) []result.Result {
+		Action: func(b *rulebot.Context) []result.Result {
 			return agent.FetchGithubStarred(b)
 		},
 	},
 	{
 		Name: "backup",
 		When: "0 0 * * *",
-		Action: func(b *rulebot.RuleBot) []result.Result {
+		Action: func(b *rulebot.Context) []result.Result {
 			return agent.Backup(b)
 		},
 	},
 	{
 		Name: "workflow_cron",
 		When: "* * * * *",
-		Action: func(b *rulebot.RuleBot) []result.Result {
+		Action: func(b *rulebot.Context) []result.Result {
 			return agent.WorkflowCron(b)
 		},
 	},
 	{
 		Name: "cloudflare_report",
 		When: "0 0 * * 0",
-		Action: func(b *rulebot.RuleBot) []result.Result {
+		Action: func(b *rulebot.Context) []result.Result {
 			return agent.DomainAnalyticsReport(b)
 		},
 	},

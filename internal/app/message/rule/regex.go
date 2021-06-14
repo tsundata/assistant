@@ -13,7 +13,7 @@ import (
 type Rule struct {
 	Regex        string
 	HelpMessage  string
-	ParseMessage func(*rulebot.RuleBot, string, []string) []string
+	ParseMessage func(*rulebot.Context, string, []string) []string
 }
 
 type regexRuleset struct {
@@ -55,7 +55,7 @@ func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in string) []string {
 		}
 
 		args := re.FindStringSubmatch(in)
-		if ret := rule.ParseMessage(b, in, args); len(ret) > 0 {
+		if ret := rule.ParseMessage(b.Ctx, in, args); len(ret) > 0 {
 			return ret
 		}
 	}

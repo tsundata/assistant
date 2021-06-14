@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
-func URL(_ *rulebot.RuleBot, r result.Result) result.Result {
+func URL(_ *rulebot.Context, r result.Result) result.Result {
 	if r.Kind == result.Url {
 		j, err := json.Marshal(r.Content)
 		if err != nil {

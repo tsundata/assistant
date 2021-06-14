@@ -12,7 +12,10 @@ import (
 	"time"
 )
 
-func DomainAnalyticsReport(b *rulebot.RuleBot) []result.Result {
+func DomainAnalyticsReport(b *rulebot.Context) []result.Result {
+	if b.Client == nil {
+		return []result.Result{result.EmptyResult()}
+	}
 	// get key
 	ctx := context.Background()
 	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(ctx, &pb.CredentialRequest{Name: cloudflare.ID})
