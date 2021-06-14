@@ -5,7 +5,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/listener"
 	"github.com/tsundata/assistant/internal/app/message/repository"
-	"github.com/tsundata/assistant/internal/app/message/rules"
+	"github.com/tsundata/assistant/internal/app/message/rule"
 	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -26,7 +26,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	}
 
 	// rule bot
-	bot := rulebot.New(c, nil, client, rules.Options...)
+	bot := rulebot.New(c, nil, client, rule.Options...)
 
 	// rpc service
 	s := service.NewManage(logger, bot, c, repo, client)

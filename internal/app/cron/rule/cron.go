@@ -1,4 +1,4 @@
-package rules
+package rule
 
 import (
 	"context"
@@ -33,7 +33,7 @@ func New(rules []Rule) *cronRuleset {
 	return r
 }
 
-// Name returns this rules name - meant for debugging.
+// Name returns this rule name - meant for debugging.
 func (r *cronRuleset) Name() string {
 	return "Cron Ruleset"
 }
