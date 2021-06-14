@@ -10,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"net/url"
 	"strings"
@@ -60,7 +60,7 @@ func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextR
 }
 
 func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
-	uuid, err := utils.GenerateUUID()
+	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*p
 
 	if find.ID > 0 {
 		var extra map[string]string
-		err = json.Unmarshal(utils.StringToByte(find.Extra), &extra)
+		err = json.Unmarshal(util.StringToByte(find.Extra), &extra)
 		if err != nil {
 			return nil, err
 		}
@@ -217,7 +217,7 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 	var kvs []*pb.KV
 	if find.ID > 0 {
 		var data map[string]string
-		err := json.Unmarshal(utils.StringToByte(find.Content), &data)
+		err := json.Unmarshal(util.StringToByte(find.Content), &data)
 		if err != nil {
 			return nil, err
 		}
@@ -267,13 +267,13 @@ func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*p
 	for _, item := range items {
 		// Data masking
 		var data map[string]string
-		err := json.Unmarshal(utils.StringToByte(item.Content), &data)
+		err := json.Unmarshal(util.StringToByte(item.Content), &data)
 		if err != nil {
 			return nil, err
 		}
 		for k, v := range data {
 			if k != "name" && k != "type" {
-				data[k] = utils.DataMasking(v)
+				data[k] = util.DataMasking(v)
 			} else {
 				data[k] = v
 			}
@@ -285,7 +285,7 @@ func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*p
 
 		kvs = append(kvs, &pb.KV{
 			Key:   item.Name,
-			Value: utils.ByteToString(content),
+			Value: util.ByteToString(content),
 		})
 	}
 
@@ -315,7 +315,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: utils.ByteToString(data), Time: time.Now()})
+	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: util.ByteToString(data), Time: time.Now()})
 	if err != nil {
 		return nil, err
 	}
@@ -333,7 +333,7 @@ func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.Settings
 	for _, ev := range kvs {
 		reply.Items = append(reply.Items, &pb.KV{
 			Key:   strings.ReplaceAll(ev.Key, "setting/", ""),
-			Value: utils.ByteToString(ev.Value),
+			Value: util.ByteToString(ev.Value),
 		})
 	}
 	return &reply, nil
@@ -348,7 +348,7 @@ func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.Set
 	if result != nil {
 		return &pb.SettingReply{
 			Key:   payload.GetText(),
-			Value: utils.ByteToString(result.Value),
+			Value: util.ByteToString(result.Value),
 		}, nil
 	}
 	return &pb.SettingReply{}, nil
@@ -358,7 +358,7 @@ func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.St
 	kv := s.consul.KV()
 	_, err := kv.Put(&api.KVPair{
 		Key:   "setting/" + payload.GetKey(),
-		Value: utils.StringToByte(payload.GetValue()),
+		Value: util.StringToByte(payload.GetValue()),
 	}, nil)
 	if err != nil {
 		return nil, err
@@ -409,7 +409,7 @@ func authUUID(rdb *redis.Client) (string, error) {
 		return "", err
 	}
 	if errors.Is(err, redis.Nil) {
-		uuid, err = utils.GenerateUUID()
+		uuid, err = util.GenerateUUID()
 		if err != nil {
 			return "", err
 		}

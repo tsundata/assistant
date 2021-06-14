@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"regexp"
 	"strings"
 )
@@ -24,7 +24,7 @@ func NewUrl() *Url {
 }
 
 func (t *Url) Cond(text string) bool {
-	re := regexp.MustCompile(`(?m)` + utils.UrlRegex)
+	re := regexp.MustCompile(`(?m)` + util.UrlRegex)
 	ts := re.FindAllString(text, -1)
 
 	if len(ts) == 0 {
@@ -59,7 +59,7 @@ func (t *Url) Handle(ctx *ctx.Context) {
 		// store
 		reply, err := rpcclient.GetMiddleClient(ctx.Client).CreatePage(context.Background(), &pb.PageRequest{
 			Title:   title,
-			Content: utils.ByteToString(resp.Body()),
+			Content: util.ByteToString(resp.Body()),
 			Type:    "html",
 		})
 		if err != nil {

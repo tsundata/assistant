@@ -14,7 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 	"strings"
 	"time"
@@ -112,7 +112,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	if err != nil {
 		return nil, err
 	}
-	_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+	_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: util.ByteToString(j)})
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			if err != nil {
 				return nil, err
 			}
-			_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: utils.ByteToString(j)})
+			_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: util.ByteToString(j)})
 			if err != nil {
 				return nil, err
 			}

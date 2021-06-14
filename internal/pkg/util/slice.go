@@ -1,4 +1,4 @@
-package utils
+package util
 
 func StringSliceDiff(s1, s2 []string) []string {
 	if len(s1) == 0 {

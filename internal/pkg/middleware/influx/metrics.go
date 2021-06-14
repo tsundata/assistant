@@ -3,7 +3,7 @@ package influx
 import (
 	"fmt"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -30,8 +30,8 @@ func PushGoServerMetrics(in influxdb2.Client, service, org, bucket string) {
 		goroutineNum := uint64(numGoroutines)
 		alloc := memStats.Alloc
 		heapAlloc := memStats.HeapAlloc
-		connsNum := utils.GetSocketCount()
-		fdsNum := utils.GetFDCount()
+		connsNum := util.GetSocketCount()
+		fdsNum := util.GetFDCount()
 		gcNum := uint64(gcStats.NumGC)
 
 		var pauseQuantiles strings.Builder

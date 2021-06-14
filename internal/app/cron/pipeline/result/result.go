@@ -1,7 +1,7 @@
 package result
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type Kind int
@@ -21,7 +21,7 @@ type Result struct {
 }
 
 func id() (i string) {
-	i, _ = utils.GenerateUUID()
+	i, _ = util.GenerateUUID()
 	return
 }
 

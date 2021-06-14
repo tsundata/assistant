@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/slack-go/slack"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/valyala/fasthttp"
 	"net/http"
 )
@@ -111,20 +111,20 @@ type SlashCommand struct {
 
 // SlashCommandParse will parse the request of the slash command
 func SlashCommandParse(r *fasthttp.Request) (s SlashCommand, err error) {
-	s.Token = utils.ByteToString(r.PostArgs().Peek("token"))
-	s.TeamID = utils.ByteToString(r.PostArgs().Peek("team_id"))
-	s.TeamDomain = utils.ByteToString(r.PostArgs().Peek("team_domain"))
-	s.EnterpriseID = utils.ByteToString(r.PostArgs().Peek("enterprise_id"))
-	s.EnterpriseName = utils.ByteToString(r.PostArgs().Peek("enterprise_name"))
-	s.ChannelID = utils.ByteToString(r.PostArgs().Peek("channel_id"))
-	s.ChannelName = utils.ByteToString(r.PostArgs().Peek("channel_name"))
-	s.UserID = utils.ByteToString(r.PostArgs().Peek("user_id"))
-	s.UserName = utils.ByteToString(r.PostArgs().Peek("user_name"))
-	s.Command = utils.ByteToString(r.PostArgs().Peek("command"))
-	s.Text = utils.ByteToString(r.PostArgs().Peek("text"))
-	s.ResponseURL = utils.ByteToString(r.PostArgs().Peek("response_url"))
-	s.TriggerID = utils.ByteToString(r.PostArgs().Peek("trigger_id"))
-	s.APIAppID = utils.ByteToString(r.PostArgs().Peek("api_app_id"))
+	s.Token = util.ByteToString(r.PostArgs().Peek("token"))
+	s.TeamID = util.ByteToString(r.PostArgs().Peek("team_id"))
+	s.TeamDomain = util.ByteToString(r.PostArgs().Peek("team_domain"))
+	s.EnterpriseID = util.ByteToString(r.PostArgs().Peek("enterprise_id"))
+	s.EnterpriseName = util.ByteToString(r.PostArgs().Peek("enterprise_name"))
+	s.ChannelID = util.ByteToString(r.PostArgs().Peek("channel_id"))
+	s.ChannelName = util.ByteToString(r.PostArgs().Peek("channel_name"))
+	s.UserID = util.ByteToString(r.PostArgs().Peek("user_id"))
+	s.UserName = util.ByteToString(r.PostArgs().Peek("user_name"))
+	s.Command = util.ByteToString(r.PostArgs().Peek("command"))
+	s.Text = util.ByteToString(r.PostArgs().Peek("text"))
+	s.ResponseURL = util.ByteToString(r.PostArgs().Peek("response_url"))
+	s.TriggerID = util.ByteToString(r.PostArgs().Peek("trigger_id"))
+	s.APIAppID = util.ByteToString(r.PostArgs().Peek("api_app_id"))
 	return s, nil
 }
 

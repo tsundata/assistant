@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"io"
 	"net/http"
 	"time"
@@ -72,7 +72,7 @@ func (v *Dropbox) GetAccessToken(code string) (interface{}, error) {
 		v.accessToken = result.AccessToken
 		return &result, nil
 	} else {
-		return nil, fmt.Errorf("%d, %s", resp.StatusCode(), utils.ByteToString(resp.Body()))
+		return nil, fmt.Errorf("%d, %s", resp.StatusCode(), util.ByteToString(resp.Body()))
 	}
 }
 
@@ -125,7 +125,7 @@ func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) err
 		Name:  ID,
 		Type:  ID,
 		Token: v.accessToken,
-		Extra: utils.ByteToString(extra),
+		Extra: util.ByteToString(extra),
 	})
 	if err != nil {
 		return err
@@ -150,7 +150,7 @@ func (v *Dropbox) Upload(path string, content io.Reader) error {
 	resp, err := v.c.R().
 		SetAuthToken(v.accessToken).
 		SetHeader("Content-Type", "application/octet-stream").
-		SetHeader("Dropbox-API-Arg", utils.ByteToString(apiArg)).
+		SetHeader("Dropbox-API-Arg", util.ByteToString(apiArg)).
 		SetContentLength(true).
 		SetBody(content).
 		Post("https://content.dropboxapi.com/2/files/upload")
@@ -161,6 +161,6 @@ func (v *Dropbox) Upload(path string, content io.Reader) error {
 	if resp.StatusCode() == http.StatusOK {
 		return nil
 	} else {
-		return fmt.Errorf("%d, %s", resp.StatusCode(), utils.ByteToString(resp.Body()))
+		return fmt.Errorf("%d, %s", resp.StatusCode(), util.ByteToString(resp.Body()))
 	}
 }

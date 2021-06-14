@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
 
@@ -24,7 +24,7 @@ func NewWorkflowTask(bus *event.Bus, client *rpc.Client) *WorkflowTask {
 
 func (t *WorkflowTask) Run(data string) (bool, error) {
 	var args map[string]string
-	err := json.Unmarshal(utils.StringToByte(data), &args)
+	err := json.Unmarshal(util.StringToByte(data), &args)
 	if err != nil {
 		return false, err
 	}

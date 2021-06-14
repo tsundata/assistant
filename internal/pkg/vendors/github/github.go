@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
 	"time"
 )
@@ -390,7 +390,7 @@ func (v *Github) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) erro
 		Name:  ID,
 		Type:  ID,
 		Token: v.accessToken,
-		Extra: utils.ByteToString(extra),
+		Extra: util.ByteToString(extra),
 	})
 	if err != nil {
 		return err

@@ -8,7 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/valyala/fasthttp"
 	"log"
 )
@@ -38,7 +38,7 @@ func RegisterEventHandler(bus *event.Bus, config *config.AppConfig) error {
 			return
 		}
 
-		_ = utils.ByteToString(resp.Body())
+		_ = util.ByteToString(resp.Body())
 		fasthttp.ReleaseResponse(resp)
 	})
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"log"
 	"net/http"
 )
@@ -31,11 +31,11 @@ func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.
 
 func (s *Server) Start() error {
 	if s.conf.Http.Port == 0 {
-		s.conf.Http.Port = utils.GetAvailablePort()
+		s.conf.Http.Port = util.GetAvailablePort()
 	}
 
 	if s.conf.Http.Host == "" {
-		s.conf.Http.Host = utils.GetLocalIP4()
+		s.conf.Http.Host = util.GetLocalIP4()
 	}
 	if s.conf.Http.Host == "" {
 		return errors.New("get local ipv4 error")

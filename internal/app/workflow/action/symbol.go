@@ -2,7 +2,7 @@ package action
 
 import (
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"github.com/tsundata/assistant/internal/pkg/util/collection"
 	"strings"
 )
 

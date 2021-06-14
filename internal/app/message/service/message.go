@@ -13,7 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transports/http"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/valyala/fasthttp"
 	"strings"
 	"sync"
@@ -103,7 +103,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 
 	// parse type
 	message.Text = strings.TrimSpace(message.Text)
-	if utils.IsUrl(message.Text) {
+	if util.IsUrl(message.Text) {
 		message.Type = model.MessageTypeLink
 	}
 	if message.IsMessageOfAction() {
@@ -160,7 +160,7 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 		return nil, err
 	}
 
-	_ = utils.ByteToString(resp.Body())
+	_ = util.ByteToString(resp.Body())
 	fasthttp.ReleaseResponse(resp)
 
 	return &pb.StateReply{
@@ -231,7 +231,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// store message
-	uuid, err := utils.GenerateUUID()
+	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}

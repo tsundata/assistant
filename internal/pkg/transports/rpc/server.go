@@ -17,7 +17,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
-	"github.com/tsundata/assistant/internal/pkg/utils"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -87,11 +87,11 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 
 func (s *Server) Start() error {
 	if s.conf.Rpc.Port == 0 {
-		s.conf.Rpc.Port = utils.GetAvailablePort()
+		s.conf.Rpc.Port = util.GetAvailablePort()
 	}
 
 	if s.conf.Rpc.Host == "" {
-		s.conf.Rpc.Host = utils.GetLocalIP4()
+		s.conf.Rpc.Host = util.GetLocalIP4()
 	}
 	if s.conf.Rpc.Host == "" {
 		return errors.New("get local ipv4 error")

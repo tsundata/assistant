@@ -3,7 +3,7 @@ package opcode
 import (
 	"fmt"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/pkg/utils/collection"
+	"github.com/tsundata/assistant/internal/pkg/util/collection"
 	"reflect"
 	"strconv"
 )
