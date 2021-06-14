@@ -8,7 +8,7 @@ import (
 	recoverMiddleware "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"log"
 	"net/http"
 	"strings"

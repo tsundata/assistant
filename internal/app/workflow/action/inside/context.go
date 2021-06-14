@@ -2,7 +2,7 @@ package inside
 
 import (
 	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"sync"
 )
 

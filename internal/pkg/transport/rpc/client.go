@@ -7,7 +7,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/discovery"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"google.golang.org/grpc"
 	"os"
 	"time"

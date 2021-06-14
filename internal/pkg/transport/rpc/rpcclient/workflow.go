@@ -3,7 +3,7 @@ package rpcclient
 import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"sync"
 )
 

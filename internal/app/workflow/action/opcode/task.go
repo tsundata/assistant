@@ -6,7 +6,7 @@ import (
 	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
