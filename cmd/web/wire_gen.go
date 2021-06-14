@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/web"
-	"github.com/tsundata/assistant/internal/app/web/controllers"
+	"github.com/tsundata/assistant/internal/app/web/controller"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -37,8 +37,8 @@ func CreateApp() (*app.Application, error) {
 		return nil, err
 	}
 	gatewayClient := sdk.NewGatewayClient(appConfig)
-	webController := controllers.NewWebController(appConfig, redisClient, loggerLogger, gatewayClient)
-	v := controllers.CreateInitControllersFn(webController)
+	webController := controller.NewWebController(appConfig, redisClient, loggerLogger, gatewayClient)
+	v := controller.CreateInitControllersFn(webController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -56,4 +56,4 @@ func CreateApp() (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controllers.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet)
