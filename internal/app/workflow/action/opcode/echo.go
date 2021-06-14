@@ -1,11 +1,10 @@
 package opcode
 
 import (
-	"context"
 	"errors"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 type Echo struct{}
@@ -28,15 +27,15 @@ func (o *Echo) Run(ctx *inside.Context, params []interface{}) (interface{}, erro
 	}
 
 	if text, ok := params[0].(string); ok {
-		if ctx.Client == nil {
+		if ctx.Bus == nil {
 			return false, nil
 		}
-		state, err :=  rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: text})
+		err := ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: text})
 		if err != nil {
 			return false, err
 		}
-		ctx.SetValue(state.GetState())
-		return state.GetState(), nil
+		ctx.SetValue(true)
+		return true, nil
 	}
 	return false, nil
 }

@@ -1,12 +1,11 @@
 package opcode
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"reflect"
 )
@@ -26,7 +25,7 @@ func (o *Message) Doc() string {
 }
 
 func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	if ctx.Client == nil {
+	if ctx.Bus == nil {
 		return false, nil
 	}
 	if ctx.Value == nil {
@@ -60,10 +59,10 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 		return false, nil
 	}
 
-	state, err := rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: text})
+	err := ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: text})
 	if err != nil {
 		return false, err
 	}
-	ctx.SetValue(state.GetState())
-	return state.GetState(), nil
+	ctx.SetValue(true)
+	return true, nil
 }

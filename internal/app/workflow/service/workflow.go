@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -11,23 +10,22 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/util"
-	"strconv"
 	"strings"
 	"time"
 )
 
 type Workflow struct {
+	bus    *event.Bus
 	rdb    *redis.Client
 	repo   repository.WorkflowRepository
 	client *rpc.Client
 }
 
-func NewWorkflow(rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
-	return &Workflow{rdb: rdb, repo: repo, client: client}
+func NewWorkflow(bus *event.Bus, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
+	return &Workflow{bus: bus, rdb: rdb, repo: repo, client: client}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -77,7 +75,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.rdb, s.client)
+	i.SetClient(s.bus, s.rdb, s.client)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err
@@ -104,15 +102,10 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 		return nil, errors.New("error secret")
 	}
 
-	// push task
-	j, err := json.Marshal(map[string]string{
-		"type": trigger.Kind,
-		"id":   strconv.Itoa(trigger.MessageID),
+	// publish event
+	err = s.bus.Publish(event.RunWorkflowSubject, model.Message{
+		ID: trigger.MessageID,
 	})
-	if err != nil {
-		return nil, err
-	}
-	_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: util.ByteToString(j)})
 	if err != nil {
 		return nil, err
 	}
@@ -155,15 +148,8 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			// time
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
-			// push task
-			j, err := json.Marshal(map[string]string{
-				"type": trigger.Kind,
-				"id":   strconv.Itoa(trigger.MessageID),
-			})
-			if err != nil {
-				return nil, err
-			}
-			_, err = rpcclient.GetTaskClient(s.client).Send(ctx, &pb.JobRequest{Name: "run", Args: util.ByteToString(j)})
+			// publish event
+			err = s.bus.Publish(event.RunWorkflowSubject, model.Message{ID: trigger.MessageID})
 			if err != nil {
 				return nil, err
 			}
