@@ -1,4 +1,4 @@
-package components
+package component
 
 import "html/template"
 
