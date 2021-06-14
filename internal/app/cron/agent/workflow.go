@@ -9,7 +9,10 @@ import (
 	"log"
 )
 
-func WorkflowCron(b *rulebot.RuleBot) []result.Result {
+func WorkflowCron(b *rulebot.Context) []result.Result {
+	if b.Client == nil {
+		return []result.Result{result.EmptyResult()}
+	}
 	_, err := rpcclient.GetWorkflowClient(b.Client).CronTrigger(context.Background(), &pb.TriggerRequest{})
 	if err != nil {
 		log.Println(err)

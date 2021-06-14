@@ -5,6 +5,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
-func Done(_ *rulebot.RuleBot, _ result.Result) result.Result {
+func Done(_ *rulebot.Context, _ result.Result) result.Result {
 	return result.EmptyResult()
 }

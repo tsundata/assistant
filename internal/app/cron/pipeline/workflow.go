@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
-func Workflow(b *rulebot.RuleBot, r result.Result) {
+func Workflow(b *rulebot.Context, r result.Result) {
 	for {
 		switch r.Kind {
 		case result.Done:

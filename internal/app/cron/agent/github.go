@@ -10,7 +10,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func FetchGithubStarred(b *rulebot.RuleBot) []result.Result {
+func FetchGithubStarred(b *rulebot.Context) []result.Result {
+	if b.Client == nil {
+		return []result.Result{result.EmptyResult()}
+	}
 	// get access token
 	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {

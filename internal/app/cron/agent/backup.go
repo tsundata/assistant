@@ -14,7 +14,10 @@ import (
 	"time"
 )
 
-func Backup(b *rulebot.RuleBot) []result.Result {
+func Backup(b *rulebot.Context) []result.Result {
+	if b.Client == nil {
+		return []result.Result{result.EmptyResult()}
+	}
 	ctx := context.Background()
 	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
 	if err != nil {

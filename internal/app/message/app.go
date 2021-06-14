@@ -26,7 +26,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	}
 
 	// rule bot
-	bot := rulebot.New(c, nil, client, rule.Options...)
+	bot := rulebot.New(&rulebot.Context{Conf: c, Client: client}, rule.Options...)
 
 	// rpc service
 	s := service.NewManage(logger, bot, c, repo, client)

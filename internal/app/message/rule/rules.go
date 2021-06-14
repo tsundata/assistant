@@ -22,14 +22,17 @@ var rules = []Rule{
 	{
 		Regex:       `version`,
 		HelpMessage: `Version info`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
 			return []string{version.Info()}
 		},
 	},
 	{
 		Regex:       `menu`,
 		HelpMessage: `Show menu`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			reply, err := rpcclient.GetMiddleClient(b.Client).GetMenu(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
@@ -45,7 +48,10 @@ var rules = []Rule{
 	{
 		Regex:       `qr\s+(.*)`,
 		HelpMessage: `Generate QR code`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -66,7 +72,7 @@ var rules = []Rule{
 	{
 		Regex:       `ut\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -86,7 +92,7 @@ var rules = []Rule{
 	{
 		Regex:       `rand\s+(\d+)\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
 			if len(args) != 3 {
 				return []string{"error args"}
 			}
@@ -113,7 +119,7 @@ var rules = []Rule{
 	{
 		Regex:       `pwd\s+(\d+)`,
 		HelpMessage: `Generate Password`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -134,7 +140,10 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+list`,
 		HelpMessage: `List subscribe`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			reply, err := rpcclient.GetSubscribeClient(b.Client).List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
@@ -150,7 +159,10 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+open\s+(.*)`,
 		HelpMessage: `Open subscribe`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -171,7 +183,10 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+close\s+(.*)`,
 		HelpMessage: `Close subscribe`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -192,7 +207,10 @@ var rules = []Rule{
 	{
 		Regex:       `view\s+(\d+)`,
 		HelpMessage: `View message`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -212,7 +230,10 @@ var rules = []Rule{
 	{
 		Regex:       `run\s+(\d+)`,
 		HelpMessage: `Run message`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -233,7 +254,10 @@ var rules = []Rule{
 	{
 		Regex:       `doc`,
 		HelpMessage: `Show action docs`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			reply, err := rpcclient.GetWorkflowClient(b.Client).ActionDoc(context.Background(), &pb.WorkflowRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
@@ -244,7 +268,10 @@ var rules = []Rule{
 	{
 		Regex:       `test`,
 		HelpMessage: `Test`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			// upload
 			f, err := os.Open("./README.md")
 			if err != nil {
@@ -288,7 +315,10 @@ var rules = []Rule{
 	{
 		Regex:       `stats`,
 		HelpMessage: `Stats Info`,
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			reply, err := rpcclient.GetMiddleClient(b.Client).GetStats(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
@@ -299,7 +329,10 @@ var rules = []Rule{
 	{
 		Regex:       `todo\s+(.*)`,
 		HelpMessage: "Todo something",
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -318,7 +351,10 @@ var rules = []Rule{
 	{
 		Regex:       `role`,
 		HelpMessage: "Role info",
-		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
 			reply, err := rpcclient.GetUserClient(b.Client).GetRole(context.Background(), &pb.RoleRequest{Id: model.SuperUserID})
 			if err != nil {
 				return []string{"error call: " + err.Error()}

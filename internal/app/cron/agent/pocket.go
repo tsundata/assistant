@@ -10,7 +10,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
-func FetchPocket(b *rulebot.RuleBot) []result.Result {
+func FetchPocket(b *rulebot.Context) []result.Result {
+	if b.Client == nil {
+		return []result.Result{result.EmptyResult()}
+	}
 	// get consumer key
 	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
