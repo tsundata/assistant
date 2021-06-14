@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/web/components"
+	"github.com/tsundata/assistant/internal/app/web/component"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
@@ -79,7 +79,7 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	var items []components.Component
+	var items []component.Component
 
 	for _, item := range list {
 		re, _ := regexp.Compile(util.UrlRegex)
@@ -89,16 +89,16 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 		}
 		item = strings.ReplaceAll(item, "\n", "<br>")
 
-		items = append(items, &components.Text{
+		items = append(items, &component.Text{
 			Title: item,
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title: reply.GetTitle(),
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: reply.GetTitle(),
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -132,7 +132,7 @@ func (wc *WebController) Qr(c *fiber.Ctx) error {
 
 func (wc *WebController) Apps(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	var items []components.Component
+	var items []component.Component
 
 	reply, err := wc.gateway.GetApps()
 	if err != nil {
@@ -147,7 +147,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 			authStr = "Authorized"
 			authorizedURL = "javascript:void(0);"
 		}
-		items = append(items, &components.App{
+		items = append(items, &component.App{
 			Name: app.GetTitle(),
 			Icon: "rocket",
 			Text: fmt.Sprintf("%s (%s)", app.GetType(), authStr),
@@ -155,12 +155,12 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title:   "Apps",
 		UseIcon: true,
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Apps",
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -171,7 +171,7 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 }
 
 func (wc *WebController) Memo(c *fiber.Ctx) error {
-	var items []components.Component
+	var items []component.Component
 
 	reply, err := wc.gateway.GetMessages()
 	if err != nil {
@@ -203,19 +203,19 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 			text = buf.String()
 		}
 
-		items = append(items, &components.Memo{
+		items = append(items, &component.Memo{
 			Time: item.GetTime(),
-			Content: &components.Text{
+			Content: &component.Text{
 				Title: text,
 			},
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Memo",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Memo",
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -226,7 +226,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 }
 
 func (wc *WebController) Credentials(c *fiber.Ctx) error {
-	var items []components.Component
+	var items []component.Component
 
 	reply, err := wc.gateway.GetMaskingCredentials()
 	if err != nil {
@@ -235,22 +235,22 @@ func (wc *WebController) Credentials(c *fiber.Ctx) error {
 	}
 
 	for _, item := range reply.GetItems() {
-		items = append(items, &components.LinkButton{
+		items = append(items, &component.LinkButton{
 			Title: item.GetKey(),
 			Name:  item.GetValue(),
 			URL:   "javascript:void(0)",
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Credentials",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Credentials",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Add Credentials",
 				URL:   fmt.Sprintf("/credentials/%s/create", c.Params("uuid")),
 			},
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -270,26 +270,26 @@ func (wc *WebController) CredentialsCreate(c *fiber.Ctx) error {
 		selectOption[k] = strings.Title(k)
 	}
 
-	var items []components.Component
-	items = append(items, &components.Input{
+	var items []component.Component
+	items = append(items, &component.Input{
 		Name:  "name",
 		Title: "Name",
 		Type:  "text",
 	})
-	items = append(items, &components.Select{
+	items = append(items, &component.Select{
 		Name:  "type",
 		Title: "Type",
 		Value: selectOption,
 	})
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Create Credentials",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Create Credentials",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Go Back",
 				URL:   fmt.Sprintf("/credentials/%s", uuid),
 			},
-			Content: &components.Form{
+			Content: &component.Form{
 				Action: fmt.Sprintf("/credentials/%s/store", uuid),
 				Method: "POST",
 				Inputs: items,
@@ -338,7 +338,7 @@ func (wc *WebController) CredentialsStore(c *fiber.Ctx) error {
 }
 
 func (wc *WebController) Setting(c *fiber.Ctx) error {
-	var items []components.Component
+	var items []component.Component
 
 	reply, err := wc.gateway.GetSettings()
 	if err != nil {
@@ -347,20 +347,20 @@ func (wc *WebController) Setting(c *fiber.Ctx) error {
 	}
 
 	for _, item := range reply.GetItems() {
-		items = append(items, &components.Text{
+		items = append(items, &component.Text{
 			Title: fmt.Sprintf("%s: %s", item.GetKey(), item.GetValue()),
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Setting",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Setting",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Add Setting",
 				URL:   fmt.Sprintf("/setting/%s/create", c.Params("uuid")),
 			},
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -372,26 +372,26 @@ func (wc *WebController) Setting(c *fiber.Ctx) error {
 
 func (wc *WebController) SettingCreate(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	var items []components.Component
-	items = append(items, &components.Input{
+	var items []component.Component
+	items = append(items, &component.Input{
 		Name:  "key",
 		Title: "Key",
 		Type:  "text",
 	})
-	items = append(items, &components.Input{
+	items = append(items, &component.Input{
 		Name:  "value",
 		Title: "Value",
 		Type:  "text",
 	})
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Create Setting",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Create Setting",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Go Back",
 				URL:   fmt.Sprintf("/setting/%s", uuid),
 			},
-			Content: &components.Form{
+			Content: &component.Form{
 				Action: fmt.Sprintf("/setting/%s/store", uuid),
 				Method: "POST",
 				Inputs: items,
@@ -421,7 +421,7 @@ func (wc *WebController) SettingStore(c *fiber.Ctx) error {
 
 func (wc *WebController) Action(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	var items []components.Component
+	var items []component.Component
 
 	reply, err := wc.gateway.GetActionMessages()
 	if err != nil {
@@ -430,22 +430,22 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 	}
 
 	for _, item := range reply.GetItems() {
-		items = append(items, &components.Action{
+		items = append(items, &component.Action{
 			ID:      int(item.GetId()),
 			UUID:    uuid,
 			Content: item.GetText(),
 		})
 	}
 
-	comp := components.Html{
+	comp := component.Html{
 		Title: "Action",
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Action",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Add Action",
 				URL:   fmt.Sprintf("/action/%s/create", c.Params("uuid")),
 			},
-			Content: &components.List{
+			Content: &component.List{
 				Items: items,
 			},
 		},
@@ -457,20 +457,20 @@ func (wc *WebController) Action(c *fiber.Ctx) error {
 
 func (wc *WebController) ActionCreate(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	var items []components.Component
-	items = append(items, &components.CodeEditor{
+	var items []component.Component
+	items = append(items, &component.CodeEditor{
 		Name: "action",
 	})
-	comp := components.Html{
+	comp := component.Html{
 		Title:         "Create Action",
 		UseCodeEditor: true,
-		Page: &components.Page{
+		Page: &component.Page{
 			Title: "Create Action",
-			Action: &components.Link{
+			Action: &component.Link{
 				Title: "Go Back",
 				URL:   fmt.Sprintf("/action/%s", uuid),
 			},
-			Content: &components.Form{
+			Content: &component.Form{
 				Action: fmt.Sprintf("/action/%s/store", uuid),
 				Method: "POST",
 				Inputs: items,
