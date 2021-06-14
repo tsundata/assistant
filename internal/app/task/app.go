@@ -33,10 +33,8 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	// worker
 	go func() {
 		workflowTask := work.NewWorkflowTask(bus, client)
-		echoTask := work.NewEchoTask(bus, client)
 		err = q.RegisterTasks(map[string]interface{}{
 			"run":  workflowTask.Run,
-			"echo": echoTask.Echo,
 		})
 		if err != nil {
 			logger.Error(err)

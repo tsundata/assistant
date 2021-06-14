@@ -8,11 +8,13 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -32,6 +34,8 @@ var providerSet = wire.NewSet(
 	rollbar.ProviderSet,
 	repository.ProviderSet,
 	consul.ProviderSet,
+	event.ProviderSet,
+	nats.ProviderSet,
 )
 
 func CreateApp() (*app.Application, error) {
