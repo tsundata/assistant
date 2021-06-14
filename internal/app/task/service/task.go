@@ -16,6 +16,7 @@ func NewTask(server *machinery.Server) *Task {
 	return &Task{server: server}
 }
 
+// Fixme remove
 func (s *Task) Send(ctx context.Context, payload *pb.JobRequest) (*pb.StateReply, error) {
 	task := tasks.Signature{
 		Name: payload.GetName(),

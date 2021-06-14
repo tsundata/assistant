@@ -1,14 +1,10 @@
 package opcode
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
-	"github.com/tsundata/assistant/internal/pkg/util"
-	"strconv"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 type Task struct{}
@@ -30,27 +26,16 @@ func (o *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, erro
 		return false, errors.New("error params")
 	}
 
-	if ctx.Client == nil {
+	if ctx.Bus == nil {
 		return false, errors.New("error client")
 	}
 
 	if id, ok := params[0].(int64); ok {
-		reply, err := rpcclient.GetMessageClient(ctx.Client).Get(context.Background(), &pb.MessageRequest{Id: id})
+		err := ctx.Bus.Publish(event.RunWorkflowSubject, model.Message{ID: int(id)})
 		if err != nil {
 			return false, err
 		}
 
-		j, err := json.Marshal(map[string]string{
-			"type": reply.GetType(),
-			"id":   strconv.FormatInt(id, 10),
-		})
-		if err != nil {
-			return false, err
-		}
-		_, err = rpcclient.GetTaskClient(ctx.Client).Send(context.Background(), &pb.JobRequest{Name: "run", Args: util.ByteToString(j)})
-		if err != nil {
-			return false, err
-		}
 		return true, nil
 	}
 

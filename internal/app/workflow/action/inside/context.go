@@ -2,6 +2,7 @@ package inside
 
 import (
 	"github.com/go-redis/redis/v8"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"sync"
 )
@@ -16,6 +17,7 @@ type Context struct {
 
 	RDB    *redis.Client
 	Client *rpc.Client
+	Bus    *event.Bus
 }
 
 func NewContext() *Context {

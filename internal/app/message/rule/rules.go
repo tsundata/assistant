@@ -245,15 +245,6 @@ var rules = []Rule{
 		Regex:       `test`,
 		HelpMessage: `Test`,
 		ParseMessage: func(b *rulebot.RuleBot, s string, args []string) []string {
-			// task
-			_, err := rpcclient.GetTaskClient(b.Client).Send(context.Background(), &pb.JobRequest{
-				Name: "echo",
-				Args: time.Now().String(),
-			})
-			if err != nil {
-				return []string{"error: " + err.Error()}
-			}
-
 			// upload
 			f, err := os.Open("./README.md")
 			if err != nil {

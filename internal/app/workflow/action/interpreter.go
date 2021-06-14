@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"log"
@@ -24,7 +25,8 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(rdb *redis.Client, client *rpc.Client) {
+func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, client *rpc.Client) {
+	i.Ctx.Bus = bus
 	i.Ctx.RDB = rdb
 	i.Ctx.Client = client
 }

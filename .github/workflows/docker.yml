@@ -162,18 +162,6 @@ jobs:
             ghcr.io/${{ secrets.IMAGE_USER }}/web:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/web:${{ steps.meta.outputs.tag }}
 
-      - name: Build and push worker
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/worker/Dockerfile
-          tags: |
-            ${{ secrets.IMAGE_USER }}/worker:latest
-            ${{ secrets.IMAGE_USER }}/worker:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/worker:latest
-            ghcr.io/${{ secrets.IMAGE_USER }}/worker:${{ steps.meta.outputs.tag }}
-
       - name: Build and push workflow
         uses: docker/build-push-action@v2
         with:
