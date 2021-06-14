@@ -8,8 +8,8 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"log"
 	"strings"
 )

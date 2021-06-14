@@ -2,7 +2,7 @@ package ctx
 
 import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
 type Context struct {

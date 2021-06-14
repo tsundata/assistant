@@ -8,7 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transports/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
 func NewApp(c *config.AppConfig, logger *logger.Logger, rdb *redis.Client, client *rpc.Client) (*app.Application, error) {
