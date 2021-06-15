@@ -51,7 +51,7 @@ services:
     image: consul:1.9.3
     volumes:
       - ./tmp/consul/data1:/data
-    command: agent -server -ui -client=0.0.0.0 -node=consul-server1 -bind=0.0.0.0 -datacenter=dc1 -bootstrap-expect=3 -data-dir=/data
+    command: agent -server -client=0.0.0.0 -node=consul-server1 -bind=0.0.0.0 -datacenter=dc1 -bootstrap-expect=3 -data-dir=/data
 
   consul-server2:
     image: consul:1.9.3
