@@ -29,7 +29,7 @@ var providerSet = wire.NewSet(
 	jaeger.ProviderSet,
 	influx.ProviderSet,
 	redis.ProviderSet,
-	finance.ProviderSet,
+	todo.ProviderSet,
 	mysql.ProviderSet,
 	rollbar.ProviderSet,
 	consul.ProviderSet,

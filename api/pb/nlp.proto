@@ -1,0 +1,15 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service NLP {
+  rpc Pinyin(TextRequest) returns (WordsReply) {}
+  rpc Segmentation(TextRequest) returns (WordsReply) {}
+}
+
+message WordsReply {
+  repeated string text = 1;
+}
