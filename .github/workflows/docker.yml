@@ -209,3 +209,15 @@ jobs:
             ${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
             ghcr.io/${{ secrets.IMAGE_USER }}/finance:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
+
+      - name: Build and push nlp
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: build/nlp/Dockerfile
+          tags: |
+            ${{ secrets.IMAGE_USER }}/nlp:latest
+            ${{ secrets.IMAGE_USER }}/nlp:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/nlp:latest
+            ghcr.io/${{ secrets.IMAGE_USER }}/nlp:${{ steps.meta.outputs.tag }}
