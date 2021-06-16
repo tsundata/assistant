@@ -1,6 +1,7 @@
 package nlp
 
 import (
+	"github.com/go-ego/gse"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/nlp/service"
@@ -12,8 +13,11 @@ import (
 )
 
 func NewApp(c *config.AppConfig, logger *logger.Logger, rs *rpc.Server) (*app.Application, error) {
+	// gse preload dict
+	seg := gse.New("zh", "alpha")
+
 	// service
-	s := service.NewNLP()
+	s := service.NewNLP(&seg)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterNLPServer(gs, s)
 		return nil
