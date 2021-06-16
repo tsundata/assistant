@@ -15,6 +15,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -363,6 +364,26 @@ var rules = []Rule{
 				return []string{"failed"}
 			}
 			return []string{fmt.Sprintf("%+v", reply.GetRole())}
+		},
+	},
+	{
+		Regex:       `pinyin\s+(.*)`,
+		HelpMessage: "chinese pinyin conversion",
+		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+			if b.Client == nil {
+				return []string{"empty client"}
+			}
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+			reply, err := rpcclient.GetNLPClient(b.Client).Pinyin(context.Background(), &pb.TextRequest{Text: args[1]})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if len(reply.GetText()) <= 0 {
+				return []string{"failed"}
+			}
+			return []string{strings.Join(reply.GetText(), ", ")}
 		},
 	},
 }
