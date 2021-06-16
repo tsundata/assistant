@@ -19,6 +19,7 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.4.0
 	github.com/jmoiron/sqlx v1.3.4
+	github.com/mozillazg/go-pinyin v0.18.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
 	github.com/opentracing/opentracing-go v1.2.0
