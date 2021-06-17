@@ -16,7 +16,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	appConfig := config.NewConfig(c)
+	appConfig := config.NewConfig(app.ServerAgent, c)
 
 	r := rollbar.New(appConfig)
 

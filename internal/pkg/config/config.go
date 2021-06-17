@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gopkg.in/yaml.v2"
-	"os"
 	"strings"
 )
 
@@ -35,27 +34,37 @@ type AppConfig struct {
 	Telegram Telegram `json:"telegram"`
 }
 
-func NewConfig(consul *api.Client) *AppConfig {
+func NewConfig(id string, consul *api.Client) *AppConfig {
 	kv := consul.KV()
-	configNamespace := os.Getenv("CONFIG_NAMESPACE")
-	if configNamespace == "" {
-		panic("config namespace error")
-	}
-	pair, _, err := kv.Get(fmt.Sprintf("config/%s", configNamespace), nil)
+	var xc AppConfig
+	xc.kv = kv
+	xc.Name = id
+
+	// common
+	pair, _, err := kv.Get("config/common", nil)
 	if err != nil {
 		panic(err)
 	}
-
-	// Watch todo
-
-	var xc AppConfig
 	err = yaml.Unmarshal(pair.Value, &xc)
 	if err != nil {
 		panic(err)
 	}
-	xc.kv = kv
+
+	// app
+	pair, _, err = kv.Get(fmt.Sprintf("config/%s", id), nil)
+	if err != nil {
+		panic(err)
+	}
+	err = yaml.Unmarshal(pair.Value, &xc)
+	if err != nil {
+		panic(err)
+	}
 
 	return &xc
+}
+
+func (c *AppConfig) Watch() {
+	// todo
 }
 
 func (c *AppConfig) GetConfig(key string) (string, error) {

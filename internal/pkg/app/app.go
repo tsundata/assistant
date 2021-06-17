@@ -11,6 +11,26 @@ import (
 	"syscall"
 )
 
+const (
+	Message   = "message"
+	Gateway   = "gateway"
+	Cron      = "cron"
+	Finance   = "finance"
+	Middle    = "middle"
+	NLP       = "nlp"
+	Spider    = "spider"
+	Storage   = "storage"
+	Subscribe = "subscribe"
+	Task      = "task"
+	Todo      = "todo"
+	User      = "user"
+	Web       = "web"
+	Workflow  = "workflow"
+
+	RedisAgent  = "redis_agent"
+	ServerAgent = "server_agent"
+)
+
 type Application struct {
 	name       string
 	logger     *logger.Logger

@@ -19,7 +19,3 @@
 ## CONSUL_TOKEN
 
 > consul server auth token
-
-## CONFIG_NAMESPACE
-
-> config namespace
