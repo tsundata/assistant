@@ -42,6 +42,6 @@ func (t *Token) String() string {
 }
 
 var ReservedKeywords = map[string]Token{
-	"TRUE":    {Type: TokenTrue, Value: true},
-	"FALSE":   {Type: TokenFalse, Value: false},
+	"TRUE":  {Type: TokenTrue, Value: true},
+	"FALSE": {Type: TokenFalse, Value: false},
 }
