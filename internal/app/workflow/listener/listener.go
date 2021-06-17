@@ -21,7 +21,8 @@ func RegisterEventHandler(bus *event.Bus, client *rpc.Client, logger *logger.Log
 			return
 		}
 
-		reply, err := rpcclient.GetMessageClient(client).Get(context.Background(), &pb.MessageRequest{Id: int64(message.ID)})
+		ctx := context.Background()
+		reply, err := rpcclient.GetMessageClient(client).Get(ctx, &pb.MessageRequest{Id: int64(message.ID)})
 		if err != nil {
 			logger.Error(err)
 			return
@@ -29,7 +30,7 @@ func RegisterEventHandler(bus *event.Bus, client *rpc.Client, logger *logger.Log
 
 		switch reply.GetType() {
 		case model.MessageTypeAction:
-			_, err := rpcclient.GetWorkflowClient(client).RunAction(context.Background(), &pb.WorkflowRequest{Text: reply.GetText()})
+			_, err := rpcclient.GetWorkflowClient(client).RunAction(ctx, &pb.WorkflowRequest{Text: reply.GetText()})
 			if err != nil {
 				logger.Error(err)
 				return
