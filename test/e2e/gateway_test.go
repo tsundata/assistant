@@ -20,6 +20,22 @@ func TestIndex(t *testing.T) {
 		Status(http.StatusOK).Text().Contains("Gateway")
 }
 
+func TestTestCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`test`)).
+		Expect().
+		Status(http.StatusOK)
+}
+
+func TestMessageCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`hello world`)).
+		Expect().
+		Status(http.StatusOK)
+}
+
 func TestHelpCommand(t *testing.T) {
 	e := httpexpect.New(t, GatewayBaseURL)
 	e.POST("/debug/event").
@@ -102,7 +118,27 @@ func TestSubsCloseCommand(t *testing.T) {
 }
 
 func TestViewCommand(t *testing.T) {
-	// todo
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`view 1`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("no message")
+}
+
+func TestRunCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`run 1`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("no message")
+}
+
+func TestDocCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`doc`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("no message")
 }
 
 func TestAuth(t *testing.T) {
