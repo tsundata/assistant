@@ -25,11 +25,6 @@ type Gateway struct {
 	Url string `json:"url" yaml:"url"`
 }
 
-// Plugin spider config
-type Plugin struct {
-	Path string `json:"path" yaml:"path"`
-}
-
 // Storage config
 type Storage struct {
 	Path string `json:"path" yaml:"path"`

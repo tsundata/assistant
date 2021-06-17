@@ -10,15 +10,14 @@ import (
 	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -28,6 +27,7 @@ type Crawler struct {
 	outCh chan rule.Result
 	jobs  map[string]rule.Rule
 
+	c      *config.AppConfig
 	rdb    *redis.Client
 	logger *logger.Logger
 	client *rpc.Client
@@ -40,32 +40,25 @@ func New() *Crawler {
 	}
 }
 
-func (s *Crawler) SetService(rdb *redis.Client, logger *logger.Logger, client *rpc.Client) {
+func (s *Crawler) SetService(c *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) {
+	s.c = c
 	s.rdb = rdb
 	s.logger = logger
 	s.client = client
 }
 
-func (s *Crawler) LoadRule(p string) error {
+func (s *Crawler) LoadRule() error {
+	data, err := s.c.GetConfig(fmt.Sprintf("%s/rules", app.Spider))
+	if err != nil {
+		return err
+	}
+
+	ruleYMLs := strings.Split(data, "---")
+
 	ctx := context.Background()
-	return filepath.Walk(p, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			return nil
-		}
-		if ext := filepath.Ext(path); ext != ".yml" && ext != ".yaml" {
-			return nil
-		}
-
-		data, err := ioutil.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
+	for _, ruleYML := range ruleYMLs {
 		var r rule.Rule
-		err = yaml.Unmarshal(data, &r)
+		err = yaml.Unmarshal(util.StringToByte(ruleYML), &r)
 		if err != nil {
 			return err
 		}
@@ -91,7 +84,8 @@ func (s *Crawler) LoadRule(p string) error {
 		s.jobs[r.Name] = r
 
 		return nil
-	})
+	}
+	return nil
 }
 
 func (s *Crawler) Daemon() {

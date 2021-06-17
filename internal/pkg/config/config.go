@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gopkg.in/yaml.v2"
+	"log"
 	"strings"
 )
 
@@ -19,7 +20,6 @@ type AppConfig struct {
 	Rpc     Rpc     `json:"rpc"`
 	Web     Web     `json:"web"`
 	Gateway Gateway `json:"gateway"`
-	Plugin  Plugin  `json:"plugin"`
 	Storage Storage `json:"storage"`
 
 	Mysql    Mysql    `json:"mysql"`
@@ -55,9 +55,11 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 	if err != nil {
 		panic(err)
 	}
-	err = yaml.Unmarshal(pair.Value, &xc)
-	if err != nil {
-		panic(err)
+	if pair != nil {
+		err = yaml.Unmarshal(pair.Value, &xc)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	return &xc

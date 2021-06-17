@@ -16,8 +16,8 @@ func NewApp(c *config.AppConfig, rdb *redis.Client, logger *logger.Logger, clien
 		// Delayed loading
 		time.Sleep(10 * time.Second)
 		s := crawler.New()
-		s.SetService(rdb, logger, client)
-		err := s.LoadRule(c.Plugin.Path)
+		s.SetService(c, rdb, logger, client)
+		err := s.LoadRule()
 		if err != nil {
 			logger.Error(err)
 			return
