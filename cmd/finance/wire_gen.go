@@ -23,12 +23,12 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp() (*app.Application, error) {
+func CreateApp(id string) (*app.Application, error) {
 	client, err := consul.New()
 	if err != nil {
 		return nil, err
 	}
-	appConfig := config.NewConfig(client)
+	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)

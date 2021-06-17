@@ -1,0 +1,30 @@
+influx:
+  token:
+  org:
+  bucket:
+  url:
+mysql:
+  url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
+redis:
+  addr: 127.0.0.1:6379
+  password:
+slack:
+  webhook:
+jaeger:
+  reporter:
+    localAgentHostPort: "127.0.0.1:6831"
+  sampler:
+    type: const
+    param: 1
+rollbar:
+  token:
+  environment: # production development
+nats:
+  url: nats://localhost:4222
+storage:
+  path: /upload
+
+web:
+  url: http://127.0.0.1:7000
+gateway:
+  url: http://127.0.0.1:5000

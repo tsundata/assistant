@@ -2,22 +2,3 @@ http:
     mode: release
     host: 127.0.0.1
     port: 5000
-redis:
-    addr: 127.0.0.1:6379
-    password:
-jaeger:
-  serviceName: gateway
-  reporter:
-    localAgentHostPort: "127.0.0.1:6831"
-  sampler:
-    type: const
-    param: 1
-slack:
-    token:
-    verification:
-    signing:
-telegram:
-    token:
-rollbar:
-    token:
-    environment: # production development

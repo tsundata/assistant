@@ -1,7 +1,9 @@
 package main
 
+import "github.com/tsundata/assistant/internal/pkg/app"
+
 func main() {
-	a, err := CreateApp()
+	a, err := CreateApp(app.User)
 	if err != nil {
 		panic(err)
 	}

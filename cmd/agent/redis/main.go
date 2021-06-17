@@ -17,7 +17,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	appConfig := config.NewConfig(c)
+	appConfig := config.NewConfig(app.RedisAgent, c)
 
 	r := rollbar.New(appConfig)
 

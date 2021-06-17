@@ -36,6 +36,6 @@ var providerSet = wire.NewSet(
 	consul.ProviderSet,
 )
 
-func CreateApp() (*app.Application, error) {
+func CreateApp(id string) (*app.Application, error) {
 	panic(wire.Build(providerSet))
 }

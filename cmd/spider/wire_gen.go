@@ -22,12 +22,12 @@ import (
 
 // Injectors from wire.go:
 
-func CreateApp() (*app.Application, error) {
+func CreateApp(id string) (*app.Application, error) {
 	client, err := consul.New()
 	if err != nil {
 		return nil, err
 	}
-	appConfig := config.NewConfig(client)
+	appConfig := config.NewConfig(id, client)
 	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err

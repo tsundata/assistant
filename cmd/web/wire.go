@@ -34,6 +34,6 @@ var providerSet = wire.NewSet(
 	sdk.ProviderSet,
 )
 
-func CreateApp() (*app.Application, error) {
+func CreateApp(id string) (*app.Application, error) {
 	panic(wire.Build(providerSet))
 }
