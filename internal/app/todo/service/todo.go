@@ -5,18 +5,19 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"log"
 	"time"
 )
 
 type Todo struct {
-	repo repository.TodoRepository
-	bus  *event.Bus
+	repo   repository.TodoRepository
+	bus    *event.Bus
+	logger *logger.Logger
 }
 
-func NewTodo(bus *event.Bus, repo repository.TodoRepository) *Todo {
-	return &Todo{bus: bus, repo: repo}
+func NewTodo(bus *event.Bus, logger *logger.Logger, repo repository.TodoRepository) *Todo {
+	return &Todo{bus: bus, repo: repo, logger: logger}
 }
 
 func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
@@ -39,7 +40,8 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 
 	err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoExp})
 	if err != nil {
-		log.Println(err)
+		s.logger.Error(err)
+		return nil, err
 	}
 
 	return &pb.StateReply{State: true}, nil

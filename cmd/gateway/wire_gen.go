@@ -59,7 +59,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(appConfig, v, influxdb2Client)
+	server, err := http.New(appConfig, v, influxdb2Client, loggerLogger)
 	if err != nil {
 		return nil, err
 	}

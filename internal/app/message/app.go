@@ -20,13 +20,13 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	repo repository.MessageRepository, client *rpc.Client) (*app.Application, error) {
 
 	// event bus register
-	err := listener.RegisterEventHandler(bus, c)
+	err := listener.RegisterEventHandler(bus, c, logger)
 	if err != nil {
 		return nil, err
 	}
 
 	// rule bot
-	bot := rulebot.New(&rulebot.Context{Conf: c, Client: client}, rule.Options...)
+	bot := rulebot.New(&rulebot.Context{Conf: c, Client: client, Logger: logger}, rule.Options...)
 
 	// rpc service
 	s := service.NewManage(logger, bot, c, repo, client)

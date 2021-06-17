@@ -1,11 +1,11 @@
 package logger
 
 import (
+	"fmt"
 	"github.com/google/wire"
 	"github.com/rollbar/rollbar-go"
 	rb "github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
-	"log"
 )
 
 type Logger struct {
@@ -17,7 +17,7 @@ func NewLogger(r *rb.Rollbar) *Logger {
 
 	logger, err := zap.NewProduction()
 	if err != nil {
-		log.Fatalf("can't initialize logger: %v", err)
+		fmt.Printf("can't initialize logger: %v\n", err)
 	}
 	defer func() { _ = logger.Sync() }()
 	return &Logger{Zap: logger}

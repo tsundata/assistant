@@ -9,7 +9,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -19,7 +18,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 	requestHandler := func(router fiber.Router) {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Println("recover", err)
+				gc.logger.Error(err.(error))
 			}
 		}()
 

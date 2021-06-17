@@ -15,7 +15,7 @@ import (
 
 func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server, repo repository.TodoRepository) (*app.Application, error) {
 	// service
-	s := service.NewTodo(bus, repo)
+	s := service.NewTodo(bus, logger, repo)
 	err := rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterTodoServer(gs, s)
 		return nil

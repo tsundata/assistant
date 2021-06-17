@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gopkg.in/yaml.v2"
-	"log"
 	"strings"
 )
 
@@ -58,7 +57,7 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 	if pair != nil {
 		err = yaml.Unmarshal(pair.Value, &xc)
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 	}
 

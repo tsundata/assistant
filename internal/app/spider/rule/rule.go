@@ -2,7 +2,6 @@ package rule
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -40,7 +39,6 @@ func (r Rule) Run() []string {
 			f := ParseFun(s, r.Page.Item[k])
 			v, err := f.Invoke()
 			if err != nil {
-				log.Println(err)
 				continue
 			}
 			v = strings.TrimSpace(v)

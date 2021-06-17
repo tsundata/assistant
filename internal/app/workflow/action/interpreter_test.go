@@ -1,7 +1,7 @@
 package action
 
 import (
-	"log"
+	"fmt"
 	"testing"
 )
 
@@ -22,7 +22,7 @@ func run(t *testing.T, text string) {
 		t.Fatal(err)
 	}
 	if Debug {
-		log.Println(symbolTable.CurrentScope)
+		fmt.Println(symbolTable.CurrentScope)
 	}
 
 	i := NewInterpreter(tree)

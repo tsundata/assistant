@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"log"
 	"strings"
 )
 
@@ -14,6 +14,7 @@ type Context struct {
 	Conf   *config.AppConfig
 	RDB    *redis.Client
 	Client *rpc.Client
+	Logger *logger.Logger
 }
 
 type RuleBot struct {
@@ -42,7 +43,7 @@ func (s *RuleBot) Name() string {
 }
 
 func (s *RuleBot) Process(in string) *RuleBot {
-	log.Println("plugin process event")
+	s.Ctx.Logger.Info("plugin process event")
 
 	s.providerIn = in
 	s.providerOut = []string{}
@@ -57,7 +58,7 @@ func (s *RuleBot) Process(in string) *RuleBot {
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("panic recovered when parsing message: %#v. Panic: %v", in, r)
+			s.Ctx.Logger.Error(fmt.Errorf("panic recovered when parsing message: %#v. Panic: %v", in, r))
 		}
 	}()
 	for _, rule := range s.rules {
@@ -82,7 +83,7 @@ type RuleParser interface {
 
 func RegisterRuleset(rule RuleParser) Option {
 	return func(s *RuleBot) {
-		log.Printf("registering ruleset %T", rule)
+		s.Ctx.Logger.Info(fmt.Sprintf("registering ruleset %T", rule))
 		rule.Boot(s)
 		s.rules = append(s.rules, rule)
 	}

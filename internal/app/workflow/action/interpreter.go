@@ -9,9 +9,9 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
-	"log"
 	"strings"
 )
 
@@ -25,10 +25,11 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, client *rpc.Client) {
+func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, client *rpc.Client, logger *logger.Logger) {
 	i.Ctx.Bus = bus
 	i.Ctx.RDB = rdb
 	i.Ctx.Client = client
+	i.Ctx.Logger = logger
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -103,7 +104,7 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	res, err := op.Run(i.Ctx, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
-		log.Println(err)
+		i.Ctx.Logger.Error(err)
 		return -1
 	}
 	debugLog(fmt.Sprintf("result: %+v\n", res))
@@ -131,7 +132,7 @@ func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
 	if i.Ctx.Client != nil {
 		reply, err := rpcclient.GetMessageClient(i.Ctx.Client).Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
 		if err != nil {
-			log.Println(err)
+			i.Ctx.Logger.Error(err)
 			return ""
 		}
 		return reply.GetText()
