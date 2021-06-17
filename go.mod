@@ -35,7 +35,7 @@ require (
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.26.0
-	github.com/yuin/goldmark v1.3.7
+	github.com/yuin/goldmark v1.3.8
 	go.uber.org/zap v1.17.0
 	google.golang.org/grpc v1.37.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
