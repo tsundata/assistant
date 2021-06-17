@@ -60,18 +60,19 @@ func (s *Crawler) LoadRule() error {
 		var r rule.Rule
 		err = yaml.Unmarshal(util.StringToByte(ruleYML), &r)
 		if err != nil {
-			return err
+			s.logger.Error(err)
+			continue
 		}
 
 		// check
 		if r.Name == "" {
-			return nil
+			continue
 		}
 		if r.When == "" {
-			return nil
+			continue
 		}
 		if !util.IsUrl(r.Page.URL) {
-			return nil
+			continue
 		}
 
 		// register
@@ -79,11 +80,10 @@ func (s *Crawler) LoadRule() error {
 			Text: r.Name,
 		})
 		if err != nil {
-			return err
+			s.logger.Error(err)
+			continue
 		}
 		s.jobs[r.Name] = r
-
-		return nil
 	}
 	return nil
 }
