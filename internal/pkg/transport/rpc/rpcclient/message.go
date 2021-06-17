@@ -3,6 +3,7 @@ package rpcclient
 import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"sync"
 )
@@ -14,7 +15,7 @@ var (
 
 func GetMessageClient(client *rpc.Client) pb.MessageClient {
 	messageOnce.Do(func() {
-		conn, err := client.Dial("message")
+		conn, err := client.Dial(app.Message)
 		if err != nil {
 			fmt.Println(err)
 			return

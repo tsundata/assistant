@@ -3,6 +3,7 @@ package rpcclient
 import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"sync"
 )
@@ -14,7 +15,7 @@ var (
 
 func GetNLPClient(client *rpc.Client) pb.NLPClient {
 	nlpOnce.Do(func() {
-		conn, err := client.Dial("nlp")
+		conn, err := client.Dial(app.NLP)
 		if err != nil {
 			fmt.Println(err)
 			return
