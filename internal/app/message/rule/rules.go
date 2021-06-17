@@ -224,6 +224,10 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
+			if messageReply.Id == 0 {
+				return []string{"no message"}
+			}
+
 			return []string{messageReply.GetText()}
 		},
 	},

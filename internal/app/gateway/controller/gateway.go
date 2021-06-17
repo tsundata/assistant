@@ -196,7 +196,10 @@ func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(reply)
+	if !reply.GetState() {
+		return c.SendStatus(http.StatusUnauthorized)
+	}
+	return c.SendStatus(http.StatusOK)
 }
 
 func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
