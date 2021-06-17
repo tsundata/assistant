@@ -9,7 +9,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"log"
 	"time"
 )
 
@@ -52,11 +51,11 @@ func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ string) []string {
 }
 
 func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
-	log.Println("cron starting...")
+	b.Ctx.Logger.Info("cron starting...")
 
 	// process cron
 	for rule := range r.cronRules {
-		log.Println("cron " + r.cronRules[rule].Name + ": start...")
+		b.Ctx.Logger.Info("cron " + r.cronRules[rule].Name + ": start...")
 		go r.ruleWorker(b, r.cronRules[rule])
 	}
 
@@ -68,12 +67,12 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 	p, err := cron.ParseUTC(rule.When)
 	if err != nil {
-		log.Println(err)
+		b.Ctx.Logger.Error(err)
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		log.Println(err)
+		b.Ctx.Logger.Error(err)
 		return
 	}
 	for {
@@ -81,9 +80,9 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 			msgs := func() []result.Result {
 				defer func() {
 					if r := recover(); r != nil {
-						log.Println("ruleWorker recover ", rule.Name)
+						b.Ctx.Logger.Info("ruleWorker recover " + rule.Name)
 						if v, ok := r.(error); ok {
-							log.Println(v)
+							b.Ctx.Logger.Error(v)
 						}
 					}
 				}()
@@ -97,7 +96,7 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			log.Println(err)
+			b.Ctx.Logger.Error(err)
 			continue
 		}
 		time.Sleep(2 * time.Second)

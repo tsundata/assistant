@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"strings"
@@ -22,10 +23,11 @@ type Workflow struct {
 	rdb    *redis.Client
 	repo   repository.WorkflowRepository
 	client *rpc.Client
+	logger *logger.Logger
 }
 
-func NewWorkflow(bus *event.Bus, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client) *Workflow {
-	return &Workflow{bus: bus, rdb: rdb, repo: repo, client: client}
+func NewWorkflow(bus *event.Bus, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client, logger *logger.Logger) *Workflow {
+	return &Workflow{bus: bus, rdb: rdb, repo: repo, client: client, logger: logger}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -75,7 +77,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.bus, s.rdb, s.client)
+	i.SetClient(s.bus, s.rdb, s.client, s.logger)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err

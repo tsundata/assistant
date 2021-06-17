@@ -7,9 +7,9 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"log"
 	"net/http"
 )
 
@@ -18,13 +18,15 @@ type Server struct {
 	router     func(router fiber.Router)
 	httpServer *fiber.App
 	in         influxdb2.Client
+	logger     *logger.Logger
 }
 
-func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client) (*Server, error) {
+func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client, logger *logger.Logger) (*Server, error) {
 	var s = &Server{
 		conf:   conf,
 		router: router,
 		in:     in,
+		logger: logger,
 	}
 	return s, nil
 }
@@ -43,7 +45,7 @@ func (s *Server) Start() error {
 
 	addr := fmt.Sprintf("%s:%d", s.conf.Http.Host, s.conf.Http.Port)
 
-	log.Println("start http server ", addr)
+	s.logger.Info("start http server " + addr)
 
 	// server
 	s.httpServer = fiber.New()
@@ -53,13 +55,13 @@ func (s *Server) Start() error {
 
 	go func() {
 		if err := s.httpServer.Listen(addr); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatal("start http server err", err)
+			s.logger.Error(fmt.Errorf("start http server err, %v", err))
 			return
 		}
 	}()
 
 	if err := s.register(); err != nil {
-		log.Fatal("register http server error")
+		s.logger.Error(errors.New("register http server error"))
 	}
 
 	// metrics

@@ -11,7 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"io"
-	"log"
 	"math/rand"
 	"os"
 	"strconv"
@@ -304,11 +303,10 @@ var rules = []Rule{
 				}
 			}
 
-			state, err := uc.CloseAndRecv()
+			_, err = uc.CloseAndRecv()
 			if err != nil {
 				return []string{"error: " + err.Error()}
 			}
-			log.Println(state.GetPath())
 
 			return []string{"test done"}
 		},

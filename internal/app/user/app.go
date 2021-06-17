@@ -19,7 +19,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	rdb *redis.Client, repo repository.UserRepository) (*app.Application, error) {
 
 	// event bus register
-	err := listener.RegisterEventHandler(bus, repo)
+	err := listener.RegisterEventHandler(bus, logger, repo)
 	if err != nil {
 		return nil, err
 	}

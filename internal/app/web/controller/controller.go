@@ -9,7 +9,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"log"
 	"net/http"
 	"time"
 )
@@ -18,7 +17,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 	requestHandler := func(router fiber.Router) {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Println("recover", err)
+				wc.logger.Error(err.(error))
 			}
 		}()
 

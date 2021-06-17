@@ -6,7 +6,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
-	"log"
 )
 
 func WorkflowCron(b *rulebot.Context) []result.Result {
@@ -15,7 +14,7 @@ func WorkflowCron(b *rulebot.Context) []result.Result {
 	}
 	_, err := rpcclient.GetWorkflowClient(b.Client).CronTrigger(context.Background(), &pb.TriggerRequest{})
 	if err != nil {
-		log.Println(err)
+		b.Logger.Error(err)
 		return []result.Result{result.ErrorResult(err)}
 	}
 	return []result.Result{result.EmptyResult()}

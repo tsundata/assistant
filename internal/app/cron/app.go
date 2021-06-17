@@ -13,7 +13,7 @@ import (
 
 func NewApp(c *config.AppConfig, logger *logger.Logger, rdb *redis.Client, client *rpc.Client) (*app.Application, error) {
 
-	b := rulebot.New(&rulebot.Context{Conf: c, RDB: rdb, Client: client}, rule.Options...)
+	b := rulebot.New(&rulebot.Context{Conf: c, RDB: rdb, Client: client, Logger: logger}, rule.Options...)
 
 	logger.Info("start cron bot " + b.Name())
 

@@ -19,13 +19,13 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	client *rpc.Client) (*app.Application, error) {
 
 	// event bus register
-	err := listener.RegisterEventHandler(bus, client)
+	err := listener.RegisterEventHandler(bus, client, logger)
 	if err != nil {
 		return nil, err
 	}
 
 	// service
-	s := service.NewWorkflow(bus, rdb, repo, client)
+	s := service.NewWorkflow(bus, rdb, repo, client, logger)
 	err = rs.Register(func(gs *grpc.Server) error {
 		pb.RegisterWorkflowServer(gs, s)
 		return nil

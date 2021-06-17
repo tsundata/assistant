@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"log"
 	"strings"
 )
 
@@ -12,7 +11,7 @@ var Debug bool
 
 func debugLog(out string) {
 	if Debug {
-		log.Println(out)
+		fmt.Println("[Action Debug]", out)
 	}
 }
 
