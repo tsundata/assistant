@@ -34,4 +34,3 @@ func NewApp(c *config.AppConfig, rdb *redis.Client, logger *logger.Logger, clien
 }
 
 var ProviderSet = wire.NewSet(NewApp)
-
