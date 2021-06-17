@@ -43,14 +43,15 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	message, err := rpcclient.GetMessageClient(t.client).Get(context.Background(), &pb.MessageRequest{Id: id})
+	ctx := context.Background()
+	message, err := rpcclient.GetMessageClient(t.client).Get(ctx, &pb.MessageRequest{Id: id})
 	if err != nil {
 		return false, err
 	}
 
 	switch tp {
 	case model.MessageTypeAction:
-		_, err := rpcclient.GetWorkflowClient(t.client).RunAction(context.Background(), &pb.WorkflowRequest{Text: message.GetText()})
+		_, err := rpcclient.GetWorkflowClient(t.client).RunAction(ctx, &pb.WorkflowRequest{Text: message.GetText()})
 		if err != nil {
 			return false, err
 		}

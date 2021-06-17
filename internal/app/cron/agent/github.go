@@ -15,7 +15,8 @@ func FetchGithubStarred(b *rulebot.Context) []result.Result {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get access token
-	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
+	ctx := context.Background()
+	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

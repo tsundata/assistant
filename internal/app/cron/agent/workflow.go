@@ -12,7 +12,8 @@ func WorkflowCron(b *rulebot.Context) []result.Result {
 	if b.Client == nil {
 		return []result.Result{result.EmptyResult()}
 	}
-	_, err := rpcclient.GetWorkflowClient(b.Client).CronTrigger(context.Background(), &pb.TriggerRequest{})
+	ctx := context.Background()
+	_, err := rpcclient.GetWorkflowClient(b.Client).CronTrigger(ctx, &pb.TriggerRequest{})
 	if err != nil {
 		b.Logger.Error(err)
 		return []result.Result{result.ErrorResult(err)}

@@ -15,7 +15,8 @@ func FetchPocket(b *rulebot.Context) []result.Result {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get consumer key
-	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(context.Background(), &pb.CredentialRequest{Type: pocket.ID})
+	ctx := context.Background()
+	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(ctx, &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -30,7 +31,7 @@ func FetchPocket(b *rulebot.Context) []result.Result {
 	}
 
 	// get access token
-	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: pocket.ID})
+	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

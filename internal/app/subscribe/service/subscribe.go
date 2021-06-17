@@ -17,8 +17,8 @@ func NewSubscribe(rdb *redis.Client) *Subscribe {
 	return &Subscribe{rdb}
 }
 
-func (s *Subscribe) List(_ context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
-	res, err := s.rdb.HGetAll(context.Background(), RuleKey).Result()
+func (s *Subscribe) List(ctx context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
+	res, err := s.rdb.HGetAll(ctx, RuleKey).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -33,14 +33,14 @@ func (s *Subscribe) List(_ context.Context, _ *pb.SubscribeRequest) (*pb.Subscri
 	}, nil
 }
 
-func (s *Subscribe) Register(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HMGet(context.Background(), RuleKey, payload.GetText()).Result()
+func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HMGet(ctx, RuleKey, payload.GetText()).Result()
 	if err != nil {
 		return nil, err
 	}
 
 	if len(resp) == 0 {
-		_, err = s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "true").Result()
+		_, err = s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
 		if err != nil {
 			return nil, err
 		}
@@ -49,8 +49,8 @@ func (s *Subscribe) Register(_ context.Context, payload *pb.SubscribeRequest) (*
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Open(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "true").Result()
+func (s *Subscribe) Open(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func (s *Subscribe) Open(_ context.Context, payload *pb.SubscribeRequest) (*pb.S
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Close(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(context.Background(), RuleKey, payload.GetText(), "false").Result()
+func (s *Subscribe) Close(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "false").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +67,8 @@ func (s *Subscribe) Close(_ context.Context, payload *pb.SubscribeRequest) (*pb.
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Subscribe) Status(_ context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HGetAll(context.Background(), RuleKey).Result()
+func (s *Subscribe) Status(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HGetAll(ctx, RuleKey).Result()
 	if err != nil {
 		return nil, err
 	}
