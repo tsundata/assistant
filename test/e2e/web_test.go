@@ -40,6 +40,7 @@ func TestGetPageIndex(t *testing.T) {
 }
 
 func TestAppGithubIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/app/github").
 		Expect().
@@ -47,6 +48,7 @@ func TestAppGithubIndex(t *testing.T) {
 }
 
 func TestOauthGithubIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/oauth/github").
 		Expect().
@@ -54,6 +56,7 @@ func TestOauthGithubIndex(t *testing.T) {
 }
 
 func TestAppDropboxIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/app/dropbox").
 		Expect().
@@ -61,6 +64,7 @@ func TestAppDropboxIndex(t *testing.T) {
 }
 
 func TestOauthDropboxIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/oauth/dropbox").
 		Expect().
@@ -68,6 +72,7 @@ func TestOauthDropboxIndex(t *testing.T) {
 }
 
 func TestAppPocketIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/app/pocket").
 		Expect().
@@ -75,6 +80,7 @@ func TestAppPocketIndex(t *testing.T) {
 }
 
 func TestOauthPocketIndex(t *testing.T) {
+	t.Skip()
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/oauth/pocket").
 		Expect().
