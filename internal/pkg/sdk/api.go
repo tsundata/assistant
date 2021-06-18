@@ -179,7 +179,7 @@ func (c *GatewayClient) WebhookTrigger(in *pb.TriggerRequest) (result *pb.StateR
 func (c *GatewayClient) GetCredential(id string) (result *pb.CredentialReply, err error) {
 	resp, err := c.r.R().
 		SetQueryParam("type", id).
-		Post("credential")
+		Get("credential")
 	if err != nil {
 		return nil, err
 	}
