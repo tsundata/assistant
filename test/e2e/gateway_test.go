@@ -13,12 +13,14 @@ import (
 
 const GatewayBaseURL = "http://127.0.0.1:5000"
 
-func TestIndex(t *testing.T) {
+func TestGatewayIndex(t *testing.T) {
 	e := httpexpect.New(t, GatewayBaseURL)
 	e.GET("/").
 		Expect().
 		Status(http.StatusOK).Text().Contains("Gateway")
 }
+
+// === command ===
 
 func TestTestCommand(t *testing.T) {
 	e := httpexpect.New(t, GatewayBaseURL)
@@ -98,7 +100,7 @@ func TestSubListCommand(t *testing.T) {
 	e.POST("/debug/event").
 		WithBytes([]byte(`subs list`)).
 		Expect().
-		Status(http.StatusOK).Text().Contains("empty subscript")
+		Status(http.StatusOK).Text().Contains("Subscribe:")
 }
 
 func TestSubsOpenCommand(t *testing.T) {
@@ -122,7 +124,7 @@ func TestViewCommand(t *testing.T) {
 	e.POST("/debug/event").
 		WithBytes([]byte(`view 1`)).
 		Expect().
-		Status(http.StatusOK).Text().Contains("no message")
+		Status(http.StatusOK).Text().Contains("hello world")
 }
 
 func TestRunCommand(t *testing.T) {
@@ -130,7 +132,7 @@ func TestRunCommand(t *testing.T) {
 	e.POST("/debug/event").
 		WithBytes([]byte(`run 1`)).
 		Expect().
-		Status(http.StatusOK).Text().Contains("no message")
+		Status(http.StatusOK).Text().Contains("Not running")
 }
 
 func TestDocCommand(t *testing.T) {
@@ -138,8 +140,42 @@ func TestDocCommand(t *testing.T) {
 	e.POST("/debug/event").
 		WithBytes([]byte(`doc`)).
 		Expect().
-		Status(http.StatusOK).Text().Contains("no message")
+		Status(http.StatusOK).Text().Contains("get [any]")
 }
+
+func TestStatsCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`stats`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("/pb.Message/Create")
+}
+
+func TestTodoCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`todo something`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("success")
+}
+
+func TestRoleCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`role`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("profession:")
+}
+
+func TestPinyinCommand(t *testing.T) {
+	e := httpexpect.New(t, GatewayBaseURL)
+	e.POST("/debug/event").
+		WithBytes([]byte(`pinyin 测试`)).
+		Expect().
+		Status(http.StatusOK).Text().Contains("ce, shi")
+}
+
+// === api ===
 
 func TestAuth(t *testing.T) {
 	e := httpexpect.New(t, GatewayBaseURL)

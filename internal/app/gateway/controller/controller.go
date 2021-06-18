@@ -58,13 +58,14 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			return c.Next()
 		}
 		router.Post("auth", gc.Authorization)
+		router.Get("page", gc.GetPage)
+		router.Post("webhook/trigger", gc.WebhookTrigger)
+		router.Get("credential", gc.GetCredential)
 		internal := router.Group("/").Use(auth)
-		internal.Get("page", gc.GetPage)
 		internal.Get("apps", gc.GetApps)
 		internal.Post("app/oauth", gc.StoreAppOAuth)
 		internal.Get("messages", gc.GetMessages)
 		internal.Get("masking_credentials", gc.GetMaskingCredentials)
-		internal.Get("credential", gc.GetCredential)
 		internal.Post("credential", gc.CreateCredential)
 		internal.Get("settings", gc.GetSettings)
 		internal.Post("setting", gc.CreateSetting)
@@ -73,7 +74,6 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Delete("workflow/message", gc.DeleteWorkflowMessage)
 		internal.Post("message/run", gc.RunMessage)
 		internal.Post("message/send", gc.SendMessage)
-		internal.Post("webhook/trigger", gc.WebhookTrigger)
 
 		router.Use(func(c *fiber.Ctx) error {
 			return c.Status(http.StatusNotFound).SendString("Unsupported path")

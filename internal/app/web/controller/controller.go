@@ -28,6 +28,9 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		router.Get("/app/:category", wc.App)
 		router.Get("/oauth/:category", wc.OAuth)
 		router.Get("/qr/:text", wc.Qr)
+		// webhook
+		router.Get("/webhook/:flag", wc.Webhook)
+		router.Post("/webhook/:flag", wc.Webhook)
 
 		// auth middleware
 		auth := func(c *fiber.Ctx) error {
@@ -88,10 +91,6 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		authR.Post("/action/:uuid/store", wc.ActionStore)
 
 		authR.Post("/workflow/:uuid/delete", wc.WorkflowDelete)
-
-		// webhook
-		router.Get("/webhook/:flag", wc.Webhook)
-		router.Post("/webhook/:flag", wc.Webhook)
 	}
 
 	return requestHandler
