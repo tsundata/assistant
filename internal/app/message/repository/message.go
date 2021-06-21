@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"time"
 )
 
 type MessageRepository interface {
@@ -68,6 +69,7 @@ func (r *MysqlMessageRepository) List() ([]model.Message, error) {
 }
 
 func (r *MysqlMessageRepository) Create(message model.Message) (int64, error) {
+	message.Time = time.Now()
 	res, err := r.db.NamedExec("INSERT INTO `messages` (`uuid`, `type`, `text`, `time`) VALUES (:uuid, :type, :text, :time)", message)
 	if err != nil {
 		return 0, err
