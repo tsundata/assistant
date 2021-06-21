@@ -19,3 +19,23 @@ go get -u github.com/cweill/gotests/...
 # Output
 gotests -w -all PATH
 ```
+
+## go-callvis
+
+```shell
+# Install
+go get -u github.com/ofabry/go-callvis
+# Output
+go-callvis ./cmd/app/main.go
+```
+
+## golangci-lint
+
+```shell
+# Install
+go get github.com/golangci/golangci-lint/cmd/golangci-lint
+# Run
+golangci-lint run
+```
+
+
