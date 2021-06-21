@@ -46,10 +46,9 @@ require (
 	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
+	golang.org/x/tools v0.1.3 // indirect
 	google.golang.org/api v0.44.0 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	google.golang.org/grpc v1.38.0
 	gopkg.in/yaml.v2 v2.4.0
 )
-
-replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
