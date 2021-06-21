@@ -38,4 +38,12 @@ go get github.com/golangci/golangci-lint/cmd/golangci-lint
 golangci-lint run
 ```
 
+## gomock
+
+```shell
+# Install
+go install github.com/golang/mock/mockgen@v1.6.0
+# Output
+mockgen -source=foo.go [other options]
+```
 
