@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/task"
+	"github.com/tsundata/assistant/internal/app/task/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -39,6 +40,12 @@ func CreateApp(id string) (*app.Application, error) {
 	bus := event.NewBus(conn)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
+	server, err := queue.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	serviceTask := service.NewTask(server)
+	initServer := service.CreateInitServerFn(serviceTask)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
@@ -55,11 +62,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, influxdb2Client, redisClient)
-	if err != nil {
-		return nil, err
-	}
-	machineryServer, err := queue.New(appConfig)
+	rpcServer, err := rpc.NewServer(appConfig, loggerLogger, initServer, tracer, influxdb2Client, redisClient, client)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +74,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := task.NewApp(appConfig, bus, loggerLogger, server, machineryServer, rpcClient)
+	application, err := task.NewApp(appConfig, bus, loggerLogger, rpcServer, server, rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -80,4 +83,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, mysql.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, mysql.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet)

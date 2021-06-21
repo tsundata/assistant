@@ -28,10 +28,10 @@ type Message struct {
 	client *rpc.Client
 }
 
-func NewManage(logger *logger.Logger, bot *rulebot.RuleBot, config *config.AppConfig, repo repository.MessageRepository, client *rpc.Client) *Message {
+func NewMessage(logger *logger.Logger, config *config.AppConfig, repo repository.MessageRepository, client *rpc.Client) *Message {
 	return &Message{
 		logger: logger,
-		bot:    bot,
+		//bot:    bot,
 		config: config,
 		repo:   repo,
 		client: client,

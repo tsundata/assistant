@@ -8,7 +8,6 @@ import (
 	recoverMiddleware "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"net/http"
 	"strings"
 	"time"
@@ -47,7 +46,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				return c.SendStatus(http.StatusForbidden)
 			}
 			token = strings.ReplaceAll(token, "Bearer ", "")
-			reply, err := rpcclient.GetUserClient(gc.client).Authorization(context.Background(), &pb.TextRequest{Text: token})
+			reply, err := gc.userSvc.Authorization(context.Background(), &pb.TextRequest{Text: token})
 			if err != nil {
 				gc.logger.Error(err)
 				return c.SendStatus(http.StatusForbidden)

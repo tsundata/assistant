@@ -68,6 +68,9 @@ func NewClient(o *ClientOptions) (*Client, error) {
 }
 
 func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientConn, error) {
+	//ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	//defer cancel()
+
 	o := &ClientOptions{
 		Wait:            c.o.Wait,
 		Tag:             c.o.Tag,
@@ -84,6 +87,9 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 
 	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
 	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
+
+	//consulAddress := os.Getenv("CONSUL_ADDRESS")
+	//target := fmt.Sprintf("consul://%s/%s?wait=%s&tag=%s", consulAddress, service, o.Wait, o.Tag)
 	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
 	if err != nil {
 		fmt.Println(err)

@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/subscribe"
+	"github.com/tsundata/assistant/internal/app/subscribe/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -31,6 +32,12 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
+	redisClient, err := redis.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	serviceSubscribe := service.NewSubscribe(redisClient)
+	initServer := service.CreateInitServerFn(serviceSubscribe)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
@@ -43,15 +50,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig)
+	server, err := rpc.NewServer(appConfig, loggerLogger, initServer, tracer, influxdb2Client, redisClient, client)
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, influxdb2Client, redisClient)
-	if err != nil {
-		return nil, err
-	}
-	application, err := subscribe.NewApp(appConfig, loggerLogger, server, redisClient)
+	application, err := subscribe.NewApp(appConfig, loggerLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +63,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, subscribe.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, subscribe.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet)

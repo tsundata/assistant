@@ -9,11 +9,11 @@ import (
 )
 
 type NLP struct {
-	seg *gse.Segmenter
+	seg *gse.Segmenter // fixme
 }
 
-func NewNLP(seg *gse.Segmenter) *NLP {
-	return &NLP{seg: seg}
+func NewNLP() *NLP {
+	return &NLP{}
 }
 
 func (s *NLP) Pinyin(_ context.Context, req *pb.TextRequest) (*pb.WordsReply, error) {

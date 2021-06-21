@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/user"
 	"github.com/tsundata/assistant/internal/app/user/repository"
+	"github.com/tsundata/assistant/internal/app/user/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -39,6 +40,17 @@ func CreateApp(id string) (*app.Application, error) {
 	bus := event.NewBus(conn)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
+	redisClient, err := redis.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	db, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	userRepository := repository.NewMysqlUserRepository(loggerLogger, db)
+	serviceUser := service.NewUser(redisClient, userRepository)
+	initServer := service.CreateInitServerFn(serviceUser)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
@@ -51,20 +63,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig)
+	server, err := rpc.NewServer(appConfig, loggerLogger, initServer, tracer, influxdb2Client, redisClient, client)
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, loggerLogger, tracer, influxdb2Client, redisClient)
-	if err != nil {
-		return nil, err
-	}
-	db, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	userRepository := repository.NewMysqlUserRepository(loggerLogger, db)
-	application, err := user.NewApp(appConfig, bus, loggerLogger, server, redisClient, userRepository)
+	application, err := user.NewApp(appConfig, bus, loggerLogger, server, userRepository)
 	if err != nil {
 		return nil, err
 	}
@@ -73,4 +76,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet)

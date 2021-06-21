@@ -1,7 +1,6 @@
 package rpc
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
@@ -10,18 +9,19 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/hashicorp/consul/api"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"net"
 )
@@ -33,15 +33,16 @@ func (*alwaysPassLimiter) Limit() bool {
 }
 
 type Server struct {
-	conf     *config.AppConfig
-	logger   *logger.Logger
-	server   *grpc.Server
-	in       influxdb2.Client
+	conf   *config.AppConfig
+	logger *logger.Logger
+	server *grpc.Server
+	in     influxdb2.Client
+	consul *api.Client
 }
 
-type InitServers func(s *grpc.Server)
+type InitServer func(s *grpc.Server)
 
-func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.Tracer, in influxdb2.Client, rdb *redis.Client) (*Server, error) {
+func NewServer(opt *config.AppConfig, logger *logger.Logger, init InitServer, tracer opentracing.Tracer, in influxdb2.Client, rdb *redis.Client, consul *api.Client) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -76,12 +77,14 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, tracer opentracing.
 			),
 		),
 	)
+	init(gs)
 
 	return &Server{
-		conf:     opt,
-		logger:   logger,
-		server:   gs,
-		in:       in,
+		conf:   opt,
+		logger: logger,
+		server: gs,
+		in:     in,
+		consul: consul,
 	}, nil
 }
 
@@ -107,19 +110,16 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("register rpc service ... " + rpcAddr)
-
-	// discovery
-	discovery.RegisterService(rpcAddr, &discovery.ConsulService{
-		IP:   s.conf.Rpc.Host,
-		Port: s.conf.Rpc.Port,
-		Tag:  []string{s.conf.Name},
-		Name: s.conf.Name,
-	})
-
-	// Health Check
-	grpc_health_v1.RegisterHealthServer(s.server, &discovery.HealthImpl{})
+	//rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
+	//s.logger.Info("register rpc service ... " + rpcAddr)
+	//
+	//// discovery
+	//discovery.RegisterService(rpcAddr, &discovery.ConsulService{
+	//	IP:   s.conf.Rpc.Host,
+	//	Port: s.conf.Rpc.Port,
+	//	Tag:  []string{s.conf.Name},
+	//	Name: s.conf.Name,
+	//})
 
 	go func() {
 		err = s.server.Serve(lis)
@@ -128,9 +128,60 @@ func (s *Server) Start() error {
 		}
 	}()
 
+	if err := s.register(); err != nil {
+		return errors.Wrap(err, "register grpc server error")
+	}
+
+	// Health Check
+	//grpc_health_v1.RegisterHealthServer(s.server, &discovery.HealthImpl{})// fixme
+
 	// metrics
 	go influx.PushGoServerMetrics(s.in, s.conf.Name, s.conf.Influx.Org, s.conf.Influx.Bucket)
 
+	return nil
+}
+
+func (s *Server) register() error {
+	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
+
+	for key, _ := range s.server.GetServiceInfo() {
+		check := &api.AgentServiceCheck{
+			Interval:                       "10s",
+			DeregisterCriticalServiceAfter: "60m",
+			TCP:                            addr,
+		}
+
+		id := fmt.Sprintf("%s[%s:%d]", key, s.conf.Rpc.Host, s.conf.Rpc.Port)
+
+		svcReg := &api.AgentServiceRegistration{
+			ID:                id,
+			Name:              s.conf.Name,
+			Tags:              []string{"grpc"},
+			Port:              s.conf.Rpc.Port,
+			Address:           s.conf.Rpc.Host,
+			EnableTagOverride: true,
+			Check:             check,
+			Checks:            nil,
+		}
+		err := s.consul.Agent().ServiceRegister(svcReg)
+		if err != nil {
+			return errors.Wrap(err, "register service error")
+		}
+		s.logger.Info("register grpc service success", zap.String("id", id))
+	}
+	return nil
+}
+
+func (s *Server) deRegister() error {
+	for key, _ := range s.server.GetServiceInfo() {
+		id := fmt.Sprintf("%s[%s:%d]", key, s.conf.Rpc.Host, s.conf.Rpc.Port)
+
+		err := s.consul.Agent().ServiceDeregister(id)
+		if err != nil {
+			return errors.Wrapf(err, "deregister service error[id=%s]", id)
+		}
+		s.logger.Info("deregister service success", zap.String("id", id))
+	}
 	return nil
 }
 
@@ -139,7 +190,11 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 }
 
 func (s *Server) Stop() error {
-	s.server.Stop()
+	s.logger.Info("grpc server stopping ...")
+	if err := s.deRegister(); err != nil {
+		return errors.Wrap(err, "deregister grpc server error")
+	}
+	s.server.GracefulStop()
 	return nil
 }
 

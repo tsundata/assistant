@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/todo"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
+	"github.com/tsundata/assistant/internal/app/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -36,6 +37,7 @@ var providerSet = wire.NewSet(
 	repository.ProviderSet,
 	event.ProviderSet,
 	nats.ProviderSet,
+	service.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

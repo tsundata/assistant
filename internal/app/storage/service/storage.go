@@ -13,15 +13,15 @@ import (
 )
 
 type Storage struct {
-	path string
+	path string // fixme
 	db   *sqlx.DB
 	rdb  *redis.Client
 }
 
 const MaxFileSize = 1 << 20
 
-func NewStorage(path string, db *sqlx.DB, rdb *redis.Client) *Storage {
-	return &Storage{path: path, db: db, rdb: rdb}
+func NewStorage(db *sqlx.DB, rdb *redis.Client) *Storage {
+	return &Storage{db: db, rdb: rdb}
 }
 
 func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {

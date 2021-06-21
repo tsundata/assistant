@@ -2,22 +2,17 @@ package message
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/listener"
-	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/app/message/rule"
-	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"google.golang.org/grpc"
 )
 
-func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server,
-	repo repository.MessageRepository, client *rpc.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server, client *rpc.Client) (*app.Application, error) {
 
 	// event bus register
 	err := listener.RegisterEventHandler(bus, c, logger)
@@ -26,17 +21,7 @@ func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.
 	}
 
 	// rule bot
-	bot := rulebot.New(&rulebot.Context{Conf: c, Client: client, Logger: logger}, rule.Options...)
-
-	// rpc service
-	s := service.NewManage(logger, bot, c, repo, client)
-	err = rs.Register(func(gs *grpc.Server) error {
-		pb.RegisterMessageServer(gs, s)
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
+	_ = rulebot.New(&rulebot.Context{Conf: c, Client: client, Logger: logger}, rule.Options...) // fixme
 
 	// rpc server
 	a, err := app.New(c, logger, app.RPCServerOption(rs))

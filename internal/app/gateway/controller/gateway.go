@@ -11,8 +11,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
 	"net/http"
@@ -25,15 +23,27 @@ type GatewayController struct {
 	opt    *config.AppConfig
 	rdb    *redis.Client
 	logger *logger.Logger
-	client *rpc.Client
+	//client *rpc.Client
+
+	messageSvc  pb.MessageClient
+	middleSvc   pb.MiddleClient
+	workflowSvc pb.WorkflowClient
+	userSvc     pb.UserClient
 }
 
-func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) *GatewayController {
+func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
+	messageSvc pb.MessageClient,
+	middleSvc pb.MiddleClient,
+	workflowSvc pb.WorkflowClient,
+	userSvc pb.UserClient) *GatewayController {
 	return &GatewayController{
-		opt:    opt,
-		rdb:    rdb,
-		logger: logger,
-		client: client,
+		opt:         opt,
+		rdb:         rdb,
+		logger:      logger,
+		messageSvc:  messageSvc,
+		middleSvc:   middleSvc,
+		workflowSvc: workflowSvc,
+		userSvc:     userSvc,
 	}
 }
 
@@ -84,7 +94,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				re = regexp.MustCompile(`[\s\p{Zs}]+`)
 				ev.Text = re.ReplaceAllString(ev.Text, " ")
 
-				reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
+				reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,
 					Text: ev.Text,
 				})
@@ -142,7 +152,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
+	reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
 		Text: incoming.Message.Text,
 	})
@@ -175,7 +185,7 @@ func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	reply, err := rpcclient.GetMessageClient(gc.client).Create(context.Background(), &pb.MessageRequest{
+	reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
 		Text: util.ByteToString(c.Body()),
 	})
@@ -192,7 +202,7 @@ func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetUserClient(gc.client).Authorization(context.Background(), &in)
+	reply, err := gc.userSvc.Authorization(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -206,7 +216,7 @@ func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).GetPage(context.Background(), &in)
+	reply, err := gc.middleSvc.GetPage(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -220,7 +230,7 @@ func (gc *GatewayController) StoreAppOAuth(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).StoreAppOAuth(context.Background(), &in)
+	reply, err := gc.middleSvc.StoreAppOAuth(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -234,7 +244,7 @@ func (gc *GatewayController) GetApps(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).GetApps(context.Background(), &in)
+	reply, err := gc.middleSvc.GetApps(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -248,7 +258,7 @@ func (gc *GatewayController) GetMessages(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).List(context.Background(), &in)
+	reply, err := gc.messageSvc.List(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -262,7 +272,7 @@ func (gc *GatewayController) GetMaskingCredentials(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).GetMaskingCredentials(context.Background(), &in)
+	reply, err := gc.middleSvc.GetMaskingCredentials(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -276,7 +286,7 @@ func (gc *GatewayController) GetCredential(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).GetCredential(context.Background(), &in)
+	reply, err := gc.middleSvc.GetCredential(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -290,7 +300,7 @@ func (gc *GatewayController) CreateCredential(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).CreateCredential(context.Background(), &in)
+	reply, err := gc.middleSvc.CreateCredential(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -304,7 +314,7 @@ func (gc *GatewayController) GetSettings(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).GetSettings(context.Background(), &in)
+	reply, err := gc.middleSvc.GetSettings(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -318,7 +328,7 @@ func (gc *GatewayController) CreateSetting(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMiddleClient(gc.client).CreateSetting(context.Background(), &in)
+	reply, err := gc.middleSvc.CreateSetting(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -332,7 +342,7 @@ func (gc *GatewayController) GetActionMessages(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).GetActionMessages(context.Background(), &in)
+	reply, err := gc.messageSvc.GetActionMessages(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -346,7 +356,7 @@ func (gc *GatewayController) CreateActionMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).CreateActionMessage(context.Background(), &in)
+	reply, err := gc.messageSvc.CreateActionMessage(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -360,7 +370,7 @@ func (gc *GatewayController) DeleteWorkflowMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).DeleteWorkflowMessage(context.Background(), &in)
+	reply, err := gc.messageSvc.DeleteWorkflowMessage(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -374,7 +384,7 @@ func (gc *GatewayController) RunMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).Run(context.Background(), &in)
+	reply, err := gc.messageSvc.Run(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -388,7 +398,7 @@ func (gc *GatewayController) SendMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetMessageClient(gc.client).Send(context.Background(), &in)
+	reply, err := gc.messageSvc.Send(context.Background(), &in)
 	if err != nil {
 		return err
 	}
@@ -402,7 +412,7 @@ func (gc *GatewayController) WebhookTrigger(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := rpcclient.GetWorkflowClient(gc.client).WebhookTrigger(context.Background(), &in)
+	reply, err := gc.workflowSvc.WebhookTrigger(context.Background(), &in)
 	if err != nil {
 		return err
 	}

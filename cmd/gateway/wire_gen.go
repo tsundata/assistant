@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/gateway"
 	"github.com/tsundata/assistant/internal/app/gateway/controller"
+	"github.com/tsundata/assistant/internal/app/gateway/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -53,7 +54,23 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, loggerLogger, rpcClient)
+	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	userClient, err := rpcclient.NewUserClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, loggerLogger, messageClient, middleClient, workflowClient, userClient)
 	v := controller.CreateInitControllersFn(gatewayController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
@@ -72,4 +89,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)
