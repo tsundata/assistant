@@ -13,7 +13,7 @@ jobs:
     env:
       DB_DATABASE: assistant
       DB_USER: root
-      DB_PASSWORD: 123456
+      DB_PASSWORD: root
       DB_HOST: localhost
 
     steps:
