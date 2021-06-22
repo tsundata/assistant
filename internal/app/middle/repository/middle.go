@@ -33,6 +33,7 @@ func NewMysqlMiddleRepository(logger *logger.Logger, db *sqlx.DB) MiddleReposito
 }
 
 func (r *MysqlMiddleRepository) CreatePage(page model.Page) (int64, error) {
+	page.Time = time.Now()
 	res, err := r.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`, `time`) VALUES (:uuid, :type, :title, :content, :time)", page)
 	if err != nil {
 		return 0, err
@@ -126,6 +127,7 @@ func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
 }
 
 func (r *MysqlMiddleRepository) CreateCredential(credential model.Credential) (int64, error) {
+	credential.Time = time.Now()
 	res, err := r.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)",
 		credential.Name, credential.Type, credential.Content, credential.Time)
 	if err != nil {
