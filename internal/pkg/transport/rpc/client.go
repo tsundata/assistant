@@ -85,8 +85,8 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 
 	// discovery
 	discovery.RegisterBuilder()
-	consulAddress := os.Getenv("CONSUL_ADDRESS") // todo
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	consulAddress := os.Getenv("CONSUL_ADDRESS")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
@@ -94,7 +94,7 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
 	if err != nil {
 		c.logger.Warn(err.Error(), zap.String("service", service))
-		return nil, nil
+		return conn, nil
 	}
 
 	return conn, nil
