@@ -12,6 +12,9 @@ func New() (*api.Client, error) {
 	consulUsername := os.Getenv("CONSUL_USERNAME")
 	consulPassword := os.Getenv("CONSUL_PASSWORD")
 	consulToken := os.Getenv("CONSUL_TOKEN")
+	if consulAddress == "" {
+		panic("CONSUL_ADDRESS error")
+	}
 	client, err := api.NewClient(&api.Config{
 		Address: consulAddress,
 		Scheme:  consulScheme,

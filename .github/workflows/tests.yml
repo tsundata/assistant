@@ -64,6 +64,7 @@ jobs:
 
       - name: Run test cases
         run: |
+          export CONSUL_ADDRESS=127.0.0.1:8500
           go test github.com/tsundata/assistant/internal/pkg/util
           go test github.com/tsundata/assistant/internal/app/message/repository
           go test github.com/tsundata/assistant/internal/app/middle/repository
