@@ -30,6 +30,7 @@ jobs:
       - name: Setup MySQL
         run: |
           sudo /etc/init.d/mysql start
+          mysql -e 'SHOW VARIABLES LIKE "%version%";' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -e 'SHOW DATABASES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_DATABASE }} < ./scripts/app.sql
