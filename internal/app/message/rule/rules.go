@@ -7,7 +7,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"io"
@@ -22,18 +21,18 @@ var rules = []Rule{
 	{
 		Regex:       `version`,
 		HelpMessage: `Version info`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			return []string{version.Info()}
 		},
 	},
 	{
 		Regex:       `menu`,
 		HelpMessage: `Show menu`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Middle() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := rpcclient.GetMiddleClient(b.Client).GetMenu(context.Background(), &pb.TextRequest{})
+			reply, err := ctx.Middle().GetMenu(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -48,8 +47,8 @@ var rules = []Rule{
 	{
 		Regex:       `qr\s+(.*)`,
 		HelpMessage: `Generate QR code`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Middle() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
@@ -57,7 +56,7 @@ var rules = []Rule{
 			}
 
 			txt := args[1]
-			reply, err := rpcclient.GetMiddleClient(b.Client).GetQrUrl(context.Background(), &pb.TextRequest{
+			reply, err := ctx.Middle().GetQrUrl(context.Background(), &pb.TextRequest{
 				Text: txt,
 			})
 			if err != nil {
@@ -72,7 +71,7 @@ var rules = []Rule{
 	{
 		Regex:       `ut\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -92,7 +91,7 @@ var rules = []Rule{
 	{
 		Regex:       `rand\s+(\d+)\s+(\d+)`,
 		HelpMessage: `Unix Timestamp`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			if len(args) != 3 {
 				return []string{"error args"}
 			}
@@ -119,7 +118,7 @@ var rules = []Rule{
 	{
 		Regex:       `pwd\s+(\d+)`,
 		HelpMessage: `Generate Password`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
@@ -140,11 +139,11 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+list`,
 		HelpMessage: `List subscribe`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Subscribe() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := rpcclient.GetSubscribeClient(b.Client).List(context.Background(), &pb.SubscribeRequest{})
+			reply, err := ctx.Subscribe().List(context.Background(), &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -159,15 +158,15 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+open\s+(.*)`,
 		HelpMessage: `Open subscribe`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Subscribe() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
 
-			reply, err := rpcclient.GetSubscribeClient(b.Client).Open(context.Background(), &pb.SubscribeRequest{
+			reply, err := ctx.Subscribe().Open(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {
@@ -183,15 +182,15 @@ var rules = []Rule{
 	{
 		Regex:       `subs\s+close\s+(.*)`,
 		HelpMessage: `Close subscribe`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Subscribe() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
 
-			reply, err := rpcclient.GetSubscribeClient(b.Client).Close(context.Background(), &pb.SubscribeRequest{
+			reply, err := ctx.Subscribe().Close(context.Background(), &pb.SubscribeRequest{
 				Text: args[1],
 			})
 			if err != nil {
@@ -207,8 +206,8 @@ var rules = []Rule{
 	{
 		Regex:       `view\s+(\d+)`,
 		HelpMessage: `View message`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Message() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
@@ -219,7 +218,7 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error args"}
 			}
-			messageReply, err := rpcclient.GetMessageClient(b.Client).Get(context.Background(), &pb.MessageRequest{Id: id})
+			messageReply, err := ctx.Message().Get(context.Background(), &pb.MessageRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -234,8 +233,8 @@ var rules = []Rule{
 	{
 		Regex:       `run\s+(\d+)`,
 		HelpMessage: `Run message`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Message() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
@@ -247,7 +246,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := rpcclient.GetMessageClient(b.Client).Run(context.Background(), &pb.MessageRequest{Id: id})
+			reply, err := ctx.Message().Run(context.Background(), &pb.MessageRequest{Id: id})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -258,11 +257,11 @@ var rules = []Rule{
 	{
 		Regex:       `doc`,
 		HelpMessage: `Show action docs`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Workflow() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := rpcclient.GetWorkflowClient(b.Client).ActionDoc(context.Background(), &pb.WorkflowRequest{})
+			reply, err := ctx.Workflow().ActionDoc(context.Background(), &pb.WorkflowRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -272,8 +271,8 @@ var rules = []Rule{
 	{
 		Regex:       `test`,
 		HelpMessage: `Test`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Storage() == nil {
 				return []string{"empty client"}
 			}
 			// upload
@@ -283,7 +282,7 @@ var rules = []Rule{
 			}
 
 			buf := make([]byte, 1024)
-			uc, err := rpcclient.GetStorageClient(b.Client).UploadFile(context.Background())
+			uc, err := ctx.Storage().UploadFile(context.Background())
 			if err != nil {
 				return []string{"error: " + err.Error()}
 			}
@@ -318,11 +317,11 @@ var rules = []Rule{
 	{
 		Regex:       `stats`,
 		HelpMessage: `Stats Info`,
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Middle() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := rpcclient.GetMiddleClient(b.Client).GetStats(context.Background(), &pb.TextRequest{})
+			reply, err := ctx.Middle().GetStats(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -332,14 +331,14 @@ var rules = []Rule{
 	{
 		Regex:       `todo\s+(.*)`,
 		HelpMessage: "Todo something",
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.Todo() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
-			reply, err := rpcclient.GetTodoClient(b.Client).CreateTodo(context.Background(), &pb.TodoRequest{
+			reply, err := ctx.Todo().CreateTodo(context.Background(), &pb.TodoRequest{
 				Content: args[1],
 			})
 			if err != nil {
@@ -354,11 +353,11 @@ var rules = []Rule{
 	{
 		Regex:       `role`,
 		HelpMessage: "Role info",
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.User() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := rpcclient.GetUserClient(b.Client).GetRole(context.Background(), &pb.RoleRequest{Id: model.SuperUserID})
+			reply, err := ctx.User().GetRole(context.Background(), &pb.RoleRequest{Id: model.SuperUserID})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -371,14 +370,14 @@ var rules = []Rule{
 	{
 		Regex:       `pinyin\s+(.*)`,
 		HelpMessage: "chinese pinyin conversion",
-		ParseMessage: func(b *rulebot.Context, s string, args []string) []string {
-			if b.Client == nil {
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if ctx.NLP() == nil {
 				return []string{"empty client"}
 			}
 			if len(args) != 2 {
 				return []string{"error args"}
 			}
-			reply, err := rpcclient.GetNLPClient(b.Client).Pinyin(context.Background(), &pb.TextRequest{Text: args[1]})
+			reply, err := ctx.NLP().Pinyin(context.Background(), &pb.TextRequest{Text: args[1]})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

@@ -5,18 +5,17 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func FetchGithubStarred(b *rulebot.Context) []result.Result {
-	if b.Client == nil {
+func FetchGithubStarred(ctx rulebot.IContext) []result.Result {
+	if ctx.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get access token
-	ctx := context.Background()
-	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
+	ctxB := context.Background()
+	app, err := ctx.Middle().GetAvailableApp(ctxB, &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

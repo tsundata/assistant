@@ -6,19 +6,18 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"time"
 )
 
-func DomainAnalyticsReport(b *rulebot.Context) []result.Result {
-	if b.Client == nil {
+func DomainAnalyticsReport(ctx rulebot.IContext) []result.Result {
+	if ctx.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get key
-	ctx := context.Background()
-	reply, err := rpcclient.GetMiddleClient(b.Client).GetCredential(ctx, &pb.CredentialRequest{Name: cloudflare.ID})
+	ctxB := context.Background()
+	reply, err := ctx.Middle().GetCredential(ctxB, &pb.CredentialRequest{Name: cloudflare.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

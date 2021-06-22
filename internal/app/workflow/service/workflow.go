@@ -13,21 +13,25 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"strings"
 	"time"
 )
 
 type Workflow struct {
-	bus    *event.Bus
-	rdb    *redis.Client
-	repo   repository.WorkflowRepository
-	client *rpc.Client
-	logger *logger.Logger
+	bus     *event.Bus
+	rdb     *redis.Client
+	repo    repository.WorkflowRepository
+	message pb.MessageClient
+	logger  *logger.Logger
 }
 
-func NewWorkflow(bus *event.Bus, rdb *redis.Client, repo repository.WorkflowRepository, client *rpc.Client, logger *logger.Logger) *Workflow {
-	return &Workflow{bus: bus, rdb: rdb, repo: repo, client: client, logger: logger}
+func NewWorkflow(
+	bus *event.Bus,
+	rdb *redis.Client,
+	repo repository.WorkflowRepository,
+	message pb.MessageClient,
+	logger *logger.Logger) *Workflow {
+	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -77,7 +81,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.bus, s.rdb, s.client, s.logger)
+	i.SetClient(s.bus, s.rdb, s.message, s.logger)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err

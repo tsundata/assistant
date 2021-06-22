@@ -4,7 +4,8 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 type Todo struct{}
@@ -15,7 +16,7 @@ func NewTodo() *Todo {
 
 func (t *Todo) Handle(ctx *ctx.Context, text string) {
 	// create
-	reply, err := rpcclient.GetTodoClient(ctx.Client).CreateTodo(context.Background(), &pb.TodoRequest{
+	reply, err := ctx.Todo.CreateTodo(context.Background(), &pb.TodoRequest{
 		Content: text,
 	})
 	if err != nil {
@@ -27,7 +28,7 @@ func (t *Todo) Handle(ctx *ctx.Context, text string) {
 	}
 
 	// send message
-	_, err = rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: "Created Todo success"})
+	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: "Created Todo success"})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return

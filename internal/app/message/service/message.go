@@ -11,8 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/valyala/fasthttp"
 	"strings"
@@ -21,20 +19,31 @@ import (
 )
 
 type Message struct {
-	config *config.AppConfig
-	logger *logger.Logger
-	bot    *rulebot.RuleBot
-	repo   repository.MessageRepository
-	client *rpc.Client
+	config   *config.AppConfig
+	logger   *logger.Logger
+	bot      *rulebot.RuleBot
+	repo     repository.MessageRepository
+	workflow pb.WorkflowClient
+	middle   pb.MiddleClient
+	todo     pb.TodoClient
 }
 
-func NewMessage(logger *logger.Logger, config *config.AppConfig, repo repository.MessageRepository, client *rpc.Client) *Message {
+func NewMessage(
+	logger *logger.Logger,
+	config *config.AppConfig,
+	repo repository.MessageRepository,
+	workflow pb.WorkflowClient,
+	middle pb.MiddleClient,
+	todo pb.TodoClient,
+	bot *rulebot.RuleBot) *Message {
 	return &Message{
-		logger: logger,
-		//bot:    bot,
-		config: config,
-		repo:   repo,
-		client: client,
+		logger:   logger,
+		bot:      bot,
+		config:   config,
+		repo:     repo,
+		workflow: workflow,
+		middle:   middle,
+		todo:     todo,
 	}
 }
 
@@ -122,7 +131,8 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	// trigger
 	c := ctx.NewContext()
 	c.Logger = m.logger
-	c.Client = m.client
+	c.Middle = m.middle
+	c.Todo = m.todo
 	triggers := trigger.Triggers()
 	wg := sync.WaitGroup{}
 	for _, item := range triggers {
@@ -177,7 +187,7 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 	switch message.Type {
 	case model.MessageTypeAction:
-		wfReply, err := rpcclient.GetWorkflowClient(m.client).RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
+		wfReply, err := m.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
 		if err != nil {
 			return nil, err
 		}
@@ -222,7 +232,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// check syntax
-	_, err := rpcclient.GetWorkflowClient(m.client).SyntaxCheck(ctx, &pb.WorkflowRequest{
+	_, err := m.workflow.SyntaxCheck(ctx, &pb.WorkflowRequest{
 		Text: payload.GetText(),
 		Type: model.MessageTypeAction,
 	})
@@ -246,7 +256,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// check/create trigger
-	_, err = rpcclient.GetWorkflowClient(m.client).CreateTrigger(ctx, &pb.TriggerRequest{
+	_, err = m.workflow.CreateTrigger(ctx, &pb.TriggerRequest{
 		Kind:        model.MessageTypeAction,
 		MessageId:   id,
 		MessageText: payload.GetText(),
@@ -264,7 +274,7 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 		return nil, err
 	}
 
-	_, err = rpcclient.GetWorkflowClient(m.client).DeleteTrigger(ctx, &pb.TriggerRequest{MessageId: payload.GetId()})
+	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{MessageId: payload.GetId()})
 	if err != nil {
 		return nil, err
 	}

@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/task"
+	"github.com/tsundata/assistant/internal/app/task/rpcclient"
 	"github.com/tsundata/assistant/internal/app/task/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -74,7 +75,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := task.NewApp(appConfig, bus, loggerLogger, rpcServer, server, rpcClient)
+	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	application, err := task.NewApp(appConfig, bus, loggerLogger, rpcServer, server, messageClient, workflowClient)
 	if err != nil {
 		return nil, err
 	}
@@ -83,4 +92,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, mysql.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, mysql.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet)

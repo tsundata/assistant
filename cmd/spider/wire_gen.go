@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/spider"
+	"github.com/tsundata/assistant/internal/app/spider/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -50,7 +51,19 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, loggerLogger, rpcClient)
+	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	application, err := spider.NewApp(appConfig, redisClient, loggerLogger, subscribeClient, middleClient, messageClient)
 	if err != nil {
 		return nil, err
 	}
@@ -59,4 +72,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)

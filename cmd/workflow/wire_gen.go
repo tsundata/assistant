@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/workflow"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
+	"github.com/tsundata/assistant/internal/app/workflow/rpcclient"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -65,7 +66,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceWorkflow := service.NewWorkflow(bus, redisClient, workflowRepository, rpcClient, loggerLogger)
+	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceWorkflow := service.NewWorkflow(bus, redisClient, workflowRepository, messageClient, loggerLogger)
 	initServer := service.CreateInitServerFn(serviceWorkflow)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
@@ -75,7 +80,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(appConfig, bus, loggerLogger, server, rpcClient)
+	application, err := workflow.NewApp(appConfig, bus, loggerLogger, server, redisClient, messageClient)
 	if err != nil {
 		return nil, err
 	}
@@ -84,4 +89,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet)

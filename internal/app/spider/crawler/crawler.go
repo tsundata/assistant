@@ -13,8 +13,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"gopkg.in/yaml.v2"
@@ -27,10 +25,12 @@ type Crawler struct {
 	outCh chan rule.Result
 	jobs  map[string]rule.Rule
 
-	c      *config.AppConfig
-	rdb    *redis.Client
-	logger *logger.Logger
-	client *rpc.Client
+	c         *config.AppConfig
+	rdb       *redis.Client
+	logger    *logger.Logger
+	subscribe pb.SubscribeClient
+	middle    pb.MiddleClient
+	message   pb.MessageClient
 }
 
 func New() *Crawler {
@@ -40,11 +40,19 @@ func New() *Crawler {
 	}
 }
 
-func (s *Crawler) SetService(c *config.AppConfig, rdb *redis.Client, logger *logger.Logger, client *rpc.Client) {
+func (s *Crawler) SetService(
+	c *config.AppConfig,
+	rdb *redis.Client,
+	logger *logger.Logger,
+	subscribe pb.SubscribeClient,
+	middle pb.MiddleClient,
+	message pb.MessageClient) {
 	s.c = c
 	s.rdb = rdb
 	s.logger = logger
-	s.client = client
+	s.subscribe = subscribe
+	s.middle = middle
+	s.message = message
 }
 
 func (s *Crawler) LoadRule() error {
@@ -76,7 +84,7 @@ func (s *Crawler) LoadRule() error {
 		}
 
 		// register
-		_, err = rpcclient.GetSubscribeClient(s.client).Register(ctx, &pb.SubscribeRequest{
+		_, err = s.subscribe.Register(ctx, &pb.SubscribeRequest{
 			Text: r.Name,
 		})
 		if err != nil {
@@ -112,7 +120,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			state, err := rpcclient.GetSubscribeClient(s.client).Status(context.Background(), &pb.SubscribeRequest{
+			state, err := s.subscribe.Status(context.Background(), &pb.SubscribeRequest{
 				Text: name,
 			})
 			if err != nil {
@@ -250,7 +258,7 @@ func (s *Crawler) send(name string, out []string) {
 			return
 		}
 
-		reply, err := rpcclient.GetMiddleClient(s.client).CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := s.middle.CreatePage(context.Background(), &pb.PageRequest{
 			Type:    "json",
 			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
 			Content: util.ByteToString(j),
@@ -263,7 +271,7 @@ func (s *Crawler) send(name string, out []string) {
 	}
 
 	// send
-	_, err = rpcclient.GetMessageClient(s.client).Send(context.Background(), &pb.MessageRequest{
+	_, err = s.message.Send(context.Background(), &pb.MessageRequest{
 		Text: text,
 	})
 	if err != nil {

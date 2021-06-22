@@ -1,13 +1,16 @@
 package ctx
 
 import (
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
 type Context struct {
 	Logger *logger.Logger
-	Client *rpc.Client
+	Middle pb.MiddleClient
+	Todo   pb.TodoClient
+	Bus    *event.Bus
 }
 
 func NewContext() *Context {

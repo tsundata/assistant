@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
+	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
@@ -17,7 +18,7 @@ func NewProject() *Project {
 
 func (t *Project) Handle(ctx *ctx.Context, text string) {
 	// get access token
-	app, err := rpcclient.GetMiddleClient(ctx.Client).GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
+	app, err := ctx.Middle.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return
@@ -69,7 +70,7 @@ func (t *Project) Handle(ctx *ctx.Context, text string) {
 	}
 
 	// send message
-	_, err = rpcclient.GetMessageClient(ctx.Client).Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Created Project Card #%d", *card.ID)})
+	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Created Project Card #%d", *card.ID)})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return

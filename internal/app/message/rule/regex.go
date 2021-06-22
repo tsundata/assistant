@@ -13,7 +13,7 @@ import (
 type Rule struct {
 	Regex        string
 	HelpMessage  string
-	ParseMessage func(*rulebot.Context, string, []string) []string
+	ParseMessage func(rulebot.IContext, string, []string) []string
 }
 
 type regexRuleset struct {

@@ -21,6 +21,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -62,9 +63,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(loggerLogger, appConfig, messageRepository, rpcClient)
-	initServer := service.CreateInitServerFn(serviceMessage)
-	influxdb2Client, err := influx.New(appConfig)
+	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	todoClient, err := rpcclient.NewTodoClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -72,11 +79,39 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	storageClient, err := rpcclient.NewStorageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	userClient, err := rpcclient.NewUserClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	nlpClient, err := rpcclient.NewNLPClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	iContext := rulebot.NewContext(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	ruleBot := rulebot.New(iContext)
+	serviceMessage := service.NewMessage(loggerLogger, appConfig, messageRepository, workflowClient, middleClient, todoClient, ruleBot)
+	initServer := service.CreateInitServerFn(serviceMessage)
+	influxdb2Client, err := influx.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
 	server, err := rpc.NewServer(appConfig, loggerLogger, initServer, tracer, influxdb2Client, redisClient, client)
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, loggerLogger, server, rpcClient)
+	application, err := message.NewApp(appConfig, bus, loggerLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -85,4 +120,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet)

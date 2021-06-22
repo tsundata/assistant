@@ -15,7 +15,7 @@ import (
 type Rule struct {
 	Name   string
 	When   string
-	Action func(b *rulebot.Context) []result.Result
+	Action func(ctx rulebot.IContext) []result.Result
 }
 
 type cronRuleset struct {
@@ -51,11 +51,11 @@ func (r *cronRuleset) ParseMessage(_ *rulebot.RuleBot, _ string) []string {
 }
 
 func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
-	b.Ctx.Logger.Info("cron starting...")
+	b.Ctx.GetLogger().Info("cron starting...")
 
 	// process cron
 	for rule := range r.cronRules {
-		b.Ctx.Logger.Info("cron " + r.cronRules[rule].Name + ": start...")
+		b.Ctx.GetLogger().Info("cron " + r.cronRules[rule].Name + ": start...")
 		go r.ruleWorker(b, r.cronRules[rule])
 	}
 
@@ -67,12 +67,12 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 	p, err := cron.ParseUTC(rule.When)
 	if err != nil {
-		b.Ctx.Logger.Error(err)
+		b.Ctx.GetLogger().Error(err)
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		b.Ctx.Logger.Error(err)
+		b.Ctx.GetLogger().Error(err)
 		return
 	}
 	for {
@@ -80,9 +80,9 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 			msgs := func() []result.Result {
 				defer func() {
 					if r := recover(); r != nil {
-						b.Ctx.Logger.Info("ruleWorker recover " + rule.Name)
+						b.Ctx.GetLogger().Info("ruleWorker recover " + rule.Name)
 						if v, ok := r.(error); ok {
-							b.Ctx.Logger.Error(v)
+							b.Ctx.GetLogger().Error(v)
 						}
 					}
 				}()
@@ -96,7 +96,7 @@ func (r *cronRuleset) ruleWorker(b *rulebot.RuleBot, rule Rule) {
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			b.Ctx.Logger.Error(err)
+			b.Ctx.GetLogger().Error(err)
 			continue
 		}
 		time.Sleep(2 * time.Second)
@@ -112,12 +112,12 @@ func (r *cronRuleset) resultWorker(b *rulebot.RuleBot) {
 	}
 }
 
-func (r *cronRuleset) filter(b *rulebot.Context, res result.Result) result.Result {
-	ctx := context.Background()
+func (r *cronRuleset) filter(ctx rulebot.IContext, res result.Result) result.Result {
+	ctxB := context.Background()
 	filterKey := fmt.Sprintf("cron:%d:filter", res.Kind)
 
 	// filter
-	state := b.RDB.SIsMember(ctx, filterKey, res.ID)
+	state := ctx.GetRedis().SIsMember(ctxB, filterKey, res.ID)
 	ex, err := state.Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return result.EmptyResult()
@@ -127,14 +127,14 @@ func (r *cronRuleset) filter(b *rulebot.Context, res result.Result) result.Resul
 	}
 
 	// add
-	b.RDB.SAdd(ctx, filterKey, res.ID)
+	ctx.GetRedis().SAdd(ctxB, filterKey, res.ID)
 
 	return res
 }
 
-func (r *cronRuleset) pipeline(b *rulebot.Context, res result.Result) {
+func (r *cronRuleset) pipeline(ctx rulebot.IContext, res result.Result) {
 	if res.ID == "" {
 		return
 	}
-	pipeline.Workflow(b, res)
+	pipeline.Workflow(ctx, res)
 }

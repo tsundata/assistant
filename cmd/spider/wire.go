@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/spider"
+	"github.com/tsundata/assistant/internal/app/spider/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
@@ -28,6 +29,7 @@ var providerSet = wire.NewSet(
 	spider.ProviderSet,
 	rollbar.ProviderSet,
 	consul.ProviderSet,
+	rpcclient.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

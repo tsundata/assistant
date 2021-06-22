@@ -9,17 +9,16 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"time"
 )
 
-func Backup(b *rulebot.Context) []result.Result {
-	if b.Client == nil {
+func Backup(ctx rulebot.IContext) []result.Result {
+	if ctx.Middle() == nil || ctx.Message() == nil || ctx.Todo() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
-	ctx := context.Background()
-	app, err := rpcclient.GetMiddleClient(b.Client).GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
+	ctxB := context.Background()
+	app, err := ctx.Middle().GetAvailableApp(ctxB, &pb.TextRequest{Text: dropbox.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -29,25 +28,25 @@ func Backup(b *rulebot.Context) []result.Result {
 	}
 
 	// messages
-	messagesReply, err := rpcclient.GetMessageClient(b.Client).List(ctx, &pb.MessageRequest{})
+	messagesReply, err := ctx.Message().List(ctxB, &pb.MessageRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// apps
-	appsReply, err := rpcclient.GetMiddleClient(b.Client).GetApps(ctx, &pb.TextRequest{})
+	appsReply, err := ctx.Middle().GetApps(ctxB, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// credentials
-	credentialsReply, err := rpcclient.GetMiddleClient(b.Client).GetCredentials(ctx, &pb.TextRequest{})
+	credentialsReply, err := ctx.Middle().GetCredentials(ctxB, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// todos
-	todosReply, err := rpcclient.GetTodoClient(b.Client).GetTodos(ctx, &pb.TodoRequest{})
+	todosReply, err := ctx.Todo().GetTodos(ctxB, &pb.TodoRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
