@@ -5,9 +5,11 @@ import (
 	"fmt"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/hashicorp/consul/api"
 	"github.com/opentracing/opentracing-go"
-	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"os"
 	"time"
@@ -19,7 +21,7 @@ type ClientOptions struct {
 	GrpcDialOptions []grpc.DialOption
 }
 
-func NewClientOptions(_ *config.AppConfig, tracer opentracing.Tracer) (*ClientOptions, error) {
+func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 	var (
 		err error
 		o   = new(ClientOptions) // Todo rpc config
@@ -58,19 +60,20 @@ func WithTag(tag string) ClientOptional {
 }
 
 type Client struct {
-	o *ClientOptions
+	o      *ClientOptions
+	consul *api.Client
+	logger *logger.Logger
 }
 
-func NewClient(o *ClientOptions) (*Client, error) {
+func NewClient(o *ClientOptions, consul *api.Client, logger *logger.Logger) (*Client, error) {
 	return &Client{
-		o: o,
+		o:      o,
+		consul: consul,
+		logger: logger,
 	}, nil
 }
 
 func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientConn, error) {
-	//ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	//defer cancel()
-
 	o := &ClientOptions{
 		Wait:            c.o.Wait,
 		Tag:             c.o.Tag,
@@ -82,17 +85,15 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 
 	// discovery
 	discovery.RegisterBuilder()
-	consulAddress := os.Getenv("CONSUL_ADDRESS")                        // todo
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second) // nolint
+	consulAddress := os.Getenv("CONSUL_ADDRESS") // todo
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
 	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
-
-	//consulAddress := os.Getenv("CONSUL_ADDRESS")
-	//target := fmt.Sprintf("consul://%s/%s?wait=%s&tag=%s", consulAddress, service, o.Wait, o.Tag)
+	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
 	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
 	if err != nil {
-		fmt.Println(err)
+		c.logger.Warn(err.Error(), zap.String("service", service))
 		return nil, nil
 	}
 

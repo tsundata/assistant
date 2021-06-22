@@ -85,7 +85,7 @@ func (cr *consulResolver) watcher() {
 	}
 
 	for {
-		services, metaInfo, err := client.Health().Service(cr.name, cr.name, true, &api.QueryOptions{WaitIndex: cr.lastIndex})
+		services, metaInfo, err := client.Health().Service(cr.name, "grpc", true, &api.QueryOptions{WaitIndex: cr.lastIndex})
 		if err != nil {
 			fmt.Printf("error retrieving instances from Consul: %v\n", err)
 		}
@@ -96,7 +96,7 @@ func (cr *consulResolver) watcher() {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
 			newAddr = append(newAddr, resolver.Address{Addr: addr})
 		}
-		fmt.Printf("newAddrs: %v\n", newAddr)
+		fmt.Printf("%s newAddrs: %v\n", cr.name, newAddr)
 		cr.cc.NewAddress(newAddr)       // nolint
 		cr.cc.NewServiceConfig(cr.name) // nolint
 	}

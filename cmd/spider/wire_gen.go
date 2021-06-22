@@ -42,11 +42,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientOptions, err := rpc.NewClientOptions(appConfig, tracer)
+	clientOptions, err := rpc.NewClientOptions(tracer)
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions)
+	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
 	if err != nil {
 		return nil, err
 	}

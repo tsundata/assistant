@@ -8,7 +8,7 @@ import (
 )
 
 func NewMessageClient(client *rpc.Client) (pb.MessageClient, error) {
-	conn, err := client.Dial(app.Middle)
+	conn, err := client.Dial(app.Message)
 	if err != nil {
 		return nil, errors.Wrap(err, "middle client dial error")
 	}
