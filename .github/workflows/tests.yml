@@ -61,3 +61,12 @@ jobs:
 
       - name: Init config data
         run: go run ./test/load.go
+
+      - name: Run test cases
+        run: |
+          go test github.com/tsundata/assistant/internal/pkg/util
+          go test github.com/tsundata/assistant/internal/app/message/repository
+          go test github.com/tsundata/assistant/internal/app/middle/repository
+          go test github.com/tsundata/assistant/internal/app/todo/repository
+          go test github.com/tsundata/assistant/internal/app/user/repository
+          go test github.com/tsundata/assistant/internal/app/workflow/repository
