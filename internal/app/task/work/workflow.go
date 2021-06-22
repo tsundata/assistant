@@ -7,14 +7,12 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
 
 type WorkflowTask struct {
 	bus      *event.Bus
-	client   *rpc.Client
 	message  pb.MessageClient
 	workflow pb.WorkflowClient
 }
