@@ -46,5 +46,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// info
+	pair, _, err := kv.Get("config/common", nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("config common: %+v\n", pair)
+
 	fmt.Println("Done")
 }

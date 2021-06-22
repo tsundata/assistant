@@ -44,6 +44,9 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 	if err != nil {
 		panic(err)
 	}
+	if pair == nil {
+		panic("pair nil")
+	}
 	err = yaml.Unmarshal(pair.Value, &xc)
 	if err != nil {
 		panic(err)
