@@ -7,7 +7,7 @@ import (
 )
 
 func TestUserRepository_GetRole(t *testing.T) {
-	sto, err := CreateUserRepository(app.Middle)
+	sto, err := CreateUserRepository(app.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -34,7 +34,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 }
 
 func TestUserRepository_ChangeRoleExp(t *testing.T) {
-	sto, err := CreateUserRepository(app.Middle)
+	sto, err := CreateUserRepository(app.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -60,7 +60,7 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 }
 
 func TestUserRepository_ChangeRoleAttr(t *testing.T) {
-	sto, err := CreateUserRepository(app.Middle)
+	sto, err := CreateUserRepository(app.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}

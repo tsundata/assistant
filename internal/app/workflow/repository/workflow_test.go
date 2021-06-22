@@ -7,7 +7,7 @@ import (
 )
 
 func TestWorkflowRepository_GetTriggerByFlag(t *testing.T) {
-	sto, err := CreateWorkflowRepository(app.Middle)
+	sto, err := CreateWorkflowRepository(app.Workflow)
 	if err != nil {
 		t.Fatalf("create workflow Preposiory error, %+v", err)
 	}
@@ -35,7 +35,7 @@ func TestWorkflowRepository_GetTriggerByFlag(t *testing.T) {
 }
 
 func TestWorkflowRepository_ListTriggersByType(t *testing.T) {
-	sto, err := CreateWorkflowRepository(app.Middle)
+	sto, err := CreateWorkflowRepository(app.Workflow)
 	if err != nil {
 		t.Fatalf("create workflow Preposiory error, %+v", err)
 	}
@@ -62,7 +62,7 @@ func TestWorkflowRepository_ListTriggersByType(t *testing.T) {
 }
 
 func TestWorkflowRepository_CreateTrigger(t *testing.T) {
-	sto, err := CreateWorkflowRepository(app.Middle)
+	sto, err := CreateWorkflowRepository(app.Workflow)
 	if err != nil {
 		t.Fatalf("create workflow Preposiory error, %+v", err)
 	}
@@ -89,7 +89,7 @@ func TestWorkflowRepository_CreateTrigger(t *testing.T) {
 }
 
 func TestWorkflowRepository_DeleteTriggerByMessageID(t *testing.T) {
-	sto, err := CreateWorkflowRepository(app.Middle)
+	sto, err := CreateWorkflowRepository(app.Workflow)
 	if err != nil {
 		t.Fatalf("create workflow Preposiory error, %+v", err)
 	}

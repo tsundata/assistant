@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"time"
 )
 
 type TodoRepository interface {
@@ -27,6 +28,7 @@ func NewMysqlTodoRepository(logger *logger.Logger, db *sqlx.DB) TodoRepository {
 }
 
 func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
+	todo.Time = time.Now()
 	res, err := r.db.NamedExec("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `category`, `remark`, `complete`, `time`) VALUES (:content, :priority, :is_remind_at_time, :remind_at, :repeat_method, :repeat_rule, :category, :remark, :complete, :time)", todo)
 	if err != nil {
 		return 0, err
@@ -62,7 +64,7 @@ func (r *MysqlTodoRepository) CompleteTodo(id int) error {
 }
 
 func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `conent` = ? WHERE id = ?", todo.Content, todo.ID)
+	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.ID)
 	return err
 }
 
