@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
+	"github.com/tsundata/assistant/internal/app/message/rule"
 	"github.com/tsundata/assistant/internal/app/message/trigger"
 	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -103,6 +104,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 
 	// process rule
+	m.bot.SetOptions(rule.Options...)
 	out := m.bot.Process(message.Text).MessageProviderOut()
 	if len(out) > 0 {
 		return &pb.TextsReply{

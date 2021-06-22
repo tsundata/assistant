@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"strings"
+	"sync"
 )
 
 type Context struct {
@@ -114,6 +115,7 @@ func NewContext(
 }
 
 type RuleBot struct {
+	onceOptions sync.Once
 	Ctx         IContext
 	name        string
 	providerIn  string
@@ -131,9 +133,11 @@ func New(ctx IContext) *RuleBot {
 }
 
 func (s *RuleBot) SetOptions(opts ...Option) {
-	for _, opt := range opts {
-		opt(s)
-	}
+	s.onceOptions.Do(func() {
+		for _, opt := range opts {
+			opt(s)
+		}
+	})
 }
 
 func (s *RuleBot) Name() string {
