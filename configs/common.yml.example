@@ -4,7 +4,7 @@ influx:
   bucket:
   url:
 mysql:
-  url: root:123456@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
+  url: root:root@tcp(localhost:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
 redis:
   addr: 127.0.0.1:6379
   password:

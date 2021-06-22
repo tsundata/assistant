@@ -10,6 +10,25 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    services:
+      nats:
+        image: nats:latest
+        ports:
+          - 4222:4222
+          - 6222:6222
+          - 8222:8222
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      consul:
+        image: consul:latest
+        options: agent -dev
+        ports:
+          - 8500:8500
+          - 8600:8600/tcp
+          - 8600:8600/udp
+
     env:
       DB_DATABASE: assistant
       DB_USER: root
@@ -35,3 +54,8 @@ jobs:
           mysql -e 'SHOW DATABASES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_DATABASE }} < ./scripts/app.sql
           mysql -e 'use ${{ env.DB_DATABASE }};SHOW TABLES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
+      - name: Copy Config
+        run: |
+          cp configs/common.yml.example configs/common.yml
+          ls -all configs
