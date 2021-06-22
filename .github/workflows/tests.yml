@@ -58,3 +58,6 @@ jobs:
         run: |
           cp configs/common.yml.example configs/common.yml
           ls -all configs
+
+      - name: Init config data
+        run: go run ./test/load.go
