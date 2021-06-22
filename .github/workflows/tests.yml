@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_DATABASE: assistant
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_HOST: localhost
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+
+      - name: Get dependencies
+        run: go mod download
+
+      - run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'SHOW DATABASES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
