@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"log"
 	"strings"
 )
 
@@ -102,7 +103,11 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	res, err := op.Run(i.Ctx, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
-		i.Ctx.Logger.Error(err)
+		if i.Ctx.Logger != nil {
+			i.Ctx.Logger.Error(err)
+		} else {
+			log.Println(err)
+		}
 		return -1
 	}
 	debugLog(fmt.Sprintf("result: %+v\n", res))

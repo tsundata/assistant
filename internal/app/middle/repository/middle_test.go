@@ -275,6 +275,7 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
+	name := util.GeneratePassword(10, "lowercase")
 	type args struct {
 		credential model.Credential
 	}
@@ -284,7 +285,7 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{credential: model.Credential{Name: "test"}}, false},
+		{"case1", sto, args{credential: model.Credential{Name: name}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
