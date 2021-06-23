@@ -69,3 +69,6 @@ jobs:
           export CONSUL_ADDRESS=127.0.0.1:8500
           go test -race -cover -coverprofile=./coverage.out -timeout=10m -short github.com/tsundata/assistant/internal/...
           go tool cover -func ./coverage.out
+
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
