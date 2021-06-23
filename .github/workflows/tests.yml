@@ -73,26 +73,3 @@ jobs:
           go test github.com/tsundata/assistant/internal/app/todo/repository
           go test github.com/tsundata/assistant/internal/app/user/repository
           go test github.com/tsundata/assistant/internal/app/workflow/repository
-
-      - name: Setup services
-        run: |
-          export CONSUL_ADDRESS=127.0.0.1:8500
-          go run github.com/tsundata/assistant/cmd/user &
-          go run github.com/tsundata/assistant/cmd/workflow &
-          go run github.com/tsundata/assistant/cmd/todo &
-          go run github.com/tsundata/assistant/cmd/task &
-          go run github.com/tsundata/assistant/cmd/subscribe &
-          go run github.com/tsundata/assistant/cmd/storage &
-          go run github.com/tsundata/assistant/cmd/spider &
-          go run github.com/tsundata/assistant/cmd/nlp &
-          go run github.com/tsundata/assistant/cmd/middle &
-          go run github.com/tsundata/assistant/cmd/finance &
-          go run github.com/tsundata/assistant/cmd/cron &
-          go run github.com/tsundata/assistant/cmd/message &
-          go run github.com/tsundata/assistant/cmd/gateway &
-          go run github.com/tsundata/assistant/cmd/web &
-
-      - name: Run e2e test cases
-        run: |
-          export CONSUL_ADDRESS=127.0.0.1:8500
-          go test github.com/tsundata/assistant/test/e2e
