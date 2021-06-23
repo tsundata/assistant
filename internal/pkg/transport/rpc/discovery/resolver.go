@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc/resolver"
+	"log"
 	"os"
 	"regexp"
 	"sync"
@@ -80,14 +81,14 @@ func (cr *consulResolver) watcher() {
 		Token: consulToken,
 	})
 	if err != nil {
-		fmt.Printf("error create consul client: %v\n", err)
+		log.Printf("error create consul client: %v\n", err)
 		return
 	}
 
 	for {
 		services, metaInfo, err := client.Health().Service(cr.name, "grpc", true, &api.QueryOptions{WaitIndex: cr.lastIndex})
 		if err != nil {
-			fmt.Printf("error retrieving instances from Consul: %v\n", err)
+			log.Printf("error retrieving instances from Consul: %v\n", err)
 		}
 
 		cr.lastIndex = metaInfo.LastIndex
@@ -96,7 +97,9 @@ func (cr *consulResolver) watcher() {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
 			newAddr = append(newAddr, resolver.Address{Addr: addr})
 		}
-		fmt.Printf("%s newAddrs: %v\n", cr.name, newAddr)
+		if len(newAddr) > 0 {
+			log.Printf("%s newAddrs: %v\n", cr.name, newAddr)
+		}
 		cr.cc.NewAddress(newAddr)       // nolint
 		cr.cc.NewServiceConfig(cr.name) // nolint
 	}

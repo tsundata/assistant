@@ -3,6 +3,7 @@ package discovery
 import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"log"
 	"os"
 	"time"
 )
@@ -31,7 +32,7 @@ func RegisterService(ca string, cs *ConsulService) {
 		Token: consulToken,
 	})
 	if err != nil {
-		fmt.Printf("error create consul client: %v\n", err)
+		log.Printf("error create consul client: %v\n", err)
 		return
 	}
 
@@ -54,7 +55,7 @@ func RegisterService(ca string, cs *ConsulService) {
 	}
 
 	if err := agent.ServiceRegister(reg); err != nil {
-		fmt.Printf("Service Register error\n%v", err)
+		log.Printf("Service Register error\n%v", err)
 		return
 	}
 }

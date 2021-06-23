@@ -129,7 +129,7 @@ func (s *Server) Start() error {
 
 func (s *Server) register() error {
 	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("register rpc service ... ", zap.String("rpc_addr", rpcAddr))
+	s.logger.Info("register rpc service ... ", zap.String("addr", rpcAddr))
 
 	// discovery
 	discovery.RegisterService(rpcAddr, &discovery.ConsulService{

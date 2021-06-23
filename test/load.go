@@ -34,6 +34,9 @@ func main() {
 		}
 
 		name := strings.ReplaceAll(path, ".yml", "")
+		name = strings.ReplaceAll(name, "configs", "")
+		name = strings.ReplaceAll(name, `\`, "")
+		name = strings.ReplaceAll(name, `/`, "")
 		name = strings.ReplaceAll(name, "_", "/")
 		p := &api.KVPair{Key: fmt.Sprintf("config/%s", name), Value: data}
 		_, err = kv.Put(p, nil)
@@ -52,7 +55,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("config common: %+v\n", pair)
+	fmt.Printf("config common: %s\n", pair.Value)
 
 	fmt.Println("Done")
 }
