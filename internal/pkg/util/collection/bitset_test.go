@@ -27,7 +27,7 @@ func TestNewBinSet(t *testing.T) {
 	b3 := s.Test(1)
 	require.False(t, b3)
 
-	s.SetTo(math.MaxInt32, 1)
-	b4 := s.Test(math.MaxInt32)
+	s.SetTo(math.MaxInt8, 1)
+	b4 := s.Test(math.MaxInt8)
 	require.True(t, b4)
 }

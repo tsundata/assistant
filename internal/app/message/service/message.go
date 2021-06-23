@@ -120,9 +120,6 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	if message.IsMessageOfAction() {
 		message.Type = model.MessageTypeAction
 	}
-	if message.IsMessageOfScript() {
-		message.Type = model.MessageTypeScript
-	}
 
 	// store
 	id, err := m.repo.Create(message)
@@ -194,11 +191,6 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 			return nil, err
 		}
 		reply = wfReply.GetText()
-	case model.MessageTypeScript:
-		switch message.ScriptKind() {
-		default:
-			reply = model.MessageScriptOfUndefined
-		}
 	default:
 		reply = "Not running"
 	}

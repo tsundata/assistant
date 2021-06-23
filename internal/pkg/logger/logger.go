@@ -13,7 +13,9 @@ type Logger struct {
 }
 
 func NewLogger(r *rb.Rollbar) *Logger {
-	r.Config()
+	if r != nil {
+		r.Config()
+	}
 
 	logger, err := zap.NewProduction()
 	if err != nil {

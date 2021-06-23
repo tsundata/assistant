@@ -19,12 +19,6 @@ const (
 	MessageTypeGroup    = "group"
 	MessageTypeRich     = "rich"
 	MessageTypeAction   = "action"
-	MessageTypeScript   = "script"
-)
-
-const (
-	MessageScriptOfJavascript = "javascript"
-	MessageScriptOfUndefined  = "undefined"
 )
 
 const (
@@ -41,15 +35,6 @@ type Message struct {
 	Time time.Time `db:"time"`
 }
 
-func (m *Message) IsMessageOfScript() bool {
-	lines := strings.Split(m.Text, "\n")
-	if len(lines) >= 1 {
-		re := regexp.MustCompile(`^#!/usr/bin/env\s+\w+\s*$`)
-		return re.MatchString(strings.TrimSpace(lines[0]))
-	}
-	return false
-}
-
 func (m *Message) IsMessageOfAction() bool {
 	lines := strings.Split(m.Text, "\n")
 	if len(lines) >= 1 {
@@ -60,18 +45,6 @@ func (m *Message) IsMessageOfAction() bool {
 }
 
 func (m *Message) RemoveActionFlag() string {
-	re := regexp.MustCompile(`^#!action\s*$`)
+	re := regexp.MustCompile(`^#!action\s*`)
 	return re.ReplaceAllString(m.Text, "")
-}
-
-func (m *Message) ScriptKind() string {
-	if !m.IsMessageOfScript() {
-		return MessageScriptOfUndefined
-	}
-
-	lines := strings.Split(m.Text, "\n")
-	if len(lines) >= 1 {
-		return strings.TrimSpace(strings.ReplaceAll(lines[0], "#!/usr/bin/env", ""))
-	}
-	return MessageScriptOfUndefined
 }

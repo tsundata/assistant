@@ -59,8 +59,8 @@ func (r *MysqlMessageRepository) ListByType(t string) ([]model.Message, error) {
 
 func (r *MysqlMessageRepository) List() ([]model.Message, error) {
 	var messages []model.Message
-	err := r.db.Select(&messages, "SELECT uuid, text, `type`, `time` FROM `messages` WHERE `type` <> ? AND `type` <> ? ORDER BY `id` DESC",
-		model.MessageTypeAction, model.MessageTypeScript)
+	err := r.db.Select(&messages, "SELECT uuid, text, `type`, `time` FROM `messages` WHERE `type` <> ? ORDER BY `id` DESC",
+		model.MessageTypeAction)
 	if err != nil {
 		return nil, err
 	}

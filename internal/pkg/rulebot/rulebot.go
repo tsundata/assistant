@@ -124,8 +124,12 @@ type RuleBot struct {
 }
 
 func New(ctx IContext) *RuleBot {
+	name := ""
+	if ctx != nil {
+		name = ctx.GetConfig().Name
+	}
 	s := &RuleBot{
-		name: ctx.GetConfig().Name,
+		name: name,
 		Ctx:  ctx,
 	}
 
@@ -145,7 +149,9 @@ func (s *RuleBot) Name() string {
 }
 
 func (s *RuleBot) Process(in string) *RuleBot {
-	s.Ctx.GetLogger().Info("plugin process event")
+	if s.Ctx != nil && s.Ctx.GetLogger() != nil {
+		s.Ctx.GetLogger().Info("plugin process event")
+	}
 
 	s.providerIn = in
 	s.providerOut = []string{}
@@ -185,7 +191,9 @@ type RuleParser interface {
 
 func RegisterRuleset(rule RuleParser) Option {
 	return func(s *RuleBot) {
-		s.Ctx.GetLogger().Info(fmt.Sprintf("registering ruleset %T", rule))
+		if s.Ctx != nil && s.Ctx.GetLogger() != nil {
+			s.Ctx.GetLogger().Info(fmt.Sprintf("registering ruleset %T", rule))
+		}
 		rule.Boot(s)
 		s.rules = append(s.rules, rule)
 	}

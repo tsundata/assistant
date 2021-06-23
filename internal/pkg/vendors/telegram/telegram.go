@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"net/http"
@@ -57,9 +58,8 @@ func NewTelegram(token string) *Telegram {
 	return v
 }
 
-func (v *Telegram) SendMessage(chatID int, text string) (*MessageResponse, error) {
+func (v *Telegram) SendMessage(chatID int, text string) (result *MessageResponse, err error) {
 	resp, err := v.c.R().
-		SetResult(&MessageResponse{}).
 		SetBody(map[string]interface{}{
 			"chat_id": chatID,
 			"text":    text,
@@ -70,7 +70,8 @@ func (v *Telegram) SendMessage(chatID int, text string) (*MessageResponse, error
 	}
 
 	if resp.StatusCode() == http.StatusOK {
-		return resp.Result().(*MessageResponse), nil
+		err = json.Unmarshal(resp.Body(), &result)
+		return
 	} else {
 		return nil, fmt.Errorf("%d", resp.StatusCode())
 	}

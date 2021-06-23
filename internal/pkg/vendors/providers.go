@@ -55,8 +55,7 @@ type OAuthProvider interface {
 	StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error
 }
 
-func NewOAuthProvider(rdb *redis.Client, c *fiber.Ctx, url string) OAuthProvider {
-	category := c.Params("category")
+func NewOAuthProvider(rdb *redis.Client, category, url string) OAuthProvider {
 	redirectURI := fmt.Sprintf("%s/oauth/%s", url, category)
 	var provider OAuthProvider
 

@@ -527,12 +527,14 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
-	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
+	category := c.Params("category")
+	provider := vendors.NewOAuthProvider(wc.rdb, category, wc.opt.Web.Url)
 	return provider.Redirect(c, wc.gateway)
 }
 
 func (wc *WebController) OAuth(c *fiber.Ctx) error {
-	provider := vendors.NewOAuthProvider(wc.rdb, c, wc.opt.Web.Url)
+	category := c.Params("category")
+	provider := vendors.NewOAuthProvider(wc.rdb, category, wc.opt.Web.Url)
 	err := provider.StoreAccessToken(c, wc.gateway)
 	if err != nil {
 		wc.logger.Error(err)
