@@ -14,4 +14,8 @@ func TestSliceDiff(t *testing.T) {
 	var s3 []string
 	diff = StringSliceDiff(s1, s3)
 	require.Len(t, diff, 3)
+
+	var s4 []string
+	diff = StringSliceDiff(s4, s1)
+	require.Len(t, diff, 3)
 }

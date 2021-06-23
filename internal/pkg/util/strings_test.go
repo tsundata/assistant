@@ -17,6 +17,17 @@ func TestIsIPv4(t *testing.T) {
 func TestGeneratePassword(t *testing.T) {
 	pwd := GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
 	require.Len(t, pwd, 32)
+
+	pwd2 := GeneratePassword(32, "")
+	require.Len(t, pwd2, 0)
+}
+
+func TestGenerateUUID(t *testing.T) {
+	uuid, err := GenerateUUID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Len(t, uuid, 36)
 }
 
 func BenchmarkGeneratePassword(b *testing.B) {
