@@ -53,4 +53,7 @@ func TestRegexRule(t *testing.T) {
 
 	res2 := b.Process("add 1 2")
 	require.Contains(t, res2.MessageProviderOut(), "3")
+
+	res3 := b.Process("help")
+	require.Len(t, res3.MessageProviderOut(), 1)
 }
