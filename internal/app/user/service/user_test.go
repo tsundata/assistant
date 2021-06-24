@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/stretchr/testify/mock"
+	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
-	"github.com/tsundata/assistant/mocks"
+	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
 	"time"
@@ -21,8 +21,7 @@ func TestUser_Authorization(t *testing.T) {
 	}
 	rdb.Set(context.Background(), "user:auth:token", "test", time.Hour)
 
-	repo := new(mocks.UserRepository)
-	u := NewUser(rdb, repo)
+	u := NewUser(rdb, nil)
 	type args struct {
 		ctx     context.Context
 		payload *pb.TextRequest
@@ -51,17 +50,15 @@ func TestUser_Authorization(t *testing.T) {
 }
 
 func TestUser_GetRole(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.User)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rdb.Set(context.Background(), "user:auth:token", "test", time.Hour)
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	repo := new(mocks.UserRepository)
-	repo.
-		On("GetRole", mock.AnythingOfType("int")).
-		Return(model.Role{Profession: "super"}, nil)
-	u := NewUser(rdb, repo)
+	repo := mock.NewMockUserRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetRole(gomock.Any()).Return(model.Role{Profession: "super"}, nil),
+	)
+
+	u := NewUser(nil, repo)
 	type args struct {
 		in0     context.Context
 		payload *pb.RoleRequest

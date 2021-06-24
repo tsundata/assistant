@@ -38,10 +38,12 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 		return nil, err
 	}
 
-	err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoExp})
-	if err != nil {
-		s.logger.Error(err)
-		return nil, err
+	if s.bus != nil {
+		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoExp})
+		if err != nil {
+			s.logger.Error(err)
+			return nil, err
+		}
 	}
 
 	return &pb.StateReply{State: true}, nil

@@ -44,14 +44,5 @@ golangci-lint run
 # Install
 go install github.com/golang/mock/mockgen@v1.6.0
 # Output
-mockgen -source=foo.go [other options]
-```
-
-## mockery
-
-```shell
-# Install
-go get github.com/vektra/mockery/v2/.../
-# Run
-mockery --all
+mockgen -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_repository.go -package=mock
 ```
