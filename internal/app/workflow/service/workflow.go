@@ -116,9 +116,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 		return nil, err
 	}
 
-	return &pb.WorkflowReply{
-		Text: "",
-	}, nil
+	return &pb.WorkflowReply{}, nil
 }
 
 func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
@@ -162,9 +160,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 		}
 	}
 
-	return &pb.WorkflowReply{
-		Text: "",
-	}, nil
+	return &pb.WorkflowReply{}, nil
 }
 
 func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
