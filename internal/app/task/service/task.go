@@ -16,28 +16,6 @@ func NewTask(server *machinery.Server) *Task {
 	return &Task{server: server}
 }
 
-// Fixme remove
-func (s *Task) Send(ctx context.Context, payload *pb.JobRequest) (*pb.StateReply, error) {
-	task := tasks.Signature{
-		Name: payload.GetName(),
-		Args: []tasks.Arg{
-			{
-				Type:  "string",
-				Value: payload.GetArgs(),
-			},
-		},
-	}
-
-	_, err := s.server.SendTaskWithContext(ctx, &task)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.StateReply{
-		State: true,
-	}, nil
-}
-
 func (s *Task) Delay(ctx context.Context, payload *pb.JobRequest) (*pb.StateReply, error) {
 	eta, err := time.ParseInLocation("2006-01-02 15:04:05", payload.GetTime(), time.Local)
 	if err != nil {
