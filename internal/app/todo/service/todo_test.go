@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -15,12 +17,18 @@ func TestTodo_CreateTodo(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	nats, err := event.CreateNats(app.Todo)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bus := event.NewBus(nats)
+
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().CreateTodo(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewTodo(nil, nil, repo)
+	s := NewTodo(bus, nil, repo)
 
 	type args struct {
 		in0     context.Context

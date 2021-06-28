@@ -28,6 +28,13 @@ func TestNLP_Pinyin(t *testing.T) {
 			&pb.WordsReply{Text: []string{"ce", "shi"}},
 			false,
 		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: ""}},
+			&pb.WordsReply{Text: []string{}},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,6 +68,13 @@ func TestNLP_Segmentation(t *testing.T) {
 			s,
 			args{context.Background(), &pb.TextRequest{Text: "现在进行单元测试"}},
 			&pb.WordsReply{Text: []string{"现在", "进行", "单元测试"}},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: ""}},
+			&pb.WordsReply{Text: []string{}},
 			false,
 		},
 	}
