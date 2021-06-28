@@ -99,17 +99,20 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 	if find.ID > 0 {
 		return &pb.TextsReply{
+			Id:   int64(find.ID),
 			Uuid: message.UUID,
 		}, nil
 	}
 
 	// process rule
-	m.bot.SetOptions(rule.Options...)
-	out := m.bot.Process(message.Text).MessageProviderOut()
-	if len(out) > 0 {
-		return &pb.TextsReply{
-			Text: out,
-		}, nil
+	if m.bot != nil {
+		m.bot.SetOptions(rule.Options...)
+		out := m.bot.Process(message.Text).MessageProviderOut()
+		if len(out) > 0 {
+			return &pb.TextsReply{
+				Text: out,
+			}, nil
+		}
 	}
 
 	// parse type
