@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"github.com/google/wire"
 	"github.com/hashicorp/consul/api"
@@ -79,7 +78,7 @@ func (c *AppConfig) GetConfig(key string) (string, error) {
 	if result != nil {
 		return util.ByteToString(result.Value), nil
 	}
-	return "", errors.New("result error")
+	return "", nil
 }
 
 func (c *AppConfig) GetSetting(key string) (string, error) {
@@ -90,7 +89,7 @@ func (c *AppConfig) GetSetting(key string) (string, error) {
 	if result != nil {
 		return util.ByteToString(result.Value), nil
 	}
-	return "", errors.New("result error")
+	return "", nil
 }
 
 func (c *AppConfig) SetSetting(key, value string) error {

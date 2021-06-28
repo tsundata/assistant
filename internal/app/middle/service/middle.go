@@ -394,9 +394,11 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
 }
 
+const AuthKey = "user:auth:token"
+
 func authUUID(rdb *redis.Client) (string, error) {
 	var uuid string
-	uuid, err := rdb.Get(context.Background(), "user:auth:token").Result()
+	uuid, err := rdb.Get(context.Background(), AuthKey).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return "", err
 	}
@@ -406,7 +408,7 @@ func authUUID(rdb *redis.Client) (string, error) {
 			return "", err
 		}
 
-		status := rdb.Set(context.Background(), "user:auth:token", uuid, 60*time.Minute)
+		status := rdb.Set(context.Background(), AuthKey, uuid, 60*time.Minute)
 		if status.Err() != nil {
 			return "", err
 		}

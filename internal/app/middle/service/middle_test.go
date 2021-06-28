@@ -199,9 +199,10 @@ func TestMiddle_GetApps(t *testing.T) {
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().ListApps().Return([]model.App{{
-			ID:      1,
-			Type:    "github",
-			Time:    time.Now(),
+			ID:   1,
+			Type: "github",
+			Extra: `{"name": "github", "type":"github", "key": "test"}`,
+			Time: time.Now(),
 		}}, nil),
 	)
 
@@ -241,6 +242,23 @@ func TestMiddle_GetApps(t *testing.T) {
 }
 
 func TestMiddle_GetAvailableApp(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetAvailableAppByType(gomock.Any()).Return(model.App{
+			ID:    1,
+			Name:  "github",
+			Type:  "github",
+			Time:  time.Now(),
+			Extra: `{"name": "github", "type":"github", "key": "test"}`,
+			Token: "test",
+		}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.TextRequest
@@ -252,7 +270,13 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 		want    *pb.AppReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "github"}},
+			&pb.AppReply{Name: "github", Type: "github", Token: "test", Extra: []*pb.KV{}},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -261,7 +285,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 				t.Errorf("Middle.GetAvailableApp() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got != nil && (got.Token != tt.want.Token || got.Type != tt.want.Type) {
 				t.Errorf("Middle.GetAvailableApp() = %v, want %v", got, tt.want)
 			}
 		})
@@ -269,6 +293,28 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 }
 
 func TestMiddle_StoreAppOAuth(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetAppByType(gomock.Any()).Return(model.App{
+			ID:    1,
+			Name:  "github",
+			Type:  "github",
+			Time:  time.Now(),
+			Extra: `{"name": "github", "type":"github", "key": "test"}`,
+			Token: "test",
+		}, nil),
+		repo.EXPECT().UpdateAppByID(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
+		repo.EXPECT().GetAppByType(gomock.Any()).Return(model.App{
+			ID: 0,
+		}, nil),
+		repo.EXPECT().CreateApp(gomock.Any()).Return(int64(1), nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.AppRequest
@@ -280,7 +326,27 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.AppRequest{Type: "github", Token: "test", Extra: "{}"}},
+			&pb.StateReply{State: true},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.AppRequest{Type: "github", Token: "test", Extra: "{}"}},
+			&pb.StateReply{State: true},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.AppRequest{Type: "github", Token: "", Extra: "{}"}},
+			&pb.StateReply{State: false},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -297,6 +363,29 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 }
 
 func TestMiddle_GetCredential(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetCredentialByName(gomock.Any()).Return(model.Credential{
+			ID:      1,
+			Name:    "github",
+			Type:    "github",
+			Content: `{"name": "github", "type":"github", "key": "test"}`,
+			Time:    time.Now(),
+		}, nil),
+		repo.EXPECT().GetCredentialByType(gomock.Any()).Return(model.Credential{
+			ID:      1,
+			Name:    "github",
+			Type:    "github",
+			Content: `{"name": "github", "type":"github", "key": "test"}`,
+			Time:    time.Now(),
+		}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.CredentialRequest
@@ -308,7 +397,28 @@ func TestMiddle_GetCredential(t *testing.T) {
 		want    *pb.CredentialReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.CredentialRequest{Name: "github"}},
+			&pb.CredentialReply{
+				Name:    "github",
+				Type:    "github",
+				Content: []*pb.KV{},
+			},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.CredentialRequest{Type: "github"}},
+			&pb.CredentialReply{
+				Name:    "github",
+				Type:    "github",
+				Content: []*pb.KV{},
+			},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -317,7 +427,7 @@ func TestMiddle_GetCredential(t *testing.T) {
 				t.Errorf("Middle.GetCredential() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got != nil && (got.Name != tt.want.Name || got.Type != tt.want.Type) {
 				t.Errorf("Middle.GetCredential() = %v, want %v", got, tt.want)
 			}
 		})
@@ -325,6 +435,22 @@ func TestMiddle_GetCredential(t *testing.T) {
 }
 
 func TestMiddle_GetCredentials(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListCredentials().Return([]model.Credential{{
+			ID:      1,
+			Name:    "github",
+			Type:    "github",
+			Content: `{"name": "github", "type":"github", "key": "test"}`,
+			Time:    time.Now(),
+		}}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0 context.Context
 		in1 *pb.TextRequest
@@ -333,10 +459,16 @@ func TestMiddle_GetCredentials(t *testing.T) {
 		name    string
 		s       *Middle
 		args    args
-		want    *pb.CredentialsReply
+		want    int
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{}},
+			1,
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -345,7 +477,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 				t.Errorf("Middle.GetCredentials() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got != nil && len(got.Credentials) != tt.want {
 				t.Errorf("Middle.GetCredentials() = %v, want %v", got, tt.want)
 			}
 		})
@@ -353,6 +485,22 @@ func TestMiddle_GetCredentials(t *testing.T) {
 }
 
 func TestMiddle_GetMaskingCredentials(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListCredentials().Return([]model.Credential{{
+			ID:      1,
+			Name:    "github",
+			Type:    "github",
+			Content: `{"name": "github", "type":"github", "key": "test"}`,
+			Time:    time.Now(),
+		}}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0 context.Context
 		in1 *pb.TextRequest
@@ -361,10 +509,16 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 		name    string
 		s       *Middle
 		args    args
-		want    *pb.MaskingReply
+		want    int
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{}},
+			1,
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -373,7 +527,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 				t.Errorf("Middle.GetMaskingCredentials() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got != nil && len(got.Items) != tt.want {
 				t.Errorf("Middle.GetMaskingCredentials() = %v, want %v", got, tt.want)
 			}
 		})
@@ -381,6 +535,16 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 }
 
 func TestMiddle_CreateCredential(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().CreateCredential(gomock.Any()).Return(int64(1), nil),
+	)
+
+	s := NewMiddle(nil, nil, repo)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.KVsRequest
@@ -392,7 +556,28 @@ func TestMiddle_CreateCredential(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.KVsRequest{Kvs: []*pb.KV{
+				{Key: "name", Value: "github"},
+				{Key: "type", Value: "github"},
+				{Key: "key", Value: "123456"},
+			}}},
+			&pb.StateReply{State: true},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.KVsRequest{Kvs: []*pb.KV{
+				{Key: "name", Value: ""},
+				{Key: "type", Value: "github"},
+				{Key: "key", Value: "123456"},
+			}}},
+			nil,
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -409,6 +594,13 @@ func TestMiddle_CreateCredential(t *testing.T) {
 }
 
 func TestMiddle_GetSettings(t *testing.T) {
+	conf, err := config.CreateAppConfig(app.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(conf, nil, nil)
+
 	type args struct {
 		in0 context.Context
 		in1 *pb.TextRequest
@@ -417,26 +609,34 @@ func TestMiddle_GetSettings(t *testing.T) {
 		name    string
 		s       *Middle
 		args    args
-		want    *pb.SettingsReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{}},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetSettings(tt.args.in0, tt.args.in1)
+			_, err := tt.s.GetSettings(tt.args.in0, tt.args.in1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Middle.GetSettings() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Middle.GetSettings() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func TestMiddle_GetSetting(t *testing.T) {
+	conf, err := config.CreateAppConfig(app.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(conf, nil, nil)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.TextRequest
@@ -445,26 +645,34 @@ func TestMiddle_GetSetting(t *testing.T) {
 		name    string
 		s       *Middle
 		args    args
-		want    *pb.SettingReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetSetting(tt.args.in0, tt.args.payload)
+			_, err := tt.s.GetSetting(tt.args.in0, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Middle.GetSetting() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Middle.GetSetting() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func TestMiddle_CreateSetting(t *testing.T) {
+	conf, err := config.CreateAppConfig(app.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(conf, nil, nil)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.KVRequest
@@ -476,7 +684,13 @@ func TestMiddle_CreateSetting(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.KVRequest{Key: "test", Value: "test"}},
+			&pb.StateReply{State: true},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -493,6 +707,13 @@ func TestMiddle_CreateSetting(t *testing.T) {
 }
 
 func TestMiddle_GetStats(t *testing.T) {
+	rdb, err := vendors.CreateRedisClient(app.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(nil, rdb, nil)
+
 	type args struct {
 		ctx context.Context
 		in1 *pb.TextRequest
@@ -501,46 +722,58 @@ func TestMiddle_GetStats(t *testing.T) {
 		name    string
 		s       *Middle
 		args    args
-		want    *pb.TextReply
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{}},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetStats(tt.args.ctx, tt.args.in1)
+			_, err := tt.s.GetStats(tt.args.ctx, tt.args.in1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Middle.GetStats() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Middle.GetStats() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func Test_authUUID(t *testing.T) {
+	rdb, err := vendors.CreateRedisClient(app.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rdb.Del(context.Background(), AuthKey)
+
 	type args struct {
 		rdb *redis.Client
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			"case1",
+			args{rdb: rdb},
+			false,
+		},
+		{
+			"case2",
+			args{rdb: rdb},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := authUUID(tt.args.rdb)
+			_, err := authUUID(tt.args.rdb)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("authUUID() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if got != tt.want {
-				t.Errorf("authUUID() = %v, want %v", got, tt.want)
 			}
 		})
 	}

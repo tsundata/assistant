@@ -49,5 +49,5 @@ func TestAppConfig_Setting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Len(t, res2, 2)
+	require.True(t, len(res2) >= 2)
 }
