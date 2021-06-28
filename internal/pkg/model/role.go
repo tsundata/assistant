@@ -2,13 +2,23 @@ package model
 
 import "time"
 
+type AttrShort string
+type RoleAttr string
+
 const (
-	RoleStrength    = "strength"
-	RoleCulture     = "culture"
-	RoleEnvironment = "environment"
-	RoleCharisma    = "charisma"
-	RoleTalent      = "talent"
-	RoleIntellect   = "intellect"
+	StrengthAttr    RoleAttr = "strength"
+	CultureAttr     RoleAttr = "culture"
+	EnvironmentAttr RoleAttr = "environment"
+	CharismaAttr    RoleAttr = "charisma"
+	TalentAttr      RoleAttr = "talent"
+	IntellectAttr   RoleAttr = "intellect"
+
+	StrengthShort    AttrShort = "str"
+	CultureShort     AttrShort = "cul"
+	EnvironmentShort AttrShort = "env"
+	CharismaShort    AttrShort = "cha"
+	TalentShort      AttrShort = "tal"
+	IntellectShort   AttrShort = "int"
 )
 
 const TodoExp = 1

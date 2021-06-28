@@ -66,7 +66,7 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 	}
 	type args struct {
 		userID int
-		attr   string
+		attr   model.RoleAttr
 		val    int
 	}
 	tests := []struct {
@@ -75,16 +75,16 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{userID: 1, attr: model.RoleStrength, val: 1}, false},
-		{"case2", sto, args{userID: 1, attr: model.RoleCulture, val: 1}, false},
-		{"case3", sto, args{userID: 1, attr: model.RoleEnvironment, val: 1}, false},
-		{"case4", sto, args{userID: 1, attr: model.RoleCharisma, val: 1}, false},
-		{"case5", sto, args{userID: 1, attr: model.RoleTalent, val: 1}, false},
-		{"case5", sto, args{userID: 1, attr: model.RoleIntellect, val: 1}, false},
+		{"case1", sto, args{userID: 1, attr: model.StrengthAttr, val: 1}, false},
+		{"case2", sto, args{userID: 1, attr: model.CultureAttr, val: 1}, false},
+		{"case3", sto, args{userID: 1, attr: model.EnvironmentAttr, val: 1}, false},
+		{"case4", sto, args{userID: 1, attr: model.CharismaAttr, val: 1}, false},
+		{"case5", sto, args{userID: 1, attr: model.TalentAttr, val: 1}, false},
+		{"case5", sto, args{userID: 1, attr: model.IntellectAttr, val: 1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.ChangeRoleAttr(tt.args.userID, tt.args.attr, tt.args.val); (err != nil) != tt.wantErr {
+			if err := tt.r.ChangeRoleAttr(tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
 				t.Errorf("MysqlUserRepository.ChangeRoleAttr() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

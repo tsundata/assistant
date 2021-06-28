@@ -59,6 +59,7 @@ jobs:
           cp configs/common.yml.example configs/common.yml
           cp configs/gateway.yml.example configs/gateway.yml
           cp configs/web.yml.example configs/web.yml
+          cp configs/classifier.yml.example configs/classifier.yml
           ls -all configs
 
       - name: Init config data

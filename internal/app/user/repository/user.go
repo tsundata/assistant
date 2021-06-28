@@ -55,18 +55,18 @@ func (r *MysqlUserRepository) ChangeRoleAttr(userID int, attr string, val int) e
 		return err
 	}
 	oldVal := 0
-	switch attr {
-	case model.RoleStrength:
+	switch model.RoleAttr(attr) {
+	case model.StrengthAttr:
 		oldVal = item.Strength
-	case model.RoleCulture:
+	case model.CultureAttr:
 		oldVal = item.Culture
-	case model.RoleEnvironment:
+	case model.EnvironmentAttr:
 		oldVal = item.Environment
-	case model.RoleCharisma:
+	case model.CharismaAttr:
 		oldVal = item.Charisma
-	case model.RoleTalent:
+	case model.TalentAttr:
 		oldVal = item.Talent
-	case model.RoleIntellect:
+	case model.IntellectAttr:
 		oldVal = item.Intellect
 	}
 	_, err = r.db.Exec(fmt.Sprintf("UPDATE `roles` SET `%s` = ? WHERE `user_id` = ?", attr), oldVal+val, userID)

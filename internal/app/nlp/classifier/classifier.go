@@ -14,7 +14,7 @@ func NewClassifier(conf *config.AppConfig) *Classifier {
 	return &Classifier{conf: conf}
 }
 
-func (c Classifier) LoadRule() error {
+func (c *Classifier) LoadRule() error {
 	s, err := c.conf.GetConfig("classifier")
 	if err != nil {
 		return err
