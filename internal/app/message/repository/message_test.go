@@ -26,6 +26,7 @@ func TestMessageRepository_GetByID(t *testing.T) {
 		{"id=1", sto, args{id: 1}, false},
 		{"id=2", sto, args{id: 2}, false},
 		{"id=3", sto, args{id: 3}, false},
+		{"id=99999", sto, args{id: 99999}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -56,6 +57,7 @@ func TestMessageRepository_GetByUUID(t *testing.T) {
 		{"uuid=1", sto, args{uuid: "1"}, false},
 		{"uuid=2", sto, args{uuid: "2"}, false},
 		{"uuid=3", sto, args{uuid: "3"}, false},
+		{"uuid=ff4103db-d554-4f22-b6c7-57a3f708d5eb", sto, args{uuid: "ff4103db-d554-4f22-b6c7-57a3f708d5eb"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

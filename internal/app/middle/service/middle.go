@@ -366,6 +366,9 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	if err != nil {
 		return nil, err
 	}
+	if len(keys) <= 0 {
+		return &pb.TextReply{Text: "not stats"}, nil
+	}
 	values, err := s.rdb.MGet(ctx, keys...).Result()
 	if err != nil {
 		return nil, err

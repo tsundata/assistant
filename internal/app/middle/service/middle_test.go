@@ -199,10 +199,10 @@ func TestMiddle_GetApps(t *testing.T) {
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().ListApps().Return([]model.App{{
-			ID:   1,
-			Type: "github",
+			ID:    1,
+			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
-			Time: time.Now(),
+			Time:  time.Now(),
 		}}, nil),
 	)
 
@@ -711,6 +711,8 @@ func TestMiddle_GetStats(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	rdb.MSet(context.Background(), "stats:count:test", "test")
+	rdb.MSet(context.Background(), "stats:month:0000", 0)
 
 	s := NewMiddle(nil, rdb, nil)
 
