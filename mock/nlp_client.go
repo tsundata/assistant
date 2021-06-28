@@ -36,6 +36,26 @@ func (m *MockNLPClient) EXPECT() *MockNLPClientMockRecorder {
 	return m.recorder
 }
 
+// Classifier mocks base method.
+func (m *MockNLPClient) Classifier(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Classifier", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Classifier indicates an expected call of Classifier.
+func (mr *MockNLPClientMockRecorder) Classifier(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPClient)(nil).Classifier), varargs...)
+}
+
 // Pinyin mocks base method.
 func (m *MockNLPClient) Pinyin(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
@@ -97,6 +117,21 @@ func NewMockNLPServer(ctrl *gomock.Controller) *MockNLPServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockNLPServer) EXPECT() *MockNLPServerMockRecorder {
 	return m.recorder
+}
+
+// Classifier mocks base method.
+func (m *MockNLPServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Classifier", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Classifier indicates an expected call of Classifier.
+func (mr *MockNLPServerMockRecorder) Classifier(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPServer)(nil).Classifier), arg0, arg1)
 }
 
 // Pinyin mocks base method.

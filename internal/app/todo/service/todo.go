@@ -39,7 +39,7 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoExp})
+		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCreatedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -109,6 +109,24 @@ func (s *Todo) CompleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.Sta
 	err := s.repo.CompleteTodo(int(payload.GetId()))
 	if err != nil {
 		return nil, err
+	}
+
+	if s.bus != nil {
+		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCompletedExp})
+		if err != nil {
+			s.logger.Error(err)
+			return nil, err
+		}
+
+		find, err := s.repo.GetTodo(int(payload.GetId()))
+		if err != nil {
+			return nil, err
+		}
+		err = s.bus.Publish(event.ChangeAttrSubject, model.AttrChange{UserID: model.SuperUserID, Content: find.Content})
+		if err != nil {
+			s.logger.Error(err)
+			return nil, err
+		}
 	}
 
 	return &pb.StateReply{State: true}, nil

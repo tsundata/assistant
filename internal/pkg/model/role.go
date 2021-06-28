@@ -21,7 +21,8 @@ const (
 	IntellectShort   AttrShort = "int"
 )
 
-const TodoExp = 1
+const TodoCreatedExp = 1
+const TodoCompletedExp = 2
 
 type Role struct {
 	ID         int    `db:"id"`
@@ -61,4 +62,9 @@ type Quest struct {
 	AttrPoints    string    `db:"attr_points"`
 	Preconditions string    `db:"preconditions"`
 	Time          time.Time `db:"time"`
+}
+
+type AttrChange struct {
+	UserID  int    `json:"user_id"`
+	Content string `json:"content"`
 }

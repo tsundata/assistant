@@ -4,19 +4,24 @@ import (
 	"context"
 	"github.com/go-ego/gse"
 	"github.com/mozillazg/go-pinyin"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/nlp/classifier"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"strings"
 )
 
 type NLP struct {
-	seg *gse.Segmenter
+	conf *config.AppConfig
+	seg  *gse.Segmenter
 }
 
-func NewNLP() *NLP {
+func NewNLP(conf *config.AppConfig) *NLP {
 	// gse preload dict
 	seg := gse.New("zh", "alpha")
 	return &NLP{
-		seg: &seg,
+		conf: conf,
+		seg:  &seg,
 	}
 }
 
@@ -39,4 +44,23 @@ func (s *NLP) Segmentation(_ context.Context, req *pb.TextRequest) (*pb.WordsRep
 	}
 	result := s.seg.Cut(req.GetText(), true)
 	return &pb.WordsReply{Text: result}, nil
+}
+
+func (s *NLP) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextReply, error) {
+	c := classifier.NewClassifier(s.conf)
+	err := c.LoadRule()
+	if err != nil {
+		return nil, err
+	}
+	if req.GetText() == "" {
+		return nil, errors.New("error text")
+	}
+	res, err := c.Do(req.GetText())
+	if err != nil {
+		if errors.Is(err, classifier.ErrEmpty) {
+			return &pb.TextReply{Text: ""}, nil
+		}
+		return nil, err
+	}
+	return &pb.TextReply{Text: string(res)}, nil
 }

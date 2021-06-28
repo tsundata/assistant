@@ -9,15 +9,14 @@ import (
 var ErrEmpty = errors.New("empty check")
 
 type Rule struct {
-	check  string
 	Format string
 }
 
-func NewRule(check string) *Rule {
-	return &Rule{check: check}
+func NewRule() *Rule {
+	return &Rule{}
 }
 
-func (r *Rule) Do() (model.RoleAttr, error) {
+func (r *Rule) Do(check string) (model.RoleAttr, error) {
 	part := strings.Split(r.Format, ">")
 	if len(part) != 2 {
 		return "", errors.New("error rule part")
@@ -32,7 +31,7 @@ func (r *Rule) Do() (model.RoleAttr, error) {
 		return "", errors.New("error rule words")
 	}
 	for _, item := range words {
-		if strings.Contains(r.check, item) {
+		if strings.Contains(check, item) {
 			return toRoleAttr(attr)
 		}
 	}

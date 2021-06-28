@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/user"
 	"github.com/tsundata/assistant/internal/app/user/repository"
+	"github.com/tsundata/assistant/internal/app/user/rpcclient"
 	"github.com/tsundata/assistant/internal/app/user/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -38,6 +39,7 @@ var providerSet = wire.NewSet(
 	event.ProviderSet,
 	nats.ProviderSet,
 	service.ProviderSet,
+	rpcclient.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

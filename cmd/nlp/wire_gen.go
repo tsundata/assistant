@@ -32,7 +32,7 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	loggerLogger := logger.NewLogger(rollbarRollbar)
-	serviceNLP := service.NewNLP()
+	serviceNLP := service.NewNLP(appConfig)
 	initServer := service.CreateInitServerFn(serviceNLP)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {

@@ -1,7 +1,9 @@
 package classifier
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"strings"
 )
 
@@ -26,4 +28,17 @@ func (c *Classifier) LoadRule() error {
 		c.rules = append(c.rules, Rule{Format: rule})
 	}
 	return nil
+}
+
+func (c *Classifier) Do(check string) (model.RoleAttr, error) {
+	for _, rule := range c.rules {
+		res, err := rule.Do(check)
+		if err != nil && !errors.Is(err, ErrEmpty) {
+			return "", err
+		}
+		if res != "" {
+			return res, nil
+		}
+	}
+	return "", ErrEmpty
 }

@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"reflect"
 	"testing"
 
@@ -9,7 +12,7 @@ import (
 )
 
 func TestNLP_Pinyin(t *testing.T) {
-	s := NewNLP()
+	s := NewNLP(nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -51,7 +54,7 @@ func TestNLP_Pinyin(t *testing.T) {
 }
 
 func TestNLP_Segmentation(t *testing.T) {
-	s := NewNLP()
+	s := NewNLP(nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -87,6 +90,59 @@ func TestNLP_Segmentation(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NLP.Segmentation() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNLP_Classifier(t *testing.T) {
+	conf, err := config.CreateAppConfig(app.NLP)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := NewNLP(conf)
+	type args struct {
+		in0 context.Context
+		req *pb.TextRequest
+	}
+	tests := []struct {
+		name    string
+		s       *NLP
+		args    args
+		want    *pb.TextReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			&pb.TextReply{Text: string(model.StrengthAttr)},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "demo2"}},
+			&pb.TextReply{Text: string(model.CultureAttr)},
+			false,
+		},
+		{
+			"case3",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "demo8"}},
+			&pb.TextReply{Text: ""},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.Classifier(tt.args.in0, tt.args.req)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("NLP.Classifier() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NLP.Classifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}
