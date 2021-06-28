@@ -49,6 +49,9 @@ func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, repo repository
 			return
 		}
 	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

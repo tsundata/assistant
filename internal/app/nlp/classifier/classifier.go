@@ -25,6 +25,9 @@ func (c *Classifier) LoadRule() error {
 
 	c.rules = []Rule{}
 	for _, rule := range rules {
+		if rule == "" {
+			continue
+		}
 		c.rules = append(c.rules, Rule{Format: rule})
 	}
 	return nil
