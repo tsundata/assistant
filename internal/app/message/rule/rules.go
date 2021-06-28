@@ -38,7 +38,7 @@ var rules = []Rule{
 			}
 
 			if reply.GetText() == "" {
-				return []string{"empty subscript"}
+				return []string{"empty menu"}
 			}
 
 			return []string{reply.GetText()}

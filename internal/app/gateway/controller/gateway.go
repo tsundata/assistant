@@ -23,7 +23,6 @@ type GatewayController struct {
 	opt    *config.AppConfig
 	rdb    *redis.Client
 	logger *logger.Logger
-	//client *rpc.Client
 
 	messageSvc  pb.MessageClient
 	middleSvc   pb.MiddleClient
