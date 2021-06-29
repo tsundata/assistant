@@ -1,8 +1,96 @@
 
+<a name="v0.0.24"></a>
+## [v0.0.24](https://github.com/tsundata/assistant/compare/v0.0.23...v0.0.24) (2021-06-29)
+
+### Bug Fixes
+
+* clasifier load rule
+* create message with default time
+* go.sum
+* gateway, web router
+* wire gen
+* go mod
+* go.sum
+* gateway, web router
+* wire gen
+* go mod
+* lint
+* lint issues
+
+### Code Refactoring
+
+* todo Complete
+* rpc client timeout
+* rulebot load options
+* rpc client
+* rpc resolver
+* grpc discovery
+* context
+* logger
+* spider read remote config
+* rpc client name
+* app id, app config
+* rulebot.Context
+* remove worker service
+* rename transports package
+* rename tasks package
+* rename components package
+* rename controllers package
+* rename rules package
+* rename utils package
+* context
+* logger
+* spider read remote config
+* rpc client name
+* app id, app config
+* rulebot.Context
+* remove worker service
+* rename transports package
+* rename tasks package
+* rename components package
+* rename controllers package
+* rename rules package
+* rename utils package
+
+### Features
+
+* classifier do rule
+* classifier load rule
+* nlp segmentation
+* nlp pinyin conversion
+* nlp service
+* AppConfig get/set method
+* send message event
+* role rpc
+* todo rpc
+* debug event
+* cleassifier
+* nlp segmentation
+* nlp pinyin conversion
+* nlp service
+* AppConfig get/set method
+* send message event
+* role rpc
+* todo rpc
+* debug event
+* consul env
+* consul discovery
+* consul
+* todo app
+* user app
+* finance app
+* event listener
+* event bus
+* nats
+* middleware dir
+* gateway sdk
+* push ghcr.io image
+
+
 <a name="v0.0.23"></a>
 ## [v0.0.23](https://github.com/tsundata/assistant/compare/v0.0.22...v0.0.23) (2021-06-03)
 
-### Build Image Tag
+### Bug Fixes
 
 * build image tag
 
@@ -10,66 +98,27 @@
 <a name="v0.0.22"></a>
 ## [v0.0.22](https://github.com/tsundata/assistant/compare/v0.0.21...v0.0.22) (2021-06-02)
 
-### Agent Cmd
+### Bug Fixes
 
+* Dockerfile
+* Dockerfile
 * agent cmd
-
-### Amqp
-
-* amqp
-
-### Config Center
-
-* config center
-
-### Dockerfile
-
-* Dockerfile
-* Dockerfile
-
-### Gateway K8s
-
-* gateway k8s
-
-### Lint
-
 * lint
-
-### Message Repository
-
-* message repository
-
-### Middle Repository
-
-* middle repository
-
-### Rabbitmq Docker-Compose
-
-* rabbitmq docker-compose
-
-### Run Web Action
-
 * run web action
 
-### Stats
+### Features
 
-* stats
-
-### Storage Service
-
-* storage service
-
-### Telegram Incoming
-
-* telegram incoming
-
-### Webhook Auth
-
-* webhook auth
-
-### Workflow Repository
-
+* gateway k8s
+* config center
 * workflow repository
+* middle repository
+* message repository
+* storage service
+* webhook auth
+* amqp
+* rabbitmq docker-compose
+* stats
+* telegram incoming
 
 ### Pull Requests
 
@@ -82,109 +131,55 @@
 <a name="v0.0.21"></a>
 ## [v0.0.21](https://github.com/tsundata/assistant/compare/v0.0.20...v0.0.21) (2021-03-24)
 
-### Cloudflare Cron
-
-* cloudflare cron
-
-### Create Script Url
-
-* create script url
-
-### Env Opcode
-
-* env opcode
-
-### Pipeline, Stage
-
-* pipeline, stage
-
-### Secret Opcode
-
-* secret opcode
-
-### Subscribe Name
+### Bug Fixes
 
 * subscribe name
+* create script url
+
+### Features
+
+* cloudflare cron
+* env opcode
+* secret opcode
+* pipeline, stage
 
 
 <a name="v0.0.20"></a>
 ## [v0.0.20](https://github.com/tsundata/assistant/compare/v0.0.19...v0.0.20) (2021-03-20)
 
-###  Email Trigger
-
-*  email trigger
-
-### Delay Task
-
-* delay task
-
-### Rand Int Security
+### Bug Fixes
 
 * rand int security
 
-### Tag Trigger
-
-* tag trigger
-
-### Todo, Issue Tag Trigger
-
-* todo, issue tag trigger
-
-### Url Trigger
+### Features
 
 * url trigger
-
-### Wire Di
-
+*  email trigger
+* todo, issue tag trigger
 * wire di
+* tag trigger
+* delay task
 
 
 <a name="v0.0.19"></a>
 ## [v0.0.19](https://github.com/tsundata/assistant/compare/v0.0.18...v0.0.19) (2021-03-17)
 
-### Action Parser Eof Error
-
-* action parser eof error
-
-### Dedupe Opcode
-
-* dedupe opcode
-
-### Json Opcode
-
-* json opcode
-
-### Message Opcode
-
-* message opcode
-
-### Opcode Doc
-
-* opcode doc
-
-### Profile Duration Function
-
-* profile duration function
-
-### Query Opcode
-
-* query opcode
-
-### Set Opcode, If Opcode, Else Opcode
-
-* set opcode, if opcode, else opcode
-
-### Spider Todo
+### Bug Fixes
 
 * spider todo
+* action parser eof error
 
-### Status Opcode
-
-* status opcode
-
-### Trigger
+### Features
 
 * trigger
+* dedupe opcode
+* query opcode
+* message opcode
+* opcode doc
+* status opcode
+* profile duration function
+* set opcode, if opcode, else opcode
+* json opcode
 
 ### Pull Requests
 
@@ -194,77 +189,35 @@
 <a name="v0.0.18"></a>
 ## [v0.0.18](https://github.com/tsundata/assistant/compare/v0.0.17...v0.0.18) (2021-03-15)
 
-### Action Semantic Analyzer
-
-* action semantic analyzer
-
-### Cron Action
-
-* cron action
-
-### Delete Workflow Message
-
-* delete workflow message
-
-### Deubg Action
-
-* deubg action
-
-### Lint
+### Bug Fixes
 
 * lint
 
-### Round Function
+### Features
 
 * round function
-
-### Task Action
-
+* deubg action
 * task action
-
-### Webhook Action
-
+* delete workflow message
+* cron action
 * webhook action
+* action semantic analyzer
 
 
 <a name="v0.0.17"></a>
 ## [v0.0.17](https://github.com/tsundata/assistant/compare/v0.0.16...v0.0.17) (2021-03-11)
 
-### Backup
+### Features
 
 * backup
-
-### Cache Auth
-
-* cache auth
-
-### Dropbox Oauth
-
 * dropbox oauth
-
-### Fiber Http Server
-
-* fiber http server
-
-### Machinery
-
-* machinery
-
-### Ping
-
-* ping
-
-### Rollbar Interceptor
-
 * rollbar interceptor
-
-### Rollbar, Logger
-
 * rollbar, logger
-
-### Task, Worker
-
+* machinery
 * task, worker
+* cache auth
+* fiber http server
+* ping
 
 ### Pull Requests
 
@@ -274,82 +227,40 @@
 <a name="v0.0.16"></a>
 ## [v0.0.16](https://github.com/tsundata/assistant/compare/v0.0.15...v0.0.16) (2021-03-03)
 
-### Action Interpreter
-
-* action interpreter
-
-### Golang Metrics
-
-* golang metrics
-
-### Lint
+### Bug Fixes
 
 * lint
 
-### Run Action
+### Features
 
+* golang metrics
 * run action
+* action interpreter
 
 
 <a name="v0.0.15"></a>
 ## [v0.0.15](https://github.com/tsundata/assistant/compare/v0.0.14...v0.0.15) (2021-02-26)
 
-### Architecture Image
+### Bug Fixes
 
-* architecture image
-
-### Cloc Github Action
-
-* cloc github action
-
-### Cron Filter And Send
-
-* cron filter and send
-
-### Docker-Compose Mysql
-
-* docker-compose mysql
-
-### ExtractUUID Func
-
+* lint
+* lint
 * extractUUID func
 
-### Fetch Pocket
-
-* fetch pocket
-
-### Github Fetch Starred
-
-* github fetch starred
-
-### Github Oauth
-
-* github oauth
-
-### Interpreter Debug
+### Features
 
 * interpreter debug
-
-### Lint
-
-* lint
-* lint
-
-### Pocket Agent
-
-* pocket agent
-
-### Pocket Oauth
-
-* pocket oauth
-
-### Run Script, Pushover Node
-
-* run script, pushover node
-
-### Script Ui
-
 * script ui
+* run script, pushover node
+* architecture image
+* github fetch starred
+* github oauth
+* cron filter and send
+* fetch pocket
+* pocket oauth
+* pocket agent
+* cloc github action
+* docker-compose mysql
 
 ### Pull Requests
 
@@ -361,7 +272,7 @@
 <a name="v0.0.14"></a>
 ## [v0.0.14](https://github.com/tsundata/assistant/compare/v0.0.13...v0.0.14) (2021-02-07)
 
-### Show Version
+### Features
 
 * show version
 
@@ -369,33 +280,18 @@
 <a name="v0.0.13"></a>
 ## [v0.0.13](https://github.com/tsundata/assistant/compare/v0.0.12...v0.0.13) (2021-02-07)
 
-### Bin Version
-
-* bin version
-
-### Build Script Path
-
-* build script path
-
-### Credentials Create Js
-
-* credentials create js
-
-### Goreleaser Action
-
-* goreleaser action
-
-### Goreleaser.Yml
-
-* goreleaser.yml
-* goreleaser.yml
-
-### Goreleaser.Yml Ldflags
+### Bug Fixes
 
 * goreleaser.yml ldflags
+* goreleaser.yml
+* goreleaser.yml
+* goreleaser action
+* build script path
 
-### Webhook, Execute Node
+### Features
 
+* bin version
+* credentials create js
 * webhook, execute node
 
 ### Pull Requests
@@ -406,7 +302,7 @@
 <a name="v0.0.12"></a>
 ## [v0.0.12](https://github.com/tsundata/assistant/compare/v0.0.11...v0.0.12) (2021-02-02)
 
-### Markdown Convert
+### Features
 
 * markdown convert
 
@@ -414,7 +310,7 @@
 <a name="v0.0.11"></a>
 ## [v0.0.11](https://github.com/tsundata/assistant/compare/v0.0.10...v0.0.11) (2021-02-02)
 
-### Etcd Auth
+### Features
 
 * etcd auth
 
@@ -427,7 +323,7 @@
 <a name="v0.0.10"></a>
 ## [v0.0.10](https://github.com/tsundata/assistant/compare/v0.0.9...v0.0.10) (2021-01-30)
 
-### Spider
+### Bug Fixes
 
 * spider
 
@@ -440,43 +336,25 @@
 <a name="v0.0.9"></a>
 ## [v0.0.9](https://github.com/tsundata/assistant/compare/v0.0.8...v0.0.9) (2021-01-30)
 
-### Apps Template
-
-* apps template
-
-### Flowscript
-
-* flowscript
-
-### Github Action Script
-
-* github action script
-
-### Http Node
-
-* http node
-
-### Memo Template
-
-* memo template
-
-### Setting, Credentials Template
-
-* setting, credentials template
-
-### Tests
+### Bug Fixes
 
 * tests
+* github action script
 
-### Workflow Service
+### Features
 
+* memo template
+* http node
+* setting, credentials template
+* apps template
 * workflow service
+* flowscript
 
 
 <a name="v0.0.8"></a>
 ## [v0.0.8](https://github.com/tsundata/assistant/compare/v0.0.7...v0.0.8) (2021-01-26)
 
-### Tests
+### Bug Fixes
 
 * tests
 
@@ -484,7 +362,7 @@
 <a name="v0.0.7"></a>
 ## [v0.0.7](https://github.com/tsundata/assistant/compare/v0.0.6...v0.0.7) (2021-01-19)
 
-### A Element
+### Bug Fixes
 
 * a element
 
@@ -492,11 +370,11 @@
 <a name="v0.0.6"></a>
 ## [v0.0.6](https://github.com/tsundata/assistant/compare/v0.0.5...v0.0.6) (2021-01-19)
 
-### Lint
+### Bug Fixes
 
 * lint
 
-### Redis Agent
+### Features
 
 * redis agent
 
@@ -504,7 +382,7 @@
 <a name="v0.0.5"></a>
 ## [v0.0.5](https://github.com/tsundata/assistant/compare/v0.0.4...v0.0.5) (2021-01-18)
 
-### Influx Interceptor
+### Features
 
 * influx interceptor
 
@@ -512,7 +390,7 @@
 <a name="v0.0.4"></a>
 ## [v0.0.4](https://github.com/tsundata/assistant/compare/v0.0.3...v0.0.4) (2021-01-18)
 
-### Web Route
+### Bug Fixes
 
 * web route
 
@@ -520,31 +398,25 @@
 <a name="v0.0.3"></a>
 ## [v0.0.3](https://github.com/tsundata/assistant/compare/v0.0.2...v0.0.3) (2021-01-15)
 
-### Bbolt, Etcd Config
-
-* bbolt, etcd config
-
-### Error Log
-
-* error log
-
-### Rpc Host Check
+### Bug Fixes
 
 * rpc host check
+* error log
 
-### Spider Script
+### Features
 
 * spider script
+* bbolt, etcd config
 
 
 <a name="v0.0.2"></a>
 ## [v0.0.2](https://github.com/tsundata/assistant/compare/v0.0.1...v0.0.2) (2021-01-14)
 
-### .Goreleaser.Yml
+### Bug Fixes
 
 * .goreleaser.yml
 
-### Download Script
+### Features
 
 * download script
 
@@ -552,298 +424,85 @@
 <a name="v0.0.1"></a>
 ## v0.0.1 (2021-01-14)
 
-### App Name
-
-* app name
-
-### Archive Production Artifacts
-
-* archive production artifacts
-
-### Base Framework
-
-* base framework
-
-### Bot Cron
-
-* bot cron
-
-### Bot, Plugin
-
-* bot, plugin
-
-### Builtin Func
-
-* builtin func
-
-### Callstack
-
-* callstack
-
-### Client Auth
-
-* client auth
-
-### Collection
-
-* collection
-
-### Cron
-
-* cron
-* cron
-
-### Executing Procedure Calls
-
-* executing procedure calls
-
-### Fasthttp
-
-* fasthttp
-
-### Function Return
-
-* function return
-
-### Generator
-
-* generator
-
-### Gitkeep
-
-* gitkeep
-
-### Goreleaser
-
-* goreleaser
-
-### Grammar File
-
-* grammar file
-
-### Grpc Middleware
-
-* grpc middleware
-
-### If Grammar
-
-* if grammar
-
-### Influxdb, Remove Prometheus
-
-* influxdb, remove prometheus
-
-### Interpareter
-
-* interpareter
-
-### Interpreter
-
-* interpreter
-* interpreter
-* interpreter
-
-### Interpreter Error
-
-* interpreter error
-
-### Interpreter, Token
-
-* interpreter, token
-
-### Jaeger
-
-* jaeger
-
-### Lexer
-
-* lexer
-
-### List, Dict
-
-* list, dict
-
-### Log Print
-
-* log print
-
-### Logging
-
-* logging
-
-### Map, Filter, Reduce
-
-* map, filter, reduce
-
-### Message Const
-
-* message const
-
-### Message Event
-
-* message event
-
-### Middle, Page Service
-
-* middle, page service
-
-### Nested Procedure Calls
-
-* nested procedure calls
-
-### Opt
-
-* opt
-
-### Package
-
-* package
-
-### Parser
-
-* parser
-
-### Print
-
-* print
-
-### Procedure Call
-
-* procedure call
-
-### Prometheus
-
-* prometheus
-
-### Proto
-
-* proto
-
-### Pwd, Ut, Rand Command
-
-* pwd, ut, rand command
-
-### Qr Command
-
-* qr command
-
-### RPC Broadcast Func
-
-* RPC broadcast func
-
-### Read Config.Yml
-
-* read config.yml
-
-### Register Rpc Service
-
-* register rpc service
-
-### Registry Tcp
-
-* registry tcp
-
-### Registry Time
-
-* registry time
-
-### Rename Dir
-
-* rename dir
-
-### Rpc Registry
-
-* rpc registry
-
-### Rpcx, Gin
-
-* rpcx, gin
-
-### Run Flowscript
-
-* run flowscript
-
-### Run Message
-
-* run message
-
-### Scope
-
-* scope
-
-### Server Agent
-
-* server agent
-
-### Service Instances
-
-* service instances
-
-### Slack Event
-
-* slack event
-
-### Slack Incoming Message
-
-* Slack Incoming Message
-
-### Spider
-
-* spider
-
-### Spider Action
+### Bug Fixes
 
 * spider action
-
-### String, Boolean
-
-* string, boolean
-
-### Subs Command
-
-* subs command
-
-### Subscribe Cron
-
-* subscribe cron
-
-### Subscribe Service
-
-* subscribe service
-
-### Symbol
-
-* symbol
-
-### UnaryOp
-
-* UnaryOp
-
-### Undefined Function Error
-
-* undefined function error
-
-### Update Dockerfile
-
-* update Dockerfile
-
-### Update README
-
-* Update README
-
-### Update Rpc Client
-
+* registry time
+* rename dir
 * update rpc client
+* service instances
+* log print
+* opt
 
-### Utils
+### Features
 
-* utils
-
-### Web Components
-
+* goreleaser
+* server agent
+* influxdb, remove prometheus
+* cron
+* spider
+* prometheus
+* jaeger
+* archive production artifacts
+* grpc middleware
+* qr command
+* pwd, ut, rand command
+* subs command
+* middle, page service
 * web components
-
-### While Grammar
-
+* subscribe cron
+* bot cron
+* bot, plugin
+* run flowscript
+* message const
+* map, filter, reduce
+* list, dict
+* package
+* builtin func
+* undefined function error
+* function return
+* print
+* string, boolean
 * while grammar
+* if grammar
+* grammar file
+* nested procedure calls
+* executing procedure calls
+* callstack
+* procedure call
+* interpreter error
+* scope
+* collection
+* interpreter
+* symbol
+* interpareter
+* UnaryOp
+* parser
+* interpreter
+* lexer
+* interpreter
+* interpreter, token
+* run message
+* registry tcp
+* fasthttp
+* logging
+* message event
+* slack event
+* rpcx, gin
+* client auth
+* RPC broadcast func
+* app name
+* proto
+* utils
+* gitkeep
+* cron
+* subscribe service
+* generator
+* Slack Incoming Message
+* update Dockerfile
+* read config.yml
+* register rpc service
+* rpc registry
+* base framework
+* Update README
 
