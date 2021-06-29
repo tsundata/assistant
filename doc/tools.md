@@ -48,3 +48,12 @@ mockgen -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_
 
 mockgen -source=./api/pb/todo.pb.go -destination=./mock/todo_client.go -package=mock
 ```
+
+### go-task
+
+```shell
+# Install
+go install github.com/go-task/task/v3/cmd/task@latest
+# Usage
+task something
+```

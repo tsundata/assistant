@@ -25,7 +25,7 @@ tasks:
   proto:
     desc: Generate proto.pb.go
     cmds:
-      - rm api/pb/*.pb.go
+      - go run scripts/rm/main.go
       - protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - git add api/pb/*.pb.go
@@ -39,3 +39,8 @@ tasks:
     desc: Docker-compose run
     cmds:
       - docker-compose -f deployments/docker-compose/docker-compose.yml up --build -d
+
+  changelog:
+    desc: Generate changelog
+    cmds:
+      - git-chglog -o CHANGELOG.md
