@@ -20,18 +20,34 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: 'tsundata/gateway:latest'
+          image: 'ghcr.io/tsundata/gateway:latest'
           imagePullPolicy: Always
           env:
-            - name: XCONF_URL
+            - name: CONSUL_ADDRESS
               valueFrom:
                 configMapKeyRef:
-                  name: xconf-config
-                  key: xconf.url
-            - name: XCONF_CLUSTER
-              value: dev
-            - name: XCONF_NAMESPACE
-              value: gateway
+                  name: consul-config
+                  key: consul.address
+            - name: CONSUL_SCHEME
+                valueFrom:
+                  configMapKeyRef:
+                    name: consul-config
+                    key: consul.scheme
+            - name: CONSUL_USERNAME
+                valueFrom:
+                  configMapKeyRef:
+                    name: consul-config
+                    key: consul.username
+            - name: CONSUL_PASSWORD
+                valueFrom:
+                  configMapKeyRef:
+                    name: consul-config
+                    key: consul.password
+            - name: CONSUL_TOKEN
+                valueFrom:
+                  configMapKeyRef:
+                    name: consul-config
+                    key: consul.token
           ports:
             - containerPort: 5000
 ---

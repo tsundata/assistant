@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  gateway:
+    image: ghcr.io/tsundata/gateway:${APP_VERSION}
+    restart: always
+    environment:
+      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
+      CONSUL_SCHEME: ${CONSUL_ADDRESS}
+      CONSUL_USERNAME: ${CONSUL_USERNAME}
+      CONSUL_PASSWORD: ${CONSUL_PASSWORD}
+      CONSUL_TOKEN: ${CONSUL_TOKEN}
+    ports:
+      - "5000:5000"
+
+  web:
+    image: ghcr.io/tsundata/web:${APP_VERSION}
+    restart: always
+    environment:
+      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
+      CONSUL_SCHEME: ${CONSUL_ADDRESS}
+      CONSUL_USERNAME: ${CONSUL_USERNAME}
+      CONSUL_PASSWORD: ${CONSUL_PASSWORD}
+      CONSUL_TOKEN: ${CONSUL_TOKEN}
+    ports:
+      - "7000:7000"

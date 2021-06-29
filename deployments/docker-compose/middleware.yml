@@ -81,12 +81,3 @@ services:
     depends_on:
       - consul-server2
       - consul-server3
-
-  gateway:
-    image: tsundata/gateway:${APP_VERSION}
-    restart: always
-    environment:
-      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
-      CONFIG_NAMESPACE: gateway
-    ports:
-      - "7000:7000"

@@ -1,7 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: xconf-config
+  name: consul-config
   namespace: assistant
 data:
-  xconf.url: http://127.0.0.1:8080
+  consul.address: 127.0.0.1:8500
+  consul.scheme: ""
+  consul.username: ""
+  consul.password: ""
+  consul.token: ""
