@@ -46,6 +46,16 @@ tasks:
     cmds:
       - git-chglog -o CHANGELOG.md
 
+  test:
+    desc: Go test
+    cmds:
+      - go test -race -cover -coverprofile=./coverage.out -timeout=10m -short github.com/tsundata/assistant/internal/...
+
+  coverage:
+    desc: Go coverage
+    cmds:
+      - go tool cover -func ./coverage.out
+
   mock:
     desc: Generate mock files
     cmds:
