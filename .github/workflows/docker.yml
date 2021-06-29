@@ -19,7 +19,7 @@ jobs:
       - name: Get Github tag
         id: meta
         run: |
-          echo "::set-output name=tag::$(git describe --always)"
+          echo "::set-output name=tag::$(git describe --always --tags --match='v*')"
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
