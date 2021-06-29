@@ -31,4 +31,4 @@ jobs:
           install-only: true
 
       - name: Build
-        run: make build
+        run: task build
