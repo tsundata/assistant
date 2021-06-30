@@ -104,10 +104,12 @@ CREATE TABLE `todos`
     `remind_at`         TIMESTAMP        NULL     DEFAULT NULL,
     `repeat_method`     VARCHAR(50)      NOT NULL,
     `repeat_rule`       VARCHAR(256)     NOT NULL DEFAULT '',
+    `repeat_end_at`     TIMESTAMP        NULL     DEFAULT NULL,
     `category`          VARCHAR(50)      NOT NULL,
     `remark`            VARCHAR(1024)    NOT NULL,
     `complete`          TINYINT(4)       NOT NULL DEFAULT '0',
-    `time`              TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

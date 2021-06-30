@@ -12,6 +12,7 @@ import (
 type TodoRepository interface {
 	CreateTodo(todo model.Todo) (int64, error)
 	ListTodos() ([]model.Todo, error)
+	ListRemindTodos() ([]model.Todo, error)
 	GetTodo(id int) (model.Todo, error)
 	CompleteTodo(id int) error
 	UpdateTodo(todo model.Todo) error
@@ -28,8 +29,9 @@ func NewMysqlTodoRepository(logger *logger.Logger, db *sqlx.DB) TodoRepository {
 }
 
 func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
-	todo.Time = time.Now()
-	res, err := r.db.NamedExec("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `category`, `remark`, `complete`, `time`) VALUES (:content, :priority, :is_remind_at_time, :remind_at, :repeat_method, :repeat_rule, :category, :remark, :complete, :time)", todo)
+	todo.CreatedAt = time.Now()
+	todo.UpdatedAt = time.Now()
+	res, err := r.db.NamedExec("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES (:content, :priority, :is_remind_at_time, :remind_at, :repeat_method, :repeat_rule, :repeat_end_at, :category, :remark, :complete, :created_at, :updated_at)", todo)
 	if err != nil {
 		return 0, err
 	}
@@ -42,7 +44,16 @@ func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
 
 func (r *MysqlTodoRepository) ListTodos() ([]model.Todo, error) {
 	var items []model.Todo
-	err := r.db.Select(&items, "SELECT * FROM `todos` ORDER BY `id` DESC")
+	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC")
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlTodoRepository) ListRemindTodos() ([]model.Todo, error) {
+	var items []model.Todo
+	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 AND `is_remind_at_time` = 1 ORDER BY `priority` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
@@ -59,12 +70,12 @@ func (r *MysqlTodoRepository) GetTodo(id int) (model.Todo, error) {
 }
 
 func (r *MysqlTodoRepository) CompleteTodo(id int) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1 WHERE id = ?", id)
+	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1, `updated_at` = ? WHERE id = ?", id, time.Now())
 	return err
 }
 
 func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.ID)
+	_, err := r.db.Exec("UPDATE `todos` SET `content` = ?, `updated_at` = ? WHERE id = ?", todo.Content, time.Now(), todo.ID)
 	return err
 }
 

@@ -96,6 +96,26 @@ func (mr *MockTodoClientMockRecorder) DeleteTodo(ctx, in interface{}, opts ...in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoClient)(nil).DeleteTodo), varargs...)
 }
 
+// GetRemindTodos mocks base method.
+func (m *MockTodoClient) GetRemindTodos(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodosReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRemindTodos", varargs...)
+	ret0, _ := ret[0].(*pb.TodosReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRemindTodos indicates an expected call of GetRemindTodos.
+func (mr *MockTodoClientMockRecorder) GetRemindTodos(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoClient)(nil).GetRemindTodos), varargs...)
+}
+
 // GetTodo mocks base method.
 func (m *MockTodoClient) GetTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodoReply, error) {
 	m.ctrl.T.Helper()
@@ -222,6 +242,21 @@ func (m *MockTodoServer) DeleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) 
 func (mr *MockTodoServerMockRecorder) DeleteTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoServer)(nil).DeleteTodo), arg0, arg1)
+}
+
+// GetRemindTodos mocks base method.
+func (m *MockTodoServer) GetRemindTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodosReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRemindTodos", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TodosReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRemindTodos indicates an expected call of GetRemindTodos.
+func (mr *MockTodoServerMockRecorder) GetRemindTodos(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoServer)(nil).GetRemindTodos), arg0, arg1)
 }
 
 // GetTodo mocks base method.

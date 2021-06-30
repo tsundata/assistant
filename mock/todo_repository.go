@@ -92,6 +92,21 @@ func (mr *MockTodoRepositoryMockRecorder) GetTodo(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoRepository)(nil).GetTodo), id)
 }
 
+// ListRemindTodos mocks base method.
+func (m *MockTodoRepository) ListRemindTodos() ([]model.Todo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListRemindTodos")
+	ret0, _ := ret[0].([]model.Todo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListRemindTodos indicates an expected call of ListRemindTodos.
+func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRemindTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListRemindTodos))
+}
+
 // ListTodos mocks base method.
 func (m *MockTodoRepository) ListTodos() ([]model.Todo, error) {
 	m.ctrl.T.Helper()

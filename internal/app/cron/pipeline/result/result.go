@@ -46,5 +46,7 @@ func EmptyResult() Result {
 }
 
 func DoneResult() Result {
-	return Result{Kind: Done}
+	return Result{
+		Kind: Done,
+	}
 }

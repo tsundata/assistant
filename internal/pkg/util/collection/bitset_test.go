@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"math"
@@ -13,7 +14,7 @@ func TestNewBinSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewBinSet(rdb, time.Now().String())
+	s := NewBinSet(rdb, fmt.Sprintf("bin_set:%s", time.Now().String()))
 
 	s.SetTo(1, 1)
 	b := s.Test(1)

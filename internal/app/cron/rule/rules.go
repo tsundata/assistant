@@ -42,6 +42,13 @@ var rules = []Rule{
 			return agent.DomainAnalyticsReport(ctx)
 		},
 	},
+	{
+		Name: "todo_remind",
+		When: "* * * * *",
+		Action: func(ctx rulebot.IContext) []result.Result {
+			return agent.TodoRemind(ctx)
+		},
+	},
 }
 
 var Options = []rulebot.Option{

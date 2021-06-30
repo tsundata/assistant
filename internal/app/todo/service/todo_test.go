@@ -2,15 +2,15 @@ package service
 
 import (
 	"context"
+	"reflect"
+	"testing"
+
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/mock"
-	"reflect"
-	"testing"
-
-	"github.com/tsundata/assistant/api/pb"
 )
 
 func TestTodo_CreateTodo(t *testing.T) {
@@ -272,6 +272,50 @@ func TestTodo_CompleteTodo(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Todo.CompleteTodo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTodo_GetRemindTodos(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockTodoRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListRemindTodos().Return([]model.Todo{{Content: "test"}}, nil),
+	)
+
+	s := NewTodo(nil, nil, repo)
+
+	type args struct {
+		in0 context.Context
+		in1 *pb.TodoRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Todo
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TodoRequest{}},
+			1,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetRemindTodos(tt.args.in0, tt.args.in1)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Todo.GetRemindTodos() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && len(got.Todos) != tt.want {
+				t.Errorf("Todo.GetRemindTodos() = %v, want %v", got, tt.want)
 			}
 		})
 	}

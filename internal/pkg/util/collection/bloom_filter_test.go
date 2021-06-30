@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
@@ -12,7 +13,7 @@ func TestBloomFilter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := NewBloomFilter(rdb, time.Now().String(), 10000, 10)
+	f := NewBloomFilter(rdb, fmt.Sprintf("bloom_filter:%s", time.Now().String()), 10000, 10)
 
 	f.Add("abc")
 	b := f.Lookup("abc")
