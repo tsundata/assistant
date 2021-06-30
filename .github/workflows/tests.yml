@@ -57,16 +57,14 @@ jobs:
           mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_DATABASE }} < ./scripts/app.sql
           mysql -e 'use ${{ env.DB_DATABASE }};SHOW TABLES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
-      - name: Copy Config
+      - name: Import Config
         run: |
           cp configs/common.yml.example configs/common.yml
           cp configs/gateway.yml.example configs/gateway.yml
           cp configs/web.yml.example configs/web.yml
           cp configs/classifier.yml.example configs/classifier.yml
           ls -all configs
-
-      - name: Init config data
-        run: go run ./test/load.go
+          go run ./test/load.go
 
       - name: Run test cases
         run: |
