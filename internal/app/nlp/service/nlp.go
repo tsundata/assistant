@@ -47,14 +47,21 @@ func (s *NLP) Segmentation(_ context.Context, req *pb.TextRequest) (*pb.WordsRep
 }
 
 func (s *NLP) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextReply, error) {
-	c := classifier.NewClassifier(s.conf)
-	err := c.LoadRule()
+	rules, err := classifier.ReadRulesConfig(s.conf)
 	if err != nil {
 		return nil, err
 	}
+
+	c := classifier.NewClassifier()
+	err = c.SetRules(rules)
+	if err != nil {
+		return nil, err
+	}
+
 	if req.GetText() == "" {
 		return nil, errors.New("error text")
 	}
+
 	res, err := c.Do(req.GetText())
 	if err != nil {
 		if errors.Is(err, classifier.ErrEmpty) {

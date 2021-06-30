@@ -2,31 +2,37 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
-	"reflect"
-	"testing"
-	"time"
-
-	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/api/pb"
 )
 
 func TestMiddle_GetMenu(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
 	conf, err := config.CreateAppConfig(app.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
-	rdb, err := vendors.CreateRedisClient(app.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	s := NewMiddle(conf, rdb, nil)
+	user := mock.NewMockUserClient(ctl)
+	gomock.InOrder(
+		user.EXPECT().
+			GetAuthToken(gomock.Any(), gomock.Any()).
+			Return(&pb.TextReply{Text: "test"}, nil),
+	)
+
+	s := NewMiddle(conf, nil, nil, user)
 
 	type args struct {
 		in0 context.Context
@@ -62,7 +68,7 @@ func TestMiddle_GetQrUrl(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -106,7 +112,7 @@ func TestMiddle_CreatePage(t *testing.T) {
 		repo.EXPECT().CreatePage(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(conf, nil, repo)
+	s := NewMiddle(conf, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -152,7 +158,7 @@ func TestMiddle_GetPage(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -206,7 +212,7 @@ func TestMiddle_GetApps(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -257,7 +263,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -313,7 +319,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 		repo.EXPECT().CreateApp(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -384,7 +390,7 @@ func TestMiddle_GetCredential(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -449,7 +455,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -499,7 +505,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -543,7 +549,7 @@ func TestMiddle_CreateCredential(t *testing.T) {
 		repo.EXPECT().CreateCredential(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(nil, nil, repo)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -599,7 +605,7 @@ func TestMiddle_GetSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -635,7 +641,7 @@ func TestMiddle_GetSetting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -671,7 +677,7 @@ func TestMiddle_CreateSetting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -714,7 +720,7 @@ func TestMiddle_GetStats(t *testing.T) {
 	rdb.MSet(context.Background(), "stats:count:test", "test")
 	rdb.MSet(context.Background(), "stats:month:0000", 0)
 
-	s := NewMiddle(nil, rdb, nil)
+	s := NewMiddle(nil, rdb, nil, nil)
 
 	type args struct {
 		ctx context.Context
@@ -744,38 +750,52 @@ func TestMiddle_GetStats(t *testing.T) {
 	}
 }
 
-func Test_authUUID(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Middle)
+func TestMiddle_GetRoleImageUrl(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	user := mock.NewMockUserClient(ctl)
+	gomock.InOrder(
+		user.EXPECT().
+			GetAuthToken(gomock.Any(), gomock.Any()).
+			Return(&pb.TextReply{Text: "test"}, nil),
+	)
+
+	conf, err := config.CreateAppConfig(app.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
-	rdb.Del(context.Background(), AuthKey)
+
+	s := NewMiddle(conf, nil, nil, user)
 
 	type args struct {
-		rdb *redis.Client
+		ctx context.Context
+		in1 *pb.TextRequest
 	}
 	tests := []struct {
 		name    string
+		s       *Middle
 		args    args
+		want    *pb.TextReply
 		wantErr bool
 	}{
 		{
 			"case1",
-			args{rdb: rdb},
-			false,
-		},
-		{
-			"case2",
-			args{rdb: rdb},
+			s,
+			args{context.Background(), &pb.TextRequest{}},
+			&pb.TextReply{Text: fmt.Sprintf("%s/role/%s", conf.Web.Url, "test")},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := authUUID(tt.args.rdb)
+			got, err := tt.s.GetRoleImageUrl(tt.args.ctx, tt.args.in1)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("authUUID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Middle.GetRoleImageUrl() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Middle.GetRoleImageUrl() = %v, want %v", got, tt.want)
 			}
 		})
 	}

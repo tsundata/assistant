@@ -10,7 +10,7 @@ import (
 func NewStorageClient(client *rpc.Client) (pb.StorageClient, error) {
 	conn, err := client.Dial(app.Storage)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "storage client dial error")
 	}
 	c := pb.NewStorageClient(conn)
 	return c, nil

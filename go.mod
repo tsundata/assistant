@@ -8,6 +8,7 @@ require (
 	github.com/RichardKnop/machinery/v2 v2.0.11
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
+	github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90
 	github.com/gavv/httpexpect/v2 v2.3.0
 	github.com/go-ego/gse v0.67.0
 	github.com/go-redis/redis/v8 v8.10.0
@@ -15,6 +16,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.13.0
 	github.com/gogo/protobuf v1.3.2
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/wire v0.5.0
@@ -47,6 +49,7 @@ require (
 	github.com/yuin/goldmark v1.3.8
 	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
+	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
 	golang.org/x/tools v0.1.3 // indirect
 	google.golang.org/api v0.44.0 // indirect

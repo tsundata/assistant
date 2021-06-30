@@ -199,25 +199,15 @@ func TestRoleRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	user := mock.NewMockUserClient(ctl)
+	middle := mock.NewMockMiddleClient(ctl)
 	gomock.InOrder(
-		user.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(&pb.RoleReply{Role: &pb.Role{
-			Profession:  "super",
-			Exp:         1,
-			Level:       1,
-			Strength:    0,
-			Culture:     0,
-			Environment: 0,
-			Charisma:    0,
-			Talent:      0,
-			Intellect:   0,
-		}}, nil),
+		middle.EXPECT().GetRoleImageUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://web.test/role/test"}, nil),
 	)
 
 	r := rules[15]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, user, nil)
+	ctx := rulebot.NewContext(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
 	res := r.ParseMessage(ctx, "role", []string{"role"})
-	require.Equal(t, []string{`profession:"super" exp:1 level:1 `}, res)
+	require.Equal(t, []string{`https://web.test/role/test`}, res)
 }
 
 func TestPinyinRule(t *testing.T) {

@@ -8,6 +8,8 @@ option go_package = "api/pb";
 service User {
   rpc Authorization(TextRequest) returns (StateReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
+  rpc GetRoleImage(RoleRequest) returns (TextReply) {}
+  rpc GetAuthToken(TextRequest) returns (TextReply) {}
 }
 
 message RoleRequest {

@@ -10,7 +10,7 @@ import (
 func NewNLPClient(client *rpc.Client) (pb.NLPClient, error) {
 	conn, err := client.Dial(app.NLP)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "nlp client dial error")
 	}
 	c := pb.NewNLPClient(conn)
 	return c, nil

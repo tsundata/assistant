@@ -2,16 +2,16 @@ package service
 
 import (
 	"context"
-	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/vendors"
-	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/vendors"
+	"github.com/tsundata/assistant/mock"
 )
 
 func TestUser_Authorization(t *testing.T) {
@@ -21,7 +21,7 @@ func TestUser_Authorization(t *testing.T) {
 	}
 	rdb.Set(context.Background(), "user:auth:token", "test", time.Hour)
 
-	u := NewUser(rdb, nil)
+	s := NewUser(rdb, nil)
 	type args struct {
 		ctx     context.Context
 		payload *pb.TextRequest
@@ -33,7 +33,13 @@ func TestUser_Authorization(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		{"case1", u, args{context.Background(), &pb.TextRequest{Text: "test"}}, &pb.StateReply{State: true}, false},
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			&pb.StateReply{State: true},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,7 +64,8 @@ func TestUser_GetRole(t *testing.T) {
 		repo.EXPECT().GetRole(gomock.Any()).Return(model.Role{Profession: "super"}, nil),
 	)
 
-	u := NewUser(nil, repo)
+	s := NewUser(nil, repo)
+
 	type args struct {
 		in0     context.Context
 		payload *pb.RoleRequest
@@ -70,11 +77,15 @@ func TestUser_GetRole(t *testing.T) {
 		want    *pb.RoleReply
 		wantErr bool
 	}{
-		{"case1", u, args{context.Background(), &pb.RoleRequest{Id: 1}}, &pb.RoleReply{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.RoleRequest{Id: 1}}, &pb.RoleReply{
 			Role: &pb.Role{
 				Profession: "super",
 			},
-		}, false},
+		},
+			false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,6 +96,56 @@ func TestUser_GetRole(t *testing.T) {
 			}
 			if got == nil || got.Role.Profession != tt.want.Role.Profession {
 				t.Errorf("User.GetRole() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUser_GetRoleImage(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockUserRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetRole(gomock.Any()).Return(model.Role{
+			ID:          1,
+			Profession:  "super",
+			Level:       60,
+			Exp:         1592481,
+			Strength:    120,
+			Culture:     150,
+			Environment: 160,
+			Charisma:    180,
+			Talent:      190,
+			Intellect:   120,
+		}, nil),
+	)
+
+	s := NewUser(nil, repo)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.RoleRequest
+	}
+	tests := []struct {
+		name    string
+		s       *User
+		args    args
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.RoleRequest{Id: 1}},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.s.GetRoleImage(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("User.GetRoleImage() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 		})
 	}

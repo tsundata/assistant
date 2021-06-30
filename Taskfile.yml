@@ -46,6 +46,11 @@ tasks:
     cmds:
       - git-chglog -o CHANGELOG.md
 
+  gentest:
+    desc: Generate test cases
+    cmds:
+      - gotests -w -all internal/{{.CLI_ARGS}}
+
   test:
     desc: Go test
     cmds:

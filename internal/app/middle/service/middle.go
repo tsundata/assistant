@@ -21,17 +21,23 @@ type Middle struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
 	repo repository.MiddleRepository
+	user pb.UserClient
 }
 
-func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository) *Middle {
-	return &Middle{rdb: rdb, repo: repo, conf: conf}
+func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, user pb.UserClient) *Middle {
+	return &Middle{rdb: rdb, repo: repo, conf: conf, user: user}
 }
 
-func (s *Middle) GetMenu(_ context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	uuid, err := authUUID(s.rdb)
+func (s *Middle) GetMenu(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
+	if s.user == nil {
+		return nil, errors.New("empty user client")
+	}
+	reply, err := s.user.GetAuthToken(ctx, &pb.TextRequest{})
 	if err != nil {
 		return nil, err
 	}
+	uuid := reply.GetText()
+
 	return &pb.TextReply{
 		Text: fmt.Sprintf(`
 Memo
@@ -55,6 +61,18 @@ Action
 func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/qr/%s", s.conf.Web.Url, url.QueryEscape(payload.GetText())),
+	}, nil
+}
+
+func (s *Middle) GetRoleImageUrl(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
+	reply, err := s.user.GetAuthToken(ctx, &pb.TextRequest{})
+	if err != nil {
+		return nil, err
+	}
+	uuid := reply.GetText()
+
+	return &pb.TextReply{
+		Text: fmt.Sprintf("%s/role/%s", s.conf.Web.Url, uuid),
 	}, nil
 }
 
@@ -395,27 +413,4 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	}
 
 	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
-}
-
-const AuthKey = "user:auth:token"
-
-func authUUID(rdb *redis.Client) (string, error) {
-	var uuid string
-	uuid, err := rdb.Get(context.Background(), AuthKey).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return "", err
-	}
-	if errors.Is(err, redis.Nil) {
-		uuid, err = util.GenerateUUID()
-		if err != nil {
-			return "", err
-		}
-
-		status := rdb.Set(context.Background(), AuthKey, uuid, 60*time.Minute)
-		if status.Err() != nil {
-			return "", err
-		}
-	}
-
-	return uuid, nil
 }

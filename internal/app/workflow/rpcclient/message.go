@@ -10,7 +10,7 @@ import (
 func NewMessageClient(client *rpc.Client) (pb.MessageClient, error) {
 	conn, err := client.Dial(app.Message)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "message client dial error")
 	}
 	c := pb.NewMessageClient(conn)
 	return c, nil

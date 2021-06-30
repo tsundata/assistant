@@ -73,6 +73,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Delete("workflow/message", gc.DeleteWorkflowMessage)
 		internal.Post("message/run", gc.RunMessage)
 		internal.Post("message/send", gc.SendMessage)
+		internal.Get("role/image", gc.GetRoleImage)
 
 		router.Use(func(c *fiber.Ctx) error {
 			return c.Status(http.StatusNotFound).SendString("Unsupported path")

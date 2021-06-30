@@ -102,6 +102,14 @@ func TestGetMemoIndex(t *testing.T) {
 		Status(http.StatusOK).Body().Contains("Memo")
 }
 
+func TestGetRoleIndex(t *testing.T) {
+	token := getToken()
+	e := httpexpect.New(t, WebBaseURL)
+	e.GET(fmt.Sprintf("/role/%s", token)).
+		Expect().
+		Status(http.StatusOK).Body().Contains("PNG")
+}
+
 func TestWebhookIndex(t *testing.T) {
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET("/webhook/123456").

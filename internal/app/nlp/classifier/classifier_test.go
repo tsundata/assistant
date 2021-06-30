@@ -14,8 +14,13 @@ func TestClassifier(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := NewClassifier(conf)
-	err = c.LoadRule()
+	rules, err := ReadRulesConfig(conf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	c := NewClassifier()
+	err = c.SetRules(rules)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -188,6 +188,17 @@ func (c *GatewayClient) GetCredential(id string) (result *pb.CredentialReply, er
 	return
 }
 
+func (c *GatewayClient) GetRoleImage() (result *pb.TextReply, err error) {
+	resp, err := c.r.R().
+		Get("role/image")
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(resp.Body(), &result)
+	return
+}
+
 func (c *GatewayClient) StoreAppOAuth(in *pb.AppRequest) (result *pb.StateReply, err error) {
 	resp, err := c.r.R().
 		SetBody(in).

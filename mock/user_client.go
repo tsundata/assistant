@@ -56,6 +56,26 @@ func (mr *MockUserClientMockRecorder) Authorization(ctx, in interface{}, opts ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserClient)(nil).Authorization), varargs...)
 }
 
+// GetAuthToken mocks base method.
+func (m *MockUserClient) GetAuthToken(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetAuthToken", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAuthToken indicates an expected call of GetAuthToken.
+func (mr *MockUserClientMockRecorder) GetAuthToken(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserClient)(nil).GetAuthToken), varargs...)
+}
+
 // GetRole mocks base method.
 func (m *MockUserClient) GetRole(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.RoleReply, error) {
 	m.ctrl.T.Helper()
@@ -74,6 +94,26 @@ func (mr *MockUserClientMockRecorder) GetRole(ctx, in interface{}, opts ...inter
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserClient)(nil).GetRole), varargs...)
+}
+
+// GetRoleImage mocks base method.
+func (m *MockUserClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRoleImage", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleImage indicates an expected call of GetRoleImage.
+func (mr *MockUserClientMockRecorder) GetRoleImage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserClient)(nil).GetRoleImage), varargs...)
 }
 
 // MockUserServer is a mock of UserServer interface.
@@ -114,6 +154,21 @@ func (mr *MockUserServerMockRecorder) Authorization(arg0, arg1 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserServer)(nil).Authorization), arg0, arg1)
 }
 
+// GetAuthToken mocks base method.
+func (m *MockUserServer) GetAuthToken(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAuthToken", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAuthToken indicates an expected call of GetAuthToken.
+func (mr *MockUserServerMockRecorder) GetAuthToken(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserServer)(nil).GetAuthToken), arg0, arg1)
+}
+
 // GetRole mocks base method.
 func (m *MockUserServer) GetRole(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.RoleReply, error) {
 	m.ctrl.T.Helper()
@@ -127,4 +182,19 @@ func (m *MockUserServer) GetRole(arg0 context.Context, arg1 *pb.RoleRequest) (*p
 func (mr *MockUserServerMockRecorder) GetRole(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserServer)(nil).GetRole), arg0, arg1)
+}
+
+// GetRoleImage mocks base method.
+func (m *MockUserServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoleImage", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleImage indicates an expected call of GetRoleImage.
+func (mr *MockUserServerMockRecorder) GetRoleImage(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserServer)(nil).GetRoleImage), arg0, arg1)
 }

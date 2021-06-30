@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
 	"net/http"
@@ -398,6 +399,21 @@ func (gc *GatewayController) SendMessage(c *fiber.Ctx) error {
 	}
 
 	reply, err := gc.messageSvc.Send(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
+	var in pb.RoleRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+	in.Id = model.SuperUserID // default
+
+	reply, err := gc.userSvc.GetRoleImage(context.Background(), &in)
 	if err != nil {
 		return err
 	}

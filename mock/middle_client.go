@@ -256,6 +256,26 @@ func (mr *MockMiddleClientMockRecorder) GetQrUrl(ctx, in interface{}, opts ...in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleClient)(nil).GetQrUrl), varargs...)
 }
 
+// GetRoleImageUrl mocks base method.
+func (m *MockMiddleClient) GetRoleImageUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRoleImageUrl", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
+func (mr *MockMiddleClientMockRecorder) GetRoleImageUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleClient)(nil).GetRoleImageUrl), varargs...)
+}
+
 // GetSetting mocks base method.
 func (m *MockMiddleClient) GetSetting(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.SettingReply, error) {
 	m.ctrl.T.Helper()
@@ -522,6 +542,21 @@ func (m *MockMiddleServer) GetQrUrl(arg0 context.Context, arg1 *pb.TextRequest) 
 func (mr *MockMiddleServerMockRecorder) GetQrUrl(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleServer)(nil).GetQrUrl), arg0, arg1)
+}
+
+// GetRoleImageUrl mocks base method.
+func (m *MockMiddleServer) GetRoleImageUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoleImageUrl", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
+func (mr *MockMiddleServerMockRecorder) GetRoleImageUrl(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleServer)(nil).GetRoleImageUrl), arg0, arg1)
 }
 
 // GetSetting mocks base method.

@@ -3,9 +3,7 @@ package rule
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
@@ -354,17 +352,14 @@ var rules = []Rule{
 		Regex:       `role`,
 		HelpMessage: "Role info",
 		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
-			if ctx.User() == nil {
+			if ctx.Middle() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := ctx.User().GetRole(context.Background(), &pb.RoleRequest{Id: model.SuperUserID})
+			reply, err := ctx.Middle().GetRoleImageUrl(context.Background(), &pb.TextRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			if reply.GetRole().Level <= 0 {
-				return []string{"failed"}
-			}
-			return []string{fmt.Sprintf("%+v", reply.GetRole())}
+			return []string{reply.GetText()}
 		},
 	},
 	{

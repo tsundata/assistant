@@ -21,6 +21,7 @@ service Middle {
   rpc CreateSetting(KVRequest) returns (StateReply) {}
   rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc GetStats(TextRequest) returns (TextReply) {}
+  rpc GetRoleImageUrl(TextRequest) returns (TextReply) {}
 }
 
 message PageRequest {

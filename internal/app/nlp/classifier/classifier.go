@@ -8,20 +8,16 @@ import (
 )
 
 type Classifier struct {
-	conf  *config.AppConfig
 	rules []Rule
 }
 
-func NewClassifier(conf *config.AppConfig) *Classifier {
-	return &Classifier{conf: conf}
+func NewClassifier() *Classifier {
+	return &Classifier{}
 }
 
-func (c *Classifier) LoadRule() error {
-	s, err := c.conf.GetConfig("classifier")
-	if err != nil {
-		return err
-	}
-	rules := strings.Split(s, "\n")
+func (c *Classifier) SetRules(data string) error {
+
+	rules := strings.Split(data, "\n")
 
 	c.rules = []Rule{}
 	for _, rule := range rules {
@@ -44,4 +40,8 @@ func (c *Classifier) Do(check string) (model.RoleAttr, error) {
 		}
 	}
 	return "", ErrEmpty
+}
+
+func ReadRulesConfig(conf *config.AppConfig) (string, error) {
+	return conf.GetConfig("classifier")
 }

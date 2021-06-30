@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/middle"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
+	"github.com/tsundata/assistant/internal/app/middle/rpcclient"
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -42,8 +43,6 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	middleRepository := repository.NewMysqlMiddleRepository(loggerLogger, db)
-	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository)
-	initServer := service.CreateInitServerFn(serviceMiddle)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {
 		return nil, err
@@ -52,6 +51,20 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	clientOptions, err := rpc.NewClientOptions(tracer)
+	if err != nil {
+		return nil, err
+	}
+	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
+	if err != nil {
+		return nil, err
+	}
+	userClient, err := rpcclient.NewUserClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, userClient)
+	initServer := service.CreateInitServerFn(serviceMiddle)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -69,4 +82,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet)

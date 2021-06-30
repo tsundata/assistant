@@ -91,6 +91,8 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		authR.Post("/action/:uuid/store", wc.ActionStore)
 
 		authR.Post("/workflow/:uuid/delete", wc.WorkflowDelete)
+
+		authR.Post("/role/:uuid", wc.Role)
 	}
 
 	return requestHandler

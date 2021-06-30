@@ -10,7 +10,7 @@ import (
 func NewWorkflowClient(client *rpc.Client) (pb.WorkflowClient, error) {
 	conn, err := client.Dial(app.Workflow)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "workflow client dial error")
 	}
 	c := pb.NewWorkflowClient(conn)
 	return c, nil

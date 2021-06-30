@@ -10,7 +10,7 @@ import (
 func NewTodoClient(client *rpc.Client) (pb.TodoClient, error) {
 	conn, err := client.Dial(app.Todo)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "todo client dial error")
 	}
 	c := pb.NewTodoClient(conn)
 	return c, nil

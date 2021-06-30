@@ -166,7 +166,7 @@ func TestRoleCommand(t *testing.T) {
 	e.POST("/debug/event").
 		WithBytes([]byte(`role`)).
 		Expect().
-		Status(http.StatusOK).Text().Contains("profession:")
+		Status(http.StatusOK).Text().Contains("/role/")
 }
 
 func TestPinyinCommand(t *testing.T) {

@@ -2,10 +2,12 @@ package util
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"math/big"
 	"net"
+	"net/http"
 	"regexp"
 	"strings"
 )
@@ -117,4 +119,28 @@ func DataMasking(data string) string {
 	} else {
 		return ""
 	}
+}
+
+//ToBase64 base64 encoding
+func ToBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
+}
+
+//ImageToBase64 image base64 encoding
+func ImageToBase64(b []byte) string {
+	mimeType := http.DetectContentType(b)
+	base64Encoding := strings.Builder{}
+	base64Encoding.WriteString("data:")
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding.WriteString("image/jpeg")
+	case "image/png":
+		base64Encoding.WriteString("image/png")
+	default:
+		return ""
+	}
+	base64Encoding.WriteString(";base64,")
+	base64Encoding.WriteString(ToBase64(b))
+
+	return base64Encoding.String()
 }

@@ -10,7 +10,7 @@ import (
 func NewSubscribe(client *rpc.Client) (pb.SubscribeClient, error) {
 	conn, err := client.Dial(app.Subscribe)
 	if err != nil {
-		return nil, errors.Wrap(err, "middle client dial error")
+		return nil, errors.Wrap(err, "subscribe client dial error")
 	}
 	c := pb.NewSubscribeClient(conn)
 	return c, nil

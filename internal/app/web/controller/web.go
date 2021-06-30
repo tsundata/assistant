@@ -526,6 +526,17 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
 
+func (wc *WebController) Role(c *fiber.Ctx) error {
+	reply, err := wc.gateway.GetRoleImage()
+	if err != nil {
+		wc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	c.Response().Header.Set("Content-Type", "image/png")
+	return c.SendString(reply.GetText())
+}
+
 func (wc *WebController) App(c *fiber.Ctx) error {
 	category := c.Params("category")
 	provider := vendors.NewOAuthProvider(wc.rdb, category, wc.opt.Web.Url)
