@@ -5,16 +5,18 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"math"
+	"math/rand"
 	"testing"
 	"time"
 )
 
 func TestNewBinSet(t *testing.T) {
+	rand.Seed(int64(time.Now().Second()))
 	rdb, err := CreateRedisClient(app.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewBinSet(rdb, fmt.Sprintf("bin_set:%s", time.Now().String()))
+	s := NewBinSet(rdb, fmt.Sprintf("bin_set:%d", rand.Int63()))
 
 	s.SetTo(1, 1)
 	b := s.Test(1)

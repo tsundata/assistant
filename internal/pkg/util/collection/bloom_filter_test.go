@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"math/rand"
 	"testing"
 	"time"
 )
 
 func TestBloomFilter(t *testing.T) {
+	rand.Seed(int64(time.Now().Second()))
 	rdb, err := CreateRedisClient(app.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := NewBloomFilter(rdb, fmt.Sprintf("bloom_filter:%s", time.Now().String()), 10000, 10)
+	f := NewBloomFilter(rdb, fmt.Sprintf("bloom_filter:%d", rand.Int63()), 10000, 10)
 
 	f.Add("abc")
 	b := f.Lookup("abc")

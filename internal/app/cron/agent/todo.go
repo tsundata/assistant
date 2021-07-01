@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const HourLayout = "2006-01-02 15:04"
+
 func TodoRemind(ctx rulebot.IContext) []result.Result {
 	if ctx.Todo() == nil {
 		return []result.Result{result.EmptyResult()}
@@ -30,15 +32,23 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 	var res []result.Result
 	for _, todo := range reply.GetTodos() {
 		remindKey := fmt.Sprintf("cron:todo_remind:%d:last_remind_at", todo.Id)
-		if todo.RemindAt == time.Now().Format("2006-01-02 15:04") {
+		if todo.RemindAt == time.Now().Format(HourLayout) {
 			res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
-			ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format("2006-01-02 15:04"), redis.KeepTTL)
+			ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 			continue
 		}
 
 		if todo.RepeatMethod != "" {
-			lastRemindAt, _ := ctx.GetRedis().Get(ctxB, fmt.Sprintf("cron:todo_remind:%d:last_remind_at", todo.Id)).Result()
-			nowTime := time.Now().Format("2006-01-02 15:04")
+			// RepeatEndAt
+			if todo.RepeatEndAt != "" {
+				endAt, _ := time.ParseInLocation(HourLayout, todo.RepeatEndAt, time.Local)
+				if endAt.Before(time.Now()) {
+					continue
+				}
+			}
+
+			lastRemindAt, _ := ctx.GetRedis().Get(ctxB, remindKey).Result()
+			nowTime := time.Now().Format(HourLayout)
 
 			isRemind := false
 			switch todo.RepeatMethod {
@@ -55,9 +65,8 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 				continue
 			}
 			if isRemind {
-				// todo RepeatEndAt
 				res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
-				ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format("2006-01-02 15:04"), redis.KeepTTL)
+				ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 				continue
 			}
 		}

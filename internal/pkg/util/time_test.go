@@ -22,13 +22,13 @@ func TestIsApartDay(t *testing.T) {
 		{
 			"case1",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35", 1},
-			true,
+			false,
 			false,
 		},
 		{
 			"case2",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35", 5},
-			true,
+			false,
 			false,
 		},
 		{
@@ -92,7 +92,7 @@ func TestIsDaily(t *testing.T) {
 		{
 			"case1",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35"},
-			true,
+			false,
 			false,
 		},
 		{
@@ -144,7 +144,7 @@ func TestIsWeekly(t *testing.T) {
 		{
 			"case1",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35"},
-			true,
+			false,
 			false,
 		},
 		{
@@ -190,7 +190,7 @@ func TestIsMonthly(t *testing.T) {
 		{
 			"case1",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35"},
-			true,
+			false,
 			false,
 		},
 		{
@@ -236,7 +236,7 @@ func TestIsAnnually(t *testing.T) {
 		{
 			"case1",
 			args{"2021-06-22 15:35", "", "2021-06-22 15:35"},
-			true,
+			false,
 			false,
 		},
 		{

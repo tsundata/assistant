@@ -18,8 +18,8 @@ func IsApartDay(check, last, now string, day int) (bool, error) {
 		return false, nil
 	}
 
-	if last == "" { // todo 1 day
-		return checkTime.YearDay() == nowTime.YearDay(), nil
+	if last == "" {
+		return nowTime.Sub(checkTime).Hours() >= float64(day)*24, nil
 	}
 
 	lastTime, err := time.ParseInLocation(HourLayout, last, time.Local)
