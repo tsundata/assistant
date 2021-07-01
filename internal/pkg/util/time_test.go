@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 )
@@ -264,4 +265,8 @@ func TestIsAnnually(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNow(t *testing.T) {
+	require.Regexp(t, `2\d{3}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}`, Now())
 }

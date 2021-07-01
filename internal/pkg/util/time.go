@@ -50,3 +50,7 @@ func IsMonthly(check, last, now string) (bool, error) {
 func IsAnnually(check, last, now string) (bool, error) {
 	return IsApartDay(check, last, now, 356)
 }
+
+func Now() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}

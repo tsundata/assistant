@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"time"
 )
 
@@ -70,12 +71,12 @@ func (r *MysqlTodoRepository) GetTodo(id int) (model.Todo, error) {
 }
 
 func (r *MysqlTodoRepository) CompleteTodo(id int) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1, `updated_at` = ? WHERE id = ?", id, time.Now())
+	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1, `updated_at` = ? WHERE id = ?", id, util.Now())
 	return err
 }
 
 func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `content` = ?, `updated_at` = ? WHERE id = ?", todo.Content, time.Now(), todo.ID)
+	_, err := r.db.Exec("UPDATE `todos` SET `content` = ?, `updated_at` = ? WHERE id = ?", todo.Content, util.Now(), todo.ID)
 	return err
 }
 

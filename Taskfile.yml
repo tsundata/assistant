@@ -7,6 +7,14 @@ tasks:
       - git version
       - docker version
 
+  check:
+    desc: Check befor submitting the code
+    cmds:
+      - task: lint
+      - task: test
+      - task: coverage
+      - echo "Both done"
+
   build:
     desc: Build the go binary.
     cmds:
@@ -54,7 +62,7 @@ tasks:
   test:
     desc: Go test
     cmds:
-      - go test -race -cover -coverprofile=./coverage.out -timeout=10m -short github.com/tsundata/assistant/internal/...
+      - go test -cover -coverprofile=./coverage.out -timeout=10m -short github.com/tsundata/assistant/internal/...
 
   coverage:
     desc: Go coverage
