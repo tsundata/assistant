@@ -7,9 +7,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
-func URL(_ rulebot.IContext, r result.Result) result.Result {
-	if r.Kind == result.Url {
-		j, err := json.Marshal(r.Content)
+func URL(_ rulebot.IContext, in result.Result) result.Result {
+	if in.Kind == result.Url {
+		j, err := json.Marshal(in.Content)
 		if err != nil {
 			return result.ErrorResult(err)
 		}

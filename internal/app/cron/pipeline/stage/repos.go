@@ -9,9 +9,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func Repos(ctx rulebot.IContext, r result.Result) result.Result {
-	if r.Kind == result.Repos {
-		if data, ok := r.Content.(map[string]string); ok {
+func Repos(ctx rulebot.IContext, in result.Result) result.Result {
+	if in.Kind == result.Repos {
+		if data, ok := in.Content.(map[string]string); ok {
 			// get access token
 			app, err := ctx.Middle().GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 			if err != nil {

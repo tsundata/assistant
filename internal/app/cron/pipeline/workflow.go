@@ -6,20 +6,20 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
-func Workflow(ctx rulebot.IContext, r result.Result) {
+func Workflow(ctx rulebot.IContext, in result.Result) {
 	for {
-		switch r.Kind {
+		switch in.Kind {
 		case result.Done:
-			r = stage.Done(ctx, r)
+			in = stage.Done(ctx, in)
 			return
 		case result.Error:
-			r = stage.Error(ctx, r)
+			in = stage.Error(ctx, in)
 		case result.Message:
-			r = stage.Message(ctx, r)
+			in = stage.Message(ctx, in)
 		case result.Url:
-			r = stage.URL(ctx, r)
+			in = stage.URL(ctx, in)
 		case result.Repos:
-			r = stage.Repos(ctx, r)
+			in = stage.Repos(ctx, in)
 		default:
 			return
 		}

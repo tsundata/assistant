@@ -8,9 +8,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
-func Error(ctx rulebot.IContext, r result.Result) result.Result {
-	if r.Kind == result.Message {
-		_, err := ctx.Message().Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Error: %s", r.Content)})
+func Error(ctx rulebot.IContext, in result.Result) result.Result {
+	if in.Kind == result.Message {
+		_, err := ctx.Message().Send(context.Background(), &pb.MessageRequest{Text: fmt.Sprintf("Error: %s", in.Content)})
 		if err != nil {
 			return result.EmptyResult()
 		}
