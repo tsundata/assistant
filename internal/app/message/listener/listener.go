@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 )
 
@@ -30,7 +31,8 @@ func RegisterEventHandler(bus *event.Bus, config *config.AppConfig, logger *logg
 		}
 
 		client := http.NewClient()
-		resp, err := client.PostJSON(config.Slack.Webhook, map[string]interface{}{
+		webhook := slack.ChannelSelect(message.Channel, config.Slack.Webhook)
+		resp, err := client.PostJSON(webhook, map[string]interface{}{
 			"text": message.Text,
 		})
 		if err != nil {

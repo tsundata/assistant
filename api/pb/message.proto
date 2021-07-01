@@ -21,6 +21,7 @@ message MessageRequest {
   int64 id = 1;
   string uuid = 2;
   string text = 3;
+  string channel = 4;
 }
 
 message MessageReply {

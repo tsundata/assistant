@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 	"strings"
 	"sync"
@@ -163,7 +164,8 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
 	client := http.NewClient()
-	resp, err := client.PostJSON(m.config.Slack.Webhook, map[string]interface{}{
+	webhook := slack.ChannelSelect(payload.GetChannel(), m.config.Slack.Webhook)
+	resp, err := client.PostJSON(webhook, map[string]interface{}{
 		"text": payload.GetText(),
 	})
 	if err != nil {

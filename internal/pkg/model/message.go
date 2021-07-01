@@ -31,6 +31,7 @@ type Message struct {
 	ID        int       `db:"id"`
 	UUID      string    `db:"uuid"`
 	Type      string    `db:"type"`
+	Channel   string    `db:"channel"`
 	Text      string    `db:"text"`
 	CreatedAt time.Time `db:"created_at"`
 }

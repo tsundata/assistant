@@ -9,7 +9,12 @@ redis:
   addr: 127.0.0.1:6379
   password:
 slack:
+  verification:
+  signing:
+  token:
   webhook:
+    - name:
+      url:
 jaeger:
   reporter:
     localAgentHostPort: "127.0.0.1:6831"

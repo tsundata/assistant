@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/slack-go/slack"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/valyala/fasthttp"
 	"net/http"
@@ -136,4 +137,27 @@ func (s SlashCommand) ValidateToken(verificationTokens ...string) bool {
 		}
 	}
 	return false
+}
+
+func ChannelSelect(channel string, webhooks []config.SlackWebhook) string {
+	if len(webhooks) <= 0 {
+		return ""
+	}
+	selectChannel := ""
+	defaultChannel := ""
+	for _, i := range webhooks {
+		if i.Name == channel {
+			selectChannel = i.Url
+		}
+		if i.Name == "default" {
+			defaultChannel = i.Url
+		}
+	}
+	if selectChannel != "" {
+		return selectChannel
+	}
+	if defaultChannel != "" {
+		return defaultChannel
+	}
+	return webhooks[0].Url
 }

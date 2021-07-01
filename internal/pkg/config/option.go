@@ -58,7 +58,7 @@ type Rabbitmq struct {
 
 // Jaeger config
 type Jaeger struct {
-	Reporter    struct {
+	Reporter struct {
 		LocalAgentHostPort string `json:"localAgentHostPort" yaml:"localAgentHostPort"`
 	} `json:"reporter" yaml:"reporter"`
 	Sampler struct {
@@ -76,10 +76,15 @@ type Nats struct {
 
 // Slack config
 type Slack struct {
-	Verification string `json:"verification" yaml:"verification"`
-	Signing      string `json:"signing" yaml:"signing"`
-	Token        string `json:"token" yaml:"token"`
-	Webhook      string `json:"webhook" yaml:"webhook"`
+	Verification string         `json:"verification" yaml:"verification"`
+	Signing      string         `json:"signing" yaml:"signing"`
+	Token        string         `json:"token" yaml:"token"`
+	Webhook      []SlackWebhook `json:"webhook" yaml:"webhook"`
+}
+
+type SlackWebhook struct {
+	Name string `json:"name" yaml:"name"`
+	Url  string `json:"url" yaml:"url"`
 }
 
 // Rollbar config

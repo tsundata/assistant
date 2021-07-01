@@ -45,6 +45,7 @@ CREATE TABLE `messages`
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `uuid`       varchar(36)      NOT NULL DEFAULT '',
     `type`       varchar(12)      NOT NULL DEFAULT '',
+    `channel`    varchar(20)      NOT NULL DEFAULT '',
     `text`       varchar(2048)    NOT NULL DEFAULT '',
     `created_at` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
