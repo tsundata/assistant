@@ -3,6 +3,7 @@ package rule
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -380,6 +381,40 @@ var rules = []Rule{
 				return []string{"failed"}
 			}
 			return []string{strings.Join(reply.GetText(), ", ")}
+		},
+	},
+	{
+		Regex:       `remind\s+(\w+)\s+(\w+)`,
+		HelpMessage: `Remind something`,
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if len(args) != 3 {
+				return []string{"error args"}
+			}
+
+			arg1 := args[1]
+			arg2 := args[2]
+			fmt.Println(arg1, arg2) // todo remind message
+
+			return []string{}
+		},
+	},
+	{
+		Regex:       `del\s+(\d+)`,
+		HelpMessage: `Delete message`,
+		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			if len(args) != 2 {
+				return []string{"error args"}
+			}
+
+			idStr := args[1]
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			fmt.Println(id) // todo delete message
+
+			return []string{}
 		},
 	},
 }

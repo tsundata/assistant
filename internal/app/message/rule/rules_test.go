@@ -224,3 +224,17 @@ func TestPinyinRule(t *testing.T) {
 	res := r.ParseMessage(ctx, "pinyin 测试", []string{"pinyin 测试", "测试"})
 	require.Equal(t, []string{"a1, a2"}, res)
 }
+
+func TestRemindRule(t *testing.T) {
+	r := rules[17]
+	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.ParseMessage(ctx, "remind test 19:50", []string{"remind test 19:50", "test", "19:50"})
+	require.Equal(t, []string{}, res)
+}
+
+func TestDeleteRule(t *testing.T) {
+	r := rules[18]
+	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.ParseMessage(ctx, "del 1", []string{"del 1", "1"})
+	require.Equal(t, []string{}, res)
+}
