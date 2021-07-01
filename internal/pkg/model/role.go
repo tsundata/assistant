@@ -43,7 +43,8 @@ type Role struct {
 	// -> Equipments
 	// -> Quests
 
-	Time time.Time `db:"time"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 type Equipment struct {

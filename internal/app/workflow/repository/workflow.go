@@ -6,7 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"time"
 )
 
 type WorkflowRepository interface {
@@ -50,8 +49,7 @@ func (r *MysqlWorkflowRepository) ListTriggersByType(t string) ([]model.Trigger,
 }
 
 func (r *MysqlWorkflowRepository) CreateTrigger(trigger model.Trigger) (int64, error) {
-	trigger.Time = time.Now()
-	res, err := r.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`, `time`) VALUES (:type, :kind, :when, :message_id, :time)", trigger)
+	res, err := r.db.NamedExec("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`) VALUES (:type, :kind, :when, :message_id)", trigger)
 	if err != nil {
 		return 0, err
 	}

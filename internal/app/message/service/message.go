@@ -16,7 +16,6 @@ import (
 	"github.com/valyala/fasthttp"
 	"strings"
 	"sync"
-	"time"
 )
 
 type Message struct {
@@ -60,7 +59,7 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageList
 			Uuid: item.UUID,
 			Text: item.Text,
 			Type: item.Type,
-			Time: item.Time.Format("2006-01-02 15:04:05"),
+			Time: item.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -80,14 +79,13 @@ func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.Messag
 		Uuid: message.UUID,
 		Text: message.Text,
 		Type: message.Type,
-		Time: message.Time.Format("2006-01-02 15:04:05"),
+		Time: message.CreatedAt.Format("2006-01-02 15:04:05"),
 	}, nil
 }
 
 func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.TextsReply, error) {
 	// check uuid
 	var message model.Message
-	message.Time = time.Now()
 	message.UUID = payload.GetUuid()
 	message.Type = model.MessageTypeText
 	message.Text = strings.TrimSpace(payload.GetText())
@@ -246,7 +244,6 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 		UUID: uuid,
 		Type: model.MessageTypeAction,
 		Text: payload.GetText(),
-		Time: time.Now(),
 	})
 	if err != nil {
 		return nil, err

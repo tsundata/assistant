@@ -4,12 +4,13 @@
 
 CREATE TABLE `apps`
 (
-    `id`    int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `name`  varchar(16)      NOT NULL DEFAULT '',
-    `type`  varchar(12)      NOT NULL DEFAULT '',
-    `token` varchar(256)     NOT NULL DEFAULT '',
-    `extra` varchar(2048)    NOT NULL DEFAULT '',
-    `time`  timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `name`       varchar(16)      NOT NULL DEFAULT '',
+    `type`       varchar(12)      NOT NULL DEFAULT '',
+    `token`      varchar(256)     NOT NULL DEFAULT '',
+    `extra`      varchar(2048)    NOT NULL DEFAULT '',
+    `created_at` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -22,11 +23,12 @@ CREATE TABLE `apps`
 
 CREATE TABLE `credentials`
 (
-    `id`      int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `name`    varchar(16)      NOT NULL DEFAULT '',
-    `type`    varchar(12)      NOT NULL DEFAULT '',
-    `content` varchar(2048)    NOT NULL DEFAULT '',
-    `time`    timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `name`       varchar(16)      NOT NULL DEFAULT '',
+    `type`       varchar(12)      NOT NULL DEFAULT '',
+    `content`    varchar(2048)    NOT NULL DEFAULT '',
+    `created_at` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `name` (`name`)
 ) ENGINE = InnoDB
@@ -40,11 +42,11 @@ CREATE TABLE `credentials`
 
 CREATE TABLE `messages`
 (
-    `id`   int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `uuid` varchar(36)      NOT NULL DEFAULT '',
-    `type` varchar(12)      NOT NULL DEFAULT '',
-    `text` varchar(2048)    NOT NULL DEFAULT '',
-    `time` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `uuid`       varchar(36)      NOT NULL DEFAULT '',
+    `type`       varchar(12)      NOT NULL DEFAULT '',
+    `text`       varchar(2048)    NOT NULL DEFAULT '',
+    `created_at` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
@@ -58,12 +60,12 @@ CREATE TABLE `messages`
 
 CREATE TABLE `pages`
 (
-    `id`      int(11) unsigned                       NOT NULL AUTO_INCREMENT,
-    `uuid`    varchar(36) CHARACTER SET utf8mb4      NOT NULL DEFAULT '',
-    `type`    varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    `title`   varchar(256) CHARACTER SET utf8mb4     NOT NULL DEFAULT '',
-    `content` text CHARACTER SET utf8mb4             NOT NULL,
-    `time`    timestamp                              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         int(11) unsigned                       NOT NULL AUTO_INCREMENT,
+    `uuid`       varchar(36) CHARACTER SET utf8mb4      NOT NULL DEFAULT '',
+    `type`       varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    `title`      varchar(256) CHARACTER SET utf8mb4     NOT NULL DEFAULT '',
+    `content`    text CHARACTER SET utf8mb4             NOT NULL,
+    `created_at` timestamp                              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
@@ -85,7 +87,7 @@ CREATE TABLE `triggers`
     `secret`     varchar(128)     NOT NULL DEFAULT '',
     `when`       varchar(128)     NOT NULL DEFAULT '',
     `message_id` int(11)          NOT NULL,
-    `time`       timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -109,7 +111,7 @@ CREATE TABLE `todos`
     `remark`            VARCHAR(1024)    NOT NULL,
     `complete`          TINYINT(4)       NOT NULL DEFAULT '0',
     `created_at`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -132,15 +134,16 @@ CREATE TABLE `roles`
     `charisma`    INT(11)          NOT NULL DEFAULT '0',
     `talent`      INT(11)          NOT NULL DEFAULT '0',
     `intellect`   INT(11)          NOT NULL DEFAULT '0',
-    `time`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`) USING BTREE
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4;
 
 INSERT INTO `roles` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`, `charisma`,
-                     `talent`, `intellect`, `time`)
-VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0, '2021-06-01 00:00:00');
+                     `talent`, `intellect`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
 
 
@@ -162,7 +165,7 @@ CREATE TABLE `role_records`
     `charisma`    INT(11)          NOT NULL DEFAULT '0',
     `talent`      INT(11)          NOT NULL DEFAULT '0',
     `intellect`   INT(11)          NOT NULL DEFAULT '0',
-    `time`        TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`) USING BTREE
 )
     ENGINE = InnoDB
@@ -170,5 +173,5 @@ CREATE TABLE `role_records`
 
 INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
                             `charisma`,
-                            `talent`, `intellect`, `time`)
-VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0, '2021-06-01 00:00:00');
+                            `talent`, `intellect`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);

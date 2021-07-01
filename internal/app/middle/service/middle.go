@@ -14,7 +14,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type Middle struct {
@@ -87,7 +86,6 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 		Type:    payload.GetType(),
 		Title:   payload.GetTitle(),
 		Content: payload.GetContent(),
-		Time:    time.Now(),
 	}
 
 	_, err = s.repo.CreatePage(page)
@@ -136,7 +134,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 			Name:         app.Name,
 			Token:        app.Token,
 			Extra:        app.Extra,
-			Time:         app.Time.Format("2006-01-02 15:04:05"),
+			Time:         app.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -265,7 +263,7 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 			Name:    item.Name,
 			Type:    item.Type,
 			Content: item.Content,
-			Time:    item.Time.Format("2006-01-02 15:04:05"),
+			Time:    item.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -332,7 +330,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: util.ByteToString(data), Time: time.Now()})
+	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: util.ByteToString(data)})
 	if err != nil {
 		return nil, err
 	}

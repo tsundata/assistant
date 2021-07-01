@@ -33,8 +33,7 @@ func NewMysqlMiddleRepository(logger *logger.Logger, db *sqlx.DB) MiddleReposito
 }
 
 func (r *MysqlMiddleRepository) CreatePage(page model.Page) (int64, error) {
-	page.Time = time.Now()
-	res, err := r.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`, `time`) VALUES (:uuid, :type, :title, :content, :time)", page)
+	res, err := r.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`) VALUES (:uuid, :type, :title, :content)", page)
 	if err != nil {
 		return 0, err
 	}
@@ -56,7 +55,7 @@ func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (model.Page, error) {
 
 func (r *MysqlMiddleRepository) ListApps() ([]model.App, error) {
 	var apps []model.App
-	err := r.db.Select(&apps, "SELECT name, `type`, token, extra, `time` FROM `apps` ORDER BY `time` DESC")
+	err := r.db.Select(&apps, "SELECT name, `type`, token, extra, `created_at` FROM `apps` ORDER BY `created_at` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
@@ -82,7 +81,7 @@ func (r *MysqlMiddleRepository) GetAppByType(t string) (model.App, error) {
 }
 
 func (r *MysqlMiddleRepository) UpdateAppByID(id int64, token, extra string) error {
-	_, err := r.db.Exec("UPDATE apps SET `token` = ?, `extra` = ?, `time` = ? WHERE id = ?", token, extra, time.Now(), id)
+	_, err := r.db.Exec("UPDATE apps SET `token` = ?, `extra` = ?, `created_at` = ? WHERE id = ?", token, extra, time.Now(), id)
 	return err
 }
 
@@ -119,7 +118,7 @@ func (r *MysqlMiddleRepository) GetCredentialByType(t string) (model.Credential,
 
 func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
 	var items []model.Credential
-	err := r.db.Select(&items, "SELECT name, `type`, content, `time` FROM `credentials` ORDER BY `id` DESC")
+	err := r.db.Select(&items, "SELECT name, `type`, content, `created_at` FROM `credentials` ORDER BY `id` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
@@ -127,9 +126,8 @@ func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
 }
 
 func (r *MysqlMiddleRepository) CreateCredential(credential model.Credential) (int64, error) {
-	credential.Time = time.Now()
-	res, err := r.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`, `time`) VALUES (?, ?, ?, ?)",
-		credential.Name, credential.Type, credential.Content, credential.Time)
+	res, err := r.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`) VALUES (?, ?, ?)",
+		credential.Name, credential.Type, credential.Content)
 	if err != nil {
 		return 0, err
 	}

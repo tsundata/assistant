@@ -7,7 +7,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"time"
 )
 
 type UserRepository interface {
@@ -80,9 +79,9 @@ func (r *MysqlUserRepository) ChangeRoleAttr(userID int, attr string, val int) e
 func (r *MysqlUserRepository) roleRecord(userId int, exp int, attr string, val int) {
 	var err error
 	if attr != "" {
-		_, err = r.db.Exec(fmt.Sprintf("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `%s`, `time`) VALUES ('', ?, ?, ?, ?)", attr), userId, exp, val, time.Now())
+		_, err = r.db.Exec(fmt.Sprintf("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `%s`) VALUES ('', ?, ?, ?, ?)", attr), userId, exp, val)
 	} else {
-		_, err = r.db.Exec("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `time`) VALUES ('', ?, ?, ?)", userId, exp, time.Now())
+		_, err = r.db.Exec("INSERT INTO `role_records` (`profession`, `user_id`, `exp`) VALUES ('', ?, ?, ?)", userId, exp)
 	}
 	if err != nil {
 		r.logger.Error(err)

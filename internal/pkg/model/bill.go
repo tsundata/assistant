@@ -8,7 +8,8 @@ type Bill struct {
 	Payee       string    `db:"payee"`
 	Description string    `db:"description"`
 	Amount      float64   `db:"amount"`
-	Time        time.Time `db:"time"`
+	CreatedAt   time.Time `db:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at"`
 }
 
 type BillRecord struct {

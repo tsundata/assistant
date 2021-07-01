@@ -28,11 +28,11 @@ const (
 )
 
 type Message struct {
-	ID   int       `db:"id"`
-	UUID string    `db:"uuid"`
-	Type string    `db:"type"`
-	Text string    `db:"text"`
-	Time time.Time `db:"time"`
+	ID        int       `db:"id"`
+	UUID      string    `db:"uuid"`
+	Type      string    `db:"type"`
+	Text      string    `db:"text"`
+	CreatedAt time.Time `db:"created_at"`
 }
 
 func (m *Message) IsMessageOfAction() bool {

@@ -9,7 +9,6 @@ import (
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
-	"time"
 )
 
 func TestMessage_List(t *testing.T) {
@@ -70,7 +69,6 @@ func TestMessage_Get(t *testing.T) {
 			Text: "test",
 			UUID: "test",
 			Type: "text",
-			Time: time.Now(),
 		}, nil),
 	)
 

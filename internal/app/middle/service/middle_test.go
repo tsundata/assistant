@@ -3,10 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"reflect"
-	"testing"
-	"time"
-
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -14,6 +10,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
+	"reflect"
+	"testing"
 )
 
 func TestMiddle_GetMenu(t *testing.T) {
@@ -154,7 +152,6 @@ func TestMiddle_GetPage(t *testing.T) {
 			Type:    "html",
 			Title:   "test",
 			Content: "test",
-			Time:    time.Now(),
 		}, nil),
 	)
 
@@ -208,7 +205,6 @@ func TestMiddle_GetApps(t *testing.T) {
 			ID:    1,
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
-			Time:  time.Now(),
 		}}, nil),
 	)
 
@@ -257,7 +253,6 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 			ID:    1,
 			Name:  "github",
 			Type:  "github",
-			Time:  time.Now(),
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
 			Token: "test",
 		}, nil),
@@ -308,7 +303,6 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 			ID:    1,
 			Name:  "github",
 			Type:  "github",
-			Time:  time.Now(),
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
 			Token: "test",
 		}, nil),
@@ -379,14 +373,12 @@ func TestMiddle_GetCredential(t *testing.T) {
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
-			Time:    time.Now(),
 		}, nil),
 		repo.EXPECT().GetCredentialByType(gomock.Any()).Return(model.Credential{
 			ID:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
-			Time:    time.Now(),
 		}, nil),
 	)
 
@@ -451,7 +443,6 @@ func TestMiddle_GetCredentials(t *testing.T) {
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
-			Time:    time.Now(),
 		}}, nil),
 	)
 
@@ -501,7 +492,6 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
-			Time:    time.Now(),
 		}}, nil),
 	)
 

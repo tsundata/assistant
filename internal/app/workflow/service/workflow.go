@@ -168,7 +168,6 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 	trigger.Type = payload.GetType()
 	trigger.Kind = payload.GetKind()
 	trigger.MessageID = int(payload.GetMessageId())
-	trigger.Time = time.Now()
 
 	switch payload.GetKind() {
 	case model.MessageTypeAction:

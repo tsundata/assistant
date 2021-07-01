@@ -10,5 +10,5 @@ type Trigger struct {
 	Secret    string    `db:"secret"`
 	When      string    `db:"when"`
 	MessageID int       `db:"message_id"`
-	Time      time.Time `db:"time"`
+	CreatedAt time.Time `db:"created_at"`
 }
