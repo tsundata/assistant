@@ -37,13 +37,15 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-- install MySQL, Redis, influx, jaeger, nats, consul
+- Install MySQL, Redis, influx, jaeger, nats, consul
 
-- import sql files
+- Import sql files
 
-- Configuration
+- Import Configuration to consul
+
+- Set Environment
 ```
-cp ./configs/*.yml.example ./config/*.yml
+See doc/env.md
 ```
 
 - Build binary
@@ -51,10 +53,7 @@ cp ./configs/*.yml.example ./config/*.yml
 make build
 ```
 
-- Run
-```
-./dist/* -f configs/*.yml
-```
+- Run App binary
 
 # License
 
