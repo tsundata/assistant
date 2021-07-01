@@ -146,9 +146,10 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			}()
 			if len(result) > 0 {
 				s.outCh <- rule.Result{
-					Name:   name,
-					Mode:   r.Mode,
-					Result: result,
+					Name:    name,
+					Channel: r.Channel,
+					Mode:    r.Mode,
+					Result:  result,
 				}
 			}
 		}
@@ -166,7 +167,7 @@ func (s *Crawler) resultWorker() {
 		// filter
 		diff := s.filter(out.Name, out.Mode, out.Result)
 		// send
-		s.send(out.Name, diff)
+		s.send(out.Channel, out.Name, diff)
 	}
 }
 
@@ -235,7 +236,7 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 	return diff
 }
 
-func (s *Crawler) send(name string, out []string) {
+func (s *Crawler) send(channel, name string, out []string) {
 	if len(out) == 0 {
 		return
 	}
@@ -272,7 +273,8 @@ func (s *Crawler) send(name string, out []string) {
 
 	// send
 	_, err = s.message.Send(context.Background(), &pb.MessageRequest{
-		Text: text,
+		Channel: channel,
+		Text:    text,
 	})
 	if err != nil {
 		s.logger.Error(err)
