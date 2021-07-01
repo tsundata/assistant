@@ -50,7 +50,7 @@ See doc/env.md
 
 - Build binary
 ```
-make build
+task build
 ```
 
 - Run App binary
