@@ -55,6 +55,7 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 				continue
 			}
 			if isRemind {
+				// todo RepeatEndAt
 				res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
 				ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format("2006-01-02 15:04"), redis.KeepTTL)
 				continue
