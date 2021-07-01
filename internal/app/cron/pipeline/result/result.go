@@ -7,7 +7,8 @@ import (
 type Kind int
 
 const (
-	Done Kind = iota
+	Undefined Kind = iota
+	Done
 	Error
 	Message
 	Url

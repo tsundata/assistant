@@ -12,6 +12,9 @@ import (
 func Repos(ctx rulebot.IContext, in result.Result) result.Result {
 	if in.Kind == result.Repos {
 		if data, ok := in.Content.(map[string]string); ok {
+			if ctx.Middle() == nil {
+				return result.EmptyResult()
+			}
 			// get access token
 			app, err := ctx.Middle().GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 			if err != nil {
