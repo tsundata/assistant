@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"time"
 )
 
@@ -45,7 +44,7 @@ func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
 
 func (r *MysqlTodoRepository) ListTodos() ([]model.Todo, error) {
 	var items []model.Todo
-	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC")
+	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC, `created_at` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
@@ -71,12 +70,12 @@ func (r *MysqlTodoRepository) GetTodo(id int) (model.Todo, error) {
 }
 
 func (r *MysqlTodoRepository) CompleteTodo(id int) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1, `updated_at` = ? WHERE id = ?", id, util.Now())
+	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1 WHERE id = ?", id)
 	return err
 }
 
 func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `content` = ?, `updated_at` = ? WHERE id = ?", todo.Content, util.Now(), todo.ID)
+	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.ID)
 	return err
 }
 
