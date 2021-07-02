@@ -27,7 +27,7 @@ type Gateway struct {
 
 // Storage config
 type Storage struct {
-	Path string `json:"path" yaml:"path"`
+	Adapter string `json:"adapter" yaml:"adapter"`
 }
 
 // === Middleware ===

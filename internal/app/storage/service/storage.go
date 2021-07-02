@@ -7,21 +7,22 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/storage/fs"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"io"
-	"io/ioutil"
 )
 
 type Storage struct {
-	path string // fixme
+	conf *config.AppConfig
 	db   *sqlx.DB
 	rdb  *redis.Client
 }
 
 const MaxFileSize = 1 << 20
 
-func NewStorage(db *sqlx.DB, rdb *redis.Client) *Storage {
-	return &Storage{db: db, rdb: rdb}
+func NewStorage(conf *config.AppConfig, db *sqlx.DB, rdb *redis.Client) *Storage {
+	return &Storage{conf: conf, db: db, rdb: rdb}
 }
 
 func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {
@@ -59,8 +60,13 @@ func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {
 	if err != nil {
 		return err
 	}
-	path := fmt.Sprintf("%s.%s", uuid, fileType)
-	err = ioutil.WriteFile(fmt.Sprintf("%s/%s", s.path, path), fileData.Bytes(), 0644)
+
+	f, err := fs.FS(s.conf.Storage.Adapter)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("upload/%s.%s", uuid, fileType)
+	err = f.Put(path, fileData.Bytes(), false)
 	if err != nil {
 		return err
 	}

@@ -40,7 +40,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	storage := service.NewStorage(db, redisClient)
+	storage := service.NewStorage(appConfig, db, redisClient)
 	initServer := service.CreateInitServerFn(storage)
 	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
 	if err != nil {

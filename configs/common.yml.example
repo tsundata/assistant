@@ -27,7 +27,7 @@ rollbar:
 nats:
   url: nats://localhost:4222
 storage:
-  path: /upload
+  adapter: dropbox
 
 web:
   url: http://127.0.0.1:7000
