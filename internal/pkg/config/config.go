@@ -77,10 +77,10 @@ func (c *AppConfig) readConfig() {
 
 func (c *AppConfig) watch() {
 	c.once.Do(func() {
-		tick := time.Tick(10 * time.Second)
+		tick := time.NewTicker(10 * time.Second)
 		for {
 			select {
-			case <-tick:
+			case <-tick.C:
 				c.readConfig()
 			default:
 				runtime.Gosched()
