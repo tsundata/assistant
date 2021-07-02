@@ -5,15 +5,6 @@ import (
 	"testing"
 )
 
-func TestAppConfig_Watch(t *testing.T) {
-	t.Skip() // todo
-	c, err := CreateAppConfig("test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	c.Watch()
-}
-
 func TestAppConfig_Config(t *testing.T) {
 	c, err := CreateAppConfig("test")
 	if err != nil {

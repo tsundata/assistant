@@ -6,11 +6,15 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gopkg.in/yaml.v2"
+	"runtime"
 	"strings"
+	"sync"
+	"time"
 )
 
 type AppConfig struct {
-	kv *api.KV
+	kv   *api.KV
+	once sync.Once
 
 	Name string `json:"name"`
 
@@ -38,36 +42,51 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 	xc.kv = kv
 	xc.Name = id
 
+	xc.readConfig()
+	go xc.watch()
+
+	return &xc
+}
+
+func (c *AppConfig) readConfig() {
 	// common
-	pair, _, err := kv.Get("config/common", nil)
+	pair, _, err := c.kv.Get("config/common", nil)
 	if err != nil {
 		panic(err)
 	}
 	if pair == nil {
 		panic("pair nil")
 	}
-	err = yaml.Unmarshal(pair.Value, &xc)
+	err = yaml.Unmarshal(pair.Value, &c)
 	if err != nil {
 		panic(err)
 	}
 
 	// app
-	pair, _, err = kv.Get(fmt.Sprintf("config/%s", id), nil)
+	pair, _, err = c.kv.Get(fmt.Sprintf("config/%s", c.Name), nil)
 	if err != nil {
 		panic(err)
 	}
 	if pair != nil {
-		err = yaml.Unmarshal(pair.Value, &xc)
+		err = yaml.Unmarshal(pair.Value, &c)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
-
-	return &xc
 }
 
-func (c *AppConfig) Watch() {
-	// todo
+func (c *AppConfig) watch() {
+	c.once.Do(func() {
+		tick := time.Tick(10 * time.Second)
+		for {
+			select {
+			case <-tick:
+				c.readConfig()
+			default:
+				runtime.Gosched()
+			}
+		}
+	})
 }
 
 func (c *AppConfig) GetConfig(key string) (string, error) {

@@ -6,7 +6,6 @@ import (
 	"github.com/google/wire"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	"github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/hashicorp/consul/api"
@@ -27,12 +26,6 @@ import (
 	"net"
 )
 
-type alwaysPassLimiter struct{}
-
-func (*alwaysPassLimiter) Limit() bool {
-	return false
-}
-
 type Server struct {
 	conf   *config.AppConfig
 	logger *logger.Logger
@@ -51,9 +44,6 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, init InitServer, tr
 		}),
 	}
 
-	// TODO limiter
-	limiter := &alwaysPassLimiter{}
-
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
@@ -61,7 +51,6 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, init InitServer, tr
 				influx.StreamServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpczap.StreamServerInterceptor(logger.Zap),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
-				ratelimit.StreamServerInterceptor(limiter),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
 			),
@@ -72,7 +61,6 @@ func NewServer(opt *config.AppConfig, logger *logger.Logger, init InitServer, tr
 				influx.UnaryServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpczap.UnaryServerInterceptor(logger.Zap),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
-				ratelimit.UnaryServerInterceptor(limiter),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
 			),

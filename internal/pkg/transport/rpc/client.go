@@ -24,7 +24,7 @@ type ClientOptions struct {
 func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 	var (
 		err error
-		o   = new(ClientOptions) // Todo rpc config
+		o   = new(ClientOptions)
 	)
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
@@ -47,12 +47,14 @@ func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 
 type ClientOptional func(o *ClientOptions)
 
+//WithTimeout timeout
 func WithTimeout(d time.Duration) ClientOptional {
 	return func(o *ClientOptions) {
 		o.Wait = d
 	}
 }
 
+//WithTag tag info
 func WithTag(tag string) ClientOptional {
 	return func(o *ClientOptions) {
 		o.Tag = tag
@@ -86,7 +88,7 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 	// discovery
 	discovery.RegisterBuilder()
 	consulAddress := os.Getenv("CONSUL_ADDRESS")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), o.Wait)
 	defer cancel()
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint

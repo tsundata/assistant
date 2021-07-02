@@ -75,7 +75,3 @@ func isIntranetIpv4(ip string) bool {
 	}
 	return false
 }
-
-func Ping(_ string) bool {
-	return false // todo
-}
