@@ -79,6 +79,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/todo.pb.go -destination=./mock/todo_client.go
       - mockgen -package=mock -source=./api/pb/user.pb.go -destination=./mock/user_client.go
       - mockgen -package=mock -source=./api/pb/workflow.pb.go -destination=./mock/workflow_client.go
+      - mockgen -package=mock -source=./api/pb/chatbot.pb.go -destination=./mock/chatbot_client.go
       - mockgen -package=mock -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_repository.go
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go

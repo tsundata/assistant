@@ -8,7 +8,7 @@ option go_package = "api/pb";
 service Message {
   rpc List(MessageRequest) returns (MessageListReply) {}
   rpc Get(MessageRequest) returns (MessageReply) {}
-  rpc Create(MessageRequest) returns (TextsReply) {}
+  rpc Create(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}
   rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}
@@ -30,12 +30,6 @@ message MessageReply {
   string text = 3;
   string type = 4;
   string time = 5;
-}
-
-message TextsReply {
-  int64 id = 1;
-  string uuid = 2;
-  repeated string text = 3;
 }
 
 message MessageListReply {

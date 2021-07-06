@@ -4,10 +4,9 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/message"
-	"github.com/tsundata/assistant/internal/app/message/repository"
-	"github.com/tsundata/assistant/internal/app/message/rpcclient"
-	"github.com/tsundata/assistant/internal/app/message/service"
+	"github.com/tsundata/assistant/internal/app/chatbot"
+	"github.com/tsundata/assistant/internal/app/chatbot/rpcclient"
+	"github.com/tsundata/assistant/internal/app/chatbot/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -18,6 +17,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -31,15 +31,15 @@ var providerSet = wire.NewSet(
 	jaeger.ProviderSet,
 	influx.ProviderSet,
 	redis.ProviderSet,
-	message.ProviderSet,
+	chatbot.ProviderSet,
 	mysql.ProviderSet,
 	rollbar.ProviderSet,
-	repository.ProviderSet,
-	nats.ProviderSet,
-	event.ProviderSet,
 	consul.ProviderSet,
 	service.ProviderSet,
 	rpcclient.ProviderSet,
+	rulebot.ProviderSet,
+	event.ProviderSet,
+	nats.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

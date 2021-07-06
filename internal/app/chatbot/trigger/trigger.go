@@ -1,6 +1,6 @@
 package trigger
 
-import "github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+import "github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 
 type Trigger interface {
 	Cond(text string) bool

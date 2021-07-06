@@ -8,6 +8,19 @@ env:
 
 builds:
   # app
+  - main: ./cmd/chatbot
+    id: "chatbot"
+    binary: "chatbot"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
+        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
+        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
+
   - main: ./cmd/cron
     id: "cron"
     binary: "cron"

@@ -66,11 +66,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	chatbotClient, err := rpcclient.NewChatbotClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
 	userClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, loggerLogger, messageClient, middleClient, workflowClient, userClient)
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, loggerLogger, messageClient, middleClient, workflowClient, chatbotClient, userClient)
 	v := controller.CreateInitControllersFn(gatewayController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {

@@ -29,12 +29,14 @@ type GatewayController struct {
 	middleSvc   pb.MiddleClient
 	workflowSvc pb.WorkflowClient
 	userSvc     pb.UserClient
+	chatbotSvc  pb.ChatbotClient
 }
 
 func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
 	messageSvc pb.MessageClient,
 	middleSvc pb.MiddleClient,
 	workflowSvc pb.WorkflowClient,
+	chatbotSvc pb.ChatbotClient,
 	userSvc pb.UserClient) *GatewayController {
 	return &GatewayController{
 		opt:         opt,
@@ -44,6 +46,7 @@ func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logg
 		middleSvc:   middleSvc,
 		workflowSvc: workflowSvc,
 		userSvc:     userSvc,
+		chatbotSvc:  chatbotSvc,
 	}
 }
 
@@ -94,7 +97,28 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 				re = regexp.MustCompile(`[\s\p{Zs}]+`)
 				ev.Text = re.ReplaceAllString(ev.Text, " ")
 
-				reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
+				// chatbot handle
+				reply, err := gc.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: ev.Text})
+				if err != nil {
+					gc.logger.Error(err)
+					return c.Status(http.StatusBadRequest).SendString(err.Error())
+				}
+
+				if len(reply.GetText()) > 0 {
+					for _, item := range reply.GetText() {
+						if item != "" {
+							_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))
+							if err != nil {
+								gc.logger.Error(err)
+								return c.Status(http.StatusBadRequest).SendString(err.Error())
+							}
+						}
+					}
+					return nil
+				}
+
+				// or create message
+				messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 					Uuid: ev.ClientMsgID,
 					Text: ev.Text,
 				})
@@ -103,15 +127,7 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 					return c.Status(http.StatusBadRequest).SendString(err.Error())
 				}
 
-				if reply.GetId() > 0 {
-					_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", reply.GetId()), false))
-				} else {
-					for _, item := range reply.GetText() {
-						if item != "" {
-							_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(item, false))
-						}
-					}
-				}
+				_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", messageReply.GetId()), false))
 				if err != nil {
 					gc.logger.Error(err)
 					return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -146,13 +162,32 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	// handle message
+	// chatbot handle
+	api := telegram.NewTelegram(gc.opt.Telegram.Token)
+	reply, err := gc.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: incoming.Message.Text})
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	if len(reply.GetText()) > 0 {
+		for _, item := range reply.GetText() {
+			if item != "" {
+				_, err = api.SendMessage(incoming.Message.Chat.Id, item)
+				gc.logger.Error(err)
+				return c.Status(http.StatusBadRequest).SendString(err.Error())
+			}
+		}
+		return nil
+	}
+
+	// or create message
 	uuid, err := util.GenerateUUID()
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
+	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
 		Text: incoming.Message.Text,
 	})
@@ -162,16 +197,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	// reply message
-	api := telegram.NewTelegram(gc.opt.Telegram.Token)
-	if reply.GetId() > 0 {
-		_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", reply.GetId()))
-	} else {
-		for _, item := range reply.GetText() {
-			if item != "" {
-				_, err = api.SendMessage(incoming.Message.Chat.Id, item)
-			}
-		}
-	}
+	_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", messageReply.GetId()))
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -181,18 +207,30 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
+	// chatbot handle
+	text := util.ByteToString(c.Body())
+	reply, err := gc.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: text})
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+	if len(reply.GetText()) > 0 {
+		return c.Send(util.StringToByte(strings.Join(reply.GetText(), "\n")))
+	}
+
+	// or create message
 	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return err
 	}
-	reply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
+	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Uuid: uuid,
-		Text: util.ByteToString(c.Body()),
+		Text: text,
 	})
 	if err != nil {
 		return err
 	}
-	return c.Send(util.StringToByte(strings.Join(reply.GetText(), "\n")))
+	return c.Send(util.StringToByte(fmt.Sprintf("ID: %d", messageReply.GetId())))
 }
 
 func (gc *GatewayController) Authorization(c *fiber.Ctx) error {

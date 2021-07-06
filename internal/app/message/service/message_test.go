@@ -5,6 +5,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -23,7 +25,7 @@ func TestMessage_List(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, nil, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -72,7 +74,7 @@ func TestMessage_Get(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, nil, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -116,6 +118,12 @@ func TestMessage_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	nats,err := event.CreateNats(app.Message)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bus := event.NewBus(nats)
+
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByUUID(gomock.Any()).Return(model.Message{ID: 2}, nil),
@@ -123,7 +131,7 @@ func TestMessage_Create(t *testing.T) {
 		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMessage(nil, nil, repo, nil, nil, nil, nil)
+	s := NewMessage(bus, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -133,21 +141,21 @@ func TestMessage_Create(t *testing.T) {
 		name    string
 		m       *Message
 		args    args
-		want    *pb.TextsReply
+		want    *pb.MessageReply
 		wantErr bool
 	}{
 		{
 			"case1",
 			s,
 			args{context.Background(), &pb.MessageRequest{Text: "demo1", Uuid: "test"}},
-			&pb.TextsReply{Id: 2, Uuid: "test"},
+			&pb.MessageReply{Id: 2, Uuid: "test"},
 			false,
 		},
 		{
 			"case2",
 			s,
 			args{context.Background(), &pb.MessageRequest{Text: "demo2", Uuid: "test"}},
-			&pb.TextsReply{Id: 1, Uuid: "test"},
+			&pb.MessageReply{Id: 1, Uuid: "test"},
 			false,
 		},
 	}
@@ -175,7 +183,7 @@ func TestMessage_Delete(t *testing.T) {
 		repo.EXPECT().Delete(gomock.Any()).Return(errors.New("not record")),
 	)
 
-	s := NewMessage(nil, nil, repo, nil, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -233,7 +241,7 @@ func TestMessage_Run(t *testing.T) {
 			Return(model.Message{ID: 1, Text: "test", Type: "other"}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, workflow, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, workflow)
 
 	type args struct {
 		ctx     context.Context
@@ -284,7 +292,7 @@ func TestMessage_GetActionMessages(t *testing.T) {
 		repo.EXPECT().ListByType(gomock.Any()).Return([]model.Message{{ID: 1, Text: "test"}}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, nil, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -331,7 +339,7 @@ func TestMessage_CreateActionMessage(t *testing.T) {
 		workflow.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, workflow, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, workflow)
 
 	type args struct {
 		ctx     context.Context
@@ -384,7 +392,7 @@ func TestMessage_DeleteWorkflowMessage(t *testing.T) {
 		workflow.EXPECT().DeleteTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	s := NewMessage(nil, nil, repo, workflow, nil, nil, nil)
+	s := NewMessage(nil, nil, nil, repo, workflow)
 
 	type args struct {
 		ctx     context.Context

@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	Chatbot   = "chatbot"
 	Message   = "message"
 	Gateway   = "gateway"
 	Cron      = "cron"

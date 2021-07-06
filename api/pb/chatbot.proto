@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service Chatbot {
+  rpc Handle(ChatbotRequest) returns (ChatbotReply) {}
+}
+
+message ChatbotRequest {
+  string text = 1;
+}
+
+message ChatbotReply {
+  repeated string text = 1;
+}

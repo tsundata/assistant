@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-type Issue struct{}
+type Project struct{}
 
-func NewIssue() *Issue {
-	return &Issue{}
+func NewProject() *Project {
+	return &Project{}
 }
 
-func (t *Issue) Handle(ctx *ctx.Context, text string) {
+func (t *Project) Handle(ctx *ctx.Context, text string) {
 	// get access token
 	app, err := ctx.Middle.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
 	if err != nil {
@@ -32,24 +32,45 @@ func (t *Issue) Handle(ctx *ctx.Context, text string) {
 	client := github.NewGithub("", "", "", accessToken)
 	user, err := client.GetUser()
 	if err != nil {
+		ctx.Logger.Error(err)
 		return
 	}
 	if *user.Login == "" {
 		return
 	}
 
-	// create issue
-	issue, err := client.CreateIssue(*user.Login, "assistant", github.Issue{Title: &text})
+	// get projects
+	projects, err := client.GetUserProjects(*user.Login)
 	if err != nil {
 		ctx.Logger.Error(err)
 		return
 	}
-	if *issue.ID == 0 {
+	if len(*projects) == 0 {
+		return
+	}
+
+	// get columns
+	columns, err := client.GetProjectColumns(*(*projects)[0].ID)
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if len(*columns) == 0 {
+		return
+	}
+
+	// create card
+	card, err := client.CreateCard(*(*columns)[0].ID, github.ProjectCard{Note: &text})
+	if err != nil {
+		ctx.Logger.Error(err)
+		return
+	}
+	if *card.ID == 0 {
 		return
 	}
 
 	// send message
-	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Created Project Card #%d", *card.ID)})
 	if err != nil {
 		ctx.Logger.Error(err)
 		return

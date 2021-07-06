@@ -37,14 +37,14 @@ func (m *MockMessageClient) EXPECT() *MockMessageClientMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockMessageClient) Create(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextsReply, error) {
+func (m *MockMessageClient) Create(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Create", varargs...)
-	ret0, _ := ret[0].(*pb.TextsReply)
+	ret0, _ := ret[0].(*pb.MessageReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -240,10 +240,10 @@ func (m *MockMessageServer) EXPECT() *MockMessageServerMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockMessageServer) Create(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextsReply, error) {
+func (m *MockMessageServer) Create(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1)
-	ret0, _ := ret[0].(*pb.TextsReply)
+	ret0, _ := ret[0].(*pb.MessageReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

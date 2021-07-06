@@ -2,7 +2,7 @@ package trigger
 
 import (
 	"fmt"
-	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"regexp"

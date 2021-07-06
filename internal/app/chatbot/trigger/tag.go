@@ -1,8 +1,8 @@
 package trigger
 
 import (
-	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
-	"github.com/tsundata/assistant/internal/app/message/trigger/tags"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
 	"regexp"
 	"strings"
 )

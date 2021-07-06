@@ -203,7 +203,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `view\s+(\d+)`, // fixme
+		Regex:       `view\s+(\d+)`,
 		HelpMessage: `View message`,
 		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			if ctx.Message() == nil {
@@ -230,7 +230,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Regex:       `run\s+(\d+)`, // fixme
+		Regex:       `run\s+(\d+)`,
 		HelpMessage: `Run message`,
 		ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
 			if ctx.Message() == nil {

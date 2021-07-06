@@ -4,47 +4,37 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
-	"github.com/tsundata/assistant/internal/app/message/rule"
-	"github.com/tsundata/assistant/internal/app/message/trigger"
-	"github.com/tsundata/assistant/internal/app/message/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
 	"strings"
-	"sync"
 )
 
 type Message struct {
+	bus      *event.Bus
 	config   *config.AppConfig
 	logger   *logger.Logger
-	bot      *rulebot.RuleBot
 	repo     repository.MessageRepository
 	workflow pb.WorkflowClient
-	middle   pb.MiddleClient
-	todo     pb.TodoClient
 }
 
 func NewMessage(
+	bus *event.Bus,
 	logger *logger.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
-	workflow pb.WorkflowClient,
-	middle pb.MiddleClient,
-	todo pb.TodoClient,
-	bot *rulebot.RuleBot) *Message {
+	workflow pb.WorkflowClient) *Message {
 	return &Message{
+		bus:      bus,
 		logger:   logger,
-		bot:      bot,
 		config:   config,
 		repo:     repo,
 		workflow: workflow,
-		middle:   middle,
-		todo:     todo,
 	}
 }
 
@@ -84,7 +74,7 @@ func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.Messag
 	}, nil
 }
 
-func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.TextsReply, error) {
+func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var message model.Message
 	message.UUID = payload.GetUuid()
@@ -97,21 +87,10 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 		return nil, err
 	}
 	if find.ID > 0 {
-		return &pb.TextsReply{
+		return &pb.MessageReply{
 			Id:   int64(find.ID),
 			Uuid: message.UUID,
 		}, nil
-	}
-
-	// process rule
-	if m.bot != nil {
-		m.bot.SetOptions(rule.Options...)
-		out := m.bot.Process(message.Text).MessageProviderOut()
-		if len(out) > 0 {
-			return &pb.TextsReply{
-				Text: out,
-			}, nil
-		}
 	}
 
 	// parse type
@@ -130,24 +109,12 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 	}
 
 	// trigger
-	c := ctx.NewContext()
-	c.Logger = m.logger
-	c.Middle = m.middle
-	c.Todo = m.todo
-	triggers := trigger.Triggers()
-	wg := sync.WaitGroup{}
-	for _, item := range triggers {
-		wg.Add(1)
-		go func(t trigger.Trigger) {
-			defer wg.Done()
-			if t.Cond(message.Text) {
-				t.Handle(c)
-			}
-		}(item)
+	err = m.bus.Publish(event.MessageTriggerSubject, message)
+	if err != nil {
+		return nil, err
 	}
-	wg.Wait()
 
-	return &pb.TextsReply{
+	return &pb.MessageReply{
 		Id:   id,
 		Uuid: message.UUID,
 	}, nil
