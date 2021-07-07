@@ -86,7 +86,7 @@ func TestTodoRepository_GetTodo(t *testing.T) {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
 	type args struct {
-		id int
+		id int64
 	}
 	tests := []struct {
 		name    string
@@ -113,7 +113,7 @@ func TestTodoRepository_CompleteTodo(t *testing.T) {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
 	type args struct {
-		id int
+		id int64
 	}
 	tests := []struct {
 		name    string
@@ -163,7 +163,7 @@ func TestTodoRepository_DeleteTodo(t *testing.T) {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
 	type args struct {
-		id int
+		id int64
 	}
 	tests := []struct {
 		name    string

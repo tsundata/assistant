@@ -35,7 +35,7 @@ func (m *MockTodoRepository) EXPECT() *MockTodoRepositoryMockRecorder {
 }
 
 // CompleteTodo mocks base method.
-func (m *MockTodoRepository) CompleteTodo(id int) error {
+func (m *MockTodoRepository) CompleteTodo(id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CompleteTodo", id)
 	ret0, _ := ret[0].(error)
@@ -64,7 +64,7 @@ func (mr *MockTodoRepositoryMockRecorder) CreateTodo(todo interface{}) *gomock.C
 }
 
 // DeleteTodo mocks base method.
-func (m *MockTodoRepository) DeleteTodo(id int) error {
+func (m *MockTodoRepository) DeleteTodo(id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTodo", id)
 	ret0, _ := ret[0].(error)
@@ -78,7 +78,7 @@ func (mr *MockTodoRepositoryMockRecorder) DeleteTodo(id interface{}) *gomock.Cal
 }
 
 // GetTodo mocks base method.
-func (m *MockTodoRepository) GetTodo(id int) (model.Todo, error) {
+func (m *MockTodoRepository) GetTodo(id int64) (model.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTodo", id)
 	ret0, _ := ret[0].(model.Todo)

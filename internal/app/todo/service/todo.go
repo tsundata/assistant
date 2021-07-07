@@ -67,7 +67,7 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 }
 
 func (s *Todo) GetTodo(_ context.Context, payload *pb.TodoRequest) (*pb.TodoReply, error) {
-	find, err := s.repo.GetTodo(int(payload.GetId()))
+	find, err := s.repo.GetTodo(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (s *Todo) GetTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, e
 }
 
 func (s *Todo) DeleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.DeleteTodo(int(payload.GetId()))
+	err := s.repo.DeleteTodo(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 }
 
 func (s *Todo) CompleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.CompleteTodo(int(payload.GetId()))
+	err := s.repo.CompleteTodo(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (s *Todo) CompleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.Sta
 			return nil, err
 		}
 
-		find, err := s.repo.GetTodo(int(payload.GetId()))
+		find, err := s.repo.GetTodo(payload.GetId())
 		if err != nil {
 			return nil, err
 		}

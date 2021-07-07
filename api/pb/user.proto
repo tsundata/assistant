@@ -10,6 +10,10 @@ service User {
   rpc GetRole(RoleRequest) returns (RoleReply) {}
   rpc GetRoleImage(RoleRequest) returns (TextReply) {}
   rpc GetAuthToken(TextRequest) returns (TextReply) {}
+  rpc CreateUser(UserRequest) returns (UserReply) {}
+  rpc GetUser(UserRequest) returns (UserReply) {}
+  rpc GetUsers(UserRequest) returns (UsersReply) {}
+  rpc UpdateUser(UserRequest) returns (StateReply) {}
 }
 
 message RoleRequest {
@@ -35,4 +39,29 @@ message Role {
   int64 talent = 8;
   int64 intellect = 9;
   string time = 10;
+}
+
+message UserRequest {
+  int64 id = 1;
+  string name = 2;
+  string mobile = 3;
+  string remark = 4;
+}
+
+message UserReply {
+  int64 id = 1;
+  string name = 2;
+  string mobile = 3;
+  string remark = 4;
+}
+
+message UsersReply {
+  repeated UserItem users = 1;
+}
+
+message UserItem {
+  int64 id = 1;
+  string name = 2;
+  string mobile = 3;
+  string remark = 4;
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
+	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
@@ -126,4 +127,64 @@ func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.Tex
 	}
 
 	return &pb.TextReply{Text: util.ImageToBase64(buf.Bytes())}, nil
+}
+
+func (s *User) CreateUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	user := model.User{
+		Name:   payload.GetName(),
+		Mobile: payload.GetMobile(),
+		Remark: payload.GetRemark(),
+	}
+	id, err := s.repo.Create(user)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UserReply{Id: id}, nil
+}
+
+func (s *User) GetUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	find, err := s.repo.GetByID(payload.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UserReply{
+		Id:     find.ID,
+		Name:   find.Name,
+		Mobile: find.Mobile,
+		Remark: find.Remark,
+	}, nil
+}
+
+func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, error) {
+	items, err := s.repo.List()
+	if err != nil {
+		return nil, err
+	}
+
+	var res []*pb.UserItem
+	for _, item := range items {
+		res = append(res, &pb.UserItem{
+			Id:     item.ID,
+			Name:   item.Name,
+			Mobile: item.Mobile,
+			Remark: item.Remark,
+		})
+	}
+
+	return &pb.UsersReply{Users: res}, nil
+}
+
+func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
+	err := s.repo.Update(model.User{
+		ID:     payload.GetId(),
+		Name:   payload.GetName(),
+		Mobile: payload.GetMobile(),
+		Remark: payload.GetRemark(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
 }

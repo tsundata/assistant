@@ -56,26 +56,6 @@ func (mr *MockChatbotClientMockRecorder) Handle(ctx, in interface{}, opts ...int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotClient)(nil).Handle), varargs...)
 }
 
-// Trigger mocks base method.
-func (m *MockChatbotClient) Trigger(ctx context.Context, in *pb.ChatbotRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Trigger", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Trigger indicates an expected call of Trigger.
-func (mr *MockChatbotClientMockRecorder) Trigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Trigger", reflect.TypeOf((*MockChatbotClient)(nil).Trigger), varargs...)
-}
-
 // MockChatbotServer is a mock of ChatbotServer interface.
 type MockChatbotServer struct {
 	ctrl     *gomock.Controller
@@ -112,19 +92,4 @@ func (m *MockChatbotServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequest
 func (mr *MockChatbotServerMockRecorder) Handle(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotServer)(nil).Handle), arg0, arg1)
-}
-
-// Trigger mocks base method.
-func (m *MockChatbotServer) Trigger(arg0 context.Context, arg1 *pb.ChatbotRequest) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Trigger", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Trigger indicates an expected call of Trigger.
-func (mr *MockChatbotServerMockRecorder) Trigger(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Trigger", reflect.TypeOf((*MockChatbotServer)(nil).Trigger), arg0, arg1)
 }

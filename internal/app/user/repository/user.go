@@ -13,6 +13,10 @@ type UserRepository interface {
 	GetRole(userID int) (model.Role, error)
 	ChangeRoleExp(userID int, exp int) error
 	ChangeRoleAttr(userID int, attr string, val int) error
+	List() ([]model.User, error)
+	Create(user model.User) (int64, error)
+	GetByID(id int64) (model.User, error)
+	Update(user model.User) error
 }
 
 type MysqlUserRepository struct {
@@ -86,4 +90,41 @@ func (r *MysqlUserRepository) roleRecord(userId int, exp int, attr string, val i
 	if err != nil {
 		r.logger.Error(err)
 	}
+}
+
+func (r *MysqlUserRepository) List() ([]model.User, error) {
+	var users []model.User
+	err := r.db.Select(&users, "SELECT `id`, `name`, `mobile`, `remark` FROM `users`")
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (r *MysqlUserRepository) Create(user model.User) (int64, error) {
+	res, err := r.db.NamedExec("INSERT INTO `users` (`name`, `mobile`, `remark`) VALUES (:name, :mobile, :remark)", user)
+	if err != nil {
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (r *MysqlUserRepository) GetByID(id int64) (model.User, error) {
+	var user model.User
+	err := r.db.Get(&user, "SELECT id, `name`, `mobile`, `remark` FROM `users` WHERE `id` = ? LIMIT 1", id)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return model.User{}, err
+	}
+
+	return user, nil
+}
+
+func (r *MysqlUserRepository) Update(user model.User) error {
+	_, err := r.db.Exec("UPDATE users SET `name` = ?, `mobile` = ?, `remark` = ? WHERE id = ?", user.Name, user.Mobile, user.Remark, user.ID)
+	return err
 }

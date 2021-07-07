@@ -176,3 +176,25 @@ INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `stre
                             `charisma`,
                             `talent`, `intellect`)
 VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
+
+
+
+#
+# Dump of table users
+# ------------------------------------------------------------
+
+CREATE TABLE `users`
+(
+    `id`         INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name`       VARCHAR(50)      NOT NULL,
+    `mobile`     VARCHAR(50)      NOT NULL DEFAULT '',
+    `remark`     VARCHAR(50)      NOT NULL DEFAULT '',
+    `created_at` TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`) USING BTREE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `users` (`id`, `name`, `mobile`, `remark`, `created_at`, `updated_at`)
+VALUES (1, 'me', '', '', '2021-07-01 00:00:00', '2021-07-01 00:00:00');

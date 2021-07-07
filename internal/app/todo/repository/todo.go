@@ -13,10 +13,10 @@ type TodoRepository interface {
 	CreateTodo(todo model.Todo) (int64, error)
 	ListTodos() ([]model.Todo, error)
 	ListRemindTodos() ([]model.Todo, error)
-	GetTodo(id int) (model.Todo, error)
-	CompleteTodo(id int) error
+	GetTodo(id int64) (model.Todo, error)
+	CompleteTodo(id int64) error
 	UpdateTodo(todo model.Todo) error
-	DeleteTodo(id int) error
+	DeleteTodo(id int64) error
 }
 
 type MysqlTodoRepository struct {
@@ -60,7 +60,7 @@ func (r *MysqlTodoRepository) ListRemindTodos() ([]model.Todo, error) {
 	return items, nil
 }
 
-func (r *MysqlTodoRepository) GetTodo(id int) (model.Todo, error) {
+func (r *MysqlTodoRepository) GetTodo(id int64) (model.Todo, error) {
 	var item model.Todo
 	err := r.db.Get(&item, "SELECT id FROM `todos` WHERE id = ?", id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -69,7 +69,7 @@ func (r *MysqlTodoRepository) GetTodo(id int) (model.Todo, error) {
 	return item, nil
 }
 
-func (r *MysqlTodoRepository) CompleteTodo(id int) error {
+func (r *MysqlTodoRepository) CompleteTodo(id int64) error {
 	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1 WHERE id = ?", id)
 	return err
 }
@@ -79,7 +79,7 @@ func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
 	return err
 }
 
-func (r *MysqlTodoRepository) DeleteTodo(id int) error {
+func (r *MysqlTodoRepository) DeleteTodo(id int64) error {
 	_, err := r.db.Exec("DELETE FROM `todos` WHERE `id` = ?", id)
 	return err
 }
