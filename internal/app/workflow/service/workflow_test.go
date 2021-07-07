@@ -16,7 +16,7 @@ import (
 )
 
 func TestWorkflow_SyntaxCheck(t *testing.T) {
-	s := NewWorkflow(nil, nil, nil, nil, nil)
+	s := NewWorkflow(nil, nil, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -66,7 +66,7 @@ message "11"
 }
 
 func TestWorkflow_RunAction(t *testing.T) {
-	s := NewWorkflow(nil, nil, nil, nil, nil)
+	s := NewWorkflow(nil, nil, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -117,7 +117,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(model.Trigger{MessageID: 1, Secret: "test"}, nil),
 	)
 
-	s := NewWorkflow(bus, nil, repo, nil, nil)
+	s := NewWorkflow(bus, nil, repo, nil, nil, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -178,7 +178,7 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 			Return([]model.Trigger{{MessageID: messageID, When: "* * * * *"}}, nil),
 	)
 
-	s := NewWorkflow(bus, rdb, repo, nil, nil)
+	s := NewWorkflow(bus, rdb, repo, nil, nil, nil)
 
 	type args struct {
 		ctx context.Context
@@ -231,7 +231,7 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 		repo.EXPECT().CreateTrigger(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewWorkflow(nil, nil, repo, nil, nil)
+	s := NewWorkflow(nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -284,7 +284,7 @@ func TestWorkflow_DeleteTrigger(t *testing.T) {
 		repo.EXPECT().DeleteTriggerByMessageID(gomock.Any()).Return(errors.New("not record")),
 	)
 
-	s := NewWorkflow(nil, nil, repo, nil, nil)
+	s := NewWorkflow(nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -327,7 +327,7 @@ func TestWorkflow_DeleteTrigger(t *testing.T) {
 }
 
 func TestWorkflow_ActionDoc(t *testing.T) {
-	s := NewWorkflow(nil, nil, nil, nil, nil)
+	s := NewWorkflow(nil, nil, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
