@@ -189,6 +189,44 @@ func TestMysqlUserRepository_GetByID(t *testing.T) {
 	}
 }
 
+func TestMysqlUserRepository_GetByName(t *testing.T) {
+	sto, err := CreateUserRepository(app.User)
+	if err != nil {
+		t.Fatalf("create user Preposiory error, %+v", err)
+	}
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name    string
+		r       UserRepository
+		args    args
+		wantErr bool
+	}{
+		{
+			"case1",
+			sto,
+			args{name: "me"},
+			false,
+		},
+		{
+			"case2",
+			sto,
+			args{name: "not_found"},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetByName(tt.args.name)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MysqlUserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
 func TestMysqlUserRepository_Update(t *testing.T) {
 	sto, err := CreateUserRepository(app.User)
 	if err != nil {
@@ -206,7 +244,7 @@ func TestMysqlUserRepository_Update(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{model.User{ID: 1, Name: "update"}},
+			args{model.User{ID: 2, Name: "update"}},
 			false,
 		},
 	}

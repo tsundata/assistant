@@ -156,6 +156,20 @@ func (s *User) GetUser(_ context.Context, payload *pb.UserRequest) (*pb.UserRepl
 	}, nil
 }
 
+func (s *User) GetUserByName(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	find, err := s.repo.GetByName(payload.GetName())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UserReply{
+		Id:     find.ID,
+		Name:   find.Name,
+		Mobile: find.Mobile,
+		Remark: find.Remark,
+	}, nil
+}
+
 func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, error) {
 	items, err := s.repo.List()
 	if err != nil {

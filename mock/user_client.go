@@ -156,6 +156,26 @@ func (mr *MockUserClientMockRecorder) GetUser(ctx, in interface{}, opts ...inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserClient)(nil).GetUser), varargs...)
 }
 
+// GetUserByName mocks base method.
+func (m *MockUserClient) GetUserByName(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetUserByName", varargs...)
+	ret0, _ := ret[0].(*pb.UserReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByName indicates an expected call of GetUserByName.
+func (mr *MockUserClientMockRecorder) GetUserByName(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserClient)(nil).GetUserByName), varargs...)
+}
+
 // GetUsers mocks base method.
 func (m *MockUserClient) GetUsers(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UsersReply, error) {
 	m.ctrl.T.Helper()
@@ -307,6 +327,21 @@ func (m *MockUserServer) GetUser(arg0 context.Context, arg1 *pb.UserRequest) (*p
 func (mr *MockUserServerMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserServer)(nil).GetUser), arg0, arg1)
+}
+
+// GetUserByName mocks base method.
+func (m *MockUserServer) GetUserByName(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByName", arg0, arg1)
+	ret0, _ := ret[0].(*pb.UserReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByName indicates an expected call of GetUserByName.
+func (mr *MockUserServerMockRecorder) GetUserByName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserServer)(nil).GetUserByName), arg0, arg1)
 }
 
 // GetUsers mocks base method.

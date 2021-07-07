@@ -12,6 +12,7 @@ service User {
   rpc GetAuthToken(TextRequest) returns (TextReply) {}
   rpc CreateUser(UserRequest) returns (UserReply) {}
   rpc GetUser(UserRequest) returns (UserReply) {}
+  rpc GetUserByName(UserRequest) returns (UserReply) {}
   rpc GetUsers(UserRequest) returns (UsersReply) {}
   rpc UpdateUser(UserRequest) returns (StateReply) {}
 }

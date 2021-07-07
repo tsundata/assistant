@@ -92,6 +92,21 @@ func (mr *MockUserRepositoryMockRecorder) GetByID(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUserRepository)(nil).GetByID), id)
 }
 
+// GetByName mocks base method.
+func (m *MockUserRepository) GetByName(name string) (model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByName", name)
+	ret0, _ := ret[0].(model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByName indicates an expected call of GetByName.
+func (mr *MockUserRepositoryMockRecorder) GetByName(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByName", reflect.TypeOf((*MockUserRepository)(nil).GetByName), name)
+}
+
 // GetRole mocks base method.
 func (m *MockUserRepository) GetRole(userID int) (model.Role, error) {
 	m.ctrl.T.Helper()

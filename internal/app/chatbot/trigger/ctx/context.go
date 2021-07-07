@@ -7,10 +7,12 @@ import (
 )
 
 type Context struct {
+	Bus    *event.Bus
 	Logger *logger.Logger
+
 	Middle pb.MiddleClient
 	Todo   pb.TodoClient
-	Bus    *event.Bus
+	User   pb.UserClient
 }
 
 func NewContext() *Context {

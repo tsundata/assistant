@@ -9,10 +9,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/model"
-	"sync"
 )
 
-func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, middle pb.MiddleClient, todo pb.TodoClient) error {
+func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, middle pb.MiddleClient, todo pb.TodoClient, user pb.UserClient) error {
 	err := bus.Subscribe(event.MessageTriggerSubject, func(msg *nats.Msg) {
 		var message model.Message
 		err := json.Unmarshal(msg.Data, &message)
@@ -25,18 +24,8 @@ func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, middle pb.Middl
 		c.Logger = logger
 		c.Middle = middle
 		c.Todo = todo
-		triggers := trigger.Triggers()
-		wg := sync.WaitGroup{}
-		for _, item := range triggers {
-			wg.Add(1)
-			go func(t trigger.Trigger) {
-				defer wg.Done()
-				if t.Cond(message.Text) {
-					t.Handle(c)
-				}
-			}(item)
-		}
-		wg.Wait()
+		c.User = user
+		trigger.Run(c, message.Text)
 	})
 	if err != nil {
 		return err

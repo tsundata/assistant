@@ -1,7 +1,9 @@
 package trigger
 
 import (
+	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/model"
@@ -42,7 +44,19 @@ func (t *User) Cond(text string) bool {
 
 func (t *User) Handle(ctx *ctx.Context) {
 	for _, user := range t.user {
-		err := ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("User: @%s", user)})
+		if ctx.User == nil {
+			continue
+		}
+
+		res, err := ctx.User.GetUserByName(context.Background(), &pb.UserRequest{Name: user})
+		if err != nil {
+			ctx.Logger.Error(err)
+			continue
+		}
+
+		err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{
+			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.Id, res.Mobile, res.Remark),
+		})
 		if err != nil {
 			return
 		}

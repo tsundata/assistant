@@ -262,7 +262,7 @@ func TestUser_GetUser(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Name: "test"}},
+			args{context.Background(), &pb.UserRequest{Id: 1}},
 			&pb.UserReply{Id: 1, Name: "test"},
 			false,
 		},
@@ -270,6 +270,50 @@ func TestUser_GetUser(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.s.GetUser(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("User.GetUser() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("User.GetUser() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUser_GetUserByName(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockUserRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetByName(gomock.Any()).Return(model.User{ID: 1, Name: "test"}, nil),
+	)
+
+	s := NewUser(nil, repo)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.UserRequest
+	}
+	tests := []struct {
+		name    string
+		s       *User
+		args    args
+		want    *pb.UserReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.UserRequest{Name: "test"}},
+			&pb.UserReply{Id: 1, Name: "test"},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetUserByName(tt.args.ctx, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("User.GetUser() error = %v, wantErr %v", err, tt.wantErr)
 				return

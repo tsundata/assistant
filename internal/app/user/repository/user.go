@@ -16,6 +16,7 @@ type UserRepository interface {
 	List() ([]model.User, error)
 	Create(user model.User) (int64, error)
 	GetByID(id int64) (model.User, error)
+	GetByName(name string) (model.User, error)
 	Update(user model.User) error
 }
 
@@ -117,6 +118,16 @@ func (r *MysqlUserRepository) Create(user model.User) (int64, error) {
 func (r *MysqlUserRepository) GetByID(id int64) (model.User, error) {
 	var user model.User
 	err := r.db.Get(&user, "SELECT id, `name`, `mobile`, `remark` FROM `users` WHERE `id` = ? LIMIT 1", id)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return model.User{}, err
+	}
+
+	return user, nil
+}
+
+func (r *MysqlUserRepository) GetByName(name string) (model.User, error) {
+	var user model.User
+	err := r.db.Get(&user, "SELECT id, `name`, `mobile`, `remark` FROM `users` WHERE `name` = ? LIMIT 1", name)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.User{}, err
 	}

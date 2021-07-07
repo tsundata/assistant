@@ -105,7 +105,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := chatbot.NewApp(appConfig, bus, loggerLogger, server, middleClient, todoClient)
+	application, err := chatbot.NewApp(appConfig, bus, loggerLogger, server, middleClient, todoClient, userClient)
 	if err != nil {
 		return nil, err
 	}
