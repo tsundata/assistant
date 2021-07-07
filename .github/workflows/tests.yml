@@ -64,7 +64,7 @@ jobs:
           cp configs/web.yml.example configs/web.yml
           cp configs/classifier.yml.example configs/classifier.yml
           ls -all configs
-          go run ./test/load.go
+          go run github.com/tsundata/assistant/cmd/cli config
 
       - name: Run test cases
         run: |

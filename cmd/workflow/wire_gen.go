@@ -70,7 +70,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceWorkflow := service.NewWorkflow(bus, redisClient, workflowRepository, messageClient, loggerLogger)
+	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceWorkflow := service.NewWorkflow(bus, redisClient, workflowRepository, messageClient, middleClient, loggerLogger)
 	initServer := service.CreateInitServerFn(serviceWorkflow)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
@@ -80,7 +84,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(appConfig, bus, loggerLogger, server, redisClient, messageClient)
+	application, err := workflow.NewApp(appConfig, bus, loggerLogger, server, redisClient, middleClient, messageClient)
 	if err != nil {
 		return nil, err
 	}

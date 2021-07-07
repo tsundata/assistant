@@ -24,11 +24,12 @@ func NewInterpreter(tree Ast) *Interpreter {
 	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
 }
 
-func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, logger *logger.Logger) {
+func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) {
 	i.Ctx.Bus = bus
 	i.Ctx.RDB = rdb
-	i.Ctx.Message = message
 	i.Ctx.Logger = logger
+	i.Ctx.Message = message
+	i.Ctx.Middle = middle
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {

@@ -20,9 +20,10 @@ import (
 type Workflow struct {
 	bus     *event.Bus
 	rdb     *redis.Client
-	repo    repository.WorkflowRepository
-	message pb.MessageClient
 	logger  *logger.Logger
+	message pb.MessageClient
+	middle  pb.MiddleClient
+	repo    repository.WorkflowRepository
 }
 
 func NewWorkflow(
@@ -30,8 +31,9 @@ func NewWorkflow(
 	rdb *redis.Client,
 	repo repository.WorkflowRepository,
 	message pb.MessageClient,
+	middle pb.MiddleClient,
 	logger *logger.Logger) *Workflow {
-	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message}
+	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message, middle: middle}
 }
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
@@ -81,7 +83,7 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}
 
 	i := action.NewInterpreter(tree)
-	i.SetClient(s.bus, s.rdb, s.message, s.logger)
+	i.SetClient(s.bus, s.rdb, s.message, s.middle, s.logger)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err

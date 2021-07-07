@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
-func RegisterEventHandler(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, logger *logger.Logger) error {
+func RegisterEventHandler(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) error {
 	err := bus.Subscribe(event.RunWorkflowSubject, func(msg *nats.Msg) {
 		var m model.Message
 		err := json.Unmarshal(msg.Data, &message)
@@ -30,7 +30,7 @@ func RegisterEventHandler(bus *event.Bus, rdb *redis.Client, message pb.MessageC
 
 		switch reply.GetType() {
 		case model.MessageTypeAction:
-			workflow := service.NewWorkflow(bus, rdb, nil, message, logger)
+			workflow := service.NewWorkflow(bus, rdb, nil, message, middle, logger)
 			_, err := workflow.RunAction(ctx, &pb.WorkflowRequest{Text: reply.GetText()})
 			if err != nil {
 				logger.Error(err)
