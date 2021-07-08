@@ -16,6 +16,7 @@ type AppConfig struct {
 	kv   *api.KV
 	once sync.Once
 
+	ID   string
 	Name string `json:"name"`
 
 	Http    Http    `json:"http"`
@@ -41,6 +42,12 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 	var xc AppConfig
 	xc.kv = kv
 	xc.Name = id
+
+	uuid, err := util.GenerateUUID()
+	if err != nil {
+		panic(err)
+	}
+	xc.ID = uuid
 
 	xc.readConfig()
 	go xc.watch()

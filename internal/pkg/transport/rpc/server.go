@@ -90,7 +90,7 @@ func (s *Server) Start() error {
 	}
 
 	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("rpc server starting ... ", zap.String("addr", addr))
+	s.logger.Info("rpc server starting ... ", zap.String("addr", addr), zap.String("uuid", s.conf.ID))
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -117,10 +117,11 @@ func (s *Server) Start() error {
 
 func (s *Server) register() error {
 	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("register rpc service ... ", zap.String("addr", rpcAddr))
+	s.logger.Info("register rpc service ... ", zap.String("addr", rpcAddr), zap.String("uuid", s.conf.ID))
 
 	// discovery
 	discovery.RegisterService(rpcAddr, &discovery.ConsulService{
+		ID:   s.conf.ID,
 		IP:   s.conf.Rpc.Host,
 		Port: s.conf.Rpc.Port,
 		Tag:  []string{"grpc"},

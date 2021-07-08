@@ -9,6 +9,7 @@ import (
 )
 
 type ConsulService struct {
+	ID   string
 	IP   string
 	Port int
 	Tag  []string
@@ -41,11 +42,11 @@ func RegisterService(ca string, cs *ConsulService) {
 	deregister := time.Duration(10) * time.Minute
 
 	reg := &api.AgentServiceRegistration{
-		ID:      fmt.Sprintf("%v/%v:%v", cs.Name, cs.IP, cs.Port), // name of service node
-		Name:    cs.Name,                                          // Service Name
-		Tags:    cs.Tag,                                           // tag, can be empty
-		Port:    cs.Port,                                          // Service Port
-		Address: cs.IP,                                            // Service IP
+		ID:      fmt.Sprintf("%v(%s)/%v:%v", cs.Name, cs.ID, cs.IP, cs.Port), // name of service node
+		Name:    cs.Name,                                                     // Service Name
+		Tags:    cs.Tag,                                                      // tag, can be empty
+		Port:    cs.Port,                                                     // Service Port
+		Address: cs.IP,                                                       // Service IP
 		Check: &api.AgentServiceCheck{ // Health Examination
 			Interval:                       interval.String(), // health check interval
 			TCP:                            fmt.Sprintf("%s:%d", cs.IP, cs.Port),
