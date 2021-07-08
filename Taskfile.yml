@@ -64,6 +64,11 @@ tasks:
     cmds:
       - go run github.com/tsundata/assistant/cmd/cli {{.CLI_ARGS}}
 
+  cve:
+    desc: Vulnerability Scanner
+    cmds:
+      - trivy fs ./
+
   test:
     desc: Go test
     cmds:

@@ -57,3 +57,12 @@ go install github.com/go-task/task/v3/cmd/task@latest
 # Usage
 task something
 ```
+
+### trivy
+
+```shell
+# Install
+go install github.com/aquasecurity/trivy/cmd/trivy
+# Usage
+trivy image [YOUR_IMAGE_NAME]
+```
