@@ -1,6 +1,6 @@
 # Kubernetes deployment
 
-# Install XConf
+# Install App
 
 ## 1. Deployment
 
@@ -26,7 +26,7 @@ kubectl create -f configmaps.yaml
 kubectl create -f gateway.yaml
 ```
 
-### Access Admin UI
+### Access gateway
 
 By default the gateway will be exposed by LoadBalancer, check service `gateway` under namespace `assistant` for detail.
 
