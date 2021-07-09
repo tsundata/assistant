@@ -22,6 +22,13 @@ var rules = []Rule{
 		},
 	},
 	{
+		Name: "github_stargazers",
+		When: "* * * * *",
+		Action: func(ctx rulebot.IContext) []result.Result {
+			return agent.FetchGithubStargazers(ctx)
+		},
+	},
+	{
 		Name: "backup",
 		When: "0 0 * * *",
 		Action: func(ctx rulebot.IContext) []result.Result {
