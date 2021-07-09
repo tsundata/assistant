@@ -37,23 +37,22 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-- Install MySQL, Redis, influx, jaeger, nats, consul
+1. Install MySQL, Redis, influx, jaeger, nats, consul
 
-- Import sql files
+2. Import sql files
 
-- Import Configuration to consul
+3. Import Configuration to consul
 
-- Set Environment
-```
-See doc/env.md
-```
+4. Set Environment
+   
+   See [doc/env.md](/doc/env.md)
 
-- Build binary
-```
-task build
-```
+5. Build binary
+   ```
+   task build
+   ```
 
-- Run App binary
+6. Run App binary
 
 # License
 
