@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
@@ -14,8 +15,8 @@ import (
 
 func TestVersionRule(t *testing.T) {
 	r := rules[0]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "version", []string{})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "version", []string{})
 	require.Equal(t, []string{version.Info()}, res)
 }
 
@@ -29,8 +30,8 @@ func TestMenuRule(t *testing.T) {
 	)
 
 	r := rules[1]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "menu", []string{})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "menu", []string{})
 	require.Equal(t, []string{"menu ..."}, res)
 }
 
@@ -44,22 +45,22 @@ func TestQrRule(t *testing.T) {
 	)
 
 	r := rules[2]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "qr abc", []string{"qr abc", "abc"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "qr abc", []string{"qr abc", "abc"})
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
 }
 
 func TestUtRule(t *testing.T) {
 	r := rules[3]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "ut 1", []string{"ut 1", "1"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "ut 1", []string{"ut 1", "1"})
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
 
 func TestRandRule(t *testing.T) {
 	r := rules[4]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "rand 1 100", []string{"rand 1 100", "1", "100"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "rand 1 100", []string{"rand 1 100", "1", "100"})
 
 	i, err := strconv.ParseInt(res[0], 10, 64)
 	if err != nil {
@@ -70,8 +71,8 @@ func TestRandRule(t *testing.T) {
 
 func TestPwdRule(t *testing.T) {
 	r := rules[5]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "pwd 32", []string{"psd 32", "32"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "pwd 32", []string{"psd 32", "32"})
 	require.Equal(t, 32, len(res[0]))
 }
 
@@ -85,8 +86,8 @@ func TestSubsListRule(t *testing.T) {
 	)
 
 	r := rules[6]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "subs list", []string{"subs list"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "subs list", []string{"subs list"})
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -100,8 +101,8 @@ func TestSubsOpenRule(t *testing.T) {
 	)
 
 	r := rules[7]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "subs open test1", []string{"subs open test1", "test1"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "subs open test1", []string{"subs open test1", "test1"})
 	require.Equal(t, []string{"ok"}, res)
 }
 
@@ -115,8 +116,8 @@ func TestSubsCloseRule(t *testing.T) {
 	)
 
 	r := rules[8]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "subs close test1", []string{"subs close test1", "test1"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "subs close test1", []string{"subs close test1", "test1"})
 	require.Equal(t, []string{"ok"}, res)
 }
 
@@ -130,8 +131,8 @@ func TestViewRule(t *testing.T) {
 	)
 
 	r := rules[9]
-	ctx := rulebot.NewContext(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "view 1", []string{"view 1", "1"})
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "view 1", []string{"view 1", "1"})
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -145,8 +146,8 @@ func TestRunRule(t *testing.T) {
 	)
 
 	r := rules[10]
-	ctx := rulebot.NewContext(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "run 1", []string{"run 1", "1"})
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "run 1", []string{"run 1", "1"})
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -160,8 +161,8 @@ func TestDocRule(t *testing.T) {
 	)
 
 	r := rules[11]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, workflow, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "doc", []string{"doc"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, workflow, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "doc", []string{"doc"})
 	require.Equal(t, []string{"doc ..."}, res)
 }
 
@@ -175,8 +176,8 @@ func TestStatsRule(t *testing.T) {
 	)
 
 	r := rules[13]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "stats", []string{"stats"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "stats", []string{"stats"})
 	require.Equal(t, []string{"stats ..."}, res)
 }
 
@@ -190,8 +191,8 @@ func TestTodoRule(t *testing.T) {
 	)
 
 	r := rules[14]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, todo, nil, nil)
-	res := r.ParseMessage(ctx, "todo test1", []string{"todo test1", "test1"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, todo, nil, nil)
+	res := r.Parse(context.Background(), comp, "todo test1", []string{"todo test1", "test1"})
 	require.Equal(t, []string{"success"}, res)
 }
 
@@ -205,8 +206,8 @@ func TestRoleRule(t *testing.T) {
 	)
 
 	r := rules[15]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "role", []string{"role"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "role", []string{"role"})
 	require.Equal(t, []string{`https://web.test/role/test`}, res)
 }
 
@@ -220,21 +221,21 @@ func TestPinyinRule(t *testing.T) {
 	)
 
 	r := rules[16]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nlp)
-	res := r.ParseMessage(ctx, "pinyin 测试", []string{"pinyin 测试", "测试"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nlp)
+	res := r.Parse(context.Background(), comp, "pinyin 测试", []string{"pinyin 测试", "测试"})
 	require.Equal(t, []string{"a1, a2"}, res)
 }
 
 func TestRemindRule(t *testing.T) {
 	r := rules[17]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "remind test 19:50", []string{"remind test 19:50", "test", "19:50"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "remind test 19:50", []string{"remind test 19:50", "test", "19:50"})
 	require.Equal(t, []string{}, res)
 }
 
 func TestDeleteRule(t *testing.T) {
 	r := rules[18]
-	ctx := rulebot.NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.ParseMessage(ctx, "del 1", []string{"del 1", "1"})
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, "del 1", []string{"del 1", "1"})
 	require.Equal(t, []string{}, res)
 }

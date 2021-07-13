@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
@@ -24,31 +25,31 @@ func (o *Message) Doc() string {
 	return "message : (any -> bool)"
 }
 
-func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	if ctx.Bus == nil {
+func (o *Message) Run(ctx context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
+	if comp.Bus == nil {
 		return false, nil
 	}
-	if ctx.Value == nil {
+	if comp.Value == nil {
 		return false, nil
 	}
 
 	var text string
-	if str, ok := ctx.Value.(string); ok {
+	if str, ok := comp.Value.(string); ok {
 		text = str
 	}
-	if num, ok := ctx.Value.(int64); ok {
+	if num, ok := comp.Value.(int64); ok {
 		text = fmt.Sprintf("%d", num)
 	}
-	if boolean, ok := ctx.Value.(bool); ok {
+	if boolean, ok := comp.Value.(bool); ok {
 		text = fmt.Sprintf("%v", boolean)
 	}
 
-	v := reflect.ValueOf(ctx.Value)
+	v := reflect.ValueOf(comp.Value)
 	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
 		if v.Len() == 0 {
 			return false, nil
 		}
-		b, err := json.Marshal(ctx.Value)
+		b, err := json.Marshal(comp.Value)
 		if err != nil {
 			return false, err
 		}
@@ -59,10 +60,10 @@ func (o *Message) Run(ctx *inside.Context, _ []interface{}) (interface{}, error)
 		return false, nil
 	}
 
-	err := ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: text})
+	err := comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: text})
 	if err != nil {
 		return false, err
 	}
-	ctx.SetValue(true)
+	comp.SetValue(true)
 	return true, nil
 }

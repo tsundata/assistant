@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/cron/agent"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -10,50 +11,50 @@ var rules = []Rule{
 	{
 		Name: "pocket",
 		When: "* * * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.FetchPocket(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.FetchPocket(ctx, comp)
 		},
 	},
 	{
 		Name: "github_starred",
 		When: "* * * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.FetchGithubStarred(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.FetchGithubStarred(ctx, comp)
 		},
 	},
 	{
 		Name: "github_stargazers",
 		When: "* * * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.FetchGithubStargazers(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.FetchGithubStargazers(ctx, comp)
 		},
 	},
 	{
 		Name: "backup",
 		When: "0 0 * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.Backup(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.Backup(ctx, comp)
 		},
 	},
 	{
 		Name: "workflow_cron",
 		When: "* * * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.WorkflowCron(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.WorkflowCron(ctx, comp)
 		},
 	},
 	{
 		Name: "cloudflare_report",
 		When: "0 0 * * 0",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.DomainAnalyticsReport(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.DomainAnalyticsReport(ctx, comp)
 		},
 	},
 	{
 		Name: "todo_remind",
 		When: "* * * * *",
-		Action: func(ctx rulebot.IContext) []result.Result {
-			return agent.TodoRemind(ctx)
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.TodoRemind(ctx, comp)
 		},
 	},
 }

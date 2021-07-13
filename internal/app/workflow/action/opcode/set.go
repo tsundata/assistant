@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"errors"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
@@ -19,14 +20,14 @@ func (o *Set) Doc() string {
 	return "set [any]... : (nil -> any)"
 }
 
-func (o *Set) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Set) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) < 1 {
 		return nil, errors.New("error params")
 	}
 	if len(params) > 1 {
-		ctx.SetValue(params)
+		comp.SetValue(params)
 		return params, nil
 	}
-	ctx.SetValue(params[0])
+	comp.SetValue(params[0])
 	return params[0], nil
 }

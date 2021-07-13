@@ -20,17 +20,17 @@ func (o *Secret) Doc() string {
 	return "secret [string] : (nil -> any)"
 }
 
-func (o *Secret) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Secret) Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, nil
 	}
 
-	if ctx.Middle == nil {
+	if comp.Middle == nil {
 		return nil, nil
 	}
 
 	if text, ok := params[0].(string); ok {
-		reply, err := ctx.Middle.GetCredential(context.Background(), &pb.CredentialRequest{Name: text})
+		reply, err := comp.Middle.GetCredential(ctx, &pb.CredentialRequest{Name: text})
 		if err != nil {
 			return nil, err
 		}
@@ -38,7 +38,7 @@ func (o *Secret) Run(ctx *inside.Context, params []interface{}) (interface{}, er
 		for _, item := range reply.GetContent() {
 			result[item.Key] = item.Value
 		}
-		ctx.SetCredential(result)
+		comp.SetCredential(result)
 		return result, nil
 	}
 

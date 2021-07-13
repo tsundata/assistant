@@ -1,17 +1,18 @@
 package stage
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
-func Error(ctx rulebot.IContext, in result.Result) result.Result {
+func Error(ctx context.Context,comp rulebot.IComponent, in result.Result) result.Result {
 	if in.Kind == result.Error {
-		if ctx.GetLogger() == nil {
+		if comp.GetLogger() == nil {
 			return result.EmptyResult()
 		}
 		if err, ok := in.Content.(error); ok {
-			ctx.GetLogger().Error(err)
+			comp.GetLogger().Error(err)
 		}
 		return result.DoneResult()
 	}

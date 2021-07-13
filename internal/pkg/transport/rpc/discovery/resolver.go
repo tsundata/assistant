@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"sync"
+	"time"
 )
 
 const defaultPort = "7001"
@@ -97,11 +98,12 @@ func (cr *consulResolver) watcher() {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
 			newAddr = append(newAddr, resolver.Address{Addr: addr})
 		}
-		if len(newAddr) > 0 {
-			log.Printf("%s newAddrs: %v\n", cr.name, newAddr)
-		}
 		cr.cc.NewAddress(newAddr)       // nolint
 		cr.cc.NewServiceConfig(cr.name) // nolint
+		if len(newAddr) > 0 {
+			log.Printf("%s newAddrs: %v\n", cr.name, newAddr)
+			time.Sleep(time.Second)
+		}
 	}
 }
 

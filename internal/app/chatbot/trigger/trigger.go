@@ -1,13 +1,14 @@
 package trigger
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"sync"
 )
 
 type Trigger interface {
 	Cond(text string) bool
-	Handle(ctx *ctx.Context)
+	Handle(ctx context.Context, comp *ctx.Component)
 }
 
 func triggers() []Trigger {
@@ -19,7 +20,7 @@ func triggers() []Trigger {
 	}
 }
 
-func Run(c *ctx.Context, message string) {
+func Run(ctx context.Context, comp *ctx.Component, message string) {
 	triggers := triggers()
 	wg := sync.WaitGroup{}
 	for _, item := range triggers {
@@ -27,7 +28,7 @@ func Run(c *ctx.Context, message string) {
 		go func(t Trigger) {
 			defer wg.Done()
 			if t.Cond(message) {
-				t.Handle(c)
+				t.Handle(ctx, comp)
 			}
 		}(item)
 	}

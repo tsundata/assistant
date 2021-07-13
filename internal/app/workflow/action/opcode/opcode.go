@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"sort"
 	"strings"
@@ -15,7 +16,7 @@ const (
 type Opcoder interface {
 	Type() int
 	Doc() string
-	Run(ctx *inside.Context, params []interface{}) (interface{}, error)
+	Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error)
 }
 
 var opcodes = map[string]Opcoder{

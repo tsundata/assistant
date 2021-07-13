@@ -1,6 +1,7 @@
 package listener
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/api/pb"
@@ -12,7 +13,7 @@ import (
 )
 
 func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, middle pb.MiddleClient, todo pb.TodoClient, user pb.UserClient) error {
-	err := bus.Subscribe(event.MessageTriggerSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.MessageTriggerSubject, func(msg *nats.Msg) {
 		var message model.Message
 		err := json.Unmarshal(msg.Data, &message)
 		if err != nil {
@@ -20,12 +21,12 @@ func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, middle pb.Middl
 			return
 		}
 
-		c := ctx.NewContext()
-		c.Logger = logger
-		c.Middle = middle
-		c.Todo = todo
-		c.User = user
-		trigger.Run(c, message.Text)
+		comp := ctx.NewComponent()
+		comp.Logger = logger
+		comp.Middle = middle
+		comp.Todo = todo
+		comp.User = user
+		trigger.Run(context.Background(), comp, message.Text)
 	})
 	if err != nil {
 		return err

@@ -20,7 +20,7 @@ func NewTodo(bus *event.Bus, logger *logger.Logger, repo repository.TodoReposito
 	return &Todo{bus: bus, repo: repo, logger: logger}
 }
 
-func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
 	var err error
 	var remindAt time.Time
 	if payload.GetRemindAt() != "" {
@@ -56,7 +56,7 @@ func (s *Todo) CreateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCreatedExp})
+		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCreatedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -122,14 +122,14 @@ func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Todo) CompleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
 	err := s.repo.CompleteTodo(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCompletedExp})
+		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCompletedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -139,7 +139,7 @@ func (s *Todo) CompleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.Sta
 		if err != nil {
 			return nil, err
 		}
-		err = s.bus.Publish(event.ChangeAttrSubject, model.AttrChange{UserID: model.SuperUserID, Content: find.Content})
+		err = s.bus.Publish(ctx, event.ChangeAttrSubject, model.AttrChange{UserID: model.SuperUserID, Content: find.Content})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err

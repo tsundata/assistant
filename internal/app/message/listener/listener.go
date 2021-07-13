@@ -1,6 +1,7 @@
 package listener
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/nats-io/nats.go"
@@ -15,14 +16,14 @@ import (
 )
 
 func RegisterEventHandler(bus *event.Bus, config *config.AppConfig, logger *logger.Logger) error {
-	err := bus.Subscribe(event.EchoSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.EchoSubject, func(msg *nats.Msg) {
 		fmt.Println(msg)
 	})
 	if err != nil {
 		return err
 	}
 
-	err = bus.Subscribe(event.SendMessageSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(context.Background(), event.SendMessageSubject, func(msg *nats.Msg) {
 		var message model.Message
 		err := json.Unmarshal(msg.Data, &message)
 		if err != nil {

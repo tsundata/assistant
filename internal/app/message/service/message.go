@@ -74,7 +74,7 @@ func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.Messag
 	}, nil
 }
 
-func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var message model.Message
 	message.UUID = payload.GetUuid()
@@ -109,7 +109,7 @@ func (m *Message) Create(_ context.Context, payload *pb.MessageRequest) (*pb.Mes
 	}
 
 	// trigger
-	err = m.bus.Publish(event.MessageTriggerSubject, message)
+	err = m.bus.Publish(ctx, event.MessageTriggerSubject, message)
 	if err != nil {
 		return nil, err
 	}

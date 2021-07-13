@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"errors"
 	"github.com/go-resty/resty/v2"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
@@ -22,7 +23,7 @@ func (o *Get) Doc() string {
 	return "get [any] : (nil -> any)"
 }
 
-func (o *Get) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Get) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, errors.New("error params")
 	}
@@ -35,7 +36,7 @@ func (o *Get) Run(ctx *inside.Context, params []interface{}) (interface{}, error
 				return nil, err
 			}
 			result := util.ByteToString(resp.Body())
-			ctx.SetValue(result)
+			comp.SetValue(result)
 			return result, nil
 		}
 	}

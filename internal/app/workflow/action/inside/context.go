@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-type Context struct {
+type Component struct {
 	mu sync.Mutex
 
 	Debug      bool
@@ -23,23 +23,23 @@ type Context struct {
 	Message pb.MessageClient
 }
 
-func NewContext() *Context {
-	return &Context{mu: sync.Mutex{}, Continue: true}
+func NewComponent() *Component {
+	return &Component{mu: sync.Mutex{}, Continue: true}
 }
 
-func (c *Context) SetValue(v interface{}) {
+func (c *Component) SetValue(v interface{}) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.Value = v
 }
 
-func (c *Context) SetContinue(b bool) {
+func (c *Component) SetContinue(b bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.Continue = b
 }
 
-func (c *Context) SetCredential(v map[string]string) {
+func (c *Component) SetCredential(v map[string]string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.Credential = v

@@ -30,7 +30,7 @@
 * spider read remote config
 * rpc client name
 * app id, app config
-* rulebot.Context
+* rulebot.Component
 * remove worker service
 * rename transports package
 * rename tasks package
@@ -43,7 +43,7 @@
 * spider read remote config
 * rpc client name
 * app id, app config
-* rulebot.Context
+* rulebot.Component
 * remove worker service
 * rename transports package
 * rename tasks package

@@ -1,6 +1,7 @@
 package action
 
 import (
+	"context"
 	"fmt"
 	"testing"
 )
@@ -25,7 +26,7 @@ func run(t *testing.T, text string) {
 		fmt.Println(symbolTable.CurrentScope)
 	}
 
-	i := NewInterpreter(tree)
+	i := NewInterpreter(context.Background(), tree)
 	_, err = i.Interpret()
 	if err != nil {
 		t.Fatal(err)

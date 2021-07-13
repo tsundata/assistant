@@ -28,9 +28,9 @@ func NewChatbot(
 	}
 }
 
-func (s *Chatbot) Handle(_ context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
+func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
 	s.bot.SetOptions(rule.Options...)
-	out := s.bot.Process(payload.GetText()).MessageProviderOut()
+	out := s.bot.Process(ctx, payload.GetText()).MessageProviderOut()
 	return &pb.ChatbotReply{
 		Text: out,
 	}, nil

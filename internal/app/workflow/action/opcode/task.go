@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"errors"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -21,17 +22,17 @@ func (o *Task) Doc() string {
 	return "task [integer] : (nil -> bool)"
 }
 
-func (o *Task) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Task) Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return false, errors.New("error params")
 	}
 
-	if ctx.Bus == nil {
+	if comp.Bus == nil {
 		return false, errors.New("error client")
 	}
 
 	if id, ok := params[0].(int64); ok {
-		err := ctx.Bus.Publish(event.RunWorkflowSubject, model.Message{ID: int(id)})
+		err := comp.Bus.Publish(ctx, event.RunWorkflowSubject, model.Message{ID: int(id)})
 		if err != nil {
 			return false, err
 		}

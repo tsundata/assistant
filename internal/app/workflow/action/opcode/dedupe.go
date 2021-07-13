@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"fmt"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/util/collection"
@@ -22,9 +23,9 @@ func (o *Dedupe) Doc() string {
 	return "dedupe [string]? : (any -> any)"
 }
 
-func (o *Dedupe) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Dedupe) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) == 0 {
-		v := reflect.ValueOf(ctx.Value)
+		v := reflect.ValueOf(comp.Value)
 		if v.Kind() == reflect.Slice {
 			var result []interface{}
 			m := make(map[interface{}]struct{})
@@ -34,36 +35,36 @@ func (o *Dedupe) Run(ctx *inside.Context, params []interface{}) (interface{}, er
 					result = append(result, v.Index(i).Interface())
 				}
 			}
-			ctx.SetValue(result)
+			comp.SetValue(result)
 			return result, nil
 		}
 	}
 	if len(params) == 1 {
 		if key, ok := params[0].(string); ok {
-			bf := collection.NewBloomFilter(ctx.RDB, fmt.Sprintf("workflow:dedupe:%s", key), 100000, 7)
+			bf := collection.NewBloomFilter(comp.RDB, fmt.Sprintf("workflow:dedupe:%s", key), 100000, 7)
 
-			if str, ok := ctx.Value.(string); ok {
+			if str, ok := comp.Value.(string); ok {
 				if !bf.Lookup(str) {
 					bf.Add(str)
-					ctx.SetValue(str)
+					comp.SetValue(str)
 					return str, nil
 				} else {
-					ctx.SetValue(nil)
+					comp.SetValue(nil)
 					return nil, nil
 				}
 			}
-			if num, ok := ctx.Value.(int64); ok {
+			if num, ok := comp.Value.(int64); ok {
 				i := strconv.FormatInt(num, 10)
 				if !bf.Lookup(i) {
 					bf.Add(i)
-					ctx.SetValue(num)
+					comp.SetValue(num)
 					return num, nil
 				} else {
-					ctx.SetValue(nil)
+					comp.SetValue(nil)
 					return nil, nil
 				}
 			}
-			if arrays, ok := ctx.Value.([]string); ok {
+			if arrays, ok := comp.Value.([]string); ok {
 				var result []string
 				for _, item := range arrays {
 					if !bf.Lookup(item) {
@@ -71,7 +72,7 @@ func (o *Dedupe) Run(ctx *inside.Context, params []interface{}) (interface{}, er
 						result = append(result, item)
 					}
 				}
-				ctx.SetValue(result)
+				comp.SetValue(result)
 				return result, nil
 			}
 		}

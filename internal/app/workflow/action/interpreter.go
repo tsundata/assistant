@@ -17,19 +17,20 @@ import (
 type Interpreter struct {
 	tree   Ast
 	stdout []interface{}
-	Ctx    *inside.Context
+	ctx    context.Context
+	Comp   *inside.Component
 }
 
-func NewInterpreter(tree Ast) *Interpreter {
-	return &Interpreter{tree: tree, Ctx: inside.NewContext()}
+func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
+	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
 }
 
-func (i *Interpreter) SetClient(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) {
-	i.Ctx.Bus = bus
-	i.Ctx.RDB = rdb
-	i.Ctx.Logger = logger
-	i.Ctx.Message = message
-	i.Ctx.Middle = middle
+func (i *Interpreter) SetComponent(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) {
+	i.Comp.Bus = bus
+	i.Comp.RDB = rdb
+	i.Comp.Logger = logger
+	i.Comp.Message = message
+	i.Comp.Middle = middle
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -83,7 +84,7 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	name := node.ID.(*Token).Value.(string)
 	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))
 	debugLog(fmt.Sprintf("params: %+v", params))
-	input := i.Ctx.Value
+	input := i.Comp.Value
 	debugLog(fmt.Sprintf("context: %+v", input))
 	op := opcode.NewOpcode(name)
 	if op == nil {
@@ -95,17 +96,17 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 		return 0
 	}
 	// Cond opcode
-	if op.Type() != opcode.TypeCond && !i.Ctx.Continue {
+	if op.Type() != opcode.TypeCond && !i.Comp.Continue {
 		debugLog(fmt.Sprintf("skip: %s", name))
 		return 0
 	}
 
 	// Run
-	res, err := op.Run(i.Ctx, params)
+	res, err := op.Run(i.ctx, i.Comp, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
-		if i.Ctx.Logger != nil {
-			i.Ctx.Logger.Error(err)
+		if i.Comp.Logger != nil {
+			i.Comp.Logger.Error(err)
 		} else {
 			log.Println(err)
 		}
@@ -133,10 +134,10 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 }
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
-	if i.Ctx.Message != nil {
-		reply, err := i.Ctx.Message.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
+	if i.Comp.Message != nil {
+		reply, err := i.Comp.Message.Get(context.Background(), &pb.MessageRequest{Id: node.Value.(int64)})
 		if err != nil {
-			i.Ctx.Logger.Error(err)
+			i.Comp.Logger.Error(err)
 			return ""
 		}
 		return reply.GetText()

@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"context"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"strconv"
@@ -10,16 +11,16 @@ import (
 func TestRegexRule(t *testing.T) {
 	var testRules = []Rule{
 		{
-			Regex:       `test`,
-			HelpMessage: `Test info`,
-			ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			Regex: `test`,
+			Help:  `Test info`,
+			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, args []string) []string {
 				return []string{"test"}
 			},
 		},
 		{
-			Regex:       `add\s+(\d+)\s+(\d+)`,
-			HelpMessage: `Addition`,
-			ParseMessage: func(ctx rulebot.IContext, s string, args []string) []string {
+			Regex: `add\s+(\d+)\s+(\d+)`,
+			Help:  `Addition`,
+			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, args []string) []string {
 				if len(args) != 3 {
 					return []string{"error args"}
 				}
@@ -48,12 +49,12 @@ func TestRegexRule(t *testing.T) {
 	b := rulebot.New(nil)
 	b.SetOptions(options...)
 
-	res := b.Process("test")
+	res := b.Process(context.Background(),"test")
 	require.Contains(t, res.MessageProviderOut(), "test")
 
-	res2 := b.Process("add 1 2")
+	res2 := b.Process(context.Background(),"add 1 2")
 	require.Contains(t, res2.MessageProviderOut(), "3")
 
-	res3 := b.Process("help")
+	res3 := b.Process(context.Background(),"help")
 	require.Len(t, res3.MessageProviderOut(), 1)
 }

@@ -1,6 +1,7 @@
 package rulebot
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
@@ -12,7 +13,7 @@ import (
 	"sync"
 )
 
-type Context struct {
+type Component struct {
 	Conf   *config.AppConfig
 	RDB    *redis.Client
 	Logger *logger.Logger
@@ -27,51 +28,51 @@ type Context struct {
 	NLPClient       pb.NLPClient
 }
 
-func (c Context) Message() pb.MessageClient {
+func (c Component) Message() pb.MessageClient {
 	return c.MessageClient
 }
 
-func (c Context) Middle() pb.MiddleClient {
+func (c Component) Middle() pb.MiddleClient {
 	return c.MiddleClient
 }
 
-func (c Context) Subscribe() pb.SubscribeClient {
+func (c Component) Subscribe() pb.SubscribeClient {
 	return c.SubscribeClient
 }
 
-func (c Context) Workflow() pb.WorkflowClient {
+func (c Component) Workflow() pb.WorkflowClient {
 	return c.WorkflowClient
 }
 
-func (c Context) Storage() pb.StorageClient {
+func (c Component) Storage() pb.StorageClient {
 	return c.StorageClient
 }
 
-func (c Context) Todo() pb.TodoClient {
+func (c Component) Todo() pb.TodoClient {
 	return c.TodoClient
 }
 
-func (c Context) User() pb.UserClient {
+func (c Component) User() pb.UserClient {
 	return c.UserClient
 }
 
-func (c Context) NLP() pb.NLPClient {
+func (c Component) NLP() pb.NLPClient {
 	return c.NLPClient
 }
 
-func (c Context) GetConfig() *config.AppConfig {
+func (c Component) GetConfig() *config.AppConfig {
 	return c.Conf
 }
 
-func (c Context) GetRedis() *redis.Client {
+func (c Component) GetRedis() *redis.Client {
 	return c.RDB
 }
 
-func (c Context) GetLogger() *logger.Logger {
+func (c Component) GetLogger() *logger.Logger {
 	return c.Logger
 }
 
-type IContext interface {
+type IComponent interface {
 	GetConfig() *config.AppConfig
 	GetRedis() *redis.Client
 	GetLogger() *logger.Logger
@@ -85,7 +86,7 @@ type IContext interface {
 	NLP() pb.NLPClient
 }
 
-func NewContext(
+func NewComponent(
 	conf *config.AppConfig,
 	rdb *redis.Client,
 	logger *logger.Logger,
@@ -98,8 +99,8 @@ func NewContext(
 	todoClient pb.TodoClient,
 	userClient pb.UserClient,
 	nlpClient pb.NLPClient,
-) IContext {
-	return Context{
+) IComponent {
+	return Component{
 		Conf:            conf,
 		RDB:             rdb,
 		Logger:          logger,
@@ -116,21 +117,21 @@ func NewContext(
 
 type RuleBot struct {
 	onceOptions sync.Once
-	Ctx         IContext
+	Comp        IComponent
 	name        string
 	providerIn  string
 	providerOut []string
 	rules       []RuleParser
 }
 
-func New(ctx IContext) *RuleBot {
+func New(comp IComponent) *RuleBot {
 	name := ""
-	if ctx != nil {
-		name = ctx.GetConfig().Name
+	if comp != nil {
+		name = comp.GetConfig().Name
 	}
 	s := &RuleBot{
 		name: name,
-		Ctx:  ctx,
+		Comp: comp,
 	}
 
 	return s
@@ -148,9 +149,9 @@ func (s *RuleBot) Name() string {
 	return s.name
 }
 
-func (s *RuleBot) Process(in string) *RuleBot {
-	if s.Ctx != nil && s.Ctx.GetLogger() != nil {
-		s.Ctx.GetLogger().Info("plugin process event")
+func (s *RuleBot) Process(ctx context.Context, in string) *RuleBot {
+	if s.Comp != nil && s.Comp.GetLogger() != nil {
+		s.Comp.GetLogger().Info("plugin process event")
 	}
 
 	s.providerIn = in
@@ -158,7 +159,7 @@ func (s *RuleBot) Process(in string) *RuleBot {
 	if strings.ToLower(in) == "help" {
 		helpMsg := fmt.Sprintf("available commands (v%s):\n", version.Version)
 		for _, rule := range s.rules {
-			helpMsg = fmt.Sprintln(helpMsg, rule.HelpMessage(s, in))
+			helpMsg = fmt.Sprintln(helpMsg, rule.HelpRule(s, in))
 		}
 		s.providerOut = append(s.providerOut, helpMsg)
 		return s
@@ -166,11 +167,11 @@ func (s *RuleBot) Process(in string) *RuleBot {
 
 	defer func() {
 		if r := recover(); r != nil {
-			s.Ctx.GetLogger().Error(fmt.Errorf("panic recovered when parsing message: %#v. Panic: %v", in, r))
+			s.Comp.GetLogger().Error(fmt.Errorf("panic recovered when parsing message: %#v. Panic: %v", in, r))
 		}
 	}()
 	for _, rule := range s.rules {
-		responses := rule.ParseMessage(s, in)
+		responses := rule.ParseRule(ctx, s, in)
 		s.providerOut = append(s.providerOut, responses...)
 	}
 	return s
@@ -185,18 +186,18 @@ type Option func(*RuleBot)
 type RuleParser interface {
 	Name() string
 	Boot(*RuleBot)
-	ParseMessage(*RuleBot, string) []string
-	HelpMessage(*RuleBot, string) string
+	ParseRule(context.Context, *RuleBot, string) []string
+	HelpRule(*RuleBot, string) string
 }
 
 func RegisterRuleset(rule RuleParser) Option {
 	return func(s *RuleBot) {
-		if s.Ctx != nil && s.Ctx.GetLogger() != nil {
-			s.Ctx.GetLogger().Info(fmt.Sprintf("registering ruleset %T", rule))
+		if s.Comp != nil && s.Comp.GetLogger() != nil {
+			s.Comp.GetLogger().Info(fmt.Sprintf("registering ruleset %T", rule))
 		}
 		rule.Boot(s)
 		s.rules = append(s.rules, rule)
 	}
 }
 
-var ProviderSet = wire.NewSet(NewContext, New)
+var ProviderSet = wire.NewSet(NewComponent, New)

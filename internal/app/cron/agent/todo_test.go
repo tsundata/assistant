@@ -47,12 +47,12 @@ func TestTodoRemind1(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx := rulebot.NewContext(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -61,13 +61,13 @@ func TestTodoRemind1(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx},
+			args{comp},
 			1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TodoRemind(tt.args.ctx); len(got) != tt.want {
+			if got := TodoRemind(context.Background(), tt.args.comp); len(got) != tt.want {
 				t.Errorf("TodoRemind() = %v, want %v", got, tt.want)
 			}
 		})
@@ -106,12 +106,12 @@ func TestTodoRemind2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx := rulebot.NewContext(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -120,13 +120,13 @@ func TestTodoRemind2(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx},
+			args{comp},
 			0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TodoRemind(tt.args.ctx); len(got) != tt.want {
+			if got := TodoRemind(context.Background(), tt.args.comp); len(got) != tt.want {
 				t.Errorf("TodoRemind() = %v, want %v", got, tt.want)
 			}
 		})
@@ -165,12 +165,12 @@ func TestTodoRemind3(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx := rulebot.NewContext(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -179,13 +179,13 @@ func TestTodoRemind3(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx},
+			args{comp},
 			0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TodoRemind(tt.args.ctx); len(got) != tt.want {
+			if got := TodoRemind(context.Background(), tt.args.comp); len(got) != tt.want {
 				t.Errorf("TodoRemind() = %v, want %v", got, tt.want)
 			}
 		})
@@ -224,12 +224,12 @@ func TestTodoRemind4(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx := rulebot.NewContext(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -238,13 +238,13 @@ func TestTodoRemind4(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx},
+			args{comp},
 			1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TodoRemind(tt.args.ctx); len(got) != tt.want {
+			if got := TodoRemind(context.Background(), tt.args.comp); len(got) != tt.want {
 				t.Errorf("TodoRemind() = %v, want %v", got, tt.want)
 			}
 		})
@@ -300,16 +300,16 @@ func TestTodoRemind5(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx1 := rulebot.NewContext(nil, rdb, nil, nil,
+	comp1 := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
-	ctx2 := rulebot.NewContext(nil, rdb, nil, nil,
+	comp2 := rulebot.NewComponent(nil, rdb, nil, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -318,18 +318,18 @@ func TestTodoRemind5(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx1},
+			args{comp1},
 			1,
 		},
 		{
 			"case2",
-			args{ctx2},
+			args{comp2},
 			0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TodoRemind(tt.args.ctx); len(got) != tt.want {
+			if got := TodoRemind(context.Background(), tt.args.comp); len(got) != tt.want {
 				t.Errorf("TodoRemind() = %v, want %v", got, tt.want)
 			}
 		})

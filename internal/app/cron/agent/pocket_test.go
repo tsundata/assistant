@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 
 func TestFetchPocket(t *testing.T) {
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -21,7 +22,7 @@ func TestFetchPocket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FetchPocket(tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+			if got := FetchPocket(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FetchPocket() = %v, want %v", got, tt.want)
 			}
 		})

@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 )
 
-type Context struct {
+type Component struct {
 	Bus    *event.Bus
 	Logger *logger.Logger
 
@@ -15,6 +15,6 @@ type Context struct {
 	User   pb.UserClient
 }
 
-func NewContext() *Context {
-	return &Context{}
+func NewComponent() *Component {
+	return &Component{}
 }

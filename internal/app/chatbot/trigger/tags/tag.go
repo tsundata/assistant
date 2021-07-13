@@ -1,9 +1,12 @@
 package tags
 
-import "github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+import (
+	"context"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+)
 
 type Tagger interface {
-	Handle(ctx *ctx.Context, text string)
+	Handle(ctx context.Context, comp *ctx.Component, text string)
 }
 
 func MapTagger(text string) Tagger {

@@ -43,7 +43,7 @@ func (t *Url) Cond(text string) bool {
 	return true
 }
 
-func (t *Url) Handle(ctx *ctx.Context) {
+func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 	for _, url := range t.url {
 		// fetch html
 		r := resty.New()
@@ -58,7 +58,7 @@ func (t *Url) Handle(ctx *ctx.Context) {
 		title := doc.Find("title").Text()
 
 		// store
-		reply, err := ctx.Middle.CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := comp.Middle.CreatePage(ctx, &pb.PageRequest{
 			Title:   title,
 			Content: util.ByteToString(resp.Body()),
 			Type:    "html",
@@ -68,7 +68,7 @@ func (t *Url) Handle(ctx *ctx.Context) {
 		}
 
 		// send message
-		err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
 		if err != nil {
 			return
 		}

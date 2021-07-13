@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterEventHandler(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) error {
-	err := bus.Subscribe(event.RunWorkflowSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.RunWorkflowSubject, func(msg *nats.Msg) {
 		var m model.Message
 		err := json.Unmarshal(msg.Data, &message)
 		if err != nil {

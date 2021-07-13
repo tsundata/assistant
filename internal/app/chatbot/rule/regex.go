@@ -2,6 +2,7 @@ package rule
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"regexp"
@@ -11,9 +12,9 @@ import (
 )
 
 type Rule struct {
-	Regex        string
-	HelpMessage  string
-	ParseMessage func(rulebot.IContext, string, []string) []string
+	Regex string
+	Help  string
+	Parse func(context.Context, rulebot.IComponent, string, []string) []string
 }
 
 type regexRuleset struct {
@@ -27,19 +28,19 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpMessage(b *rulebot.RuleBot, _ string) string {
+func (r regexRuleset) HelpRule(b *rulebot.RuleBot, _ string) string {
 	botName := b.Name()
 	var helpMsg string
 	for _, rule := range r.rules {
 		var finalRegex bytes.Buffer
 		_ = r.regexes[rule.Regex].Execute(&finalRegex, struct{ RobotName string }{botName})
 
-		helpMsg = fmt.Sprintln(helpMsg, finalRegex.String(), "-", rule.HelpMessage)
+		helpMsg = fmt.Sprintln(helpMsg, finalRegex.String(), "-", rule.Help)
 	}
 	return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 }
 
-func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in string) []string {
+func (r regexRuleset) ParseRule(ctx context.Context, b *rulebot.RuleBot, in string) []string {
 	for _, rule := range r.rules {
 		botName := b.Name()
 		var finalRegex bytes.Buffer
@@ -55,7 +56,7 @@ func (r regexRuleset) ParseMessage(b *rulebot.RuleBot, in string) []string {
 		}
 
 		args := re.FindStringSubmatch(in)
-		if ret := rule.ParseMessage(b.Ctx, in, args); len(ret) > 0 {
+		if ret := rule.Parse(ctx, b.Comp, in, args); len(ret) > 0 {
 			return ret
 		}
 	}

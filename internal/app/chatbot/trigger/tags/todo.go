@@ -14,13 +14,13 @@ func NewTodo() *Todo {
 	return &Todo{}
 }
 
-func (t *Todo) Handle(ctx *ctx.Context, text string) {
+func (t *Todo) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	// create
-	reply, err := ctx.Todo.CreateTodo(context.Background(), &pb.TodoRequest{
+	reply, err := comp.Todo.CreateTodo(ctx, &pb.TodoRequest{
 		Content: text,
 	})
 	if err != nil {
-		ctx.Logger.Error(err)
+		comp.Logger.Error(err)
 		return
 	}
 	if !reply.GetState() {
@@ -28,9 +28,9 @@ func (t *Todo) Handle(ctx *ctx.Context, text string) {
 	}
 
 	// send message
-	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: "Created Todo success"})
+	err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: "Created Todo success"})
 	if err != nil {
-		ctx.Logger.Error(err)
+		comp.Logger.Error(err)
 		return
 	}
 }

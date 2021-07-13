@@ -79,7 +79,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	iContext := NewContext(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	iContext := NewComponent(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
 	ruleBot := New(iContext)
 	return ruleBot, nil
 }

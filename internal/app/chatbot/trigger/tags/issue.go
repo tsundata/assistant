@@ -16,11 +16,11 @@ func NewIssue() *Issue {
 	return &Issue{}
 }
 
-func (t *Issue) Handle(ctx *ctx.Context, text string) {
+func (t *Issue) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	// get access token
-	app, err := ctx.Middle.GetAvailableApp(context.Background(), &pb.TextRequest{Text: github.ID})
+	app, err := comp.Middle.GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
 	if err != nil {
-		ctx.Logger.Error(err)
+		comp.Logger.Error(err)
 		return
 	}
 	accessToken := app.GetToken()
@@ -41,7 +41,7 @@ func (t *Issue) Handle(ctx *ctx.Context, text string) {
 	// create issue
 	issue, err := client.CreateIssue(*user.Login, "assistant", github.Issue{Title: &text})
 	if err != nil {
-		ctx.Logger.Error(err)
+		comp.Logger.Error(err)
 		return
 	}
 	if *issue.ID == 0 {
@@ -49,9 +49,9 @@ func (t *Issue) Handle(ctx *ctx.Context, text string) {
 	}
 
 	// send message
-	err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
 	if err != nil {
-		ctx.Logger.Error(err)
+		comp.Logger.Error(err)
 		return
 	}
 }

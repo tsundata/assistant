@@ -11,13 +11,12 @@ import (
 	"time"
 )
 
-func DomainAnalyticsReport(ctx rulebot.IContext) []result.Result {
-	if ctx.Middle() == nil {
+func DomainAnalyticsReport(ctx context.Context, comp rulebot.IComponent) []result.Result {
+	if comp.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get key
-	ctxB := context.Background()
-	reply, err := ctx.Middle().GetCredential(ctxB, &pb.CredentialRequest{Name: cloudflare.ID})
+	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Name: cloudflare.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

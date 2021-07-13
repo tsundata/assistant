@@ -92,7 +92,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iContext := rulebot.NewContext(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	iContext := rulebot.NewComponent(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
 	ruleBot := rulebot.New(iContext)
 	serviceChatbot := service.NewChatbot(loggerLogger, middleClient, todoClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)

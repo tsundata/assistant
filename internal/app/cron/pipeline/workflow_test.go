@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
@@ -12,25 +13,25 @@ import (
 )
 
 func TestWorkflowDone(t *testing.T) {
-	ctx := rulebot.NewContext(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
 		nil, nil, nil)
 
 	in := result.DoneResult()
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }
 
 func TestWorkflowError(t *testing.T) {
 	l := logger.NewLogger(nil)
 
-	ctx := rulebot.NewContext(nil, nil, l, nil,
+	comp := rulebot.NewComponent(nil, nil, l, nil,
 		nil, nil, nil, nil,
 		nil, nil, nil)
 
 	in := result.ErrorResult(errors.New("test"))
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }
 
 func TestWorkflowMessage(t *testing.T) {
@@ -44,17 +45,17 @@ func TestWorkflowMessage(t *testing.T) {
 			Return(&pb.StateReply{State: true}, nil),
 	)
 
-	ctx := rulebot.NewContext(nil, nil, nil, message,
+	comp := rulebot.NewComponent(nil, nil, nil, message,
 		nil, nil, nil, nil,
 		nil, nil, nil)
 
 	in := result.MessageResult("test")
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }
 
 func TestWorkflowUrl(t *testing.T) {
-	ctx := rulebot.NewContext(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
 		nil, nil, nil)
 
@@ -63,7 +64,7 @@ func TestWorkflowUrl(t *testing.T) {
 		Content: map[string]interface{}{"test": "test"},
 	}
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }
 
 func TestWorkflowRepos(t *testing.T) {
@@ -77,7 +78,7 @@ func TestWorkflowRepos(t *testing.T) {
 			Return(&pb.AppReply{Token: ""}, nil),
 	)
 
-	ctx := rulebot.NewContext(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		middle, nil, nil, nil,
 		nil, nil, nil)
 
@@ -88,10 +89,10 @@ func TestWorkflowRepos(t *testing.T) {
 		},
 	}
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }
 func TestWorkflowDefault(t *testing.T) {
-	ctx := rulebot.NewContext(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
 		nil, nil, nil)
 
@@ -99,5 +100,5 @@ func TestWorkflowDefault(t *testing.T) {
 		Kind: result.Undefined,
 	}
 
-	Workflow(ctx, in)
+	Workflow(context.Background(), comp, in)
 }

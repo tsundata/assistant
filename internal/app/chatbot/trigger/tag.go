@@ -1,6 +1,7 @@
 package trigger
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
 	"regexp"
@@ -45,8 +46,8 @@ func (t *Tag) Cond(text string) bool {
 	return true
 }
 
-func (t *Tag) Handle(ctx *ctx.Context) {
+func (t *Tag) Handle(ctx context.Context, comp *ctx.Component) {
 	for _, item := range t.t {
-		item.Handle(ctx, t.text)
+		item.Handle(ctx, comp, t.text)
 	}
 }

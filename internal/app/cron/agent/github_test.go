@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 
 func TestFetchGithubStarred(t *testing.T) {
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -21,7 +22,7 @@ func TestFetchGithubStarred(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FetchGithubStarred(tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+			if got := FetchGithubStarred(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FetchGithubStarred() = %v, want %v", got, tt.want)
 			}
 		})
@@ -30,7 +31,7 @@ func TestFetchGithubStarred(t *testing.T) {
 
 func TestFetchGithubStargazers(t *testing.T) {
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -41,7 +42,7 @@ func TestFetchGithubStargazers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FetchGithubStargazers(tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+			if got := FetchGithubStargazers(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FetchGithubStarred() = %v, want %v", got, tt.want)
 			}
 		})

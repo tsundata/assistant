@@ -13,12 +13,11 @@ import (
 	"time"
 )
 
-func Backup(ctx rulebot.IContext) []result.Result {
-	if ctx.Middle() == nil || ctx.Message() == nil || ctx.Todo() == nil {
+func Backup(ctx context.Context, comp rulebot.IComponent) []result.Result {
+	if comp.Middle() == nil || comp.Message() == nil || comp.Todo() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
-	ctxB := context.Background()
-	app, err := ctx.Middle().GetAvailableApp(ctxB, &pb.TextRequest{Text: dropbox.ID})
+	app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -28,25 +27,25 @@ func Backup(ctx rulebot.IContext) []result.Result {
 	}
 
 	// messages
-	messagesReply, err := ctx.Message().List(ctxB, &pb.MessageRequest{})
+	messagesReply, err := comp.Message().List(ctx, &pb.MessageRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// apps
-	appsReply, err := ctx.Middle().GetApps(ctxB, &pb.TextRequest{})
+	appsReply, err := comp.Middle().GetApps(ctx, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// credentials
-	credentialsReply, err := ctx.Middle().GetCredentials(ctxB, &pb.TextRequest{})
+	credentialsReply, err := comp.Middle().GetCredentials(ctx, &pb.TextRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
 
 	// todos
-	todosReply, err := ctx.Todo().GetTodos(ctxB, &pb.TodoRequest{})
+	todosReply, err := comp.Todo().GetTodos(ctx, &pb.TodoRequest{})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

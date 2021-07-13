@@ -43,8 +43,8 @@ func (t *Email) Cond(text string) bool {
 	return true
 }
 
-func (t *Email) Handle(ctx *ctx.Context) {
-	reply, err := ctx.Middle.GetCredential(context.Background(), &pb.CredentialRequest{Type: email.ID})
+func (t *Email) Handle(ctx context.Context, comp *ctx.Component) {
+	reply, err := comp.Middle.GetCredential(ctx, &pb.CredentialRequest{Type: email.ID})
 	if err != nil {
 		return
 	}
@@ -88,10 +88,10 @@ func (t *Email) Handle(ctx *ctx.Context) {
 Sended by Assistant
 `, t.text))
 		if err != nil {
-			ctx.Logger.Error(err)
+			comp.Logger.Error(err)
 			return
 		}
-		err := ctx.Bus.Publish(event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
+		err := comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
 		if err != nil {
 			return
 		}

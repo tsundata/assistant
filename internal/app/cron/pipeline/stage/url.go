@@ -1,13 +1,14 @@
 package stage
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
-func URL(_ rulebot.IContext, in result.Result) result.Result {
+func URL(_ context.Context, _ rulebot.IComponent, in result.Result) result.Result {
 	if in.Kind == result.Url {
 		j, err := json.Marshal(in.Content)
 		if err != nil {

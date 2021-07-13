@@ -63,7 +63,7 @@ func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (
 	}
 }
 
-func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+func (s *Workflow) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	if payload.GetText() == "" {
 		return nil, errors.New("empty action")
 	}
@@ -82,15 +82,15 @@ func (s *Workflow) RunAction(_ context.Context, payload *pb.WorkflowRequest) (*p
 		return nil, err
 	}
 
-	i := action.NewInterpreter(tree)
-	i.SetClient(s.bus, s.rdb, s.message, s.middle, s.logger)
+	i := action.NewInterpreter(ctx, tree)
+	i.SetComponent(s.bus, s.rdb, s.message, s.middle, s.logger)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err
 	}
 
 	var result string
-	if i.Ctx.Debug {
+	if i.Comp.Debug {
 		result = fmt.Sprintf("Tracing\n-------\n %s", i.Stdout())
 	}
 
@@ -111,7 +111,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	}
 
 	// publish event
-	err = s.bus.Publish(event.RunWorkflowSubject, model.Message{
+	err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{
 		ID: trigger.MessageID,
 	})
 	if err != nil {
@@ -155,7 +155,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
 			// publish event
-			err = s.bus.Publish(event.RunWorkflowSubject, model.Message{ID: trigger.MessageID})
+			err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{ID: trigger.MessageID})
 			if err != nil {
 				return nil, err
 			}

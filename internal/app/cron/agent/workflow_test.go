@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
@@ -21,12 +22,12 @@ func TestWorkflowCron(t *testing.T) {
 			Return(&pb.WorkflowReply{Text: ""}, nil),
 	)
 
-	ctx := rulebot.NewContext(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		nil, nil, workflow, nil,
 		nil, nil, nil)
 
 	type args struct {
-		ctx rulebot.IContext
+		comp rulebot.IComponent
 	}
 	tests := []struct {
 		name string
@@ -35,13 +36,13 @@ func TestWorkflowCron(t *testing.T) {
 	}{
 		{
 			"case1",
-			args{ctx},
+			args{comp},
 			[]result.Result{result.EmptyResult()},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := WorkflowCron(tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+			if got := WorkflowCron(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("WorkflowCron() = %v, want %v", got, tt.want)
 			}
 		})

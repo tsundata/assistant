@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
 
@@ -18,6 +19,6 @@ func (o *Cron) Doc() string {
 	return "cron [string]"
 }
 
-func (o *Cron) Run(_ *inside.Context, _ []interface{}) (interface{}, error) {
+func (o *Cron) Run(_ context.Context, _ *inside.Component, _ []interface{}) (interface{}, error) {
 	return nil, nil
 }

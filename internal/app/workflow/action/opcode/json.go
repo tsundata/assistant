@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"github.com/tidwall/gjson"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
@@ -19,10 +20,10 @@ func (o *Json) Doc() string {
 	return "json : (string -> any)"
 }
 
-func (o *Json) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	if text, ok := ctx.Value.(string); ok {
+func (o *Json) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
+	if text, ok := comp.Value.(string); ok {
 		result := gjson.Parse(text).Value()
-		ctx.SetValue(result)
+		comp.SetValue(result)
 		return result, nil
 	}
 	return nil, nil

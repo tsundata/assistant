@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"reflect"
 )
@@ -19,16 +20,16 @@ func (o *Count) Doc() string {
 	return "count : (any -> integer)"
 }
 
-func (o *Count) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	if text, ok := ctx.Value.(string); ok {
+func (o *Count) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
+	if text, ok := comp.Value.(string); ok {
 		result := len(text)
-		ctx.SetValue(result)
+		comp.SetValue(result)
 		return int64(result), nil
 	}
-	v := reflect.ValueOf(ctx.Value)
+	v := reflect.ValueOf(comp.Value)
 	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
 		result := int64(v.Len())
-		ctx.SetValue(result)
+		comp.SetValue(result)
 		return result, nil
 	}
 	return int64(0), nil

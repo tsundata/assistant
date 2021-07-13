@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 )
 
@@ -18,7 +19,7 @@ func (o *Else) Doc() string {
 	return "else"
 }
 
-func (o *Else) Run(ctx *inside.Context, _ []interface{}) (interface{}, error) {
-	ctx.SetContinue(!ctx.Continue)
+func (o *Else) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
+	comp.SetContinue(!comp.Continue)
 	return nil, nil
 }

@@ -9,13 +9,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func FetchGithubStarred(ctx rulebot.IContext) []result.Result {
-	if ctx.Middle() == nil {
+func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.Result {
+	if comp.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get access token
-	ctxB := context.Background()
-	app, err := ctx.Middle().GetAvailableApp(ctxB, &pb.TextRequest{Text: github.ID})
+	app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -54,7 +53,7 @@ func FetchGithubStarred(ctx rulebot.IContext) []result.Result {
 	return r
 }
 
-func FetchGithubStargazers(_ rulebot.IContext) []result.Result {
+func FetchGithubStargazers(ctx context.Context, _ rulebot.IComponent) []result.Result {
 	// todo
 	return []result.Result{}
 }

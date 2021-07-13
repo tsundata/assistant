@@ -42,19 +42,19 @@ func (t *User) Cond(text string) bool {
 	return true
 }
 
-func (t *User) Handle(ctx *ctx.Context) {
+func (t *User) Handle(ctx context.Context, comp *ctx.Component) {
 	for _, user := range t.user {
-		if ctx.User == nil {
+		if comp.User == nil {
 			continue
 		}
 
-		res, err := ctx.User.GetUserByName(context.Background(), &pb.UserRequest{Name: user})
+		res, err := comp.User.GetUserByName(ctx, &pb.UserRequest{Name: user})
 		if err != nil {
-			ctx.Logger.Error(err)
+			comp.Logger.Error(err)
 			continue
 		}
 
-		err = ctx.Bus.Publish(event.SendMessageSubject, model.Message{
+		err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{
 			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.Id, res.Mobile, res.Remark),
 		})
 		if err != nil {

@@ -1,12 +1,13 @@
 package rulebot
 
 import (
+	"context"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestNewContext(t *testing.T) {
-	ctx := NewContext(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	ctx := NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.Nil(t, ctx.Message())
 	require.Nil(t, ctx.Middle())
 	require.Nil(t, ctx.Subscribe())
@@ -24,11 +25,11 @@ func TestRuleBot(t *testing.T) {
 	b := New(nil)
 	var opts []Option
 	b.SetOptions(opts...)
-	rb := b.Process("test")
+	rb := b.Process(context.Background(),"test")
 	require.Equal(t, "", rb.Name())
 	require.Len(t, rb.MessageProviderOut(), 0)
 
-	rb2 := b.Process("help")
+	rb2 := b.Process(context.Background(),"help")
 	require.Len(t, rb2.MessageProviderOut(), 1)
 }
 

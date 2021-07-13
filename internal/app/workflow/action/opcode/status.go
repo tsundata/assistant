@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"errors"
 	"github.com/sourcegraph/checkup/check/dns"
 	"github.com/sourcegraph/checkup/check/http"
@@ -24,7 +25,7 @@ func (o *Status) Doc() string {
 	return "status [string:(http|tcp|dns|tls)] [string] : (nil -> bool)"
 }
 
-func (o *Status) Run(_ *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Status) Run(_ context.Context, _ *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 2 {
 		return false, errors.New("error params")
 	}

@@ -9,13 +9,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )
 
-func FetchPocket(ctx rulebot.IContext) []result.Result {
-	if ctx.Middle() == nil {
+func FetchPocket(ctx context.Context, comp rulebot.IComponent) []result.Result {
+	if comp.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	// get consumer key
-	ctxB := context.Background()
-	reply, err := ctx.Middle().GetCredential(ctxB, &pb.CredentialRequest{Type: pocket.ID})
+	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Type: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
@@ -30,7 +29,7 @@ func FetchPocket(ctx rulebot.IContext) []result.Result {
 	}
 
 	// get access token
-	app, err := ctx.Middle().GetAvailableApp(ctxB, &pb.TextRequest{Text: pocket.ID})
+	app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: pocket.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

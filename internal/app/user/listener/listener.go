@@ -12,7 +12,7 @@ import (
 )
 
 func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, repo repository.UserRepository, nlpClient pb.NLPClient) error {
-	err := bus.Subscribe(event.ChangeExpSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.ChangeExpSubject, func(msg *nats.Msg) {
 		var role model.Role
 		err := json.Unmarshal(msg.Data, &role)
 		if err != nil {
@@ -29,7 +29,7 @@ func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, repo repository
 		return err
 	}
 
-	err = bus.Subscribe(event.ChangeAttrSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(context.Background(), event.ChangeAttrSubject, func(msg *nats.Msg) {
 		var data model.AttrChange
 		err := json.Unmarshal(msg.Data, &data)
 		if err != nil {

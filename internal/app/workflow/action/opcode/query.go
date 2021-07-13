@@ -1,6 +1,7 @@
 package opcode
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -24,7 +25,7 @@ func (o *Query) Doc() string {
 	return "query [string:(css|json|regex)] [string] [string]? : (any -> any)"
 }
 
-func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, error) {
+func (o *Query) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) < 2 {
 		return false, errors.New("error params")
 	}
@@ -44,7 +45,7 @@ func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, err
 				return false, errors.New("error param[2] type")
 			}
 
-			if text, ok := ctx.Value.(string); ok {
+			if text, ok := comp.Value.(string); ok {
 				doc, err := goquery.NewDocumentFromReader(strings.NewReader(text))
 				if err != nil {
 					return nil, err
@@ -61,7 +62,7 @@ func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, err
 							}
 						}
 					})
-					ctx.SetValue(values)
+					comp.SetValue(values)
 					return values, nil
 				} else {
 					var value string
@@ -72,26 +73,26 @@ func (o *Query) Run(ctx *inside.Context, params []interface{}) (interface{}, err
 							value = v
 						}
 					}
-					ctx.SetValue(value)
+					comp.SetValue(value)
 					return value, nil
 				}
 			}
 		case "json":
-			if text, ok := ctx.Value.(string); ok {
+			if text, ok := comp.Value.(string); ok {
 				j := gjson.Parse(text)
 				value := j.Get(expression)
 				result := value.Value()
-				ctx.SetValue(result)
+				comp.SetValue(result)
 				return result, nil
 			}
 		case "regex":
-			if text, ok := ctx.Value.(string); ok {
+			if text, ok := comp.Value.(string); ok {
 				re, err := regexp.Compile(fmt.Sprintf(`(?m)%s`, expression))
 				if err != nil {
 					return nil, err
 				}
 				result := re.FindAllString(text, -1)
-				ctx.SetValue(result)
+				comp.SetValue(result)
 				return result, nil
 			}
 		default:

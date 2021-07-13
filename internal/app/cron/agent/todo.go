@@ -14,18 +14,17 @@ import (
 
 const HourLayout = "2006-01-02 15:04"
 
-func TodoRemind(ctx rulebot.IContext) []result.Result {
-	if ctx.Todo() == nil {
+func TodoRemind(ctx context.Context, comp rulebot.IComponent) []result.Result {
+	if comp.Todo() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
-	ctxB := context.Background()
-	reply, err := ctx.Todo().GetRemindTodos(ctxB, &pb.TodoRequest{})
+	reply, err := comp.Todo().GetRemindTodos(ctx, &pb.TodoRequest{})
 	if err != nil {
-		ctx.GetLogger().Error(err)
+		comp.GetLogger().Error(err)
 		return []result.Result{result.ErrorResult(err)}
 	}
 
-	if ctx.GetRedis() == nil {
+	if comp.GetRedis() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 
@@ -34,7 +33,7 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 		remindKey := fmt.Sprintf("cron:todo_remind:%d:last_remind_at", todo.Id)
 		if todo.RemindAt == time.Now().Format(HourLayout) {
 			res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
-			ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
+			comp.GetRedis().Set(ctx, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 			continue
 		}
 
@@ -47,7 +46,7 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 				}
 			}
 
-			lastRemindAt, _ := ctx.GetRedis().Get(ctxB, remindKey).Result()
+			lastRemindAt, _ := comp.GetRedis().Get(ctx, remindKey).Result()
 			nowTime := time.Now().Format(HourLayout)
 
 			isRemind := false
@@ -66,7 +65,7 @@ func TodoRemind(ctx rulebot.IContext) []result.Result {
 			}
 			if isRemind {
 				res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
-				ctx.GetRedis().Set(ctxB, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
+				comp.GetRedis().Set(ctx, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 				continue
 			}
 		}

@@ -1,6 +1,7 @@
 package event
 
 import (
+	"context"
 	"fmt"
 	"github.com/google/wire"
 	"github.com/nats-io/nats.go"
@@ -17,7 +18,7 @@ func NewBus(nc *nats.Conn) *Bus {
 	return &Bus{nc: nc}
 }
 
-func (b *Bus) Subscribe(subject Subject, fn nats.MsgHandler) error {
+func (b *Bus) Subscribe(_ context.Context, subject Subject, fn nats.MsgHandler) error {
 	if !(reflect.TypeOf(fn).Kind() == reflect.Func) {
 		return fmt.Errorf("%s is not of type reflect.Func", reflect.TypeOf(fn).Kind())
 	}
@@ -28,7 +29,7 @@ func (b *Bus) Subscribe(subject Subject, fn nats.MsgHandler) error {
 	return nil
 }
 
-func (b *Bus) Publish(subject Subject, message interface{}) error {
+func (b *Bus) Publish(_ context.Context, subject Subject, message interface{}) error {
 	ec, err := nats.NewEncodedConn(b.nc, nats.JSON_ENCODER)
 	if err != nil {
 		return err
