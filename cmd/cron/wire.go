@@ -14,7 +14,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -22,7 +21,6 @@ import (
 var providerSet = wire.NewSet(
 	config.ProviderSet,
 	logger.ProviderSet,
-	http.ProviderSet,
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
 	influx.ProviderSet,
