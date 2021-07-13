@@ -16,7 +16,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/logger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
@@ -92,15 +91,14 @@ func (s *Server) Start() error {
 	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
 	s.logger.Info("rpc server starting ... ", zap.String("addr", addr), zap.String("uuid", s.conf.ID))
 
-	lis, err := net.Listen("tcp", addr)
-	if err != nil {
-		s.logger.Error(err)
-		return err
-	}
-
 	go func() {
-		err = s.server.Serve(lis)
+		lis, err := net.Listen("tcp", addr)
 		if err != nil {
+			s.logger.Error(err)
+			return
+		}
+
+		if err := s.server.Serve(lis); err != nil {
 			s.logger.Error(err)
 		}
 	}()
@@ -119,24 +117,36 @@ func (s *Server) register() error {
 	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
 	s.logger.Info("register rpc service ... ", zap.String("addr", rpcAddr), zap.String("uuid", s.conf.ID))
 
-	// discovery
-	discovery.RegisterService(rpcAddr, &discovery.ConsulService{
-		ID:   s.conf.ID,
-		IP:   s.conf.Rpc.Host,
-		Port: s.conf.Rpc.Port,
-		Tag:  []string{"grpc"},
-		Name: s.conf.Name,
-	})
+	check := &api.AgentServiceCheck{
+		Interval:                       "10s",
+		DeregisterCriticalServiceAfter: "60m",
+		TCP:                            rpcAddr,
+	}
 
-	// Health Check
-	// grpc_health_v1.RegisterHealthServer(s.server, &discovery.HealthImpl{})
+	id := fmt.Sprintf("%v(%s)/%v:%v", s.conf.Name, s.conf.ID, s.conf.Rpc.Host, s.conf.Rpc.Port)
+
+	svcReg := &api.AgentServiceRegistration{
+		ID:      id,
+		Name:    s.conf.Name,
+		Tags:    []string{"rpc"},
+		Port:    s.conf.Rpc.Port,
+		Address: s.conf.Rpc.Host,
+		Check:   check,
+		Checks:  nil,
+	}
+
+	err := s.consul.Agent().ServiceRegister(svcReg)
+	if err != nil {
+		return errors.Wrap(err, "register service error")
+	}
+	s.logger.Info("register grpc service success", zap.String("id", id))
 
 	return nil
 }
 
 func (s *Server) deregister() error {
 	for range s.server.GetServiceInfo() {
-		id := fmt.Sprintf("%v/%v:%v", s.conf.Name, s.conf.Rpc.Host, s.conf.Rpc.Port)
+		id := fmt.Sprintf("%v(%s)/%v:%v", s.conf.Name, s.conf.ID, s.conf.Rpc.Host, s.conf.Rpc.Port)
 
 		err := s.consul.Agent().ServiceDeregister(id)
 		if err != nil {

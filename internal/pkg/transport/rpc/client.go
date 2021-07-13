@@ -6,10 +6,9 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/hashicorp/consul/api"
+	_ "github.com/mbobakov/grpc-consul-resolver"
 	"github.com/opentracing/opentracing-go"
 	"github.com/tsundata/assistant/internal/pkg/logger"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"os"
 	"time"
@@ -85,18 +84,15 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 		option(o)
 	}
 
-	// discovery
-	discovery.RegisterBuilder()
-	consulAddress := os.Getenv("CONSUL_ADDRESS")
 	ctx, cancel := context.WithTimeout(context.Background(), o.Wait)
 	defer cancel()
 
-	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
-	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
+	consulAddress := os.Getenv("CONSUL_ADDRESS")
+	target := fmt.Sprintf("consul://%s/%s?wait=%s&tag=%s", consulAddress, service, o.Wait, o.Tag)
+
 	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
 	if err != nil {
-		c.logger.Warn(err.Error(), zap.String("service", service))
-		return conn, nil
+		// return nil, errors.Wrap(err, "grpc dial error") // fixme timeout
 	}
 
 	return conn, nil
