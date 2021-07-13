@@ -19,12 +19,6 @@ vendor/
 .idea/
 dist/
 configs/*.yml
-configs/redis/
-configs/backup/
-configs/influxdb/
 configs/*.conf
-internal/app/web/templates/
-*.db
 deployments/docker-compose/tmp
 deployments/docker-compose/.env
-upload/
