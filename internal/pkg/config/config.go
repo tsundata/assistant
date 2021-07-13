@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gopkg.in/yaml.v2"
-	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -85,13 +84,8 @@ func (c *AppConfig) readConfig() {
 func (c *AppConfig) watch() {
 	c.once.Do(func() {
 		tick := time.NewTicker(10 * time.Second)
-		for {
-			select {
-			case <-tick.C:
-				c.readConfig()
-			default:
-				runtime.Gosched()
-			}
+		for range tick.C {
+			c.readConfig()
 		}
 	})
 }
