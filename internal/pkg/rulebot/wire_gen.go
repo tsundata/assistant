@@ -9,7 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/cron/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
@@ -30,8 +30,8 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
-	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
+	logger := log.NewZapLogger(rollbarRollbar)
+	configuration, err := jaeger.NewConfiguration(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -79,11 +79,11 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	iContext := NewComponent(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
-	ruleBot := New(iContext)
+	iComponent := NewComponent(appConfig, redisClient, logger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	ruleBot := New(iComponent)
 	return ruleBot, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(logger.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet)

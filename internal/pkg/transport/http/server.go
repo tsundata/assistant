@@ -7,7 +7,7 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
@@ -18,10 +18,10 @@ type Server struct {
 	router     func(router fiber.Router)
 	httpServer *fiber.App
 	in         influxdb2.Client
-	logger     *logger.Logger
+	logger     log.Logger
 }
 
-func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client, logger *logger.Logger) (*Server, error) {
+func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client, logger log.Logger) (*Server, error) {
 	var s = &Server{
 		conf:   conf,
 		router: router,
@@ -55,7 +55,7 @@ func (s *Server) Start() error {
 
 	go func() {
 		if err := s.httpServer.Listen(addr); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.logger.Error(fmt.Errorf("start http server err, %v", err))
+			s.logger.Fatal(fmt.Errorf("start http server err, %v", err))
 			return
 		}
 	}()

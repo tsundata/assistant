@@ -29,7 +29,6 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/mattn/go-isatty v0.0.13 // indirect
-	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
@@ -41,8 +40,8 @@ require (
 	github.com/slack-go/slack v0.9.1
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
-	github.com/spf13/cobra v1.2.1 // indirect
-	github.com/spf13/viper v1.8.1 // indirect
+	github.com/spf13/cobra v1.2.1
+	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.8.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
@@ -54,8 +53,6 @@ require (
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
 	golang.org/x/tools v0.1.3 // indirect
-	google.golang.org/api v0.44.0 // indirect
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	google.golang.org/grpc v1.38.0
 	gopkg.in/yaml.v2 v2.4.0
 )

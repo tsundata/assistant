@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"time"
 )
@@ -20,11 +20,11 @@ type TodoRepository interface {
 }
 
 type MysqlTodoRepository struct {
-	logger *logger.Logger
+	logger log.Logger
 	db     *sqlx.DB
 }
 
-func NewMysqlTodoRepository(logger *logger.Logger, db *sqlx.DB) TodoRepository {
+func NewMysqlTodoRepository(logger log.Logger, db *sqlx.DB) TodoRepository {
 	return &MysqlTodoRepository{logger: logger, db: db}
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/hashicorp/consul/api"
 	"github.com/opentracing/opentracing-go"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -64,10 +64,10 @@ func WithTag(tag string) ClientOptional {
 type Client struct {
 	o      *ClientOptions
 	consul *api.Client
-	logger *logger.Logger
+	logger log.Logger
 }
 
-func NewClient(o *ClientOptions, consul *api.Client, logger *logger.Logger) (*Client, error) {
+func NewClient(o *ClientOptions, consul *api.Client, logger log.Logger) (*Client, error) {
 	return &Client{
 		o:      o,
 		consul: consul,

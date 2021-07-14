@@ -6,7 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/cron/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
@@ -15,7 +15,7 @@ import (
 )
 
 var testProviderSet = wire.NewSet(
-	logger.ProviderSet,
+	log.ProviderSet,
 	config.ProviderSet,
 	consul.ProviderSet,
 	ProviderSet,

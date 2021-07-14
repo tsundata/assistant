@@ -13,7 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -33,12 +33,12 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
+	logger := log.NewZapLogger(rollbarRollbar)
 	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -74,17 +74,17 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, loggerLogger, messageClient, middleClient, workflowClient, chatbotClient, userClient)
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, logger, messageClient, middleClient, workflowClient, chatbotClient, userClient)
 	v := controller.CreateInitControllersFn(gatewayController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(appConfig, v, influxdb2Client, loggerLogger)
+	server, err := http.New(appConfig, v, influxdb2Client, logger)
 	if err != nil {
 		return nil, err
 	}
-	application, err := gateway.NewApp(appConfig, loggerLogger, server)
+	application, err := gateway.NewApp(appConfig, logger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -93,4 +93,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)

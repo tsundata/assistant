@@ -7,11 +7,11 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
-func RegisterEventHandler(bus *event.Bus, logger *logger.Logger, repo repository.UserRepository, nlpClient pb.NLPClient) error {
+func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPClient) error {
 	err := bus.Subscribe(context.Background(), event.ChangeExpSubject, func(msg *nats.Msg) {
 		var role model.Role
 		err := json.Unmarshal(msg.Data, &role)

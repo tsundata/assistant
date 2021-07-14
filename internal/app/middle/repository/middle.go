@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"time"
 )
@@ -24,11 +24,11 @@ type MiddleRepository interface {
 }
 
 type MysqlMiddleRepository struct {
-	logger *logger.Logger
+	logger log.Logger
 	db     *sqlx.DB
 }
 
-func NewMysqlMiddleRepository(logger *logger.Logger, db *sqlx.DB) MiddleRepository {
+func NewMysqlMiddleRepository(logger log.Logger, db *sqlx.DB) MiddleRepository {
 	return &MysqlMiddleRepository{logger: logger, db: db}
 }
 

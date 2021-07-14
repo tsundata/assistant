@@ -11,7 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -30,12 +30,12 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
+	logger := log.NewZapLogger(rollbarRollbar)
 	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -83,9 +83,9 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iContext := rulebot.NewComponent(appConfig, redisClient, loggerLogger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
-	ruleBot := rulebot.New(iContext)
-	application, err := cron.NewApp(appConfig, loggerLogger, ruleBot)
+	iComponent := rulebot.NewComponent(appConfig, redisClient, logger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	ruleBot := rulebot.New(iComponent)
+	application, err := cron.NewApp(appConfig, logger, ruleBot)
 	if err != nil {
 		return nil, err
 	}
@@ -94,4 +94,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rulebot.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rulebot.ProviderSet, rpcclient.ProviderSet)

@@ -5,18 +5,18 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"time"
 )
 
 type Todo struct {
 	repo   repository.TodoRepository
-	bus    *event.Bus
-	logger *logger.Logger
+	bus    event.Bus
+	logger log.Logger
 }
 
-func NewTodo(bus *event.Bus, logger *logger.Logger, repo repository.TodoRepository) *Todo {
+func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) *Todo {
 	return &Todo{bus: bus, repo: repo, logger: logger}
 }
 

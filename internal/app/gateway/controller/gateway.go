@@ -10,7 +10,7 @@ import (
 	"github.com/slack-go/slack/slackevents"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
@@ -23,7 +23,7 @@ import (
 type GatewayController struct {
 	opt    *config.AppConfig
 	rdb    *redis.Client
-	logger *logger.Logger
+	logger log.Logger
 
 	messageSvc  pb.MessageClient
 	middleSvc   pb.MiddleClient
@@ -32,7 +32,7 @@ type GatewayController struct {
 	chatbotSvc  pb.ChatbotClient
 }
 
-func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger,
+func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.Logger,
 	messageSvc pb.MessageClient,
 	middleSvc pb.MiddleClient,
 	workflowSvc pb.WorkflowClient,

@@ -5,10 +5,10 @@ import (
 	"github.com/tsundata/assistant/internal/app/agent/broker"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
-func NewApp(c *config.AppConfig, logger *logger.Logger, b broker.Runner) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger log.Logger, b broker.Runner) (*app.Application, error) {
 	logger.Info("start agent " + c.Name)
 
 	a, err := app.New(c, logger)

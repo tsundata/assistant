@@ -9,7 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	nats2 "github.com/tsundata/assistant/internal/pkg/middleware/nats"
 )
@@ -31,4 +31,4 @@ func CreateNats(id string) (*nats.Conn, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(logger.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, nats2.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, nats2.ProviderSet)

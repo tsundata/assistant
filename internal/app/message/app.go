@@ -6,11 +6,11 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, bus *event.Bus, logger *logger.Logger, rs *rpc.Server) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server) (*app.Application, error) {
 	// event bus register
 	err := listener.RegisterEventHandler(bus, c, logger)
 	if err != nil {

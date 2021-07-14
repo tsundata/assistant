@@ -11,28 +11,28 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/app/workflow/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"strings"
 	"time"
 )
 
 type Workflow struct {
-	bus     *event.Bus
+	bus     event.Bus
 	rdb     *redis.Client
-	logger  *logger.Logger
+	logger  log.Logger
 	message pb.MessageClient
 	middle  pb.MiddleClient
 	repo    repository.WorkflowRepository
 }
 
 func NewWorkflow(
-	bus *event.Bus,
+	bus event.Bus,
 	rdb *redis.Client,
 	repo repository.WorkflowRepository,
 	message pb.MessageClient,
 	middle pb.MiddleClient,
-	logger *logger.Logger) *Workflow {
+	logger log.Logger) *Workflow {
 	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message, middle: middle}
 }
 

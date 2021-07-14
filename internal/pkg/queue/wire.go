@@ -6,13 +6,13 @@ import (
 	"github.com/RichardKnop/machinery/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 )
 
 var testProviderSet = wire.NewSet(
-	logger.ProviderSet,
+	log.ProviderSet,
 	config.ProviderSet,
 	consul.ProviderSet,
 	redisMiddle.ProviderSet,

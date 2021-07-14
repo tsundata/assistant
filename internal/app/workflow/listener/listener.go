@@ -8,11 +8,11 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
-func RegisterEventHandler(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) error {
+func RegisterEventHandler(bus event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger log.Logger) error {
 	err := bus.Subscribe(context.Background(), event.RunWorkflowSubject, func(msg *nats.Msg) {
 		var m model.Message
 		err := json.Unmarshal(msg.Data, &message)

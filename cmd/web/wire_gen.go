@@ -11,7 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/web/controller"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -31,23 +31,23 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
+	logger := log.NewZapLogger(rollbarRollbar)
 	redisClient, err := redis.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
 	gatewayClient := sdk.NewGatewayClient(appConfig)
-	webController := controller.NewWebController(appConfig, redisClient, loggerLogger, gatewayClient)
+	webController := controller.NewWebController(appConfig, redisClient, logger, gatewayClient)
 	v := controller.CreateInitControllersFn(webController)
 	influxdb2Client, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(appConfig, v, influxdb2Client, loggerLogger)
+	server, err := http.New(appConfig, v, influxdb2Client, logger)
 	if err != nil {
 		return nil, err
 	}
-	application, err := web.NewApp(appConfig, loggerLogger, server)
+	application, err := web.NewApp(appConfig, logger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -56,4 +56,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet)

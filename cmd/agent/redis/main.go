@@ -5,7 +5,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/agent/broker"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
@@ -21,7 +21,7 @@ func CreateApp() (*app.Application, error) {
 
 	r := rollbar.New(appConfig)
 
-	log := logger.NewLogger(r)
+	l := log.NewZapLogger(r)
 
 	i, err := influx.New(appConfig)
 	if err != nil {
@@ -33,7 +33,7 @@ func CreateApp() (*app.Application, error) {
 		return nil, err
 	}
 
-	br, err := broker.NewBroker(appConfig, log, i)
+	br, err := broker.NewBroker(appConfig, l, i)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func CreateApp() (*app.Application, error) {
 		return nil, err
 	}
 
-	application, err := agent.NewApp(appConfig, log, b)
+	application, err := agent.NewApp(appConfig, l, b)
 	if err != nil {
 		return nil, err
 	}

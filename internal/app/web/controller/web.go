@@ -10,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/web/component"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -28,11 +28,11 @@ import (
 type WebController struct {
 	opt     *config.AppConfig
 	rdb     *redis.Client
-	logger  *logger.Logger
+	logger  log.Logger
 	gateway *sdk.GatewayClient
 }
 
-func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger *logger.Logger, gateway *sdk.GatewayClient) *WebController {
+func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger log.Logger, gateway *sdk.GatewayClient) *WebController {
 	return &WebController{opt: opt, rdb: rdb, logger: logger, gateway: gateway}
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -33,8 +33,8 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
-	configuration, err := jaeger.NewConfiguration(appConfig, loggerLogger)
+	logger := log.NewZapLogger(rollbarRollbar)
+	configuration, err := jaeger.NewConfiguration(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, loggerLogger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, loggerLogger, subscribeClient, middleClient, messageClient)
+	application, err := spider.NewApp(appConfig, redisClient, logger, subscribeClient, middleClient, messageClient)
 	if err != nil {
 		return nil, err
 	}
@@ -71,4 +71,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, logger.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)

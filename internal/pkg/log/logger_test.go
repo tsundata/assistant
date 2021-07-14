@@ -1,4 +1,4 @@
-package logger
+package log
 
 import (
 	"errors"
@@ -7,8 +7,9 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	l := NewLogger(nil)
+	l := NewZapLogger(nil)
 	l.Error(errors.New("test error"), zap.Any("t", t.Name()))
+	l.Debug("debug", zap.Any("t", t.Name()))
 	l.Info("info", zap.Any("t", t.Name()))
 	l.Warn("info", zap.Any("t", t.Name()))
 }

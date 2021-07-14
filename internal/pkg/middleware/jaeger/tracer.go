@@ -4,11 +4,11 @@ import (
 	"github.com/google/wire"
 	"github.com/opentracing/opentracing-go"
 	appConfig "github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/uber/jaeger-client-go/config"
 )
 
-func NewConfiguration(c *appConfig.AppConfig, logger *logger.Logger) (*config.Configuration, error) {
+func NewConfiguration(c *appConfig.AppConfig, logger log.Logger) (*config.Configuration, error) {
 	var cc = new(config.Configuration)
 
 	cc.ServiceName = c.Name

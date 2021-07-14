@@ -4,19 +4,19 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/rule"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
 type Chatbot struct {
-	logger   *logger.Logger
-	bot      *rulebot.RuleBot
-	middle   pb.MiddleClient
-	todo     pb.TodoClient
+	logger log.Logger
+	bot    *rulebot.RuleBot
+	middle pb.MiddleClient
+	todo   pb.TodoClient
 }
 
 func NewChatbot(
-	logger *logger.Logger,
+	logger log.Logger,
 	middle pb.MiddleClient,
 	todo pb.TodoClient,
 	bot *rulebot.RuleBot) *Chatbot {

@@ -7,7 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"strings"
 	"sync"
@@ -16,7 +16,7 @@ import (
 type Component struct {
 	Conf   *config.AppConfig
 	RDB    *redis.Client
-	Logger *logger.Logger
+	Logger log.Logger
 
 	MessageClient   pb.MessageClient
 	MiddleClient    pb.MiddleClient
@@ -68,14 +68,14 @@ func (c Component) GetRedis() *redis.Client {
 	return c.RDB
 }
 
-func (c Component) GetLogger() *logger.Logger {
+func (c Component) GetLogger() log.Logger {
 	return c.Logger
 }
 
 type IComponent interface {
 	GetConfig() *config.AppConfig
 	GetRedis() *redis.Client
-	GetLogger() *logger.Logger
+	GetLogger() log.Logger
 	Message() pb.MessageClient
 	Middle() pb.MiddleClient
 	Subscribe() pb.SubscribeClient
@@ -89,7 +89,7 @@ type IComponent interface {
 func NewComponent(
 	conf *config.AppConfig,
 	rdb *redis.Client,
-	logger *logger.Logger,
+	logger log.Logger,
 
 	messageClient pb.MessageClient,
 	middleClient pb.MiddleClient,

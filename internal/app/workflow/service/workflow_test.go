@@ -110,7 +110,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewBus(nats)
+	bus := event.NewNatsBus(nats)
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
@@ -165,7 +165,7 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewBus(nats)
+	bus := event.NewNatsBus(nats)
 
 	messageID := rand.Int()
 	repo := mock.NewMockWorkflowRepository(ctl)

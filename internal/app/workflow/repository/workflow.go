@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
@@ -16,11 +16,11 @@ type WorkflowRepository interface {
 }
 
 type MysqlWorkflowRepository struct {
-	logger *logger.Logger
+	logger log.Logger
 	db     *sqlx.DB
 }
 
-func NewMysqlWorkflowRepository(logger *logger.Logger, db *sqlx.DB) WorkflowRepository {
+func NewMysqlWorkflowRepository(logger log.Logger, db *sqlx.DB) WorkflowRepository {
 	return &MysqlWorkflowRepository{logger: logger, db: db}
 }
 

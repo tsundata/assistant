@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -16,16 +16,16 @@ import (
 )
 
 type Message struct {
-	bus      *event.Bus
+	bus      event.Bus
 	config   *config.AppConfig
-	logger   *logger.Logger
+	logger   log.Logger
 	repo     repository.MessageRepository
 	workflow pb.WorkflowClient
 }
 
 func NewMessage(
-	bus *event.Bus,
-	logger *logger.Logger,
+	bus event.Bus,
+	logger log.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
 	workflow pb.WorkflowClient) *Message {

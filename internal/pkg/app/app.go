@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"os"
@@ -34,7 +34,7 @@ const (
 
 type Application struct {
 	name       string
-	logger     *logger.Logger
+	logger     log.Logger
 	httpServer *http.Server
 	rpcServer  *rpc.Server
 }
@@ -57,7 +57,7 @@ func RPCServerOption(svr *rpc.Server) Option {
 	}
 }
 
-func New(c *config.AppConfig, logger *logger.Logger, options ...Option) (*Application, error) {
+func New(c *config.AppConfig, logger log.Logger, options ...Option) (*Application, error) {
 	app := &Application{
 		name:   c.Name,
 		logger: logger,

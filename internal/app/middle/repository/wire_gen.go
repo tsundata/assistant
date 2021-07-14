@@ -8,7 +8,7 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -23,15 +23,15 @@ func CreateMiddleRepository(id string) (MiddleRepository, error) {
 	}
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
-	loggerLogger := logger.NewLogger(rollbarRollbar)
+	logger := log.NewZapLogger(rollbarRollbar)
 	db, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := NewMysqlMiddleRepository(loggerLogger, db)
+	middleRepository := NewMysqlMiddleRepository(logger, db)
 	return middleRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(logger.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet)

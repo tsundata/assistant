@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/mock"
 	"testing"
@@ -23,7 +23,7 @@ func TestWorkflowDone(t *testing.T) {
 }
 
 func TestWorkflowError(t *testing.T) {
-	l := logger.NewLogger(nil)
+	l := log.NewZapLogger(nil)
 
 	comp := rulebot.NewComponent(nil, nil, l, nil,
 		nil, nil, nil, nil,

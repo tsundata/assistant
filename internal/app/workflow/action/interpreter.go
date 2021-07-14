@@ -9,8 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
-	"log"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"strings"
 )
 
@@ -25,7 +24,7 @@ func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
 	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
 }
 
-func (i *Interpreter) SetComponent(bus *event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger *logger.Logger) {
+func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger log.Logger) {
 	i.Comp.Bus = bus
 	i.Comp.RDB = rdb
 	i.Comp.Logger = logger
@@ -107,8 +106,6 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	if err != nil {
 		if i.Comp.Logger != nil {
 			i.Comp.Logger.Error(err)
-		} else {
-			log.Println(err)
 		}
 		return -1
 	}

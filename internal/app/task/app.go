@@ -8,14 +8,14 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
 func NewApp(
 	c *config.AppConfig,
-	bus *event.Bus,
-	logger *logger.Logger,
+	bus event.Bus,
+	logger log.Logger,
 	rs *rpc.Server,
 	q *machinery.Server,
 	message pb.MessageClient,

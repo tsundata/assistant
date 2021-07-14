@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
@@ -21,11 +21,11 @@ type UserRepository interface {
 }
 
 type MysqlUserRepository struct {
-	logger *logger.Logger
+	logger log.Logger
 	db     *sqlx.DB
 }
 
-func NewMysqlUserRepository(logger *logger.Logger, db *sqlx.DB) UserRepository {
+func NewMysqlUserRepository(logger log.Logger, db *sqlx.DB) UserRepository {
 	return &MysqlUserRepository{logger: logger, db: db}
 }
 

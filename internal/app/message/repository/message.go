@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
@@ -18,11 +18,11 @@ type MessageRepository interface {
 }
 
 type MysqlMessageRepository struct {
-	logger *logger.Logger
+	logger log.Logger
 	db     *sqlx.DB
 }
 
-func NewMysqlMessageRepository(logger *logger.Logger, db *sqlx.DB) MessageRepository {
+func NewMysqlMessageRepository(logger log.Logger, db *sqlx.DB) MessageRepository {
 	return &MysqlMessageRepository{logger: logger, db: db}
 }
 

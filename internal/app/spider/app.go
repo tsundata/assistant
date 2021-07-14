@@ -7,14 +7,14 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/crawler"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"time"
 )
 
 func NewApp(
 	c *config.AppConfig,
 	rdb *redis.Client,
-	logger *logger.Logger,
+	logger log.Logger,
 	subscribe pb.SubscribeClient,
 	middle pb.MiddleClient,
 	message pb.MessageClient) (*app.Application, error) {

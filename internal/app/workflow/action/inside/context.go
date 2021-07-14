@@ -4,7 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"sync"
 )
 
@@ -17,8 +17,8 @@ type Component struct {
 	Credential map[string]string
 
 	RDB     *redis.Client
-	Bus     *event.Bus
-	Logger  *logger.Logger
+	Bus     event.Bus
+	Logger  log.Logger
 	Middle  pb.MiddleClient
 	Message pb.MessageClient
 }

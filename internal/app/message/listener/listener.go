@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -15,7 +15,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func RegisterEventHandler(bus *event.Bus, config *config.AppConfig, logger *logger.Logger) error {
+func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger) error {
 	err := bus.Subscribe(context.Background(), event.EchoSubject, func(msg *nats.Msg) {
 		fmt.Println(msg)
 	})

@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/logger"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"gopkg.in/yaml.v2"
@@ -27,7 +27,7 @@ type Crawler struct {
 
 	c         *config.AppConfig
 	rdb       *redis.Client
-	logger    *logger.Logger
+	logger    log.Logger
 	subscribe pb.SubscribeClient
 	middle    pb.MiddleClient
 	message   pb.MessageClient
@@ -43,7 +43,7 @@ func New() *Crawler {
 func (s *Crawler) SetService(
 	c *config.AppConfig,
 	rdb *redis.Client,
-	logger *logger.Logger,
+	logger log.Logger,
 	subscribe pb.SubscribeClient,
 	middle pb.MiddleClient,
 	message pb.MessageClient) {
