@@ -17,7 +17,6 @@ import (
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -46,9 +45,8 @@ func NewServer(opt *config.AppConfig, logger log.Logger, init InitServer, tracer
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
-				rollbar.StreamServerInterceptor(),
+				log.StreamServerInterceptor(logger),
 				influx.StreamServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
-				//grpczap.StreamServerInterceptor(logger.Zap),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
@@ -56,9 +54,8 @@ func NewServer(opt *config.AppConfig, logger log.Logger, init InitServer, tracer
 		),
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
-				rollbar.UnaryServerInterceptor(),
+				log.UnaryServerInterceptor(logger),
 				influx.UnaryServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
-			//	grpczap.UnaryServerInterceptor(logger.Zap),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
