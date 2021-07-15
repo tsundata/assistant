@@ -27,6 +27,11 @@ jobs:
           - 8500:8500
           - 8600:8600/tcp
           - 8600:8600/udp
+      rqlite:
+        image: rqlite/rqlite:latest
+        ports:
+          - 4001:4001
+          - 4002:4002
 
     env:
       DB_DATABASE: assistant
@@ -56,6 +61,10 @@ jobs:
           mysql -e 'SHOW DATABASES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_DATABASE }} < ./scripts/app.sql
           mysql -e 'use ${{ env.DB_DATABASE }};SHOW TABLES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
+      - name: Setup rqlite
+        run: |
+          task cli -- rqlite
 
       - name: Import Config
         run: |
