@@ -6,11 +6,13 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.0
 	github.com/RichardKnop/machinery/v2 v2.0.11
+	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90
 	github.com/gavv/httpexpect/v2 v2.3.0
 	github.com/go-ego/gse v0.67.0
+	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-redis/redis/v8 v8.10.0
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -32,9 +34,11 @@ require (
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
+	github.com/onsi/gomega v1.12.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/rollbar/rollbar-go v1.4.0
+	github.com/rqlite/gorqlite v0.0.0-20210514125552-08ff1e76b22f
 	github.com/shirou/gopsutil/v3 v3.21.5
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.1
@@ -44,6 +48,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.8.0
+	github.com/tklauser/go-sysconf v0.3.6 // indirect
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.26.0

@@ -102,7 +102,7 @@ func (cr *consulResolver) watcher() {
 		cr.cc.NewServiceConfig(cr.name) // nolint
 		if len(newAddr) > 0 {
 			log.Printf("%s newAddrs: %v\n", cr.name, newAddr)
-			time.Sleep(time.Second)
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }

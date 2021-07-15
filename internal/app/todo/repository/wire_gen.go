@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -24,14 +25,14 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	db, err := mysql.New(appConfig)
+	connection, err := rqlite.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := NewMysqlTodoRepository(logger, db)
+	todoRepository := NewRqliteTodoRepository(logger, connection)
 	return todoRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet)

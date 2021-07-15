@@ -25,6 +25,7 @@ type AppConfig struct {
 	Storage Storage `json:"storage"`
 
 	Mysql    Mysql    `json:"mysql"`
+	Rqlite   Rqlite   `json:"rqlite"`
 	Redis    Redis    `json:"redis"`
 	Influx   Influx   `json:"influx"`
 	Rabbitmq Rabbitmq `json:"rabbitmq"`

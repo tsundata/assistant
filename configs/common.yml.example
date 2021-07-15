@@ -4,7 +4,9 @@ influx:
   bucket:
   url:
 mysql:
-  url: root:root@tcp(localhost:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
+  url: root:root@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
+rqlite:
+  url: http://127.0.0.1:4001
 redis:
   addr: 127.0.0.1:6379
   password:
@@ -25,7 +27,7 @@ rollbar:
   token:
   environment: # production development
 nats:
-  url: nats://localhost:4222
+  url: nats://127.0.0.1:4222
 storage:
   adapter: dropbox
 

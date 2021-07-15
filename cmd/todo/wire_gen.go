@@ -20,6 +20,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -39,11 +40,11 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	bus := event.NewNatsBus(conn)
-	db, err := mysql.New(appConfig)
+	connection, err := rqlite.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := repository.NewMysqlTodoRepository(logger, db)
+	todoRepository := repository.NewRqliteTodoRepository(logger, connection)
 	serviceTodo := service.NewTodo(bus, logger, todoRepository)
 	initServer := service.CreateInitServerFn(serviceTodo)
 	configuration, err := jaeger.NewConfiguration(appConfig, logger)
@@ -75,4 +76,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rqlite.ProviderSet)
