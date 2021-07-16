@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	model "github.com/tsundata/assistant/api/model"
+	pb "github.com/tsundata/assistant/api/pb"
 )
 
 // MockMiddleRepository is a mock of MiddleRepository interface.
@@ -65,7 +66,7 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateCredential(credential interfac
 }
 
 // CreatePage mocks base method.
-func (m *MockMiddleRepository) CreatePage(page model.Page) (int64, error) {
+func (m *MockMiddleRepository) CreatePage(page pb.Page) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePage", page)
 	ret0, _ := ret[0].(int64)
@@ -140,10 +141,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(t interface{}) *
 }
 
 // GetPageByUUID mocks base method.
-func (m *MockMiddleRepository) GetPageByUUID(uuid string) (model.Page, error) {
+func (m *MockMiddleRepository) GetPageByUUID(uuid string) (pb.Page, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPageByUUID", uuid)
-	ret0, _ := ret[0].(model.Page)
+	ret0, _ := ret[0].(pb.Page)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

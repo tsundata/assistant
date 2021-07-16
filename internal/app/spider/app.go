@@ -16,7 +16,7 @@ func NewApp(
 	rdb *redis.Client,
 	logger log.Logger,
 	subscribe pb.SubscribeClient,
-	middle pb.MiddleClient,
+	middle pb.MiddleSvcClient,
 	message pb.MessageClient) (*app.Application, error) {
 
 	// spider

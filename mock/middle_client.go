@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockMiddleClient is a mock of MiddleClient interface.
-type MockMiddleClient struct {
+// MockMiddleSvcClient is a mock of MiddleSvcClient interface.
+type MockMiddleSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockMiddleClientMockRecorder
+	recorder *MockMiddleSvcClientMockRecorder
 }
 
-// MockMiddleClientMockRecorder is the mock recorder for MockMiddleClient.
-type MockMiddleClientMockRecorder struct {
-	mock *MockMiddleClient
+// MockMiddleSvcClientMockRecorder is the mock recorder for MockMiddleSvcClient.
+type MockMiddleSvcClientMockRecorder struct {
+	mock *MockMiddleSvcClient
 }
 
-// NewMockMiddleClient creates a new mock instance.
-func NewMockMiddleClient(ctrl *gomock.Controller) *MockMiddleClient {
-	mock := &MockMiddleClient{ctrl: ctrl}
-	mock.recorder = &MockMiddleClientMockRecorder{mock}
+// NewMockMiddleSvcClient creates a new mock instance.
+func NewMockMiddleSvcClient(ctrl *gomock.Controller) *MockMiddleSvcClient {
+	mock := &MockMiddleSvcClient{ctrl: ctrl}
+	mock.recorder = &MockMiddleSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMiddleClient) EXPECT() *MockMiddleClientMockRecorder {
+func (m *MockMiddleSvcClient) EXPECT() *MockMiddleSvcClientMockRecorder {
 	return m.recorder
 }
 
 // CreateCredential mocks base method.
-func (m *MockMiddleClient) CreateCredential(ctx context.Context, in *pb.KVsRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMiddleSvcClient) CreateCredential(ctx context.Context, in *pb.KVsRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockMiddleClient) CreateCredential(ctx context.Context, in *pb.KVsReque
 }
 
 // CreateCredential indicates an expected call of CreateCredential.
-func (mr *MockMiddleClientMockRecorder) CreateCredential(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) CreateCredential(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCredential", reflect.TypeOf((*MockMiddleClient)(nil).CreateCredential), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCredential", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreateCredential), varargs...)
 }
 
 // CreatePage mocks base method.
-func (m *MockMiddleClient) CreatePage(ctx context.Context, in *pb.PageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMiddleSvcClient) CreatePage(ctx context.Context, in *pb.PageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockMiddleClient) CreatePage(ctx context.Context, in *pb.PageRequest, o
 }
 
 // CreatePage indicates an expected call of CreatePage.
-func (mr *MockMiddleClientMockRecorder) CreatePage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) CreatePage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePage", reflect.TypeOf((*MockMiddleClient)(nil).CreatePage), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePage", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreatePage), varargs...)
 }
 
 // CreateSetting mocks base method.
-func (m *MockMiddleClient) CreateSetting(ctx context.Context, in *pb.KVRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMiddleSvcClient) CreateSetting(ctx context.Context, in *pb.KVRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,14 +90,14 @@ func (m *MockMiddleClient) CreateSetting(ctx context.Context, in *pb.KVRequest, 
 }
 
 // CreateSetting indicates an expected call of CreateSetting.
-func (mr *MockMiddleClientMockRecorder) CreateSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) CreateSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSetting", reflect.TypeOf((*MockMiddleClient)(nil).CreateSetting), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSetting", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreateSetting), varargs...)
 }
 
 // GetApps mocks base method.
-func (m *MockMiddleClient) GetApps(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.AppsReply, error) {
+func (m *MockMiddleSvcClient) GetApps(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.AppsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -110,14 +110,14 @@ func (m *MockMiddleClient) GetApps(ctx context.Context, in *pb.TextRequest, opts
 }
 
 // GetApps indicates an expected call of GetApps.
-func (mr *MockMiddleClientMockRecorder) GetApps(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetApps(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApps", reflect.TypeOf((*MockMiddleClient)(nil).GetApps), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApps", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetApps), varargs...)
 }
 
 // GetAvailableApp mocks base method.
-func (m *MockMiddleClient) GetAvailableApp(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.AppReply, error) {
+func (m *MockMiddleSvcClient) GetAvailableApp(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.AppReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -130,14 +130,14 @@ func (m *MockMiddleClient) GetAvailableApp(ctx context.Context, in *pb.TextReque
 }
 
 // GetAvailableApp indicates an expected call of GetAvailableApp.
-func (mr *MockMiddleClientMockRecorder) GetAvailableApp(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetAvailableApp(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableApp", reflect.TypeOf((*MockMiddleClient)(nil).GetAvailableApp), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableApp", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetAvailableApp), varargs...)
 }
 
 // GetCredential mocks base method.
-func (m *MockMiddleClient) GetCredential(ctx context.Context, in *pb.CredentialRequest, opts ...grpc.CallOption) (*pb.CredentialReply, error) {
+func (m *MockMiddleSvcClient) GetCredential(ctx context.Context, in *pb.CredentialRequest, opts ...grpc.CallOption) (*pb.CredentialReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -150,14 +150,14 @@ func (m *MockMiddleClient) GetCredential(ctx context.Context, in *pb.CredentialR
 }
 
 // GetCredential indicates an expected call of GetCredential.
-func (mr *MockMiddleClientMockRecorder) GetCredential(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetCredential(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredential", reflect.TypeOf((*MockMiddleClient)(nil).GetCredential), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredential", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCredential), varargs...)
 }
 
 // GetCredentials mocks base method.
-func (m *MockMiddleClient) GetCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.CredentialsReply, error) {
+func (m *MockMiddleSvcClient) GetCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.CredentialsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -170,14 +170,14 @@ func (m *MockMiddleClient) GetCredentials(ctx context.Context, in *pb.TextReques
 }
 
 // GetCredentials indicates an expected call of GetCredentials.
-func (mr *MockMiddleClientMockRecorder) GetCredentials(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetCredentials(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleClient)(nil).GetCredentials), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCredentials), varargs...)
 }
 
 // GetMaskingCredentials mocks base method.
-func (m *MockMiddleClient) GetMaskingCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.MaskingReply, error) {
+func (m *MockMiddleSvcClient) GetMaskingCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.MaskingReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -190,14 +190,14 @@ func (m *MockMiddleClient) GetMaskingCredentials(ctx context.Context, in *pb.Tex
 }
 
 // GetMaskingCredentials indicates an expected call of GetMaskingCredentials.
-func (mr *MockMiddleClientMockRecorder) GetMaskingCredentials(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetMaskingCredentials(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleClient)(nil).GetMaskingCredentials), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMaskingCredentials), varargs...)
 }
 
 // GetMenu mocks base method.
-func (m *MockMiddleClient) GetMenu(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMiddleSvcClient) GetMenu(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -210,14 +210,14 @@ func (m *MockMiddleClient) GetMenu(ctx context.Context, in *pb.TextRequest, opts
 }
 
 // GetMenu indicates an expected call of GetMenu.
-func (mr *MockMiddleClientMockRecorder) GetMenu(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetMenu(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleClient)(nil).GetMenu), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMenu), varargs...)
 }
 
 // GetPage mocks base method.
-func (m *MockMiddleClient) GetPage(ctx context.Context, in *pb.PageRequest, opts ...grpc.CallOption) (*pb.PageReply, error) {
+func (m *MockMiddleSvcClient) GetPage(ctx context.Context, in *pb.PageRequest, opts ...grpc.CallOption) (*pb.PageReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -230,14 +230,14 @@ func (m *MockMiddleClient) GetPage(ctx context.Context, in *pb.PageRequest, opts
 }
 
 // GetPage indicates an expected call of GetPage.
-func (mr *MockMiddleClientMockRecorder) GetPage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetPage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPage", reflect.TypeOf((*MockMiddleClient)(nil).GetPage), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPage", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetPage), varargs...)
 }
 
 // GetQrUrl mocks base method.
-func (m *MockMiddleClient) GetQrUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMiddleSvcClient) GetQrUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -250,14 +250,14 @@ func (m *MockMiddleClient) GetQrUrl(ctx context.Context, in *pb.TextRequest, opt
 }
 
 // GetQrUrl indicates an expected call of GetQrUrl.
-func (mr *MockMiddleClientMockRecorder) GetQrUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetQrUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleClient)(nil).GetQrUrl), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetQrUrl), varargs...)
 }
 
 // GetRoleImageUrl mocks base method.
-func (m *MockMiddleClient) GetRoleImageUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMiddleSvcClient) GetRoleImageUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -270,14 +270,14 @@ func (m *MockMiddleClient) GetRoleImageUrl(ctx context.Context, in *pb.TextReque
 }
 
 // GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
-func (mr *MockMiddleClientMockRecorder) GetRoleImageUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetRoleImageUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleClient)(nil).GetRoleImageUrl), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetRoleImageUrl), varargs...)
 }
 
 // GetSetting mocks base method.
-func (m *MockMiddleClient) GetSetting(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.SettingReply, error) {
+func (m *MockMiddleSvcClient) GetSetting(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.SettingReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -290,14 +290,14 @@ func (m *MockMiddleClient) GetSetting(ctx context.Context, in *pb.TextRequest, o
 }
 
 // GetSetting indicates an expected call of GetSetting.
-func (mr *MockMiddleClientMockRecorder) GetSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetting", reflect.TypeOf((*MockMiddleClient)(nil).GetSetting), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetting", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetSetting), varargs...)
 }
 
 // GetSettings mocks base method.
-func (m *MockMiddleClient) GetSettings(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.SettingsReply, error) {
+func (m *MockMiddleSvcClient) GetSettings(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.SettingsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -310,14 +310,14 @@ func (m *MockMiddleClient) GetSettings(ctx context.Context, in *pb.TextRequest, 
 }
 
 // GetSettings indicates an expected call of GetSettings.
-func (mr *MockMiddleClientMockRecorder) GetSettings(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetSettings(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSettings", reflect.TypeOf((*MockMiddleClient)(nil).GetSettings), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSettings", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetSettings), varargs...)
 }
 
 // GetStats mocks base method.
-func (m *MockMiddleClient) GetStats(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMiddleSvcClient) GetStats(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -330,14 +330,14 @@ func (m *MockMiddleClient) GetStats(ctx context.Context, in *pb.TextRequest, opt
 }
 
 // GetStats indicates an expected call of GetStats.
-func (mr *MockMiddleClientMockRecorder) GetStats(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) GetStats(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleClient)(nil).GetStats), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetStats), varargs...)
 }
 
 // StoreAppOAuth mocks base method.
-func (m *MockMiddleClient) StoreAppOAuth(ctx context.Context, in *pb.AppRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMiddleSvcClient) StoreAppOAuth(ctx context.Context, in *pb.AppRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -350,37 +350,37 @@ func (m *MockMiddleClient) StoreAppOAuth(ctx context.Context, in *pb.AppRequest,
 }
 
 // StoreAppOAuth indicates an expected call of StoreAppOAuth.
-func (mr *MockMiddleClientMockRecorder) StoreAppOAuth(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMiddleSvcClientMockRecorder) StoreAppOAuth(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleClient)(nil).StoreAppOAuth), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleSvcClient)(nil).StoreAppOAuth), varargs...)
 }
 
-// MockMiddleServer is a mock of MiddleServer interface.
-type MockMiddleServer struct {
+// MockMiddleSvcServer is a mock of MiddleSvcServer interface.
+type MockMiddleSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockMiddleServerMockRecorder
+	recorder *MockMiddleSvcServerMockRecorder
 }
 
-// MockMiddleServerMockRecorder is the mock recorder for MockMiddleServer.
-type MockMiddleServerMockRecorder struct {
-	mock *MockMiddleServer
+// MockMiddleSvcServerMockRecorder is the mock recorder for MockMiddleSvcServer.
+type MockMiddleSvcServerMockRecorder struct {
+	mock *MockMiddleSvcServer
 }
 
-// NewMockMiddleServer creates a new mock instance.
-func NewMockMiddleServer(ctrl *gomock.Controller) *MockMiddleServer {
-	mock := &MockMiddleServer{ctrl: ctrl}
-	mock.recorder = &MockMiddleServerMockRecorder{mock}
+// NewMockMiddleSvcServer creates a new mock instance.
+func NewMockMiddleSvcServer(ctrl *gomock.Controller) *MockMiddleSvcServer {
+	mock := &MockMiddleSvcServer{ctrl: ctrl}
+	mock.recorder = &MockMiddleSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMiddleServer) EXPECT() *MockMiddleServerMockRecorder {
+func (m *MockMiddleSvcServer) EXPECT() *MockMiddleSvcServerMockRecorder {
 	return m.recorder
 }
 
 // CreateCredential mocks base method.
-func (m *MockMiddleServer) CreateCredential(arg0 context.Context, arg1 *pb.KVsRequest) (*pb.StateReply, error) {
+func (m *MockMiddleSvcServer) CreateCredential(arg0 context.Context, arg1 *pb.KVsRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCredential", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -389,13 +389,13 @@ func (m *MockMiddleServer) CreateCredential(arg0 context.Context, arg1 *pb.KVsRe
 }
 
 // CreateCredential indicates an expected call of CreateCredential.
-func (mr *MockMiddleServerMockRecorder) CreateCredential(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) CreateCredential(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCredential", reflect.TypeOf((*MockMiddleServer)(nil).CreateCredential), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCredential", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreateCredential), arg0, arg1)
 }
 
 // CreatePage mocks base method.
-func (m *MockMiddleServer) CreatePage(arg0 context.Context, arg1 *pb.PageRequest) (*pb.TextReply, error) {
+func (m *MockMiddleSvcServer) CreatePage(arg0 context.Context, arg1 *pb.PageRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePage", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -404,13 +404,13 @@ func (m *MockMiddleServer) CreatePage(arg0 context.Context, arg1 *pb.PageRequest
 }
 
 // CreatePage indicates an expected call of CreatePage.
-func (mr *MockMiddleServerMockRecorder) CreatePage(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) CreatePage(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePage", reflect.TypeOf((*MockMiddleServer)(nil).CreatePage), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePage", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreatePage), arg0, arg1)
 }
 
 // CreateSetting mocks base method.
-func (m *MockMiddleServer) CreateSetting(arg0 context.Context, arg1 *pb.KVRequest) (*pb.StateReply, error) {
+func (m *MockMiddleSvcServer) CreateSetting(arg0 context.Context, arg1 *pb.KVRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSetting", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -419,13 +419,13 @@ func (m *MockMiddleServer) CreateSetting(arg0 context.Context, arg1 *pb.KVReques
 }
 
 // CreateSetting indicates an expected call of CreateSetting.
-func (mr *MockMiddleServerMockRecorder) CreateSetting(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) CreateSetting(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSetting", reflect.TypeOf((*MockMiddleServer)(nil).CreateSetting), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSetting", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreateSetting), arg0, arg1)
 }
 
 // GetApps mocks base method.
-func (m *MockMiddleServer) GetApps(arg0 context.Context, arg1 *pb.TextRequest) (*pb.AppsReply, error) {
+func (m *MockMiddleSvcServer) GetApps(arg0 context.Context, arg1 *pb.TextRequest) (*pb.AppsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetApps", arg0, arg1)
 	ret0, _ := ret[0].(*pb.AppsReply)
@@ -434,13 +434,13 @@ func (m *MockMiddleServer) GetApps(arg0 context.Context, arg1 *pb.TextRequest) (
 }
 
 // GetApps indicates an expected call of GetApps.
-func (mr *MockMiddleServerMockRecorder) GetApps(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetApps(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApps", reflect.TypeOf((*MockMiddleServer)(nil).GetApps), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApps", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetApps), arg0, arg1)
 }
 
 // GetAvailableApp mocks base method.
-func (m *MockMiddleServer) GetAvailableApp(arg0 context.Context, arg1 *pb.TextRequest) (*pb.AppReply, error) {
+func (m *MockMiddleSvcServer) GetAvailableApp(arg0 context.Context, arg1 *pb.TextRequest) (*pb.AppReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAvailableApp", arg0, arg1)
 	ret0, _ := ret[0].(*pb.AppReply)
@@ -449,13 +449,13 @@ func (m *MockMiddleServer) GetAvailableApp(arg0 context.Context, arg1 *pb.TextRe
 }
 
 // GetAvailableApp indicates an expected call of GetAvailableApp.
-func (mr *MockMiddleServerMockRecorder) GetAvailableApp(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetAvailableApp(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableApp", reflect.TypeOf((*MockMiddleServer)(nil).GetAvailableApp), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableApp", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetAvailableApp), arg0, arg1)
 }
 
 // GetCredential mocks base method.
-func (m *MockMiddleServer) GetCredential(arg0 context.Context, arg1 *pb.CredentialRequest) (*pb.CredentialReply, error) {
+func (m *MockMiddleSvcServer) GetCredential(arg0 context.Context, arg1 *pb.CredentialRequest) (*pb.CredentialReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredential", arg0, arg1)
 	ret0, _ := ret[0].(*pb.CredentialReply)
@@ -464,13 +464,13 @@ func (m *MockMiddleServer) GetCredential(arg0 context.Context, arg1 *pb.Credenti
 }
 
 // GetCredential indicates an expected call of GetCredential.
-func (mr *MockMiddleServerMockRecorder) GetCredential(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetCredential(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredential", reflect.TypeOf((*MockMiddleServer)(nil).GetCredential), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredential", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCredential), arg0, arg1)
 }
 
 // GetCredentials mocks base method.
-func (m *MockMiddleServer) GetCredentials(arg0 context.Context, arg1 *pb.TextRequest) (*pb.CredentialsReply, error) {
+func (m *MockMiddleSvcServer) GetCredentials(arg0 context.Context, arg1 *pb.TextRequest) (*pb.CredentialsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredentials", arg0, arg1)
 	ret0, _ := ret[0].(*pb.CredentialsReply)
@@ -479,13 +479,13 @@ func (m *MockMiddleServer) GetCredentials(arg0 context.Context, arg1 *pb.TextReq
 }
 
 // GetCredentials indicates an expected call of GetCredentials.
-func (mr *MockMiddleServerMockRecorder) GetCredentials(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetCredentials(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleServer)(nil).GetCredentials), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCredentials), arg0, arg1)
 }
 
 // GetMaskingCredentials mocks base method.
-func (m *MockMiddleServer) GetMaskingCredentials(arg0 context.Context, arg1 *pb.TextRequest) (*pb.MaskingReply, error) {
+func (m *MockMiddleSvcServer) GetMaskingCredentials(arg0 context.Context, arg1 *pb.TextRequest) (*pb.MaskingReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMaskingCredentials", arg0, arg1)
 	ret0, _ := ret[0].(*pb.MaskingReply)
@@ -494,13 +494,13 @@ func (m *MockMiddleServer) GetMaskingCredentials(arg0 context.Context, arg1 *pb.
 }
 
 // GetMaskingCredentials indicates an expected call of GetMaskingCredentials.
-func (mr *MockMiddleServerMockRecorder) GetMaskingCredentials(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetMaskingCredentials(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleServer)(nil).GetMaskingCredentials), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMaskingCredentials), arg0, arg1)
 }
 
 // GetMenu mocks base method.
-func (m *MockMiddleServer) GetMenu(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockMiddleSvcServer) GetMenu(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMenu", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -509,13 +509,13 @@ func (m *MockMiddleServer) GetMenu(arg0 context.Context, arg1 *pb.TextRequest) (
 }
 
 // GetMenu indicates an expected call of GetMenu.
-func (mr *MockMiddleServerMockRecorder) GetMenu(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetMenu(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleServer)(nil).GetMenu), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMenu), arg0, arg1)
 }
 
 // GetPage mocks base method.
-func (m *MockMiddleServer) GetPage(arg0 context.Context, arg1 *pb.PageRequest) (*pb.PageReply, error) {
+func (m *MockMiddleSvcServer) GetPage(arg0 context.Context, arg1 *pb.PageRequest) (*pb.PageReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPage", arg0, arg1)
 	ret0, _ := ret[0].(*pb.PageReply)
@@ -524,13 +524,13 @@ func (m *MockMiddleServer) GetPage(arg0 context.Context, arg1 *pb.PageRequest) (
 }
 
 // GetPage indicates an expected call of GetPage.
-func (mr *MockMiddleServerMockRecorder) GetPage(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetPage(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPage", reflect.TypeOf((*MockMiddleServer)(nil).GetPage), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPage", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetPage), arg0, arg1)
 }
 
 // GetQrUrl mocks base method.
-func (m *MockMiddleServer) GetQrUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockMiddleSvcServer) GetQrUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetQrUrl", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -539,13 +539,13 @@ func (m *MockMiddleServer) GetQrUrl(arg0 context.Context, arg1 *pb.TextRequest) 
 }
 
 // GetQrUrl indicates an expected call of GetQrUrl.
-func (mr *MockMiddleServerMockRecorder) GetQrUrl(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetQrUrl(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleServer)(nil).GetQrUrl), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetQrUrl), arg0, arg1)
 }
 
 // GetRoleImageUrl mocks base method.
-func (m *MockMiddleServer) GetRoleImageUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockMiddleSvcServer) GetRoleImageUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRoleImageUrl", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -554,13 +554,13 @@ func (m *MockMiddleServer) GetRoleImageUrl(arg0 context.Context, arg1 *pb.TextRe
 }
 
 // GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
-func (mr *MockMiddleServerMockRecorder) GetRoleImageUrl(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetRoleImageUrl(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleServer)(nil).GetRoleImageUrl), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetRoleImageUrl), arg0, arg1)
 }
 
 // GetSetting mocks base method.
-func (m *MockMiddleServer) GetSetting(arg0 context.Context, arg1 *pb.TextRequest) (*pb.SettingReply, error) {
+func (m *MockMiddleSvcServer) GetSetting(arg0 context.Context, arg1 *pb.TextRequest) (*pb.SettingReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSetting", arg0, arg1)
 	ret0, _ := ret[0].(*pb.SettingReply)
@@ -569,13 +569,13 @@ func (m *MockMiddleServer) GetSetting(arg0 context.Context, arg1 *pb.TextRequest
 }
 
 // GetSetting indicates an expected call of GetSetting.
-func (mr *MockMiddleServerMockRecorder) GetSetting(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetSetting(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetting", reflect.TypeOf((*MockMiddleServer)(nil).GetSetting), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetting", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetSetting), arg0, arg1)
 }
 
 // GetSettings mocks base method.
-func (m *MockMiddleServer) GetSettings(arg0 context.Context, arg1 *pb.TextRequest) (*pb.SettingsReply, error) {
+func (m *MockMiddleSvcServer) GetSettings(arg0 context.Context, arg1 *pb.TextRequest) (*pb.SettingsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSettings", arg0, arg1)
 	ret0, _ := ret[0].(*pb.SettingsReply)
@@ -584,13 +584,13 @@ func (m *MockMiddleServer) GetSettings(arg0 context.Context, arg1 *pb.TextReques
 }
 
 // GetSettings indicates an expected call of GetSettings.
-func (mr *MockMiddleServerMockRecorder) GetSettings(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetSettings(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSettings", reflect.TypeOf((*MockMiddleServer)(nil).GetSettings), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSettings", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetSettings), arg0, arg1)
 }
 
 // GetStats mocks base method.
-func (m *MockMiddleServer) GetStats(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockMiddleSvcServer) GetStats(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStats", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -599,13 +599,13 @@ func (m *MockMiddleServer) GetStats(arg0 context.Context, arg1 *pb.TextRequest) 
 }
 
 // GetStats indicates an expected call of GetStats.
-func (mr *MockMiddleServerMockRecorder) GetStats(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) GetStats(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleServer)(nil).GetStats), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetStats), arg0, arg1)
 }
 
 // StoreAppOAuth mocks base method.
-func (m *MockMiddleServer) StoreAppOAuth(arg0 context.Context, arg1 *pb.AppRequest) (*pb.StateReply, error) {
+func (m *MockMiddleSvcServer) StoreAppOAuth(arg0 context.Context, arg1 *pb.AppRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StoreAppOAuth", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -614,7 +614,7 @@ func (m *MockMiddleServer) StoreAppOAuth(arg0 context.Context, arg1 *pb.AppReque
 }
 
 // StoreAppOAuth indicates an expected call of StoreAppOAuth.
-func (mr *MockMiddleServerMockRecorder) StoreAppOAuth(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMiddleSvcServerMockRecorder) StoreAppOAuth(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleServer)(nil).StoreAppOAuth), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleSvcServer)(nil).StoreAppOAuth), arg0, arg1)
 }

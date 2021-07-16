@@ -29,7 +29,7 @@ type Crawler struct {
 	rdb       *redis.Client
 	logger    log.Logger
 	subscribe pb.SubscribeClient
-	middle    pb.MiddleClient
+	middle    pb.MiddleSvcClient
 	message   pb.MessageClient
 }
 
@@ -45,7 +45,7 @@ func (s *Crawler) SetService(
 	rdb *redis.Client,
 	logger log.Logger,
 	subscribe pb.SubscribeClient,
-	middle pb.MiddleClient,
+	middle pb.MiddleSvcClient,
 	message pb.MessageClient) {
 	s.c = c
 	s.rdb = rdb
@@ -260,9 +260,11 @@ func (s *Crawler) send(channel, name string, out []string) {
 		}
 
 		reply, err := s.middle.CreatePage(context.Background(), &pb.PageRequest{
-			Type:    "json",
-			Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
-			Content: util.ByteToString(j),
+			Page: &pb.Page{
+				Type:    "json",
+				Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
+				Content: util.ByteToString(j),
+			},
 		})
 		if err != nil {
 			return

@@ -125,7 +125,7 @@ func TestMiddle_CreatePage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.PageRequest{Type: "html", Title: "title", Content: "test"}},
+			args{context.Background(), &pb.PageRequest{Page: &pb.Page{Type: "html", Title: "title", Content: "test"}}},
 			false,
 		},
 	}
@@ -171,12 +171,14 @@ func TestMiddle_GetPage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.PageRequest{Uuid: "test"}},
+			args{context.Background(), &pb.PageRequest{Page: &pb.Page{Uuid: "test"}}},
 			&pb.PageReply{
-				Uuid:    "test",
-				Title:   "test",
-				Content: "test",
-				Type:    "html",
+				Page: &pb.Page{
+					Uuid:    "test",
+					Title:   "test",
+					Content: "test",
+					Type:    "html",
+				},
 			},
 			false,
 		},
@@ -329,21 +331,21 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.AppRequest{Type: "github", Token: "test", Extra: "{}"}},
+			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.AppRequest{Type: "github", Token: "test", Extra: "{}"}},
+			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.AppRequest{Type: "github", Token: "", Extra: "{}"}},
+			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "", Extra: "{}"}}},
 			&pb.StateReply{State: false},
 			false,
 		},

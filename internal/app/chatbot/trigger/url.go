@@ -59,9 +59,11 @@ func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 
 		// store
 		reply, err := comp.Middle.CreatePage(ctx, &pb.PageRequest{
-			Title:   title,
-			Content: util.ByteToString(resp.Body()),
-			Type:    "html",
+			Page: &pb.Page{
+				Title:   title,
+				Content: util.ByteToString(resp.Body()),
+				Type:    "html",
+			},
 		})
 		if err != nil {
 			return

@@ -24,7 +24,7 @@ func TestMenuRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		middle.EXPECT().GetMenu(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "menu ..."}, nil),
 	)
@@ -39,7 +39,7 @@ func TestQrRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		middle.EXPECT().GetQrUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://qr.test/abc"}, nil),
 	)
@@ -170,7 +170,7 @@ func TestStatsRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		middle.EXPECT().GetStats(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "stats ..."}, nil),
 	)
@@ -200,7 +200,7 @@ func TestRoleRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		middle.EXPECT().GetRoleImageUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://web.test/role/test"}, nil),
 	)

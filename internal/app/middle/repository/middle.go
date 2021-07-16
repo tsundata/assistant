@@ -5,13 +5,14 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"time"
 )
 
 type MiddleRepository interface {
-	CreatePage(page model.Page) (int64, error)
-	GetPageByUUID(uuid string) (model.Page, error)
+	CreatePage(page pb.Page) (int64, error)
+	GetPageByUUID(uuid string) (pb.Page, error)
 	ListApps() ([]model.App, error)
 	GetAvailableAppByType(t string) (model.App, error)
 	GetAppByType(t string) (model.App, error)
@@ -32,7 +33,7 @@ func NewMysqlMiddleRepository(logger log.Logger, db *sqlx.DB) MiddleRepository {
 	return &MysqlMiddleRepository{logger: logger, db: db}
 }
 
-func (r *MysqlMiddleRepository) CreatePage(page model.Page) (int64, error) {
+func (r *MysqlMiddleRepository) CreatePage(page pb.Page) (int64, error) {
 	res, err := r.db.NamedExec("INSERT INTO `pages` (`uuid`, `type`, `title`, `content`) VALUES (:uuid, :type, :title, :content)", page)
 	if err != nil {
 		return 0, err
@@ -44,11 +45,11 @@ func (r *MysqlMiddleRepository) CreatePage(page model.Page) (int64, error) {
 	return id, nil
 }
 
-func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (model.Page, error) {
-	var find model.Page
+func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (pb.Page, error) {
+	var find pb.Page
 	err := r.db.Get(&find, "SELECT uuid, `type`, title, content FROM `pages` WHERE `uuid` = ?", uuid)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.Page{}, err
+		return pb.Page{}, err
 	}
 	return find, nil
 }

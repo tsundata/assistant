@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
@@ -14,7 +15,7 @@ func TestMiddleRepository_CreatePage(t *testing.T) {
 	}
 	uuid, _ := util.GenerateUUID()
 	type args struct {
-		page model.Page
+		page pb.Page
 	}
 	tests := []struct {
 		name    string
@@ -22,7 +23,7 @@ func TestMiddleRepository_CreatePage(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{page: model.Page{UUID: uuid}}, false},
+		{"case1", sto, args{page: pb.Page{Uuid: uuid}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

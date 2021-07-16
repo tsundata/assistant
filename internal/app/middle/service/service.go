@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Middle) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterMiddleServer(s, ps)
+		pb.RegisterMiddleSvcServer(s, ps)
 	}
 }
 

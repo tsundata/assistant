@@ -387,10 +387,12 @@ func (v *Github) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) erro
 		return err
 	}
 	appReply, err := gateway.StoreAppOAuth(&pb.AppRequest{
-		Name:  ID,
-		Type:  ID,
-		Token: v.accessToken,
-		Extra: util.ByteToString(extra),
+		App: &pb.App{
+			Name:  ID,
+			Type:  ID,
+			Token: v.accessToken,
+			Extra: util.ByteToString(extra),
+		},
 	})
 	if err != nil {
 		return err

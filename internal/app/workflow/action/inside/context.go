@@ -19,7 +19,7 @@ type Component struct {
 	RDB     *redis.Client
 	Bus     event.Bus
 	Logger  log.Logger
-	Middle  pb.MiddleClient
+	Middle  pb.MiddleSvcClient
 	Message pb.MessageClient
 }
 

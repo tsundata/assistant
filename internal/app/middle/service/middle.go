@@ -81,11 +81,11 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 		return nil, err
 	}
 
-	page := model.Page{
-		UUID:    uuid,
-		Type:    payload.GetType(),
-		Title:   payload.GetTitle(),
-		Content: payload.GetContent(),
+	page := pb.Page{
+		Uuid:    uuid,
+		Type:    payload.Page.GetType(),
+		Title:   payload.Page.GetTitle(),
+		Content: payload.Page.GetContent(),
 	}
 
 	_, err = s.repo.CreatePage(page)
@@ -94,21 +94,23 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 	}
 
 	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/page/%s", s.conf.Web.Url, page.UUID),
+		Text: fmt.Sprintf("%s/page/%s", s.conf.Web.Url, page.Uuid),
 	}, nil
 }
 
 func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
-	find, err := s.repo.GetPageByUUID(payload.GetUuid())
+	find, err := s.repo.GetPageByUUID(payload.Page.GetUuid())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.PageReply{
-		Uuid:    find.UUID,
-		Type:    find.Type,
-		Title:   find.Title,
-		Content: find.Content,
+		Page: &pb.Page{
+			Uuid:    find.Uuid,
+			Type:    find.Type,
+			Title:   find.Title,
+			Content: find.Content,
+		},
 	}, nil
 }
 
@@ -134,7 +136,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 			Name:         app.Name,
 			Token:        app.Token,
 			Extra:        app.Extra,
-			Time:         app.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreatedAt:    app.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -184,28 +186,28 @@ func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*p
 }
 
 func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
-	if payload.GetToken() == "" {
+	if payload.App.GetToken() == "" {
 		return &pb.StateReply{
 			State: false,
 		}, nil
 	}
 
-	app, err := s.repo.GetAppByType(payload.GetType())
+	app, err := s.repo.GetAppByType(payload.App.GetType())
 	if err != nil {
 		return nil, err
 	}
 
 	if app.ID > 0 {
-		err = s.repo.UpdateAppByID(int64(app.ID), payload.GetToken(), payload.GetExtra())
+		err = s.repo.UpdateAppByID(int64(app.ID), payload.App.GetToken(), payload.App.GetExtra())
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		_, err = s.repo.CreateApp(model.App{
-			Name:  payload.GetName(),
-			Type:  payload.GetType(),
-			Token: payload.GetToken(),
-			Extra: payload.GetExtra(),
+			Name:  payload.App.GetName(),
+			Type:  payload.App.GetType(),
+			Token: payload.App.GetToken(),
+			Extra: payload.App.GetExtra(),
 		})
 		if err != nil {
 			return nil, err
@@ -260,10 +262,10 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 	var credentials []*pb.Credential
 	for _, item := range items {
 		credentials = append(credentials, &pb.Credential{
-			Name:    item.Name,
-			Type:    item.Type,
-			Content: item.Content,
-			Time:    item.CreatedAt.Format("2006-01-02 15:04:05"),
+			Name:      item.Name,
+			Type:      item.Type,
+			Content:   item.Content,
+			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 

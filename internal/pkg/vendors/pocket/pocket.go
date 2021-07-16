@@ -174,10 +174,12 @@ func (v *Pocket) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) erro
 			return err
 		}
 		appReply, err := gateway.StoreAppOAuth(&pb.AppRequest{
-			Name:  "pocket",
-			Type:  "pocket",
-			Token: v.accessToken,
-			Extra: util.ByteToString(extra),
+			App: &pb.App{
+				Name:  "pocket",
+				Type:  "pocket",
+				Token: v.accessToken,
+				Extra: util.ByteToString(extra),
+			},
 		})
 		if err != nil {
 			return err

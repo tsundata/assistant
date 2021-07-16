@@ -10,7 +10,7 @@ type Component struct {
 	Bus    event.Bus
 	Logger log.Logger
 
-	Middle pb.MiddleClient
+	Middle pb.MiddleSvcClient
 	Todo   pb.TodoSvcClient
 	User   pb.UserSvcClient
 }

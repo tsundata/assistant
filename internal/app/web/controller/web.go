@@ -59,21 +59,21 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	if reply.GetContent() == "" {
+	if reply.Page.GetContent() == "" {
 		return c.Status(http.StatusBadRequest).SendString("content empty")
 	}
 
-	if reply.GetType() == "html" {
+	if reply.Page.GetType() == "html" {
 		c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
-		return c.SendString(reply.GetContent())
+		return c.SendString(reply.Page.GetContent())
 	}
 
-	if reply.GetType() != "json" {
+	if reply.Page.GetType() != "json" {
 		return c.Status(http.StatusBadRequest).SendString("error type")
 	}
 
 	var list []string
-	err = json.Unmarshal([]byte(reply.GetContent()), &list)
+	err = json.Unmarshal([]byte(reply.Page.GetContent()), &list)
 	if err != nil {
 		wc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -95,9 +95,9 @@ func (wc *WebController) Page(c *fiber.Ctx) error {
 	}
 
 	comp := component.Html{
-		Title: reply.GetTitle(),
+		Title: reply.Page.GetTitle(),
 		Page: &component.Page{
-			Title: reply.GetTitle(),
+			Title: reply.Page.GetTitle(),
 			Content: &component.List{
 				Items: items,
 			},

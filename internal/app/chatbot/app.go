@@ -12,7 +12,7 @@ import (
 )
 
 func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server,
-	middle pb.MiddleClient, todo pb.TodoSvcClient, user pb.UserSvcClient) (*app.Application, error) {
+	middle pb.MiddleSvcClient, todo pb.TodoSvcClient, user pb.UserSvcClient) (*app.Application, error) {
 	// event bus register
 	err := listener.RegisterEventHandler(bus, logger, middle, todo, user)
 	if err != nil {

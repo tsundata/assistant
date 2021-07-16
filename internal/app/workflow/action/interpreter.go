@@ -24,7 +24,7 @@ func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
 	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
 }
 
-func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger log.Logger) {
+func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleSvcClient, logger log.Logger) {
 	i.Comp.Bus = bus
 	i.Comp.RDB = rdb
 	i.Comp.Logger = logger

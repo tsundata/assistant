@@ -19,7 +19,7 @@ type Component struct {
 	Logger log.Logger
 
 	MessageClient     pb.MessageClient
-	MiddleClient      pb.MiddleClient
+	MiddleClient      pb.MiddleSvcClient
 	SubscribeClient   pb.SubscribeClient
 	WorkflowSvcClient pb.WorkflowSvcClient
 	StorageClient     pb.StorageClient
@@ -32,7 +32,7 @@ func (c Component) Message() pb.MessageClient {
 	return c.MessageClient
 }
 
-func (c Component) Middle() pb.MiddleClient {
+func (c Component) Middle() pb.MiddleSvcClient {
 	return c.MiddleClient
 }
 
@@ -77,7 +77,7 @@ type IComponent interface {
 	GetRedis() *redis.Client
 	GetLogger() log.Logger
 	Message() pb.MessageClient
-	Middle() pb.MiddleClient
+	Middle() pb.MiddleSvcClient
 	Subscribe() pb.SubscribeClient
 	Workflow() pb.WorkflowSvcClient
 	Storage() pb.StorageClient
@@ -92,7 +92,7 @@ func NewComponent(
 	logger log.Logger,
 
 	messageClient pb.MessageClient,
-	middleClient pb.MiddleClient,
+	middleClient pb.MiddleSvcClient,
 	subscribeClient pb.SubscribeClient,
 	workflowClient pb.WorkflowSvcClient,
 	storageClient pb.StorageClient,

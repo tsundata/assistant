@@ -22,7 +22,7 @@ type Workflow struct {
 	rdb     *redis.Client
 	logger  log.Logger
 	message pb.MessageClient
-	middle  pb.MiddleClient
+	middle  pb.MiddleSvcClient
 	repo    repository.WorkflowRepository
 }
 
@@ -31,7 +31,7 @@ func NewWorkflow(
 	rdb *redis.Client,
 	repo repository.WorkflowRepository,
 	message pb.MessageClient,
-	middle pb.MiddleClient,
+	middle pb.MiddleSvcClient,
 	logger log.Logger) *Workflow {
 	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message, middle: middle}
 }

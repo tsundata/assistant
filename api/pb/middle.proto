@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Middle {
+service MiddleSvc {
   rpc CreatePage(PageRequest) returns (TextReply) {}
   rpc GetPage(PageRequest) returns (PageReply) {}
   rpc GetQrUrl(TextRequest) returns (TextReply) {}
@@ -25,28 +25,28 @@ service Middle {
 }
 
 message PageRequest {
-  // @inject_tag: query:"uuid"
-  string uuid = 1;
-  // @inject_tag: query:"title"
-  string title = 2;
-  // @inject_tag: query:"content"
-  string content = 3;
-  // @inject_tag: query:"type"
-  string type = 4;
+  Page page = 1;
 }
 
 message PageReply {
-  string uuid = 1;
-  string title = 2;
-  string content = 3;
-  string type = 4;
+  Page page = 1;
+}
+
+message Page {
+  int64 id = 1;
+  // @inject_tag: query:"uuid"
+  string uuid = 2;
+  // @inject_tag: query:"title"
+  string title = 3;
+  // @inject_tag: query:"content"
+  string content = 4;
+  // @inject_tag: query:"type"
+  string type = 5;
+  string createdAt = 6;
 }
 
 message AppRequest {
-  string name = 1;
-  string type = 2;
-  string token = 3;
-  string extra = 4;
+  App app = 1;
 }
 
 message AppsReply {
@@ -61,13 +61,15 @@ message AppReply {
 }
 
 message App {
-  string title = 1;
-  bool isAuthorized = 2;
-  string type = 3;
-  string name = 4;
-  string token = 5;
-  string extra = 6;
-  string time = 7;
+  int64 id = 1;
+  string type = 2;
+  string name = 3;
+  string token = 4;
+  string extra = 5;
+  string title = 6;
+  bool isAuthorized = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
 }
 
 message CredentialsReply {
@@ -75,10 +77,12 @@ message CredentialsReply {
 }
 
 message Credential {
-  string name = 1;
-  string type = 2;
-  string content = 3;
-  string time = 4;
+  int64  id = 1;
+  string name = 2;
+  string type = 3;
+  string content = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
 }
 
 message MaskingReply {

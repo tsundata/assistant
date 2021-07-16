@@ -71,7 +71,7 @@ func TestWorkflowRepos(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		middle.EXPECT().
 			GetAvailableApp(gomock.Any(), gomock.Any()).
