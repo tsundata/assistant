@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rqlite/gorqlite"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/gorqlite"
 )
 
 type TodoRepository interface {
@@ -106,15 +106,61 @@ func (r *RqliteTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
 }
 
 func (r *RqliteTodoRepository) ListTodos() ([]pb.Todo, error) {
-	panic("implement me")
+	rows, err := r.db.QueryOne("SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC, `created_at` DESC")
+	if err != nil {
+		return nil, err
+	}
+
+	var items []pb.Todo
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return nil, err
+		}
+		var item pb.Todo
+		util.Inject(item, m)
+		items = append(items, item)
+	}
+
+	return items, nil
 }
 
 func (r *RqliteTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
-	panic("implement me")
+	rows, err := r.db.QueryOne("SELECT * FROM `todos` WHERE `complete` <> 1 AND `is_remind_at_time` = 1 ORDER BY `priority` DESC")
+	if err != nil {
+		return nil, err
+	}
+
+	var items []pb.Todo
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return nil, err
+		}
+		var item pb.Todo
+		util.Inject(item, m)
+		items = append(items, item)
+	}
+
+	return items, nil
 }
 
 func (r *RqliteTodoRepository) GetTodo(id int64) (pb.Todo, error) {
-	panic("implement me")
+	rows, err := r.db.QueryOne(fmt.Sprintf("SELECT * FROM `todos` WHERE id = %d", id))
+	if err != nil {
+		return pb.Todo{}, err
+	}
+
+	var find pb.Todo
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return pb.Todo{}, err
+		}
+		util.Inject(&find, m)
+	}
+
+	return find, nil
 }
 
 func (r *RqliteTodoRepository) CompleteTodo(id int64) error {

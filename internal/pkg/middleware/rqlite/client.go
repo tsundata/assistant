@@ -2,8 +2,8 @@ package rqlite
 
 import (
 	"github.com/google/wire"
-	"github.com/rqlite/gorqlite"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/gorqlite"
 )
 
 func New(c *config.AppConfig) (gorqlite.Connection, error) {

@@ -37,6 +37,7 @@ tasks:
       - go run github.com/tsundata/assistant/cmd/cli clear
       - protoc -I api/pb ./api/pb/*.proto --gogo_out=plugins=grpc:.
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
+      - protoc-go-inject-tag -input=./api/pb/todo.pb.go
       - git add api/pb/*.pb.go
 
   release:

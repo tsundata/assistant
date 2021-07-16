@@ -554,8 +554,6 @@ github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rollbar/rollbar-go v1.4.0 h1:0hbintwgQUMvgGVAZiV3vOAtL71316PBI1o49PGzIzw=
 github.com/rollbar/rollbar-go v1.4.0/go.mod h1:kLQ9gP3WCRGrvJmF0ueO3wK9xWocej8GRX98D8sa39w=
-github.com/rqlite/gorqlite v0.0.0-20210514125552-08ff1e76b22f h1:BSnJgAfHzEp7o8PYJ7YfwAVHhqu7BYUTggcn/LGlUWY=
-github.com/rqlite/gorqlite v0.0.0-20210514125552-08ff1e76b22f/go.mod h1:UW/gxgQwSePTvL1KA8QEHsXeYHP4xkoXgbDdN781p34=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdhQKdks0=
@@ -636,6 +634,8 @@ github.com/tklauser/numcpus v0.2.1/go.mod h1:9aU+wOc6WjUIZEwWMP62PL/41d65P+iks1g
 github.com/tklauser/numcpus v0.2.2 h1:oyhllyrScuYI6g+h/zUvNXNp1wy7x8qQy3t/piefldA=
 github.com/tklauser/numcpus v0.2.2/go.mod h1:x3qojaO3uyYt0i56EW/VUYs7uBvdl2fkfZFu0T9wgjM=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
+github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd h1:T3jtghR5ge7W4ByrEYN8oGZvsWv3aHgACfTTQAEnc/c=
+github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd/go.mod h1:+PWSpYmpOBDp66bGyyi6GACxb8Yt2lI2vsM/aXzdQhY=
 github.com/uber/jaeger-client-go v2.29.1+incompatible h1:R9ec3zO3sGpzs0abd43Y+fBZRJ9uiH6lXyR/+u6brW4=
 github.com/uber/jaeger-client-go v2.29.1+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
 github.com/uber/jaeger-lib v2.4.0+incompatible h1:fY7QsGQWiCt8pajv4r7JEvmATdCVaWxXbjwyYwsNaLQ=
