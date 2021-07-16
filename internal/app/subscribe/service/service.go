@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Subscribe) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterSubscribeServer(s, ps)
+		pb.RegisterSubscribeSvcServer(s, ps)
 	}
 }
 

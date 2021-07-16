@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Task {
+service TaskSvc {
   rpc Delay(JobRequest) returns (StateReply) {}
 }
 

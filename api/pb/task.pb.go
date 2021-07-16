@@ -85,17 +85,17 @@ func init() {
 func init() { proto.RegisterFile("task.proto", fileDescriptor_ce5d8dd45b4a91ff) }
 
 var fileDescriptor_ce5d8dd45b4a91ff = []byte{
-	// 157 bytes of a gzipped FileDescriptorProto
+	// 160 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0x49, 0x2c, 0xce,
 	0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x92, 0xe2, 0x4a, 0x4a, 0x2c, 0x4e,
 	0x85, 0xf0, 0x95, 0x3c, 0xb8, 0xb8, 0xbc, 0xf2, 0x93, 0x82, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b,
 	0x84, 0x84, 0xb8, 0x58, 0xf2, 0x12, 0x73, 0x53, 0x25, 0x18, 0x15, 0x18, 0x35, 0x38, 0x83, 0xc0,
 	0x6c, 0x90, 0x58, 0x62, 0x51, 0x7a, 0xb1, 0x04, 0x13, 0x44, 0x0c, 0xc4, 0x06, 0x89, 0x95, 0x64,
-	0xe6, 0xa6, 0x4a, 0x30, 0x43, 0xc4, 0x40, 0x6c, 0x23, 0x43, 0x2e, 0x96, 0x90, 0xc4, 0xe2, 0x6c,
-	0x21, 0x4d, 0x2e, 0x56, 0x97, 0xd4, 0x9c, 0xc4, 0x4a, 0x21, 0x3e, 0xbd, 0x82, 0x24, 0x3d, 0x84,
-	0xe1, 0x52, 0x60, 0x7e, 0x70, 0x49, 0x62, 0x49, 0x6a, 0x50, 0x6a, 0x41, 0x4e, 0xa5, 0x12, 0x83,
-	0x13, 0x47, 0x14, 0x5b, 0x62, 0x41, 0xa6, 0x7e, 0x41, 0x52, 0x12, 0x1b, 0xd8, 0x35, 0xc6, 0x80,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0xfd, 0xd1, 0x0f, 0xf6, 0xab, 0x00, 0x00, 0x00,
+	0xe6, 0xa6, 0x4a, 0x30, 0x43, 0xc4, 0x40, 0x6c, 0x23, 0x13, 0x2e, 0xf6, 0x90, 0xc4, 0xe2, 0xec,
+	0xe0, 0xb2, 0x64, 0x21, 0x4d, 0x2e, 0x56, 0x97, 0xd4, 0x9c, 0xc4, 0x4a, 0x21, 0x3e, 0xbd, 0x82,
+	0x24, 0x3d, 0x84, 0xf9, 0x52, 0x60, 0x7e, 0x70, 0x49, 0x62, 0x49, 0x6a, 0x50, 0x6a, 0x41, 0x4e,
+	0xa5, 0x12, 0x83, 0x13, 0x47, 0x14, 0x5b, 0x62, 0x41, 0xa6, 0x7e, 0x41, 0x52, 0x12, 0x1b, 0xd8,
+	0x41, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x10, 0x56, 0x5d, 0xd6, 0xae, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -106,72 +106,72 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// TaskClient is the client API for Task service.
+// TaskSvcClient is the client API for TaskSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type TaskClient interface {
+type TaskSvcClient interface {
 	Delay(ctx context.Context, in *JobRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
-type taskClient struct {
+type taskSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewTaskClient(cc *grpc.ClientConn) TaskClient {
-	return &taskClient{cc}
+func NewTaskSvcClient(cc *grpc.ClientConn) TaskSvcClient {
+	return &taskSvcClient{cc}
 }
 
-func (c *taskClient) Delay(ctx context.Context, in *JobRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *taskSvcClient) Delay(ctx context.Context, in *JobRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Task/Delay", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TaskSvc/Delay", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TaskServer is the server API for Task service.
-type TaskServer interface {
+// TaskSvcServer is the server API for TaskSvc service.
+type TaskSvcServer interface {
 	Delay(context.Context, *JobRequest) (*StateReply, error)
 }
 
-// UnimplementedTaskServer can be embedded to have forward compatible implementations.
-type UnimplementedTaskServer struct {
+// UnimplementedTaskSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedTaskSvcServer struct {
 }
 
-func (*UnimplementedTaskServer) Delay(ctx context.Context, req *JobRequest) (*StateReply, error) {
+func (*UnimplementedTaskSvcServer) Delay(ctx context.Context, req *JobRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delay not implemented")
 }
 
-func RegisterTaskServer(s *grpc.Server, srv TaskServer) {
-	s.RegisterService(&_Task_serviceDesc, srv)
+func RegisterTaskSvcServer(s *grpc.Server, srv TaskSvcServer) {
+	s.RegisterService(&_TaskSvc_serviceDesc, srv)
 }
 
-func _Task_Delay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TaskSvc_Delay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(JobRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TaskServer).Delay(ctx, in)
+		return srv.(TaskSvcServer).Delay(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Task/Delay",
+		FullMethod: "/pb.TaskSvc/Delay",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).Delay(ctx, req.(*JobRequest))
+		return srv.(TaskSvcServer).Delay(ctx, req.(*JobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Task_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Task",
-	HandlerType: (*TaskServer)(nil),
+var _TaskSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.TaskSvc",
+	HandlerType: (*TaskSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Delay",
-			Handler:    _Task_Delay_Handler,
+			Handler:    _TaskSvc_Delay_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

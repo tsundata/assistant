@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Finance {
+service FinanceSvc {
   rpc CreateBill(BillRequest) returns (StateReply) {}
   rpc GetBill(BillRequest) returns (BillReply) {}
   rpc GetBills(BillRequest) returns (BillsReply) {}

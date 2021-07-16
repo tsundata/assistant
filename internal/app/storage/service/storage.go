@@ -25,7 +25,7 @@ func NewStorage(conf *config.AppConfig, db *sqlx.DB, rdb *redis.Client) *Storage
 	return &Storage{conf: conf, db: db, rdb: rdb}
 }
 
-func (s *Storage) UploadFile(stream pb.Storage_UploadFileServer) error {
+func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
 	fileData := bytes.Buffer{}
 	fileSize := 0
 	req, err := stream.Recv()

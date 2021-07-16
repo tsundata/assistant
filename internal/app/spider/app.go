@@ -15,7 +15,7 @@ func NewApp(
 	c *config.AppConfig,
 	rdb *redis.Client,
 	logger log.Logger,
-	subscribe pb.SubscribeClient,
+	subscribe pb.SubscribeSvcClient,
 	middle pb.MiddleSvcClient,
 	message pb.MessageSvcClient) (*app.Application, error) {
 

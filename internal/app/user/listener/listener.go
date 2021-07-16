@@ -10,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
-func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPClient) error {
+func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
 	err := bus.Subscribe(context.Background(), event.ChangeExpSubject, func(msg *nats.Msg) {
 		var role pb.Role
 		err := json.Unmarshal(msg.Data, &role)

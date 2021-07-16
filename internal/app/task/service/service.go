@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Task) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterTaskServer(s, ps)
+		pb.RegisterTaskSvcServer(s, ps)
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Finance) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterFinanceServer(s, ps)
+		pb.RegisterFinanceSvcServer(s, ps)
 	}
 }
 

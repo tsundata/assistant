@@ -186,7 +186,7 @@ func init() {
 func init() { proto.RegisterFile("storage.proto", fileDescriptor_0d2c4ccf1453ffdb) }
 
 var fileDescriptor_0d2c4ccf1453ffdb = []byte{
-	// 213 bytes of a gzipped FileDescriptorProto
+	// 216 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2d, 0x2e, 0xc9, 0x2f,
 	0x4a, 0x4c, 0x4f, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x0a, 0xe4,
 	0xe2, 0x76, 0xcb, 0xcc, 0x49, 0x0d, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x52, 0xe2, 0x62,
@@ -196,11 +196,11 @@ var fileDescriptor_0d2c4ccf1453ffdb = []byte{
 	0x36, 0x2e, 0x96, 0x94, 0xc4, 0x92, 0x44, 0x25, 0x35, 0x2e, 0x0e, 0x98, 0x1e, 0x21, 0x29, 0x2e,
 	0x8e, 0xb4, 0xcc, 0x9c, 0xd4, 0x90, 0xca, 0x82, 0x54, 0xb0, 0x99, 0x9c, 0x41, 0x70, 0xbe, 0x92,
 	0x3c, 0x17, 0x27, 0xc4, 0xea, 0x82, 0x9c, 0x4a, 0x21, 0x21, 0x2e, 0x96, 0x82, 0xc4, 0x92, 0x0c,
-	0xa8, 0x22, 0x30, 0xdb, 0xc8, 0x9a, 0x8b, 0x3d, 0x18, 0xe2, 0x60, 0x21, 0x03, 0x2e, 0xae, 0xd0,
-	0x82, 0x9c, 0xfc, 0xc4, 0x14, 0x90, 0x0e, 0x21, 0x7e, 0x98, 0xbb, 0xa0, 0xce, 0x96, 0xe2, 0x45,
-	0x08, 0x14, 0xe4, 0x54, 0x2a, 0x31, 0x68, 0x30, 0x3a, 0x71, 0x44, 0xb1, 0x25, 0x16, 0x64, 0xea,
-	0x17, 0x24, 0x25, 0xb1, 0x81, 0x7d, 0x6b, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x92, 0x92, 0xb6,
-	0x44, 0xfe, 0x00, 0x00, 0x00,
+	0xa8, 0x22, 0x30, 0xdb, 0xc8, 0x8e, 0x8b, 0x2b, 0x18, 0xe2, 0xe0, 0xe0, 0xb2, 0x64, 0x21, 0x03,
+	0x2e, 0xae, 0xd0, 0x82, 0x9c, 0xfc, 0xc4, 0x14, 0x90, 0x26, 0x21, 0x7e, 0x98, 0xd3, 0xa0, 0x2e,
+	0x97, 0xe2, 0x45, 0x08, 0x14, 0xe4, 0x54, 0x2a, 0x31, 0x68, 0x30, 0x3a, 0x71, 0x44, 0xb1, 0x25,
+	0x16, 0x64, 0xea, 0x17, 0x24, 0x25, 0xb1, 0x81, 0x3d, 0x6c, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff,
+	0x8a, 0x47, 0x84, 0xc3, 0x01, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -211,45 +211,45 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// StorageClient is the client API for Storage service.
+// StorageSvcClient is the client API for StorageSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type StorageClient interface {
-	UploadFile(ctx context.Context, opts ...grpc.CallOption) (Storage_UploadFileClient, error)
+type StorageSvcClient interface {
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (StorageSvc_UploadFileClient, error)
 }
 
-type storageClient struct {
+type storageSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewStorageClient(cc *grpc.ClientConn) StorageClient {
-	return &storageClient{cc}
+func NewStorageSvcClient(cc *grpc.ClientConn) StorageSvcClient {
+	return &storageSvcClient{cc}
 }
 
-func (c *storageClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (Storage_UploadFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Storage_serviceDesc.Streams[0], "/pb.Storage/UploadFile", opts...)
+func (c *storageSvcClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (StorageSvc_UploadFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_StorageSvc_serviceDesc.Streams[0], "/pb.StorageSvc/UploadFile", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &storageUploadFileClient{stream}
+	x := &storageSvcUploadFileClient{stream}
 	return x, nil
 }
 
-type Storage_UploadFileClient interface {
+type StorageSvc_UploadFileClient interface {
 	Send(*FileRequest) error
 	CloseAndRecv() (*FileReply, error)
 	grpc.ClientStream
 }
 
-type storageUploadFileClient struct {
+type storageSvcUploadFileClient struct {
 	grpc.ClientStream
 }
 
-func (x *storageUploadFileClient) Send(m *FileRequest) error {
+func (x *storageSvcUploadFileClient) Send(m *FileRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *storageUploadFileClient) CloseAndRecv() (*FileReply, error) {
+func (x *storageSvcUploadFileClient) CloseAndRecv() (*FileReply, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -260,42 +260,42 @@ func (x *storageUploadFileClient) CloseAndRecv() (*FileReply, error) {
 	return m, nil
 }
 
-// StorageServer is the server API for Storage service.
-type StorageServer interface {
-	UploadFile(Storage_UploadFileServer) error
+// StorageSvcServer is the server API for StorageSvc service.
+type StorageSvcServer interface {
+	UploadFile(StorageSvc_UploadFileServer) error
 }
 
-// UnimplementedStorageServer can be embedded to have forward compatible implementations.
-type UnimplementedStorageServer struct {
+// UnimplementedStorageSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedStorageSvcServer struct {
 }
 
-func (*UnimplementedStorageServer) UploadFile(srv Storage_UploadFileServer) error {
+func (*UnimplementedStorageSvcServer) UploadFile(srv StorageSvc_UploadFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 
-func RegisterStorageServer(s *grpc.Server, srv StorageServer) {
-	s.RegisterService(&_Storage_serviceDesc, srv)
+func RegisterStorageSvcServer(s *grpc.Server, srv StorageSvcServer) {
+	s.RegisterService(&_StorageSvc_serviceDesc, srv)
 }
 
-func _Storage_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(StorageServer).UploadFile(&storageUploadFileServer{stream})
+func _StorageSvc_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StorageSvcServer).UploadFile(&storageSvcUploadFileServer{stream})
 }
 
-type Storage_UploadFileServer interface {
+type StorageSvc_UploadFileServer interface {
 	SendAndClose(*FileReply) error
 	Recv() (*FileRequest, error)
 	grpc.ServerStream
 }
 
-type storageUploadFileServer struct {
+type storageSvcUploadFileServer struct {
 	grpc.ServerStream
 }
 
-func (x *storageUploadFileServer) SendAndClose(m *FileReply) error {
+func (x *storageSvcUploadFileServer) SendAndClose(m *FileReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *storageUploadFileServer) Recv() (*FileRequest, error) {
+func (x *storageSvcUploadFileServer) Recv() (*FileRequest, error) {
 	m := new(FileRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -303,14 +303,14 @@ func (x *storageUploadFileServer) Recv() (*FileRequest, error) {
 	return m, nil
 }
 
-var _Storage_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Storage",
-	HandlerType: (*StorageServer)(nil),
+var _StorageSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.StorageSvc",
+	HandlerType: (*StorageSvcServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "UploadFile",
-			Handler:       _Storage_UploadFile_Handler,
+			Handler:       _StorageSvc_UploadFile_Handler,
 			ClientStreams: true,
 		},
 	},

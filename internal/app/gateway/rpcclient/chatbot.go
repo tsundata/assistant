@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewChatbotClient(client *rpc.Client) (pb.ChatbotClient, error) {
+func NewChatbotClient(client *rpc.Client) (pb.ChatbotSvcClient, error) {
 	conn, err := client.Dial(app.Chatbot, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "chatbot client dial error")
 	}
-	c := pb.NewChatbotClient(conn)
+	c := pb.NewChatbotSvcClient(conn)
 	return c, nil
 }

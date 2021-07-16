@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Subscribe {
+service SubscribeSvc {
   rpc List(SubscribeRequest) returns (SubscribeReply) {}
   rpc Register(SubscribeRequest) returns (StateReply) {}
   rpc Open(SubscribeRequest) returns (StateReply) {}

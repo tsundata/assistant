@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewStorageClient(client *rpc.Client) (pb.StorageClient, error) {
+func NewStorageClient(client *rpc.Client) (pb.StorageSvcClient, error) {
 	conn, err := client.Dial(app.Storage, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "storage client dial error")
 	}
-	c := pb.NewStorageClient(conn)
+	c := pb.NewStorageSvcClient(conn)
 	return c, nil
 }

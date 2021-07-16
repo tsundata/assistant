@@ -20,12 +20,12 @@ type Component struct {
 
 	MessageClient     pb.MessageSvcClient
 	MiddleClient      pb.MiddleSvcClient
-	SubscribeClient   pb.SubscribeClient
+	SubscribeClient   pb.SubscribeSvcClient
 	WorkflowSvcClient pb.WorkflowSvcClient
-	StorageClient     pb.StorageClient
+	StorageClient     pb.StorageSvcClient
 	TodoClient        pb.TodoSvcClient
 	UserClient        pb.UserSvcClient
-	NLPClient         pb.NLPClient
+	NLPClient         pb.NLPSvcClient
 }
 
 func (c Component) Message() pb.MessageSvcClient {
@@ -36,7 +36,7 @@ func (c Component) Middle() pb.MiddleSvcClient {
 	return c.MiddleClient
 }
 
-func (c Component) Subscribe() pb.SubscribeClient {
+func (c Component) Subscribe() pb.SubscribeSvcClient {
 	return c.SubscribeClient
 }
 
@@ -44,7 +44,7 @@ func (c Component) Workflow() pb.WorkflowSvcClient {
 	return c.WorkflowSvcClient
 }
 
-func (c Component) Storage() pb.StorageClient {
+func (c Component) Storage() pb.StorageSvcClient {
 	return c.StorageClient
 }
 
@@ -56,7 +56,7 @@ func (c Component) User() pb.UserSvcClient {
 	return c.UserClient
 }
 
-func (c Component) NLP() pb.NLPClient {
+func (c Component) NLP() pb.NLPSvcClient {
 	return c.NLPClient
 }
 
@@ -78,12 +78,12 @@ type IComponent interface {
 	GetLogger() log.Logger
 	Message() pb.MessageSvcClient
 	Middle() pb.MiddleSvcClient
-	Subscribe() pb.SubscribeClient
+	Subscribe() pb.SubscribeSvcClient
 	Workflow() pb.WorkflowSvcClient
-	Storage() pb.StorageClient
+	Storage() pb.StorageSvcClient
 	Todo() pb.TodoSvcClient
 	User() pb.UserSvcClient
-	NLP() pb.NLPClient
+	NLP() pb.NLPSvcClient
 }
 
 func NewComponent(
@@ -93,12 +93,12 @@ func NewComponent(
 
 	messageClient pb.MessageSvcClient,
 	middleClient pb.MiddleSvcClient,
-	subscribeClient pb.SubscribeClient,
+	subscribeClient pb.SubscribeSvcClient,
 	workflowClient pb.WorkflowSvcClient,
-	storageClient pb.StorageClient,
+	storageClient pb.StorageSvcClient,
 	todoClient pb.TodoSvcClient,
 	userClient pb.UserSvcClient,
-	nlpClient pb.NLPClient,
+	nlpClient pb.NLPSvcClient,
 ) IComponent {
 	return Component{
 		Conf:              conf,

@@ -3,7 +3,7 @@ package pb;
 
 option go_package = "api/pb";
 
-service Chatbot {
+service ChatbotSvc {
   rpc Handle(ChatbotRequest) returns (ChatbotReply) {}
 }
 

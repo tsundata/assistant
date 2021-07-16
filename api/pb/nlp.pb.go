@@ -69,18 +69,18 @@ func init() {
 func init() { proto.RegisterFile("nlp.proto", fileDescriptor_6ebd3cd177a18baf) }
 
 var fileDescriptor_6ebd3cd177a18baf = []byte{
-	// 173 bytes of a gzipped FileDescriptorProto
+	// 176 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcc, 0xcb, 0x29, 0xd0,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x92, 0xe2, 0x4a, 0x4a, 0x2c, 0x4e, 0x85,
 	0xf0, 0x95, 0x14, 0xb8, 0xb8, 0xc2, 0xf3, 0x8b, 0x52, 0x8a, 0x83, 0x52, 0x0b, 0x72, 0x2a, 0x85,
 	0x84, 0xb8, 0x58, 0x4a, 0x52, 0x2b, 0x4a, 0x24, 0x18, 0x15, 0x98, 0x35, 0x38, 0x83, 0xc0, 0x6c,
-	0xa3, 0xa9, 0x8c, 0x5c, 0xcc, 0x7e, 0x3e, 0x01, 0x42, 0xda, 0x5c, 0x6c, 0x01, 0x99, 0x79, 0x95,
-	0x99, 0x79, 0x42, 0xfc, 0x7a, 0x05, 0x49, 0x7a, 0x21, 0xa9, 0x15, 0x25, 0x41, 0xa9, 0x85, 0xa5,
-	0xa9, 0xc5, 0x25, 0x52, 0x7c, 0x20, 0x01, 0x84, 0x31, 0x4a, 0x0c, 0x42, 0x86, 0x5c, 0x3c, 0xc1,
-	0xa9, 0xe9, 0xb9, 0xa9, 0x79, 0x25, 0x89, 0x25, 0x99, 0xf9, 0x44, 0x69, 0xd1, 0xe3, 0xe2, 0x72,
-	0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x2d, 0xc2, 0xd4, 0xc0, 0x8b, 0x10, 0x00, 0xab,
-	0x77, 0xe2, 0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03, 0x7b, 0xc5, 0x18,
-	0x10, 0x00, 0x00, 0xff, 0xff, 0xe2, 0x7d, 0x65, 0x0f, 0xe7, 0x00, 0x00, 0x00,
+	0xa3, 0x19, 0x8c, 0x5c, 0x6c, 0x7e, 0x3e, 0x01, 0xc1, 0x65, 0xc9, 0x42, 0xda, 0x5c, 0x6c, 0x01,
+	0x99, 0x79, 0x95, 0x99, 0x79, 0x42, 0xfc, 0x7a, 0x05, 0x49, 0x7a, 0x21, 0xa9, 0x15, 0x25, 0x41,
+	0xa9, 0x85, 0xa5, 0xa9, 0xc5, 0x25, 0x52, 0x7c, 0x20, 0x01, 0x84, 0x49, 0x4a, 0x0c, 0x42, 0x86,
+	0x5c, 0x3c, 0xc1, 0xa9, 0xe9, 0xb9, 0xa9, 0x79, 0x25, 0x89, 0x25, 0x99, 0xf9, 0x44, 0x69, 0xd1,
+	0xe3, 0xe2, 0x72, 0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x2d, 0xc2, 0xd4, 0xc0, 0x8b,
+	0x10, 0x00, 0xab, 0x77, 0xe2, 0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03,
+	0xfb, 0xc6, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xb6, 0x49, 0x4c, 0xdb, 0xea, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -91,144 +91,144 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// NLPClient is the client API for NLP service.
+// NLPSvcClient is the client API for NLPSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type NLPClient interface {
+type NLPSvcClient interface {
 	Pinyin(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error)
 	Segmentation(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error)
 	Classifier(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 }
 
-type nLPClient struct {
+type nLPSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewNLPClient(cc *grpc.ClientConn) NLPClient {
-	return &nLPClient{cc}
+func NewNLPSvcClient(cc *grpc.ClientConn) NLPSvcClient {
+	return &nLPSvcClient{cc}
 }
 
-func (c *nLPClient) Pinyin(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error) {
+func (c *nLPSvcClient) Pinyin(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error) {
 	out := new(WordsReply)
-	err := c.cc.Invoke(ctx, "/pb.NLP/Pinyin", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.NLPSvc/Pinyin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *nLPClient) Segmentation(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error) {
+func (c *nLPSvcClient) Segmentation(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error) {
 	out := new(WordsReply)
-	err := c.cc.Invoke(ctx, "/pb.NLP/Segmentation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.NLPSvc/Segmentation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *nLPClient) Classifier(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+func (c *nLPSvcClient) Classifier(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
 	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.NLP/Classifier", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.NLPSvc/Classifier", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// NLPServer is the server API for NLP service.
-type NLPServer interface {
+// NLPSvcServer is the server API for NLPSvc service.
+type NLPSvcServer interface {
 	Pinyin(context.Context, *TextRequest) (*WordsReply, error)
 	Segmentation(context.Context, *TextRequest) (*WordsReply, error)
 	Classifier(context.Context, *TextRequest) (*TextReply, error)
 }
 
-// UnimplementedNLPServer can be embedded to have forward compatible implementations.
-type UnimplementedNLPServer struct {
+// UnimplementedNLPSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedNLPSvcServer struct {
 }
 
-func (*UnimplementedNLPServer) Pinyin(ctx context.Context, req *TextRequest) (*WordsReply, error) {
+func (*UnimplementedNLPSvcServer) Pinyin(ctx context.Context, req *TextRequest) (*WordsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Pinyin not implemented")
 }
-func (*UnimplementedNLPServer) Segmentation(ctx context.Context, req *TextRequest) (*WordsReply, error) {
+func (*UnimplementedNLPSvcServer) Segmentation(ctx context.Context, req *TextRequest) (*WordsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Segmentation not implemented")
 }
-func (*UnimplementedNLPServer) Classifier(ctx context.Context, req *TextRequest) (*TextReply, error) {
+func (*UnimplementedNLPSvcServer) Classifier(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Classifier not implemented")
 }
 
-func RegisterNLPServer(s *grpc.Server, srv NLPServer) {
-	s.RegisterService(&_NLP_serviceDesc, srv)
+func RegisterNLPSvcServer(s *grpc.Server, srv NLPSvcServer) {
+	s.RegisterService(&_NLPSvc_serviceDesc, srv)
 }
 
-func _NLP_Pinyin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NLPSvc_Pinyin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NLPServer).Pinyin(ctx, in)
+		return srv.(NLPSvcServer).Pinyin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.NLP/Pinyin",
+		FullMethod: "/pb.NLPSvc/Pinyin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NLPServer).Pinyin(ctx, req.(*TextRequest))
+		return srv.(NLPSvcServer).Pinyin(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NLP_Segmentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NLPSvc_Segmentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NLPServer).Segmentation(ctx, in)
+		return srv.(NLPSvcServer).Segmentation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.NLP/Segmentation",
+		FullMethod: "/pb.NLPSvc/Segmentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NLPServer).Segmentation(ctx, req.(*TextRequest))
+		return srv.(NLPSvcServer).Segmentation(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NLP_Classifier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NLPSvc_Classifier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NLPServer).Classifier(ctx, in)
+		return srv.(NLPSvcServer).Classifier(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.NLP/Classifier",
+		FullMethod: "/pb.NLPSvc/Classifier",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NLPServer).Classifier(ctx, req.(*TextRequest))
+		return srv.(NLPSvcServer).Classifier(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _NLP_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.NLP",
-	HandlerType: (*NLPServer)(nil),
+var _NLPSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.NLPSvc",
+	HandlerType: (*NLPSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Pinyin",
-			Handler:    _NLP_Pinyin_Handler,
+			Handler:    _NLPSvc_Pinyin_Handler,
 		},
 		{
 			MethodName: "Segmentation",
-			Handler:    _NLP_Segmentation_Handler,
+			Handler:    _NLPSvc_Segmentation_Handler,
 		},
 		{
 			MethodName: "Classifier",
-			Handler:    _NLP_Classifier_Handler,
+			Handler:    _NLPSvc_Classifier_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

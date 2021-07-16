@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *NLP) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterNLPServer(s, ps)
+		pb.RegisterNLPSvcServer(s, ps)
 	}
 }
 

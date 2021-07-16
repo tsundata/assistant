@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewNLPClient(client *rpc.Client) (pb.NLPClient, error) {
+func NewNLPClient(client *rpc.Client) (pb.NLPSvcClient, error) {
 	conn, err := client.Dial(app.NLP, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "nlp client dial error")
 	}
-	c := pb.NewNLPClient(conn)
+	c := pb.NewNLPSvcClient(conn)
 	return c, nil
 }

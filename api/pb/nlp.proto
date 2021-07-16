@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service NLP {
+service NLPSvc {
   rpc Pinyin(TextRequest) returns (WordsReply) {}
   rpc Segmentation(TextRequest) returns (WordsReply) {}
   rpc Classifier(TextRequest) returns (TextReply) {}

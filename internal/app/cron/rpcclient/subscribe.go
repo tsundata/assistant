@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewSubscribe(client *rpc.Client) (pb.SubscribeClient, error) {
+func NewSubscribe(client *rpc.Client) (pb.SubscribeSvcClient, error) {
 	conn, err := client.Dial(app.Subscribe, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "subscribe client dial error")
 	}
-	c := pb.NewSubscribeClient(conn)
+	c := pb.NewSubscribeSvcClient(conn)
 	return c, nil
 }

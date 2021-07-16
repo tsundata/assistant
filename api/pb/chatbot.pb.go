@@ -108,16 +108,16 @@ func init() {
 func init() { proto.RegisterFile("chatbot.proto", fileDescriptor_acc44097314201ac) }
 
 var fileDescriptor_acc44097314201ac = []byte{
-	// 136 bytes of a gzipped FileDescriptorProto
+	// 139 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4d, 0xce, 0x48, 0x2c,
 	0x49, 0xca, 0x2f, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x52, 0xe1,
 	0xe2, 0x73, 0x86, 0x08, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x09, 0x71, 0xb1, 0x94,
 	0xa4, 0x56, 0x94, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0x4a, 0x5c, 0x3c,
-	0x70, 0x55, 0x05, 0x39, 0x95, 0x48, 0x6a, 0x98, 0x61, 0x6a, 0x8c, 0xac, 0xb9, 0xd8, 0xa1, 0x6a,
-	0x84, 0x0c, 0xb8, 0xd8, 0x3c, 0x12, 0xf3, 0x52, 0x72, 0x52, 0x85, 0x84, 0xf4, 0x0a, 0x92, 0xf4,
-	0x50, 0x2d, 0x90, 0x12, 0x40, 0x11, 0x2b, 0xc8, 0xa9, 0x54, 0x62, 0x70, 0xe2, 0x88, 0x62, 0x4b,
-	0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03, 0xbb, 0xcd, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff,
-	0x82, 0x90, 0xd1, 0x51, 0xac, 0x00, 0x00, 0x00,
+	0x70, 0x55, 0x05, 0x39, 0x95, 0x48, 0x6a, 0x98, 0x61, 0x6a, 0x8c, 0xec, 0xb8, 0xb8, 0xa0, 0x6a,
+	0x82, 0xcb, 0x92, 0x85, 0x0c, 0xb8, 0xd8, 0x3c, 0x12, 0xf3, 0x52, 0x72, 0x52, 0x85, 0x84, 0xf4,
+	0x0a, 0x92, 0xf4, 0x50, 0xed, 0x90, 0x12, 0x40, 0x11, 0x2b, 0xc8, 0xa9, 0x54, 0x62, 0x70, 0xe2,
+	0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03, 0x3b, 0xcf, 0x18, 0x10, 0x00,
+	0x00, 0xff, 0xff, 0xab, 0xf1, 0x9d, 0x90, 0xaf, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -128,72 +128,72 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ChatbotClient is the client API for Chatbot service.
+// ChatbotSvcClient is the client API for ChatbotSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ChatbotClient interface {
+type ChatbotSvcClient interface {
 	Handle(ctx context.Context, in *ChatbotRequest, opts ...grpc.CallOption) (*ChatbotReply, error)
 }
 
-type chatbotClient struct {
+type chatbotSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewChatbotClient(cc *grpc.ClientConn) ChatbotClient {
-	return &chatbotClient{cc}
+func NewChatbotSvcClient(cc *grpc.ClientConn) ChatbotSvcClient {
+	return &chatbotSvcClient{cc}
 }
 
-func (c *chatbotClient) Handle(ctx context.Context, in *ChatbotRequest, opts ...grpc.CallOption) (*ChatbotReply, error) {
+func (c *chatbotSvcClient) Handle(ctx context.Context, in *ChatbotRequest, opts ...grpc.CallOption) (*ChatbotReply, error) {
 	out := new(ChatbotReply)
-	err := c.cc.Invoke(ctx, "/pb.Chatbot/Handle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/Handle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ChatbotServer is the server API for Chatbot service.
-type ChatbotServer interface {
+// ChatbotSvcServer is the server API for ChatbotSvc service.
+type ChatbotSvcServer interface {
 	Handle(context.Context, *ChatbotRequest) (*ChatbotReply, error)
 }
 
-// UnimplementedChatbotServer can be embedded to have forward compatible implementations.
-type UnimplementedChatbotServer struct {
+// UnimplementedChatbotSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedChatbotSvcServer struct {
 }
 
-func (*UnimplementedChatbotServer) Handle(ctx context.Context, req *ChatbotRequest) (*ChatbotReply, error) {
+func (*UnimplementedChatbotSvcServer) Handle(ctx context.Context, req *ChatbotRequest) (*ChatbotReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Handle not implemented")
 }
 
-func RegisterChatbotServer(s *grpc.Server, srv ChatbotServer) {
-	s.RegisterService(&_Chatbot_serviceDesc, srv)
+func RegisterChatbotSvcServer(s *grpc.Server, srv ChatbotSvcServer) {
+	s.RegisterService(&_ChatbotSvc_serviceDesc, srv)
 }
 
-func _Chatbot_Handle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ChatbotSvc_Handle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChatbotRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotServer).Handle(ctx, in)
+		return srv.(ChatbotSvcServer).Handle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Chatbot/Handle",
+		FullMethod: "/pb.ChatbotSvc/Handle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotServer).Handle(ctx, req.(*ChatbotRequest))
+		return srv.(ChatbotSvcServer).Handle(ctx, req.(*ChatbotRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Chatbot_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Chatbot",
-	HandlerType: (*ChatbotServer)(nil),
+var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.ChatbotSvc",
+	HandlerType: (*ChatbotSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Handle",
-			Handler:    _Chatbot_Handle_Handler,
+			Handler:    _ChatbotSvc_Handle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

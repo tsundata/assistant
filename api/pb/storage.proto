@@ -5,7 +5,7 @@ package pb;
 
 option go_package = "api/pb";
 
-service Storage {
+service StorageSvc {
   rpc UploadFile(stream FileRequest) returns (FileReply) {}
 }
 

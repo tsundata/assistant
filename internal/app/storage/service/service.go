@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Storage) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterStorageServer(s, ps)
+		pb.RegisterStorageSvcServer(s, ps)
 	}
 }
 

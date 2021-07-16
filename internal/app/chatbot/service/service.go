@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Chatbot) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterChatbotServer(s, ps)
+		pb.RegisterChatbotSvcServer(s, ps)
 	}
 }
 
