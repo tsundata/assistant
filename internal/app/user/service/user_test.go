@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/model"
 	"reflect"
 	"testing"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 )

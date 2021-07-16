@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"time"
 )
 

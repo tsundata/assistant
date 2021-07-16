@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/internal/pkg/model"
+	model "github.com/tsundata/assistant/api/model"
 )
 
 // MockWorkflowRepository is a mock of WorkflowRepository interface.

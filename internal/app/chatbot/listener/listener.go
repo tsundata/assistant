@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/nats-io/nats.go"
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleClient, todo pb.TodoClient, user pb.UserClient) error {

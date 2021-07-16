@@ -1,10 +1,9 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
-
-	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 func TestTodoRepository_CreateTodo(t *testing.T) {

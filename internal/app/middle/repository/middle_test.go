@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )

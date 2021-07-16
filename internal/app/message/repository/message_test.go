@@ -1,11 +1,10 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
-
-	"github.com/tsundata/assistant/internal/pkg/app"
-	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 func TestMessageRepository_GetByID(t *testing.T) {

@@ -2,13 +2,12 @@ package service
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"reflect"
 	"testing"
-
-	"github.com/tsundata/assistant/api/pb"
 )
 
 func TestNLP_Pinyin(t *testing.T) {

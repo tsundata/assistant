@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
@@ -118,7 +118,7 @@ func TestMessage_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats,err := event.CreateNats(app.Message)
+	nats, err := event.CreateNats(app.Message)
 	if err != nil {
 		t.Fatal(err)
 	}

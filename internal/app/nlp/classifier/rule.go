@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/internal/pkg/model"
+	"github.com/tsundata/assistant/api/model"
 	"strings"
 )
 

@@ -21,7 +21,9 @@ var rqliteCmd = &cobra.Command{
 			return
 		}
 		client := resty.New()
-		resp, err := client.R().SetBody([]string{string(sql)}).Post("http://127.0.0.1:4001/db/execute?pretty&timings")
+		resp, err := client.R().
+			SetBody([]string{string(sql)}).
+			Post("http://127.0.0.1:4001/db/execute?pretty&timings")
 		if err != nil {
 			fmt.Println(err)
 		}

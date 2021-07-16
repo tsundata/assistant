@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/nats-io/nats.go"
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/service"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/model"
 )
 
 func RegisterEventHandler(bus event.Bus, rdb *redis.Client, message pb.MessageClient, middle pb.MiddleClient, logger log.Logger) error {

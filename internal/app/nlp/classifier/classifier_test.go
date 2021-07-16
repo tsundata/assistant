@@ -2,9 +2,9 @@ package classifier
 
 import (
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/model"
 	"testing"
 )
 
