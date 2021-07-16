@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *User) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterUserServer(s, ps)
+		pb.RegisterUserSvcServer(s, ps)
 	}
 }
 

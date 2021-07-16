@@ -20,10 +20,10 @@ type Middle struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
 	repo repository.MiddleRepository
-	user pb.UserClient
+	user pb.UserSvcClient
 }
 
-func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, user pb.UserClient) *Middle {
+func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, user pb.UserSvcClient) *Middle {
 	return &Middle{rdb: rdb, repo: repo, conf: conf, user: user}
 }
 

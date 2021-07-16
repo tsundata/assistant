@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service User {
+service UserSvc {
   rpc Authorization(TextRequest) returns (StateReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
   rpc GetRoleImage(RoleRequest) returns (TextReply) {}
@@ -29,40 +29,62 @@ message RolesReply {
   repeated Role roles = 1;
 }
 
-message Role {
-  string profession = 1;
-  int64 exp = 2;
-  int64 level = 3;
-  int64 strength = 4;
-  int64 culture = 5;
-  int64 environment = 6;
-  int64 charisma = 7;
-  int64 talent = 8;
-  int64 intellect = 9;
-  string time = 10;
-}
-
 message UserRequest {
-  int64 id = 1;
-  string name = 2;
-  string mobile = 3;
-  string remark = 4;
+  User user = 1;
 }
 
 message UserReply {
-  int64 id = 1;
-  string name = 2;
-  string mobile = 3;
-  string remark = 4;
+  User user = 1;
 }
 
 message UsersReply {
-  repeated UserItem users = 1;
+  repeated User users = 1;
 }
 
-message UserItem {
+message User {
   int64 id = 1;
   string name = 2;
   string mobile = 3;
   string remark = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+}
+
+message Role {
+  int64 id = 1;
+  int64 userId = 2;
+  string profession = 3;
+  int64 exp = 4;
+  int64 level = 5;
+  int64 strength = 6;
+  int64 culture = 7;
+  int64 environment = 8;
+  int64 charisma = 9;
+  int64 talent = 10;
+  int64 intellect = 11;
+  string createdAt = 12;
+  string updatedAt = 13;
+}
+
+message Equipment {
+  int64 id = 1;
+  string name = 2;
+  string quality = 3;
+  int64 level = 4;
+  string category = 5;
+  string createdAt = 6;
+}
+
+message Quest {
+  int64 id = 1;
+  string title = 2;
+  int64 exp = 3;
+  string attrPoints = 4;
+  string preconditions = 5;
+  string createdAt = 6;
+}
+
+message AttrChange {
+  int64 userId = 1;
+  string content = 2;
 }

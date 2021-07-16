@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"strings"
 )
@@ -29,7 +29,7 @@ func (c *Classifier) SetRules(data string) error {
 	return nil
 }
 
-func (c *Classifier) Do(check string) (model.RoleAttr, error) {
+func (c *Classifier) Do(check string) (enum.RoleAttr, error) {
 	for _, rule := range c.rules {
 		res, err := rule.Do(check)
 		if err != nil && !errors.Is(err, ErrEmpty) {

@@ -2,16 +2,14 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/model"
-	"reflect"
-	"testing"
-	"time"
-
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
+	"reflect"
+	"testing"
+	"time"
 )
 
 func TestUser_Authorization(t *testing.T) {
@@ -61,7 +59,7 @@ func TestUser_GetRole(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any()).Return(model.Role{Profession: "super"}, nil),
+		repo.EXPECT().GetRole(gomock.Any()).Return(pb.Role{Profession: "super"}, nil),
 	)
 
 	s := NewUser(nil, repo)
@@ -107,8 +105,8 @@ func TestUser_GetRoleImage(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any()).Return(model.Role{
-			ID:          1,
+		repo.EXPECT().GetRole(gomock.Any()).Return(pb.Role{
+			Id:          1,
 			Profession:  "super",
 			Level:       60,
 			Exp:         1592481,
@@ -218,8 +216,8 @@ func TestUser_CreateUser(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Name: "test"}},
-			&pb.UserReply{Id: 1},
+			args{context.Background(), &pb.UserRequest{User: &pb.User{Name: "test"}}},
+			&pb.UserReply{User: &pb.User{Id: 1}},
 			false,
 		},
 	}
@@ -243,7 +241,7 @@ func TestUser_GetUser(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any()).Return(model.User{ID: 1, Name: "test"}, nil),
+		repo.EXPECT().GetByID(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
 	s := NewUser(nil, repo)
@@ -262,8 +260,8 @@ func TestUser_GetUser(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Id: 1}},
-			&pb.UserReply{Id: 1, Name: "test"},
+			args{context.Background(), &pb.UserRequest{User: &pb.User{Id: 1}}},
+			&pb.UserReply{User: &pb.User{Id: 1, Name: "test"}},
 			false,
 		},
 	}
@@ -287,7 +285,7 @@ func TestUser_GetUserByName(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByName(gomock.Any()).Return(model.User{ID: 1, Name: "test"}, nil),
+		repo.EXPECT().GetByName(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
 	s := NewUser(nil, repo)
@@ -306,8 +304,8 @@ func TestUser_GetUserByName(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Name: "test"}},
-			&pb.UserReply{Id: 1, Name: "test"},
+			args{context.Background(), &pb.UserRequest{User: &pb.User{Name: "test"}}},
+			&pb.UserReply{User: &pb.User{Id: 1, Name: "test"}},
 			false,
 		},
 	}
@@ -331,7 +329,7 @@ func TestUser_GetUsers(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List().Return([]model.User{{ID: 1, Name: "test"}}, nil),
+		repo.EXPECT().List().Return([]pb.User{{Id: 1, Name: "test"}}, nil),
 	)
 
 	s := NewUser(nil, repo)
@@ -350,8 +348,8 @@ func TestUser_GetUsers(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Name: "test"}},
-			&pb.UsersReply{Users: []*pb.UserItem{{Id: 1, Name: "test"}}},
+			args{context.Background(), &pb.UserRequest{User: &pb.User{Name: "test"}}},
+			&pb.UsersReply{Users: []*pb.User{{Id: 1, Name: "test"}}},
 			false,
 		},
 	}
@@ -394,7 +392,7 @@ func TestUser_UpdateUser(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.UserRequest{Id: 1, Name: "update"}},
+			args{context.Background(), &pb.UserRequest{User: &pb.User{Id: 1, Name: "update"}}},
 			&pb.StateReply{State: true},
 			false,
 		},

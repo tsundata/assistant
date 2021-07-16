@@ -23,7 +23,7 @@ func TestMiddle_GetMenu(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	user := mock.NewMockUserClient(ctl)
+	user := mock.NewMockUserSvcClient(ctl)
 	gomock.InOrder(
 		user.EXPECT().
 			GetAuthToken(gomock.Any(), gomock.Any()).
@@ -744,7 +744,7 @@ func TestMiddle_GetRoleImageUrl(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	user := mock.NewMockUserClient(ctl)
+	user := mock.NewMockUserSvcClient(ctl)
 	gomock.InOrder(
 		user.EXPECT().
 			GetAuthToken(gomock.Any(), gomock.Any()).

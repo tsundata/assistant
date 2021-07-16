@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -62,7 +61,7 @@ func TestTodo_GetTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTodo(gomock.Any()).Return(model.Todo{Content: "test"}, nil),
+		repo.EXPECT().GetTodo(gomock.Any()).Return(pb.Todo{Content: "test"}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -104,7 +103,7 @@ func TestTodo_GetTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTodos().Return([]model.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListTodos().Return([]pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -282,7 +281,7 @@ func TestTodo_GetRemindTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListRemindTodos().Return([]model.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListRemindTodos().Return([]pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)

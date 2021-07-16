@@ -5,19 +5,20 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
 type UserRepository interface {
-	GetRole(userID int) (model.Role, error)
-	ChangeRoleExp(userID int, exp int) error
-	ChangeRoleAttr(userID int, attr string, val int) error
-	List() ([]model.User, error)
-	Create(user model.User) (int64, error)
-	GetByID(id int64) (model.User, error)
-	GetByName(name string) (model.User, error)
-	Update(user model.User) error
+	GetRole(userID int64) (pb.Role, error)
+	ChangeRoleExp(userID int64, exp int64) error
+	ChangeRoleAttr(userID int64, attr string, val int64) error
+	List() ([]pb.User, error)
+	Create(user pb.User) (int64, error)
+	GetByID(id int64) (pb.User, error)
+	GetByName(name string) (pb.User, error)
+	Update(user pb.User) error
 }
 
 type MysqlUserRepository struct {
@@ -29,17 +30,17 @@ func NewMysqlUserRepository(logger log.Logger, db *sqlx.DB) UserRepository {
 	return &MysqlUserRepository{logger: logger, db: db}
 }
 
-func (r *MysqlUserRepository) GetRole(userId int) (model.Role, error) {
-	var item model.Role
+func (r *MysqlUserRepository) GetRole(userId int64) (pb.Role, error) {
+	var item pb.Role
 	err := r.db.Get(&item, "SELECT * FROM `roles` WHERE user_id = ?", userId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.Role{}, err
+		return pb.Role{}, err
 	}
 	return item, nil
 }
 
-func (r *MysqlUserRepository) ChangeRoleExp(userID int, exp int) error {
-	var item model.Role
+func (r *MysqlUserRepository) ChangeRoleExp(userID int64, exp int64) error {
+	var item pb.Role
 	err := r.db.Get(&item, "SELECT `id`, `exp` FROM `roles` WHERE `user_id` = ?", userID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
@@ -52,25 +53,25 @@ func (r *MysqlUserRepository) ChangeRoleExp(userID int, exp int) error {
 	return nil
 }
 
-func (r *MysqlUserRepository) ChangeRoleAttr(userID int, attr string, val int) error {
-	var item model.Role
+func (r *MysqlUserRepository) ChangeRoleAttr(userID int64, attr string, val int64) error {
+	var item pb.Role
 	err := r.db.Get(&item, fmt.Sprintf("SELECT `id`, `%s` FROM `roles` WHERE `user_id` = ?", attr), userID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
-	oldVal := 0
-	switch model.RoleAttr(attr) {
-	case model.StrengthAttr:
+	oldVal := int64(0)
+	switch enum.RoleAttr(attr) {
+	case enum.StrengthAttr:
 		oldVal = item.Strength
-	case model.CultureAttr:
+	case enum.CultureAttr:
 		oldVal = item.Culture
-	case model.EnvironmentAttr:
+	case enum.EnvironmentAttr:
 		oldVal = item.Environment
-	case model.CharismaAttr:
+	case enum.CharismaAttr:
 		oldVal = item.Charisma
-	case model.TalentAttr:
+	case enum.TalentAttr:
 		oldVal = item.Talent
-	case model.IntellectAttr:
+	case enum.IntellectAttr:
 		oldVal = item.Intellect
 	}
 	_, err = r.db.Exec(fmt.Sprintf("UPDATE `roles` SET `%s` = ? WHERE `user_id` = ?", attr), oldVal+val, userID)
@@ -81,7 +82,7 @@ func (r *MysqlUserRepository) ChangeRoleAttr(userID int, attr string, val int) e
 	return nil
 }
 
-func (r *MysqlUserRepository) roleRecord(userId int, exp int, attr string, val int) {
+func (r *MysqlUserRepository) roleRecord(userId int64, exp int64, attr string, val int64) {
 	var err error
 	if attr != "" {
 		_, err = r.db.Exec(fmt.Sprintf("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `%s`) VALUES ('', ?, ?, ?, ?)", attr), userId, exp, val)
@@ -93,8 +94,8 @@ func (r *MysqlUserRepository) roleRecord(userId int, exp int, attr string, val i
 	}
 }
 
-func (r *MysqlUserRepository) List() ([]model.User, error) {
-	var users []model.User
+func (r *MysqlUserRepository) List() ([]pb.User, error) {
+	var users []pb.User
 	err := r.db.Select(&users, "SELECT `id`, `name`, `mobile`, `remark` FROM `users`")
 	if err != nil {
 		return nil, err
@@ -103,7 +104,7 @@ func (r *MysqlUserRepository) List() ([]model.User, error) {
 	return users, nil
 }
 
-func (r *MysqlUserRepository) Create(user model.User) (int64, error) {
+func (r *MysqlUserRepository) Create(user pb.User) (int64, error) {
 	res, err := r.db.NamedExec("INSERT INTO `users` (`name`, `mobile`, `remark`) VALUES (:name, :mobile, :remark)", user)
 	if err != nil {
 		return 0, err
@@ -115,27 +116,27 @@ func (r *MysqlUserRepository) Create(user model.User) (int64, error) {
 	return id, nil
 }
 
-func (r *MysqlUserRepository) GetByID(id int64) (model.User, error) {
-	var user model.User
+func (r *MysqlUserRepository) GetByID(id int64) (pb.User, error) {
+	var user pb.User
 	err := r.db.Get(&user, "SELECT id, `name`, `mobile`, `remark` FROM `users` WHERE `id` = ? LIMIT 1", id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.User{}, err
+		return pb.User{}, err
 	}
 
 	return user, nil
 }
 
-func (r *MysqlUserRepository) GetByName(name string) (model.User, error) {
-	var user model.User
+func (r *MysqlUserRepository) GetByName(name string) (pb.User, error) {
+	var user pb.User
 	err := r.db.Get(&user, "SELECT id, `name`, `mobile`, `remark` FROM `users` WHERE `name` = ? LIMIT 1", name)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.User{}, err
+		return pb.User{}, err
 	}
 
 	return user, nil
 }
 
-func (r *MysqlUserRepository) Update(user model.User) error {
-	_, err := r.db.Exec("UPDATE users SET `name` = ?, `mobile` = ?, `remark` = ? WHERE id = ?", user.Name, user.Mobile, user.Remark, user.ID)
+func (r *MysqlUserRepository) Update(user pb.User) error {
+	_, err := r.db.Exec("UPDATE users SET `name` = ?, `mobile` = ?, `remark` = ? WHERE id = ?", user.Name, user.Mobile, user.Remark, user.Id)
 	return err
 }

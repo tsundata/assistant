@@ -28,7 +28,7 @@ type GatewayController struct {
 	messageSvc  pb.MessageClient
 	middleSvc   pb.MiddleClient
 	workflowSvc pb.WorkflowClient
-	userSvc     pb.UserClient
+	userSvc     pb.UserSvcClient
 	chatbotSvc  pb.ChatbotClient
 }
 
@@ -37,7 +37,7 @@ func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.L
 	middleSvc pb.MiddleClient,
 	workflowSvc pb.WorkflowClient,
 	chatbotSvc pb.ChatbotClient,
-	userSvc pb.UserClient) *GatewayController {
+	userSvc pb.UserSvcClient) *GatewayController {
 	return &GatewayController{
 		opt:         opt,
 		rdb:         rdb,

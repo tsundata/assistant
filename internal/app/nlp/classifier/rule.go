@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"strings"
 )
 
@@ -16,7 +16,7 @@ func NewRule() *Rule {
 	return &Rule{}
 }
 
-func (r *Rule) Do(check string) (model.RoleAttr, error) {
+func (r *Rule) Do(check string) (enum.RoleAttr, error) {
 	part := strings.Split(r.Format, ">")
 	if len(part) != 2 {
 		return "", errors.New("error rule part")
@@ -38,20 +38,20 @@ func (r *Rule) Do(check string) (model.RoleAttr, error) {
 	return "", ErrEmpty
 }
 
-func toRoleAttr(shortAttr string) (model.RoleAttr, error) {
-	switch model.AttrShort(shortAttr) {
-	case model.StrengthShort:
-		return model.StrengthAttr, nil
-	case model.CultureShort:
-		return model.CultureAttr, nil
-	case model.EnvironmentShort:
-		return model.EnvironmentAttr, nil
-	case model.CharismaShort:
-		return model.CharismaAttr, nil
-	case model.TalentShort:
-		return model.TalentAttr, nil
-	case model.IntellectShort:
-		return model.IntellectAttr, nil
+func toRoleAttr(shortAttr string) (enum.RoleAttr, error) {
+	switch enum.AttrShort(shortAttr) {
+	case enum.StrengthShort:
+		return enum.StrengthAttr, nil
+	case enum.CultureShort:
+		return enum.CultureAttr, nil
+	case enum.EnvironmentShort:
+		return enum.EnvironmentAttr, nil
+	case enum.CharismaShort:
+		return enum.CharismaAttr, nil
+	case enum.TalentShort:
+		return enum.TalentAttr, nil
+	case enum.IntellectShort:
+		return enum.IntellectAttr, nil
 	default:
 		return "", errors.New("error role attr")
 	}

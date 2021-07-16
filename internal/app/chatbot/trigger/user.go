@@ -48,14 +48,14 @@ func (t *User) Handle(ctx context.Context, comp *ctx.Component) {
 			continue
 		}
 
-		res, err := comp.User.GetUserByName(ctx, &pb.UserRequest{Name: user})
+		res, err := comp.User.GetUserByName(ctx, &pb.UserRequest{User: &pb.User{Name: user}})
 		if err != nil {
 			comp.Logger.Error(err)
 			continue
 		}
 
 		err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{
-			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.Id, res.Mobile, res.Remark),
+			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.User.Id, res.User.Mobile, res.User.Remark),
 		})
 		if err != nil {
 			return

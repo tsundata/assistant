@@ -12,7 +12,7 @@ type Component struct {
 
 	Middle pb.MiddleClient
 	Todo   pb.TodoSvcClient
-	User   pb.UserClient
+	User   pb.UserSvcClient
 }
 
 func NewComponent() *Component {

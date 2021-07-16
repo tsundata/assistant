@@ -8,7 +8,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/freetype/truetype"
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -63,7 +62,7 @@ func (s *User) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.
 }
 
 func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleReply, error) {
-	find, err := s.repo.GetRole(int(payload.GetId()))
+	find, err := s.repo.GetRole(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +80,11 @@ func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleRepl
 }
 
 func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.TextReply, error) {
-	find, err := s.repo.GetRole(int(payload.GetId()))
+	find, err := s.repo.GetRole(payload.GetId())
 	if err != nil {
 		return nil, err
 	}
-	if find.ID <= 0 {
+	if find.Id <= 0 {
 		return nil, errors.New("not role")
 	}
 
@@ -130,43 +129,49 @@ func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.Tex
 }
 
 func (s *User) CreateUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	user := model.User{
-		Name:   payload.GetName(),
-		Mobile: payload.GetMobile(),
-		Remark: payload.GetRemark(),
+	user := pb.User{
+		Name:   payload.User.GetName(),
+		Mobile: payload.User.GetMobile(),
+		Remark: payload.User.GetRemark(),
 	}
 	id, err := s.repo.Create(user)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UserReply{Id: id}, nil
+	return &pb.UserReply{User: &pb.User{
+		Id: id,
+	}}, nil
 }
 
 func (s *User) GetUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	find, err := s.repo.GetByID(payload.GetId())
+	find, err := s.repo.GetByID(payload.User.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.UserReply{
-		Id:     find.ID,
-		Name:   find.Name,
-		Mobile: find.Mobile,
-		Remark: find.Remark,
+		User: &pb.User{
+			Id:     find.Id,
+			Name:   find.Name,
+			Mobile: find.Mobile,
+			Remark: find.Remark,
+		},
 	}, nil
 }
 
 func (s *User) GetUserByName(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	find, err := s.repo.GetByName(payload.GetName())
+	find, err := s.repo.GetByName(payload.User.GetName())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.UserReply{
-		Id:     find.ID,
-		Name:   find.Name,
-		Mobile: find.Mobile,
-		Remark: find.Remark,
+		User: &pb.User{
+			Id:     find.Id,
+			Name:   find.Name,
+			Mobile: find.Mobile,
+			Remark: find.Remark,
+		},
 	}, nil
 }
 
@@ -176,10 +181,10 @@ func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, e
 		return nil, err
 	}
 
-	var res []*pb.UserItem
+	var res []*pb.User
 	for _, item := range items {
-		res = append(res, &pb.UserItem{
-			Id:     item.ID,
+		res = append(res, &pb.User{
+			Id:     item.Id,
 			Name:   item.Name,
 			Mobile: item.Mobile,
 			Remark: item.Remark,
@@ -190,11 +195,11 @@ func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, e
 }
 
 func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
-	err := s.repo.Update(model.User{
-		ID:     payload.GetId(),
-		Name:   payload.GetName(),
-		Mobile: payload.GetMobile(),
-		Remark: payload.GetRemark(),
+	err := s.repo.Update(pb.User{
+		Id:     payload.User.GetId(),
+		Name:   payload.User.GetName(),
+		Mobile: payload.User.GetMobile(),
+		Remark: payload.User.GetRemark(),
 	})
 	if err != nil {
 		return nil, err

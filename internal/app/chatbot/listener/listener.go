@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
-func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleClient, todo pb.TodoSvcClient, user pb.UserClient) error {
+func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleClient, todo pb.TodoSvcClient, user pb.UserSvcClient) error {
 	err := bus.Subscribe(context.Background(), event.MessageTriggerSubject, func(msg *nats.Msg) {
 		var message model.Message
 		err := json.Unmarshal(msg.Data, &message)

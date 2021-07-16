@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockUserClient is a mock of UserClient interface.
-type MockUserClient struct {
+// MockUserSvcClient is a mock of UserSvcClient interface.
+type MockUserSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockUserClientMockRecorder
+	recorder *MockUserSvcClientMockRecorder
 }
 
-// MockUserClientMockRecorder is the mock recorder for MockUserClient.
-type MockUserClientMockRecorder struct {
-	mock *MockUserClient
+// MockUserSvcClientMockRecorder is the mock recorder for MockUserSvcClient.
+type MockUserSvcClientMockRecorder struct {
+	mock *MockUserSvcClient
 }
 
-// NewMockUserClient creates a new mock instance.
-func NewMockUserClient(ctrl *gomock.Controller) *MockUserClient {
-	mock := &MockUserClient{ctrl: ctrl}
-	mock.recorder = &MockUserClientMockRecorder{mock}
+// NewMockUserSvcClient creates a new mock instance.
+func NewMockUserSvcClient(ctrl *gomock.Controller) *MockUserSvcClient {
+	mock := &MockUserSvcClient{ctrl: ctrl}
+	mock.recorder = &MockUserSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockUserClient) EXPECT() *MockUserClientMockRecorder {
+func (m *MockUserSvcClient) EXPECT() *MockUserSvcClientMockRecorder {
 	return m.recorder
 }
 
 // Authorization mocks base method.
-func (m *MockUserClient) Authorization(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockUserSvcClient) Authorization(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockUserClient) Authorization(ctx context.Context, in *pb.TextRequest, 
 }
 
 // Authorization indicates an expected call of Authorization.
-func (mr *MockUserClientMockRecorder) Authorization(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) Authorization(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserClient)(nil).Authorization), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserSvcClient)(nil).Authorization), varargs...)
 }
 
 // CreateUser mocks base method.
-func (m *MockUserClient) CreateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
+func (m *MockUserSvcClient) CreateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockUserClient) CreateUser(ctx context.Context, in *pb.UserRequest, opt
 }
 
 // CreateUser indicates an expected call of CreateUser.
-func (mr *MockUserClientMockRecorder) CreateUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) CreateUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserClient)(nil).CreateUser), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserSvcClient)(nil).CreateUser), varargs...)
 }
 
 // GetAuthToken mocks base method.
-func (m *MockUserClient) GetAuthToken(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockUserSvcClient) GetAuthToken(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,14 +90,14 @@ func (m *MockUserClient) GetAuthToken(ctx context.Context, in *pb.TextRequest, o
 }
 
 // GetAuthToken indicates an expected call of GetAuthToken.
-func (mr *MockUserClientMockRecorder) GetAuthToken(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetAuthToken(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserClient)(nil).GetAuthToken), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserSvcClient)(nil).GetAuthToken), varargs...)
 }
 
 // GetRole mocks base method.
-func (m *MockUserClient) GetRole(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.RoleReply, error) {
+func (m *MockUserSvcClient) GetRole(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.RoleReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -110,14 +110,14 @@ func (m *MockUserClient) GetRole(ctx context.Context, in *pb.RoleRequest, opts .
 }
 
 // GetRole indicates an expected call of GetRole.
-func (mr *MockUserClientMockRecorder) GetRole(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetRole(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserClient)(nil).GetRole), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserSvcClient)(nil).GetRole), varargs...)
 }
 
 // GetRoleImage mocks base method.
-func (m *MockUserClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockUserSvcClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -130,14 +130,14 @@ func (m *MockUserClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, o
 }
 
 // GetRoleImage indicates an expected call of GetRoleImage.
-func (mr *MockUserClientMockRecorder) GetRoleImage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetRoleImage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserClient)(nil).GetRoleImage), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserSvcClient)(nil).GetRoleImage), varargs...)
 }
 
 // GetUser mocks base method.
-func (m *MockUserClient) GetUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
+func (m *MockUserSvcClient) GetUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -150,14 +150,14 @@ func (m *MockUserClient) GetUser(ctx context.Context, in *pb.UserRequest, opts .
 }
 
 // GetUser indicates an expected call of GetUser.
-func (mr *MockUserClientMockRecorder) GetUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserClient)(nil).GetUser), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserSvcClient)(nil).GetUser), varargs...)
 }
 
 // GetUserByName mocks base method.
-func (m *MockUserClient) GetUserByName(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
+func (m *MockUserSvcClient) GetUserByName(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -170,14 +170,14 @@ func (m *MockUserClient) GetUserByName(ctx context.Context, in *pb.UserRequest, 
 }
 
 // GetUserByName indicates an expected call of GetUserByName.
-func (mr *MockUserClientMockRecorder) GetUserByName(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetUserByName(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserClient)(nil).GetUserByName), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserSvcClient)(nil).GetUserByName), varargs...)
 }
 
 // GetUsers mocks base method.
-func (m *MockUserClient) GetUsers(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UsersReply, error) {
+func (m *MockUserSvcClient) GetUsers(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UsersReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -190,14 +190,14 @@ func (m *MockUserClient) GetUsers(ctx context.Context, in *pb.UserRequest, opts 
 }
 
 // GetUsers indicates an expected call of GetUsers.
-func (mr *MockUserClientMockRecorder) GetUsers(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) GetUsers(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserClient)(nil).GetUsers), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserSvcClient)(nil).GetUsers), varargs...)
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserClient) UpdateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockUserSvcClient) UpdateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -210,37 +210,37 @@ func (m *MockUserClient) UpdateUser(ctx context.Context, in *pb.UserRequest, opt
 }
 
 // UpdateUser indicates an expected call of UpdateUser.
-func (mr *MockUserClientMockRecorder) UpdateUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockUserSvcClientMockRecorder) UpdateUser(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserClient)(nil).UpdateUser), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserSvcClient)(nil).UpdateUser), varargs...)
 }
 
-// MockUserServer is a mock of UserServer interface.
-type MockUserServer struct {
+// MockUserSvcServer is a mock of UserSvcServer interface.
+type MockUserSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockUserServerMockRecorder
+	recorder *MockUserSvcServerMockRecorder
 }
 
-// MockUserServerMockRecorder is the mock recorder for MockUserServer.
-type MockUserServerMockRecorder struct {
-	mock *MockUserServer
+// MockUserSvcServerMockRecorder is the mock recorder for MockUserSvcServer.
+type MockUserSvcServerMockRecorder struct {
+	mock *MockUserSvcServer
 }
 
-// NewMockUserServer creates a new mock instance.
-func NewMockUserServer(ctrl *gomock.Controller) *MockUserServer {
-	mock := &MockUserServer{ctrl: ctrl}
-	mock.recorder = &MockUserServerMockRecorder{mock}
+// NewMockUserSvcServer creates a new mock instance.
+func NewMockUserSvcServer(ctrl *gomock.Controller) *MockUserSvcServer {
+	mock := &MockUserSvcServer{ctrl: ctrl}
+	mock.recorder = &MockUserSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockUserServer) EXPECT() *MockUserServerMockRecorder {
+func (m *MockUserSvcServer) EXPECT() *MockUserSvcServerMockRecorder {
 	return m.recorder
 }
 
 // Authorization mocks base method.
-func (m *MockUserServer) Authorization(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
+func (m *MockUserSvcServer) Authorization(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Authorization", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -249,13 +249,13 @@ func (m *MockUserServer) Authorization(arg0 context.Context, arg1 *pb.TextReques
 }
 
 // Authorization indicates an expected call of Authorization.
-func (mr *MockUserServerMockRecorder) Authorization(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) Authorization(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserServer)(nil).Authorization), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserSvcServer)(nil).Authorization), arg0, arg1)
 }
 
 // CreateUser mocks base method.
-func (m *MockUserServer) CreateUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
+func (m *MockUserSvcServer) CreateUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", arg0, arg1)
 	ret0, _ := ret[0].(*pb.UserReply)
@@ -264,13 +264,13 @@ func (m *MockUserServer) CreateUser(arg0 context.Context, arg1 *pb.UserRequest) 
 }
 
 // CreateUser indicates an expected call of CreateUser.
-func (mr *MockUserServerMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserServer)(nil).CreateUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserSvcServer)(nil).CreateUser), arg0, arg1)
 }
 
 // GetAuthToken mocks base method.
-func (m *MockUserServer) GetAuthToken(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockUserSvcServer) GetAuthToken(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAuthToken", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -279,13 +279,13 @@ func (m *MockUserServer) GetAuthToken(arg0 context.Context, arg1 *pb.TextRequest
 }
 
 // GetAuthToken indicates an expected call of GetAuthToken.
-func (mr *MockUserServerMockRecorder) GetAuthToken(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetAuthToken(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserServer)(nil).GetAuthToken), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthToken", reflect.TypeOf((*MockUserSvcServer)(nil).GetAuthToken), arg0, arg1)
 }
 
 // GetRole mocks base method.
-func (m *MockUserServer) GetRole(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.RoleReply, error) {
+func (m *MockUserSvcServer) GetRole(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.RoleReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRole", arg0, arg1)
 	ret0, _ := ret[0].(*pb.RoleReply)
@@ -294,13 +294,13 @@ func (m *MockUserServer) GetRole(arg0 context.Context, arg1 *pb.RoleRequest) (*p
 }
 
 // GetRole indicates an expected call of GetRole.
-func (mr *MockUserServerMockRecorder) GetRole(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetRole(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserServer)(nil).GetRole), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockUserSvcServer)(nil).GetRole), arg0, arg1)
 }
 
 // GetRoleImage mocks base method.
-func (m *MockUserServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.TextReply, error) {
+func (m *MockUserSvcServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRoleImage", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -309,13 +309,13 @@ func (m *MockUserServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest
 }
 
 // GetRoleImage indicates an expected call of GetRoleImage.
-func (mr *MockUserServerMockRecorder) GetRoleImage(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetRoleImage(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserServer)(nil).GetRoleImage), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImage", reflect.TypeOf((*MockUserSvcServer)(nil).GetRoleImage), arg0, arg1)
 }
 
 // GetUser mocks base method.
-func (m *MockUserServer) GetUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
+func (m *MockUserSvcServer) GetUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUser", arg0, arg1)
 	ret0, _ := ret[0].(*pb.UserReply)
@@ -324,13 +324,13 @@ func (m *MockUserServer) GetUser(arg0 context.Context, arg1 *pb.UserRequest) (*p
 }
 
 // GetUser indicates an expected call of GetUser.
-func (mr *MockUserServerMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserServer)(nil).GetUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserSvcServer)(nil).GetUser), arg0, arg1)
 }
 
 // GetUserByName mocks base method.
-func (m *MockUserServer) GetUserByName(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
+func (m *MockUserSvcServer) GetUserByName(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByName", arg0, arg1)
 	ret0, _ := ret[0].(*pb.UserReply)
@@ -339,13 +339,13 @@ func (m *MockUserServer) GetUserByName(arg0 context.Context, arg1 *pb.UserReques
 }
 
 // GetUserByName indicates an expected call of GetUserByName.
-func (mr *MockUserServerMockRecorder) GetUserByName(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetUserByName(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserServer)(nil).GetUserByName), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserSvcServer)(nil).GetUserByName), arg0, arg1)
 }
 
 // GetUsers mocks base method.
-func (m *MockUserServer) GetUsers(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UsersReply, error) {
+func (m *MockUserSvcServer) GetUsers(arg0 context.Context, arg1 *pb.UserRequest) (*pb.UsersReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUsers", arg0, arg1)
 	ret0, _ := ret[0].(*pb.UsersReply)
@@ -354,13 +354,13 @@ func (m *MockUserServer) GetUsers(arg0 context.Context, arg1 *pb.UserRequest) (*
 }
 
 // GetUsers indicates an expected call of GetUsers.
-func (mr *MockUserServerMockRecorder) GetUsers(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) GetUsers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserServer)(nil).GetUsers), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserSvcServer)(nil).GetUsers), arg0, arg1)
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserServer) UpdateUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.StateReply, error) {
+func (m *MockUserSvcServer) UpdateUser(arg0 context.Context, arg1 *pb.UserRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -369,7 +369,7 @@ func (m *MockUserServer) UpdateUser(arg0 context.Context, arg1 *pb.UserRequest) 
 }
 
 // UpdateUser indicates an expected call of UpdateUser.
-func (mr *MockUserServerMockRecorder) UpdateUser(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserSvcServerMockRecorder) UpdateUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserServer)(nil).UpdateUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserSvcServer)(nil).UpdateUser), arg0, arg1)
 }

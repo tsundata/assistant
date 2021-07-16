@@ -24,7 +24,7 @@ type Component struct {
 	WorkflowClient  pb.WorkflowClient
 	StorageClient   pb.StorageClient
 	TodoClient      pb.TodoSvcClient
-	UserClient      pb.UserClient
+	UserClient      pb.UserSvcClient
 	NLPClient       pb.NLPClient
 }
 
@@ -52,7 +52,7 @@ func (c Component) Todo() pb.TodoSvcClient {
 	return c.TodoClient
 }
 
-func (c Component) User() pb.UserClient {
+func (c Component) User() pb.UserSvcClient {
 	return c.UserClient
 }
 
@@ -82,7 +82,7 @@ type IComponent interface {
 	Workflow() pb.WorkflowClient
 	Storage() pb.StorageClient
 	Todo() pb.TodoSvcClient
-	User() pb.UserClient
+	User() pb.UserSvcClient
 	NLP() pb.NLPClient
 }
 
@@ -97,7 +97,7 @@ func NewComponent(
 	workflowClient pb.WorkflowClient,
 	storageClient pb.StorageClient,
 	todoClient pb.TodoSvcClient,
-	userClient pb.UserClient,
+	userClient pb.UserSvcClient,
 	nlpClient pb.NLPClient,
 ) IComponent {
 	return Component{

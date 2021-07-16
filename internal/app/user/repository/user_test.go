@@ -1,7 +1,8 @@
 package repository
 
 import (
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
@@ -12,7 +13,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
 	type args struct {
-		userId int
+		userId int64
 	}
 	tests := []struct {
 		name    string
@@ -39,8 +40,8 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
 	type args struct {
-		userID int
-		exp    int
+		userID int64
+		exp    int64
 	}
 	tests := []struct {
 		name    string
@@ -65,9 +66,9 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
 	type args struct {
-		userID int
-		attr   model.RoleAttr
-		val    int
+		userID int64
+		attr   enum.RoleAttr
+		val    int64
 	}
 	tests := []struct {
 		name    string
@@ -75,12 +76,12 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{userID: 1, attr: model.StrengthAttr, val: 1}, false},
-		{"case2", sto, args{userID: 1, attr: model.CultureAttr, val: 1}, false},
-		{"case3", sto, args{userID: 1, attr: model.EnvironmentAttr, val: 1}, false},
-		{"case4", sto, args{userID: 1, attr: model.CharismaAttr, val: 1}, false},
-		{"case5", sto, args{userID: 1, attr: model.TalentAttr, val: 1}, false},
-		{"case5", sto, args{userID: 1, attr: model.IntellectAttr, val: 1}, false},
+		{"case1", sto, args{userID: 1, attr: enum.StrengthAttr, val: 1}, false},
+		{"case2", sto, args{userID: 1, attr: enum.CultureAttr, val: 1}, false},
+		{"case3", sto, args{userID: 1, attr: enum.EnvironmentAttr, val: 1}, false},
+		{"case4", sto, args{userID: 1, attr: enum.CharismaAttr, val: 1}, false},
+		{"case5", sto, args{userID: 1, attr: enum.TalentAttr, val: 1}, false},
+		{"case5", sto, args{userID: 1, attr: enum.IntellectAttr, val: 1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -124,7 +125,7 @@ func TestMysqlUserRepository_Create(t *testing.T) {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
 	type args struct {
-		user model.User
+		user pb.User
 	}
 	tests := []struct {
 		name    string
@@ -135,7 +136,7 @@ func TestMysqlUserRepository_Create(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{model.User{Name: "test", Mobile: "", Remark: ""}},
+			args{pb.User{Name: "test", Mobile: "", Remark: ""}},
 			false,
 		},
 	}
@@ -232,7 +233,7 @@ func TestMysqlUserRepository_Update(t *testing.T) {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
 	type args struct {
-		in0 model.User
+		in0 pb.User
 	}
 	tests := []struct {
 		name    string
@@ -243,7 +244,7 @@ func TestMysqlUserRepository_Update(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{model.User{ID: 2, Name: "update"}},
+			args{pb.User{Id: 2, Name: "update"}},
 			false,
 		},
 	}

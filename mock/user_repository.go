@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/api/model"
+	pb "github.com/tsundata/assistant/api/pb"
 )
 
 // MockUserRepository is a mock of UserRepository interface.
@@ -35,7 +35,7 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // ChangeRoleAttr mocks base method.
-func (m *MockUserRepository) ChangeRoleAttr(userID int, attr string, val int) error {
+func (m *MockUserRepository) ChangeRoleAttr(userID int64, attr string, val int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ChangeRoleAttr", userID, attr, val)
 	ret0, _ := ret[0].(error)
@@ -49,7 +49,7 @@ func (mr *MockUserRepositoryMockRecorder) ChangeRoleAttr(userID, attr, val inter
 }
 
 // ChangeRoleExp mocks base method.
-func (m *MockUserRepository) ChangeRoleExp(userID, exp int) error {
+func (m *MockUserRepository) ChangeRoleExp(userID, exp int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ChangeRoleExp", userID, exp)
 	ret0, _ := ret[0].(error)
@@ -63,7 +63,7 @@ func (mr *MockUserRepositoryMockRecorder) ChangeRoleExp(userID, exp interface{})
 }
 
 // Create mocks base method.
-func (m *MockUserRepository) Create(user model.User) (int64, error) {
+func (m *MockUserRepository) Create(user pb.User) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", user)
 	ret0, _ := ret[0].(int64)
@@ -78,10 +78,10 @@ func (mr *MockUserRepositoryMockRecorder) Create(user interface{}) *gomock.Call 
 }
 
 // GetByID mocks base method.
-func (m *MockUserRepository) GetByID(id int64) (model.User, error) {
+func (m *MockUserRepository) GetByID(id int64) (pb.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", id)
-	ret0, _ := ret[0].(model.User)
+	ret0, _ := ret[0].(pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -93,10 +93,10 @@ func (mr *MockUserRepositoryMockRecorder) GetByID(id interface{}) *gomock.Call {
 }
 
 // GetByName mocks base method.
-func (m *MockUserRepository) GetByName(name string) (model.User, error) {
+func (m *MockUserRepository) GetByName(name string) (pb.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByName", name)
-	ret0, _ := ret[0].(model.User)
+	ret0, _ := ret[0].(pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -108,10 +108,10 @@ func (mr *MockUserRepositoryMockRecorder) GetByName(name interface{}) *gomock.Ca
 }
 
 // GetRole mocks base method.
-func (m *MockUserRepository) GetRole(userID int) (model.Role, error) {
+func (m *MockUserRepository) GetRole(userID int64) (pb.Role, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRole", userID)
-	ret0, _ := ret[0].(model.Role)
+	ret0, _ := ret[0].(pb.Role)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -123,10 +123,10 @@ func (mr *MockUserRepositoryMockRecorder) GetRole(userID interface{}) *gomock.Ca
 }
 
 // List mocks base method.
-func (m *MockUserRepository) List() ([]model.User, error) {
+func (m *MockUserRepository) List() ([]pb.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List")
-	ret0, _ := ret[0].([]model.User)
+	ret0, _ := ret[0].([]pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -138,7 +138,7 @@ func (mr *MockUserRepositoryMockRecorder) List() *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockUserRepository) Update(user model.User) error {
+func (m *MockUserRepository) Update(user pb.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", user)
 	ret0, _ := ret[0].(error)
