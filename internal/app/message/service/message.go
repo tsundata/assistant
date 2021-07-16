@@ -20,7 +20,7 @@ type Message struct {
 	config   *config.AppConfig
 	logger   log.Logger
 	repo     repository.MessageRepository
-	workflow pb.WorkflowClient
+	workflow pb.WorkflowSvcClient
 }
 
 func NewMessage(
@@ -28,7 +28,7 @@ func NewMessage(
 	logger log.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
-	workflow pb.WorkflowClient) *Message {
+	workflow pb.WorkflowSvcClient) *Message {
 	return &Message{
 		bus:      bus,
 		logger:   logger,
@@ -220,9 +220,11 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 
 	// check/create trigger
 	_, err = m.workflow.CreateTrigger(ctx, &pb.TriggerRequest{
-		Kind:        model.MessageTypeAction,
-		MessageId:   id,
-		MessageText: payload.GetText(),
+		Trigger: &pb.Trigger{
+			Kind:        model.MessageTypeAction,
+			MessageId:   id,
+			MessageText: payload.GetText(),
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -237,7 +239,7 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 		return nil, err
 	}
 
-	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{MessageId: payload.GetId()})
+	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.GetId()}})
 	if err != nil {
 		return nil, err
 	}

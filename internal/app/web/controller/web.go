@@ -565,11 +565,13 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 	}
 
 	_, err := wc.gateway.WebhookTrigger(&pb.TriggerRequest{
-		Type:   "webhook",
-		Flag:   flag,
-		Secret: secret,
-		Header: c.Request().Header.String(),
-		Body:   util.ByteToString(c.Request().Body()),
+		Trigger: &pb.Trigger{
+			Type:   "webhook",
+			Flag:   flag,
+			Secret: secret,
+			Header: c.Request().Header.String(),
+			Body:   util.ByteToString(c.Request().Body()),
+		},
 	})
 	if err != nil {
 		wc.logger.Error(err)

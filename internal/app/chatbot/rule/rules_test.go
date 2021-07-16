@@ -155,7 +155,7 @@ func TestDocRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowClient(ctl)
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	gomock.InOrder(
 		workflow.EXPECT().ActionDoc(gomock.Any(), gomock.Any()).Return(&pb.WorkflowReply{Text: "doc ..."}, nil),
 	)

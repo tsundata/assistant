@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Workflow) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterWorkflowServer(s, ps)
+		pb.RegisterWorkflowSvcServer(s, ps)
 	}
 }
 

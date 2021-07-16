@@ -109,14 +109,7 @@ func (m *WorkflowReply) GetText() string {
 }
 
 type TriggerRequest struct {
-	Type                 string   `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Kind                 string   `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
-	Flag                 string   `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
-	Secret               string   `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
-	Header               string   `protobuf:"bytes,5,opt,name=header,proto3" json:"header,omitempty"`
-	Body                 string   `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
-	MessageId            int64    `protobuf:"varint,7,opt,name=messageId,proto3" json:"messageId,omitempty"`
-	MessageText          string   `protobuf:"bytes,8,opt,name=messageText,proto3" json:"messageText,omitempty"`
+	Trigger              *Trigger `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -146,58 +139,127 @@ func (m *TriggerRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_TriggerRequest proto.InternalMessageInfo
 
-func (m *TriggerRequest) GetType() string {
+func (m *TriggerRequest) GetTrigger() *Trigger {
+	if m != nil {
+		return m.Trigger
+	}
+	return nil
+}
+
+type Trigger struct {
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Kind                 string   `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
+	Flag                 string   `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty"`
+	Secret               string   `protobuf:"bytes,5,opt,name=secret,proto3" json:"secret,omitempty"`
+	When                 string   `protobuf:"bytes,6,opt,name=when,proto3" json:"when,omitempty"`
+	MessageId            int64    `protobuf:"varint,7,opt,name=messageId,proto3" json:"messageId,omitempty"`
+	CreatedAt            string   `protobuf:"bytes,8,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	MessageText          string   `protobuf:"bytes,9,opt,name=messageText,proto3" json:"messageText,omitempty"`
+	Header               string   `protobuf:"bytes,10,opt,name=header,proto3" json:"header,omitempty"`
+	Body                 string   `protobuf:"bytes,11,opt,name=body,proto3" json:"body,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Trigger) Reset()         { *m = Trigger{} }
+func (m *Trigger) String() string { return proto.CompactTextString(m) }
+func (*Trigger) ProtoMessage()    {}
+func (*Trigger) Descriptor() ([]byte, []int) {
+	return fileDescriptor_892c7f566756b0be, []int{3}
+}
+func (m *Trigger) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Trigger.Unmarshal(m, b)
+}
+func (m *Trigger) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Trigger.Marshal(b, m, deterministic)
+}
+func (m *Trigger) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Trigger.Merge(m, src)
+}
+func (m *Trigger) XXX_Size() int {
+	return xxx_messageInfo_Trigger.Size(m)
+}
+func (m *Trigger) XXX_DiscardUnknown() {
+	xxx_messageInfo_Trigger.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Trigger proto.InternalMessageInfo
+
+func (m *Trigger) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Trigger) GetType() string {
 	if m != nil {
 		return m.Type
 	}
 	return ""
 }
 
-func (m *TriggerRequest) GetKind() string {
+func (m *Trigger) GetKind() string {
 	if m != nil {
 		return m.Kind
 	}
 	return ""
 }
 
-func (m *TriggerRequest) GetFlag() string {
+func (m *Trigger) GetFlag() string {
 	if m != nil {
 		return m.Flag
 	}
 	return ""
 }
 
-func (m *TriggerRequest) GetSecret() string {
+func (m *Trigger) GetSecret() string {
 	if m != nil {
 		return m.Secret
 	}
 	return ""
 }
 
-func (m *TriggerRequest) GetHeader() string {
+func (m *Trigger) GetWhen() string {
 	if m != nil {
-		return m.Header
+		return m.When
 	}
 	return ""
 }
 
-func (m *TriggerRequest) GetBody() string {
-	if m != nil {
-		return m.Body
-	}
-	return ""
-}
-
-func (m *TriggerRequest) GetMessageId() int64 {
+func (m *Trigger) GetMessageId() int64 {
 	if m != nil {
 		return m.MessageId
 	}
 	return 0
 }
 
-func (m *TriggerRequest) GetMessageText() string {
+func (m *Trigger) GetCreatedAt() string {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return ""
+}
+
+func (m *Trigger) GetMessageText() string {
 	if m != nil {
 		return m.MessageText
+	}
+	return ""
+}
+
+func (m *Trigger) GetHeader() string {
+	if m != nil {
+		return m.Header
+	}
+	return ""
+}
+
+func (m *Trigger) GetBody() string {
+	if m != nil {
+		return m.Body
 	}
 	return ""
 }
@@ -206,34 +268,38 @@ func init() {
 	proto.RegisterType((*WorkflowRequest)(nil), "pb.WorkflowRequest")
 	proto.RegisterType((*WorkflowReply)(nil), "pb.WorkflowReply")
 	proto.RegisterType((*TriggerRequest)(nil), "pb.TriggerRequest")
+	proto.RegisterType((*Trigger)(nil), "pb.Trigger")
 }
 
 func init() { proto.RegisterFile("workflow.proto", fileDescriptor_892c7f566756b0be) }
 
 var fileDescriptor_892c7f566756b0be = []byte{
-	// 342 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0x6a, 0xc2, 0x40,
-	0x10, 0x86, 0x1b, 0xb5, 0xa9, 0x19, 0x31, 0xa5, 0x5b, 0x28, 0x41, 0x7a, 0x90, 0xf4, 0xe2, 0xc9,
-	0x42, 0x5b, 0x0b, 0x1e, 0x5b, 0xbd, 0xf4, 0x1a, 0x05, 0xa1, 0xb7, 0x4d, 0x32, 0xc6, 0x90, 0x34,
-	0xbb, 0xdd, 0xac, 0x68, 0x9e, 0xa2, 0xaf, 0xd6, 0x47, 0x2a, 0x9b, 0x8d, 0xa8, 0x25, 0x94, 0x7a,
-	0x9b, 0xf9, 0xd8, 0xef, 0x87, 0xf9, 0x59, 0xb0, 0x37, 0x4c, 0x24, 0xcb, 0x94, 0x6d, 0x86, 0x5c,
-	0x30, 0xc9, 0x48, 0x83, 0xfb, 0x3d, 0xf0, 0x69, 0x8e, 0x7a, 0x77, 0xc7, 0x70, 0xb9, 0xa8, 0x5e,
-	0x78, 0xf8, 0xb9, 0xc6, 0x5c, 0x12, 0x02, 0x2d, 0x89, 0x5b, 0xe9, 0x18, 0x7d, 0x63, 0x60, 0x79,
-	0xe5, 0x5c, 0xb2, 0x82, 0xa3, 0xd3, 0xa8, 0x58, 0xc1, 0xd1, 0xbd, 0x83, 0xee, 0x5e, 0xe5, 0x69,
-	0x51, 0x27, 0xba, 0xdf, 0x06, 0xd8, 0x73, 0x11, 0x47, 0x11, 0x8a, 0xc3, 0x7c, 0x95, 0x65, 0xec,
-	0xb3, 0x14, 0x4b, 0xe2, 0x2c, 0xdc, 0xe5, 0xab, 0x59, 0xb1, 0x65, 0x4a, 0x23, 0xa7, 0xa9, 0x99,
-	0x9a, 0xc9, 0x0d, 0x98, 0x39, 0x06, 0x02, 0xa5, 0xd3, 0x2a, 0x69, 0xb5, 0x29, 0xbe, 0x42, 0x1a,
-	0xa2, 0x70, 0xce, 0x35, 0xd7, 0x9b, 0xca, 0xf0, 0x59, 0x58, 0x38, 0xa6, 0xce, 0x50, 0x33, 0xb9,
-	0x05, 0xeb, 0x03, 0xf3, 0x9c, 0x46, 0xf8, 0x16, 0x3a, 0x17, 0x7d, 0x63, 0xd0, 0xf4, 0xf6, 0x80,
-	0xf4, 0xa1, 0x53, 0x2d, 0x73, 0x75, 0x4b, 0xbb, 0x14, 0x0f, 0xd1, 0xc3, 0x57, 0x13, 0xda, 0xbb,
-	0xc3, 0xc9, 0x13, 0x74, 0x66, 0x45, 0x26, 0xe9, 0x76, 0xb2, 0xc2, 0x20, 0x21, 0xd7, 0x43, 0xee,
-	0x0f, 0x7f, 0x15, 0xda, 0xb3, 0x15, 0x9c, 0x49, 0x2a, 0xb1, 0xec, 0xc9, 0x3d, 0x23, 0x23, 0xb0,
-	0xbc, 0x75, 0xf6, 0x12, 0xc8, 0x98, 0x65, 0xf5, 0xce, 0xd5, 0x31, 0xd4, 0xda, 0x18, 0xec, 0x05,
-	0xfa, 0x2b, 0xc6, 0x92, 0xaa, 0x52, 0x42, 0xd4, 0xb3, 0xe3, 0x7e, 0xeb, 0xd5, 0x67, 0xe8, 0x4c,
-	0x04, 0xcb, 0x4e, 0xf6, 0x46, 0xd0, 0x9d, 0x08, 0xa4, 0x12, 0xff, 0x32, 0xeb, 0x0e, 0xec, 0x4e,
-	0x31, 0xc5, 0xd3, 0x35, 0x4b, 0x97, 0x32, 0x65, 0xc1, 0xff, 0x7b, 0x79, 0x6d, 0xbf, 0x9b, 0x94,
-	0xc7, 0xf7, 0xdc, 0xf7, 0xcd, 0xf2, 0x57, 0x3f, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0xc6, 0x35,
-	0x01, 0x8f, 0xf7, 0x02, 0x00, 0x00,
+	// 394 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0xc1, 0x8f, 0x93, 0x40,
+	0x14, 0xc6, 0x5d, 0xba, 0xd2, 0xe5, 0x91, 0x62, 0x1c, 0x13, 0x33, 0xd9, 0x78, 0xd8, 0x60, 0x4c,
+	0x3c, 0xd5, 0x64, 0xb5, 0x9a, 0x1e, 0x6b, 0x7b, 0xf1, 0x4a, 0x9b, 0x34, 0xf1, 0x36, 0xc0, 0x2b,
+	0x10, 0x90, 0x19, 0x87, 0xa9, 0x2d, 0x7f, 0x83, 0x37, 0xff, 0x62, 0x33, 0x33, 0x90, 0x56, 0x43,
+	0x9a, 0xed, 0xed, 0xbd, 0xdf, 0xfb, 0x3e, 0x78, 0x7c, 0x2f, 0x40, 0x70, 0xe0, 0xb2, 0xdc, 0x55,
+	0xfc, 0x30, 0x15, 0x92, 0x2b, 0x4e, 0x1c, 0x11, 0xdf, 0x43, 0xcc, 0x1a, 0xb4, 0x7d, 0x38, 0x87,
+	0x17, 0xdb, 0x4e, 0x11, 0xe1, 0xcf, 0x3d, 0x36, 0x8a, 0x10, 0xb8, 0x55, 0x78, 0x54, 0xf4, 0xe6,
+	0xe1, 0xe6, 0xbd, 0x17, 0x99, 0xda, 0xb0, 0x56, 0x20, 0x75, 0x3a, 0xd6, 0x0a, 0x0c, 0xdf, 0xc2,
+	0xe4, 0x64, 0x15, 0x55, 0x3b, 0x64, 0x0c, 0xbf, 0x40, 0xb0, 0x91, 0x45, 0x96, 0xa1, 0xec, 0x1f,
+	0xff, 0x0e, 0xc6, 0xca, 0x12, 0x23, 0xf4, 0x1f, 0xfd, 0xa9, 0x88, 0xa7, 0xbd, 0xa8, 0x9f, 0x85,
+	0xbf, 0x1d, 0x18, 0x77, 0x90, 0x04, 0xe0, 0x14, 0xa9, 0x51, 0x8f, 0x22, 0xa7, 0x48, 0x87, 0xb6,
+	0xd1, 0xac, 0x2c, 0xea, 0x94, 0x8e, 0x2c, 0xd3, 0xb5, 0x66, 0xbb, 0x8a, 0x65, 0xf4, 0xd6, 0x32,
+	0x5d, 0x93, 0xd7, 0xe0, 0x36, 0x98, 0x48, 0x54, 0xf4, 0xb9, 0xa1, 0x5d, 0xa7, 0xb5, 0x87, 0x1c,
+	0x6b, 0xea, 0x5a, 0xad, 0xae, 0xc9, 0x1b, 0xf0, 0x7e, 0x60, 0xd3, 0xb0, 0x0c, 0xbf, 0xa5, 0x74,
+	0x6c, 0x5e, 0x7f, 0x02, 0x7a, 0x9a, 0x48, 0x64, 0x0a, 0xd3, 0x85, 0xa2, 0x77, 0xc6, 0x76, 0x02,
+	0xe4, 0x01, 0xfc, 0x4e, 0xba, 0xd1, 0x99, 0x78, 0x66, 0x7e, 0x8e, 0xf4, 0x26, 0x39, 0xb2, 0x14,
+	0x25, 0x05, 0xbb, 0x89, 0xed, 0xf4, 0x26, 0x31, 0x4f, 0x5b, 0xea, 0xdb, 0x4d, 0x74, 0xfd, 0xf8,
+	0x67, 0x04, 0x7e, 0x1f, 0xf6, 0xfa, 0x57, 0x42, 0x3e, 0x81, 0xbf, 0x6e, 0x6b, 0xc5, 0x8e, 0xcb,
+	0x1c, 0x93, 0x92, 0xbc, 0xd2, 0x11, 0xfe, 0x77, 0xc7, 0xfb, 0x40, 0xc3, 0xb5, 0x62, 0x0a, 0xcd,
+	0x79, 0xc2, 0x67, 0x64, 0x06, 0x5e, 0xb4, 0xaf, 0x17, 0x89, 0x2a, 0x78, 0x3d, 0xec, 0x79, 0xf9,
+	0x2f, 0xb4, 0xb6, 0x39, 0x04, 0x5b, 0x8c, 0x73, 0xce, 0xcb, 0xfe, 0x20, 0xe4, 0xfc, 0x64, 0x97,
+	0xac, 0x9f, 0xc1, 0x5f, 0x4a, 0x5e, 0x5f, 0xed, 0x9b, 0xc1, 0x64, 0x69, 0xa2, 0xbc, 0xe4, 0x1c,
+	0xfa, 0xc0, 0xc9, 0x0a, 0x2b, 0xbc, 0xde, 0xe6, 0xd9, 0x50, 0x56, 0x3c, 0x79, 0x7a, 0x2e, 0x5f,
+	0xef, 0xbe, 0xbb, 0x4c, 0x14, 0x1f, 0x44, 0x1c, 0xbb, 0xe6, 0x67, 0xfa, 0xf8, 0x37, 0x00, 0x00,
+	0xff, 0xff, 0x69, 0x7f, 0x31, 0x20, 0x6e, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -244,10 +310,10 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// WorkflowClient is the client API for Workflow service.
+// WorkflowSvcClient is the client API for WorkflowSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type WorkflowClient interface {
+type WorkflowSvcClient interface {
 	SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error)
 	RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
@@ -257,79 +323,79 @@ type WorkflowClient interface {
 	ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 }
 
-type workflowClient struct {
+type workflowSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewWorkflowClient(cc *grpc.ClientConn) WorkflowClient {
-	return &workflowClient{cc}
+func NewWorkflowSvcClient(cc *grpc.ClientConn) WorkflowSvcClient {
+	return &workflowSvcClient{cc}
 }
 
-func (c *workflowClient) SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *workflowSvcClient) SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/SyntaxCheck", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/SyntaxCheck", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *workflowSvcClient) RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/RunAction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/RunAction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *workflowSvcClient) WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/WebhookTrigger", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/WebhookTrigger", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *workflowSvcClient) CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/CronTrigger", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/CronTrigger", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *workflowSvcClient) CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/CreateTrigger", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/CreateTrigger", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *workflowSvcClient) DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/DeleteTrigger", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/DeleteTrigger", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workflowClient) ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *workflowSvcClient) ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.Workflow/ActionDoc", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.WorkflowSvc/ActionDoc", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// WorkflowServer is the server API for Workflow service.
-type WorkflowServer interface {
+// WorkflowSvcServer is the server API for WorkflowSvc service.
+type WorkflowSvcServer interface {
 	SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error)
 	RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 	WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
@@ -339,193 +405,193 @@ type WorkflowServer interface {
 	ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 }
 
-// UnimplementedWorkflowServer can be embedded to have forward compatible implementations.
-type UnimplementedWorkflowServer struct {
+// UnimplementedWorkflowSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedWorkflowSvcServer struct {
 }
 
-func (*UnimplementedWorkflowServer) SyntaxCheck(ctx context.Context, req *WorkflowRequest) (*StateReply, error) {
+func (*UnimplementedWorkflowSvcServer) SyntaxCheck(ctx context.Context, req *WorkflowRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyntaxCheck not implemented")
 }
-func (*UnimplementedWorkflowServer) RunAction(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
+func (*UnimplementedWorkflowSvcServer) RunAction(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunAction not implemented")
 }
-func (*UnimplementedWorkflowServer) WebhookTrigger(ctx context.Context, req *TriggerRequest) (*WorkflowReply, error) {
+func (*UnimplementedWorkflowSvcServer) WebhookTrigger(ctx context.Context, req *TriggerRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebhookTrigger not implemented")
 }
-func (*UnimplementedWorkflowServer) CronTrigger(ctx context.Context, req *TriggerRequest) (*WorkflowReply, error) {
+func (*UnimplementedWorkflowSvcServer) CronTrigger(ctx context.Context, req *TriggerRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CronTrigger not implemented")
 }
-func (*UnimplementedWorkflowServer) CreateTrigger(ctx context.Context, req *TriggerRequest) (*StateReply, error) {
+func (*UnimplementedWorkflowSvcServer) CreateTrigger(ctx context.Context, req *TriggerRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTrigger not implemented")
 }
-func (*UnimplementedWorkflowServer) DeleteTrigger(ctx context.Context, req *TriggerRequest) (*StateReply, error) {
+func (*UnimplementedWorkflowSvcServer) DeleteTrigger(ctx context.Context, req *TriggerRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTrigger not implemented")
 }
-func (*UnimplementedWorkflowServer) ActionDoc(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
+func (*UnimplementedWorkflowSvcServer) ActionDoc(ctx context.Context, req *WorkflowRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActionDoc not implemented")
 }
 
-func RegisterWorkflowServer(s *grpc.Server, srv WorkflowServer) {
-	s.RegisterService(&_Workflow_serviceDesc, srv)
+func RegisterWorkflowSvcServer(s *grpc.Server, srv WorkflowSvcServer) {
+	s.RegisterService(&_WorkflowSvc_serviceDesc, srv)
 }
 
-func _Workflow_SyntaxCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_SyntaxCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkflowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).SyntaxCheck(ctx, in)
+		return srv.(WorkflowSvcServer).SyntaxCheck(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/SyntaxCheck",
+		FullMethod: "/pb.WorkflowSvc/SyntaxCheck",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).SyntaxCheck(ctx, req.(*WorkflowRequest))
+		return srv.(WorkflowSvcServer).SyntaxCheck(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_RunAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_RunAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkflowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).RunAction(ctx, in)
+		return srv.(WorkflowSvcServer).RunAction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/RunAction",
+		FullMethod: "/pb.WorkflowSvc/RunAction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).RunAction(ctx, req.(*WorkflowRequest))
+		return srv.(WorkflowSvcServer).RunAction(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_WebhookTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_WebhookTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TriggerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).WebhookTrigger(ctx, in)
+		return srv.(WorkflowSvcServer).WebhookTrigger(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/WebhookTrigger",
+		FullMethod: "/pb.WorkflowSvc/WebhookTrigger",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).WebhookTrigger(ctx, req.(*TriggerRequest))
+		return srv.(WorkflowSvcServer).WebhookTrigger(ctx, req.(*TriggerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_CronTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_CronTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TriggerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).CronTrigger(ctx, in)
+		return srv.(WorkflowSvcServer).CronTrigger(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/CronTrigger",
+		FullMethod: "/pb.WorkflowSvc/CronTrigger",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).CronTrigger(ctx, req.(*TriggerRequest))
+		return srv.(WorkflowSvcServer).CronTrigger(ctx, req.(*TriggerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_CreateTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_CreateTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TriggerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).CreateTrigger(ctx, in)
+		return srv.(WorkflowSvcServer).CreateTrigger(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/CreateTrigger",
+		FullMethod: "/pb.WorkflowSvc/CreateTrigger",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).CreateTrigger(ctx, req.(*TriggerRequest))
+		return srv.(WorkflowSvcServer).CreateTrigger(ctx, req.(*TriggerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_DeleteTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_DeleteTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TriggerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).DeleteTrigger(ctx, in)
+		return srv.(WorkflowSvcServer).DeleteTrigger(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/DeleteTrigger",
+		FullMethod: "/pb.WorkflowSvc/DeleteTrigger",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).DeleteTrigger(ctx, req.(*TriggerRequest))
+		return srv.(WorkflowSvcServer).DeleteTrigger(ctx, req.(*TriggerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Workflow_ActionDoc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _WorkflowSvc_ActionDoc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkflowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WorkflowServer).ActionDoc(ctx, in)
+		return srv.(WorkflowSvcServer).ActionDoc(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Workflow/ActionDoc",
+		FullMethod: "/pb.WorkflowSvc/ActionDoc",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkflowServer).ActionDoc(ctx, req.(*WorkflowRequest))
+		return srv.(WorkflowSvcServer).ActionDoc(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Workflow_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Workflow",
-	HandlerType: (*WorkflowServer)(nil),
+var _WorkflowSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.WorkflowSvc",
+	HandlerType: (*WorkflowSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SyntaxCheck",
-			Handler:    _Workflow_SyntaxCheck_Handler,
+			Handler:    _WorkflowSvc_SyntaxCheck_Handler,
 		},
 		{
 			MethodName: "RunAction",
-			Handler:    _Workflow_RunAction_Handler,
+			Handler:    _WorkflowSvc_RunAction_Handler,
 		},
 		{
 			MethodName: "WebhookTrigger",
-			Handler:    _Workflow_WebhookTrigger_Handler,
+			Handler:    _WorkflowSvc_WebhookTrigger_Handler,
 		},
 		{
 			MethodName: "CronTrigger",
-			Handler:    _Workflow_CronTrigger_Handler,
+			Handler:    _WorkflowSvc_CronTrigger_Handler,
 		},
 		{
 			MethodName: "CreateTrigger",
-			Handler:    _Workflow_CreateTrigger_Handler,
+			Handler:    _WorkflowSvc_CreateTrigger_Handler,
 		},
 		{
 			MethodName: "DeleteTrigger",
-			Handler:    _Workflow_DeleteTrigger_Handler,
+			Handler:    _WorkflowSvc_DeleteTrigger_Handler,
 		},
 		{
 			MethodName: "ActionDoc",
-			Handler:    _Workflow_ActionDoc_Handler,
+			Handler:    _WorkflowSvc_ActionDoc_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

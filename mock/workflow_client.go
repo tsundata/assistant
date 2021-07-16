@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockWorkflowClient is a mock of WorkflowClient interface.
-type MockWorkflowClient struct {
+// MockWorkflowSvcClient is a mock of WorkflowSvcClient interface.
+type MockWorkflowSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockWorkflowClientMockRecorder
+	recorder *MockWorkflowSvcClientMockRecorder
 }
 
-// MockWorkflowClientMockRecorder is the mock recorder for MockWorkflowClient.
-type MockWorkflowClientMockRecorder struct {
-	mock *MockWorkflowClient
+// MockWorkflowSvcClientMockRecorder is the mock recorder for MockWorkflowSvcClient.
+type MockWorkflowSvcClientMockRecorder struct {
+	mock *MockWorkflowSvcClient
 }
 
-// NewMockWorkflowClient creates a new mock instance.
-func NewMockWorkflowClient(ctrl *gomock.Controller) *MockWorkflowClient {
-	mock := &MockWorkflowClient{ctrl: ctrl}
-	mock.recorder = &MockWorkflowClientMockRecorder{mock}
+// NewMockWorkflowSvcClient creates a new mock instance.
+func NewMockWorkflowSvcClient(ctrl *gomock.Controller) *MockWorkflowSvcClient {
+	mock := &MockWorkflowSvcClient{ctrl: ctrl}
+	mock.recorder = &MockWorkflowSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockWorkflowClient) EXPECT() *MockWorkflowClientMockRecorder {
+func (m *MockWorkflowSvcClient) EXPECT() *MockWorkflowSvcClientMockRecorder {
 	return m.recorder
 }
 
 // ActionDoc mocks base method.
-func (m *MockWorkflowClient) ActionDoc(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcClient) ActionDoc(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockWorkflowClient) ActionDoc(ctx context.Context, in *pb.WorkflowReque
 }
 
 // ActionDoc indicates an expected call of ActionDoc.
-func (mr *MockWorkflowClientMockRecorder) ActionDoc(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) ActionDoc(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockWorkflowClient)(nil).ActionDoc), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockWorkflowSvcClient)(nil).ActionDoc), varargs...)
 }
 
 // CreateTrigger mocks base method.
-func (m *MockWorkflowClient) CreateTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcClient) CreateTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockWorkflowClient) CreateTrigger(ctx context.Context, in *pb.TriggerRe
 }
 
 // CreateTrigger indicates an expected call of CreateTrigger.
-func (mr *MockWorkflowClientMockRecorder) CreateTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) CreateTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowClient)(nil).CreateTrigger), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowSvcClient)(nil).CreateTrigger), varargs...)
 }
 
 // CronTrigger mocks base method.
-func (m *MockWorkflowClient) CronTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcClient) CronTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,14 +90,14 @@ func (m *MockWorkflowClient) CronTrigger(ctx context.Context, in *pb.TriggerRequ
 }
 
 // CronTrigger indicates an expected call of CronTrigger.
-func (mr *MockWorkflowClientMockRecorder) CronTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) CronTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockWorkflowClient)(nil).CronTrigger), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockWorkflowSvcClient)(nil).CronTrigger), varargs...)
 }
 
 // DeleteTrigger mocks base method.
-func (m *MockWorkflowClient) DeleteTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcClient) DeleteTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -110,14 +110,14 @@ func (m *MockWorkflowClient) DeleteTrigger(ctx context.Context, in *pb.TriggerRe
 }
 
 // DeleteTrigger indicates an expected call of DeleteTrigger.
-func (mr *MockWorkflowClientMockRecorder) DeleteTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) DeleteTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockWorkflowClient)(nil).DeleteTrigger), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockWorkflowSvcClient)(nil).DeleteTrigger), varargs...)
 }
 
 // RunAction mocks base method.
-func (m *MockWorkflowClient) RunAction(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcClient) RunAction(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -130,14 +130,14 @@ func (m *MockWorkflowClient) RunAction(ctx context.Context, in *pb.WorkflowReque
 }
 
 // RunAction indicates an expected call of RunAction.
-func (mr *MockWorkflowClientMockRecorder) RunAction(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) RunAction(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockWorkflowClient)(nil).RunAction), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockWorkflowSvcClient)(nil).RunAction), varargs...)
 }
 
 // SyntaxCheck mocks base method.
-func (m *MockWorkflowClient) SyntaxCheck(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcClient) SyntaxCheck(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -150,14 +150,14 @@ func (m *MockWorkflowClient) SyntaxCheck(ctx context.Context, in *pb.WorkflowReq
 }
 
 // SyntaxCheck indicates an expected call of SyntaxCheck.
-func (mr *MockWorkflowClientMockRecorder) SyntaxCheck(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) SyntaxCheck(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockWorkflowClient)(nil).SyntaxCheck), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockWorkflowSvcClient)(nil).SyntaxCheck), varargs...)
 }
 
 // WebhookTrigger mocks base method.
-func (m *MockWorkflowClient) WebhookTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcClient) WebhookTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -170,37 +170,37 @@ func (m *MockWorkflowClient) WebhookTrigger(ctx context.Context, in *pb.TriggerR
 }
 
 // WebhookTrigger indicates an expected call of WebhookTrigger.
-func (mr *MockWorkflowClientMockRecorder) WebhookTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcClientMockRecorder) WebhookTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockWorkflowClient)(nil).WebhookTrigger), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockWorkflowSvcClient)(nil).WebhookTrigger), varargs...)
 }
 
-// MockWorkflowServer is a mock of WorkflowServer interface.
-type MockWorkflowServer struct {
+// MockWorkflowSvcServer is a mock of WorkflowSvcServer interface.
+type MockWorkflowSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockWorkflowServerMockRecorder
+	recorder *MockWorkflowSvcServerMockRecorder
 }
 
-// MockWorkflowServerMockRecorder is the mock recorder for MockWorkflowServer.
-type MockWorkflowServerMockRecorder struct {
-	mock *MockWorkflowServer
+// MockWorkflowSvcServerMockRecorder is the mock recorder for MockWorkflowSvcServer.
+type MockWorkflowSvcServerMockRecorder struct {
+	mock *MockWorkflowSvcServer
 }
 
-// NewMockWorkflowServer creates a new mock instance.
-func NewMockWorkflowServer(ctrl *gomock.Controller) *MockWorkflowServer {
-	mock := &MockWorkflowServer{ctrl: ctrl}
-	mock.recorder = &MockWorkflowServerMockRecorder{mock}
+// NewMockWorkflowSvcServer creates a new mock instance.
+func NewMockWorkflowSvcServer(ctrl *gomock.Controller) *MockWorkflowSvcServer {
+	mock := &MockWorkflowSvcServer{ctrl: ctrl}
+	mock.recorder = &MockWorkflowSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockWorkflowServer) EXPECT() *MockWorkflowServerMockRecorder {
+func (m *MockWorkflowSvcServer) EXPECT() *MockWorkflowSvcServerMockRecorder {
 	return m.recorder
 }
 
 // ActionDoc mocks base method.
-func (m *MockWorkflowServer) ActionDoc(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcServer) ActionDoc(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ActionDoc", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
@@ -209,13 +209,13 @@ func (m *MockWorkflowServer) ActionDoc(arg0 context.Context, arg1 *pb.WorkflowRe
 }
 
 // ActionDoc indicates an expected call of ActionDoc.
-func (mr *MockWorkflowServerMockRecorder) ActionDoc(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) ActionDoc(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockWorkflowServer)(nil).ActionDoc), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockWorkflowSvcServer)(nil).ActionDoc), arg0, arg1)
 }
 
 // CreateTrigger mocks base method.
-func (m *MockWorkflowServer) CreateTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcServer) CreateTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTrigger", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -224,13 +224,13 @@ func (m *MockWorkflowServer) CreateTrigger(arg0 context.Context, arg1 *pb.Trigge
 }
 
 // CreateTrigger indicates an expected call of CreateTrigger.
-func (mr *MockWorkflowServerMockRecorder) CreateTrigger(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) CreateTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowServer)(nil).CreateTrigger), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowSvcServer)(nil).CreateTrigger), arg0, arg1)
 }
 
 // CronTrigger mocks base method.
-func (m *MockWorkflowServer) CronTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcServer) CronTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CronTrigger", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
@@ -239,13 +239,13 @@ func (m *MockWorkflowServer) CronTrigger(arg0 context.Context, arg1 *pb.TriggerR
 }
 
 // CronTrigger indicates an expected call of CronTrigger.
-func (mr *MockWorkflowServerMockRecorder) CronTrigger(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) CronTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockWorkflowServer)(nil).CronTrigger), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockWorkflowSvcServer)(nil).CronTrigger), arg0, arg1)
 }
 
 // DeleteTrigger mocks base method.
-func (m *MockWorkflowServer) DeleteTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcServer) DeleteTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTrigger", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -254,13 +254,13 @@ func (m *MockWorkflowServer) DeleteTrigger(arg0 context.Context, arg1 *pb.Trigge
 }
 
 // DeleteTrigger indicates an expected call of DeleteTrigger.
-func (mr *MockWorkflowServerMockRecorder) DeleteTrigger(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) DeleteTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockWorkflowServer)(nil).DeleteTrigger), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockWorkflowSvcServer)(nil).DeleteTrigger), arg0, arg1)
 }
 
 // RunAction mocks base method.
-func (m *MockWorkflowServer) RunAction(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcServer) RunAction(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RunAction", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
@@ -269,13 +269,13 @@ func (m *MockWorkflowServer) RunAction(arg0 context.Context, arg1 *pb.WorkflowRe
 }
 
 // RunAction indicates an expected call of RunAction.
-func (mr *MockWorkflowServerMockRecorder) RunAction(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) RunAction(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockWorkflowServer)(nil).RunAction), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockWorkflowSvcServer)(nil).RunAction), arg0, arg1)
 }
 
 // SyntaxCheck mocks base method.
-func (m *MockWorkflowServer) SyntaxCheck(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.StateReply, error) {
+func (m *MockWorkflowSvcServer) SyntaxCheck(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SyntaxCheck", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -284,13 +284,13 @@ func (m *MockWorkflowServer) SyntaxCheck(arg0 context.Context, arg1 *pb.Workflow
 }
 
 // SyntaxCheck indicates an expected call of SyntaxCheck.
-func (mr *MockWorkflowServerMockRecorder) SyntaxCheck(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) SyntaxCheck(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockWorkflowServer)(nil).SyntaxCheck), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockWorkflowSvcServer)(nil).SyntaxCheck), arg0, arg1)
 }
 
 // WebhookTrigger mocks base method.
-func (m *MockWorkflowServer) WebhookTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+func (m *MockWorkflowSvcServer) WebhookTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WebhookTrigger", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
@@ -299,7 +299,7 @@ func (m *MockWorkflowServer) WebhookTrigger(arg0 context.Context, arg1 *pb.Trigg
 }
 
 // WebhookTrigger indicates an expected call of WebhookTrigger.
-func (mr *MockWorkflowServerMockRecorder) WebhookTrigger(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowSvcServerMockRecorder) WebhookTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockWorkflowServer)(nil).WebhookTrigger), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockWorkflowSvcServer)(nil).WebhookTrigger), arg0, arg1)
 }

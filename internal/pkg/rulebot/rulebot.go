@@ -18,14 +18,14 @@ type Component struct {
 	RDB    *redis.Client
 	Logger log.Logger
 
-	MessageClient   pb.MessageClient
-	MiddleClient    pb.MiddleClient
-	SubscribeClient pb.SubscribeClient
-	WorkflowClient  pb.WorkflowClient
-	StorageClient   pb.StorageClient
-	TodoClient      pb.TodoSvcClient
-	UserClient      pb.UserSvcClient
-	NLPClient       pb.NLPClient
+	MessageClient     pb.MessageClient
+	MiddleClient      pb.MiddleClient
+	SubscribeClient   pb.SubscribeClient
+	WorkflowSvcClient pb.WorkflowSvcClient
+	StorageClient     pb.StorageClient
+	TodoClient        pb.TodoSvcClient
+	UserClient        pb.UserSvcClient
+	NLPClient         pb.NLPClient
 }
 
 func (c Component) Message() pb.MessageClient {
@@ -40,8 +40,8 @@ func (c Component) Subscribe() pb.SubscribeClient {
 	return c.SubscribeClient
 }
 
-func (c Component) Workflow() pb.WorkflowClient {
-	return c.WorkflowClient
+func (c Component) Workflow() pb.WorkflowSvcClient {
+	return c.WorkflowSvcClient
 }
 
 func (c Component) Storage() pb.StorageClient {
@@ -79,7 +79,7 @@ type IComponent interface {
 	Message() pb.MessageClient
 	Middle() pb.MiddleClient
 	Subscribe() pb.SubscribeClient
-	Workflow() pb.WorkflowClient
+	Workflow() pb.WorkflowSvcClient
 	Storage() pb.StorageClient
 	Todo() pb.TodoSvcClient
 	User() pb.UserSvcClient
@@ -94,24 +94,24 @@ func NewComponent(
 	messageClient pb.MessageClient,
 	middleClient pb.MiddleClient,
 	subscribeClient pb.SubscribeClient,
-	workflowClient pb.WorkflowClient,
+	workflowClient pb.WorkflowSvcClient,
 	storageClient pb.StorageClient,
 	todoClient pb.TodoSvcClient,
 	userClient pb.UserSvcClient,
 	nlpClient pb.NLPClient,
 ) IComponent {
 	return Component{
-		Conf:            conf,
-		RDB:             rdb,
-		Logger:          logger,
-		MessageClient:   messageClient,
-		MiddleClient:    middleClient,
-		SubscribeClient: subscribeClient,
-		WorkflowClient:  workflowClient,
-		StorageClient:   storageClient,
-		TodoClient:      todoClient,
-		UserClient:      userClient,
-		NLPClient:       nlpClient,
+		Conf:              conf,
+		RDB:               rdb,
+		Logger:            logger,
+		MessageClient:     messageClient,
+		MiddleClient:      middleClient,
+		SubscribeClient:   subscribeClient,
+		WorkflowSvcClient: workflowClient,
+		StorageClient:     storageClient,
+		TodoClient:        todoClient,
+		UserClient:        userClient,
+		NLPClient:         nlpClient,
 	}
 }
 

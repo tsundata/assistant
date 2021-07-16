@@ -19,7 +19,7 @@ func NewApp(
 	rs *rpc.Server,
 	q *machinery.Server,
 	message pb.MessageClient,
-	workflow pb.WorkflowClient) (*app.Application, error) {
+	workflow pb.WorkflowSvcClient) (*app.Application, error) {
 
 	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {

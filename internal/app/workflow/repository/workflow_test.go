@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
@@ -67,7 +67,7 @@ func TestWorkflowRepository_CreateTrigger(t *testing.T) {
 		t.Fatalf("create workflow Preposiory error, %+v", err)
 	}
 	type args struct {
-		trigger model.Trigger
+		trigger pb.Trigger
 	}
 	tests := []struct {
 		name    string
@@ -75,7 +75,7 @@ func TestWorkflowRepository_CreateTrigger(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{trigger: model.Trigger{Type: "test"}}, false},
+		{"case1", sto, args{trigger: pb.Trigger{Type: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

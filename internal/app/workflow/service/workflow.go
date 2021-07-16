@@ -100,19 +100,19 @@ func (s *Workflow) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (
 }
 
 func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	trigger, err := s.repo.GetTriggerByFlag(payload.GetType(), payload.GetFlag())
+	trigger, err := s.repo.GetTriggerByFlag(payload.Trigger.GetType(), payload.Trigger.GetFlag())
 	if err != nil {
 		return nil, err
 	}
 
 	// Authorization
-	if trigger.Secret != "" && payload.GetSecret() != trigger.Secret {
+	if trigger.Secret != "" && payload.Trigger.GetSecret() != trigger.Secret {
 		return nil, errors.New("error secret")
 	}
 
 	// publish event
 	err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{
-		ID: trigger.MessageID,
+		ID: int(trigger.MessageId),
 	})
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 
 	for _, trigger := range triggers {
 		var lastTime time.Time
-		key := fmt.Sprintf("workflow:cron:%d:time", trigger.MessageID)
+		key := fmt.Sprintf("workflow:cron:%d:time", trigger.MessageId)
 		t := s.rdb.Get(ctx, key).Val()
 		if t == "" {
 			lastTime = time.Time{}
@@ -155,7 +155,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
 			// publish event
-			err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{ID: trigger.MessageID})
+			err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{ID: int(trigger.MessageId)})
 			if err != nil {
 				return nil, err
 			}
@@ -166,17 +166,17 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 }
 
 func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
-	var trigger model.Trigger
-	trigger.Type = payload.GetType()
-	trigger.Kind = payload.GetKind()
-	trigger.MessageID = int(payload.GetMessageId())
+	var trigger pb.Trigger
+	trigger.Type = payload.Trigger.GetType()
+	trigger.Kind = payload.Trigger.GetKind()
+	trigger.MessageId = payload.Trigger.GetMessageId()
 
-	switch payload.GetKind() {
+	switch payload.Trigger.GetKind() {
 	case model.MessageTypeAction:
-		if payload.GetMessageText() == "" {
+		if payload.Trigger.GetMessageText() == "" {
 			return nil, errors.New("empty action")
 		}
-		p, err := action.NewParser(action.NewLexer([]rune(payload.GetMessageText())))
+		p, err := action.NewParser(action.NewLexer([]rune(payload.Trigger.GetMessageText())))
 		if err != nil {
 			return nil, err
 		}
@@ -216,7 +216,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 				return nil, err
 			}
 
-			if find.ID > 0 {
+			if find.Id > 0 {
 				return nil, errors.New("exist flag: " + trigger.Flag)
 			}
 
@@ -234,7 +234,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 }
 
 func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
-	err := s.repo.DeleteTriggerByMessageID(payload.GetMessageId())
+	err := s.repo.DeleteTriggerByMessageID(payload.Trigger.GetMessageId())
 	if err != nil {
 		return &pb.StateReply{State: false}, err
 	}

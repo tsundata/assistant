@@ -114,7 +114,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(model.Trigger{MessageID: 1, Secret: "test"}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
 	)
 
 	s := NewWorkflow(bus, nil, repo, nil, nil, nil)
@@ -133,7 +133,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TriggerRequest{Type: "webhook", Secret: "test"}},
+			args{context.Background(), &pb.TriggerRequest{Trigger: &pb.Trigger{Type: "webhook", Secret: "test"}}},
 			&pb.WorkflowReply{},
 			false,
 		},
@@ -167,15 +167,15 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 	}
 	bus := event.NewNatsBus(nats)
 
-	messageID := rand.Int()
+	messageID := rand.Int63()
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().
 			ListTriggersByType("cron").
-			Return([]model.Trigger{{MessageID: messageID, When: "* * * * *"}}, nil),
+			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 		repo.EXPECT().
 			ListTriggersByType("cron").
-			Return([]model.Trigger{{MessageID: messageID, When: "* * * * *"}}, nil),
+			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 	)
 
 	s := NewWorkflow(bus, rdb, repo, nil, nil, nil)
@@ -227,7 +227,7 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().CreateTrigger(gomock.Any()).Return(int64(1), nil),
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(model.Trigger{}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
 		repo.EXPECT().CreateTrigger(gomock.Any()).Return(int64(1), nil),
 	)
 
@@ -248,13 +248,15 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.TriggerRequest{
-				Kind:      model.MessageTypeAction,
-				Type:      "webhook",
-				MessageId: 1,
-				MessageText: `
+				Trigger: &pb.Trigger{
+					Kind:      model.MessageTypeAction,
+					Type:      "webhook",
+					MessageId: 1,
+					MessageText: `
 cron "* * * * *"
 webhook "test"
 `,
+				},
 			}},
 			&pb.StateReply{State: true},
 			false,
@@ -300,14 +302,14 @@ func TestWorkflow_DeleteTrigger(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TriggerRequest{MessageId: 1}},
+			args{context.Background(), &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: 1}}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TriggerRequest{MessageId: 2}},
+			args{context.Background(), &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: 2}}},
 			&pb.StateReply{State: false},
 			true,
 		},

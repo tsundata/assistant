@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Workflow {
+service WorkflowSvc {
   rpc SyntaxCheck(WorkflowRequest) returns (StateReply) {}
   rpc RunAction(WorkflowRequest) returns (WorkflowReply) {}
   rpc WebhookTrigger(TriggerRequest) returns (WorkflowReply) {}
@@ -25,12 +25,20 @@ message WorkflowReply {
 }
 
 message TriggerRequest {
-  string type = 1;
-  string kind = 2;
-  string flag = 3;
-  string secret = 4;
-  string header = 5;
-  string body = 6;
+  Trigger trigger = 1;
+}
+
+message Trigger {
+  int64 id = 1;
+  string type = 2;
+  string kind = 3;
+  string flag = 4;
+  string secret = 5;
+  string when = 6;
   int64 messageId = 7;
-  string messageText = 8;
+  string createdAt = 8;
+  string messageText = 9;
+
+  string header = 10;
+  string body = 11;
 }

@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewWorkflowClient(client *rpc.Client) (pb.WorkflowClient, error) {
+func NewWorkflowClient(client *rpc.Client) (pb.WorkflowSvcClient, error) {
 	conn, err := client.Dial(app.Workflow, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "middle client dial error")
 	}
-	c := pb.NewWorkflowClient(conn)
+	c := pb.NewWorkflowSvcClient(conn)
 	return c, nil
 }

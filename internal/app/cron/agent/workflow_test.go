@@ -15,7 +15,7 @@ func TestWorkflowCron(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowClient(ctl)
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	gomock.InOrder(
 		workflow.EXPECT().
 			CronTrigger(gomock.Any(), gomock.Any()).

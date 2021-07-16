@@ -229,7 +229,7 @@ func TestMessage_Run(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowClient(ctl)
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByID(gomock.Any()).
@@ -331,7 +331,7 @@ func TestMessage_CreateActionMessage(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowClient(ctl)
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		workflow.EXPECT().SyntaxCheck(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
@@ -385,7 +385,7 @@ func TestMessage_DeleteWorkflowMessage(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowClient(ctl)
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().Delete(gomock.Any()).Return(nil),

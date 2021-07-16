@@ -14,10 +14,10 @@ import (
 type WorkflowTask struct {
 	bus      event.Bus
 	message  pb.MessageClient
-	workflow pb.WorkflowClient
+	workflow pb.WorkflowSvcClient
 }
 
-func NewWorkflowTask(bus event.Bus, message pb.MessageClient, workflow pb.WorkflowClient) *WorkflowTask {
+func NewWorkflowTask(bus event.Bus, message pb.MessageClient, workflow pb.WorkflowSvcClient) *WorkflowTask {
 	return &WorkflowTask{bus: bus, message: message, workflow: workflow}
 }
 

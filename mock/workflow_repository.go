@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/api/model"
+	pb "github.com/tsundata/assistant/api/pb"
 )
 
 // MockWorkflowRepository is a mock of WorkflowRepository interface.
@@ -35,7 +35,7 @@ func (m *MockWorkflowRepository) EXPECT() *MockWorkflowRepositoryMockRecorder {
 }
 
 // CreateTrigger mocks base method.
-func (m *MockWorkflowRepository) CreateTrigger(trigger model.Trigger) (int64, error) {
+func (m *MockWorkflowRepository) CreateTrigger(trigger pb.Trigger) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTrigger", trigger)
 	ret0, _ := ret[0].(int64)
@@ -64,10 +64,10 @@ func (mr *MockWorkflowRepositoryMockRecorder) DeleteTriggerByMessageID(messageID
 }
 
 // GetTriggerByFlag mocks base method.
-func (m *MockWorkflowRepository) GetTriggerByFlag(t, flag string) (model.Trigger, error) {
+func (m *MockWorkflowRepository) GetTriggerByFlag(t, flag string) (pb.Trigger, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTriggerByFlag", t, flag)
-	ret0, _ := ret[0].(model.Trigger)
+	ret0, _ := ret[0].(pb.Trigger)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +79,10 @@ func (mr *MockWorkflowRepositoryMockRecorder) GetTriggerByFlag(t, flag interface
 }
 
 // ListTriggersByType mocks base method.
-func (m *MockWorkflowRepository) ListTriggersByType(t string) ([]model.Trigger, error) {
+func (m *MockWorkflowRepository) ListTriggersByType(t string) ([]pb.Trigger, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListTriggersByType", t)
-	ret0, _ := ret[0].([]model.Trigger)
+	ret0, _ := ret[0].([]pb.Trigger)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
