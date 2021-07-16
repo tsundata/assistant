@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
@@ -12,7 +12,7 @@ func TestTodoRepository_CreateTodo(t *testing.T) {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
 	type args struct {
-		todo model.Todo
+		todo pb.Todo
 	}
 	tests := []struct {
 		name    string
@@ -20,7 +20,7 @@ func TestTodoRepository_CreateTodo(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{todo: model.Todo{Content: "test"}}, false},
+		{"case1", sto, args{todo: pb.Todo{Content: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -137,7 +137,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
 	type args struct {
-		todo model.Todo
+		todo pb.Todo
 	}
 	tests := []struct {
 		name    string
@@ -145,7 +145,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{todo: model.Todo{ID: 1, Content: "test"}}, false},
+		{"case1", sto, args{todo: pb.Todo{Id: 1, Content: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

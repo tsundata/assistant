@@ -6,19 +6,18 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rqlite/gorqlite"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"time"
 )
 
 type TodoRepository interface {
-	CreateTodo(todo model.Todo) (int64, error)
-	ListTodos() ([]model.Todo, error)
-	ListRemindTodos() ([]model.Todo, error)
-	GetTodo(id int64) (model.Todo, error)
+	CreateTodo(todo pb.Todo) (int64, error)
+	ListTodos() ([]pb.Todo, error)
+	ListRemindTodos() ([]pb.Todo, error)
+	GetTodo(id int64) (pb.Todo, error)
 	CompleteTodo(id int64) error
-	UpdateTodo(todo model.Todo) error
+	UpdateTodo(todo pb.Todo) error
 	DeleteTodo(id int64) error
 }
 
@@ -31,9 +30,9 @@ func NewMysqlTodoRepository(logger log.Logger, db *sqlx.DB) TodoRepository {
 	return &MysqlTodoRepository{logger: logger, db: db}
 }
 
-func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
-	todo.CreatedAt = time.Now()
-	todo.UpdatedAt = time.Now()
+func (r *MysqlTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
+	todo.CreatedAt = util.Now()
+	todo.UpdatedAt = util.Now()
 	res, err := r.db.NamedExec("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES (:content, :priority, :is_remind_at_time, :remind_at, :repeat_method, :repeat_rule, :repeat_end_at, :category, :remark, :complete, :created_at, :updated_at)", todo)
 	if err != nil {
 		return 0, err
@@ -45,8 +44,8 @@ func (r *MysqlTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
 	return id, nil
 }
 
-func (r *MysqlTodoRepository) ListTodos() ([]model.Todo, error) {
-	var items []model.Todo
+func (r *MysqlTodoRepository) ListTodos() ([]pb.Todo, error) {
+	var items []pb.Todo
 	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC, `created_at` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
@@ -54,8 +53,8 @@ func (r *MysqlTodoRepository) ListTodos() ([]model.Todo, error) {
 	return items, nil
 }
 
-func (r *MysqlTodoRepository) ListRemindTodos() ([]model.Todo, error) {
-	var items []model.Todo
+func (r *MysqlTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
+	var items []pb.Todo
 	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 AND `is_remind_at_time` = 1 ORDER BY `priority` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
@@ -63,11 +62,11 @@ func (r *MysqlTodoRepository) ListRemindTodos() ([]model.Todo, error) {
 	return items, nil
 }
 
-func (r *MysqlTodoRepository) GetTodo(id int64) (model.Todo, error) {
-	var item model.Todo
+func (r *MysqlTodoRepository) GetTodo(id int64) (pb.Todo, error) {
+	var item pb.Todo
 	err := r.db.Get(&item, "SELECT id FROM `todos` WHERE id = ?", id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.Todo{}, err
+		return pb.Todo{}, err
 	}
 	return item, nil
 }
@@ -77,8 +76,8 @@ func (r *MysqlTodoRepository) CompleteTodo(id int64) error {
 	return err
 }
 
-func (r *MysqlTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.ID)
+func (r *MysqlTodoRepository) UpdateTodo(todo pb.Todo) error {
+	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.Id)
 	return err
 }
 
@@ -96,7 +95,7 @@ type RqliteTodoRepository struct {
 	db     gorqlite.Connection
 }
 
-func (r *RqliteTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
+func (r *RqliteTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
 	now := util.Now()
 	res, err := r.db.WriteOne(fmt.Sprintf("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES ('%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')",
 		todo.Content, todo.Priority, util.BoolInt(todo.IsRemindAtTime), todo.RemindAt, todo.RepeatMethod, todo.RepeatRule, todo.RepeatEndAt, todo.Category, todo.Remark, util.BoolInt(todo.Complete), now, now))
@@ -106,15 +105,15 @@ func (r *RqliteTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
 	return res.LastInsertID, nil
 }
 
-func (r *RqliteTodoRepository) ListTodos() ([]model.Todo, error) {
+func (r *RqliteTodoRepository) ListTodos() ([]pb.Todo, error) {
 	panic("implement me")
 }
 
-func (r *RqliteTodoRepository) ListRemindTodos() ([]model.Todo, error) {
+func (r *RqliteTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
 	panic("implement me")
 }
 
-func (r *RqliteTodoRepository) GetTodo(id int64) (model.Todo, error) {
+func (r *RqliteTodoRepository) GetTodo(id int64) (pb.Todo, error) {
 	panic("implement me")
 }
 
@@ -123,8 +122,8 @@ func (r *RqliteTodoRepository) CompleteTodo(id int64) error {
 	return err
 }
 
-func (r *RqliteTodoRepository) UpdateTodo(todo model.Todo) error {
-	_, err := r.db.WriteOne(fmt.Sprintf("UPDATE `todos` SET `content` = '%s' WHERE id = %d", todo.Content, todo.ID))
+func (r *RqliteTodoRepository) UpdateTodo(todo pb.Todo) error {
+	_, err := r.db.WriteOne(fmt.Sprintf("UPDATE `todos` SET `content` = '%s' WHERE id = %d", todo.Content, todo.Id))
 	return err
 }
 

@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/api/model"
+	pb "github.com/tsundata/assistant/api/pb"
 )
 
 // MockTodoRepository is a mock of TodoRepository interface.
@@ -49,7 +49,7 @@ func (mr *MockTodoRepositoryMockRecorder) CompleteTodo(id interface{}) *gomock.C
 }
 
 // CreateTodo mocks base method.
-func (m *MockTodoRepository) CreateTodo(todo model.Todo) (int64, error) {
+func (m *MockTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTodo", todo)
 	ret0, _ := ret[0].(int64)
@@ -78,10 +78,10 @@ func (mr *MockTodoRepositoryMockRecorder) DeleteTodo(id interface{}) *gomock.Cal
 }
 
 // GetTodo mocks base method.
-func (m *MockTodoRepository) GetTodo(id int64) (model.Todo, error) {
+func (m *MockTodoRepository) GetTodo(id int64) (pb.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTodo", id)
-	ret0, _ := ret[0].(model.Todo)
+	ret0, _ := ret[0].(pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -93,10 +93,10 @@ func (mr *MockTodoRepositoryMockRecorder) GetTodo(id interface{}) *gomock.Call {
 }
 
 // ListRemindTodos mocks base method.
-func (m *MockTodoRepository) ListRemindTodos() ([]model.Todo, error) {
+func (m *MockTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListRemindTodos")
-	ret0, _ := ret[0].([]model.Todo)
+	ret0, _ := ret[0].([]pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -108,10 +108,10 @@ func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos() *gomock.Call {
 }
 
 // ListTodos mocks base method.
-func (m *MockTodoRepository) ListTodos() ([]model.Todo, error) {
+func (m *MockTodoRepository) ListTodos() ([]pb.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListTodos")
-	ret0, _ := ret[0].([]model.Todo)
+	ret0, _ := ret[0].([]pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -123,7 +123,7 @@ func (mr *MockTodoRepositoryMockRecorder) ListTodos() *gomock.Call {
 }
 
 // UpdateTodo mocks base method.
-func (m *MockTodoRepository) UpdateTodo(todo model.Todo) error {
+func (m *MockTodoRepository) UpdateTodo(todo pb.Todo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTodo", todo)
 	ret0, _ := ret[0].(error)

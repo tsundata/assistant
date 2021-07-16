@@ -25,16 +25,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type TodoRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Content              string   `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
-	Priority             int64    `protobuf:"varint,3,opt,name=priority,proto3" json:"priority,omitempty"`
-	IsRemindAtTime       bool     `protobuf:"varint,4,opt,name=IsRemindAtTime,proto3" json:"IsRemindAtTime,omitempty"`
-	RemindAt             string   `protobuf:"bytes,5,opt,name=remindAt,proto3" json:"remindAt,omitempty"`
-	RepeatMethod         string   `protobuf:"bytes,6,opt,name=repeatMethod,proto3" json:"repeatMethod,omitempty"`
-	RepeatRule           string   `protobuf:"bytes,7,opt,name=repeatRule,proto3" json:"repeatRule,omitempty"`
-	RepeatEndAt          string   `protobuf:"bytes,8,opt,name=repeatEndAt,proto3" json:"repeatEndAt,omitempty"`
-	Remark               string   `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
-	Complete             bool     `protobuf:"varint,10,opt,name=complete,proto3" json:"complete,omitempty"`
+	Todo                 *Todo    `protobuf:"bytes,1,opt,name=todo,proto3" json:"todo,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -64,81 +55,18 @@ func (m *TodoRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_TodoRequest proto.InternalMessageInfo
 
-func (m *TodoRequest) GetId() int64 {
+func (m *TodoRequest) GetTodo() *Todo {
 	if m != nil {
-		return m.Id
+		return m.Todo
 	}
-	return 0
-}
-
-func (m *TodoRequest) GetContent() string {
-	if m != nil {
-		return m.Content
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetPriority() int64 {
-	if m != nil {
-		return m.Priority
-	}
-	return 0
-}
-
-func (m *TodoRequest) GetIsRemindAtTime() bool {
-	if m != nil {
-		return m.IsRemindAtTime
-	}
-	return false
-}
-
-func (m *TodoRequest) GetRemindAt() string {
-	if m != nil {
-		return m.RemindAt
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetRepeatMethod() string {
-	if m != nil {
-		return m.RepeatMethod
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetRepeatRule() string {
-	if m != nil {
-		return m.RepeatRule
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetRepeatEndAt() string {
-	if m != nil {
-		return m.RepeatEndAt
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetRemark() string {
-	if m != nil {
-		return m.Remark
-	}
-	return ""
-}
-
-func (m *TodoRequest) GetComplete() bool {
-	if m != nil {
-		return m.Complete
-	}
-	return false
+	return nil
 }
 
 type TodoReply struct {
-	Todo                 *TodoItem `protobuf:"bytes,1,opt,name=todo,proto3" json:"todo,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
+	Todo                 *Todo    `protobuf:"bytes,1,opt,name=todo,proto3" json:"todo,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *TodoReply) Reset()         { *m = TodoReply{} }
@@ -165,7 +93,7 @@ func (m *TodoReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_TodoReply proto.InternalMessageInfo
 
-func (m *TodoReply) GetTodo() *TodoItem {
+func (m *TodoReply) GetTodo() *Todo {
 	if m != nil {
 		return m.Todo
 	}
@@ -173,10 +101,10 @@ func (m *TodoReply) GetTodo() *TodoItem {
 }
 
 type TodosReply struct {
-	Todos                []*TodoItem `protobuf:"bytes,1,rep,name=todos,proto3" json:"todos,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	Todos                []*Todo  `protobuf:"bytes,1,rep,name=todos,proto3" json:"todos,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *TodosReply) Reset()         { *m = TodosReply{} }
@@ -203,127 +131,143 @@ func (m *TodosReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_TodosReply proto.InternalMessageInfo
 
-func (m *TodosReply) GetTodos() []*TodoItem {
+func (m *TodosReply) GetTodos() []*Todo {
 	if m != nil {
 		return m.Todos
 	}
 	return nil
 }
 
-type TodoItem struct {
+type Todo struct {
 	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Content              string   `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
-	Priority             int64    `protobuf:"varint,3,opt,name=priority,proto3" json:"priority,omitempty"`
-	IsRemindAtTime       bool     `protobuf:"varint,4,opt,name=IsRemindAtTime,proto3" json:"IsRemindAtTime,omitempty"`
-	RemindAt             string   `protobuf:"bytes,5,opt,name=remindAt,proto3" json:"remindAt,omitempty"`
-	RepeatMethod         string   `protobuf:"bytes,6,opt,name=repeatMethod,proto3" json:"repeatMethod,omitempty"`
-	RepeatRule           string   `protobuf:"bytes,7,opt,name=repeatRule,proto3" json:"repeatRule,omitempty"`
-	RepeatEndAt          string   `protobuf:"bytes,8,opt,name=repeatEndAt,proto3" json:"repeatEndAt,omitempty"`
-	Remark               string   `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
-	Complete             bool     `protobuf:"varint,10,opt,name=complete,proto3" json:"complete,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Category             string   `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	Remark               string   `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	Priority             int64    `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`
+	IsRemindAtTime       bool     `protobuf:"varint,6,opt,name=isRemindAtTime,proto3" json:"isRemindAtTime,omitempty"`
+	RemindAt             string   `protobuf:"bytes,7,opt,name=remindAt,proto3" json:"remindAt,omitempty"`
+	RepeatMethod         string   `protobuf:"bytes,8,opt,name=repeatMethod,proto3" json:"repeatMethod,omitempty"`
+	RepeatRule           string   `protobuf:"bytes,9,opt,name=repeatRule,proto3" json:"repeatRule,omitempty"`
+	RepeatEndAt          string   `protobuf:"bytes,10,opt,name=repeatEndAt,proto3" json:"repeatEndAt,omitempty"`
+	Complete             bool     `protobuf:"varint,11,opt,name=complete,proto3" json:"complete,omitempty"`
+	CreatedAt            string   `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt            string   `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *TodoItem) Reset()         { *m = TodoItem{} }
-func (m *TodoItem) String() string { return proto.CompactTextString(m) }
-func (*TodoItem) ProtoMessage()    {}
-func (*TodoItem) Descriptor() ([]byte, []int) {
+func (m *Todo) Reset()         { *m = Todo{} }
+func (m *Todo) String() string { return proto.CompactTextString(m) }
+func (*Todo) ProtoMessage()    {}
+func (*Todo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0e4b95d0c4e09639, []int{3}
 }
-func (m *TodoItem) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TodoItem.Unmarshal(m, b)
+func (m *Todo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Todo.Unmarshal(m, b)
 }
-func (m *TodoItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TodoItem.Marshal(b, m, deterministic)
+func (m *Todo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Todo.Marshal(b, m, deterministic)
 }
-func (m *TodoItem) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TodoItem.Merge(m, src)
+func (m *Todo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Todo.Merge(m, src)
 }
-func (m *TodoItem) XXX_Size() int {
-	return xxx_messageInfo_TodoItem.Size(m)
+func (m *Todo) XXX_Size() int {
+	return xxx_messageInfo_Todo.Size(m)
 }
-func (m *TodoItem) XXX_DiscardUnknown() {
-	xxx_messageInfo_TodoItem.DiscardUnknown(m)
+func (m *Todo) XXX_DiscardUnknown() {
+	xxx_messageInfo_Todo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TodoItem proto.InternalMessageInfo
+var xxx_messageInfo_Todo proto.InternalMessageInfo
 
-func (m *TodoItem) GetId() int64 {
+func (m *Todo) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *TodoItem) GetContent() string {
+func (m *Todo) GetContent() string {
 	if m != nil {
 		return m.Content
 	}
 	return ""
 }
 
-func (m *TodoItem) GetPriority() int64 {
+func (m *Todo) GetCategory() string {
 	if m != nil {
-		return m.Priority
-	}
-	return 0
-}
-
-func (m *TodoItem) GetIsRemindAtTime() bool {
-	if m != nil {
-		return m.IsRemindAtTime
-	}
-	return false
-}
-
-func (m *TodoItem) GetRemindAt() string {
-	if m != nil {
-		return m.RemindAt
+		return m.Category
 	}
 	return ""
 }
 
-func (m *TodoItem) GetRepeatMethod() string {
-	if m != nil {
-		return m.RepeatMethod
-	}
-	return ""
-}
-
-func (m *TodoItem) GetRepeatRule() string {
-	if m != nil {
-		return m.RepeatRule
-	}
-	return ""
-}
-
-func (m *TodoItem) GetRepeatEndAt() string {
-	if m != nil {
-		return m.RepeatEndAt
-	}
-	return ""
-}
-
-func (m *TodoItem) GetRemark() string {
+func (m *Todo) GetRemark() string {
 	if m != nil {
 		return m.Remark
 	}
 	return ""
 }
 
-func (m *TodoItem) GetComplete() bool {
+func (m *Todo) GetPriority() int64 {
+	if m != nil {
+		return m.Priority
+	}
+	return 0
+}
+
+func (m *Todo) GetIsRemindAtTime() bool {
+	if m != nil {
+		return m.IsRemindAtTime
+	}
+	return false
+}
+
+func (m *Todo) GetRemindAt() string {
+	if m != nil {
+		return m.RemindAt
+	}
+	return ""
+}
+
+func (m *Todo) GetRepeatMethod() string {
+	if m != nil {
+		return m.RepeatMethod
+	}
+	return ""
+}
+
+func (m *Todo) GetRepeatRule() string {
+	if m != nil {
+		return m.RepeatRule
+	}
+	return ""
+}
+
+func (m *Todo) GetRepeatEndAt() string {
+	if m != nil {
+		return m.RepeatEndAt
+	}
+	return ""
+}
+
+func (m *Todo) GetComplete() bool {
 	if m != nil {
 		return m.Complete
 	}
 	return false
 }
 
-func (m *TodoItem) GetCreatedAt() string {
+func (m *Todo) GetCreatedAt() string {
 	if m != nil {
 		return m.CreatedAt
+	}
+	return ""
+}
+
+func (m *Todo) GetUpdatedAt() string {
+	if m != nil {
+		return m.UpdatedAt
 	}
 	return ""
 }
@@ -332,39 +276,40 @@ func init() {
 	proto.RegisterType((*TodoRequest)(nil), "pb.TodoRequest")
 	proto.RegisterType((*TodoReply)(nil), "pb.TodoReply")
 	proto.RegisterType((*TodosReply)(nil), "pb.TodosReply")
-	proto.RegisterType((*TodoItem)(nil), "pb.TodoItem")
+	proto.RegisterType((*Todo)(nil), "pb.Todo")
 }
 
 func init() { proto.RegisterFile("todo.proto", fileDescriptor_0e4b95d0c4e09639) }
 
 var fileDescriptor_0e4b95d0c4e09639 = []byte{
-	// 413 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x94, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0x6b, 0x27, 0x4d, 0x9c, 0x2f, 0x21, 0x48, 0x7b, 0x40, 0xab, 0x48, 0x20, 0x6b, 0x0f,
-	0x28, 0x12, 0x6a, 0x0c, 0xed, 0x13, 0x94, 0x82, 0xaa, 0x1e, 0xb8, 0x98, 0x72, 0xe1, 0x82, 0xec,
-	0xec, 0x48, 0x58, 0xc4, 0xd9, 0x65, 0x3d, 0x3d, 0xf4, 0xb1, 0x78, 0x10, 0x1e, 0x81, 0x77, 0x41,
-	0xbb, 0xeb, 0xa4, 0xe5, 0x9f, 0x08, 0x77, 0x8e, 0xdf, 0x6f, 0xbe, 0x59, 0xef, 0x7c, 0xb3, 0x32,
-	0xc0, 0x46, 0x9b, 0x95, 0x75, 0x86, 0x8d, 0x48, 0x6d, 0xbd, 0x40, 0x5d, 0x75, 0x14, 0xb5, 0xfa,
-	0x92, 0x62, 0x7a, 0x6d, 0xb4, 0x29, 0xe9, 0xf3, 0x0d, 0x75, 0x2c, 0xe6, 0x48, 0x1b, 0x2d, 0x93,
-	0x3c, 0x59, 0x0e, 0xca, 0xb4, 0xd1, 0x42, 0x62, 0xbc, 0x36, 0x5b, 0xa6, 0x2d, 0xcb, 0x34, 0x4f,
-	0x96, 0x93, 0x72, 0x27, 0xc5, 0x02, 0x99, 0x75, 0x8d, 0x71, 0x0d, 0xdf, 0xca, 0x41, 0xf0, 0xef,
-	0xb5, 0x78, 0x8a, 0xf9, 0x55, 0x57, 0x52, 0xdb, 0x6c, 0xf5, 0x39, 0x5f, 0x37, 0x2d, 0xc9, 0x61,
-	0x9e, 0x2c, 0xb3, 0xf2, 0x27, 0xea, 0xcf, 0x70, 0xbd, 0x96, 0xc7, 0xe1, 0xf8, 0xbd, 0x16, 0x0a,
-	0x33, 0x47, 0x96, 0x2a, 0x7e, 0x43, 0xfc, 0xd1, 0x68, 0x39, 0x0a, 0xf5, 0x1f, 0x98, 0x78, 0x02,
-	0x44, 0x5d, 0xde, 0x6c, 0x48, 0x8e, 0x83, 0xe3, 0x1e, 0x11, 0x39, 0xa6, 0x51, 0xbd, 0x0e, 0x9f,
-	0xc8, 0x82, 0xe1, 0x3e, 0x12, 0x8f, 0x30, 0x72, 0xd4, 0x56, 0xee, 0x93, 0x9c, 0x84, 0x62, 0xaf,
-	0xfc, 0xcd, 0xd6, 0xa6, 0xb5, 0x1b, 0x62, 0x92, 0x08, 0x77, 0xdf, 0x6b, 0x75, 0x82, 0x49, 0x8c,
-	0xcc, 0x6e, 0x6e, 0x45, 0x8e, 0xa1, 0x8f, 0x37, 0x44, 0x36, 0x3d, 0x9d, 0xad, 0x6c, 0xbd, 0xf2,
-	0xc5, 0x2b, 0xa6, 0xb6, 0x0c, 0x15, 0xf5, 0x1c, 0xf0, 0xa4, 0x8b, 0x7e, 0x85, 0x63, 0x4f, 0x3b,
-	0x99, 0xe4, 0x83, 0x5f, 0x1a, 0x62, 0x49, 0x7d, 0x4d, 0x91, 0xed, 0xd8, 0xff, 0x8d, 0xfc, 0x7d,
-	0x23, 0xe2, 0x31, 0xb0, 0x76, 0x54, 0x31, 0xe9, 0x0f, 0x15, 0xcb, 0x69, 0xe8, 0x9b, 0xf4, 0xe4,
-	0x9c, 0x4f, 0xbf, 0xa5, 0x18, 0xfa, 0x3c, 0x45, 0x01, 0x5c, 0x04, 0x1a, 0xd4, 0xc3, 0x5d, 0xf6,
-	0xfd, 0xe3, 0x5f, 0xcc, 0x3d, 0x78, 0xcb, 0x15, 0x53, 0xd8, 0x95, 0x3a, 0x12, 0xcf, 0x30, 0xbe,
-	0x24, 0xfe, 0xbd, 0xfb, 0xc1, 0x1d, 0x88, 0xe6, 0x13, 0x64, 0xbd, 0xb9, 0xfb, 0xc3, 0xd9, 0x77,
-	0xef, 0x40, 0x1d, 0x89, 0x33, 0xcc, 0x2f, 0x89, 0x63, 0xfa, 0x07, 0x37, 0x15, 0xc0, 0x2b, 0xf2,
-	0x33, 0x1f, 0x3a, 0x41, 0x01, 0xbc, 0xb3, 0xfa, 0x1f, 0x46, 0x7e, 0x81, 0xd9, 0x45, 0x9f, 0xeb,
-	0x81, 0x2d, 0x2f, 0xb3, 0xf7, 0xa3, 0xca, 0x36, 0x85, 0xad, 0xeb, 0x51, 0xf8, 0xab, 0x9c, 0x7d,
-	0x0f, 0x00, 0x00, 0xff, 0xff, 0xe4, 0xb9, 0x99, 0x5f, 0x73, 0x04, 0x00, 0x00,
+	// 423 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
+	0x18, 0xc6, 0x97, 0xb4, 0x6b, 0xd3, 0xa7, 0x5d, 0x91, 0x7c, 0x40, 0x56, 0x05, 0x53, 0x94, 0x03,
+	0x2a, 0x1a, 0xb4, 0x62, 0xfb, 0x04, 0x65, 0xa0, 0x9d, 0xb8, 0x64, 0xe3, 0xc2, 0x05, 0x25, 0xcd,
+	0x2b, 0x88, 0x68, 0x6b, 0xe3, 0xbc, 0x45, 0xea, 0x9d, 0x0f, 0xca, 0x47, 0x41, 0x7e, 0x9d, 0x76,
+	0x1b, 0x02, 0xd1, 0xe3, 0xef, 0xf9, 0x63, 0xc7, 0x7e, 0x1d, 0x80, 0x4d, 0x65, 0x66, 0xd6, 0x19,
+	0x36, 0x2a, 0xb6, 0xe5, 0x04, 0x65, 0xd1, 0x50, 0xe0, 0xec, 0x02, 0xc3, 0x3b, 0x53, 0x99, 0x9c,
+	0xbe, 0x6f, 0xa9, 0x61, 0xf5, 0x0c, 0x5d, 0x1f, 0xd6, 0x51, 0x1a, 0x4d, 0x87, 0x97, 0xc9, 0xcc,
+	0x96, 0x33, 0xb1, 0x45, 0xcd, 0x5e, 0x62, 0x10, 0xc2, 0x76, 0xb5, 0xfb, 0x4f, 0xf4, 0x15, 0xe0,
+	0xa9, 0x09, 0xd9, 0x73, 0x9c, 0x7a, 0xb5, 0xd1, 0x51, 0xda, 0x79, 0x14, 0x0e, 0x72, 0xf6, 0xb3,
+	0x83, 0xae, 0x67, 0x35, 0x46, 0x5c, 0x57, 0xb2, 0x64, 0x27, 0x8f, 0xeb, 0x4a, 0x69, 0xf4, 0x97,
+	0x66, 0xc3, 0xb4, 0x61, 0x1d, 0xa7, 0xd1, 0x74, 0x90, 0xef, 0x51, 0x4d, 0x90, 0x2c, 0x0b, 0xa6,
+	0x2f, 0xc6, 0xed, 0x74, 0x47, 0xac, 0x03, 0xab, 0xa7, 0xe8, 0x39, 0x5a, 0x17, 0xee, 0x9b, 0xee,
+	0x8a, 0xd3, 0x92, 0xef, 0x58, 0x57, 0x1b, 0x57, 0xf3, 0x4e, 0x9f, 0xca, 0x1e, 0x07, 0x56, 0x2f,
+	0x30, 0xae, 0x9b, 0x9c, 0xd6, 0xf5, 0xa6, 0x5a, 0xf0, 0x5d, 0xbd, 0x26, 0xdd, 0x4b, 0xa3, 0x69,
+	0x92, 0xff, 0xa1, 0xfa, 0x35, 0x5c, 0xcb, 0xba, 0x1f, 0xf6, 0xdd, 0xb3, 0xca, 0x30, 0x72, 0x64,
+	0xa9, 0xe0, 0x0f, 0xc4, 0x5f, 0x4d, 0xa5, 0x13, 0xf1, 0x1f, 0x69, 0xea, 0x1c, 0x08, 0x9c, 0x6f,
+	0x57, 0xa4, 0x07, 0x92, 0x78, 0xa0, 0xa8, 0x14, 0xc3, 0x40, 0xef, 0x65, 0x0b, 0x48, 0xe0, 0xa1,
+	0x24, 0x27, 0x37, 0x6b, 0xbb, 0x22, 0x26, 0x3d, 0x94, 0x6f, 0x3c, 0xb0, 0x7a, 0x0e, 0x2c, 0x1d,
+	0x15, 0x4c, 0xd5, 0xe7, 0x82, 0xf5, 0x48, 0xca, 0x83, 0x56, 0x59, 0xb0, 0xb7, 0xb7, 0xb6, 0xda,
+	0xdb, 0x67, 0xc1, 0x6e, 0x95, 0x05, 0x5f, 0xfe, 0x8a, 0xd1, 0xf7, 0x63, 0xb8, 0xfd, 0xb1, 0x54,
+	0x73, 0xe0, 0x5a, 0x7a, 0x32, 0x97, 0x27, 0x87, 0x89, 0x85, 0x87, 0x32, 0x19, 0x7b, 0xe1, 0x96,
+	0x0b, 0x26, 0x99, 0x70, 0x76, 0xa2, 0x2e, 0xd0, 0xbf, 0x21, 0xfe, 0x7b, 0xfa, 0xec, 0x5e, 0x08,
+	0xe1, 0xd7, 0x48, 0xda, 0x70, 0xf3, 0x8f, 0xb5, 0xef, 0x5f, 0x4f, 0x76, 0xa2, 0xae, 0x30, 0xbe,
+	0x21, 0x0e, 0x73, 0x38, 0xba, 0x34, 0x07, 0xde, 0x91, 0xbf, 0x95, 0x63, 0x4f, 0x30, 0x07, 0x3e,
+	0xca, 0x5d, 0x1c, 0x5b, 0x78, 0x83, 0xd1, 0x75, 0x7b, 0xf3, 0x47, 0x56, 0xde, 0x26, 0x9f, 0x7a,
+	0x85, 0xad, 0xe7, 0xb6, 0x2c, 0x7b, 0xf2, 0x03, 0x5e, 0xfd, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x12,
+	0xe4, 0x85, 0x87, 0x9e, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -375,10 +320,10 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// TodoClient is the client API for Todo service.
+// TodoSvcClient is the client API for TodoSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type TodoClient interface {
+type TodoSvcClient interface {
 	CreateTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodoReply, error)
 	GetTodos(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodosReply, error)
@@ -388,79 +333,79 @@ type TodoClient interface {
 	CompleteTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
-type todoClient struct {
+type todoSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewTodoClient(cc *grpc.ClientConn) TodoClient {
-	return &todoClient{cc}
+func NewTodoSvcClient(cc *grpc.ClientConn) TodoSvcClient {
+	return &todoSvcClient{cc}
 }
 
-func (c *todoClient) CreateTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *todoSvcClient) CreateTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/CreateTodo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/CreateTodo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) GetTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodoReply, error) {
+func (c *todoSvcClient) GetTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodoReply, error) {
 	out := new(TodoReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/GetTodo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/GetTodo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) GetTodos(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodosReply, error) {
+func (c *todoSvcClient) GetTodos(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodosReply, error) {
 	out := new(TodosReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/GetTodos", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/GetTodos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) GetRemindTodos(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodosReply, error) {
+func (c *todoSvcClient) GetRemindTodos(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*TodosReply, error) {
 	out := new(TodosReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/GetRemindTodos", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/GetRemindTodos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) DeleteTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *todoSvcClient) DeleteTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/DeleteTodo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/DeleteTodo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) UpdateTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *todoSvcClient) UpdateTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/UpdateTodo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/UpdateTodo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *todoClient) CompleteTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *todoSvcClient) CompleteTodo(ctx context.Context, in *TodoRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Todo/CompleteTodo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.TodoSvc/CompleteTodo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TodoServer is the server API for Todo service.
-type TodoServer interface {
+// TodoSvcServer is the server API for TodoSvc service.
+type TodoSvcServer interface {
 	CreateTodo(context.Context, *TodoRequest) (*StateReply, error)
 	GetTodo(context.Context, *TodoRequest) (*TodoReply, error)
 	GetTodos(context.Context, *TodoRequest) (*TodosReply, error)
@@ -470,193 +415,193 @@ type TodoServer interface {
 	CompleteTodo(context.Context, *TodoRequest) (*StateReply, error)
 }
 
-// UnimplementedTodoServer can be embedded to have forward compatible implementations.
-type UnimplementedTodoServer struct {
+// UnimplementedTodoSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedTodoSvcServer struct {
 }
 
-func (*UnimplementedTodoServer) CreateTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
+func (*UnimplementedTodoSvcServer) CreateTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTodo not implemented")
 }
-func (*UnimplementedTodoServer) GetTodo(ctx context.Context, req *TodoRequest) (*TodoReply, error) {
+func (*UnimplementedTodoSvcServer) GetTodo(ctx context.Context, req *TodoRequest) (*TodoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTodo not implemented")
 }
-func (*UnimplementedTodoServer) GetTodos(ctx context.Context, req *TodoRequest) (*TodosReply, error) {
+func (*UnimplementedTodoSvcServer) GetTodos(ctx context.Context, req *TodoRequest) (*TodosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTodos not implemented")
 }
-func (*UnimplementedTodoServer) GetRemindTodos(ctx context.Context, req *TodoRequest) (*TodosReply, error) {
+func (*UnimplementedTodoSvcServer) GetRemindTodos(ctx context.Context, req *TodoRequest) (*TodosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRemindTodos not implemented")
 }
-func (*UnimplementedTodoServer) DeleteTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
+func (*UnimplementedTodoSvcServer) DeleteTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTodo not implemented")
 }
-func (*UnimplementedTodoServer) UpdateTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
+func (*UnimplementedTodoSvcServer) UpdateTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTodo not implemented")
 }
-func (*UnimplementedTodoServer) CompleteTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
+func (*UnimplementedTodoSvcServer) CompleteTodo(ctx context.Context, req *TodoRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteTodo not implemented")
 }
 
-func RegisterTodoServer(s *grpc.Server, srv TodoServer) {
-	s.RegisterService(&_Todo_serviceDesc, srv)
+func RegisterTodoSvcServer(s *grpc.Server, srv TodoSvcServer) {
+	s.RegisterService(&_TodoSvc_serviceDesc, srv)
 }
 
-func _Todo_CreateTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_CreateTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).CreateTodo(ctx, in)
+		return srv.(TodoSvcServer).CreateTodo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/CreateTodo",
+		FullMethod: "/pb.TodoSvc/CreateTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).CreateTodo(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).CreateTodo(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_GetTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_GetTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).GetTodo(ctx, in)
+		return srv.(TodoSvcServer).GetTodo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/GetTodo",
+		FullMethod: "/pb.TodoSvc/GetTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).GetTodo(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).GetTodo(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_GetTodos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_GetTodos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).GetTodos(ctx, in)
+		return srv.(TodoSvcServer).GetTodos(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/GetTodos",
+		FullMethod: "/pb.TodoSvc/GetTodos",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).GetTodos(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).GetTodos(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_GetRemindTodos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_GetRemindTodos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).GetRemindTodos(ctx, in)
+		return srv.(TodoSvcServer).GetRemindTodos(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/GetRemindTodos",
+		FullMethod: "/pb.TodoSvc/GetRemindTodos",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).GetRemindTodos(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).GetRemindTodos(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_DeleteTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_DeleteTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).DeleteTodo(ctx, in)
+		return srv.(TodoSvcServer).DeleteTodo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/DeleteTodo",
+		FullMethod: "/pb.TodoSvc/DeleteTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).DeleteTodo(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).DeleteTodo(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_UpdateTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_UpdateTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).UpdateTodo(ctx, in)
+		return srv.(TodoSvcServer).UpdateTodo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/UpdateTodo",
+		FullMethod: "/pb.TodoSvc/UpdateTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).UpdateTodo(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).UpdateTodo(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Todo_CompleteTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TodoSvc_CompleteTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TodoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TodoServer).CompleteTodo(ctx, in)
+		return srv.(TodoSvcServer).CompleteTodo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Todo/CompleteTodo",
+		FullMethod: "/pb.TodoSvc/CompleteTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServer).CompleteTodo(ctx, req.(*TodoRequest))
+		return srv.(TodoSvcServer).CompleteTodo(ctx, req.(*TodoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Todo_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Todo",
-	HandlerType: (*TodoServer)(nil),
+var _TodoSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.TodoSvc",
+	HandlerType: (*TodoSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateTodo",
-			Handler:    _Todo_CreateTodo_Handler,
+			Handler:    _TodoSvc_CreateTodo_Handler,
 		},
 		{
 			MethodName: "GetTodo",
-			Handler:    _Todo_GetTodo_Handler,
+			Handler:    _TodoSvc_GetTodo_Handler,
 		},
 		{
 			MethodName: "GetTodos",
-			Handler:    _Todo_GetTodos_Handler,
+			Handler:    _TodoSvc_GetTodos_Handler,
 		},
 		{
 			MethodName: "GetRemindTodos",
-			Handler:    _Todo_GetRemindTodos_Handler,
+			Handler:    _TodoSvc_GetRemindTodos_Handler,
 		},
 		{
 			MethodName: "DeleteTodo",
-			Handler:    _Todo_DeleteTodo_Handler,
+			Handler:    _TodoSvc_DeleteTodo_Handler,
 		},
 		{
 			MethodName: "UpdateTodo",
-			Handler:    _Todo_UpdateTodo_Handler,
+			Handler:    _TodoSvc_UpdateTodo_Handler,
 		},
 		{
 			MethodName: "CompleteTodo",
-			Handler:    _Todo_CompleteTodo_Handler,
+			Handler:    _TodoSvc_CompleteTodo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

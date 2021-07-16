@@ -12,13 +12,13 @@ type Chatbot struct {
 	logger log.Logger
 	bot    *rulebot.RuleBot
 	middle pb.MiddleClient
-	todo   pb.TodoClient
+	todo   pb.TodoSvcClient
 }
 
 func NewChatbot(
 	logger log.Logger,
 	middle pb.MiddleClient,
-	todo pb.TodoClient,
+	todo pb.TodoSvcClient,
 	bot *rulebot.RuleBot) *Chatbot {
 	return &Chatbot{
 		logger:   logger,

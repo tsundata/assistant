@@ -11,7 +11,7 @@ type Component struct {
 	Logger log.Logger
 
 	Middle pb.MiddleClient
-	Todo   pb.TodoClient
+	Todo   pb.TodoSvcClient
 	User   pb.UserClient
 }
 

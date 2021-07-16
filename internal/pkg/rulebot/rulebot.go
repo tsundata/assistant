@@ -23,7 +23,7 @@ type Component struct {
 	SubscribeClient pb.SubscribeClient
 	WorkflowClient  pb.WorkflowClient
 	StorageClient   pb.StorageClient
-	TodoClient      pb.TodoClient
+	TodoClient      pb.TodoSvcClient
 	UserClient      pb.UserClient
 	NLPClient       pb.NLPClient
 }
@@ -48,7 +48,7 @@ func (c Component) Storage() pb.StorageClient {
 	return c.StorageClient
 }
 
-func (c Component) Todo() pb.TodoClient {
+func (c Component) Todo() pb.TodoSvcClient {
 	return c.TodoClient
 }
 
@@ -81,7 +81,7 @@ type IComponent interface {
 	Subscribe() pb.SubscribeClient
 	Workflow() pb.WorkflowClient
 	Storage() pb.StorageClient
-	Todo() pb.TodoClient
+	Todo() pb.TodoSvcClient
 	User() pb.UserClient
 	NLP() pb.NLPClient
 }
@@ -96,7 +96,7 @@ func NewComponent(
 	subscribeClient pb.SubscribeClient,
 	workflowClient pb.WorkflowClient,
 	storageClient pb.StorageClient,
-	todoClient pb.TodoClient,
+	todoClient pb.TodoSvcClient,
 	userClient pb.UserClient,
 	nlpClient pb.NLPClient,
 ) IComponent {

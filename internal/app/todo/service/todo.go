@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
@@ -23,31 +25,34 @@ func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) *
 func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
 	var err error
 	var remindAt time.Time
-	if payload.GetRemindAt() != "" {
-		remindAt, err = time.ParseInLocation("2006-01-02 15:04", payload.GetRemindAt(), time.Local)
+	if payload.Todo.GetRemindAt() != "" {
+		remindAt, err = time.ParseInLocation("2006-01-02 15:04", payload.Todo.GetRemindAt(), time.Local)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	var endAt time.Time
-	if payload.GetRepeatEndAt() != "" {
-		endAt, err = time.ParseInLocation("2006-01-02 15:04", payload.GetRepeatEndAt(), time.Local)
+	if payload.Todo.GetRepeatEndAt() != "" {
+		endAt, err = time.ParseInLocation("2006-01-02 15:04", payload.Todo.GetRepeatEndAt(), time.Local)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	todo := model.Todo{
-		Content:        payload.GetContent(),
-		Priority:       payload.GetPriority(),
-		IsRemindAtTime: payload.GetIsRemindAtTime(),
-		RemindAt:       &remindAt,
-		RepeatMethod:   payload.GetRepeatMethod(),
-		RepeatRule:     payload.GetRepeatRule(),
-		RepeatEndAt:    &endAt,
+	fmt.Println(remindAt) // fixme
+	fmt.Println(endAt)    // fixme
+
+	todo := pb.Todo{
+		Content:        payload.Todo.GetContent(),
+		Priority:       payload.Todo.GetPriority(),
+		IsRemindAtTime: payload.Todo.GetIsRemindAtTime(),
+		RemindAt:       "", //&remindAt, fixme
+		RepeatMethod:   payload.Todo.GetRepeatMethod(),
+		RepeatRule:     payload.Todo.GetRepeatRule(),
+		RepeatEndAt:    "", //&endAt, fixme
 		Category:       "",
-		Remark:         payload.GetRemark(),
+		Remark:         payload.Todo.GetRemark(),
 		Complete:       false,
 	}
 	_, err = s.repo.CreateTodo(todo)
@@ -56,7 +61,7 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCreatedExp})
+		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: enum.TodoCreatedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -67,13 +72,13 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 }
 
 func (s *Todo) GetTodo(_ context.Context, payload *pb.TodoRequest) (*pb.TodoReply, error) {
-	find, err := s.repo.GetTodo(payload.GetId())
+	find, err := s.repo.GetTodo(payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.TodoReply{
-		Todo: &pb.TodoItem{
+		Todo: &pb.Todo{
 			Content:  find.Content,
 			Priority: find.Priority,
 			Remark:   find.Remark,
@@ -88,9 +93,9 @@ func (s *Todo) GetTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, e
 		return nil, err
 	}
 
-	var res []*pb.TodoItem
+	var res []*pb.Todo
 	for _, item := range items {
-		res = append(res, &pb.TodoItem{
+		res = append(res, &pb.Todo{
 			Content:  item.Content,
 			Priority: item.Priority,
 			Remark:   item.Remark,
@@ -102,7 +107,7 @@ func (s *Todo) GetTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, e
 }
 
 func (s *Todo) DeleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.DeleteTodo(payload.GetId())
+	err := s.repo.DeleteTodo(payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -111,9 +116,9 @@ func (s *Todo) DeleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 }
 
 func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.UpdateTodo(model.Todo{
-		ID:      payload.GetId(),
-		Content: payload.GetContent(),
+	err := s.repo.UpdateTodo(pb.Todo{
+		Id:      payload.Todo.GetId(),
+		Content: payload.Todo.GetContent(),
 	})
 	if err != nil {
 		return nil, err
@@ -123,19 +128,19 @@ func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 }
 
 func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.CompleteTodo(payload.GetId())
+	err := s.repo.CompleteTodo(payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: model.TodoCompletedExp})
+		err = s.bus.Publish(ctx, event.ChangeExpSubject, model.Role{UserID: model.SuperUserID, Exp: enum.TodoCompletedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
 		}
 
-		find, err := s.repo.GetTodo(payload.GetId())
+		find, err := s.repo.GetTodo(payload.Todo.GetId())
 		if err != nil {
 			return nil, err
 		}
@@ -155,28 +160,18 @@ func (s *Todo) GetRemindTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosRe
 		return nil, err
 	}
 
-	layout := "2006-01-02 15:04"
-	var res []*pb.TodoItem
+	var res []*pb.Todo
 	for _, item := range items {
-		remindAt := ""
-		if item.RemindAt != nil {
-			remindAt = item.RemindAt.Format(layout)
-		}
-		endAt := ""
-		if item.RepeatEndAt != nil {
-			endAt = item.RepeatEndAt.Format(layout)
-		}
-
-		res = append(res, &pb.TodoItem{
-			Id:             item.ID,
+		res = append(res, &pb.Todo{
+			Id:             item.Id,
 			Content:        item.Content,
 			Priority:       item.Priority,
 			IsRemindAtTime: item.IsRemindAtTime,
-			RemindAt:       remindAt,
+			RemindAt:       item.RemindAt,
 			RepeatMethod:   item.RepeatMethod,
 			RepeatRule:     item.RepeatRule,
-			RepeatEndAt:    endAt,
-			CreatedAt:      item.CreatedAt.Format(layout),
+			RepeatEndAt:    item.RepeatEndAt,
+			CreatedAt:      item.CreatedAt,
 		})
 	}
 

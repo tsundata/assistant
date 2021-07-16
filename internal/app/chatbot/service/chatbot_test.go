@@ -22,7 +22,7 @@ func TestChatbot_Handle(t *testing.T) {
 	}
 
 	middle := mock.NewMockMiddleClient(ctl)
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 
 	s := NewChatbot(nil, middle, todo, bot)
 

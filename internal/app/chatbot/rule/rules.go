@@ -338,7 +338,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 			reply, err := comp.Todo().CreateTodo(ctx, &pb.TodoRequest{
-				Content: args[1],
+				Todo: &pb.Todo{Content: args[1]},
 			})
 			if err != nil {
 				return []string{"error call: " + err.Error()}

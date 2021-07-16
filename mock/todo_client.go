@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockTodoClient is a mock of TodoClient interface.
-type MockTodoClient struct {
+// MockTodoSvcClient is a mock of TodoSvcClient interface.
+type MockTodoSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockTodoClientMockRecorder
+	recorder *MockTodoSvcClientMockRecorder
 }
 
-// MockTodoClientMockRecorder is the mock recorder for MockTodoClient.
-type MockTodoClientMockRecorder struct {
-	mock *MockTodoClient
+// MockTodoSvcClientMockRecorder is the mock recorder for MockTodoSvcClient.
+type MockTodoSvcClientMockRecorder struct {
+	mock *MockTodoSvcClient
 }
 
-// NewMockTodoClient creates a new mock instance.
-func NewMockTodoClient(ctrl *gomock.Controller) *MockTodoClient {
-	mock := &MockTodoClient{ctrl: ctrl}
-	mock.recorder = &MockTodoClientMockRecorder{mock}
+// NewMockTodoSvcClient creates a new mock instance.
+func NewMockTodoSvcClient(ctrl *gomock.Controller) *MockTodoSvcClient {
+	mock := &MockTodoSvcClient{ctrl: ctrl}
+	mock.recorder = &MockTodoSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTodoClient) EXPECT() *MockTodoClientMockRecorder {
+func (m *MockTodoSvcClient) EXPECT() *MockTodoSvcClientMockRecorder {
 	return m.recorder
 }
 
 // CompleteTodo mocks base method.
-func (m *MockTodoClient) CompleteTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockTodoSvcClient) CompleteTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockTodoClient) CompleteTodo(ctx context.Context, in *pb.TodoRequest, o
 }
 
 // CompleteTodo indicates an expected call of CompleteTodo.
-func (mr *MockTodoClientMockRecorder) CompleteTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) CompleteTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoClient)(nil).CompleteTodo), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoSvcClient)(nil).CompleteTodo), varargs...)
 }
 
 // CreateTodo mocks base method.
-func (m *MockTodoClient) CreateTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockTodoSvcClient) CreateTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockTodoClient) CreateTodo(ctx context.Context, in *pb.TodoRequest, opt
 }
 
 // CreateTodo indicates an expected call of CreateTodo.
-func (mr *MockTodoClientMockRecorder) CreateTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) CreateTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoClient)(nil).CreateTodo), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoSvcClient)(nil).CreateTodo), varargs...)
 }
 
 // DeleteTodo mocks base method.
-func (m *MockTodoClient) DeleteTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockTodoSvcClient) DeleteTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,14 +90,14 @@ func (m *MockTodoClient) DeleteTodo(ctx context.Context, in *pb.TodoRequest, opt
 }
 
 // DeleteTodo indicates an expected call of DeleteTodo.
-func (mr *MockTodoClientMockRecorder) DeleteTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) DeleteTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoClient)(nil).DeleteTodo), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoSvcClient)(nil).DeleteTodo), varargs...)
 }
 
 // GetRemindTodos mocks base method.
-func (m *MockTodoClient) GetRemindTodos(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodosReply, error) {
+func (m *MockTodoSvcClient) GetRemindTodos(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodosReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -110,14 +110,14 @@ func (m *MockTodoClient) GetRemindTodos(ctx context.Context, in *pb.TodoRequest,
 }
 
 // GetRemindTodos indicates an expected call of GetRemindTodos.
-func (mr *MockTodoClientMockRecorder) GetRemindTodos(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) GetRemindTodos(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoClient)(nil).GetRemindTodos), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoSvcClient)(nil).GetRemindTodos), varargs...)
 }
 
 // GetTodo mocks base method.
-func (m *MockTodoClient) GetTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodoReply, error) {
+func (m *MockTodoSvcClient) GetTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodoReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -130,14 +130,14 @@ func (m *MockTodoClient) GetTodo(ctx context.Context, in *pb.TodoRequest, opts .
 }
 
 // GetTodo indicates an expected call of GetTodo.
-func (mr *MockTodoClientMockRecorder) GetTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) GetTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoClient)(nil).GetTodo), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoSvcClient)(nil).GetTodo), varargs...)
 }
 
 // GetTodos mocks base method.
-func (m *MockTodoClient) GetTodos(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodosReply, error) {
+func (m *MockTodoSvcClient) GetTodos(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.TodosReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -150,14 +150,14 @@ func (m *MockTodoClient) GetTodos(ctx context.Context, in *pb.TodoRequest, opts 
 }
 
 // GetTodos indicates an expected call of GetTodos.
-func (mr *MockTodoClientMockRecorder) GetTodos(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) GetTodos(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodos", reflect.TypeOf((*MockTodoClient)(nil).GetTodos), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodos", reflect.TypeOf((*MockTodoSvcClient)(nil).GetTodos), varargs...)
 }
 
 // UpdateTodo mocks base method.
-func (m *MockTodoClient) UpdateTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockTodoSvcClient) UpdateTodo(ctx context.Context, in *pb.TodoRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -170,37 +170,37 @@ func (m *MockTodoClient) UpdateTodo(ctx context.Context, in *pb.TodoRequest, opt
 }
 
 // UpdateTodo indicates an expected call of UpdateTodo.
-func (mr *MockTodoClientMockRecorder) UpdateTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockTodoSvcClientMockRecorder) UpdateTodo(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoClient)(nil).UpdateTodo), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoSvcClient)(nil).UpdateTodo), varargs...)
 }
 
-// MockTodoServer is a mock of TodoServer interface.
-type MockTodoServer struct {
+// MockTodoSvcServer is a mock of TodoSvcServer interface.
+type MockTodoSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockTodoServerMockRecorder
+	recorder *MockTodoSvcServerMockRecorder
 }
 
-// MockTodoServerMockRecorder is the mock recorder for MockTodoServer.
-type MockTodoServerMockRecorder struct {
-	mock *MockTodoServer
+// MockTodoSvcServerMockRecorder is the mock recorder for MockTodoSvcServer.
+type MockTodoSvcServerMockRecorder struct {
+	mock *MockTodoSvcServer
 }
 
-// NewMockTodoServer creates a new mock instance.
-func NewMockTodoServer(ctrl *gomock.Controller) *MockTodoServer {
-	mock := &MockTodoServer{ctrl: ctrl}
-	mock.recorder = &MockTodoServerMockRecorder{mock}
+// NewMockTodoSvcServer creates a new mock instance.
+func NewMockTodoSvcServer(ctrl *gomock.Controller) *MockTodoSvcServer {
+	mock := &MockTodoSvcServer{ctrl: ctrl}
+	mock.recorder = &MockTodoSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTodoServer) EXPECT() *MockTodoServerMockRecorder {
+func (m *MockTodoSvcServer) EXPECT() *MockTodoSvcServerMockRecorder {
 	return m.recorder
 }
 
 // CompleteTodo mocks base method.
-func (m *MockTodoServer) CompleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
+func (m *MockTodoSvcServer) CompleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CompleteTodo", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -209,13 +209,13 @@ func (m *MockTodoServer) CompleteTodo(arg0 context.Context, arg1 *pb.TodoRequest
 }
 
 // CompleteTodo indicates an expected call of CompleteTodo.
-func (mr *MockTodoServerMockRecorder) CompleteTodo(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) CompleteTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoServer)(nil).CompleteTodo), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoSvcServer)(nil).CompleteTodo), arg0, arg1)
 }
 
 // CreateTodo mocks base method.
-func (m *MockTodoServer) CreateTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
+func (m *MockTodoSvcServer) CreateTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTodo", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -224,13 +224,13 @@ func (m *MockTodoServer) CreateTodo(arg0 context.Context, arg1 *pb.TodoRequest) 
 }
 
 // CreateTodo indicates an expected call of CreateTodo.
-func (mr *MockTodoServerMockRecorder) CreateTodo(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) CreateTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoServer)(nil).CreateTodo), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoSvcServer)(nil).CreateTodo), arg0, arg1)
 }
 
 // DeleteTodo mocks base method.
-func (m *MockTodoServer) DeleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
+func (m *MockTodoSvcServer) DeleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTodo", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -239,13 +239,13 @@ func (m *MockTodoServer) DeleteTodo(arg0 context.Context, arg1 *pb.TodoRequest) 
 }
 
 // DeleteTodo indicates an expected call of DeleteTodo.
-func (mr *MockTodoServerMockRecorder) DeleteTodo(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) DeleteTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoServer)(nil).DeleteTodo), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoSvcServer)(nil).DeleteTodo), arg0, arg1)
 }
 
 // GetRemindTodos mocks base method.
-func (m *MockTodoServer) GetRemindTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodosReply, error) {
+func (m *MockTodoSvcServer) GetRemindTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodosReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRemindTodos", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TodosReply)
@@ -254,13 +254,13 @@ func (m *MockTodoServer) GetRemindTodos(arg0 context.Context, arg1 *pb.TodoReque
 }
 
 // GetRemindTodos indicates an expected call of GetRemindTodos.
-func (mr *MockTodoServerMockRecorder) GetRemindTodos(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) GetRemindTodos(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoServer)(nil).GetRemindTodos), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRemindTodos", reflect.TypeOf((*MockTodoSvcServer)(nil).GetRemindTodos), arg0, arg1)
 }
 
 // GetTodo mocks base method.
-func (m *MockTodoServer) GetTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodoReply, error) {
+func (m *MockTodoSvcServer) GetTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodoReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTodo", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TodoReply)
@@ -269,13 +269,13 @@ func (m *MockTodoServer) GetTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*p
 }
 
 // GetTodo indicates an expected call of GetTodo.
-func (mr *MockTodoServerMockRecorder) GetTodo(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) GetTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoServer)(nil).GetTodo), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoSvcServer)(nil).GetTodo), arg0, arg1)
 }
 
 // GetTodos mocks base method.
-func (m *MockTodoServer) GetTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodosReply, error) {
+func (m *MockTodoSvcServer) GetTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.TodosReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTodos", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TodosReply)
@@ -284,13 +284,13 @@ func (m *MockTodoServer) GetTodos(arg0 context.Context, arg1 *pb.TodoRequest) (*
 }
 
 // GetTodos indicates an expected call of GetTodos.
-func (mr *MockTodoServerMockRecorder) GetTodos(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) GetTodos(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodos", reflect.TypeOf((*MockTodoServer)(nil).GetTodos), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodos", reflect.TypeOf((*MockTodoSvcServer)(nil).GetTodos), arg0, arg1)
 }
 
 // UpdateTodo mocks base method.
-func (m *MockTodoServer) UpdateTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
+func (m *MockTodoSvcServer) UpdateTodo(arg0 context.Context, arg1 *pb.TodoRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTodo", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -299,7 +299,7 @@ func (m *MockTodoServer) UpdateTodo(arg0 context.Context, arg1 *pb.TodoRequest) 
 }
 
 // UpdateTodo indicates an expected call of UpdateTodo.
-func (mr *MockTodoServerMockRecorder) UpdateTodo(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTodoSvcServerMockRecorder) UpdateTodo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoServer)(nil).UpdateTodo), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoSvcServer)(nil).UpdateTodo), arg0, arg1)
 }

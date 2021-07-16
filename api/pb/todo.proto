@@ -5,7 +5,7 @@ import "base.proto";
 
 option go_package = "api/pb";
 
-service Todo {
+service TodoSvc {
   rpc CreateTodo(TodoRequest) returns (StateReply) {}
   rpc GetTodo(TodoRequest) returns (TodoReply) {}
   rpc GetTodos(TodoRequest) returns (TodosReply) {}
@@ -16,36 +16,29 @@ service Todo {
 }
 
 message TodoRequest {
-  int64 id = 1;
-  string content = 2;
-  int64 priority = 3;
-  bool IsRemindAtTime = 4;
-  string remindAt = 5;
-  string repeatMethod = 6;
-  string repeatRule = 7;
-  string repeatEndAt = 8;
-  string remark = 9;
-  bool complete = 10;
+  Todo todo = 1;
 }
 
 message TodoReply {
-  TodoItem todo = 1;
+  Todo todo = 1;
 }
 
 message TodosReply {
-  repeated TodoItem todos = 1;
+  repeated Todo todos = 1;
 }
 
-message TodoItem {
+message Todo {
   int64 id = 1;
   string content = 2;
-  int64 priority = 3;
-  bool IsRemindAtTime = 4;
-  string remindAt = 5;
-  string repeatMethod = 6;
-  string repeatRule = 7;
-  string repeatEndAt = 8;
-  string remark = 9;
-  bool complete = 10;
-  string created_at = 11;
+  string category = 3;
+  string remark = 4;
+  int64 priority = 5;
+  bool isRemindAtTime = 6;
+  string remindAt = 7;
+  string repeatMethod = 8;
+  string repeatRule = 9;
+  string repeatEndAt = 10;
+  bool complete = 11;
+  string created_at = 12;
+  string updated_at = 13;
 }

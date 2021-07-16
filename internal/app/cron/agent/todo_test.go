@@ -22,11 +22,11 @@ func TestTodoRemind1(t *testing.T) {
 	id := rand.Int63()
 	clear(t, id)
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",
@@ -81,11 +81,11 @@ func TestTodoRemind2(t *testing.T) {
 	id := rand.Int63()
 	clear(t, id)
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",
@@ -140,11 +140,11 @@ func TestTodoRemind3(t *testing.T) {
 	id := rand.Int63()
 	clear(t, id)
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",
@@ -199,11 +199,11 @@ func TestTodoRemind4(t *testing.T) {
 	id := rand.Int63()
 	clear(t, id)
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",
@@ -259,11 +259,11 @@ func TestTodoRemind5(t *testing.T) {
 	clear(t, id)
 	now := time.Now()
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",
@@ -279,7 +279,7 @@ func TestTodoRemind5(t *testing.T) {
 			}}, nil),
 		todo.EXPECT().
 			GetRemindTodos(gomock.Any(), gomock.Any()).
-			Return(&pb.TodosReply{Todos: []*pb.TodoItem{
+			Return(&pb.TodosReply{Todos: []*pb.Todo{
 				{
 					Id:             id,
 					Content:        "test",

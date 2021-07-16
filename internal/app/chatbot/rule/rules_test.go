@@ -185,7 +185,7 @@ func TestTodoRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	todo := mock.NewMockTodoClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
 	gomock.InOrder(
 		todo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)

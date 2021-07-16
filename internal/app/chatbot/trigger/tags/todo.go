@@ -17,7 +17,7 @@ func NewTodo() *Todo {
 func (t *Todo) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	// create
 	reply, err := comp.Todo.CreateTodo(ctx, &pb.TodoRequest{
-		Content: text,
+		Todo: &pb.Todo{Content: text},
 	})
 	if err != nil {
 		comp.Logger.Error(err)

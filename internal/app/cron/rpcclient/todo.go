@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewTodoClient(client *rpc.Client) (pb.TodoClient, error) {
+func NewTodoClient(client *rpc.Client) (pb.TodoSvcClient, error) {
 	conn, err := client.Dial(app.Todo, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "todo client dial error")
 	}
-	c := pb.NewTodoClient(conn)
+	c := pb.NewTodoSvcClient(conn)
 	return c, nil
 }

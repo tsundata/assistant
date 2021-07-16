@@ -40,7 +40,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.TodoRequest{Content: "test"}}, &pb.StateReply{State: true}, false},
+		{"case1", s, args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Content: "test"}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,8 +79,8 @@ func TestTodo_GetTodo(t *testing.T) {
 		wantErr bool
 	}{
 		{"case1", s, args{context.Background(),
-			&pb.TodoRequest{Id: 1}},
-			&pb.TodoReply{Todo: &pb.TodoItem{Content: "test"}},
+			&pb.TodoRequest{Todo: &pb.Todo{Id: 1}}},
+			&pb.TodoReply{Todo: &pb.Todo{Content: "test"}},
 			false,
 		},
 	}
@@ -124,7 +124,7 @@ func TestTodo_GetTodos(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.TodoRequest{}},
-			&pb.TodosReply{Todos: []*pb.TodoItem{
+			&pb.TodosReply{Todos: []*pb.Todo{
 				{Content: "test"},
 			}},
 			false,
@@ -169,7 +169,7 @@ func TestTodo_DeleteTodo(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TodoRequest{Id: 1}},
+			args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Id: 1}}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -213,7 +213,7 @@ func TestTodo_UpdateTodo(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TodoRequest{Id: 1, Content: "test update"}},
+			args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Id: 1, Content: "test update"}}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -257,7 +257,7 @@ func TestTodo_CompleteTodo(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TodoRequest{Id: 1}},
+			args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Id: 1}}},
 			&pb.StateReply{State: true},
 			false,
 		},
