@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -19,8 +19,8 @@ func TestMessage_List(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List().Return([]model.Message{{
-			ID:   1,
+		repo.EXPECT().List().Return([]pb.Message{{
+			Id:   1,
 			Text: "test",
 		}}, nil),
 	)
@@ -66,10 +66,10 @@ func TestMessage_Get(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any()).Return(model.Message{
-			ID:   1,
+		repo.EXPECT().GetByID(gomock.Any()).Return(pb.Message{
+			Id:   1,
 			Text: "test",
-			UUID: "test",
+			Uuid: "test",
 			Type: "text",
 		}, nil),
 	)
@@ -90,12 +90,14 @@ func TestMessage_Get(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 1}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 1}}},
 			&pb.MessageReply{
-				Id:   1,
-				Uuid: "test",
-				Text: "test",
-				Type: "text",
+				Message: &pb.Message{
+					Id:   1,
+					Uuid: "test",
+					Text: "test",
+					Type: "text",
+				},
 			},
 			false,
 		},
@@ -107,7 +109,7 @@ func TestMessage_Get(t *testing.T) {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Id != tt.want.Id || got.Uuid != tt.want.Uuid || got.Text != tt.want.Text || got.Type != tt.want.Type) {
+			if got != nil && (got.Message.Id != tt.want.Message.Id || got.Message.Uuid != tt.want.Message.Uuid || got.Message.Text != tt.want.Message.Text || got.Message.Type != tt.want.Message.Type) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})
@@ -126,8 +128,8 @@ func TestMessage_Create(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any()).Return(model.Message{ID: 2}, nil),
-		repo.EXPECT().GetByUUID(gomock.Any()).Return(model.Message{ID: 0}, nil),
+		repo.EXPECT().GetByUUID(gomock.Any()).Return(pb.Message{Id: 2}, nil),
+		repo.EXPECT().GetByUUID(gomock.Any()).Return(pb.Message{Id: 0}, nil),
 		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
 	)
 
@@ -147,15 +149,15 @@ func TestMessage_Create(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Text: "demo1", Uuid: "test"}},
-			&pb.MessageReply{Id: 2, Uuid: "test"},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo1", Uuid: "test"}}},
+			&pb.MessageReply{Message: &pb.Message{Id: 2, Uuid: "test"}},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.MessageRequest{Text: "demo2", Uuid: "test"}},
-			&pb.MessageReply{Id: 1, Uuid: "test"},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test"}}},
+			&pb.MessageReply{Message: &pb.Message{Id: 1, Uuid: "test"}},
 			false,
 		},
 	}
@@ -199,14 +201,14 @@ func TestMessage_Delete(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 1}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 1}}},
 			nil,
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 2}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 2}}},
 			nil,
 			true,
 		},
@@ -233,12 +235,12 @@ func TestMessage_Run(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByID(gomock.Any()).
-			Return(model.Message{ID: 1, Text: "test", Type: model.MessageTypeAction}, nil),
+			Return(pb.Message{Id: 1, Text: "test", Type: enum.MessageTypeAction}, nil),
 		workflow.EXPECT().RunAction(gomock.Any(), gomock.Any()).
 			Return(&pb.WorkflowReply{Text: "ok"}, nil),
 
 		repo.EXPECT().GetByID(gomock.Any()).
-			Return(model.Message{ID: 1, Text: "test", Type: "other"}, nil),
+			Return(pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, workflow)
@@ -257,14 +259,14 @@ func TestMessage_Run(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 1}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 1}}},
 			&pb.TextReply{Text: "ok"},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 2}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 2}}},
 			&pb.TextReply{Text: "Not running"},
 			false,
 		},
@@ -289,7 +291,7 @@ func TestMessage_GetActionMessages(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListByType(gomock.Any()).Return([]model.Message{{ID: 1, Text: "test"}}, nil),
+		repo.EXPECT().ListByType(gomock.Any()).Return([]pb.Message{{Id: 1, Text: "test"}}, nil),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, nil)
@@ -408,7 +410,7 @@ func TestMessage_DeleteWorkflowMessage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Id: 1}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 1}}},
 			&pb.StateReply{State: true},
 			false,
 		},

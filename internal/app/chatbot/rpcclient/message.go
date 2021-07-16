@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewMessageClient(client *rpc.Client) (pb.MessageClient, error) {
+func NewMessageClient(client *rpc.Client) (pb.MessageSvcClient, error) {
 	conn, err := client.Dial(app.Message, rpc.WithTimeout(time.Second))
 	if err != nil {
 		return nil, errors.Wrap(err, "message client dial error")
 	}
-	c := pb.NewMessageClient(conn)
+	c := pb.NewMessageSvcClient(conn)
 	return c, nil
 }

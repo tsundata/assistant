@@ -3,7 +3,6 @@ package trigger
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -91,7 +90,7 @@ Sended by Assistant
 			comp.Logger.Error(err)
 			return
 		}
-		err := comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
+		err := comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
 		if err != nil {
 			return
 		}

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -136,7 +135,7 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 			Name:         app.Name,
 			Token:        app.Token,
 			Extra:        app.Extra,
-			CreatedAt:    app.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreatedAt:    app.CreatedAt,
 		})
 	}
 
@@ -163,7 +162,7 @@ func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*p
 
 	var kvs []*pb.KV
 
-	if find.ID > 0 {
+	if find.Id > 0 {
 		var extra map[string]string
 		err = json.Unmarshal(util.StringToByte(find.Extra), &extra)
 		if err != nil {
@@ -197,13 +196,13 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 		return nil, err
 	}
 
-	if app.ID > 0 {
-		err = s.repo.UpdateAppByID(int64(app.ID), payload.App.GetToken(), payload.App.GetExtra())
+	if app.Id > 0 {
+		err = s.repo.UpdateAppByID(app.Id, payload.App.GetToken(), payload.App.GetExtra())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		_, err = s.repo.CreateApp(model.App{
+		_, err = s.repo.CreateApp(pb.App{
 			Name:  payload.App.GetName(),
 			Type:  payload.App.GetType(),
 			Token: payload.App.GetToken(),
@@ -220,7 +219,7 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 }
 
 func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
-	var find model.Credential
+	var find pb.Credential
 	var err error
 	if payload.GetName() != "" {
 		find, err = s.repo.GetCredentialByName(payload.GetName())
@@ -232,7 +231,7 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 	}
 
 	var kvs []*pb.KV
-	if find.ID > 0 {
+	if find.Id > 0 {
 		var data map[string]string
 		err := json.Unmarshal(util.StringToByte(find.Content), &data)
 		if err != nil {
@@ -265,7 +264,7 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 			Name:      item.Name,
 			Type:      item.Type,
 			Content:   item.Content,
-			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreatedAt: item.CreatedAt,
 		})
 	}
 
@@ -332,7 +331,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	_, err = s.repo.CreateCredential(model.Credential{Name: name, Type: category, Content: util.ByteToString(data)})
+	_, err = s.repo.CreateCredential(pb.Credential{Name: name, Type: category, Content: util.ByteToString(data)})
 	if err != nil {
 		return nil, err
 	}

@@ -30,7 +30,7 @@ type Crawler struct {
 	logger    log.Logger
 	subscribe pb.SubscribeClient
 	middle    pb.MiddleSvcClient
-	message   pb.MessageClient
+	message   pb.MessageSvcClient
 }
 
 func New() *Crawler {
@@ -46,7 +46,7 @@ func (s *Crawler) SetService(
 	logger log.Logger,
 	subscribe pb.SubscribeClient,
 	middle pb.MiddleSvcClient,
-	message pb.MessageClient) {
+	message pb.MessageSvcClient) {
 	s.c = c
 	s.rdb = rdb
 	s.logger = logger
@@ -275,8 +275,10 @@ func (s *Crawler) send(channel, name string, out []string) {
 
 	// send
 	_, err = s.message.Send(context.Background(), &pb.MessageRequest{
-		Channel: channel,
-		Text:    text,
+		Message: &pb.Message{
+			Channel: channel,
+			Text:    text,
+		},
 	})
 	if err != nil {
 		s.logger.Error(err)

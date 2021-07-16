@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -173,7 +172,7 @@ func TestMiddleRepository_CreateApp(t *testing.T) {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
 	type args struct {
-		app model.App
+		app pb.App
 	}
 	tests := []struct {
 		name    string
@@ -181,7 +180,7 @@ func TestMiddleRepository_CreateApp(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{app: model.App{Name: "test"}}, false},
+		{"case1", sto, args{app: pb.App{Name: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -278,7 +277,7 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 	}
 	name := util.GeneratePassword(10, "lowercase")
 	type args struct {
-		credential model.Credential
+		credential pb.Credential
 	}
 	tests := []struct {
 		name    string
@@ -286,7 +285,7 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{credential: model.Credential{Name: name}}, false},
+		{"case1", sto, args{credential: pb.Credential{Name: name}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

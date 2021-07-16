@@ -38,7 +38,7 @@ func TestWorkflowMessage(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	message := mock.NewMockMessageClient(ctl)
+	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
 		message.EXPECT().
 			Send(gomock.Any(), gomock.Any()).

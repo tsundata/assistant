@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action"
 	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
@@ -21,7 +21,7 @@ type Workflow struct {
 	bus     event.Bus
 	rdb     *redis.Client
 	logger  log.Logger
-	message pb.MessageClient
+	message pb.MessageSvcClient
 	middle  pb.MiddleSvcClient
 	repo    repository.WorkflowRepository
 }
@@ -30,7 +30,7 @@ func NewWorkflow(
 	bus event.Bus,
 	rdb *redis.Client,
 	repo repository.WorkflowRepository,
-	message pb.MessageClient,
+	message pb.MessageSvcClient,
 	middle pb.MiddleSvcClient,
 	logger log.Logger) *Workflow {
 	return &Workflow{bus: bus, rdb: rdb, repo: repo, logger: logger, message: message, middle: middle}
@@ -38,7 +38,7 @@ func NewWorkflow(
 
 func (s *Workflow) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
 	switch payload.Type {
-	case model.MessageTypeAction:
+	case enum.MessageTypeAction:
 		if payload.GetText() == "" {
 			return nil, errors.New("empty action")
 		}
@@ -111,8 +111,8 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	}
 
 	// publish event
-	err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{
-		ID: int(trigger.MessageId),
+	err = s.bus.Publish(ctx, event.RunWorkflowSubject, pb.Message{
+		Id: trigger.MessageId,
 	})
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
 			// publish event
-			err = s.bus.Publish(ctx, event.RunWorkflowSubject, model.Message{ID: int(trigger.MessageId)})
+			err = s.bus.Publish(ctx, event.RunWorkflowSubject, pb.Message{Id: trigger.MessageId})
 			if err != nil {
 				return nil, err
 			}
@@ -172,7 +172,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 	trigger.MessageId = payload.Trigger.GetMessageId()
 
 	switch payload.Trigger.GetKind() {
-	case model.MessageTypeAction:
+	case enum.MessageTypeAction:
 		if payload.Trigger.GetMessageText() == "" {
 			return nil, errors.New("empty action")
 		}

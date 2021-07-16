@@ -20,7 +20,7 @@ type Component struct {
 	Bus     event.Bus
 	Logger  log.Logger
 	Middle  pb.MiddleSvcClient
-	Message pb.MessageClient
+	Message pb.MessageSvcClient
 }
 
 func NewComponent() *Component {

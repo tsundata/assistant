@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -33,7 +33,7 @@ func TestWorkflow_SyntaxCheck(t *testing.T) {
 			"ok syntax",
 			s,
 			args{context.Background(), &pb.WorkflowRequest{
-				Type: model.MessageTypeAction,
+				Type: enum.MessageTypeAction,
 				Text: `get 1
 echo 1
 message "11"
@@ -45,7 +45,7 @@ message "11"
 			"error syntax",
 			s,
 			args{context.Background(), &pb.WorkflowRequest{
-				Type: model.MessageTypeAction,
+				Type: enum.MessageTypeAction,
 				Text: `get a a;`}},
 			&pb.StateReply{State: false},
 			true,
@@ -249,7 +249,7 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 			s,
 			args{context.Background(), &pb.TriggerRequest{
 				Trigger: &pb.Trigger{
-					Kind:      model.MessageTypeAction,
+					Kind:      enum.MessageTypeAction,
 					Type:      "webhook",
 					MessageId: 1,
 					MessageText: `

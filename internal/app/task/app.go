@@ -18,7 +18,7 @@ func NewApp(
 	logger log.Logger,
 	rs *rpc.Server,
 	q *machinery.Server,
-	message pb.MessageClient,
+	message pb.MessageSvcClient,
 	workflow pb.WorkflowSvcClient) (*app.Application, error) {
 
 	a, err := app.New(c, logger, app.RPCServerOption(rs))

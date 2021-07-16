@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -115,14 +115,14 @@ func TestNLP_Classifier(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.TextRequest{Text: "test"}},
-			&pb.TextReply{Text: string(model.StrengthAttr)},
+			&pb.TextReply{Text: string(enum.StrengthAttr)},
 			false,
 		},
 		{
 			"case2",
 			s,
 			args{context.Background(), &pb.TextRequest{Text: "demo2"}},
-			&pb.TextReply{Text: string(model.CultureAttr)},
+			&pb.TextReply{Text: string(enum.CultureAttr)},
 			false,
 		},
 		{

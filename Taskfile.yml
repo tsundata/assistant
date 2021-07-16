@@ -35,7 +35,7 @@ tasks:
     desc: Generate proto.pb.go
     cmds:
       - go run github.com/tsundata/assistant/cmd/cli clear
-      - protoc -I api/pb ./api/pb/* --gogo_out=plugins=grpc:.
+      - protoc -I api/pb ./api/pb/*.proto --gogo_out=plugins=grpc:.
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - git add api/pb/*.pb.go
 

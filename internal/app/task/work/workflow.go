@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -13,11 +13,11 @@ import (
 
 type WorkflowTask struct {
 	bus      event.Bus
-	message  pb.MessageClient
+	message  pb.MessageSvcClient
 	workflow pb.WorkflowSvcClient
 }
 
-func NewWorkflowTask(bus event.Bus, message pb.MessageClient, workflow pb.WorkflowSvcClient) *WorkflowTask {
+func NewWorkflowTask(bus event.Bus, message pb.MessageSvcClient, workflow pb.WorkflowSvcClient) *WorkflowTask {
 	return &WorkflowTask{bus: bus, message: message, workflow: workflow}
 }
 
@@ -43,14 +43,14 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 	}
 
 	ctx := context.Background()
-	message, err := t.message.Get(ctx, &pb.MessageRequest{Id: id})
+	message, err := t.message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return false, err
 	}
 
 	switch tp {
-	case model.MessageTypeAction:
-		_, err = t.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.GetText()})
+	case enum.MessageTypeAction:
+		_, err = t.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetText()})
 		if err != nil {
 			return false, err
 		}

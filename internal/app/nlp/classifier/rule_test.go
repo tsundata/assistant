@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"github.com/stretchr/testify/require"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ func TestRule(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.StrengthAttr, a)
+	require.Equal(t, enum.StrengthAttr, a)
 }
 
 func TestRule2(t *testing.T) {
@@ -23,7 +23,7 @@ func TestRule2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.CultureAttr, a)
+	require.Equal(t, enum.CultureAttr, a)
 }
 
 func TestRule3(t *testing.T) {
@@ -33,7 +33,7 @@ func TestRule3(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.EnvironmentAttr, a)
+	require.Equal(t, enum.EnvironmentAttr, a)
 }
 
 func TestRule4(t *testing.T) {
@@ -43,7 +43,7 @@ func TestRule4(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.CharismaAttr, a)
+	require.Equal(t, enum.CharismaAttr, a)
 }
 
 func TestRule5(t *testing.T) {
@@ -53,7 +53,7 @@ func TestRule5(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.TalentAttr, a)
+	require.Equal(t, enum.TalentAttr, a)
 }
 
 func TestRule6(t *testing.T) {
@@ -63,7 +63,7 @@ func TestRule6(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.IntellectAttr, a)
+	require.Equal(t, enum.IntellectAttr, a)
 }
 
 func TestRule7(t *testing.T) {
@@ -73,7 +73,7 @@ func TestRule7(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.IntellectAttr, a)
+	require.Equal(t, enum.IntellectAttr, a)
 }
 
 func TestRule8(t *testing.T) {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-resty/resty/v2"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -70,7 +69,7 @@ func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 		}
 
 		// send message
-		err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
 		if err != nil {
 			return
 		}

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
@@ -133,7 +133,7 @@ func TestMessageRepository_Create(t *testing.T) {
 	}
 
 	type args struct {
-		message model.Message
+		message pb.Message
 	}
 	tests := []struct {
 		name    string
@@ -141,7 +141,7 @@ func TestMessageRepository_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{message: model.Message{UUID: uuid, Text: "test"}}, false},
+		{"case1", sto, args{message: pb.Message{Uuid: uuid, Text: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

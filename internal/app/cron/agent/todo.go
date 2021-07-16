@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -51,13 +51,13 @@ func TodoRemind(ctx context.Context, comp rulebot.IComponent) []result.Result {
 
 			isRemind := false
 			switch todo.RepeatMethod {
-			case model.RepeatDaily:
+			case enum.RepeatDaily:
 				isRemind, err = util.IsDaily(todo.RemindAt, lastRemindAt, nowTime)
-			case model.RepeatWeekly:
+			case enum.RepeatWeekly:
 				isRemind, err = util.IsWeekly(todo.RemindAt, lastRemindAt, nowTime)
-			case model.RepeatMonthly:
+			case enum.RepeatMonthly:
 				isRemind, err = util.IsMonthly(todo.RemindAt, lastRemindAt, nowTime)
-			case model.RepeatAnnually:
+			case enum.RepeatAnnually:
 				isRemind, err = util.IsAnnually(todo.RemindAt, lastRemindAt, nowTime)
 			}
 			if err != nil {

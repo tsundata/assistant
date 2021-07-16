@@ -19,7 +19,7 @@ func NewApp(
 	rs *rpc.Server,
 	rdb *redis.Client,
 	middle pb.MiddleSvcClient,
-	message pb.MessageClient) (*app.Application, error) {
+	message pb.MessageSvcClient) (*app.Application, error) {
 	// event bus register
 	err := listener.RegisterEventHandler(bus, rdb, message, middle, logger)
 	if err != nil {

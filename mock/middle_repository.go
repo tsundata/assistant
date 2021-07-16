@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/api/model"
 	pb "github.com/tsundata/assistant/api/pb"
 )
 
@@ -36,7 +35,7 @@ func (m *MockMiddleRepository) EXPECT() *MockMiddleRepositoryMockRecorder {
 }
 
 // CreateApp mocks base method.
-func (m *MockMiddleRepository) CreateApp(app model.App) (int64, error) {
+func (m *MockMiddleRepository) CreateApp(app pb.App) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateApp", app)
 	ret0, _ := ret[0].(int64)
@@ -51,7 +50,7 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateApp(app interface{}) *gomock.C
 }
 
 // CreateCredential mocks base method.
-func (m *MockMiddleRepository) CreateCredential(credential model.Credential) (int64, error) {
+func (m *MockMiddleRepository) CreateCredential(credential pb.Credential) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCredential", credential)
 	ret0, _ := ret[0].(int64)
@@ -81,10 +80,10 @@ func (mr *MockMiddleRepositoryMockRecorder) CreatePage(page interface{}) *gomock
 }
 
 // GetAppByType mocks base method.
-func (m *MockMiddleRepository) GetAppByType(t string) (model.App, error) {
+func (m *MockMiddleRepository) GetAppByType(t string) (pb.App, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAppByType", t)
-	ret0, _ := ret[0].(model.App)
+	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -96,10 +95,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetAppByType(t interface{}) *gomock.
 }
 
 // GetAvailableAppByType mocks base method.
-func (m *MockMiddleRepository) GetAvailableAppByType(t string) (model.App, error) {
+func (m *MockMiddleRepository) GetAvailableAppByType(t string) (pb.App, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAvailableAppByType", t)
-	ret0, _ := ret[0].(model.App)
+	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -111,10 +110,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(t interface{})
 }
 
 // GetCredentialByName mocks base method.
-func (m *MockMiddleRepository) GetCredentialByName(name string) (model.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByName(name string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredentialByName", name)
-	ret0, _ := ret[0].(model.Credential)
+	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -126,10 +125,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByName(name interface{}
 }
 
 // GetCredentialByType mocks base method.
-func (m *MockMiddleRepository) GetCredentialByType(t string) (model.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByType(t string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredentialByType", t)
-	ret0, _ := ret[0].(model.Credential)
+	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -156,10 +155,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetPageByUUID(uuid interface{}) *gom
 }
 
 // ListApps mocks base method.
-func (m *MockMiddleRepository) ListApps() ([]model.App, error) {
+func (m *MockMiddleRepository) ListApps() ([]pb.App, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListApps")
-	ret0, _ := ret[0].([]model.App)
+	ret0, _ := ret[0].([]pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -171,10 +170,10 @@ func (mr *MockMiddleRepositoryMockRecorder) ListApps() *gomock.Call {
 }
 
 // ListCredentials mocks base method.
-func (m *MockMiddleRepository) ListCredentials() ([]model.Credential, error) {
+func (m *MockMiddleRepository) ListCredentials() ([]pb.Credential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListCredentials")
-	ret0, _ := ret[0].([]model.Credential)
+	ret0, _ := ret[0].([]pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

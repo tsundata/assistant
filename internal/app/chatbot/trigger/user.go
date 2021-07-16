@@ -3,7 +3,6 @@ package trigger
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -54,7 +53,7 @@ func (t *User) Handle(ctx context.Context, comp *ctx.Component) {
 			continue
 		}
 
-		err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{
+		err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{
 			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.User.Id, res.User.Mobile, res.User.Remark),
 		})
 		if err != nil {

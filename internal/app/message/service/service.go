@@ -9,7 +9,7 @@ import (
 
 func CreateInitServerFn(ps *Message) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterMessageServer(s, ps)
+		pb.RegisterMessageSvcServer(s, ps)
 	}
 }
 

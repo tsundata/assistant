@@ -125,9 +125,9 @@ func TestViewRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	message := mock.NewMockMessageClient(ctl)
+	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
-		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.MessageReply{Id: 1, Text: "test1"}, nil),
+		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.MessageReply{Message: &pb.Message{Id: 1, Text: "test1"}}, nil),
 	)
 
 	r := rules[9]
@@ -140,7 +140,7 @@ func TestRunRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	message := mock.NewMockMessageClient(ctl)
+	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
 		message.EXPECT().Run(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "test1"}, nil),
 	)

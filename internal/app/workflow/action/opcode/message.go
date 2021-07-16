@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -60,7 +60,7 @@ func (o *Message) Run(ctx context.Context, comp *inside.Component, _ []interface
 		return false, nil
 	}
 
-	err := comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: text})
+	err := comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: text})
 	if err != nil {
 		return false, err
 	}

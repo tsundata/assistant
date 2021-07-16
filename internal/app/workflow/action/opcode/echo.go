@@ -3,7 +3,7 @@ package opcode
 import (
 	"context"
 	"errors"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/event"
 )
@@ -31,7 +31,7 @@ func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interfa
 		if comp.Bus == nil {
 			return false, nil
 		}
-		err := comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: text})
+		err := comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: text})
 		if err != nil {
 			return false, err
 		}

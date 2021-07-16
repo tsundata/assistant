@@ -190,7 +190,7 @@ func TestPage(t *testing.T) {
 	e := httpexpect.New(t, GatewayBaseURL)
 	e.GET("/page").
 		WithHeader("Authorization", getAuth()).
-		WithJSON(pb.MessageRequest{Uuid: "test"}).
+		WithJSON(pb.MessageRequest{Message: &pb.Message{Uuid: "test"}}).
 		Expect().Status(http.StatusOK).
 		JSON().Object()
 }

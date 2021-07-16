@@ -12,7 +12,7 @@ func Message(ctx context.Context, comp rulebot.IComponent, in result.Result) res
 		if comp.Message() == nil {
 			return result.EmptyResult()
 		}
-		_, err := comp.Message().Send(ctx, &pb.MessageRequest{Text: in.Content.(string)})
+		_, err := comp.Message().Send(ctx, &pb.MessageRequest{Message: &pb.Message{Text: in.Content.(string)}})
 		if err != nil {
 			return result.ErrorResult(err)
 		}

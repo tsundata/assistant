@@ -26,5 +26,34 @@ message BillsReply {
 }
 
 message Bill {
-  string name = 1;
+  int64 id = 1;
+  string date = 2;
+  string payee = 3;
+  string description = 4;
+  float amount = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+}
+
+message BillRecord {
+  int64 id = 1;
+  int64 billId = 2;
+  string posting = 3;
+  float amount = 4;
+}
+
+message Assets {
+  int64 id = 1;
+  int64 accountId = 2;
+  string name = 3;
+  string category = 4;
+  float balance = 5;
+  string createdAt = 6;
+}
+
+message Account {
+  int64 id = 1;
+  string name = 2;
+  float balance = 3;
+  string createdAt = 4;
 }

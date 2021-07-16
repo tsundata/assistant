@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -146,9 +145,9 @@ func TestMiddle_GetPage(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetPageByUUID(gomock.Any()).Return(model.Page{
-			ID:      1,
-			UUID:    "test",
+		repo.EXPECT().GetPageByUUID(gomock.Any()).Return(pb.Page{
+			Id:      1,
+			Uuid:    "test",
 			Type:    "html",
 			Title:   "test",
 			Content: "test",
@@ -203,8 +202,8 @@ func TestMiddle_GetApps(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListApps().Return([]model.App{{
-			ID:    1,
+		repo.EXPECT().ListApps().Return([]pb.App{{
+			Id:    1,
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
 		}}, nil),
@@ -251,8 +250,8 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAvailableAppByType(gomock.Any()).Return(model.App{
-			ID:    1,
+		repo.EXPECT().GetAvailableAppByType(gomock.Any()).Return(pb.App{
+			Id:    1,
 			Name:  "github",
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
@@ -301,16 +300,16 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAppByType(gomock.Any()).Return(model.App{
-			ID:    1,
+		repo.EXPECT().GetAppByType(gomock.Any()).Return(pb.App{
+			Id:    1,
 			Name:  "github",
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
 			Token: "test",
 		}, nil),
 		repo.EXPECT().UpdateAppByID(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
-		repo.EXPECT().GetAppByType(gomock.Any()).Return(model.App{
-			ID: 0,
+		repo.EXPECT().GetAppByType(gomock.Any()).Return(pb.App{
+			Id: 0,
 		}, nil),
 		repo.EXPECT().CreateApp(gomock.Any()).Return(int64(1), nil),
 	)
@@ -370,14 +369,14 @@ func TestMiddle_GetCredential(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetCredentialByName(gomock.Any()).Return(model.Credential{
-			ID:      1,
+		repo.EXPECT().GetCredentialByName(gomock.Any()).Return(pb.Credential{
+			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
 		}, nil),
-		repo.EXPECT().GetCredentialByType(gomock.Any()).Return(model.Credential{
-			ID:      1,
+		repo.EXPECT().GetCredentialByType(gomock.Any()).Return(pb.Credential{
+			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
@@ -440,8 +439,8 @@ func TestMiddle_GetCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials().Return([]model.Credential{{
-			ID:      1,
+		repo.EXPECT().ListCredentials().Return([]pb.Credential{{
+			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
@@ -489,8 +488,8 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials().Return([]model.Credential{{
-			ID:      1,
+		repo.EXPECT().ListCredentials().Return([]pb.Credential{{
+			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,

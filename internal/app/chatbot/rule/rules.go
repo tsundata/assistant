@@ -217,16 +217,16 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error args"}
 			}
-			messageReply, err := comp.Message().Get(ctx, &pb.MessageRequest{Id: id})
+			messageReply, err := comp.Message().Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
 
-			if messageReply.Id == 0 {
+			if messageReply.Message.Id == 0 {
 				return []string{"no message"}
 			}
 
-			return []string{messageReply.GetText()}
+			return []string{messageReply.Message.GetText()}
 		},
 	},
 	{
@@ -245,7 +245,7 @@ var rules = []Rule{
 				return []string{"error args"}
 			}
 
-			reply, err := comp.Message().Run(ctx, &pb.MessageRequest{Id: id})
+			reply, err := comp.Message().Run(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

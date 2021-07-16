@@ -1,8 +1,6 @@
 syntax = "proto3";
 package pb;
 
-import "base.proto";
-
 option go_package = "api/pb";
 
 service Chatbot {

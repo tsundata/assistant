@@ -2,7 +2,6 @@ package tags
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -28,7 +27,7 @@ func (t *Todo) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	}
 
 	// send message
-	err = comp.Bus.Publish(ctx, event.SendMessageSubject, model.Message{Text: "Created Todo success"})
+	err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: "Created Todo success"})
 	if err != nil {
 		comp.Logger.Error(err)
 		return

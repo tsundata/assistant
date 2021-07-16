@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/tsundata/assistant/api/model"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"time"
@@ -13,15 +12,15 @@ import (
 type MiddleRepository interface {
 	CreatePage(page pb.Page) (int64, error)
 	GetPageByUUID(uuid string) (pb.Page, error)
-	ListApps() ([]model.App, error)
-	GetAvailableAppByType(t string) (model.App, error)
-	GetAppByType(t string) (model.App, error)
+	ListApps() ([]pb.App, error)
+	GetAvailableAppByType(t string) (pb.App, error)
+	GetAppByType(t string) (pb.App, error)
 	UpdateAppByID(id int64, token, extra string) error
-	CreateApp(app model.App) (int64, error)
-	GetCredentialByName(name string) (model.Credential, error)
-	GetCredentialByType(t string) (model.Credential, error)
-	ListCredentials() ([]model.Credential, error)
-	CreateCredential(credential model.Credential) (int64, error)
+	CreateApp(app pb.App) (int64, error)
+	GetCredentialByName(name string) (pb.Credential, error)
+	GetCredentialByType(t string) (pb.Credential, error)
+	ListCredentials() ([]pb.Credential, error)
+	CreateCredential(credential pb.Credential) (int64, error)
 }
 
 type MysqlMiddleRepository struct {
@@ -54,8 +53,8 @@ func (r *MysqlMiddleRepository) GetPageByUUID(uuid string) (pb.Page, error) {
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) ListApps() ([]model.App, error) {
-	var apps []model.App
+func (r *MysqlMiddleRepository) ListApps() ([]pb.App, error) {
+	var apps []pb.App
 	err := r.db.Select(&apps, "SELECT name, `type`, token, extra, `created_at` FROM `apps` ORDER BY `created_at` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
@@ -63,20 +62,20 @@ func (r *MysqlMiddleRepository) ListApps() ([]model.App, error) {
 	return apps, nil
 }
 
-func (r *MysqlMiddleRepository) GetAvailableAppByType(t string) (model.App, error) {
-	var find model.App
+func (r *MysqlMiddleRepository) GetAvailableAppByType(t string) (pb.App, error) {
+	var find pb.App
 	err := r.db.Get(&find, "SELECT id, name, `type`, token FROM apps WHERE `type` = ? AND `token` <> '' LIMIT 1", t)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.App{}, err
+		return pb.App{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) GetAppByType(t string) (model.App, error) {
-	var app model.App
+func (r *MysqlMiddleRepository) GetAppByType(t string) (pb.App, error) {
+	var app pb.App
 	err := r.db.Get(&app, "SELECT id FROM apps WHERE type = ? ORDER BY id DESC LIMIT 1", t)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.App{}, err
+		return pb.App{}, err
 	}
 	return app, nil
 }
@@ -86,7 +85,7 @@ func (r *MysqlMiddleRepository) UpdateAppByID(id int64, token, extra string) err
 	return err
 }
 
-func (r *MysqlMiddleRepository) CreateApp(app model.App) (int64, error) {
+func (r *MysqlMiddleRepository) CreateApp(app pb.App) (int64, error) {
 	res, err := r.db.Exec("INSERT INTO `apps` (`name`, `type`, `token`, `extra`) VALUES (?, ?, ?, ?)",
 		app.Name, app.Type, app.Token, app.Extra)
 	if err != nil {
@@ -99,26 +98,26 @@ func (r *MysqlMiddleRepository) CreateApp(app model.App) (int64, error) {
 	return id, err
 }
 
-func (r *MysqlMiddleRepository) GetCredentialByName(name string) (model.Credential, error) {
-	var find model.Credential
+func (r *MysqlMiddleRepository) GetCredentialByName(name string) (pb.Credential, error) {
+	var find pb.Credential
 	err := r.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE name = ? LIMIT 1", name)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.Credential{}, err
+		return pb.Credential{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) GetCredentialByType(t string) (model.Credential, error) {
-	var find model.Credential
+func (r *MysqlMiddleRepository) GetCredentialByType(t string) (pb.Credential, error) {
+	var find pb.Credential
 	err := r.db.Get(&find, "SELECT id, name, `type` FROM credentials WHERE type = ? LIMIT 1", t)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return model.Credential{}, err
+		return pb.Credential{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
-	var items []model.Credential
+func (r *MysqlMiddleRepository) ListCredentials() ([]pb.Credential, error) {
+	var items []pb.Credential
 	err := r.db.Select(&items, "SELECT name, `type`, content, `created_at` FROM `credentials` ORDER BY `id` DESC")
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
@@ -126,7 +125,7 @@ func (r *MysqlMiddleRepository) ListCredentials() ([]model.Credential, error) {
 	return items, nil
 }
 
-func (r *MysqlMiddleRepository) CreateCredential(credential model.Credential) (int64, error) {
+func (r *MysqlMiddleRepository) CreateCredential(credential pb.Credential) (int64, error) {
 	res, err := r.db.Exec("INSERT INTO `credentials` (`name`, `type`, `content`) VALUES (?, ?, ?)",
 		credential.Name, credential.Type, credential.Content)
 	if err != nil {

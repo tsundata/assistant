@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockMessageClient is a mock of MessageClient interface.
-type MockMessageClient struct {
+// MockMessageSvcClient is a mock of MessageSvcClient interface.
+type MockMessageSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockMessageClientMockRecorder
+	recorder *MockMessageSvcClientMockRecorder
 }
 
-// MockMessageClientMockRecorder is the mock recorder for MockMessageClient.
-type MockMessageClientMockRecorder struct {
-	mock *MockMessageClient
+// MockMessageSvcClientMockRecorder is the mock recorder for MockMessageSvcClient.
+type MockMessageSvcClientMockRecorder struct {
+	mock *MockMessageSvcClient
 }
 
-// NewMockMessageClient creates a new mock instance.
-func NewMockMessageClient(ctrl *gomock.Controller) *MockMessageClient {
-	mock := &MockMessageClient{ctrl: ctrl}
-	mock.recorder = &MockMessageClientMockRecorder{mock}
+// NewMockMessageSvcClient creates a new mock instance.
+func NewMockMessageSvcClient(ctrl *gomock.Controller) *MockMessageSvcClient {
+	mock := &MockMessageSvcClient{ctrl: ctrl}
+	mock.recorder = &MockMessageSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMessageClient) EXPECT() *MockMessageClientMockRecorder {
+func (m *MockMessageSvcClient) EXPECT() *MockMessageSvcClientMockRecorder {
 	return m.recorder
 }
 
 // Create mocks base method.
-func (m *MockMessageClient) Create(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
+func (m *MockMessageSvcClient) Create(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockMessageClient) Create(ctx context.Context, in *pb.MessageRequest, o
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockMessageClientMockRecorder) Create(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) Create(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageClient)(nil).Create), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageSvcClient)(nil).Create), varargs...)
 }
 
 // CreateActionMessage mocks base method.
-func (m *MockMessageClient) CreateActionMessage(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMessageSvcClient) CreateActionMessage(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockMessageClient) CreateActionMessage(ctx context.Context, in *pb.Text
 }
 
 // CreateActionMessage indicates an expected call of CreateActionMessage.
-func (mr *MockMessageClientMockRecorder) CreateActionMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) CreateActionMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageClient)(nil).CreateActionMessage), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).CreateActionMessage), varargs...)
 }
 
 // Delete mocks base method.
-func (m *MockMessageClient) Delete(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMessageSvcClient) Delete(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,14 +90,14 @@ func (m *MockMessageClient) Delete(ctx context.Context, in *pb.MessageRequest, o
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockMessageClientMockRecorder) Delete(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) Delete(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageClient)(nil).Delete), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcClient)(nil).Delete), varargs...)
 }
 
 // DeleteWorkflowMessage mocks base method.
-func (m *MockMessageClient) DeleteWorkflowMessage(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMessageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -110,14 +110,14 @@ func (m *MockMessageClient) DeleteWorkflowMessage(ctx context.Context, in *pb.Me
 }
 
 // DeleteWorkflowMessage indicates an expected call of DeleteWorkflowMessage.
-func (mr *MockMessageClientMockRecorder) DeleteWorkflowMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) DeleteWorkflowMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageClient)(nil).DeleteWorkflowMessage), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).DeleteWorkflowMessage), varargs...)
 }
 
 // Get mocks base method.
-func (m *MockMessageClient) Get(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
+func (m *MockMessageSvcClient) Get(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -130,14 +130,14 @@ func (m *MockMessageClient) Get(ctx context.Context, in *pb.MessageRequest, opts
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockMessageClientMockRecorder) Get(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) Get(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageClient)(nil).Get), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageSvcClient)(nil).Get), varargs...)
 }
 
 // GetActionMessages mocks base method.
-func (m *MockMessageClient) GetActionMessages(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.ActionReply, error) {
+func (m *MockMessageSvcClient) GetActionMessages(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.ActionReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -150,34 +150,34 @@ func (m *MockMessageClient) GetActionMessages(ctx context.Context, in *pb.TextRe
 }
 
 // GetActionMessages indicates an expected call of GetActionMessages.
-func (mr *MockMessageClientMockRecorder) GetActionMessages(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageClient)(nil).GetActionMessages), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcClient)(nil).GetActionMessages), varargs...)
 }
 
 // List mocks base method.
-func (m *MockMessageClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageListReply, error) {
+func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "List", varargs...)
-	ret0, _ := ret[0].(*pb.MessageListReply)
+	ret0, _ := ret[0].(*pb.MessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List.
-func (mr *MockMessageClientMockRecorder) List(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) List(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageClient)(nil).List), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageSvcClient)(nil).List), varargs...)
 }
 
 // Run mocks base method.
-func (m *MockMessageClient) Run(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockMessageSvcClient) Run(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -190,14 +190,14 @@ func (m *MockMessageClient) Run(ctx context.Context, in *pb.MessageRequest, opts
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockMessageClientMockRecorder) Run(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) Run(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageClient)(nil).Run), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageSvcClient)(nil).Run), varargs...)
 }
 
 // Send mocks base method.
-func (m *MockMessageClient) Send(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMessageSvcClient) Send(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -210,37 +210,37 @@ func (m *MockMessageClient) Send(ctx context.Context, in *pb.MessageRequest, opt
 }
 
 // Send indicates an expected call of Send.
-func (mr *MockMessageClientMockRecorder) Send(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockMessageSvcClientMockRecorder) Send(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockMessageClient)(nil).Send), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockMessageSvcClient)(nil).Send), varargs...)
 }
 
-// MockMessageServer is a mock of MessageServer interface.
-type MockMessageServer struct {
+// MockMessageSvcServer is a mock of MessageSvcServer interface.
+type MockMessageSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockMessageServerMockRecorder
+	recorder *MockMessageSvcServerMockRecorder
 }
 
-// MockMessageServerMockRecorder is the mock recorder for MockMessageServer.
-type MockMessageServerMockRecorder struct {
-	mock *MockMessageServer
+// MockMessageSvcServerMockRecorder is the mock recorder for MockMessageSvcServer.
+type MockMessageSvcServerMockRecorder struct {
+	mock *MockMessageSvcServer
 }
 
-// NewMockMessageServer creates a new mock instance.
-func NewMockMessageServer(ctrl *gomock.Controller) *MockMessageServer {
-	mock := &MockMessageServer{ctrl: ctrl}
-	mock.recorder = &MockMessageServerMockRecorder{mock}
+// NewMockMessageSvcServer creates a new mock instance.
+func NewMockMessageSvcServer(ctrl *gomock.Controller) *MockMessageSvcServer {
+	mock := &MockMessageSvcServer{ctrl: ctrl}
+	mock.recorder = &MockMessageSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMessageServer) EXPECT() *MockMessageServerMockRecorder {
+func (m *MockMessageSvcServer) EXPECT() *MockMessageSvcServerMockRecorder {
 	return m.recorder
 }
 
 // Create mocks base method.
-func (m *MockMessageServer) Create(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *MockMessageSvcServer) Create(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1)
 	ret0, _ := ret[0].(*pb.MessageReply)
@@ -249,13 +249,13 @@ func (m *MockMessageServer) Create(arg0 context.Context, arg1 *pb.MessageRequest
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockMessageServerMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageServer)(nil).Create), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageSvcServer)(nil).Create), arg0, arg1)
 }
 
 // CreateActionMessage mocks base method.
-func (m *MockMessageServer) CreateActionMessage(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
+func (m *MockMessageSvcServer) CreateActionMessage(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateActionMessage", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -264,13 +264,13 @@ func (m *MockMessageServer) CreateActionMessage(arg0 context.Context, arg1 *pb.T
 }
 
 // CreateActionMessage indicates an expected call of CreateActionMessage.
-func (mr *MockMessageServerMockRecorder) CreateActionMessage(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) CreateActionMessage(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageServer)(nil).CreateActionMessage), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).CreateActionMessage), arg0, arg1)
 }
 
 // Delete mocks base method.
-func (m *MockMessageServer) Delete(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *MockMessageSvcServer) Delete(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -279,13 +279,13 @@ func (m *MockMessageServer) Delete(arg0 context.Context, arg1 *pb.MessageRequest
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockMessageServerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageServer)(nil).Delete), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcServer)(nil).Delete), arg0, arg1)
 }
 
 // DeleteWorkflowMessage mocks base method.
-func (m *MockMessageServer) DeleteWorkflowMessage(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.StateReply, error) {
+func (m *MockMessageSvcServer) DeleteWorkflowMessage(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteWorkflowMessage", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -294,13 +294,13 @@ func (m *MockMessageServer) DeleteWorkflowMessage(arg0 context.Context, arg1 *pb
 }
 
 // DeleteWorkflowMessage indicates an expected call of DeleteWorkflowMessage.
-func (mr *MockMessageServerMockRecorder) DeleteWorkflowMessage(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) DeleteWorkflowMessage(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageServer)(nil).DeleteWorkflowMessage), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).DeleteWorkflowMessage), arg0, arg1)
 }
 
 // Get mocks base method.
-func (m *MockMessageServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *MockMessageSvcServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
 	ret0, _ := ret[0].(*pb.MessageReply)
@@ -309,13 +309,13 @@ func (m *MockMessageServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockMessageServerMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageServer)(nil).Get), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageSvcServer)(nil).Get), arg0, arg1)
 }
 
 // GetActionMessages mocks base method.
-func (m *MockMessageServer) GetActionMessages(arg0 context.Context, arg1 *pb.TextRequest) (*pb.ActionReply, error) {
+func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.TextRequest) (*pb.ActionReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetActionMessages", arg0, arg1)
 	ret0, _ := ret[0].(*pb.ActionReply)
@@ -324,28 +324,28 @@ func (m *MockMessageServer) GetActionMessages(arg0 context.Context, arg1 *pb.Tex
 }
 
 // GetActionMessages indicates an expected call of GetActionMessages.
-func (mr *MockMessageServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageServer)(nil).GetActionMessages), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcServer)(nil).GetActionMessages), arg0, arg1)
 }
 
 // List mocks base method.
-func (m *MockMessageServer) List(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageListReply, error) {
+func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", arg0, arg1)
-	ret0, _ := ret[0].(*pb.MessageListReply)
+	ret0, _ := ret[0].(*pb.MessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List.
-func (mr *MockMessageServerMockRecorder) List(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) List(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageServer)(nil).List), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageSvcServer)(nil).List), arg0, arg1)
 }
 
 // Run mocks base method.
-func (m *MockMessageServer) Run(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
+func (m *MockMessageSvcServer) Run(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Run", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -354,13 +354,13 @@ func (m *MockMessageServer) Run(arg0 context.Context, arg1 *pb.MessageRequest) (
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockMessageServerMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageServer)(nil).Run), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageSvcServer)(nil).Run), arg0, arg1)
 }
 
 // Send mocks base method.
-func (m *MockMessageServer) Send(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.StateReply, error) {
+func (m *MockMessageSvcServer) Send(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Send", arg0, arg1)
 	ret0, _ := ret[0].(*pb.StateReply)
@@ -369,7 +369,7 @@ func (m *MockMessageServer) Send(arg0 context.Context, arg1 *pb.MessageRequest) 
 }
 
 // Send indicates an expected call of Send.
-func (mr *MockMessageServerMockRecorder) Send(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockMessageSvcServerMockRecorder) Send(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockMessageServer)(nil).Send), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockMessageSvcServer)(nil).Send), arg0, arg1)
 }

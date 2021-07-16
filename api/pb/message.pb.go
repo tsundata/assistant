@@ -25,10 +25,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MessageRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
-	Channel              string   `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
+	Message              *Message `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -58,40 +55,15 @@ func (m *MessageRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MessageRequest proto.InternalMessageInfo
 
-func (m *MessageRequest) GetId() int64 {
+func (m *MessageRequest) GetMessage() *Message {
 	if m != nil {
-		return m.Id
+		return m.Message
 	}
-	return 0
-}
-
-func (m *MessageRequest) GetUuid() string {
-	if m != nil {
-		return m.Uuid
-	}
-	return ""
-}
-
-func (m *MessageRequest) GetText() string {
-	if m != nil {
-		return m.Text
-	}
-	return ""
-}
-
-func (m *MessageRequest) GetChannel() string {
-	if m != nil {
-		return m.Channel
-	}
-	return ""
+	return nil
 }
 
 type MessageReply struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
-	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Time                 string   `protobuf:"bytes,5,opt,name=time,proto3" json:"time,omitempty"`
+	Message              *Message `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -121,145 +93,125 @@ func (m *MessageReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MessageReply proto.InternalMessageInfo
 
-func (m *MessageReply) GetId() int64 {
+func (m *MessageReply) GetMessage() *Message {
 	if m != nil {
-		return m.Id
+		return m.Message
 	}
-	return 0
+	return nil
 }
 
-func (m *MessageReply) GetUuid() string {
-	if m != nil {
-		return m.Uuid
-	}
-	return ""
+type MessagesReply struct {
+	Messages             []*Message `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *MessageReply) GetText() string {
-	if m != nil {
-		return m.Text
-	}
-	return ""
-}
-
-func (m *MessageReply) GetType() string {
-	if m != nil {
-		return m.Type
-	}
-	return ""
-}
-
-func (m *MessageReply) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-type MessageListReply struct {
-	Messages             []*MessageItem `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *MessageListReply) Reset()         { *m = MessageListReply{} }
-func (m *MessageListReply) String() string { return proto.CompactTextString(m) }
-func (*MessageListReply) ProtoMessage()    {}
-func (*MessageListReply) Descriptor() ([]byte, []int) {
+func (m *MessagesReply) Reset()         { *m = MessagesReply{} }
+func (m *MessagesReply) String() string { return proto.CompactTextString(m) }
+func (*MessagesReply) ProtoMessage()    {}
+func (*MessagesReply) Descriptor() ([]byte, []int) {
 	return fileDescriptor_33c57e4bae7b9afd, []int{2}
 }
-func (m *MessageListReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MessageListReply.Unmarshal(m, b)
+func (m *MessagesReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MessagesReply.Unmarshal(m, b)
 }
-func (m *MessageListReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MessageListReply.Marshal(b, m, deterministic)
+func (m *MessagesReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MessagesReply.Marshal(b, m, deterministic)
 }
-func (m *MessageListReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MessageListReply.Merge(m, src)
+func (m *MessagesReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessagesReply.Merge(m, src)
 }
-func (m *MessageListReply) XXX_Size() int {
-	return xxx_messageInfo_MessageListReply.Size(m)
+func (m *MessagesReply) XXX_Size() int {
+	return xxx_messageInfo_MessagesReply.Size(m)
 }
-func (m *MessageListReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_MessageListReply.DiscardUnknown(m)
+func (m *MessagesReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessagesReply.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MessageListReply proto.InternalMessageInfo
+var xxx_messageInfo_MessagesReply proto.InternalMessageInfo
 
-func (m *MessageListReply) GetMessages() []*MessageItem {
+func (m *MessagesReply) GetMessages() []*Message {
 	if m != nil {
 		return m.Messages
 	}
 	return nil
 }
 
-type MessageItem struct {
+type Message struct {
 	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
 	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Time                 string   `protobuf:"bytes,5,opt,name=time,proto3" json:"time,omitempty"`
+	Channel              string   `protobuf:"bytes,5,opt,name=channel,proto3" json:"channel,omitempty"`
+	CreatedAt            string   `protobuf:"bytes,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *MessageItem) Reset()         { *m = MessageItem{} }
-func (m *MessageItem) String() string { return proto.CompactTextString(m) }
-func (*MessageItem) ProtoMessage()    {}
-func (*MessageItem) Descriptor() ([]byte, []int) {
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
+func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_33c57e4bae7b9afd, []int{3}
 }
-func (m *MessageItem) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MessageItem.Unmarshal(m, b)
+func (m *Message) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Message.Unmarshal(m, b)
 }
-func (m *MessageItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MessageItem.Marshal(b, m, deterministic)
+func (m *Message) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Message.Marshal(b, m, deterministic)
 }
-func (m *MessageItem) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MessageItem.Merge(m, src)
+func (m *Message) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message.Merge(m, src)
 }
-func (m *MessageItem) XXX_Size() int {
-	return xxx_messageInfo_MessageItem.Size(m)
+func (m *Message) XXX_Size() int {
+	return xxx_messageInfo_Message.Size(m)
 }
-func (m *MessageItem) XXX_DiscardUnknown() {
-	xxx_messageInfo_MessageItem.DiscardUnknown(m)
+func (m *Message) XXX_DiscardUnknown() {
+	xxx_messageInfo_Message.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MessageItem proto.InternalMessageInfo
+var xxx_messageInfo_Message proto.InternalMessageInfo
 
-func (m *MessageItem) GetId() int64 {
+func (m *Message) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *MessageItem) GetUuid() string {
+func (m *Message) GetUuid() string {
 	if m != nil {
 		return m.Uuid
 	}
 	return ""
 }
 
-func (m *MessageItem) GetText() string {
+func (m *Message) GetText() string {
 	if m != nil {
 		return m.Text
 	}
 	return ""
 }
 
-func (m *MessageItem) GetType() string {
+func (m *Message) GetType() string {
 	if m != nil {
 		return m.Type
 	}
 	return ""
 }
 
-func (m *MessageItem) GetTime() string {
+func (m *Message) GetChannel() string {
 	if m != nil {
-		return m.Time
+		return m.Channel
+	}
+	return ""
+}
+
+func (m *Message) GetCreatedAt() string {
+	if m != nil {
+		return m.CreatedAt
 	}
 	return ""
 }
@@ -351,8 +303,8 @@ func (m *ActionReply) GetItems() []*Action {
 func init() {
 	proto.RegisterType((*MessageRequest)(nil), "pb.MessageRequest")
 	proto.RegisterType((*MessageReply)(nil), "pb.MessageReply")
-	proto.RegisterType((*MessageListReply)(nil), "pb.MessageListReply")
-	proto.RegisterType((*MessageItem)(nil), "pb.MessageItem")
+	proto.RegisterType((*MessagesReply)(nil), "pb.MessagesReply")
+	proto.RegisterType((*Message)(nil), "pb.Message")
 	proto.RegisterType((*Action)(nil), "pb.Action")
 	proto.RegisterType((*ActionReply)(nil), "pb.ActionReply")
 }
@@ -360,32 +312,33 @@ func init() {
 func init() { proto.RegisterFile("message.proto", fileDescriptor_33c57e4bae7b9afd) }
 
 var fileDescriptor_33c57e4bae7b9afd = []byte{
-	// 394 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x53, 0x4b, 0x6b, 0xdb, 0x40,
-	0x10, 0xae, 0x1e, 0x96, 0xdd, 0x71, 0xfd, 0xe8, 0xb6, 0x85, 0xc5, 0x27, 0xa1, 0x93, 0x69, 0xfd,
-	0x28, 0xee, 0xa1, 0xb9, 0x84, 0x90, 0x07, 0x98, 0x40, 0x72, 0x91, 0x03, 0x81, 0xdc, 0x24, 0x6b,
-	0x92, 0x2c, 0xd1, 0x2b, 0xde, 0x15, 0xb1, 0x7f, 0x6a, 0xfe, 0x4d, 0x90, 0x76, 0x2d, 0xcb, 0xd8,
-	0x01, 0x13, 0xc8, 0x6d, 0xf6, 0x9b, 0xef, 0x9b, 0x99, 0xef, 0x13, 0x82, 0x56, 0x84, 0x9c, 0x7b,
-	0x0f, 0x38, 0x4a, 0x17, 0x89, 0x48, 0x88, 0x9e, 0xfa, 0x3d, 0xf0, 0x3d, 0xae, 0xde, 0x8e, 0x0f,
-	0xed, 0x6b, 0x49, 0x70, 0xf1, 0x39, 0x43, 0x2e, 0x48, 0x1b, 0x74, 0x16, 0x50, 0xcd, 0xd6, 0xfa,
-	0x86, 0xab, 0xb3, 0x80, 0x10, 0x30, 0xb3, 0x8c, 0x05, 0x54, 0xb7, 0xb5, 0xfe, 0x57, 0xb7, 0xa8,
-	0x73, 0x4c, 0xe0, 0x52, 0x50, 0x43, 0x62, 0x79, 0x4d, 0x28, 0xd4, 0xe7, 0x8f, 0x5e, 0x1c, 0x63,
-	0x48, 0xcd, 0x02, 0x5e, 0x3f, 0x9d, 0x18, 0xbe, 0x95, 0x3b, 0xd2, 0x70, 0xf5, 0xe1, 0x0d, 0x39,
-	0xb6, 0x4a, 0x51, 0x8d, 0x2f, 0xea, 0x02, 0x63, 0x11, 0xd2, 0x9a, 0xc2, 0x58, 0x84, 0xce, 0x09,
-	0x74, 0xd5, 0xbe, 0x2b, 0xc6, 0x85, 0xdc, 0xf9, 0x07, 0x1a, 0x2a, 0x08, 0x4e, 0x75, 0xdb, 0xe8,
-	0x37, 0x27, 0x9d, 0x51, 0xea, 0x8f, 0x14, 0xef, 0x52, 0x60, 0xe4, 0x96, 0x04, 0x27, 0x82, 0x66,
-	0xa5, 0xf1, 0xe9, 0xf7, 0x0e, 0xc0, 0x3a, 0x9d, 0x0b, 0x96, 0xc4, 0xfb, 0x36, 0x15, 0x53, 0xf5,
-	0xcd, 0x54, 0x67, 0x0c, 0x4d, 0xc9, 0x96, 0xc6, 0x6c, 0xa8, 0x31, 0x81, 0x11, 0xa7, 0x5a, 0xe1,
-	0x0a, 0x72, 0x57, 0xaa, 0x2f, 0x1b, 0x93, 0x57, 0x03, 0xea, 0xca, 0x0e, 0x99, 0x80, 0x99, 0x67,
-	0x42, 0x48, 0xc5, 0xbc, 0xfa, 0xf0, 0xbd, 0x9f, 0x15, 0xac, 0x0c, 0xce, 0xf9, 0x42, 0x86, 0x60,
-	0x4c, 0x71, 0xbf, 0xa4, 0xbb, 0x85, 0x49, 0xfa, 0x5f, 0xb0, 0xce, 0x17, 0xe8, 0x09, 0x3c, 0x58,
-	0x31, 0x04, 0xeb, 0x02, 0x43, 0x7c, 0x47, 0xd1, 0xca, 0xb1, 0x1b, 0x5c, 0x96, 0xf7, 0x0c, 0xc0,
-	0x9c, 0x61, 0x1c, 0xec, 0x25, 0xb7, 0x73, 0x6c, 0x26, 0x3c, 0x51, 0x0e, 0xff, 0x0d, 0x86, 0x9b,
-	0xc5, 0x87, 0x4d, 0xfe, 0x0f, 0xdf, 0xa7, 0x28, 0x64, 0x7a, 0x8a, 0xcb, 0x49, 0x67, 0xc3, 0x92,
-	0xb2, 0x4e, 0x25, 0x62, 0x25, 0x3c, 0x82, 0x1f, 0xd2, 0xf3, 0x96, 0x76, 0x57, 0xba, 0x7b, 0xde,
-	0x31, 0xfc, 0x92, 0xde, 0x6f, 0x93, 0xc5, 0xd3, 0x7d, 0x98, 0xbc, 0xac, 0xb5, 0x07, 0xb9, 0x3b,
-	0x6b, 0xdc, 0x59, 0x5e, 0xca, 0xc6, 0xa9, 0xef, 0x5b, 0xc5, 0xff, 0xfc, 0xef, 0x2d, 0x00, 0x00,
-	0xff, 0xff, 0x12, 0x9c, 0x7d, 0x0d, 0xf0, 0x03, 0x00, 0x00,
+	// 404 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0x4b, 0xcf, 0xd2, 0x40,
+	0x18, 0x85, 0xed, 0x85, 0x02, 0x2f, 0x02, 0x32, 0xc6, 0x64, 0x42, 0x5c, 0x34, 0x4d, 0x8c, 0xc4,
+	0x70, 0x31, 0x18, 0x03, 0x1b, 0x17, 0xa8, 0x09, 0x1b, 0xdd, 0x14, 0x13, 0x13, 0x77, 0xbd, 0xbc,
+	0x6a, 0x63, 0x69, 0x47, 0x66, 0xaa, 0xf0, 0x23, 0xfc, 0x81, 0xfe, 0x9b, 0x2f, 0x9d, 0x99, 0x72,
+	0xf9, 0xe0, 0x4b, 0xba, 0x9b, 0x39, 0xe7, 0x3c, 0x33, 0x73, 0xde, 0xa6, 0xd0, 0xdd, 0x22, 0xe7,
+	0xc1, 0x0f, 0x9c, 0xb2, 0x5d, 0x2e, 0x72, 0x62, 0xb2, 0x70, 0x08, 0x61, 0xc0, 0xf5, 0xde, 0x5b,
+	0x40, 0xef, 0xb3, 0x0a, 0xf8, 0xf8, 0xbb, 0x40, 0x2e, 0xc8, 0x0b, 0x68, 0x6a, 0x84, 0x1a, 0xae,
+	0x31, 0xea, 0xcc, 0x3b, 0x53, 0x16, 0x4e, 0xab, 0x50, 0xe5, 0x79, 0x6f, 0xe1, 0xf1, 0x11, 0x64,
+	0xe9, 0xa1, 0x2e, 0xb6, 0x84, 0xae, 0xd6, 0xb8, 0xe2, 0x5e, 0x42, 0x4b, 0x7b, 0x9c, 0x9a, 0xae,
+	0x75, 0x1f, 0x3c, 0x9a, 0xde, 0x3f, 0x03, 0x9a, 0x5a, 0x25, 0x3d, 0x30, 0x93, 0x58, 0xde, 0x63,
+	0xf9, 0x66, 0x12, 0x13, 0x02, 0x76, 0x51, 0x24, 0x31, 0x35, 0x5d, 0x63, 0xd4, 0xf6, 0xe5, 0xba,
+	0xd4, 0x04, 0xee, 0x05, 0xb5, 0x94, 0x56, 0xae, 0xa5, 0x76, 0x60, 0x48, 0x6d, 0xad, 0x1d, 0x18,
+	0x12, 0x0a, 0xcd, 0xe8, 0x67, 0x90, 0x65, 0x98, 0xd2, 0x86, 0x94, 0xab, 0x2d, 0x79, 0x0e, 0xed,
+	0x68, 0x87, 0x81, 0xc0, 0x78, 0x25, 0xa8, 0x23, 0xbd, 0x93, 0xe0, 0x8d, 0xc1, 0x59, 0x45, 0x22,
+	0xc9, 0xb3, 0x5b, 0xaf, 0x91, 0x37, 0x9b, 0xa7, 0x9b, 0xbd, 0x19, 0x74, 0x54, 0x5a, 0xb5, 0x76,
+	0xa1, 0x91, 0x08, 0xdc, 0x72, 0x6a, 0xc8, 0xca, 0x50, 0x56, 0xd6, 0xbe, 0x32, 0xe6, 0xff, 0x2d,
+	0x00, 0x5d, 0x77, 0xf3, 0x27, 0x22, 0x33, 0xb0, 0x3f, 0x25, 0x5c, 0x10, 0x72, 0x3e, 0x1c, 0xf5,
+	0xc5, 0x86, 0x83, 0x33, 0x4d, 0x4d, 0xd5, 0x7b, 0x44, 0x26, 0x60, 0xad, 0xf1, 0x76, 0xfe, 0xc9,
+	0x85, 0xa6, 0xe2, 0xaf, 0xc1, 0xf9, 0x20, 0xab, 0xd5, 0x26, 0x26, 0xe0, 0x7c, 0xc4, 0x14, 0x1f,
+	0x20, 0xba, 0xa5, 0xf6, 0x05, 0xf7, 0xa2, 0x8a, 0x8f, 0xc1, 0xde, 0x60, 0x16, 0xdf, 0x0c, 0xf7,
+	0x4a, 0x6d, 0x23, 0x02, 0x71, 0x3c, 0xfc, 0x15, 0x58, 0x7e, 0x91, 0xd5, 0x3b, 0x79, 0x01, 0x83,
+	0x35, 0x0a, 0x35, 0xbd, 0x6a, 0x0a, 0xa4, 0x7f, 0x4a, 0x29, 0xac, 0x7f, 0x36, 0x62, 0x0d, 0x2e,
+	0xe1, 0xa9, 0xea, 0x7c, 0xc1, 0x5e, 0xa3, 0xd7, 0xcf, 0x7b, 0x07, 0xcf, 0x54, 0xf7, 0xaf, 0xf9,
+	0xee, 0xd7, 0xf7, 0x34, 0xff, 0x5b, 0xb1, 0xb5, 0xda, 0xbd, 0x6f, 0x7d, 0x73, 0x02, 0x96, 0xcc,
+	0x58, 0x18, 0x3a, 0xf2, 0x2f, 0x7c, 0x73, 0x17, 0x00, 0x00, 0xff, 0xff, 0x6a, 0xd4, 0xb8, 0x7a,
+	0xa6, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -396,11 +349,11 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// MessageClient is the client API for Message service.
+// MessageSvcClient is the client API for MessageSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type MessageClient interface {
-	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageListReply, error)
+type MessageSvcClient interface {
+	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error)
 	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -411,98 +364,98 @@ type MessageClient interface {
 	DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
-type messageClient struct {
+type messageSvcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewMessageClient(cc *grpc.ClientConn) MessageClient {
-	return &messageClient{cc}
+func NewMessageSvcClient(cc *grpc.ClientConn) MessageSvcClient {
+	return &messageSvcClient{cc}
 }
 
-func (c *messageClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageListReply, error) {
-	out := new(MessageListReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/List", in, out, opts...)
+func (c *messageSvcClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error) {
+	out := new(MessagesReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
+func (c *messageSvcClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
 	out := new(MessageReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
+func (c *messageSvcClient) Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
 	out := new(MessageReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+func (c *messageSvcClient) Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
 	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *messageSvcClient) Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/Send", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Send", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
+func (c *messageSvcClient) Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error) {
 	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/Run", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Run", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error) {
+func (c *messageSvcClient) GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error) {
 	out := new(ActionReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/GetActionMessages", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetActionMessages", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *messageSvcClient) CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/CreateActionMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/CreateActionMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageClient) DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error) {
+func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.Message/DeleteWorkflowMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/DeleteWorkflowMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MessageServer is the server API for Message service.
-type MessageServer interface {
-	List(context.Context, *MessageRequest) (*MessageListReply, error)
+// MessageSvcServer is the server API for MessageSvc service.
+type MessageSvcServer interface {
+	List(context.Context, *MessageRequest) (*MessagesReply, error)
 	Get(context.Context, *MessageRequest) (*MessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
@@ -513,243 +466,243 @@ type MessageServer interface {
 	DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error)
 }
 
-// UnimplementedMessageServer can be embedded to have forward compatible implementations.
-type UnimplementedMessageServer struct {
+// UnimplementedMessageSvcServer can be embedded to have forward compatible implementations.
+type UnimplementedMessageSvcServer struct {
 }
 
-func (*UnimplementedMessageServer) List(ctx context.Context, req *MessageRequest) (*MessageListReply, error) {
+func (*UnimplementedMessageSvcServer) List(ctx context.Context, req *MessageRequest) (*MessagesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (*UnimplementedMessageServer) Get(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageSvcServer) Get(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedMessageServer) Create(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
+func (*UnimplementedMessageSvcServer) Create(ctx context.Context, req *MessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (*UnimplementedMessageServer) Delete(ctx context.Context, req *MessageRequest) (*TextReply, error) {
+func (*UnimplementedMessageSvcServer) Delete(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (*UnimplementedMessageServer) Send(ctx context.Context, req *MessageRequest) (*StateReply, error) {
+func (*UnimplementedMessageSvcServer) Send(ctx context.Context, req *MessageRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Send not implemented")
 }
-func (*UnimplementedMessageServer) Run(ctx context.Context, req *MessageRequest) (*TextReply, error) {
+func (*UnimplementedMessageSvcServer) Run(ctx context.Context, req *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
 }
-func (*UnimplementedMessageServer) GetActionMessages(ctx context.Context, req *TextRequest) (*ActionReply, error) {
+func (*UnimplementedMessageSvcServer) GetActionMessages(ctx context.Context, req *TextRequest) (*ActionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActionMessages not implemented")
 }
-func (*UnimplementedMessageServer) CreateActionMessage(ctx context.Context, req *TextRequest) (*StateReply, error) {
+func (*UnimplementedMessageSvcServer) CreateActionMessage(ctx context.Context, req *TextRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateActionMessage not implemented")
 }
-func (*UnimplementedMessageServer) DeleteWorkflowMessage(ctx context.Context, req *MessageRequest) (*StateReply, error) {
+func (*UnimplementedMessageSvcServer) DeleteWorkflowMessage(ctx context.Context, req *MessageRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteWorkflowMessage not implemented")
 }
 
-func RegisterMessageServer(s *grpc.Server, srv MessageServer) {
-	s.RegisterService(&_Message_serviceDesc, srv)
+func RegisterMessageSvcServer(s *grpc.Server, srv MessageSvcServer) {
+	s.RegisterService(&_MessageSvc_serviceDesc, srv)
 }
 
-func _Message_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).List(ctx, in)
+		return srv.(MessageSvcServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/List",
+		FullMethod: "/pb.MessageSvc/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).List(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).List(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).Get(ctx, in)
+		return srv.(MessageSvcServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/Get",
+		FullMethod: "/pb.MessageSvc/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).Get(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Get(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).Create(ctx, in)
+		return srv.(MessageSvcServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/Create",
+		FullMethod: "/pb.MessageSvc/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).Create(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Create(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).Delete(ctx, in)
+		return srv.(MessageSvcServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/Delete",
+		FullMethod: "/pb.MessageSvc/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).Delete(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Delete(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_Send_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_Send_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).Send(ctx, in)
+		return srv.(MessageSvcServer).Send(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/Send",
+		FullMethod: "/pb.MessageSvc/Send",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).Send(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Send(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).Run(ctx, in)
+		return srv.(MessageSvcServer).Run(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/Run",
+		FullMethod: "/pb.MessageSvc/Run",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).Run(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Run(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_GetActionMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_GetActionMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).GetActionMessages(ctx, in)
+		return srv.(MessageSvcServer).GetActionMessages(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/GetActionMessages",
+		FullMethod: "/pb.MessageSvc/GetActionMessages",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).GetActionMessages(ctx, req.(*TextRequest))
+		return srv.(MessageSvcServer).GetActionMessages(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_CreateActionMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_CreateActionMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).CreateActionMessage(ctx, in)
+		return srv.(MessageSvcServer).CreateActionMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/CreateActionMessage",
+		FullMethod: "/pb.MessageSvc/CreateActionMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).CreateActionMessage(ctx, req.(*TextRequest))
+		return srv.(MessageSvcServer).CreateActionMessage(ctx, req.(*TextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Message_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageServer).DeleteWorkflowMessage(ctx, in)
+		return srv.(MessageSvcServer).DeleteWorkflowMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Message/DeleteWorkflowMessage",
+		FullMethod: "/pb.MessageSvc/DeleteWorkflowMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).DeleteWorkflowMessage(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).DeleteWorkflowMessage(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Message_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Message",
-	HandlerType: (*MessageServer)(nil),
+var _MessageSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.MessageSvc",
+	HandlerType: (*MessageSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "List",
-			Handler:    _Message_List_Handler,
+			Handler:    _MessageSvc_List_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _Message_Get_Handler,
+			Handler:    _MessageSvc_Get_Handler,
 		},
 		{
 			MethodName: "Create",
-			Handler:    _Message_Create_Handler,
+			Handler:    _MessageSvc_Create_Handler,
 		},
 		{
 			MethodName: "Delete",
-			Handler:    _Message_Delete_Handler,
+			Handler:    _MessageSvc_Delete_Handler,
 		},
 		{
 			MethodName: "Send",
-			Handler:    _Message_Send_Handler,
+			Handler:    _MessageSvc_Send_Handler,
 		},
 		{
 			MethodName: "Run",
-			Handler:    _Message_Run_Handler,
+			Handler:    _MessageSvc_Run_Handler,
 		},
 		{
 			MethodName: "GetActionMessages",
-			Handler:    _Message_GetActionMessages_Handler,
+			Handler:    _MessageSvc_GetActionMessages_Handler,
 		},
 		{
 			MethodName: "CreateActionMessage",
-			Handler:    _Message_CreateActionMessage_Handler,
+			Handler:    _MessageSvc_CreateActionMessage_Handler,
 		},
 		{
 			MethodName: "DeleteWorkflowMessage",
-			Handler:    _Message_DeleteWorkflowMessage_Handler,
+			Handler:    _MessageSvc_DeleteWorkflowMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

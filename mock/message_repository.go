@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/tsundata/assistant/api/model"
+	pb "github.com/tsundata/assistant/api/pb"
 )
 
 // MockMessageRepository is a mock of MessageRepository interface.
@@ -35,7 +35,7 @@ func (m *MockMessageRepository) EXPECT() *MockMessageRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockMessageRepository) Create(message model.Message) (int64, error) {
+func (m *MockMessageRepository) Create(message pb.Message) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", message)
 	ret0, _ := ret[0].(int64)
@@ -64,10 +64,10 @@ func (mr *MockMessageRepositoryMockRecorder) Delete(id interface{}) *gomock.Call
 }
 
 // GetByID mocks base method.
-func (m *MockMessageRepository) GetByID(id int64) (model.Message, error) {
+func (m *MockMessageRepository) GetByID(id int64) (pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", id)
-	ret0, _ := ret[0].(model.Message)
+	ret0, _ := ret[0].(pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +79,10 @@ func (mr *MockMessageRepositoryMockRecorder) GetByID(id interface{}) *gomock.Cal
 }
 
 // GetByUUID mocks base method.
-func (m *MockMessageRepository) GetByUUID(uuid string) (model.Message, error) {
+func (m *MockMessageRepository) GetByUUID(uuid string) (pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUUID", uuid)
-	ret0, _ := ret[0].(model.Message)
+	ret0, _ := ret[0].(pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -94,10 +94,10 @@ func (mr *MockMessageRepositoryMockRecorder) GetByUUID(uuid interface{}) *gomock
 }
 
 // List mocks base method.
-func (m *MockMessageRepository) List() ([]model.Message, error) {
+func (m *MockMessageRepository) List() ([]pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List")
-	ret0, _ := ret[0].([]model.Message)
+	ret0, _ := ret[0].([]pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -109,10 +109,10 @@ func (mr *MockMessageRepositoryMockRecorder) List() *gomock.Call {
 }
 
 // ListByType mocks base method.
-func (m *MockMessageRepository) ListByType(t string) ([]model.Message, error) {
+func (m *MockMessageRepository) ListByType(t string) ([]pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListByType", t)
-	ret0, _ := ret[0].([]model.Message)
+	ret0, _ := ret[0].([]pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

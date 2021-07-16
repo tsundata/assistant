@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -25,7 +25,7 @@ type GatewayController struct {
 	rdb    *redis.Client
 	logger log.Logger
 
-	messageSvc  pb.MessageClient
+	messageSvc  pb.MessageSvcClient
 	middleSvc   pb.MiddleSvcClient
 	workflowSvc pb.WorkflowSvcClient
 	userSvc     pb.UserSvcClient
@@ -33,7 +33,7 @@ type GatewayController struct {
 }
 
 func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.Logger,
-	messageSvc pb.MessageClient,
+	messageSvc pb.MessageSvcClient,
 	middleSvc pb.MiddleSvcClient,
 	workflowSvc pb.WorkflowSvcClient,
 	chatbotSvc pb.ChatbotClient,
@@ -119,15 +119,17 @@ func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {
 
 				// or create message
 				messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
-					Uuid: ev.ClientMsgID,
-					Text: ev.Text,
+					Message: &pb.Message{
+						Uuid: ev.ClientMsgID,
+						Text: ev.Text,
+					},
 				})
 				if err != nil {
 					gc.logger.Error(err)
 					return c.Status(http.StatusBadRequest).SendString(err.Error())
 				}
 
-				_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", messageReply.GetId()), false))
+				_, _, err = api.PostMessage(ev.Channel, slack.MsgOptionText(fmt.Sprintf("ID: %d", messageReply.Message.GetId()), false))
 				if err != nil {
 					gc.logger.Error(err)
 					return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -188,8 +190,10 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
-		Uuid: uuid,
-		Text: incoming.Message.Text,
+		Message: &pb.Message{
+			Uuid: uuid,
+			Text: incoming.Message.Text,
+		},
 	})
 	if err != nil {
 		gc.logger.Error(err)
@@ -197,7 +201,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	// reply message
-	_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", messageReply.GetId()))
+	_, err = api.SendMessage(incoming.Message.Chat.Id, fmt.Sprintf("ID: %d", messageReply.Message.GetId()))
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -224,13 +228,15 @@ func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 		return err
 	}
 	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
-		Uuid: uuid,
-		Text: text,
+		Message: &pb.Message{
+			Uuid: uuid,
+			Text: text,
+		},
 	})
 	if err != nil {
 		return err
 	}
-	return c.Send(util.StringToByte(fmt.Sprintf("ID: %d", messageReply.GetId())))
+	return c.Send(util.StringToByte(fmt.Sprintf("ID: %d", messageReply.Message.GetId())))
 }
 
 func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
@@ -449,7 +455,7 @@ func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	in.Id = model.SuperUserID // default
+	in.Id = enum.SuperUserID // default
 
 	reply, err := gc.userSvc.GetRoleImage(context.Background(), &in)
 	if err != nil {

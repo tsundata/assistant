@@ -18,7 +18,7 @@ type Component struct {
 	RDB    *redis.Client
 	Logger log.Logger
 
-	MessageClient     pb.MessageClient
+	MessageClient     pb.MessageSvcClient
 	MiddleClient      pb.MiddleSvcClient
 	SubscribeClient   pb.SubscribeClient
 	WorkflowSvcClient pb.WorkflowSvcClient
@@ -28,7 +28,7 @@ type Component struct {
 	NLPClient         pb.NLPClient
 }
 
-func (c Component) Message() pb.MessageClient {
+func (c Component) Message() pb.MessageSvcClient {
 	return c.MessageClient
 }
 
@@ -76,7 +76,7 @@ type IComponent interface {
 	GetConfig() *config.AppConfig
 	GetRedis() *redis.Client
 	GetLogger() log.Logger
-	Message() pb.MessageClient
+	Message() pb.MessageSvcClient
 	Middle() pb.MiddleSvcClient
 	Subscribe() pb.SubscribeClient
 	Workflow() pb.WorkflowSvcClient
@@ -91,7 +91,7 @@ func NewComponent(
 	rdb *redis.Client,
 	logger log.Logger,
 
-	messageClient pb.MessageClient,
+	messageClient pb.MessageSvcClient,
 	middleClient pb.MiddleSvcClient,
 	subscribeClient pb.SubscribeClient,
 	workflowClient pb.WorkflowSvcClient,

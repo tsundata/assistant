@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nats-io/nats.go"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -24,7 +24,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 	}
 
 	err = bus.Subscribe(context.Background(), event.SendMessageSubject, func(msg *nats.Msg) {
-		var message model.Message
+		var message pb.Message
 		err := json.Unmarshal(msg.Data, &message)
 		if err != nil {
 			logger.Error(err)

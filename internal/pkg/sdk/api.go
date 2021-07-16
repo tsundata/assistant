@@ -48,7 +48,7 @@ func (c *GatewayClient) GetApps() (result *pb.AppsReply, err error) {
 	return
 }
 
-func (c *GatewayClient) GetMessages() (result *pb.MessageListReply, err error) {
+func (c *GatewayClient) GetMessages() (result *pb.MessagesReply, err error) {
 	resp, err := c.r.R().
 		Get("messages")
 	if err != nil {

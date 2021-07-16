@@ -204,7 +204,7 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 		}
 
 		items = append(items, &component.Memo{
-			Time: item.GetTime(),
+			Time: item.GetCreatedAt(),
 			Content: &component.Text{
 				Title: text,
 			},
@@ -488,12 +488,12 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	reply, err := wc.gateway.RunMessage(&pb.MessageRequest{Id: id})
+	reply, err := wc.gateway.RunMessage(&pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
-	_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Text: reply.GetText()})
+	_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Message: &pb.Message{Text: reply.GetText()}})
 
 	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }
@@ -518,7 +518,7 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	_, err = wc.gateway.DeleteWorkflowMessage(&pb.MessageRequest{Id: id})
+	_, err = wc.gateway.DeleteWorkflowMessage(&pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}

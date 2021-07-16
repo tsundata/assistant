@@ -17,7 +17,7 @@ func NewApp(
 	logger log.Logger,
 	subscribe pb.SubscribeClient,
 	middle pb.MiddleSvcClient,
-	message pb.MessageClient) (*app.Application, error) {
+	message pb.MessageSvcClient) (*app.Application, error) {
 
 	// spider
 	go func() {

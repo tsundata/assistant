@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -38,68 +38,72 @@ func NewMessage(
 	}
 }
 
-func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessageListReply, error) {
+func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
 	messages, err := m.repo.List()
 	if err != nil {
 		return nil, err
 	}
 
-	var reply []*pb.MessageItem
+	var reply []*pb.Message
 	for _, item := range messages {
-		reply = append(reply, &pb.MessageItem{
-			Uuid: item.UUID,
-			Text: item.Text,
-			Type: item.Type,
-			Time: item.CreatedAt.Format("2006-01-02 15:04:05"),
+		reply = append(reply, &pb.Message{
+			Uuid:      item.Uuid,
+			Text:      item.Text,
+			Type:      item.Type,
+			CreatedAt: item.CreatedAt,
 		})
 	}
 
-	return &pb.MessageListReply{
+	return &pb.MessagesReply{
 		Messages: reply,
 	}, nil
 }
 
 func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	message, err := m.repo.GetByID(payload.GetId())
+	message, err := m.repo.GetByID(payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.MessageReply{
-		Id:   int64(message.ID),
-		Uuid: message.UUID,
-		Text: message.Text,
-		Type: message.Type,
-		Time: message.CreatedAt.Format("2006-01-02 15:04:05"),
+		Message: &pb.Message{
+			Id:        message.Id,
+			Uuid:      message.Uuid,
+			Text:      message.Text,
+			Type:      message.Type,
+			CreatedAt: message.CreatedAt,
+		},
 	}, nil
 }
 
 func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
-	var message model.Message
-	message.UUID = payload.GetUuid()
-	message.Type = model.MessageTypeText
-	message.Text = strings.TrimSpace(payload.GetText())
+	var message pb.Message
+	message.Uuid = payload.Message.GetUuid()
+	message.Type = enum.MessageTypeText
+	message.Text = strings.TrimSpace(payload.Message.GetText())
 
 	// check
-	find, err := m.repo.GetByUUID(message.UUID)
+	find, err := m.repo.GetByUUID(message.Uuid)
 	if err != nil {
 		return nil, err
 	}
-	if find.ID > 0 {
+	if find.Id > 0 {
 		return &pb.MessageReply{
-			Id:   int64(find.ID),
-			Uuid: message.UUID,
+			Message: &pb.Message{
+				Id:   find.Id,
+				Uuid: message.Uuid,
+			},
 		}, nil
 	}
 
 	// parse type
 	message.Text = strings.TrimSpace(message.Text)
 	if util.IsUrl(message.Text) {
-		message.Type = model.MessageTypeLink
+		message.Type = enum.MessageTypeLink
 	}
 	if message.IsMessageOfAction() {
-		message.Type = model.MessageTypeAction
+		message.Type = enum.MessageTypeAction
 	}
 
 	// store
@@ -115,13 +119,15 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}
 
 	return &pb.MessageReply{
-		Id:   id,
-		Uuid: message.UUID,
+		Message: &pb.Message{
+			Id:   id,
+			Uuid: message.Uuid,
+		},
 	}, nil
 }
 
 func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	err := m.repo.Delete(payload.GetId())
+	err := m.repo.Delete(payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -131,9 +137,9 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
 	client := http.NewClient()
-	webhook := slack.ChannelSelect(payload.GetChannel(), m.config.Slack.Webhook)
+	webhook := slack.ChannelSelect(payload.Message.GetChannel(), m.config.Slack.Webhook)
 	resp, err := client.PostJSON(webhook, map[string]interface{}{
-		"text": payload.GetText(),
+		"text": payload.Message.GetText(),
 	})
 	if err != nil {
 		return nil, err
@@ -149,13 +155,13 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 
 func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
-	message, err := m.repo.GetByID(payload.GetId())
+	message, err := m.repo.GetByID(payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	switch message.Type {
-	case model.MessageTypeAction:
+	case enum.MessageTypeAction:
 		wfReply, err := m.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
 		if err != nil {
 			return nil, err
@@ -171,8 +177,8 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 }
 
 func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
-	var items []model.Message
-	items, err := m.repo.ListByType(model.MessageTypeAction)
+	var items []pb.Message
+	items, err := m.repo.ListByType(enum.MessageTypeAction)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +186,7 @@ func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.A
 	var kvs []*pb.Action
 	for _, item := range items {
 		kvs = append(kvs, &pb.Action{
-			Id:   int64(item.ID),
+			Id:   item.Id,
 			Text: item.Text,
 		})
 	}
@@ -198,7 +204,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	// check syntax
 	_, err := m.workflow.SyntaxCheck(ctx, &pb.WorkflowRequest{
 		Text: payload.GetText(),
-		Type: model.MessageTypeAction,
+		Type: enum.MessageTypeAction,
 	})
 	if err != nil {
 		return nil, err
@@ -209,9 +215,9 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	if err != nil {
 		return nil, err
 	}
-	id, err := m.repo.Create(model.Message{
-		UUID: uuid,
-		Type: model.MessageTypeAction,
+	id, err := m.repo.Create(pb.Message{
+		Uuid: uuid,
+		Type: enum.MessageTypeAction,
 		Text: payload.GetText(),
 	})
 	if err != nil {
@@ -221,7 +227,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	// check/create trigger
 	_, err = m.workflow.CreateTrigger(ctx, &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
-			Kind:        model.MessageTypeAction,
+			Kind:        enum.MessageTypeAction,
 			MessageId:   id,
 			MessageText: payload.GetText(),
 		},
@@ -234,12 +240,12 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 }
 
 func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
-	err := m.repo.Delete(payload.GetId())
+	err := m.repo.Delete(payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.GetId()}})
+	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.Message.GetId()}})
 	if err != nil {
 		return nil, err
 	}

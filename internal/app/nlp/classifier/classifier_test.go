@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"github.com/stretchr/testify/require"
-	"github.com/tsundata/assistant/api/model"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"testing"
@@ -30,7 +30,7 @@ func TestClassifier(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, model.CultureAttr, a)
+	require.Equal(t, enum.CultureAttr, a)
 
 	_, err = c.Do("demo8")
 	require.ErrorIs(t, ErrEmpty, err)
