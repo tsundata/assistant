@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
-	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
 )
@@ -17,15 +15,13 @@ type Server struct {
 	conf       *config.AppConfig
 	router     func(router fiber.Router)
 	httpServer *fiber.App
-	in         influxdb2.Client
 	logger     log.Logger
 }
 
-func New(conf *config.AppConfig, router func(router fiber.Router), in influxdb2.Client, logger log.Logger) (*Server, error) {
+func New(conf *config.AppConfig, router func(router fiber.Router), logger log.Logger) (*Server, error) {
 	var s = &Server{
 		conf:   conf,
 		router: router,
-		in:     in,
 		logger: logger,
 	}
 	return s, nil
@@ -63,9 +59,6 @@ func (s *Server) Start() error {
 	if err := s.register(); err != nil {
 		s.logger.Error(errors.New("register http server error"))
 	}
-
-	// metrics
-	go influx.PushGoServerMetrics(s.in, s.conf.Name, s.conf.Influx.Org, s.conf.Influx.Bucket)
 
 	return nil
 }

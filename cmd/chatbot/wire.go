@@ -19,6 +19,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -38,6 +39,7 @@ var providerSet = wire.NewSet(
 	rulebot.ProviderSet,
 	event.ProviderSet,
 	nats.ProviderSet,
+	newrelic.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

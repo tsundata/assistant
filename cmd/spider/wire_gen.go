@@ -17,6 +17,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -28,13 +29,18 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	redisClient, err := redis.New(appConfig)
+	rollbarRollbar := rollbar.New(appConfig)
+	logger := log.NewZapLogger(rollbarRollbar)
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
+	logLogger := log.NewAppLogger(logger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -46,23 +52,23 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	subscribeSvcClient, err := rpcclient.NewSubscribe(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, logger, subscribeClient, middleClient, messageClient)
+	application, err := spider.NewApp(appConfig, redisClient, logLogger, subscribeSvcClient, middleSvcClient, messageSvcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -71,4 +77,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)

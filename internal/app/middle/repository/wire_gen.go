@@ -24,11 +24,12 @@ func CreateMiddleRepository(id string) (MiddleRepository, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
+	logLogger := log.NewAppLogger(logger)
 	db, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := NewMysqlMiddleRepository(logger, db)
+	middleRepository := NewMysqlMiddleRepository(logLogger, db)
 	return middleRepository, nil
 }
 

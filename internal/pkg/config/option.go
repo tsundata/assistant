@@ -102,3 +102,9 @@ type Rollbar struct {
 type Telegram struct {
 	Token string `json:"token" yaml:"token"`
 }
+
+// Newrelic config
+type Newrelic struct {
+	Name    string `json:"name" yaml:"name"`
+	License string `json:"license" yaml:"license"`
+}

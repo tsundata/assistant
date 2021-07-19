@@ -18,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -31,9 +32,10 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
+	logLogger := log.NewAppLogger(logger)
 	serviceNLP := service.NewNLP(appConfig)
 	initServer := service.CreateInitServerFn(serviceNLP)
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -41,19 +43,19 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	influxdb2Client, err := influx.New(appConfig)
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig)
+	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, logger, initServer, tracer, influxdb2Client, redisClient, client)
+	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, client, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := nlp.NewApp(appConfig, logger, server)
+	application, err := nlp.NewApp(appConfig, logLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -62,4 +64,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, nlp.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, nlp.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet, newrelic.ProviderSet)

@@ -12,6 +12,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	redis2 "github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 // Injectors from wire.go:
@@ -22,7 +24,13 @@ func CreateRedisClient(id string) (*redis.Client, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	redisClient, err := redis2.New(appConfig)
+	rollbarRollbar := rollbar.New(appConfig)
+	logger := log.NewZapLogger(rollbarRollbar)
+	app, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis2.New(appConfig, app)
 	if err != nil {
 		return nil, err
 	}
@@ -31,4 +39,4 @@ func CreateRedisClient(id string) (*redis.Client, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, redis2.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, redis2.ProviderSet, newrelic.ProviderSet, rollbar.ProviderSet)

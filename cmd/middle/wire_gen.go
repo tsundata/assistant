@@ -20,6 +20,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -33,7 +34,12 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	redisClient, err := redis.New(appConfig)
+	logLogger := log.NewAppLogger(logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +47,8 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := repository.NewMysqlMiddleRepository(logger, db)
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	middleRepository := repository.NewMysqlMiddleRepository(logLogger, db)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -54,25 +60,21 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	userClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, userClient)
+	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, userSvcClient)
 	initServer := service.CreateInitServerFn(serviceMiddle)
-	influxdb2Client, err := influx.New(appConfig)
+	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, client, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, logger, initServer, tracer, influxdb2Client, redisClient, client)
-	if err != nil {
-		return nil, err
-	}
-	application, err := middle.NewApp(appConfig, logger, server)
+	application, err := middle.NewApp(appConfig, logLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -81,4 +83,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)

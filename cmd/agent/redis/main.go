@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -21,14 +22,20 @@ func CreateApp() (*app.Application, error) {
 
 	r := rollbar.New(appConfig)
 
-	l := log.NewZapLogger(r)
+	zap := log.NewZapLogger(r)
+	l := log.NewAppLogger(zap)
 
 	i, err := influx.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	rdb, err := redis.New(appConfig)
+	nr, err := newrelic.New(appConfig, zap)
+	if err != nil {
+		return nil, err
+	}
+
+	rdb, err := redis.New(appConfig, nr)
 	if err != nil {
 		return nil, err
 	}

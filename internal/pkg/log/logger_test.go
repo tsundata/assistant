@@ -7,7 +7,8 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	l := NewZapLogger(nil)
+	z := NewZapLogger(nil)
+	l := NewAppLogger(z)
 	l.Error(errors.New("test error"), zap.Any("t", t.Name()))
 	l.Debug("debug", zap.Any("t", t.Name()))
 	l.Info("info", zap.Any("t", t.Name()))

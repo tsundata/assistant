@@ -16,6 +16,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -32,6 +33,7 @@ var providerSet = wire.NewSet(
 	rollbar.ProviderSet,
 	consul.ProviderSet,
 	sdk.ProviderSet,
+	newrelic.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

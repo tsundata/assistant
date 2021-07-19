@@ -7,8 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"github.com/tsundata/gorqlite"
 )
 
 type TodoRepository interface {
@@ -86,13 +86,13 @@ func (r *MysqlTodoRepository) DeleteTodo(id int64) error {
 	return err
 }
 
-func NewRqliteTodoRepository(logger log.Logger, db gorqlite.Connection) TodoRepository {
+func NewRqliteTodoRepository(logger log.Logger, db *rqlite.Conn) TodoRepository {
 	return &RqliteTodoRepository{logger: logger, db: db}
 }
 
 type RqliteTodoRepository struct {
 	logger log.Logger
-	db     gorqlite.Connection
+	db     *rqlite.Conn
 }
 
 func (r *RqliteTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {

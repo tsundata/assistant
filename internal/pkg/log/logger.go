@@ -17,11 +17,7 @@ type Logger interface {
 	Fatal(err error, fields ...interface{})
 }
 
-type ZapLogger struct {
-	Zap *zap.Logger
-}
-
-func NewZapLogger(r *rb.Rollbar) Logger {
+func NewZapLogger(r *rb.Rollbar) *zap.Logger {
 	if r != nil {
 		r.Config()
 	}
@@ -31,40 +27,48 @@ func NewZapLogger(r *rb.Rollbar) Logger {
 		fmt.Printf("can't initialize logger: %v\n", err)
 	}
 	defer func() { _ = logger.Sync() }()
-	return &ZapLogger{Zap: logger}
+	return logger
 }
 
-func (l *ZapLogger) Debug(msg string, fields ...interface{}) {
+type AppLogger struct {
+	logger *zap.Logger
+}
+
+func NewAppLogger(zap *zap.Logger) Logger {
+	return &AppLogger{logger: zap}
+}
+
+func (l *AppLogger) Debug(msg string, fields ...interface{}) {
 	kvs := zapFields(fields)
-	l.Zap.Debug(msg, kvs...)
+	l.logger.Debug(msg, kvs...)
 }
 
-func (l *ZapLogger) Info(msg string, fields ...interface{}) {
+func (l *AppLogger) Info(msg string, fields ...interface{}) {
 	kvs := zapFields(fields)
-	l.Zap.Info(msg, kvs...)
+	l.logger.Info(msg, kvs...)
 }
 
-func (l *ZapLogger) Warn(msg string, fields ...interface{}) {
+func (l *AppLogger) Warn(msg string, fields ...interface{}) {
 	kvs := zapFields(fields)
-	l.Zap.Warn(msg, kvs...)
+	l.logger.Warn(msg, kvs...)
 }
 
-func (l *ZapLogger) Error(err error, fields ...interface{}) {
-	kvs := zapFields(fields)
-	rollbar.Error(err)
-	l.Zap.Error(err.Error(), kvs...)
-}
-
-func (l *ZapLogger) Panic(err error, fields ...interface{}) {
-	kvs := zapFields(fields)
-	rollbar.Error(err)
-	l.Zap.Panic(err.Error(), kvs...)
-}
-
-func (l *ZapLogger) Fatal(err error, fields ...interface{}) {
+func (l *AppLogger) Error(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
 	rollbar.Error(err)
-	l.Zap.Fatal(err.Error(), kvs...)
+	l.logger.Error(err.Error(), kvs...)
+}
+
+func (l *AppLogger) Panic(err error, fields ...interface{}) {
+	kvs := zapFields(fields)
+	rollbar.Error(err)
+	l.logger.Panic(err.Error(), kvs...)
+}
+
+func (l *AppLogger) Fatal(err error, fields ...interface{}) {
+	kvs := zapFields(fields)
+	rollbar.Error(err)
+	l.logger.Fatal(err.Error(), kvs...)
 }
 
 func zapFields(fields []interface{}) []zap.Field {
@@ -77,4 +81,4 @@ func zapFields(fields []interface{}) []zap.Field {
 	return res
 }
 
-var ProviderSet = wire.NewSet(NewZapLogger)
+var ProviderSet = wire.NewSet(NewZapLogger, NewAppLogger)

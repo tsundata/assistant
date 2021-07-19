@@ -22,6 +22,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -37,10 +38,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	bus := event.NewNatsBus(conn, newrelicApp)
+	logLogger := log.NewAppLogger(logger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -52,59 +58,55 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	todoClient, err := rpcclient.NewTodoClient(rpcClient)
+	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig)
+	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	subscribeSvcClient, err := rpcclient.NewSubscribe(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	storageClient, err := rpcclient.NewStorageClient(rpcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	userClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	nlpClient, err := rpcclient.NewNLPClient(rpcClient)
+	nlpSvcClient, err := rpcclient.NewNLPClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	iComponent := rulebot.NewComponent(appConfig, redisClient, logger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, subscribeSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient)
 	ruleBot := rulebot.New(iComponent)
-	serviceChatbot := service.NewChatbot(logger, middleClient, todoClient, ruleBot)
+	serviceChatbot := service.NewChatbot(logLogger, middleSvcClient, todoSvcClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)
-	influxdb2Client, err := influx.New(appConfig)
+	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, client, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, logger, initServer, tracer, influxdb2Client, redisClient, client)
-	if err != nil {
-		return nil, err
-	}
-	application, err := chatbot.NewApp(appConfig, bus, logger, server, middleClient, todoClient, userClient)
+	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, middleSvcClient, todoSvcClient, userSvcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -113,4 +115,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, nats.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, nats.ProviderSet, newrelic.ProviderSet)

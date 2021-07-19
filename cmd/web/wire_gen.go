@@ -19,6 +19,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -32,22 +33,23 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	redisClient, err := redis.New(appConfig)
+	logLogger := log.NewAppLogger(logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
 	gatewayClient := sdk.NewGatewayClient(appConfig)
-	webController := controller.NewWebController(appConfig, redisClient, logger, gatewayClient)
+	webController := controller.NewWebController(appConfig, redisClient, logLogger, gatewayClient)
 	v := controller.CreateInitControllersFn(webController)
-	influxdb2Client, err := influx.New(appConfig)
+	server, err := http.New(appConfig, v, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(appConfig, v, influxdb2Client, logger)
-	if err != nil {
-		return nil, err
-	}
-	application, err := web.NewApp(appConfig, logger, server)
+	application, err := web.NewApp(appConfig, logLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -56,4 +58,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, web.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, sdk.ProviderSet, newrelic.ProviderSet)

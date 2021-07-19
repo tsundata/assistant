@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewServer(t *testing.T) {
-	_, err := New(nil, func(r fiber.Router) {}, nil, nil)
+	_, err := New(nil, func(r fiber.Router) {}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

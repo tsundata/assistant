@@ -124,7 +124,7 @@ func TestMessage_Create(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(nats)
+	bus := event.NewNatsBus(nats, nil)
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(

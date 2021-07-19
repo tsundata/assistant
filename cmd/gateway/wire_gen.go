@@ -21,6 +21,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -34,11 +35,21 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	redisClient, err := redis.New(appConfig)
+	logLogger := log.NewAppLogger(logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := nats.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	bus := event.NewNatsBus(conn, newrelicApp)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -50,41 +61,37 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	chatbotClient, err := rpcclient.NewChatbotClient(rpcClient)
+	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	userClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, logger, messageClient, middleClient, workflowClient, chatbotClient, userClient)
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, logLogger, newrelicApp, bus, messageSvcClient, middleSvcClient, workflowSvcClient, chatbotSvcClient, userSvcClient)
 	v := controller.CreateInitControllersFn(gatewayController)
-	influxdb2Client, err := influx.New(appConfig)
+	server, err := http.New(appConfig, v, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(appConfig, v, influxdb2Client, logger)
-	if err != nil {
-		return nil, err
-	}
-	application, err := gateway.NewApp(appConfig, logger, server)
+	application, err := gateway.NewApp(appConfig, logLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -93,4 +100,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, consul.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)

@@ -35,6 +35,7 @@ type AppConfig struct {
 	Slack    Slack    `json:"slack"`
 	Rollbar  Rollbar  `json:"rollbar"`
 	Telegram Telegram `json:"telegram"`
+	Newrelic Newrelic `json:"newrelic"`
 }
 
 func NewConfig(id string, consul *api.Client) *AppConfig {

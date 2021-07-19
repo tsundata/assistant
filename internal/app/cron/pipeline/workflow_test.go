@@ -23,7 +23,8 @@ func TestWorkflowDone(t *testing.T) {
 }
 
 func TestWorkflowError(t *testing.T) {
-	l := log.NewZapLogger(nil)
+	z := log.NewZapLogger(nil)
+	l := log.NewAppLogger(z)
 
 	comp := rulebot.NewComponent(nil, nil, l, nil,
 		nil, nil, nil, nil,

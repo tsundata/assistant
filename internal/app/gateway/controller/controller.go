@@ -8,6 +8,7 @@ import (
 	recoverMiddleware "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"net/http"
 	"strings"
 	"time"
@@ -33,6 +34,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			Max:        20,
 			Expiration: time.Minute,
 		}))
+		router.Use(newrelic.NewMiddleware(newrelic.MiddlewareConfig{NewRelicApp: gc.nr.Application()}))
 
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)

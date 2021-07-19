@@ -5,18 +5,20 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/hashicorp/consul/api"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
+	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -28,13 +30,12 @@ type Server struct {
 	conf   *config.AppConfig
 	logger log.Logger
 	server *grpc.Server
-	in     influxdb2.Client
 	consul *api.Client
 }
 
 type InitServer func(s *grpc.Server)
 
-func NewServer(opt *config.AppConfig, logger log.Logger, init InitServer, tracer opentracing.Tracer, in influxdb2.Client, rdb *redis.Client, consul *api.Client) (*Server, error) {
+func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init InitServer, tracer opentracing.Tracer, rdb *redis.Client, consul *api.Client, nc *newrelic.App) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -45,20 +46,22 @@ func NewServer(opt *config.AppConfig, logger log.Logger, init InitServer, tracer
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
 			grpcmiddleware.ChainStreamServer(
-				log.StreamServerInterceptor(logger),
-				influx.StreamServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
+				rollbar.StreamServerInterceptor(),
+				grpc_zap.StreamServerInterceptor(z),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
+				nrgrpc.StreamServerInterceptor(nc.Application()),
 			),
 		),
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
-				log.UnaryServerInterceptor(logger),
-				influx.UnaryServerInterceptor(in, opt.Influx.Org, opt.Influx.Bucket),
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
+				rollbar.UnaryServerInterceptor(),
+				grpc_zap.UnaryServerInterceptor(z),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
+				nrgrpc.UnaryServerInterceptor(nc.Application()),
 			),
 		),
 	)
@@ -68,7 +71,6 @@ func NewServer(opt *config.AppConfig, logger log.Logger, init InitServer, tracer
 		conf:   opt,
 		logger: logger,
 		server: gs,
-		in:     in,
 		consul: consul,
 	}, nil
 }
@@ -104,9 +106,6 @@ func (s *Server) Start() error {
 	if err := s.register(); err != nil {
 		return errors.Wrap(err, "register grpc server error")
 	}
-
-	// metrics
-	go influx.PushGoServerMetrics(s.in, s.conf.Name, s.conf.Influx.Org, s.conf.Influx.Bucket)
 
 	return nil
 }

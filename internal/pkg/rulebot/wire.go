@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -24,6 +25,7 @@ var testProviderSet = wire.NewSet(
 	rollbar.ProviderSet,
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
+	newrelic.ProviderSet,
 )
 
 func CreateRuleBot(id string) (*RuleBot, error) {

@@ -18,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -31,11 +32,16 @@ func CreateApp(id string) (*app.Application, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	redisClient, err := redis.New(appConfig)
+	logLogger := log.NewAppLogger(logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -47,45 +53,45 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	subscribeSvcClient, err := rpcclient.NewSubscribe(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	storageClient, err := rpcclient.NewStorageClient(rpcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	todoClient, err := rpcclient.NewTodoClient(rpcClient)
+	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	userClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	nlpClient, err := rpcclient.NewNLPClient(rpcClient)
+	nlpSvcClient, err := rpcclient.NewNLPClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	iComponent := rulebot.NewComponent(appConfig, redisClient, logger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, subscribeSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient)
 	ruleBot := rulebot.New(iComponent)
-	application, err := cron.NewApp(appConfig, logger, ruleBot)
+	application, err := cron.NewApp(appConfig, logLogger, ruleBot)
 	if err != nil {
 		return nil, err
 	}
@@ -94,4 +100,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rulebot.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, cron.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, rulebot.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)

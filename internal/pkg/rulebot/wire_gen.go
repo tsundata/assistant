@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -25,13 +26,18 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	redisClient, err := redis.New(appConfig)
+	rollbarRollbar := rollbar.New(appConfig)
+	logger := log.NewZapLogger(rollbarRollbar)
+	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
-	configuration, err := jaeger.NewConfiguration(appConfig, logger)
+	redisClient, err := redis.New(appConfig, app)
+	if err != nil {
+		return nil, err
+	}
+	logLogger := log.NewAppLogger(logger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -43,47 +49,47 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logger)
+	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	messageClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	middleClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	subscribeClient, err := rpcclient.NewSubscribe(rpcClient)
+	subscribeSvcClient, err := rpcclient.NewSubscribe(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	workflowClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	storageClient, err := rpcclient.NewStorageClient(rpcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	todoClient, err := rpcclient.NewTodoClient(rpcClient)
+	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	userClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	nlpClient, err := rpcclient.NewNLPClient(rpcClient)
+	nlpSvcClient, err := rpcclient.NewNLPClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	iComponent := NewComponent(appConfig, redisClient, logger, messageClient, middleClient, subscribeClient, workflowClient, storageClient, todoClient, userClient, nlpClient)
+	iComponent := NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, subscribeSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient)
 	ruleBot := New(iComponent)
 	return ruleBot, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet)

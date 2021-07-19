@@ -20,7 +20,8 @@ func CreateApp() (*app.Application, error) {
 
 	r := rollbar.New(appConfig)
 
-	l := log.NewZapLogger(r)
+	zap := log.NewZapLogger(r)
+	l := log.NewAppLogger(zap)
 
 	i, err := influx.New(appConfig)
 	if err != nil {
