@@ -15,3 +15,16 @@ CREATE TABLE "todos"
     "updated_at"        DATETIME      NOT NULL,
     PRIMARY KEY ("id")
 );
+
+CREATE TABLE `triggers`
+(
+    `id`         INTEGER      NOT NULL,
+    `type`       varchar(16)  NOT NULL DEFAULT '',
+    `kind`       varchar(16)  NOT NULL DEFAULT '',
+    `flag`       varchar(128) NOT NULL DEFAULT '',
+    `secret`     varchar(128) NOT NULL DEFAULT '',
+    `when`       varchar(128) NOT NULL DEFAULT '',
+    `message_id` INTEGER      NOT NULL,
+    `created_at` DATETIME     NOT NULL,
+    PRIMARY KEY (`id`)
+);

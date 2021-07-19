@@ -3,9 +3,12 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
+	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type WorkflowRepository interface {
@@ -70,4 +73,65 @@ func (r *MysqlWorkflowRepository) DeleteTriggerByMessageID(messageID int64) erro
 		return err
 	}
 	return nil
+}
+
+type RqliteWorkflowRepository struct {
+	logger log.Logger
+	db     *rqlite.Conn
+}
+
+func NewRqliteWorkflowRepository(logger log.Logger, db *rqlite.Conn) WorkflowRepository {
+	return &RqliteWorkflowRepository{logger: logger, db: db}
+}
+
+func (r *RqliteWorkflowRepository) GetTriggerByFlag(t, flag string) (pb.Trigger, error) {
+	rows, err := r.db.QueryOne(fmt.Sprintf("SELECT message_id, kind FROM `triggers` WHERE `type` = '%s' AND `flag` = '%s'", t, flag))
+	if err != nil {
+		return pb.Trigger{}, err
+	}
+
+	var trigger pb.Trigger
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return pb.Trigger{}, err
+		}
+		util.Inject(&trigger, m)
+	}
+
+	return trigger, nil
+}
+
+func (r *RqliteWorkflowRepository) ListTriggersByType(t string) ([]pb.Trigger, error) {
+	rows, err := r.db.QueryOne(fmt.Sprintf("SELECT message_id, kind, `when` FROM `triggers` WHERE `type` = '%s'", t))
+	if err != nil {
+		return nil, err
+	}
+
+	var triggers []pb.Trigger
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return nil, err
+		}
+		var item pb.Trigger
+		util.Inject(item, m)
+		triggers = append(triggers, item)
+	}
+
+	return triggers, nil
+}
+
+func (r *RqliteWorkflowRepository) CreateTrigger(trigger pb.Trigger) (int64, error) {
+	trigger.CreatedAt = util.Now()
+	res, err := r.db.WriteOne(fmt.Sprintf("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`, `created_at`) VALUES ('%s', '%s', '%s', '%d', '%s')", trigger.Type, trigger.Kind, trigger.When, trigger.MessageId, trigger.CreatedAt))
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID, nil
+}
+
+func (r *RqliteWorkflowRepository) DeleteTriggerByMessageID(messageID int64) error {
+	_, err := r.db.WriteOne(fmt.Sprintf("DELETE FROM triggers WHERE message_id = %d", messageID))
+	return err
 }

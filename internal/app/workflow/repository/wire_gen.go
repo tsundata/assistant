@@ -11,6 +11,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
+	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
@@ -25,14 +27,18 @@ func CreateWorkflowRepository(id string) (WorkflowRepository, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	db, err := mysql.New(appConfig)
+	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	workflowRepository := NewMysqlWorkflowRepository(logLogger, db)
+	conn, err := rqlite.New(appConfig, app)
+	if err != nil {
+		return nil, err
+	}
+	workflowRepository := NewRqliteWorkflowRepository(logLogger, conn)
 	return workflowRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, mysql.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)

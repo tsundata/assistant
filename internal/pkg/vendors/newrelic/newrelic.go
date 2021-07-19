@@ -17,7 +17,7 @@ func New(c *config.AppConfig, zap *zap.Logger) (*App, error) {
 	var nr *newrelic.Application
 	var err error
 	if c.Newrelic.Name == "" || c.Newrelic.License == "" {
-		nr, err = newrelic.NewApplication()
+		nr, _ = newrelic.NewApplication()
 	} else {
 		nr, err = newrelic.NewApplication(
 			newrelic.ConfigAppName(c.Newrelic.Name),

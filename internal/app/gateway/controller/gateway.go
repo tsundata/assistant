@@ -11,7 +11,6 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -27,7 +26,6 @@ type GatewayController struct {
 	rdb    *redis.Client
 	logger log.Logger
 	nr     *newrelic.App
-	bus    event.Bus
 
 	messageSvc  pb.MessageSvcClient
 	middleSvc   pb.MiddleSvcClient
@@ -38,7 +36,6 @@ type GatewayController struct {
 
 func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.Logger,
 	nr *newrelic.App,
-	bus event.Bus,
 	messageSvc pb.MessageSvcClient,
 	middleSvc pb.MiddleSvcClient,
 	workflowSvc pb.WorkflowSvcClient,
@@ -49,7 +46,6 @@ func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.L
 		rdb:         rdb,
 		logger:      logger,
 		nr:          nr,
-		bus:         bus,
 		messageSvc:  messageSvc,
 		middleSvc:   middleSvc,
 		workflowSvc: workflowSvc,
@@ -59,21 +55,6 @@ func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.L
 }
 
 func (gc *GatewayController) Index(c *fiber.Ctx) error {
-	nxt := gc.nr.StartTransaction("gateway/test")
-	defer nxt.End()
-	ctx := gc.nr.NewContext(context.Background(), nxt)
-	gc.rdb.Get(ctx, "abc")
-
-	err := gc.bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: "test"})
-	if err != nil {
-		fmt.Println("Publish", err)
-	}
-
-	_, err = gc.middleSvc.GetPage(ctx, &pb.PageRequest{Page: &pb.Page{Uuid: "1"}})
-	if err != nil {
-		fmt.Println("GetPage", err)
-	}
-
 	return c.SendString("Gateway")
 }
 
