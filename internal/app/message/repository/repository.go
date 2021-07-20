@@ -2,4 +2,4 @@ package repository
 
 import "github.com/google/wire"
 
-var ProviderSet = wire.NewSet(NewMysqlMessageRepository)
+var ProviderSet = wire.NewSet(NewRqliteMessageRepository)

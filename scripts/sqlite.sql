@@ -83,3 +83,15 @@ INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `stre
                             `talent`, `intellect`)
 VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
+
+CREATE TABLE `messages`
+(
+    `id`         INTEGER       NOT NULL,
+    `uuid`       varchar(36)   NOT NULL DEFAULT '',
+    `type`       varchar(12)   NOT NULL DEFAULT '',
+    `channel`    varchar(20)   NOT NULL DEFAULT '',
+    `text`       varchar(2048) NOT NULL DEFAULT '',
+    `created_at` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE (`uuid`)
+);

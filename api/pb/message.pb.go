@@ -139,12 +139,18 @@ func (m *MessagesReply) GetMessages() []*Message {
 }
 
 type Message struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Uuid                 string   `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
-	Type                 string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Channel              string   `protobuf:"bytes,5,opt,name=channel,proto3" json:"channel,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	// @inject_tag: db:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	// @inject_tag: db:"uuid"
+	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty" db:"uuid"`
+	// @inject_tag: db:"text"
+	Text string `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty" db:"text"`
+	// @inject_tag: db:"type"
+	Type string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty" db:"type"`
+	// @inject_tag: db:"channel"
+	Channel string `protobuf:"bytes,5,opt,name=channel,proto3" json:"channel,omitempty" db:"channel"`
+	// @inject_tag: db:"created_at"
+	CreatedAt            string   `protobuf:"bytes,6,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

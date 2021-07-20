@@ -80,7 +80,7 @@ func TestSubsListRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	subscribe := mock.NewMockSubscribeClient(ctl)
+	subscribe := mock.NewMockSubscribeSvcClient(ctl)
 	gomock.InOrder(
 		subscribe.EXPECT().List(gomock.Any(), gomock.Any()).Return(&pb.SubscribeReply{Text: []string{"test1"}}, nil),
 	)
@@ -95,7 +95,7 @@ func TestSubsOpenRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	subscribe := mock.NewMockSubscribeClient(ctl)
+	subscribe := mock.NewMockSubscribeSvcClient(ctl)
 	gomock.InOrder(
 		subscribe.EXPECT().Open(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
@@ -110,7 +110,7 @@ func TestSubsCloseRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	subscribe := mock.NewMockSubscribeClient(ctl)
+	subscribe := mock.NewMockSubscribeSvcClient(ctl)
 	gomock.InOrder(
 		subscribe.EXPECT().Close(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
@@ -215,7 +215,7 @@ func TestPinyinRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nlp := mock.NewMockNLPClient(ctl)
+	nlp := mock.NewMockNLPSvcClient(ctl)
 	gomock.InOrder(
 		nlp.EXPECT().Pinyin(gomock.Any(), gomock.Any()).Return(&pb.WordsReply{Text: []string{"a1", "a2"}}, nil),
 	)

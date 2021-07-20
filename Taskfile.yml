@@ -40,6 +40,7 @@ tasks:
       - protoc-go-inject-tag -input=./api/pb/todo.pb.go
       - protoc-go-inject-tag -input=./api/pb/workflow.pb.go
       - protoc-go-inject-tag -input=./api/pb/user.pb.go
+      - protoc-go-inject-tag -input=./api/pb/message.pb.go
       - git add api/pb/*.pb.go
 
   release:

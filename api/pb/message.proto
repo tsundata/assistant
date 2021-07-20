@@ -30,11 +30,17 @@ message MessagesReply {
 }
 
 message Message {
+  // @inject_tag: db:"id"
   int64 id = 1;
+  // @inject_tag: db:"uuid"
   string uuid = 2;
+  // @inject_tag: db:"text"
   string text = 3;
+  // @inject_tag: db:"type"
   string type = 4;
+  // @inject_tag: db:"channel"
   string channel = 5;
+  // @inject_tag: db:"created_at"
   string createdAt = 6;
 }
 
