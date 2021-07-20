@@ -117,14 +117,14 @@ func (mr *MockUserSvcClientMockRecorder) GetRole(ctx, in interface{}, opts ...in
 }
 
 // GetRoleImage mocks base method.
-func (m *MockUserSvcClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockUserSvcClient) GetRoleImage(ctx context.Context, in *pb.RoleRequest, opts ...grpc.CallOption) (*pb.BytesReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetRoleImage", varargs...)
-	ret0, _ := ret[0].(*pb.TextReply)
+	ret0, _ := ret[0].(*pb.BytesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -300,10 +300,10 @@ func (mr *MockUserSvcServerMockRecorder) GetRole(arg0, arg1 interface{}) *gomock
 }
 
 // GetRoleImage mocks base method.
-func (m *MockUserSvcServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.TextReply, error) {
+func (m *MockUserSvcServer) GetRoleImage(arg0 context.Context, arg1 *pb.RoleRequest) (*pb.BytesReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRoleImage", arg0, arg1)
-	ret0, _ := ret[0].(*pb.TextReply)
+	ret0, _ := ret[0].(*pb.BytesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

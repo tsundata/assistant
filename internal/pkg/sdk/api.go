@@ -188,7 +188,7 @@ func (c *GatewayClient) GetCredential(id string) (result *pb.CredentialReply, er
 	return
 }
 
-func (c *GatewayClient) GetRoleImage() (result *pb.TextReply, err error) {
+func (c *GatewayClient) GetRoleImage() (result *pb.BytesReply, err error) {
 	resp, err := c.r.R().
 		Get("role/image")
 	if err != nil {

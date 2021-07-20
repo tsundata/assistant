@@ -154,7 +154,7 @@ func TestUser_GetAuthToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	rdb.Set(context.Background(), AuthKey, "test", time.Hour)
+	rdb.Set(context.Background(), AuthKey, "04a2e287-c394-4cf3-902e-ed2a84b85c5a", time.Hour)
 
 	s := NewUser(rdb, nil)
 
@@ -173,7 +173,7 @@ func TestUser_GetAuthToken(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.TextRequest{}},
-			&pb.TextReply{Text: "test"},
+			&pb.TextReply{Text: "04a2e287-c394-4cf3-902e-ed2a84b85c5a"},
 			false,
 		},
 	}

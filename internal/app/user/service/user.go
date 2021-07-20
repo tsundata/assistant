@@ -33,7 +33,8 @@ func (s *User) GetAuthToken(ctx context.Context, _ *pb.TextRequest) (*pb.TextRep
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, err
 	}
-	if errors.Is(err, redis.Nil) {
+	uuid = util.ExtractUUID(uuid)
+	if errors.Is(err, redis.Nil) || uuid == "" {
 		uuid, err = util.GenerateUUID()
 		if err != nil {
 			return nil, err
@@ -68,18 +69,18 @@ func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleRepl
 	}
 	return &pb.RoleReply{Role: &pb.Role{
 		Profession:  find.Profession,
-		Exp:         int64(find.Exp),
-		Level:       int64(find.Level),
-		Strength:    int64(find.Strength),
-		Culture:     int64(find.Culture),
-		Environment: int64(find.Environment),
-		Charisma:    int64(find.Charisma),
-		Talent:      int64(find.Talent),
-		Intellect:   int64(find.Intellect),
+		Exp:         find.Exp,
+		Level:       find.Level,
+		Strength:    find.Strength,
+		Culture:     find.Culture,
+		Environment: find.Environment,
+		Charisma:    find.Charisma,
+		Talent:      find.Talent,
+		Intellect:   find.Intellect,
 	}}, nil
 }
 
-func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.TextReply, error) {
+func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.BytesReply, error) {
 	find, err := s.repo.GetRole(payload.GetId())
 	if err != nil {
 		return nil, err
@@ -125,7 +126,7 @@ func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.Tex
 		return nil, err
 	}
 
-	return &pb.TextReply{Text: util.ImageToBase64(buf.Bytes())}, nil
+	return &pb.BytesReply{Data: buf.Bytes()}, nil
 }
 
 func (s *User) CreateUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
@@ -194,7 +195,7 @@ func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, e
 	return &pb.UsersReply{Users: res}, nil
 }
 
-func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
+func (s *User) UpdateUser(_ context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
 	err := s.repo.Update(pb.User{
 		Id:     payload.User.GetId(),
 		Name:   payload.User.GetName(),

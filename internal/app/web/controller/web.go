@@ -533,8 +533,8 @@ func (wc *WebController) Role(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	c.Response().Header.Set("Content-Type", "image/png")
-	return c.SendString(reply.GetText())
+	c.Set("Content-Type", "image/png")
+	return c.Send(reply.GetData())
 }
 
 func (wc *WebController) App(c *fiber.Ctx) error {
