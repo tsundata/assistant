@@ -1,11 +1,7 @@
 package repository
 
 import (
-	"database/sql"
-	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
@@ -20,78 +16,12 @@ type TodoRepository interface {
 	DeleteTodo(id int64) error
 }
 
-type MysqlTodoRepository struct {
-	logger log.Logger
-	db     *sqlx.DB
-}
-
-func NewMysqlTodoRepository(logger log.Logger, db *sqlx.DB) TodoRepository {
-	return &MysqlTodoRepository{logger: logger, db: db}
-}
-
-func (r *MysqlTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
-	todo.CreatedAt = util.Now()
-	todo.UpdatedAt = util.Now()
-	res, err := r.db.NamedExec("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES (:content, :priority, :is_remind_at_time, :remind_at, :repeat_method, :repeat_rule, :repeat_end_at, :category, :remark, :complete, :created_at, :updated_at)", todo)
-	if err != nil {
-		return 0, err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
-}
-
-func (r *MysqlTodoRepository) ListTodos() ([]pb.Todo, error) {
-	var items []pb.Todo
-	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 ORDER BY `priority` DESC, `created_at` DESC")
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	return items, nil
-}
-
-func (r *MysqlTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
-	var items []pb.Todo
-	err := r.db.Select(&items, "SELECT * FROM `todos` WHERE `complete` <> 1 AND `is_remind_at_time` = 1 ORDER BY `priority` DESC")
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	return items, nil
-}
-
-func (r *MysqlTodoRepository) GetTodo(id int64) (pb.Todo, error) {
-	var item pb.Todo
-	err := r.db.Get(&item, "SELECT id FROM `todos` WHERE id = ?", id)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return pb.Todo{}, err
-	}
-	return item, nil
-}
-
-func (r *MysqlTodoRepository) CompleteTodo(id int64) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `complete` = 1 WHERE id = ?", id)
-	return err
-}
-
-func (r *MysqlTodoRepository) UpdateTodo(todo pb.Todo) error {
-	_, err := r.db.Exec("UPDATE `todos` SET `content` = ? WHERE id = ?", todo.Content, todo.Id)
-	return err
-}
-
-func (r *MysqlTodoRepository) DeleteTodo(id int64) error {
-	_, err := r.db.Exec("DELETE FROM `todos` WHERE `id` = ?", id)
-	return err
-}
-
-func NewRqliteTodoRepository(logger log.Logger, db *rqlite.Conn) TodoRepository {
-	return &RqliteTodoRepository{logger: logger, db: db}
+func NewRqliteTodoRepository(db *rqlite.Conn) TodoRepository {
+	return &RqliteTodoRepository{db: db}
 }
 
 type RqliteTodoRepository struct {
-	logger log.Logger
-	db     *rqlite.Conn
+	db *rqlite.Conn
 }
 
 func (r *RqliteTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
@@ -117,7 +47,7 @@ func (r *RqliteTodoRepository) ListTodos() ([]pb.Todo, error) {
 			return nil, err
 		}
 		var item pb.Todo
-		util.Inject(item, m)
+		util.Inject(&item, m)
 		items = append(items, item)
 	}
 
@@ -137,7 +67,7 @@ func (r *RqliteTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
 			return nil, err
 		}
 		var item pb.Todo
-		util.Inject(item, m)
+		util.Inject(&item, m)
 		items = append(items, item)
 	}
 

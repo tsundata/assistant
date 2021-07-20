@@ -95,3 +95,42 @@ CREATE TABLE `messages`
     PRIMARY KEY (`id`),
     UNIQUE (`uuid`)
 );
+
+
+CREATE TABLE `apps`
+(
+    `id`         INTEGER       NOT NULL,
+    `name`       varchar(16)   NOT NULL DEFAULT '',
+    `type`       varchar(12)   NOT NULL DEFAULT '',
+    `token`      varchar(256)  NOT NULL DEFAULT '',
+    `extra`      varchar(2048) NOT NULL DEFAULT '',
+    `created_at` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
+
+CREATE TABLE `credentials`
+(
+    `id`         INTEGER       NOT NULL,
+    `name`       varchar(16)   NOT NULL DEFAULT '',
+    `type`       varchar(12)   NOT NULL DEFAULT '',
+    `content`    varchar(2048) NOT NULL DEFAULT '',
+    `created_at` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE (`name`)
+);
+
+
+CREATE TABLE `pages`
+(
+    `id`         INTEGER      NOT NULL,
+    `uuid`       varchar(36)  NOT NULL DEFAULT '',
+    `type`       varchar(10)  NOT NULL DEFAULT '',
+    `title`      varchar(256) NOT NULL DEFAULT '',
+    `content`    text         NOT NULL,
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE (`uuid`)
+);

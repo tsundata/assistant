@@ -50,7 +50,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := repository.NewRqliteTodoRepository(logLogger, rqliteConn)
+	todoRepository := repository.NewRqliteTodoRepository(rqliteConn)
 	serviceTodo := service.NewTodo(bus, logLogger, todoRepository)
 	initServer := service.CreateInitServerFn(serviceTodo)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)

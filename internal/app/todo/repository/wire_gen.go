@@ -26,7 +26,6 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	logLogger := log.NewAppLogger(logger)
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
@@ -35,7 +34,7 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := NewRqliteTodoRepository(logLogger, conn)
+	todoRepository := NewRqliteTodoRepository(conn)
 	return todoRepository, nil
 }
 

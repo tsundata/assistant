@@ -33,15 +33,17 @@ message PageReply {
 }
 
 message Page {
+  // @inject_tag: db:"id"
   int64 id = 1;
-  // @inject_tag: query:"uuid"
+  // @inject_tag: query:"uuid" db:"uuid"
   string uuid = 2;
-  // @inject_tag: query:"title"
+  // @inject_tag: query:"title" db:"title"
   string title = 3;
-  // @inject_tag: query:"content"
+  // @inject_tag: query:"content" db:"content"
   string content = 4;
-  // @inject_tag: query:"type"
+  // @inject_tag: query:"type" db:"type"
   string type = 5;
+  // @inject_tag: db:"created_at"
   string createdAt = 6;
 }
 
@@ -61,15 +63,23 @@ message AppReply {
 }
 
 message App {
+  // @inject_tag: db:"id"
   int64 id = 1;
+  // @inject_tag: db:"type"
   string type = 2;
+  // @inject_tag: db:"name"
   string name = 3;
+  // @inject_tag: db:"token"
   string token = 4;
+  // @inject_tag: db:"extra"
   string extra = 5;
-  string title = 6;
-  bool isAuthorized = 7;
-  string createdAt = 8;
-  string updatedAt = 9;
+  // @inject_tag: db:"created_at"
+  string createdAt = 6;
+  // @inject_tag: db:"updated_at"
+  string updatedAt = 7;
+
+  string title = 8;
+  bool isAuthorized = 9;
 }
 
 message CredentialsReply {
@@ -77,11 +87,17 @@ message CredentialsReply {
 }
 
 message Credential {
+  // @inject_tag: db:"id"
   int64  id = 1;
+  // @inject_tag: db:"name"
   string name = 2;
+  // @inject_tag: db:"type"
   string type = 3;
+  // @inject_tag: db:"content"
   string content = 4;
+  // @inject_tag: db:"created_at"
   string createdAt = 5;
+  // @inject_tag: db:"updated_at"
   string updatedAt = 6;
 }
 

@@ -26,7 +26,6 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	logLogger := log.NewAppLogger(logger)
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
@@ -35,7 +34,7 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := NewRqliteMessageRepository(logLogger, conn)
+	messageRepository := NewRqliteMessageRepository(conn)
 	return messageRepository, nil
 }
 

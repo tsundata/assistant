@@ -26,7 +26,6 @@ func CreateWorkflowRepository(id string) (WorkflowRepository, error) {
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	logLogger := log.NewAppLogger(logger)
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
@@ -35,7 +34,7 @@ func CreateWorkflowRepository(id string) (WorkflowRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	workflowRepository := NewRqliteWorkflowRepository(logLogger, conn)
+	workflowRepository := NewRqliteWorkflowRepository(conn)
 	return workflowRepository, nil
 }
 

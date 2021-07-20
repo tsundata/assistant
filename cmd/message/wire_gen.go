@@ -51,7 +51,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := repository.NewRqliteMessageRepository(logLogger, rqliteConn)
+	messageRepository := repository.NewRqliteMessageRepository(rqliteConn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err

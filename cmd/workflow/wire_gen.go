@@ -55,7 +55,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	workflowRepository := repository.NewRqliteWorkflowRepository(logLogger, rqliteConn)
+	workflowRepository := repository.NewRqliteWorkflowRepository(rqliteConn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
