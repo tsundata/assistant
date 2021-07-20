@@ -22,7 +22,7 @@ func NewRqliteWorkflowRepository(db *rqlite.Conn) WorkflowRepository {
 }
 
 func (r *RqliteWorkflowRepository) GetTriggerByFlag(t, flag string) (pb.Trigger, error) {
-	rows, err := r.db.QueryOne("SELECT message_id, kind FROM `triggers` WHERE `type` = '%s' AND `flag` = '%s'", t, flag)
+	rows, err := r.db.QueryOne("SELECT * FROM `triggers` WHERE `type` = '%s' AND `flag` = '%s'", t, flag)
 	if err != nil {
 		return pb.Trigger{}, err
 	}
@@ -40,7 +40,7 @@ func (r *RqliteWorkflowRepository) GetTriggerByFlag(t, flag string) (pb.Trigger,
 }
 
 func (r *RqliteWorkflowRepository) ListTriggersByType(t string) ([]pb.Trigger, error) {
-	rows, err := r.db.QueryOne("SELECT message_id, kind, `when` FROM `triggers` WHERE `type` = '%s'", t)
+	rows, err := r.db.QueryOne("SELECT * FROM `triggers` WHERE `type` = '%s'", t)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,8 @@ func (r *RqliteWorkflowRepository) ListTriggersByType(t string) ([]pb.Trigger, e
 
 func (r *RqliteWorkflowRepository) CreateTrigger(trigger pb.Trigger) (int64, error) {
 	trigger.CreatedAt = util.Now()
-	res, err := r.db.WriteOne("INSERT INTO `triggers` (`type`, `kind`, `when`, `message_id`, `created_at`) VALUES ('%s', '%s', '%s', '%d', '%s')", trigger.Type, trigger.Kind, trigger.When, trigger.MessageId, trigger.CreatedAt)
+	res, err := r.db.WriteOne("INSERT INTO `triggers` (`type`, `kind`, `flag`, `secret`, `when`, `message_id`, `created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%d', '%s')",
+		trigger.Type, trigger.Kind, trigger.Flag, trigger.Secret, trigger.When, trigger.MessageId, trigger.CreatedAt)
 	if err != nil {
 		return 0, err
 	}

@@ -13,8 +13,8 @@ import (
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleSvcClient, todo pb.TodoSvcClient, user pb.UserSvcClient) error {
 	err := bus.Subscribe(context.Background(), event.MessageTriggerSubject, func(msg *nats.Msg) {
-		var message pb.Message
-		err := json.Unmarshal(msg.Data, &message)
+		var m pb.Message
+		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
 			logger.Error(err)
 			return
@@ -25,7 +25,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleSvcC
 		comp.Middle = middle
 		comp.Todo = todo
 		comp.User = user
-		trigger.Run(context.Background(), comp, message.Text)
+		trigger.Run(context.Background(), comp, m.Text)
 	})
 	if err != nil {
 		return err

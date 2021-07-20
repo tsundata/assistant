@@ -23,18 +23,18 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), event.SendMessageSubject, func(msg *nats.Msg) {
-		var message pb.Message
-		err := json.Unmarshal(msg.Data, &message)
+	err = bus.Subscribe(context.Background(), event.MessageSendSubject, func(msg *nats.Msg) {
+		var m pb.Message
+		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
 			logger.Error(err)
 			return
 		}
 
 		client := http.NewClient()
-		webhook := slack.ChannelSelect(message.Channel, config.Slack.Webhook)
+		webhook := slack.ChannelSelect(m.Channel, config.Slack.Webhook)
 		resp, err := client.PostJSON(webhook, map[string]interface{}{
-			"text": message.Text,
+			"text": m.Text,
 		})
 		if err != nil {
 			logger.Error(err)

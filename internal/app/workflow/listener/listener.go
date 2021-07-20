@@ -13,9 +13,9 @@ import (
 )
 
 func RegisterEventHandler(bus event.Bus, rdb *redis.Client, message pb.MessageSvcClient, middle pb.MiddleSvcClient, logger log.Logger) error {
-	err := bus.Subscribe(context.Background(), event.RunWorkflowSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.WorkflowRunSubject, func(msg *nats.Msg) {
 		var m pb.Message
-		err := json.Unmarshal(msg.Data, &message)
+		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
 			logger.Error(err)
 			return

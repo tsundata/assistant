@@ -31,7 +31,7 @@ func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interfa
 		if comp.Bus == nil {
 			return false, nil
 		}
-		err := comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: text})
+		err := comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: text})
 		if err != nil {
 			return false, err
 		}

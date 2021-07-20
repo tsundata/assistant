@@ -69,7 +69,7 @@ func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 		}
 
 		// send message
-		err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
 		if err != nil {
 			return
 		}

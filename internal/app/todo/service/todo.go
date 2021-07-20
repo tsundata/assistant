@@ -60,7 +60,7 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.ChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCreatedExp})
+		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCreatedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -133,7 +133,7 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.ChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCompletedExp})
+		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCompletedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -143,7 +143,7 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 		if err != nil {
 			return nil, err
 		}
-		err = s.bus.Publish(ctx, event.ChangeAttrSubject, pb.AttrChange{UserId: enum.SuperUserID, Content: find.Content})
+		err = s.bus.Publish(ctx, event.RoleChangeAttrSubject, pb.AttrChange{UserId: enum.SuperUserID, Content: find.Content})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err

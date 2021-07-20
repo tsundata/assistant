@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
-	err := bus.Subscribe(context.Background(), event.ChangeExpSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), event.RoleChangeExpSubject, func(msg *nats.Msg) {
 		var role pb.Role
 		err := json.Unmarshal(msg.Data, &role)
 		if err != nil {
@@ -28,7 +28,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.User
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), event.ChangeAttrSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(context.Background(), event.RoleChangeAttrSubject, func(msg *nats.Msg) {
 		var data pb.AttrChange
 		err := json.Unmarshal(msg.Data, &data)
 		if err != nil {

@@ -27,7 +27,7 @@ func (t *Todo) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	}
 
 	// send message
-	err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: "Created Todo success"})
+	err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: "Created Todo success"})
 	if err != nil {
 		comp.Logger.Error(err)
 		return

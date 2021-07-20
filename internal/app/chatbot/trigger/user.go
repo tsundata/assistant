@@ -53,7 +53,7 @@ func (t *User) Handle(ctx context.Context, comp *ctx.Component) {
 			continue
 		}
 
-		err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{
+		err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{
 			Text: fmt.Sprintf("User: @%s\nID: %d\nMobile: %s\nRemark: %s", user, res.User.Id, res.User.Mobile, res.User.Remark),
 		})
 		if err != nil {

@@ -32,7 +32,7 @@ func (o *Task) Run(ctx context.Context, comp *inside.Component, params []interfa
 	}
 
 	if id, ok := params[0].(int64); ok {
-		err := comp.Bus.Publish(ctx, event.RunWorkflowSubject, pb.Message{Id: id})
+		err := comp.Bus.Publish(ctx, event.WorkflowRunSubject, pb.Message{Id: id})
 		if err != nil {
 			return false, err
 		}

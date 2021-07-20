@@ -48,7 +48,7 @@ func (t *Issue) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	}
 
 	// send message
-	err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
 	if err != nil {
 		comp.Logger.Error(err)
 		return

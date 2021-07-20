@@ -4,9 +4,9 @@ type Subject string
 
 const (
 	EchoSubject           Subject = "echo"
-	ChangeExpSubject      Subject = "change_exp"
-	ChangeAttrSubject     Subject = "change_attr"
-	SendMessageSubject    Subject = "send_message"
-	RunWorkflowSubject    Subject = "run_workflow"
+	RoleChangeExpSubject  Subject = "role_change_exp"
+	RoleChangeAttrSubject Subject = "role_change_attr"
+	MessageSendSubject    Subject = "message_send"
+	WorkflowRunSubject    Subject = "workflow_run"
 	MessageTriggerSubject Subject = "message_trigger"
 )

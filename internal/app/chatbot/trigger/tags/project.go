@@ -69,7 +69,7 @@ func (t *Project) Handle(ctx context.Context, comp *ctx.Component, text string) 
 	}
 
 	// send message
-	err = comp.Bus.Publish(ctx, event.SendMessageSubject, pb.Message{Text: fmt.Sprintf("Created Project Card #%d", *card.ID)})
+	err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Created Project Card #%d", *card.ID)})
 	if err != nil {
 		comp.Logger.Error(err)
 		return

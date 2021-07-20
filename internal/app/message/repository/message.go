@@ -73,7 +73,7 @@ func (r *RqliteMessageRepository) ListByType(t string) ([]pb.Message, error) {
 			return nil, err
 		}
 		var item pb.Message
-		util.Inject(item, m)
+		util.Inject(&item, m)
 		messages = append(messages, item)
 	}
 
@@ -93,7 +93,7 @@ func (r *RqliteMessageRepository) List() ([]pb.Message, error) {
 			return nil, err
 		}
 		var item pb.Message
-		util.Inject(item, m)
+		util.Inject(&item, m)
 		messages = append(messages, item)
 	}
 
