@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/queue"
 	"reflect"
@@ -34,8 +35,8 @@ func TestTask_Delay(t *testing.T) {
 			s,
 			args{context.Background(), &pb.JobRequest{
 				Time: time.Now().Format("2006-01-02 15:04:05"),
-				Name: "test",
-				Args: `{"text":"test"}`,
+				Name: enum.WorkflowRunTask,
+				Args: `{"type":"action", "id":"1"}`,
 			}},
 			&pb.StateReply{State: true},
 			false,

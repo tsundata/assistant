@@ -3,6 +3,7 @@ package task
 import (
 	"github.com/RichardKnop/machinery/v2"
 	"github.com/google/wire"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/task/work"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -30,7 +31,7 @@ func NewApp(
 	go func() {
 		workflowTask := work.NewWorkflowTask(bus, message, workflow)
 		err = q.RegisterTasks(map[string]interface{}{
-			"run": workflowTask.Run,
+			enum.WorkflowRunTask: workflowTask.Run,
 		})
 		if err != nil {
 			logger.Error(err)
