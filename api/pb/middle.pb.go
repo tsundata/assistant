@@ -592,8 +592,10 @@ func (m *MaskingReply) GetItems() []*KV {
 }
 
 type CredentialRequest struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	// @inject_tag: query:"name"
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" query:"name"`
+	// @inject_tag: query:"type"
+	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty" query:"type"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

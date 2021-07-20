@@ -258,13 +258,13 @@ func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) GetPage(c *fiber.Ctx) error {
-	var in pb.PageRequest
+	var in pb.Page
 	err := c.QueryParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.middleSvc.GetPage(context.Background(), &in)
+	reply, err := gc.middleSvc.GetPage(context.Background(), &pb.PageRequest{Page: &in})
 	if err != nil {
 		return err
 	}

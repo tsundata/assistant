@@ -29,7 +29,8 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := rqlite.New(appConfig, app)
+	logLogger := log.NewAppLogger(logger)
+	conn, err := rqlite.New(appConfig, app, logLogger)
 	if err != nil {
 		return nil, err
 	}

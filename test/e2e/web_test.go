@@ -34,7 +34,7 @@ Disallow: /`)
 
 func TestGetPageIndex(t *testing.T) {
 	e := httpexpect.New(t, WebBaseURL)
-	e.GET("/page/7e5833e3-3a55-4228-9775-ce90794897f2").
+	e.GET("/page/fad68757-ef72-4d0a-a573-684a35fa4dda").
 		Expect().
 		Status(http.StatusOK).Body().Contains("test")
 }
@@ -107,7 +107,7 @@ func TestGetRoleIndex(t *testing.T) {
 	e := httpexpect.New(t, WebBaseURL)
 	e.GET(fmt.Sprintf("/role/%s", token)).
 		Expect().
-		Status(http.StatusOK).Body().Contains("PNG")
+		Status(http.StatusOK).Body().Contains("data:image/png;base64")
 }
 
 func TestWebhookIndex(t *testing.T) {

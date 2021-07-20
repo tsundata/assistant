@@ -106,7 +106,9 @@ message MaskingReply {
 }
 
 message CredentialRequest {
+  // @inject_tag: query:"name"
   string name = 1;
+  // @inject_tag: query:"type"
   string type = 2;
 }
 

@@ -30,7 +30,7 @@ func CreateUserRepository(id string) (UserRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := rqlite.New(appConfig, app)
+	conn, err := rqlite.New(appConfig, app, logLogger)
 	if err != nil {
 		return nil, err
 	}

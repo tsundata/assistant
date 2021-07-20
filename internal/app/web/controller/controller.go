@@ -1,16 +1,12 @@
 package controller
 
 import (
-	"context"
 	"errors"
-	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
-	"time"
 )
 
 func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
@@ -39,35 +35,18 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 				return errors.New("error param")
 			}
 
-			// cache
-			key := fmt.Sprintf("web:auth:%s", uuid)
-			r, err := wc.rdb.Get(context.Background(), key).Result()
-			var reply *pb.StateReply
+			reply, err := wc.gateway.Authorization(&pb.TextRequest{
+				Text: uuid,
+			})
 			if err != nil {
-				if errors.Is(err, redis.Nil) {
-					reply, err = wc.gateway.Authorization(&pb.TextRequest{
-						Text: uuid,
-					})
-					if err != nil {
-						return err
-					}
-				} else {
-					wc.logger.Error(err)
-					return c.SendStatus(http.StatusForbidden)
-				}
-			}
-			if r == "1" {
-				wc.gateway.AuthToken(uuid)
-				return c.Next()
+				return err
 			}
 
 			if reply != nil && reply.GetState() {
 				wc.gateway.AuthToken(uuid)
-				wc.rdb.Set(context.Background(), key, "1", time.Hour)
 				return c.Next()
 			}
 
-			wc.rdb.Set(context.Background(), key, "0", time.Hour)
 			return c.SendStatus(http.StatusForbidden)
 		}
 
@@ -92,7 +71,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 
 		authR.Post("/workflow/:uuid/delete", wc.WorkflowDelete)
 
-		authR.Post("/role/:uuid", wc.Role)
+		authR.Get("/role/:uuid", wc.Role)
 	}
 
 	return requestHandler

@@ -34,7 +34,11 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			Max:        20,
 			Expiration: time.Minute,
 		}))
-		router.Use(newrelic.NewMiddleware(newrelic.MiddlewareConfig{NewRelicApp: gc.nr.Application()}))
+		router.Use(newrelic.NewMiddleware(
+			newrelic.MiddlewareConfig{
+				NewRelicApp: gc.nr.Application(),
+			},
+		))
 
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)

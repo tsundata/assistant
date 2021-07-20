@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/gorqlite"
+	"go.uber.org/zap"
 )
 
 type Conn struct {
-	nr   *newrelic.App
-	conn gorqlite.Connection
+	nr     *newrelic.App
+	conn   gorqlite.Connection
+	logger log.Logger
 }
 
-func New(c *config.AppConfig, nr *newrelic.App) (*Conn, error) {
+func New(c *config.AppConfig, nr *newrelic.App, logger log.Logger) (*Conn, error) {
 	conn, err := gorqlite.Open(c.Rqlite.Url)
 	if err != nil {
 		return nil, err
@@ -22,7 +25,7 @@ func New(c *config.AppConfig, nr *newrelic.App) (*Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Conn{nr: nr, conn: conn}, nil
+	return &Conn{nr: nr, conn: conn, logger: logger}, nil
 }
 
 func (c *Conn) Query(sqlStatements []string) ([]gorqlite.QueryResult, error) {
@@ -42,6 +45,8 @@ func (c *Conn) QueryOne(sqlStatement string, args ...interface{}) (gorqlite.Quer
 	defer nxt.End()
 	segment := nxt.StartSegment(sqlStatement)
 	defer segment.End()
+
+	c.logger.Info(sqlStatement, zap.String("rqlite", "query"))
 
 	return c.conn.QueryOne(sqlStatement)
 }
@@ -63,6 +68,8 @@ func (c *Conn) WriteOne(sqlStatement string, args ...interface{}) (gorqlite.Writ
 	defer nxt.End()
 	segment := nxt.StartSegment(sqlStatement)
 	defer segment.End()
+
+	c.logger.Info(sqlStatement, zap.String("rqlite", "write"))
 
 	return c.conn.WriteOne(sqlStatement)
 }

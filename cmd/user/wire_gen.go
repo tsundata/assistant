@@ -50,7 +50,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rqliteConn, err := rqlite.New(appConfig, newrelicApp)
+	rqliteConn, err := rqlite.New(appConfig, newrelicApp, logLogger)
 	if err != nil {
 		return nil, err
 	}

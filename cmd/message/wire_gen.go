@@ -46,7 +46,7 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
-	rqliteConn, err := rqlite.New(appConfig, newrelicApp)
+	rqliteConn, err := rqlite.New(appConfig, newrelicApp, logLogger)
 	if err != nil {
 		return nil, err
 	}
