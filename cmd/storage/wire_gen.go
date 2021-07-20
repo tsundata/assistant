@@ -15,7 +15,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -33,10 +32,6 @@ func CreateApp(id string) (*app.Application, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	db, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
@@ -45,7 +40,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	storage := service.NewStorage(appConfig, db, redisClient)
+	storage := service.NewStorage(appConfig, redisClient)
 	initServer := service.CreateInitServerFn(storage)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
@@ -68,4 +63,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, workflow.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, service.ProviderSet, newrelic.ProviderSet)

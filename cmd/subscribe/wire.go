@@ -12,7 +12,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -27,7 +26,6 @@ var providerSet = wire.NewSet(
 	influx.ProviderSet,
 	redis.ProviderSet,
 	subscribe.ProviderSet,
-	mysql.ProviderSet,
 	rollbar.ProviderSet,
 	consul.ProviderSet,
 	service.ProviderSet,

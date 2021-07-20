@@ -29,6 +29,8 @@ Assistant Bot is a workflow engine for chatbot
 - Dropbox
 - Slack
 - Rollbar
+- Newrelic
+- Cloudflare
 - Email
 
 ## Requirements
@@ -37,7 +39,7 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-1. Install MySQL, Redis, influx, jaeger, nats, consul
+1. Install rqlite, Redis, influx, jaeger, nats, consul
 
 2. Import sql files
 

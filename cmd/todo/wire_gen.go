@@ -17,7 +17,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
@@ -78,4 +77,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, mysql.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)

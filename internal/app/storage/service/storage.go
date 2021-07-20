@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/jmoiron/sqlx"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/storage/fs"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -15,14 +14,13 @@ import (
 
 type Storage struct {
 	conf *config.AppConfig
-	db   *sqlx.DB
 	rdb  *redis.Client
 }
 
 const MaxFileSize = 1 << 20
 
-func NewStorage(conf *config.AppConfig, db *sqlx.DB, rdb *redis.Client) *Storage {
-	return &Storage{conf: conf, db: db, rdb: rdb}
+func NewStorage(conf *config.AppConfig, rdb *redis.Client) *Storage {
+	return &Storage{conf: conf, rdb: rdb}
 }
 
 func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
