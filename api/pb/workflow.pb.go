@@ -147,14 +147,22 @@ func (m *TriggerRequest) GetTrigger() *Trigger {
 }
 
 type Trigger struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Kind                 string   `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
-	Flag                 string   `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty"`
-	Secret               string   `protobuf:"bytes,5,opt,name=secret,proto3" json:"secret,omitempty"`
-	When                 string   `protobuf:"bytes,6,opt,name=when,proto3" json:"when,omitempty"`
-	MessageId            int64    `protobuf:"varint,7,opt,name=messageId,proto3" json:"messageId,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,8,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	// @inject_tag: db:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	// @inject_tag: db:"type"
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty" db:"type"`
+	// @inject_tag: db:"kind"
+	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty" db:"kind"`
+	// @inject_tag: db:"flag"
+	Flag string `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty" db:"flag"`
+	// @inject_tag: db:"secret"
+	Secret string `protobuf:"bytes,5,opt,name=secret,proto3" json:"secret,omitempty" db:"secret"`
+	// @inject_tag: db:"when"
+	When string `protobuf:"bytes,6,opt,name=when,proto3" json:"when,omitempty" db:"when"`
+	// @inject_tag: db:"message_id"
+	MessageId int64 `protobuf:"varint,7,opt,name=messageId,proto3" json:"messageId,omitempty" db:"message_id"`
+	// @inject_tag: db:"created_at"
+	CreatedAt            string   `protobuf:"bytes,8,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
 	MessageText          string   `protobuf:"bytes,9,opt,name=messageText,proto3" json:"messageText,omitempty"`
 	Header               string   `protobuf:"bytes,10,opt,name=header,proto3" json:"header,omitempty"`
 	Body                 string   `protobuf:"bytes,11,opt,name=body,proto3" json:"body,omitempty"`

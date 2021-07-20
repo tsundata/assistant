@@ -42,27 +42,46 @@ message UsersReply {
 }
 
 message User {
+  // @inject_tag: db:"id"
   int64 id = 1;
+  // @inject_tag: db:"name"
   string name = 2;
+  // @inject_tag: db:"mobile"
   string mobile = 3;
+  // @inject_tag: db:"remark"
   string remark = 4;
+  // @inject_tag: db:"created_at"
   string createdAt = 5;
+  // @inject_tag: db:"updated_at"
   string updatedAt = 6;
 }
 
 message Role {
+  // @inject_tag: db:"id"
   int64 id = 1;
+  // @inject_tag: db:"user_id"
   int64 userId = 2;
+  // @inject_tag: db:"profession"
   string profession = 3;
+  // @inject_tag: db:"exp"
   int64 exp = 4;
+  // @inject_tag: db:"level"
   int64 level = 5;
+  // @inject_tag: db:"strength"
   int64 strength = 6;
+  // @inject_tag: db:"culture"
   int64 culture = 7;
+  // @inject_tag: db:"environment"
   int64 environment = 8;
+  // @inject_tag: db:"charisma"
   int64 charisma = 9;
+  // @inject_tag: db:"talent"
   int64 talent = 10;
+  // @inject_tag: db:"intellect"
   int64 intellect = 11;
+  // @inject_tag: db:"created_at"
   string createdAt = 12;
+  // @inject_tag: db:"updated_at"
   string updatedAt = 13;
 }
 

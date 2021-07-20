@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockNLPClient is a mock of NLPClient interface.
-type MockNLPClient struct {
+// MockNLPSvcClient is a mock of NLPSvcClient interface.
+type MockNLPSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockNLPClientMockRecorder
+	recorder *MockNLPSvcClientMockRecorder
 }
 
-// MockNLPClientMockRecorder is the mock recorder for MockNLPClient.
-type MockNLPClientMockRecorder struct {
-	mock *MockNLPClient
+// MockNLPSvcClientMockRecorder is the mock recorder for MockNLPSvcClient.
+type MockNLPSvcClientMockRecorder struct {
+	mock *MockNLPSvcClient
 }
 
-// NewMockNLPClient creates a new mock instance.
-func NewMockNLPClient(ctrl *gomock.Controller) *MockNLPClient {
-	mock := &MockNLPClient{ctrl: ctrl}
-	mock.recorder = &MockNLPClientMockRecorder{mock}
+// NewMockNLPSvcClient creates a new mock instance.
+func NewMockNLPSvcClient(ctrl *gomock.Controller) *MockNLPSvcClient {
+	mock := &MockNLPSvcClient{ctrl: ctrl}
+	mock.recorder = &MockNLPSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNLPClient) EXPECT() *MockNLPClientMockRecorder {
+func (m *MockNLPSvcClient) EXPECT() *MockNLPSvcClientMockRecorder {
 	return m.recorder
 }
 
 // Classifier mocks base method.
-func (m *MockNLPClient) Classifier(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockNLPSvcClient) Classifier(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,14 +50,14 @@ func (m *MockNLPClient) Classifier(ctx context.Context, in *pb.TextRequest, opts
 }
 
 // Classifier indicates an expected call of Classifier.
-func (mr *MockNLPClientMockRecorder) Classifier(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockNLPSvcClientMockRecorder) Classifier(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPClient)(nil).Classifier), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPSvcClient)(nil).Classifier), varargs...)
 }
 
 // Pinyin mocks base method.
-func (m *MockNLPClient) Pinyin(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
+func (m *MockNLPSvcClient) Pinyin(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -70,14 +70,14 @@ func (m *MockNLPClient) Pinyin(ctx context.Context, in *pb.TextRequest, opts ...
 }
 
 // Pinyin indicates an expected call of Pinyin.
-func (mr *MockNLPClientMockRecorder) Pinyin(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockNLPSvcClientMockRecorder) Pinyin(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockNLPClient)(nil).Pinyin), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockNLPSvcClient)(nil).Pinyin), varargs...)
 }
 
 // Segmentation mocks base method.
-func (m *MockNLPClient) Segmentation(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
+func (m *MockNLPSvcClient) Segmentation(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -90,37 +90,37 @@ func (m *MockNLPClient) Segmentation(ctx context.Context, in *pb.TextRequest, op
 }
 
 // Segmentation indicates an expected call of Segmentation.
-func (mr *MockNLPClientMockRecorder) Segmentation(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockNLPSvcClientMockRecorder) Segmentation(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockNLPClient)(nil).Segmentation), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockNLPSvcClient)(nil).Segmentation), varargs...)
 }
 
-// MockNLPServer is a mock of NLPServer interface.
-type MockNLPServer struct {
+// MockNLPSvcServer is a mock of NLPSvcServer interface.
+type MockNLPSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockNLPServerMockRecorder
+	recorder *MockNLPSvcServerMockRecorder
 }
 
-// MockNLPServerMockRecorder is the mock recorder for MockNLPServer.
-type MockNLPServerMockRecorder struct {
-	mock *MockNLPServer
+// MockNLPSvcServerMockRecorder is the mock recorder for MockNLPSvcServer.
+type MockNLPSvcServerMockRecorder struct {
+	mock *MockNLPSvcServer
 }
 
-// NewMockNLPServer creates a new mock instance.
-func NewMockNLPServer(ctrl *gomock.Controller) *MockNLPServer {
-	mock := &MockNLPServer{ctrl: ctrl}
-	mock.recorder = &MockNLPServerMockRecorder{mock}
+// NewMockNLPSvcServer creates a new mock instance.
+func NewMockNLPSvcServer(ctrl *gomock.Controller) *MockNLPSvcServer {
+	mock := &MockNLPSvcServer{ctrl: ctrl}
+	mock.recorder = &MockNLPSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNLPServer) EXPECT() *MockNLPServerMockRecorder {
+func (m *MockNLPSvcServer) EXPECT() *MockNLPSvcServerMockRecorder {
 	return m.recorder
 }
 
 // Classifier mocks base method.
-func (m *MockNLPServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockNLPSvcServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Classifier", arg0, arg1)
 	ret0, _ := ret[0].(*pb.TextReply)
@@ -129,13 +129,13 @@ func (m *MockNLPServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (
 }
 
 // Classifier indicates an expected call of Classifier.
-func (mr *MockNLPServerMockRecorder) Classifier(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockNLPSvcServerMockRecorder) Classifier(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPServer)(nil).Classifier), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockNLPSvcServer)(nil).Classifier), arg0, arg1)
 }
 
 // Pinyin mocks base method.
-func (m *MockNLPServer) Pinyin(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
+func (m *MockNLPSvcServer) Pinyin(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pinyin", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WordsReply)
@@ -144,13 +144,13 @@ func (m *MockNLPServer) Pinyin(arg0 context.Context, arg1 *pb.TextRequest) (*pb.
 }
 
 // Pinyin indicates an expected call of Pinyin.
-func (mr *MockNLPServerMockRecorder) Pinyin(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockNLPSvcServerMockRecorder) Pinyin(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockNLPServer)(nil).Pinyin), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockNLPSvcServer)(nil).Pinyin), arg0, arg1)
 }
 
 // Segmentation mocks base method.
-func (m *MockNLPServer) Segmentation(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
+func (m *MockNLPSvcServer) Segmentation(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Segmentation", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WordsReply)
@@ -159,7 +159,7 @@ func (m *MockNLPServer) Segmentation(arg0 context.Context, arg1 *pb.TextRequest)
 }
 
 // Segmentation indicates an expected call of Segmentation.
-func (mr *MockNLPServerMockRecorder) Segmentation(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockNLPSvcServerMockRecorder) Segmentation(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockNLPServer)(nil).Segmentation), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockNLPSvcServer)(nil).Segmentation), arg0, arg1)
 }

@@ -253,12 +253,18 @@ func (m *UsersReply) GetUsers() []*User {
 }
 
 type User struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Mobile               string   `protobuf:"bytes,3,opt,name=mobile,proto3" json:"mobile,omitempty"`
-	Remark               string   `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,5,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt            string   `protobuf:"bytes,6,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	// @inject_tag: db:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	// @inject_tag: db:"name"
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" db:"name"`
+	// @inject_tag: db:"mobile"
+	Mobile string `protobuf:"bytes,3,opt,name=mobile,proto3" json:"mobile,omitempty" db:"mobile"`
+	// @inject_tag: db:"remark"
+	Remark string `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty" db:"remark"`
+	// @inject_tag: db:"created_at"
+	CreatedAt string `protobuf:"bytes,5,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt            string   `protobuf:"bytes,6,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -331,19 +337,32 @@ func (m *User) GetUpdatedAt() string {
 }
 
 type Role struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId               int64    `protobuf:"varint,2,opt,name=userId,proto3" json:"userId,omitempty"`
-	Profession           string   `protobuf:"bytes,3,opt,name=profession,proto3" json:"profession,omitempty"`
-	Exp                  int64    `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
-	Level                int64    `protobuf:"varint,5,opt,name=level,proto3" json:"level,omitempty"`
-	Strength             int64    `protobuf:"varint,6,opt,name=strength,proto3" json:"strength,omitempty"`
-	Culture              int64    `protobuf:"varint,7,opt,name=culture,proto3" json:"culture,omitempty"`
-	Environment          int64    `protobuf:"varint,8,opt,name=environment,proto3" json:"environment,omitempty"`
-	Charisma             int64    `protobuf:"varint,9,opt,name=charisma,proto3" json:"charisma,omitempty"`
-	Talent               int64    `protobuf:"varint,10,opt,name=talent,proto3" json:"talent,omitempty"`
-	Intellect            int64    `protobuf:"varint,11,opt,name=intellect,proto3" json:"intellect,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,12,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt            string   `protobuf:"bytes,13,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	// @inject_tag: db:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	// @inject_tag: db:"user_id"
+	UserId int64 `protobuf:"varint,2,opt,name=userId,proto3" json:"userId,omitempty" db:"user_id"`
+	// @inject_tag: db:"profession"
+	Profession string `protobuf:"bytes,3,opt,name=profession,proto3" json:"profession,omitempty" db:"profession"`
+	// @inject_tag: db:"exp"
+	Exp int64 `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty" db:"exp"`
+	// @inject_tag: db:"level"
+	Level int64 `protobuf:"varint,5,opt,name=level,proto3" json:"level,omitempty" db:"level"`
+	// @inject_tag: db:"strength"
+	Strength int64 `protobuf:"varint,6,opt,name=strength,proto3" json:"strength,omitempty" db:"strength"`
+	// @inject_tag: db:"culture"
+	Culture int64 `protobuf:"varint,7,opt,name=culture,proto3" json:"culture,omitempty" db:"culture"`
+	// @inject_tag: db:"environment"
+	Environment int64 `protobuf:"varint,8,opt,name=environment,proto3" json:"environment,omitempty" db:"environment"`
+	// @inject_tag: db:"charisma"
+	Charisma int64 `protobuf:"varint,9,opt,name=charisma,proto3" json:"charisma,omitempty" db:"charisma"`
+	// @inject_tag: db:"talent"
+	Talent int64 `protobuf:"varint,10,opt,name=talent,proto3" json:"talent,omitempty" db:"talent"`
+	// @inject_tag: db:"intellect"
+	Intellect int64 `protobuf:"varint,11,opt,name=intellect,proto3" json:"intellect,omitempty" db:"intellect"`
+	// @inject_tag: db:"created_at"
+	CreatedAt string `protobuf:"bytes,12,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt            string   `protobuf:"bytes,13,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

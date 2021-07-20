@@ -11,8 +11,8 @@ CREATE TABLE "todos"
     "category"          VARCHAR(50)   NOT NULL DEFAULT '',
     "remark"            VARCHAR(1024) NOT NULL DEFAULT '',
     "complete"          TINYINT       NOT NULL,
-    "created_at"        DATETIME      NOT NULL,
-    "updated_at"        DATETIME      NOT NULL,
+    "created_at"        DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"        DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("id")
 );
 
@@ -25,6 +25,61 @@ CREATE TABLE `triggers`
     `secret`     varchar(128) NOT NULL DEFAULT '',
     `when`       varchar(128) NOT NULL DEFAULT '',
     `message_id` INTEGER      NOT NULL,
-    `created_at` DATETIME     NOT NULL,
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 );
+
+CREATE TABLE `users`
+(
+    `id`         INTEGER     NOT NULL,
+    `name`       VARCHAR(50) NOT NULL,
+    `mobile`     VARCHAR(50) NOT NULL DEFAULT '',
+    `remark`     VARCHAR(50) NOT NULL DEFAULT '',
+    `created_at` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
+INSERT INTO `users` (`id`, `name`, `mobile`, `remark`, `created_at`, `updated_at`)
+VALUES (1, 'me', '', '', '2021-07-01 00:00:00', '2021-07-01 00:00:00');
+
+CREATE TABLE `roles`
+(
+    `id`          INTEGER     NOT NULL,
+    `user_id`     INTEGER     NOT NULL,
+    `profession`  VARCHAR(50) NOT NULL,
+    `exp`         INTEGER     NOT NULL DEFAULT '0',
+    `level`       INTEGER     NOT NULL DEFAULT '1',
+    `strength`    INTEGER     NOT NULL DEFAULT '0',
+    `culture`     INTEGER     NOT NULL DEFAULT '0',
+    `environment` INTEGER     NOT NULL DEFAULT '0',
+    `charisma`    INTEGER     NOT NULL DEFAULT '0',
+    `talent`      INTEGER     NOT NULL DEFAULT '0',
+    `intellect`   INTEGER     NOT NULL DEFAULT '0',
+    `created_at`  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `role_records`
+(
+    `id`          INTEGER     NOT NULL,
+    `user_id`     INTEGER     NOT NULL,
+    `profession`  VARCHAR(50) NOT NULL,
+    `exp`         INTEGER     NOT NULL DEFAULT '0',
+    `level`       INTEGER     NOT NULL DEFAULT '0',
+    `strength`    INTEGER     NOT NULL DEFAULT '0',
+    `culture`     INTEGER     NOT NULL DEFAULT '0',
+    `environment` INTEGER     NOT NULL DEFAULT '0',
+    `charisma`    INTEGER     NOT NULL DEFAULT '0',
+    `talent`      INTEGER     NOT NULL DEFAULT '0',
+    `intellect`   INTEGER     NOT NULL DEFAULT '0',
+    `created_at`  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
+INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
+                            `charisma`,
+                            `talent`, `intellect`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
+

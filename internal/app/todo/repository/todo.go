@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
@@ -97,8 +96,8 @@ type RqliteTodoRepository struct {
 
 func (r *RqliteTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
 	now := util.Now()
-	res, err := r.db.WriteOne(fmt.Sprintf("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES ('%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')",
-		todo.Content, todo.Priority, util.BoolInt(todo.IsRemindAtTime), todo.RemindAt, todo.RepeatMethod, todo.RepeatRule, todo.RepeatEndAt, todo.Category, todo.Remark, util.BoolInt(todo.Complete), now, now))
+	res, err := r.db.WriteOne("INSERT INTO `todos` (`content`, `priority`, `is_remind_at_time`, `remind_at`, `repeat_method`, `repeat_rule`, `repeat_end_at`, `category`, `remark`, `complete`, `created_at`, `updated_at`) VALUES ('%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')",
+		todo.Content, todo.Priority, util.BoolInt(todo.IsRemindAtTime), todo.RemindAt, todo.RepeatMethod, todo.RepeatRule, todo.RepeatEndAt, todo.Category, todo.Remark, util.BoolInt(todo.Complete), now, now)
 	if err != nil {
 		return 0, err
 	}
@@ -146,7 +145,7 @@ func (r *RqliteTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
 }
 
 func (r *RqliteTodoRepository) GetTodo(id int64) (pb.Todo, error) {
-	rows, err := r.db.QueryOne(fmt.Sprintf("SELECT * FROM `todos` WHERE id = %d", id))
+	rows, err := r.db.QueryOne("SELECT * FROM `todos` WHERE id = %d", id)
 	if err != nil {
 		return pb.Todo{}, err
 	}
@@ -164,16 +163,16 @@ func (r *RqliteTodoRepository) GetTodo(id int64) (pb.Todo, error) {
 }
 
 func (r *RqliteTodoRepository) CompleteTodo(id int64) error {
-	_, err := r.db.WriteOne(fmt.Sprintf("UPDATE `todos` SET `complete` = 1 WHERE id = %d", id))
+	_, err := r.db.WriteOne("UPDATE `todos` SET `complete` = 1 WHERE id = %d", id)
 	return err
 }
 
 func (r *RqliteTodoRepository) UpdateTodo(todo pb.Todo) error {
-	_, err := r.db.WriteOne(fmt.Sprintf("UPDATE `todos` SET `content` = '%s' WHERE id = %d", todo.Content, todo.Id))
+	_, err := r.db.WriteOne("UPDATE `todos` SET `content` = '%s' WHERE id = %d", todo.Content, todo.Id)
 	return err
 }
 
 func (r *RqliteTodoRepository) DeleteTodo(id int64) error {
-	_, err := r.db.WriteOne(fmt.Sprintf("DELETE FROM `todos` WHERE `id` = %d", id))
+	_, err := r.db.WriteOne("DELETE FROM `todos` WHERE `id` = %d", id)
 	return err
 }

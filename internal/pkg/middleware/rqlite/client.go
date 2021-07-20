@@ -1,6 +1,7 @@
 package rqlite
 
 import (
+	"fmt"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -35,7 +36,8 @@ func (c *Conn) Query(sqlStatements []string) ([]gorqlite.QueryResult, error) {
 	return c.conn.Query(sqlStatements)
 }
 
-func (c *Conn) QueryOne(sqlStatement string) (gorqlite.QueryResult, error) {
+func (c *Conn) QueryOne(sqlStatement string, args ...interface{}) (gorqlite.QueryResult, error) {
+	sqlStatement = fmt.Sprintf(sqlStatement, args...)
 	nxt := c.nr.StartTransaction("rqlite/query")
 	defer nxt.End()
 	segment := nxt.StartSegment(sqlStatement)
@@ -55,7 +57,8 @@ func (c *Conn) Write(sqlStatements []string) ([]gorqlite.WriteResult, error) {
 	return c.conn.Write(sqlStatements)
 }
 
-func (c *Conn) WriteOne(sqlStatement string) (gorqlite.WriteResult, error) {
+func (c *Conn) WriteOne(sqlStatement string, args ...interface{}) (gorqlite.WriteResult, error) {
+	sqlStatement = fmt.Sprintf(sqlStatement, args...)
 	nxt := c.nr.StartTransaction("rqlite/write")
 	defer nxt.End()
 	segment := nxt.StartSegment(sqlStatement)

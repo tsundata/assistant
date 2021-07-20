@@ -13,31 +13,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-// MockChatbotClient is a mock of ChatbotClient interface.
-type MockChatbotClient struct {
+// MockChatbotSvcClient is a mock of ChatbotSvcClient interface.
+type MockChatbotSvcClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockChatbotClientMockRecorder
+	recorder *MockChatbotSvcClientMockRecorder
 }
 
-// MockChatbotClientMockRecorder is the mock recorder for MockChatbotClient.
-type MockChatbotClientMockRecorder struct {
-	mock *MockChatbotClient
+// MockChatbotSvcClientMockRecorder is the mock recorder for MockChatbotSvcClient.
+type MockChatbotSvcClientMockRecorder struct {
+	mock *MockChatbotSvcClient
 }
 
-// NewMockChatbotClient creates a new mock instance.
-func NewMockChatbotClient(ctrl *gomock.Controller) *MockChatbotClient {
-	mock := &MockChatbotClient{ctrl: ctrl}
-	mock.recorder = &MockChatbotClientMockRecorder{mock}
+// NewMockChatbotSvcClient creates a new mock instance.
+func NewMockChatbotSvcClient(ctrl *gomock.Controller) *MockChatbotSvcClient {
+	mock := &MockChatbotSvcClient{ctrl: ctrl}
+	mock.recorder = &MockChatbotSvcClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockChatbotClient) EXPECT() *MockChatbotClientMockRecorder {
+func (m *MockChatbotSvcClient) EXPECT() *MockChatbotSvcClientMockRecorder {
 	return m.recorder
 }
 
 // Handle mocks base method.
-func (m *MockChatbotClient) Handle(ctx context.Context, in *pb.ChatbotRequest, opts ...grpc.CallOption) (*pb.ChatbotReply, error) {
+func (m *MockChatbotSvcClient) Handle(ctx context.Context, in *pb.ChatbotRequest, opts ...grpc.CallOption) (*pb.ChatbotReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -50,37 +50,37 @@ func (m *MockChatbotClient) Handle(ctx context.Context, in *pb.ChatbotRequest, o
 }
 
 // Handle indicates an expected call of Handle.
-func (mr *MockChatbotClientMockRecorder) Handle(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockChatbotSvcClientMockRecorder) Handle(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotClient)(nil).Handle), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcClient)(nil).Handle), varargs...)
 }
 
-// MockChatbotServer is a mock of ChatbotServer interface.
-type MockChatbotServer struct {
+// MockChatbotSvcServer is a mock of ChatbotSvcServer interface.
+type MockChatbotSvcServer struct {
 	ctrl     *gomock.Controller
-	recorder *MockChatbotServerMockRecorder
+	recorder *MockChatbotSvcServerMockRecorder
 }
 
-// MockChatbotServerMockRecorder is the mock recorder for MockChatbotServer.
-type MockChatbotServerMockRecorder struct {
-	mock *MockChatbotServer
+// MockChatbotSvcServerMockRecorder is the mock recorder for MockChatbotSvcServer.
+type MockChatbotSvcServerMockRecorder struct {
+	mock *MockChatbotSvcServer
 }
 
-// NewMockChatbotServer creates a new mock instance.
-func NewMockChatbotServer(ctrl *gomock.Controller) *MockChatbotServer {
-	mock := &MockChatbotServer{ctrl: ctrl}
-	mock.recorder = &MockChatbotServerMockRecorder{mock}
+// NewMockChatbotSvcServer creates a new mock instance.
+func NewMockChatbotSvcServer(ctrl *gomock.Controller) *MockChatbotSvcServer {
+	mock := &MockChatbotSvcServer{ctrl: ctrl}
+	mock.recorder = &MockChatbotSvcServerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockChatbotServer) EXPECT() *MockChatbotServerMockRecorder {
+func (m *MockChatbotSvcServer) EXPECT() *MockChatbotSvcServerMockRecorder {
 	return m.recorder
 }
 
 // Handle mocks base method.
-func (m *MockChatbotServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
+func (m *MockChatbotSvcServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Handle", arg0, arg1)
 	ret0, _ := ret[0].(*pb.ChatbotReply)
@@ -89,7 +89,7 @@ func (m *MockChatbotServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequest
 }
 
 // Handle indicates an expected call of Handle.
-func (mr *MockChatbotServerMockRecorder) Handle(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockChatbotSvcServerMockRecorder) Handle(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotServer)(nil).Handle), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcServer)(nil).Handle), arg0, arg1)
 }
