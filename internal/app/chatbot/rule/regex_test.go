@@ -11,26 +11,26 @@ import (
 func TestRegexRule(t *testing.T) {
 	var testRules = []Rule{
 		{
-			Regex: `test`,
+			Define: `test`,
 			Help:  `Test info`,
-			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, args []string) []string {
+			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
 				return []string{"test"}
 			},
 		},
 		{
-			Regex: `add\s+(\d+)\s+(\d+)`,
+			Define: `add [number] [number]`,
 			Help:  `Addition`,
-			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, args []string) []string {
-				if len(args) != 3 {
+			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+				if len(tokens) != 3 {
 					return []string{"error args"}
 				}
 
-				tt1, err := strconv.ParseInt(args[1], 10, 64)
+				tt1, err := strconv.ParseInt(tokens[1].Value, 10, 64)
 				if err != nil {
 					return []string{"error call: " + err.Error()}
 				}
 
-				tt2, err := strconv.ParseInt(args[2], 10, 64)
+				tt2, err := strconv.ParseInt(tokens[2].Value, 10, 64)
 				if err != nil {
 					return []string{"error call: " + err.Error()}
 				}

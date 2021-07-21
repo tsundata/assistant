@@ -151,7 +151,7 @@ func (s *RuleBot) Name() string {
 
 func (s *RuleBot) Process(ctx context.Context, in string) *RuleBot {
 	if s.Comp != nil && s.Comp.GetLogger() != nil {
-		s.Comp.GetLogger().Info("plugin process event")
+		s.Comp.GetLogger().Debug("plugin process event")
 	}
 
 	s.providerIn = in
