@@ -102,6 +102,9 @@ type Command struct {
 }
 
 func ParseCommand(in string) ([]*Token, error) {
+	if in == "" {
+		return []*Token{}, nil
+	}
 	l := NewLexer([]rune(in))
 	var tokens []*Token
 	token, err := l.GetNextToken()
