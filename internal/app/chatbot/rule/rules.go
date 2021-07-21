@@ -269,7 +269,7 @@ var rules = []Rule{
 			res.WriteString("Action:\n")
 			res.WriteString(reply.GetText())
 			res.WriteString("\n\nTag:\n")
-			for k, _ := range tags.Tags() {
+			for k := range tags.Tags() {
 				res.WriteString("#")
 				res.WriteString(k)
 				res.WriteString("\n")

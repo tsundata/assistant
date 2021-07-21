@@ -223,7 +223,7 @@ func TestDocRule(t *testing.T) {
 	r := rules[11]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, workflow, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"doc ..."}, res)
+	require.Len(t, res, 1)
 }
 
 func TestStatsRule(t *testing.T) {
