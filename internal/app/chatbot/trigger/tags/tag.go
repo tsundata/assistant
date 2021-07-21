@@ -9,12 +9,16 @@ type Tagger interface {
 	Handle(ctx context.Context, comp *ctx.Component, text string)
 }
 
-func MapTagger(text string) Tagger {
-	m := map[string]Tagger{
+func Tags() map[string]Tagger {
+	return map[string]Tagger{
 		"issue":   NewIssue(),
 		"project": NewProject(),
 		"todo":    NewTodo(),
 	}
+}
+
+func MapTagger(text string) Tagger {
+	m := Tags()
 	if t, ok := m[text]; ok {
 		return t
 	}

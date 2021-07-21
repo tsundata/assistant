@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
@@ -264,7 +265,16 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			return []string{reply.GetText()}
+			res := strings.Builder{}
+			res.WriteString("Action:\n")
+			res.WriteString(reply.GetText())
+			res.WriteString("\n\nTag:\n")
+			for k, _ := range tags.Tags() {
+				res.WriteString("#")
+				res.WriteString(k)
+				res.WriteString("\n")
+			}
+			return []string{res.String()}
 		},
 	},
 	{
