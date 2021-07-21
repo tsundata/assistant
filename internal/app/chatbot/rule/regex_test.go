@@ -13,14 +13,14 @@ func TestRegexRule(t *testing.T) {
 		{
 			Define: `test`,
 			Help:  `Test info`,
-			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 				return []string{"test"}
 			},
 		},
 		{
 			Define: `add [number] [number]`,
 			Help:  `Addition`,
-			Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 				if len(tokens) != 3 {
 					return []string{"error args"}
 				}

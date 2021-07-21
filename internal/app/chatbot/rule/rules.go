@@ -20,14 +20,14 @@ var rules = []Rule{
 	{
 		Define: "version",
 		Help:   `Version info`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			return []string{version.Info()}
 		},
 	},
 	{
 		Define: `menu`,
 		Help:   `Show menu`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -46,7 +46,7 @@ var rules = []Rule{
 	{
 		Define: `qr [string]`,
 		Help:   `Generate QR code`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -70,7 +70,7 @@ var rules = []Rule{
 	{
 		Define: `ut [number]`,
 		Help:   `Unix Timestamp`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if len(tokens) != 2 {
 				return []string{"error args"}
 			}
@@ -90,7 +90,7 @@ var rules = []Rule{
 	{
 		Define: `rand [number] [number]`,
 		Help:   `Unix Timestamp`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if len(tokens) != 3 {
 				return []string{"error args"}
 			}
@@ -117,7 +117,7 @@ var rules = []Rule{
 	{
 		Define: `pwd [number]`,
 		Help:   `Generate Password`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if len(tokens) != 2 {
 				return []string{"error args"}
 			}
@@ -138,7 +138,7 @@ var rules = []Rule{
 	{
 		Define: "subs list",
 		Help:   `List subscribe`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Subscribe() == nil {
 				return []string{"empty client"}
 			}
@@ -157,7 +157,7 @@ var rules = []Rule{
 	{
 		Define: "subs open [string]",
 		Help:   `Open subscribe`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Subscribe() == nil {
 				return []string{"empty client"}
 			}
@@ -181,7 +181,7 @@ var rules = []Rule{
 	{
 		Define: `subs close [string]`,
 		Help:   `Close subscribe`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Subscribe() == nil {
 				return []string{"empty client"}
 			}
@@ -205,7 +205,7 @@ var rules = []Rule{
 	{
 		Define: `view [number]`,
 		Help:   `View message`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Message() == nil {
 				return []string{"empty client"}
 			}
@@ -232,7 +232,7 @@ var rules = []Rule{
 	{
 		Define: `run [number]`,
 		Help:   `Run message`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Message() == nil {
 				return []string{"empty client"}
 			}
@@ -256,7 +256,7 @@ var rules = []Rule{
 	{
 		Define: `doc`,
 		Help:   `Show action docs`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Workflow() == nil {
 				return []string{"empty client"}
 			}
@@ -270,7 +270,7 @@ var rules = []Rule{
 	{
 		Define: `test`,
 		Help:   `Test`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Storage() == nil {
 				return []string{"empty client"}
 			}
@@ -316,7 +316,7 @@ var rules = []Rule{
 	{
 		Define: `stats`,
 		Help:   `Stats Info`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -330,7 +330,7 @@ var rules = []Rule{
 	{
 		Define: `todo [string]`,
 		Help:   "Todo something",
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Todo() == nil {
 				return []string{"empty client"}
 			}
@@ -352,7 +352,7 @@ var rules = []Rule{
 	{
 		Define: `role`,
 		Help:   "Role info",
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -366,7 +366,7 @@ var rules = []Rule{
 	{
 		Define: `pinyin [string]`,
 		Help:   "chinese pinyin conversion",
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.NLP() == nil {
 				return []string{"empty client"}
 			}
@@ -386,7 +386,7 @@ var rules = []Rule{
 	{
 		Define: `remind [string] [string]`,
 		Help:   `Remind something`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if len(tokens) != 3 {
 				return []string{"error args"}
 			}
@@ -401,7 +401,7 @@ var rules = []Rule{
 	{
 		Define: `del [number]`,
 		Help:   `Delete message`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, s string, tokens []*Token) []string {
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if len(tokens) != 2 {
 				return []string{"error args"}
 			}

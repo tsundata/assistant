@@ -21,7 +21,7 @@ func TestVersionRule(t *testing.T) {
 	}
 	r := rules[0]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{version.Info()}, res)
 }
 
@@ -41,7 +41,7 @@ func TestMenuRule(t *testing.T) {
 	}
 	r := rules[1]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"menu ..."}, res)
 }
 
@@ -61,7 +61,7 @@ func TestQrRule(t *testing.T) {
 	}
 	r := rules[2]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
 }
 
@@ -73,7 +73,7 @@ func TestUtRule(t *testing.T) {
 	}
 	r := rules[3]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
 
@@ -85,7 +85,7 @@ func TestRandRule(t *testing.T) {
 	}
 	r := rules[4]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 
 	i, err := strconv.ParseInt(res[0], 10, 64)
 	if err != nil {
@@ -102,7 +102,7 @@ func TestPwdRule(t *testing.T) {
 	}
 	r := rules[5]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, 32, len(res[0]))
 }
 
@@ -122,7 +122,7 @@ func TestSubsListRule(t *testing.T) {
 	}
 	r := rules[6]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -142,7 +142,7 @@ func TestSubsOpenRule(t *testing.T) {
 	}
 	r := rules[7]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
 
@@ -162,7 +162,7 @@ func TestSubsCloseRule(t *testing.T) {
 	}
 	r := rules[8]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, subscribe, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
 
@@ -182,7 +182,7 @@ func TestViewRule(t *testing.T) {
 	}
 	r := rules[9]
 	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -202,7 +202,7 @@ func TestRunRule(t *testing.T) {
 	}
 	r := rules[10]
 	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"test1"}, res)
 }
 
@@ -222,7 +222,7 @@ func TestDocRule(t *testing.T) {
 	}
 	r := rules[11]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, workflow, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"doc ..."}, res)
 }
 
@@ -242,7 +242,7 @@ func TestStatsRule(t *testing.T) {
 	}
 	r := rules[13]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"stats ..."}, res)
 }
 
@@ -262,7 +262,7 @@ func TestTodoRule(t *testing.T) {
 	}
 	r := rules[14]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, todo, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"success"}, res)
 }
 
@@ -282,7 +282,7 @@ func TestRoleRule(t *testing.T) {
 	}
 	r := rules[15]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{`https://web.test/role/test`}, res)
 }
 
@@ -302,7 +302,7 @@ func TestPinyinRule(t *testing.T) {
 	}
 	r := rules[16]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nlp)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"a1, a2"}, res)
 }
 
@@ -314,7 +314,7 @@ func TestRemindRule(t *testing.T) {
 	}
 	r := rules[17]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{}, res)
 }
 
@@ -326,6 +326,6 @@ func TestDeleteRule(t *testing.T) {
 	}
 	r := rules[18]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	res := r.Parse(context.Background(), comp, command, tokens)
+	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{}, res)
 }

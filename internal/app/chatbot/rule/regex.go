@@ -11,7 +11,7 @@ import (
 type Rule struct {
 	Define string
 	Help   string
-	Parse  func(context.Context, rulebot.IComponent, string, []*Token) []string
+	Parse  func(context.Context, rulebot.IComponent, []*Token) []string
 }
 
 type regexRuleset struct {
@@ -24,7 +24,7 @@ func (r regexRuleset) Name() string {
 
 func (r regexRuleset) Boot(_ *rulebot.RuleBot) {}
 
-func (r regexRuleset) HelpRule(b *rulebot.RuleBot, _ string) string {
+func (r regexRuleset) HelpRule(_ *rulebot.RuleBot, _ string) string {
 	var helpMsg string
 	for _, rule := range r.rules {
 		helpMsg = fmt.Sprintln(helpMsg, rule.Define, " : ", rule.Help)
@@ -50,7 +50,7 @@ func (r regexRuleset) ParseRule(ctx context.Context, b *rulebot.RuleBot, in stri
 			continue
 		}
 
-		if ret := rule.Parse(ctx, b.Comp, in, tokens); len(ret) > 0 {
+		if ret := rule.Parse(ctx, b.Comp, tokens); len(ret) > 0 {
 			return ret
 		}
 	}
