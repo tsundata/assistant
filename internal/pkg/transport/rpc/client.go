@@ -1,18 +1,15 @@
 package rpc
 
 import (
-	"context"
-	"fmt"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
-	"github.com/hashicorp/consul/api"
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"os"
 	"time"
 )
 
@@ -29,7 +26,6 @@ func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 	)
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
-		grpc.WithBlock(),
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(
 			grpcMiddleware.ChainUnaryClient(
@@ -66,14 +62,14 @@ func WithTag(tag string) ClientOptional {
 
 type Client struct {
 	o      *ClientOptions
-	consul *api.Client
+	conf   *config.AppConfig
 	logger log.Logger
 }
 
-func NewClient(o *ClientOptions, consul *api.Client, logger log.Logger) (*Client, error) {
+func NewClient(o *ClientOptions, conf *config.AppConfig, logger log.Logger) (*Client, error) {
 	return &Client{
 		o:      o,
-		consul: consul,
+		conf:   conf,
 		logger: logger,
 	}, nil
 }
@@ -88,15 +84,8 @@ func (c *Client) Dial(service string, options ...ClientOptional) (*grpc.ClientCo
 		option(o)
 	}
 
-	// discovery
-	discovery.RegisterBuilder()
-	consulAddress := os.Getenv("CONSUL_ADDRESS")
-	ctx, cancel := context.WithTimeout(context.Background(), o.Wait)
-	defer cancel()
-
-	o.GrpcDialOptions = append(o.GrpcDialOptions, grpc.WithBalancerName("round_robin")) // nolint
-	target := fmt.Sprintf("consul://%s/%s", consulAddress, service)
-	conn, err := grpc.DialContext(ctx, target, o.GrpcDialOptions...)
+	target := discovery.SvcAddr(c.conf, service)
+	conn, err := grpc.Dial(target, o.GrpcDialOptions...)
 	if err != nil {
 		c.logger.Warn(err.Error(), zap.String("service", service))
 		return conn, nil

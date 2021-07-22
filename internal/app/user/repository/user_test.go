@@ -3,12 +3,11 @@ package repository
 import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
 
 func TestUserRepository_GetRole(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -27,7 +26,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetRole(tt.args.userId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.GetRole() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.GetRole() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
@@ -35,7 +34,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 }
 
 func TestUserRepository_ChangeRoleExp(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -54,14 +53,14 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.ChangeRoleExp(tt.args.userID, tt.args.exp); (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.ChangeRoleExp() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.ChangeRoleExp() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
 func TestUserRepository_ChangeRoleAttr(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -86,14 +85,14 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.ChangeRoleAttr(tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.ChangeRoleAttr() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.ChangeRoleAttr() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestMysqlUserRepository_List(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+func TestUserRepository_List(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -112,15 +111,15 @@ func TestMysqlUserRepository_List(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.List()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.List() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestMysqlUserRepository_Create(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+func TestUserRepository_Create(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -144,15 +143,15 @@ func TestMysqlUserRepository_Create(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.Create(tt.args.user)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestMysqlUserRepository_GetByID(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+func TestUserRepository_GetByID(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -182,15 +181,15 @@ func TestMysqlUserRepository_GetByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetByID(tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestMysqlUserRepository_GetByName(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+func TestUserRepository_GetByName(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -220,15 +219,15 @@ func TestMysqlUserRepository_GetByName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetByName(tt.args.name)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestMysqlUserRepository_Update(t *testing.T) {
-	sto, err := CreateUserRepository(app.User)
+func TestUserRepository_Update(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
 		t.Fatalf("create user Preposiory error, %+v", err)
 	}
@@ -251,7 +250,7 @@ func TestMysqlUserRepository_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.Update(tt.args.in0); (err != nil) != tt.wantErr {
-				t.Errorf("MysqlUserRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

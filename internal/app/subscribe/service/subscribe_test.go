@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"reflect"
 	"testing"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestSubscribe_List(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Subscribe)
+	rdb, err := vendors.CreateRedisClient(enum.Subscribe)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestSubscribe_List(t *testing.T) {
 }
 
 func TestSubscribe_Register(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Subscribe)
+	rdb, err := vendors.CreateRedisClient(enum.Subscribe)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestSubscribe_Register(t *testing.T) {
 }
 
 func TestSubscribe_Open(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Subscribe)
+	rdb, err := vendors.CreateRedisClient(enum.Subscribe)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -146,7 +146,7 @@ func TestSubscribe_Open(t *testing.T) {
 }
 
 func TestSubscribe_Close(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Subscribe)
+	rdb, err := vendors.CreateRedisClient(enum.Subscribe)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -187,7 +187,7 @@ func TestSubscribe_Close(t *testing.T) {
 }
 
 func TestSubscribe_Status(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Subscribe)
+	rdb, err := vendors.CreateRedisClient(enum.Subscribe)
 	if err != nil {
 		t.Fatal(err)
 	}

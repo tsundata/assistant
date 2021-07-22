@@ -49,7 +49,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, client, logLogger)
+	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}

@@ -144,3 +144,14 @@ func ImageToBase64(b []byte) string {
 
 	return base64Encoding.String()
 }
+
+func FirstToUpper(str string) string {
+	if len(str) < 1 {
+		return ""
+	}
+	strA := []rune(str)
+	if strA[0] >= 97 && strA[0] <= 122 {
+		strA[0] -= 32
+	}
+	return string(strA)
+}

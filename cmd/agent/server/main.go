@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/app/agent"
 	"github.com/tsundata/assistant/internal/app/agent/broker"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -16,7 +17,7 @@ func CreateApp() (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	appConfig := config.NewConfig(app.ServerAgent, c)
+	appConfig := config.NewConfig(enum.ServerAgent, c)
 
 	r := rollbar.New(appConfig)
 

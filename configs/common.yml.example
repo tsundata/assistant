@@ -3,13 +3,20 @@ influx:
   org:
   bucket:
   url:
-mysql:
-  url: root:root@tcp(127.0.0.1:3306)/assistant?charset=utf8mb4&parseTime=True&loc=Local
 rqlite:
   url: http://127.0.0.1:4001
 redis:
   addr: 127.0.0.1:6379
   password:
+jaeger:
+  reporter:
+    localAgentHostPort: "127.0.0.1:6831"
+  sampler:
+    type: const
+    param: 1
+nats:
+  url: nats://127.0.0.1:4222
+
 slack:
   verification:
   signing:
@@ -17,24 +24,29 @@ slack:
   webhook:
     - name:
       url:
-jaeger:
-  reporter:
-    localAgentHostPort: "127.0.0.1:6831"
-  sampler:
-    type: const
-    param: 1
 rollbar:
   token:
   environment: # production development
-nats:
-  url: nats://127.0.0.1:4222
-storage:
-  adapter: dropbox
 newrelic:
   name:
   license:
 
+svc_addr:
+  chatbot: 127.0.0.1:6000
+  message: 127.0.0.1:6001
+  middle: 127.0.0.1:6002
+  workflow: 127.0.0.1:6003
+  user: 127.0.0.1:6004
+  subscribe: 127.0.0.1:6005
+  todo: 127.0.0.1:6006
+  finance: 127.0.0.1:6007
+  nlp: 127.0.0.1:6008
+  storage: 127.0.0.1:609
+  task: 127.0.0.1:6010
 web:
   url: http://127.0.0.1:7000
 gateway:
   url: http://127.0.0.1:5000
+
+storage:
+  adapter: dropbox

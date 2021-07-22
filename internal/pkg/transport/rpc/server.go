@@ -15,7 +15,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -79,6 +78,9 @@ func (s *Server) Start() error {
 	if s.conf.Rpc.Port == 0 {
 		s.conf.Rpc.Port = util.GetAvailablePort()
 	}
+	if s.conf.Rpc.Port == 0 {
+		return errors.New("get available port error")
+	}
 
 	if s.conf.Rpc.Host == "" {
 		s.conf.Rpc.Host = util.GetLocalIP4()
@@ -103,42 +105,6 @@ func (s *Server) Start() error {
 		}
 	}()
 
-	if err := s.register(); err != nil {
-		return errors.Wrap(err, "register grpc server error")
-	}
-
-	return nil
-}
-
-func (s *Server) register() error {
-	rpcAddr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("register rpc service ... ", zap.String("addr", rpcAddr), zap.String("uuid", s.conf.ID))
-
-	// discovery
-	discovery.RegisterService(rpcAddr, &discovery.ConsulService{
-		ID:   s.conf.ID,
-		IP:   s.conf.Rpc.Host,
-		Port: s.conf.Rpc.Port,
-		Tag:  []string{"grpc"},
-		Name: s.conf.Name,
-	})
-
-	// Health Check
-	// grpc_health_v1.RegisterHealthServer(s.server, &discovery.HealthImpl{})
-
-	return nil
-}
-
-func (s *Server) deregister() error {
-	for range s.server.GetServiceInfo() {
-		id := fmt.Sprintf("%v/%v:%v", s.conf.Name, s.conf.Rpc.Host, s.conf.Rpc.Port)
-
-		err := s.consul.Agent().ServiceDeregister(id)
-		if err != nil {
-			return errors.Wrapf(err, "deregister service error[id=%s]", id)
-		}
-		s.logger.Info("deregister service success", zap.String("id", id))
-	}
 	return nil
 }
 
@@ -148,9 +114,6 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 
 func (s *Server) Stop() error {
 	s.logger.Info("grpc server stopping ...")
-	if err := s.deregister(); err != nil {
-		return errors.Wrap(err, "deregister grpc server error")
-	}
 	s.server.GracefulStop()
 	return nil
 }

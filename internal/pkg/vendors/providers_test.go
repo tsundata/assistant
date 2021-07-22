@@ -1,7 +1,7 @@
 package vendors
 
 import (
-	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestPocketProvider(t *testing.T) {
-	rdb, err := CreateRedisClient(app.Message)
+	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +19,7 @@ func TestPocketProvider(t *testing.T) {
 }
 
 func TestGithubProvider(t *testing.T) {
-	rdb, err := CreateRedisClient(app.Message)
+	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func TestGithubProvider(t *testing.T) {
 }
 
 func TestDropboxProvider(t *testing.T) {
-	rdb, err := CreateRedisClient(app.Message)
+	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}

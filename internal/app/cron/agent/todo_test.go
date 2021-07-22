@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"math/rand"
@@ -42,7 +42,7 @@ func TestTodoRemind1(t *testing.T) {
 			}}, nil),
 	)
 
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,7 +101,7 @@ func TestTodoRemind2(t *testing.T) {
 			}}, nil),
 	)
 
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestTodoRemind3(t *testing.T) {
 			}}, nil),
 	)
 
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -219,7 +219,7 @@ func TestTodoRemind4(t *testing.T) {
 			}}, nil),
 	)
 
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -295,7 +295,7 @@ func TestTodoRemind5(t *testing.T) {
 			}}, nil),
 	)
 
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -337,7 +337,7 @@ func TestTodoRemind5(t *testing.T) {
 }
 
 func clear(t *testing.T, id int64) {
-	rdb, err := vendors.CreateRedisClient(app.Cron)
+	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,13 +1,13 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
 
 func TestTodoRepository_CreateTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -34,7 +34,7 @@ func TestTodoRepository_CreateTodo(t *testing.T) {
 }
 
 func TestTodoRepository_ListTodos(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -57,7 +57,7 @@ func TestTodoRepository_ListTodos(t *testing.T) {
 }
 
 func TestTodoRepository_ListRemindTodos(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -80,7 +80,7 @@ func TestTodoRepository_ListRemindTodos(t *testing.T) {
 }
 
 func TestTodoRepository_GetTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -107,7 +107,7 @@ func TestTodoRepository_GetTodo(t *testing.T) {
 }
 
 func TestTodoRepository_CompleteTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -132,7 +132,7 @@ func TestTodoRepository_CompleteTodo(t *testing.T) {
 }
 
 func TestTodoRepository_UpdateTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}
@@ -157,7 +157,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 }
 
 func TestTodoRepository_DeleteTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(app.Todo)
+	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
 		t.Fatalf("create todo Preposiory error, %+v", err)
 	}

@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestUser_Authorization(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.User)
+	rdb, err := vendors.CreateRedisClient(enum.User)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,7 +150,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 }
 
 func TestUser_GetAuthToken(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.User)
+	rdb, err := vendors.CreateRedisClient(enum.User)
 	if err != nil {
 		t.Fatal(err)
 	}

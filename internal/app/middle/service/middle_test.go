@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
@@ -17,7 +17,7 @@ func TestMiddle_GetMenu(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +60,7 @@ func TestMiddle_GetMenu(t *testing.T) {
 }
 
 func TestMiddle_GetQrUrl(t *testing.T) {
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +99,7 @@ func TestMiddle_CreatePage(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -591,7 +591,7 @@ func TestMiddle_CreateCredential(t *testing.T) {
 }
 
 func TestMiddle_GetSettings(t *testing.T) {
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -627,7 +627,7 @@ func TestMiddle_GetSettings(t *testing.T) {
 }
 
 func TestMiddle_GetSetting(t *testing.T) {
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -663,7 +663,7 @@ func TestMiddle_GetSetting(t *testing.T) {
 }
 
 func TestMiddle_CreateSetting(t *testing.T) {
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -704,7 +704,7 @@ func TestMiddle_CreateSetting(t *testing.T) {
 }
 
 func TestMiddle_GetStats(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(app.Middle)
+	rdb, err := vendors.CreateRedisClient(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -752,7 +752,7 @@ func TestMiddle_GetRoleImageUrl(t *testing.T) {
 			Return(&pb.TextReply{Text: "test"}, nil),
 	)
 
-	conf, err := config.CreateAppConfig(app.Middle)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}

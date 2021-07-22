@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -56,7 +56,7 @@ func (s *Crawler) SetService(
 }
 
 func (s *Crawler) LoadRule() error {
-	data, err := s.c.GetConfig(fmt.Sprintf("%s/rules", app.Spider))
+	data, err := s.c.GetConfig(fmt.Sprintf("%s/rules", enum.Spider))
 	if err != nil {
 		return err
 	}

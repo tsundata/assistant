@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -16,7 +16,7 @@ func TestChatbot_Handle(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	bot, err := rulebot.CreateRuleBot(app.Chatbot)
+	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"reflect"
 	"testing"
@@ -95,7 +94,7 @@ func TestNLP_Segmentation(t *testing.T) {
 }
 
 func TestNLP_Classifier(t *testing.T) {
-	conf, err := config.CreateAppConfig(app.NLP)
+	conf, err := config.CreateAppConfig(enum.NLP)
 	if err != nil {
 		t.Fatal(err)
 	}

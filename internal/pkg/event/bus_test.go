@@ -3,14 +3,14 @@ package event
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/api/enum"
 	"log"
 	"testing"
 	"time"
 )
 
 func TestBus(t *testing.T) {
-	n, err := CreateNats(app.Cron)
+	n, err := CreateNats(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}

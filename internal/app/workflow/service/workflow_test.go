@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
@@ -106,7 +105,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(app.Workflow)
+	nats, err := event.CreateNats(enum.Workflow)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -156,12 +155,12 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	rdb, err := vendors.CreateRedisClient(app.User)
+	rdb, err := vendors.CreateRedisClient(enum.User)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	nats, err := event.CreateNats(app.Workflow)
+	nats, err := event.CreateNats(enum.Workflow)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -16,26 +16,27 @@ type AppConfig struct {
 	once sync.Once
 
 	ID   string
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 
-	Http    Http    `json:"http"`
-	Rpc     Rpc     `json:"rpc"`
-	Web     Web     `json:"web"`
-	Gateway Gateway `json:"gateway"`
-	Storage Storage `json:"storage"`
+	SvcAddr SvcAddr `json:"svc_addr" yaml:"svc_addr"`
+	Http    Http    `json:"http" yaml:"http"`
+	Rpc     Rpc     `json:"rpc" yaml:"rpc"`
+	Web     Web     `json:"web" yaml:"web"`
+	Gateway Gateway `json:"gateway" yaml:"gateway"`
+	Storage Storage `json:"storage" yaml:"storage"`
 
-	Mysql    Mysql    `json:"mysql"`
-	Rqlite   Rqlite   `json:"rqlite"`
-	Redis    Redis    `json:"redis"`
-	Influx   Influx   `json:"influx"`
-	Rabbitmq Rabbitmq `json:"rabbitmq"`
-	Jaeger   Jaeger   `json:"jaeger"`
-	Nats     Nats     `json:"nats"`
+	Mysql    Mysql    `json:"mysql" yaml:"mysql"`
+	Rqlite   Rqlite   `json:"rqlite" yaml:"rqlite"`
+	Redis    Redis    `json:"redis" yaml:"redis"`
+	Influx   Influx   `json:"influx" yaml:"influx"`
+	Rabbitmq Rabbitmq `json:"rabbitmq" yaml:"rabbitmq"`
+	Jaeger   Jaeger   `json:"jaeger" yaml:"jaeger"`
+	Nats     Nats     `json:"nats" yaml:"nats"`
 
-	Slack    Slack    `json:"slack"`
-	Rollbar  Rollbar  `json:"rollbar"`
-	Telegram Telegram `json:"telegram"`
-	Newrelic Newrelic `json:"newrelic"`
+	Slack    Slack    `json:"slack" yaml:"slack"`
+	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
+	Telegram Telegram `json:"telegram" yaml:"telegram"`
+	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`
 }
 
 func NewConfig(id string, consul *api.Client) *AppConfig {

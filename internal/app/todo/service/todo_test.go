@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -15,7 +15,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(app.Todo)
+	nats, err := event.CreateNats(enum.Todo)
 	if err != nil {
 		t.Fatal(err)
 	}

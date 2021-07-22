@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/queue"
 	"reflect"
 	"testing"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestTask_Delay(t *testing.T) {
-	q, err := queue.CreateQueueServer(app.Task)
+	q, err := queue.CreateQueueServer(enum.Task)
 	if err != nil {
 		t.Fatal(err)
 	}

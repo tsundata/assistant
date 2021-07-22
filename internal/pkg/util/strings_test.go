@@ -189,3 +189,33 @@ func TestImageToBase64(t *testing.T) {
 		})
 	}
 }
+
+func TestFirstToUpper(t *testing.T) {
+	tests := []struct {
+		name   string
+		data   string
+		expect string
+	}{
+		{
+			"case1",
+			"",
+			"",
+		},
+		{
+			"case2",
+			"message",
+			"Message",
+		},
+		{
+			"case2",
+			"123",
+			"123",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expect, FirstToUpper(tt.data))
+		})
+	}
+}

@@ -1,14 +1,14 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )
 
 func TestMessageRepository_GetByID(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}
@@ -39,7 +39,7 @@ func TestMessageRepository_GetByID(t *testing.T) {
 }
 
 func TestMessageRepository_GetByUUID(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}
@@ -70,7 +70,7 @@ func TestMessageRepository_GetByUUID(t *testing.T) {
 }
 
 func TestMessageRepository_ListByType(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}
@@ -98,7 +98,7 @@ func TestMessageRepository_ListByType(t *testing.T) {
 }
 
 func TestMessageRepository_List(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}
@@ -122,7 +122,7 @@ func TestMessageRepository_List(t *testing.T) {
 }
 
 func TestMessageRepository_Create(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}
@@ -155,7 +155,7 @@ func TestMessageRepository_Create(t *testing.T) {
 }
 
 func TestMessageRepository_Delete(t *testing.T) {
-	sto, err := CreateMessageRepository(app.Message)
+	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
 		t.Fatalf("create message Preposiory error, %+v", err)
 	}

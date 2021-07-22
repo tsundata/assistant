@@ -1,9 +1,11 @@
 package main
 
-import "github.com/tsundata/assistant/internal/pkg/app"
+import (
+	"github.com/tsundata/assistant/api/enum"
+)
 
 func main() {
-	a, err := CreateApp(app.Finance)
+	a, err := CreateApp(enum.Finance)
 	if err != nil {
 		panic(err)
 	}

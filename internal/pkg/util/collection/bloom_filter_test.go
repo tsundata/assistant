@@ -3,7 +3,7 @@ package collection
 import (
 	"fmt"
 	"github.com/stretchr/testify/require"
-	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/api/enum"
 	"math/rand"
 	"testing"
 	"time"
@@ -11,7 +11,7 @@ import (
 
 func TestBloomFilter(t *testing.T) {
 	rand.Seed(int64(time.Now().Second()))
-	rdb, err := CreateRedisClient(app.Message)
+	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}

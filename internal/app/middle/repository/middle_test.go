@@ -1,14 +1,14 @@
 package repository
 
 import (
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )
 
 func TestMiddleRepository_CreatePage(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -36,7 +36,7 @@ func TestMiddleRepository_CreatePage(t *testing.T) {
 }
 
 func TestMiddleRepository_GetPageByUUID(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -63,7 +63,7 @@ func TestMiddleRepository_GetPageByUUID(t *testing.T) {
 }
 
 func TestMiddleRepository_ListApps(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -86,7 +86,7 @@ func TestMiddleRepository_ListApps(t *testing.T) {
 }
 
 func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -113,7 +113,7 @@ func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
 }
 
 func TestMiddleRepository_GetAppByType(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -140,7 +140,7 @@ func TestMiddleRepository_GetAppByType(t *testing.T) {
 }
 
 func TestMiddleRepository_UpdateAppByID(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -167,7 +167,7 @@ func TestMiddleRepository_UpdateAppByID(t *testing.T) {
 }
 
 func TestMiddleRepository_CreateApp(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -194,7 +194,7 @@ func TestMiddleRepository_CreateApp(t *testing.T) {
 }
 
 func TestMiddleRepository_GetCredentialByName(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -221,7 +221,7 @@ func TestMiddleRepository_GetCredentialByName(t *testing.T) {
 }
 
 func TestMiddleRepository_GetCredentialByType(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -248,7 +248,7 @@ func TestMiddleRepository_GetCredentialByType(t *testing.T) {
 }
 
 func TestMiddleRepository_ListCredentials(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
@@ -271,7 +271,7 @@ func TestMiddleRepository_ListCredentials(t *testing.T) {
 }
 
 func TestMiddleRepository_CreateCredential(t *testing.T) {
-	sto, err := CreateMiddleRepository(app.Middle)
+	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
 		t.Fatalf("create middle Preposiory error, %+v", err)
 	}
