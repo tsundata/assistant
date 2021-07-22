@@ -1,4 +1,60 @@
 
+<a name="v0.0.25"></a>
+## [v0.0.25](https://github.com/tsundata/assistant/compare/v0.0.24...v0.0.25) (2021-07-22)
+
+### Bug Fixes
+
+* parse command check empty string
+* workflow trigger
+* sdk
+* config watch
+* time tick
+* go.sum
+* complete todo sql
+
+### Code Refactoring
+
+* rule parse func
+* regex bot rule
+* task enum
+* remove mysql
+* middle repository
+* message repository
+* user repository
+* todo repository
+* svc pb
+* message pb
+* middle pb
+* workflow pb
+* user pb
+* todo pb
+* model dir
+* use rqlite instead of mysql
+* bus, log
+* context
+* wire_gen
+* config watch, rpc client timeout
+* todo remind check
+* rename args
+* created_at column
+* get role image
+
+### Features
+
+* tag doc
+* newrelic
+* grpc log ServerInterceptor
+* app id
+* cli app
+* user trigger
+* user rpc service
+* chatbot service
+* filesystem
+* subscribe send with channel
+* send message with channel
+* todo remind
+
+
 <a name="v0.0.24"></a>
 ## [v0.0.24](https://github.com/tsundata/assistant/compare/v0.0.23...v0.0.24) (2021-06-29)
 
@@ -30,7 +86,7 @@
 * spider read remote config
 * rpc client name
 * app id, app config
-* rulebot.Component
+* rulebot.Context
 * remove worker service
 * rename transports package
 * rename tasks package
@@ -43,7 +99,7 @@
 * spider read remote config
 * rpc client name
 * app id, app config
-* rulebot.Component
+* rulebot.Context
 * remove worker service
 * rename transports package
 * rename tasks package

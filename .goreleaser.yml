@@ -245,11 +245,13 @@ changelog:
   filters:
     exclude:
       - '^docs:'
+      - '^doc:'
       - '^test:'
       - '^merge:'
       - '^Merge pull request'
       - '^Merge branch'
       - '^debug:'
+      - '^ci:'
 
 env_files:
   github_token: ~/.gh_token

@@ -15,7 +15,6 @@ require (
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-redis/redis/v8 v8.10.0
 	github.com/go-resty/resty/v2 v2.6.0
-	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.13.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -29,17 +28,15 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.4.0
 	github.com/jarcoal/httpmock v1.0.8
-	github.com/jmoiron/sqlx v1.3.4
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
-	github.com/newrelic/go-agent v3.14.0+incompatible // indirect
-	github.com/newrelic/go-agent/v3 v3.14.0 // indirect
-	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.0 // indirect
-	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1 // indirect
-	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0 // indirect
-	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1 // indirect
+	github.com/newrelic/go-agent/v3 v3.14.0
+	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.0
+	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
+	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
+	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
 	github.com/onsi/gomega v1.12.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
