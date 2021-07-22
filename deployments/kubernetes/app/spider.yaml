@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: message
+  name: spider
   namespace: assistant
 spec:
   replicas: 1
@@ -12,15 +12,15 @@ spec:
       maxSurge: 0
   selector:
     matchLabels:
-      app: message
+      app: spider
   template:
     metadata:
       labels:
-        app: message
+        app: spider
     spec:
       containers:
-        - name: message
-          image: 'ghcr.io/tsundata/message:v0.0.26'
+        - name: spider
+          image: 'ghcr.io/tsundata/spider:v0.0.26'
           imagePullPolicy: Always
           env:
             - name: CONSUL_ADDRESS
@@ -48,21 +48,3 @@ spec:
                 configMapKeyRef:
                   name: consul-config
                   key: consul.token
-          ports:
-            - containerPort: 6001
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: assistant
-  name: message
-spec:
-  ports:
-    - name: http
-      port: 6001
-      protocol: TCP
-      targetPort: 6001
-  selector:
-    app: message
-  sessionAffinity: ClientIP
-  type: ClusterIP

@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: message
+  name: nlp
   namespace: assistant
 spec:
   replicas: 1
@@ -12,15 +12,15 @@ spec:
       maxSurge: 0
   selector:
     matchLabels:
-      app: message
+      app: nlp
   template:
     metadata:
       labels:
-        app: message
+        app: nlp
     spec:
       containers:
-        - name: message
-          image: 'ghcr.io/tsundata/message:v0.0.26'
+        - name: nlp
+          image: 'ghcr.io/tsundata/nlp:v0.0.26'
           imagePullPolicy: Always
           env:
             - name: CONSUL_ADDRESS
@@ -49,20 +49,20 @@ spec:
                   name: consul-config
                   key: consul.token
           ports:
-            - containerPort: 6001
+            - containerPort: 6008
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: assistant
-  name: message
+  name: nlp
 spec:
   ports:
     - name: http
-      port: 6001
+      port: 6008
       protocol: TCP
-      targetPort: 6001
+      targetPort: 6008
   selector:
-    app: message
+    app: nlp
   sessionAffinity: ClientIP
   type: ClusterIP

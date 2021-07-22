@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: 'ghcr.io/tsundata/gateway:v0.0.25'
+          image: 'ghcr.io/tsundata/gateway:v0.0.26'
           imagePullPolicy: Always
           env:
             - name: CONSUL_ADDRESS
@@ -62,7 +62,7 @@ spec:
       port: 5000
       protocol: TCP
       targetPort: 5000
+      nodePort: 30005
   selector:
     app: gateway
-  sessionAffinity: ClientIP
-  type: ClusterIP
+  type: NodePort
