@@ -1,12 +1,13 @@
-name: Release
+name: Dev
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - '*'
+  pull_request:
 
 jobs:
-  Release:
+  dev:
     runs-on: ubuntu-latest
 
     services:
@@ -106,10 +107,3 @@ jobs:
 
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
-
-      ### Release ###
-
-      - name: Release
-        run: GOVERSION=$(go version) goreleaser release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
