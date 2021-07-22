@@ -1,25 +1,13 @@
 version: '3'
 
 services:
-  mysql:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: assistant
-      MYSQL_PASSWORD: 123456
-    volumes:
-      - ./tmp/mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-
   redis:
     image: redis:latest
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./tmp/redis/data:/data
-      - ../configs/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ../../configs/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
 
@@ -29,7 +17,7 @@ services:
       - INFLUXDB_ADMIN_USER=admin
       - INFLUXDB_ADMIN_PASSWORD=12345678
     volumes:
-      - ../configs/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - ../../configs/influx/influx.conf:/etc/influxdb/influxdb.conf:ro
     ports:
       - "8086:8086"
 
@@ -81,3 +69,11 @@ services:
     depends_on:
       - consul-server2
       - consul-server3
+
+  rqlite:
+    image: rqlite/rqlite:latest
+    volumes:
+      - ./tmp/rqlite/data:/rqlite/file/data
+    ports:
+      - '4001:4001'
+      - '4002:4002'

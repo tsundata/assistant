@@ -1,0 +1,68 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: user
+  namespace: assistant
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: 'ghcr.io/tsundata/user:v0.0.25'
+          imagePullPolicy: Always
+          env:
+            - name: CONSUL_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: consul-config
+                  key: consul.address
+            - name: CONSUL_SCHEME
+              valueFrom:
+                configMapKeyRef:
+                  name: consul-config
+                  key: consul.scheme
+            - name: CONSUL_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: consul-config
+                  key: consul.username
+            - name: CONSUL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: consul-config
+                  key: consul.password
+            - name: CONSUL_TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  name: consul-config
+                  key: consul.token
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: assistant
+  name: user
+spec:
+  ports:
+    - name: http
+      port: 6004
+      protocol: TCP
+      targetPort: 6004
+  selector:
+    app: user
+  sessionAffinity: ClientIP
+  type: ClusterIP
