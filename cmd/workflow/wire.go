@@ -12,7 +12,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
@@ -33,7 +33,7 @@ var providerSet = wire.NewSet(
 	workflow.ProviderSet,
 	rollbar.ProviderSet,
 	repository.ProviderSet,
-	consul.ProviderSet,
+	etcd.ProviderSet,
 	event.ProviderSet,
 	nats.ProviderSet,
 	service.ProviderSet,

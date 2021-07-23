@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -15,7 +15,7 @@ import (
 )
 
 func CreateApp() (*app.Application, error) {
-	c, err := consul.New()
+	c, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}

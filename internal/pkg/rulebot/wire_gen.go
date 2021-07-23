@@ -10,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -21,7 +21,7 @@ import (
 // Injectors from wire.go:
 
 func CreateRuleBot(id string) (*RuleBot, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -92,4 +92,4 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet)

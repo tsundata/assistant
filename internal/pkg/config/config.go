@@ -1,10 +1,12 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"github.com/google/wire"
-	"github.com/hashicorp/consul/api"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"gopkg.in/yaml.v2"
 	"strings"
 	"sync"
@@ -12,7 +14,7 @@ import (
 )
 
 type AppConfig struct {
-	kv   *api.KV
+	kv   *etcd.Client
 	once sync.Once
 
 	ID   string
@@ -25,11 +27,9 @@ type AppConfig struct {
 	Gateway Gateway `json:"gateway" yaml:"gateway"`
 	Storage Storage `json:"storage" yaml:"storage"`
 
-	Mysql    Mysql    `json:"mysql" yaml:"mysql"`
 	Rqlite   Rqlite   `json:"rqlite" yaml:"rqlite"`
 	Redis    Redis    `json:"redis" yaml:"redis"`
 	Influx   Influx   `json:"influx" yaml:"influx"`
-	Rabbitmq Rabbitmq `json:"rabbitmq" yaml:"rabbitmq"`
 	Jaeger   Jaeger   `json:"jaeger" yaml:"jaeger"`
 	Nats     Nats     `json:"nats" yaml:"nats"`
 
@@ -39,8 +39,7 @@ type AppConfig struct {
 	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`
 }
 
-func NewConfig(id string, consul *api.Client) *AppConfig {
-	kv := consul.KV()
+func NewConfig(id string, kv *etcd.Client) *AppConfig {
 	var xc AppConfig
 	xc.kv = kv
 	xc.Name = id
@@ -59,25 +58,30 @@ func NewConfig(id string, consul *api.Client) *AppConfig {
 
 func (c *AppConfig) readConfig() {
 	// common
-	pair, _, err := c.kv.Get("config/common", nil)
+	resp, err := c.kv.Get(context.Background(), "config/common")
 	if err != nil {
 		panic(err)
 	}
-	if pair == nil {
-		panic("pair nil")
+	var value []byte
+	for _, ev := range resp.Kvs {
+		value = ev.Value
 	}
-	err = yaml.Unmarshal(pair.Value, &c)
+
+	err = yaml.Unmarshal(value, &c)
 	if err != nil {
 		panic(err)
 	}
 
 	// app
-	pair, _, err = c.kv.Get(fmt.Sprintf("config/%s", c.Name), nil)
+	resp, err = c.kv.Get(context.Background(), fmt.Sprintf("config/%s", c.Name))
 	if err != nil {
 		panic(err)
 	}
-	if pair != nil {
-		err = yaml.Unmarshal(pair.Value, &c)
+	if len(resp.Kvs) > 0 {
+		for _, ev := range resp.Kvs {
+			value = ev.Value
+		}
+		err = yaml.Unmarshal(value, &c)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -93,44 +97,49 @@ func (c *AppConfig) watch() {
 	})
 }
 
-func (c *AppConfig) GetConfig(key string) (string, error) {
-	result, _, err := c.kv.Get(fmt.Sprintf("config/%s", key), nil)
+func (c *AppConfig) GetConfig(ctx context.Context, key string) (string, error) {
+	resp, err := c.kv.Get(ctx, fmt.Sprintf("config/%s", key))
 	if err != nil {
 		return "", err
 	}
-	if result != nil {
-		return util.ByteToString(result.Value), nil
+	if len(resp.Kvs) > 0 {
+		var value []byte
+		for _, ev := range resp.Kvs {
+			value = ev.Value
+		}
+		return util.ByteToString(value), nil
 	}
 	return "", nil
 }
 
-func (c *AppConfig) GetSetting(key string) (string, error) {
-	result, _, err := c.kv.Get(fmt.Sprintf("setting/%s", key), nil)
+func (c *AppConfig) GetSetting(ctx context.Context, key string) (string, error) {
+	resp, err := c.kv.Get(ctx, fmt.Sprintf("setting/%s", key))
 	if err != nil {
 		return "", err
 	}
-	if result != nil {
-		return util.ByteToString(result.Value), nil
+	if len(resp.Kvs) > 0 {
+		var value []byte
+		for _, ev := range resp.Kvs {
+			value = ev.Value
+		}
+		return util.ByteToString(value), nil
 	}
 	return "", nil
 }
 
-func (c *AppConfig) SetSetting(key, value string) error {
-	_, err := c.kv.Put(&api.KVPair{
-		Key:   fmt.Sprintf("setting/%s", key),
-		Value: util.StringToByte(value),
-	}, nil)
+func (c *AppConfig) SetSetting(ctx context.Context, key, value string) error {
+	_, err := c.kv.Put(ctx, fmt.Sprintf("setting/%s", key), value)
 	return err
 }
 
-func (c *AppConfig) GetSettings() (map[string]string, error) {
-	kvs, _, err := c.kv.List("setting", nil)
+func (c *AppConfig) GetSettings(ctx context.Context) (map[string]string, error) {
+	resp, err := c.kv.Get(ctx, "setting", clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortAscend))
 	if err != nil {
 		return nil, err
 	}
 	result := make(map[string]string)
-	for _, ev := range kvs {
-		result[strings.ReplaceAll(ev.Key, "setting/", "")] = util.ByteToString(ev.Value)
+	for _, ev := range resp.Kvs {
+		result[strings.ReplaceAll(util.ByteToString(ev.Key), "setting/", "")] = util.ByteToString(ev.Value)
 	}
 	return result, nil
 }

@@ -46,11 +46,6 @@ type Storage struct {
 
 // === Middleware ===
 
-// Mysql config
-type Mysql struct {
-	Url string `json:"url" yaml:"url"`
-}
-
 // Rqlite config
 type Rqlite struct {
 	Url string `json:"url" yaml:"url"`
@@ -68,11 +63,6 @@ type Influx struct {
 	Org    string `json:"org" yaml:"org"`
 	Bucket string `json:"bucket" yaml:"bucket"`
 	Url    string `json:"url" yaml:"url"`
-}
-
-// Rabbitmq config
-type Rabbitmq struct {
-	Url string `json:"url" yaml:"url"`
 }
 
 // Jaeger config

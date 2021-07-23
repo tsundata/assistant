@@ -9,7 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -18,7 +18,7 @@ import (
 // Injectors from wire.go:
 
 func CreateMessageRepository(id string) (MessageRepository, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -40,4 +40,4 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)

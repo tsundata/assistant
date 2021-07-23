@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -18,7 +18,7 @@ import (
 var testProviderSet = wire.NewSet(
 	log.ProviderSet,
 	config.ProviderSet,
-	consul.ProviderSet,
+	etcd.ProviderSet,
 	ProviderSet,
 	rpcclient.ProviderSet,
 	redis.ProviderSet,

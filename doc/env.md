@@ -1,21 +1,13 @@
 # Environment
 
-## CONSUL_ADDRESS
+## ETCD_ADDRESS
 
-> consul server host
+> etcd server host
 
-## CONSUL_SCHEME
+## ETCD_USERNAME
 
-> consul server scheme
+> etcd server auth user
 
-## CONSUL_USERNAME
+## ETCD_PASSWORD
 
-> consul server http auth user
-
-## CONSUL_PASSWORD
-
-> consul server http auth password
-
-## CONSUL_TOKEN
-
-> consul server auth token
+> etcd server auth password

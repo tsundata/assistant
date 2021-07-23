@@ -339,8 +339,8 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.SettingsReply, error) {
-	result, err := s.conf.GetSettings()
+func (s *Middle) GetSettings(ctx context.Context, _ *pb.TextRequest) (*pb.SettingsReply, error) {
+	result, err := s.conf.GetSettings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -355,8 +355,8 @@ func (s *Middle) GetSettings(_ context.Context, _ *pb.TextRequest) (*pb.Settings
 	return &reply, nil
 }
 
-func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
-	result, err := s.conf.GetSetting(payload.GetText())
+func (s *Middle) GetSetting(ctx context.Context, payload *pb.TextRequest) (*pb.SettingReply, error) {
+	result, err := s.conf.GetSetting(ctx, payload.GetText())
 	if err != nil {
 		return nil, err
 	}
@@ -367,8 +367,8 @@ func (s *Middle) GetSetting(_ context.Context, payload *pb.TextRequest) (*pb.Set
 	}, nil
 }
 
-func (s *Middle) CreateSetting(_ context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {
-	err := s.conf.SetSetting(payload.GetKey(), payload.GetValue())
+func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.StateReply, error) {
+	err := s.conf.SetSetting(ctx, payload.GetKey(), payload.GetValue())
 	if err != nil {
 		return nil, err
 	}

@@ -39,11 +39,11 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-1. Install rqlite, Redis, influx, jaeger, nats, consul
+1. Install rqlite, Redis, influx, jaeger, nats, etcd
 
 2. Import sql files
 
-3. Import Configuration to consul
+3. Import Configuration to etcd
 
 4. Set Environment
    

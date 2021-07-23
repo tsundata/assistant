@@ -35,41 +35,6 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
 
-  consul-server1:
-    image: consul:1.9.3
-    volumes:
-      - ./tmp/consul/data1:/data
-    command: agent -server -client=0.0.0.0 -node=consul-server1 -bind=0.0.0.0 -datacenter=dc1 -bootstrap-expect=3 -data-dir=/data
-
-  consul-server2:
-    image: consul:1.9.3
-    volumes:
-      - ./tmp/consul/data2:/data
-    command: agent -server -client=0.0.0.0 -node=consul-server2 -bind=0.0.0.0 -datacenter=dc1 -bootstrap-expect=3 --retry-join=consul-server1 -data-dir=/data
-    depends_on:
-      - consul-server1
-
-  consul-server3:
-    image: consul:1.9.3
-    volumes:
-      - ./tmp/consul/data3:/data
-    command: agent -server -client=0.0.0.0 -node=consul-server3 -bind=0.0.0.0 -datacenter=dc1 -bootstrap-expect=3 --retry-join=consul-server1 -data-dir=/data
-    depends_on:
-      - consul-server1
-
-  consul-client:
-    image: consul:1.9.3
-    volumes:
-      - ./tmp/consul/data-client:/data
-    ports:
-      - '8500:8500'
-      - '8600:8600/tcp'
-      - '8600:8600/udp'
-    command: agent -client=0.0.0.0 -node=consul-clinet -bind=0.0.0.0 -datacenter=dc1 -retry-join=consul-server1 -data-dir=/data -ui
-    depends_on:
-      - consul-server2
-      - consul-server3
-
   rqlite:
     image: rqlite/rqlite:latest
     volumes:
@@ -77,3 +42,13 @@ services:
     ports:
       - '4001:4001'
       - '4002:4002'
+
+ etcd:
+   image: docker.io/bitnami/etcd:3-debian-10
+   environment:
+     - ALLOW_NONE_AUTHENTICATION=yes
+   volumes:
+     - ./tmp/etcd/data:/bitnami/etcd
+   ports:
+     - "2379:2379"
+     - "2380:2380"

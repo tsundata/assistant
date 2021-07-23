@@ -10,14 +10,14 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 )
 
 // Injectors from wire.go:
 
 func CreateQueueServer(id string) (*machinery.Server, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -31,4 +31,4 @@ func CreateQueueServer(id string) (*machinery.Server, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, redis.ProviderSet, ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, redis.ProviderSet, ProviderSet)

@@ -6,11 +6,9 @@ services:
     image: ghcr.io/tsundata/gateway:${APP_VERSION}
     restart: always
     environment:
-      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
-      CONSUL_SCHEME: ${CONSUL_ADDRESS}
-      CONSUL_USERNAME: ${CONSUL_USERNAME}
-      CONSUL_PASSWORD: ${CONSUL_PASSWORD}
-      CONSUL_TOKEN: ${CONSUL_TOKEN}
+      ETCD_ADDRESS: ${ETCD_ADDRESS}
+      ETCD_USERNAME: ${ETCD_USERNAME}
+      ETCD_PASSWORD: ${ETCD_PASSWORD}
     ports:
       - "5000:5000"
 
@@ -18,10 +16,8 @@ services:
     image: ghcr.io/tsundata/web:${APP_VERSION}
     restart: always
     environment:
-      CONSUL_ADDRESS: ${CONSUL_ADDRESS}
-      CONSUL_SCHEME: ${CONSUL_ADDRESS}
-      CONSUL_USERNAME: ${CONSUL_USERNAME}
-      CONSUL_PASSWORD: ${CONSUL_PASSWORD}
-      CONSUL_TOKEN: ${CONSUL_TOKEN}
+      ETCD_ADDRESS: ${ETCD_ADDRESS}
+      ETCD_USERNAME: ${ETCD_USERNAME}
+      ETCD_PASSWORD: ${ETCD_PASSWORD}
     ports:
       - "7000:7000"

@@ -8,7 +8,6 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
-	"github.com/hashicorp/consul/api"
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
@@ -29,12 +28,11 @@ type Server struct {
 	conf   *config.AppConfig
 	logger log.Logger
 	server *grpc.Server
-	consul *api.Client
 }
 
 type InitServer func(s *grpc.Server)
 
-func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init InitServer, tracer opentracing.Tracer, rdb *redis.Client, consul *api.Client, nc *newrelic.App) (*Server, error) {
+func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init InitServer, tracer opentracing.Tracer, rdb *redis.Client, nc *newrelic.App) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -70,7 +68,6 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 		conf:   opt,
 		logger: logger,
 		server: gs,
-		consul: consul,
 	}, nil
 }
 

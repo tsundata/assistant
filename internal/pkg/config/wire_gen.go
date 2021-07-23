@@ -7,13 +7,13 @@ package config
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 )
 
 // Injectors from wire.go:
 
 func CreateAppConfig(id string) (*AppConfig, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -23,4 +23,4 @@ func CreateAppConfig(id string) (*AppConfig, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(consul.ProviderSet, ProviderSet)
+var testProviderSet = wire.NewSet(etcd.ProviderSet, ProviderSet)

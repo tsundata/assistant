@@ -7,7 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -16,7 +16,7 @@ import (
 var testProviderSet = wire.NewSet(
 	log.ProviderSet,
 	config.ProviderSet,
-	consul.ProviderSet,
+	etcd.ProviderSet,
 	redisMiddle.ProviderSet,
 	newrelic.ProviderSet,
 	rollbar.ProviderSet,

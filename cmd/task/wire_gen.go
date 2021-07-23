@@ -14,7 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
@@ -28,7 +28,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcServer, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, client, newrelicApp)
+	rpcServer, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -92,4 +92,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, consul.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)

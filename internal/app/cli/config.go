@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"context"
 	"fmt"
-	"github.com/hashicorp/consul/api"
 	"github.com/spf13/cobra"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
@@ -19,13 +21,10 @@ var configCmd = &cobra.Command{
 	Short: "Import default configs",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get a new client
-		client, err := api.NewClient(api.DefaultConfig())
+		kv, err := etcd.New()
 		if err != nil {
 			panic(err)
 		}
-
-		// Get a handle to the KV API
-		kv := client.KV()
 
 		err = filepath.Walk("./configs", func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
@@ -46,8 +45,7 @@ var configCmd = &cobra.Command{
 			name = strings.ReplaceAll(name, `\`, "")
 			name = strings.ReplaceAll(name, `/`, "")
 			name = strings.ReplaceAll(name, "_", "/")
-			p := &api.KVPair{Key: fmt.Sprintf("config/%s", name), Value: data}
-			_, err = kv.Put(p, nil)
+			_, err = kv.Put(context.Background(), fmt.Sprintf("config/%s", name), util.ByteToString(data))
 			if err != nil {
 				panic(err)
 			}
@@ -59,11 +57,13 @@ var configCmd = &cobra.Command{
 		}
 
 		// info
-		pair, _, err := kv.Get("config/common", nil)
+		resp, err := kv.Get(context.Background(), "config/common")
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("config common: %s\n", pair.Value)
+		for _, ev := range resp.Kvs {
+			fmt.Printf("config common: %s\n", ev.Value)
+		}
 
 		fmt.Println("Done")
 	},

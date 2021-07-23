@@ -7,14 +7,14 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	natsMiddle "github.com/tsundata/assistant/internal/pkg/middleware/nats"
 )
 
 var testProviderSet = wire.NewSet(
 	log.ProviderSet,
 	config.ProviderSet,
-	consul.ProviderSet,
+	etcd.ProviderSet,
 	ProviderSet,
 	natsMiddle.ProviderSet,
 )

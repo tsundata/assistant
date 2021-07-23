@@ -56,7 +56,7 @@ func (s *Crawler) SetService(
 }
 
 func (s *Crawler) LoadRule() error {
-	data, err := s.c.GetConfig(fmt.Sprintf("%s/rules", enum.Spider))
+	data, err := s.c.GetConfig(context.Background(), fmt.Sprintf("%s/rules", enum.Spider))
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package classifier
 
 import (
+	"context"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -43,5 +44,5 @@ func (c *Classifier) Do(check string) (enum.RoleAttr, error) {
 }
 
 func ReadRulesConfig(conf *config.AppConfig) (string, error) {
-	return conf.GetConfig("classifier")
+	return conf.GetConfig(context.Background(), "classifier")
 }

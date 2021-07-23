@@ -10,14 +10,14 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/consul"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	nats2 "github.com/tsundata/assistant/internal/pkg/middleware/nats"
 )
 
 // Injectors from wire.go:
 
 func CreateNats(id string) (*nats.Conn, error) {
-	client, err := consul.New()
+	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
@@ -31,4 +31,4 @@ func CreateNats(id string) (*nats.Conn, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, consul.ProviderSet, ProviderSet, nats2.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, nats2.ProviderSet)

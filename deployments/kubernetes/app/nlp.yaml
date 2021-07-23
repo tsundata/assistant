@@ -23,31 +23,21 @@ spec:
           image: 'ghcr.io/tsundata/nlp:v0.0.26'
           imagePullPolicy: Always
           env:
-            - name: CONSUL_ADDRESS
+            - name: ETCD_ADDRESS
               valueFrom:
                 configMapKeyRef:
-                  name: consul-config
-                  key: consul.address
-            - name: CONSUL_SCHEME
+                  name: etcd-config
+                  key: etcd.address
+            - name: ETCD_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: consul-config
-                  key: consul.scheme
-            - name: CONSUL_USERNAME
+                  name: etcd-config
+                  key: etcd.username
+            - name: ETCD_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: consul-config
-                  key: consul.username
-            - name: CONSUL_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: consul-config
-                  key: consul.password
-            - name: CONSUL_TOKEN
-              valueFrom:
-                configMapKeyRef:
-                  name: consul-config
-                  key: consul.token
+                  name: etcd-config
+                  key: etcd.password
           ports:
             - containerPort: 6008
 ---

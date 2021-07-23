@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -10,7 +11,7 @@ func TestAppConfig_Config(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := c.GetConfig("common")
+	res, err := c.GetConfig(context.Background(), "common")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,21 +23,21 @@ func TestAppConfig_Setting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = c.SetSetting("key", "value")
+	err = c.SetSetting(context.Background(), "key", "value")
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := c.GetSetting("key")
+	res, err := c.GetSetting(context.Background(), "key")
 	if err != nil {
 		t.Fatal(err)
 	}
 	require.Equal(t, "value", res)
 
-	err = c.SetSetting("key2", "value2")
+	err = c.SetSetting(context.Background(), "key2", "value2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	res2, err := c.GetSettings()
+	res2, err := c.GetSettings(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
