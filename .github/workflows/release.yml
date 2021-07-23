@@ -83,6 +83,7 @@ jobs:
 
       - name: Import Config
         run: |
+          export ETCD_ADDRESS=127.0.0.1:2379
           cp configs/common.yml.example configs/common.yml
           cp configs/gateway.yml.example configs/gateway.yml
           cp configs/web.yml.example configs/web.yml
