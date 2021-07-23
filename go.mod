@@ -41,7 +41,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/rollbar/rollbar-go v1.4.0
-	github.com/shirou/gopsutil/v3 v3.21.5
+	github.com/shirou/gopsutil/v3 v3.21.6
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.1
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
@@ -50,7 +50,6 @@ require (
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.8.0
-	github.com/tklauser/go-sysconf v0.3.6 // indirect
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
