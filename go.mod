@@ -49,7 +49,7 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/gjson v1.8.0
+	github.com/tidwall/gjson v1.8.1
 	github.com/tklauser/go-sysconf v0.3.6 // indirect
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
