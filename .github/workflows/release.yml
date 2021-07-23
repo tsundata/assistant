@@ -92,7 +92,7 @@ jobs:
 
       - name: Run test cases
         run: |
-          export CONSUL_ADDRESS=127.0.0.1:8500
+          export ETCD_ADDRESS=127.0.0.1:2379
           task test
           task coverage
 
