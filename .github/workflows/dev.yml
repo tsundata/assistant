@@ -21,12 +21,13 @@ jobs:
         image: redis:latest
         ports:
           - 6379:6379
-      consul:
-        image: bitnami/consul:latest
+      etcd:
+        image: bitnami/etcd:3.5.0
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
         ports:
-          - 8500:8500
-          - 8600:8600/tcp
-          - 8600:8600/udp
+          - 2379:2379
+          - 2380:2380
       rqlite:
         image: rqlite/rqlite:latest
         ports:
