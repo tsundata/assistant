@@ -4,18 +4,18 @@ go 1.16
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
-	github.com/PuerkitoBio/goquery v1.7.0
+	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
 	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90
+	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-ego/gse v0.67.0
 	github.com/go-ole/go-ole v1.2.5 // indirect
-	github.com/go-redis/redis/v8 v8.10.0
+	github.com/go-redis/redis/v8 v8.11.0
 	github.com/go-resty/resty/v2 v2.6.0
-	github.com/gofiber/fiber/v2 v2.13.0
+	github.com/gofiber/fiber/v2 v2.15.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
@@ -23,8 +23,6 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
-	github.com/hashicorp/consul/api v1.8.1
-	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.4.0
 	github.com/jarcoal/httpmock v1.0.8
@@ -32,15 +30,15 @@ require (
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.11.0
-	github.com/newrelic/go-agent/v3 v3.14.0
-	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.0
+	github.com/newrelic/go-agent/v3 v3.14.1
+	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
 	github.com/onsi/gomega v1.12.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/rollbar/rollbar-go v1.4.0
+	github.com/rollbar/rollbar-go v1.4.1
 	github.com/shirou/gopsutil/v3 v3.21.6
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.3
@@ -53,8 +51,8 @@ require (
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.27.0
-	github.com/yuin/goldmark v1.3.8
+	github.com/valyala/fasthttp v1.28.0
+	github.com/yuin/goldmark v1.4.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.18.1
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect

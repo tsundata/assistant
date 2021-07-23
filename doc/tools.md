@@ -66,3 +66,12 @@ go install github.com/aquasecurity/trivy/cmd/trivy
 # Usage
 trivy image [YOUR_IMAGE_NAME]
 ```
+
+### go-mod-outdated
+
+```shell
+# Install
+go install github.com/psampaz/go-mod-outdated@latest
+# Usage
+go list -u -m -json all | go-mod-outdated -direct
+```
