@@ -10,7 +10,7 @@ require (
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90
-	github.com/gavv/httpexpect/v2 v2.3.0
+	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-ego/gse v0.67.0
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-redis/redis/v8 v8.10.0
@@ -54,7 +54,7 @@ require (
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.26.0
+	github.com/valyala/fasthttp v1.27.0
 	github.com/yuin/goldmark v1.3.8
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.17.0
