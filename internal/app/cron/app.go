@@ -7,12 +7,18 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"time"
 )
 
 func NewApp(c *config.AppConfig, logger log.Logger, bot *rulebot.RuleBot) (*app.Application, error) {
-	// load rule
-	bot.SetOptions(rule.Options...)
-	logger.Info("start cron rule bot")
+	// cron
+	go func() {
+		// Delayed loading
+		time.Sleep(5 * time.Minute)
+		// load rule
+		bot.SetOptions(rule.Options...)
+		logger.Info("start cron rule bot")
+	}()
 
 	a, err := app.New(c, logger)
 	if err != nil {
