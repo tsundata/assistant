@@ -39,7 +39,12 @@ func (s *Subscribe) Register(ctx context.Context, payload *pb.SubscribeRequest) 
 		return nil, err
 	}
 
-	if len(resp) == 0 {
+	exist := true
+	if len(resp) == 0 || (len(resp) == 1 && resp[0] == nil) {
+		exist = false
+	}
+
+	if !exist {
 		_, err = s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
 		if err != nil {
 			return nil, err

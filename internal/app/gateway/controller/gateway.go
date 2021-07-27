@@ -15,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/telegram"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"net/http"
 	"regexp"
 	"strings"
@@ -55,7 +56,7 @@ func NewGatewayController(opt *config.AppConfig, rdb *redis.Client, logger log.L
 }
 
 func (gc *GatewayController) Index(c *fiber.Ctx) error {
-	return c.SendString("Gateway")
+	return c.SendString(fmt.Sprintf("Gateway %s", version.Version))
 }
 
 func (gc *GatewayController) SlackEvent(c *fiber.Ctx) error {

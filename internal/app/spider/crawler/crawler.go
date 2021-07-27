@@ -15,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 	"strconv"
 	"strings"
@@ -100,7 +101,6 @@ func (s *Crawler) Daemon() {
 	s.logger.Info("subscribe spider starting...")
 
 	for name, job := range s.jobs {
-		s.logger.Info("spider " + name + ": crawl...")
 		go s.ruleWorker(name, job)
 	}
 
@@ -108,6 +108,7 @@ func (s *Crawler) Daemon() {
 }
 
 func (s *Crawler) ruleWorker(name string, r rule.Rule) {
+	s.logger.Info("spider "+name+": crawl...", zap.String("spider", name))
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
 		s.logger.Error(err)
@@ -120,6 +121,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			s.logger.Info("spider "+name+": scheduled", zap.String("spider", name))
 			state, err := s.subscribe.Status(context.Background(), &pb.SubscribeRequest{
 				Text: name,
 			})
@@ -136,9 +138,9 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {
-						s.logger.Warn("ruleWorker recover " + name)
+						s.logger.Warn("ruleWorker recover " + name, zap.String("spider", name))
 						if v, ok := r.(error); ok {
-							s.logger.Error(v)
+							s.logger.Error(v, zap.String("spider", name))
 						}
 					}
 				}()
@@ -155,7 +157,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			s.logger.Error(err)
+			s.logger.Error(err, zap.String("spider", name))
 			continue
 		}
 		time.Sleep(2 * time.Second)

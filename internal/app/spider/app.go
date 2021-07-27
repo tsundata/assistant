@@ -22,7 +22,7 @@ func NewApp(
 	// spider
 	go func() {
 		// Delayed loading
-		time.Sleep(10 * time.Second)
+		time.Sleep(5 * time.Minute)
 		s := crawler.New()
 		s.SetService(c, rdb, logger, subscribe, middle, message)
 		err := s.LoadRule()

@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
+	"github.com/tsundata/assistant/internal/pkg/version"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
@@ -37,7 +38,7 @@ func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger log.Logge
 }
 
 func (wc *WebController) Index(c *fiber.Ctx) error {
-	return c.SendString("Web")
+	return c.SendString(fmt.Sprintf("Web %s", version.Version))
 }
 
 func (wc *WebController) Echo(c *fiber.Ctx) error {
