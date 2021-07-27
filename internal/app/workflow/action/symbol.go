@@ -232,11 +232,15 @@ func (b *SemanticAnalyzer) VisitOpcode(node *Opcode) error {
 				b.Webhook = NewWebhookSymbol(args[0], args[1])
 			} else if len(args) >= 1 {
 				b.Webhook = NewWebhookSymbol(args[0], "")
+			} else {
+				return b.error(ParameterType, node.Token)
 			}
 		}
 		if name == "cron" {
 			if len(args) >= 1 {
 				b.Cron = NewCronSymbol(args[0])
+			} else {
+				return b.error(ParameterType, node.Token)
 			}
 		}
 	}

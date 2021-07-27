@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"github.com/go-resty/resty/v2"
 	"github.com/google/wire"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"net/http"
 	"time"
 )
 
@@ -33,6 +35,10 @@ func (c *GatewayClient) GetPage(uuid string) (result *pb.PageReply, err error) {
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -42,6 +48,10 @@ func (c *GatewayClient) GetApps() (result *pb.AppsReply, err error) {
 		Get("apps")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -66,6 +76,10 @@ func (c *GatewayClient) GetMaskingCredentials() (result *pb.MaskingReply, err er
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -78,6 +92,10 @@ func (c *GatewayClient) CreateCredential(in *pb.KVsRequest) (result *pb.StateRep
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -87,6 +105,10 @@ func (c *GatewayClient) GetSettings() (result *pb.SettingsReply, err error) {
 		Get("settings")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -101,6 +123,10 @@ func (c *GatewayClient) CreateSetting(in *pb.KVRequest) (result *pb.StateReply, 
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -110,6 +136,10 @@ func (c *GatewayClient) GetActionMessages() (result *pb.ActionReply, err error) 
 		Get("action/messages")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -124,6 +154,10 @@ func (c *GatewayClient) CreateActionMessage(in *pb.TextRequest) (result *pb.Stat
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -134,6 +168,10 @@ func (c *GatewayClient) DeleteWorkflowMessage(in *pb.MessageRequest) (result *pb
 		Delete("workflow/message")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -148,6 +186,10 @@ func (c *GatewayClient) RunMessage(in *pb.MessageRequest) (result *pb.TextReply,
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -158,6 +200,10 @@ func (c *GatewayClient) SendMessage(in *pb.MessageRequest) (result *pb.StateRepl
 		Post("message/send")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -172,6 +218,10 @@ func (c *GatewayClient) WebhookTrigger(in *pb.TriggerRequest) (result *pb.StateR
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -184,6 +234,10 @@ func (c *GatewayClient) GetCredential(id string) (result *pb.CredentialReply, er
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -193,6 +247,10 @@ func (c *GatewayClient) GetRoleImage() (result *pb.BytesReply, err error) {
 		Get("role/image")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)
@@ -207,6 +265,10 @@ func (c *GatewayClient) StoreAppOAuth(in *pb.AppRequest) (result *pb.StateReply,
 		return nil, err
 	}
 
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
 	err = json.Unmarshal(resp.Body(), &result)
 	return
 }
@@ -217,6 +279,10 @@ func (c *GatewayClient) Authorization(in *pb.TextRequest) (result *pb.StateReply
 		Post("auth")
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
 	}
 
 	err = json.Unmarshal(resp.Body(), &result)

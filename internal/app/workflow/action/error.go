@@ -16,6 +16,7 @@ const (
 	UnexpectedToken ErrorCode = "Unexpected token"
 	IdNotFound      ErrorCode = "Identifier not found"
 	RepeatOpcode    ErrorCode = "Repeat opcode"
+	ParameterType   ErrorCode = "Parameter type error"
 )
 
 type Error struct {
