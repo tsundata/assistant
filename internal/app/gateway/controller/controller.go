@@ -31,7 +31,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			Next: func(c *fiber.Ctx) bool {
 				return c.IP() == "127.0.0.1"
 			},
-			Max:        20,
+			Max:        500,
 			Expiration: time.Minute,
 		}))
 		router.Use(newrelic.NewMiddleware(
