@@ -493,7 +493,9 @@ func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}
 
-	_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Message: &pb.Message{Text: reply.GetText()}})
+	if reply.GetText() != "" {
+		_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Message: &pb.Message{Text: reply.GetText()}})
+	}
 
 	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
 }

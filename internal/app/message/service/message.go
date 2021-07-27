@@ -136,6 +136,9 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 }
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
+	if payload.Message.GetText() == "" {
+		return &pb.StateReply{State: false}, nil
+	}
 	client := http.NewClient()
 	webhook := slack.ChannelSelect(payload.Message.GetChannel(), m.config.Slack.Webhook)
 	resp, err := client.PostJSON(webhook, map[string]interface{}{
