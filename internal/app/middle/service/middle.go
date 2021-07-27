@@ -234,15 +234,17 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 	var kvs []*pb.KV
 	if find.Id > 0 {
 		var data map[string]string
-		err := json.Unmarshal(util.StringToByte(find.Content), &data)
-		if err != nil {
-			return nil, err
-		}
-		for k, v := range data {
-			kvs = append(kvs, &pb.KV{
-				Key:   k,
-				Value: v,
-			})
+		if find.Content != "" {
+			err := json.Unmarshal(util.StringToByte(find.Content), &data)
+			if err != nil {
+				return nil, err
+			}
+			for k, v := range data {
+				kvs = append(kvs, &pb.KV{
+					Key:   k,
+					Value: v,
+				})
+			}
 		}
 	}
 
@@ -284,6 +286,9 @@ func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*p
 	for _, item := range items {
 		// Data masking
 		var data map[string]string
+		if item.Content == "" {
+			continue
+		}
 		err := json.Unmarshal(util.StringToByte(item.Content), &data)
 		if err != nil {
 			return nil, err

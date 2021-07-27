@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"go.uber.org/zap"
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
@@ -15,12 +16,12 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.User
 		var role pb.Role
 		err := json.Unmarshal(msg.Data, &role)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.RoleChangeExpSubject))
 			return
 		}
 		err = repo.ChangeRoleExp(role.UserId, role.Exp)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.RoleChangeExpSubject))
 			return
 		}
 	})
@@ -32,19 +33,19 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.User
 		var data pb.AttrChange
 		err := json.Unmarshal(msg.Data, &data)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.RoleChangeAttrSubject))
 			return
 		}
 
 		res, err := nlpClient.Classifier(context.Background(), &pb.TextRequest{Text: data.Content})
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.RoleChangeAttrSubject))
 			return
 		}
 
 		err = repo.ChangeRoleAttr(data.UserId, res.Text, 1)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.RoleChangeAttrSubject))
 			return
 		}
 	})

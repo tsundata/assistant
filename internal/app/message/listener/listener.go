@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
+	"go.uber.org/zap"
 )
 
 func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger) error {
@@ -27,7 +28,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.MessageSendSubject))
 			return
 		}
 
@@ -37,7 +38,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			"text": m.Text,
 		})
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.MessageSendSubject))
 			return
 		}
 

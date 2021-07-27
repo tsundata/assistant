@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"go.uber.org/zap"
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleSvcClient, todo pb.TodoSvcClient, user pb.UserSvcClient) error {
@@ -16,7 +17,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleSvcC
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, zap.Any("event", event.MessageTriggerSubject))
 			return
 		}
 
