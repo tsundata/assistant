@@ -161,18 +161,19 @@ func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*p
 	}
 
 	var kvs []*pb.KV
-
 	if find.Id > 0 {
 		var extra map[string]string
-		err = json.Unmarshal(util.StringToByte(find.Extra), &extra)
-		if err != nil {
-			return nil, err
-		}
-		for k, v := range extra {
-			kvs = append(kvs, &pb.KV{
-				Key:   k,
-				Value: v,
-			})
+		if find.Extra != "" {
+			err = json.Unmarshal(util.StringToByte(find.Extra), &extra)
+			if err != nil {
+				return nil, err
+			}
+			for k, v := range extra {
+				kvs = append(kvs, &pb.KV{
+					Key:   k,
+					Value: v,
+				})
+			}
 		}
 	}
 

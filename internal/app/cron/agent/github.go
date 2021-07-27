@@ -53,7 +53,7 @@ func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.R
 	return r
 }
 
-func FetchGithubStargazers(ctx context.Context, _ rulebot.IComponent) []result.Result {
+func FetchGithubStargazers(_ context.Context, _ rulebot.IComponent) []result.Result {
 	// todo
 	return []result.Result{}
 }
