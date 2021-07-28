@@ -19,7 +19,7 @@ Assistant Bot is a workflow engine for chatbot
 
 ## Architecture
 
-<img src="./docs/architecture.png" alt="Architecture" align="center" width="100%" /> 
+<img src="architecture.png" alt="Architecture" align="center" width="100%" /> 
 
 ## Applications used
 
@@ -46,8 +46,8 @@ This project requires Go 1.16 or newer
 3. Import Configuration to etcd
 
 4. Set Environment
-   
-   See [docs/env.md](/docs/env.md)
+
+   See [env.md](env.md)
 
 5. Build binary
    ```
