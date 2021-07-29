@@ -182,8 +182,8 @@ github.com/go-redis/redis/v7 v7.4.0/go.mod h1:JDNMw23GTyLNC4GZu9njt15ctBQVn7xjRf
 github.com/go-redis/redis/v8 v8.1.1/go.mod h1:ysgGY09J/QeDYbu3HikWEIPCwaeOkuNoTgKayTEaEOw=
 github.com/go-redis/redis/v8 v8.4.0/go.mod h1:A1tbYoHSa1fXwN+//ljcCYYJeLmVrwL9hbQN45Jdy0M=
 github.com/go-redis/redis/v8 v8.6.0/go.mod h1:DQ9q4Rk2HtwkrwVrdgmphoOQDMfpvcd/nHEwRsicg8s=
-github.com/go-redis/redis/v8 v8.11.0 h1:O1Td0mQ8UFChQ3N9zFQqo6kTU2cJ+/it88gDB+zg0wo=
-github.com/go-redis/redis/v8 v8.11.0/go.mod h1:DLomh7y2e3ggQXQLd1YgmvIfecPJoFl7WU5SOQ/r06M=
+github.com/go-redis/redis/v8 v8.11.1 h1:Aqf/1y2eVfE9zrySM++/efzwv3mkLH7n/T96//gbo94=
+github.com/go-redis/redis/v8 v8.11.1/go.mod h1:DLomh7y2e3ggQXQLd1YgmvIfecPJoFl7WU5SOQ/r06M=
 github.com/go-redsync/redsync/v4 v4.0.4 h1:ru0qG+VCefaZSx3a5ADmlKZXkNdgeeYWIuymDu/tzV8=
 github.com/go-redsync/redsync/v4 v4.0.4/go.mod h1:QBOJAs1k8O6Eyrre4a++pxQgHe5eQ+HF56KuTVv+8Bs=
 github.com/go-resty/resty/v2 v2.6.0 h1:joIR5PNLM2EFqqESUjCMGXrWmXNHEU9CEiK813oKYS4=
