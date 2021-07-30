@@ -75,3 +75,13 @@ go install github.com/psampaz/go-mod-outdated@latest
 # Usage
 go list -u -m -json all | go-mod-outdated -direct
 ```
+
+### gocyclo
+
+```shell
+# Install
+go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
+
+# Usage
+gocyclo -over 10 -ignore "_test|Godeps|mock|vendor/" .
+```
