@@ -13,7 +13,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-ego/gse v0.67.0
 	github.com/go-ole/go-ole v1.2.5 // indirect
-	github.com/go-redis/redis/v8 v8.11.0
+	github.com/go-redis/redis/v8 v8.11.1
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/gofiber/fiber/v2 v2.15.0
 	github.com/gogo/protobuf v1.3.2
