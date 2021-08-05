@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/internal/pkg/sdk"
+	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
@@ -45,6 +46,10 @@ var ProviderCredentialOptions = map[string]interface{}{
 		cloudflare.Token:     "Api Token",
 		cloudflare.ZoneID:    "Zone ID",
 		cloudflare.AccountID: "Account ID",
+	},
+	cloudcone.ID: map[string]string{
+		cloudcone.ApiKey:  "Api Key",
+		cloudcone.ApiHash: "Api Hash",
 	},
 }
 

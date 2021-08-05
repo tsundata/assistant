@@ -16,7 +16,7 @@ func DomainAnalyticsReport(ctx context.Context, comp rulebot.IComponent) []resul
 		return []result.Result{result.EmptyResult()}
 	}
 	// get key
-	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Name: cloudflare.ID})
+	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Type: cloudflare.ID})
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

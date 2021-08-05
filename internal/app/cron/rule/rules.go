@@ -57,6 +57,13 @@ var rules = []Rule{
 			return agent.TodoRemind(ctx, comp)
 		},
 	},
+	{
+		Name: "cloudcone_billing",
+		When: "50 23 * * SUN",
+		Action: func(ctx context.Context, comp rulebot.IComponent) []result.Result {
+			return agent.CloudconeWeeklyBilling(ctx, comp)
+		},
+	},
 }
 
 var Options = []rulebot.Option{

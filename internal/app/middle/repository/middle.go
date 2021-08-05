@@ -126,7 +126,7 @@ func (r *RqliteMiddleRepository) CreateApp(app pb.App) (int64, error) {
 }
 
 func (r *RqliteMiddleRepository) GetCredentialByName(name string) (pb.Credential, error) {
-	rows, err := r.db.QueryOne("SELECT id, name, `type` FROM credentials WHERE name = '%s' LIMIT 1", name)
+	rows, err := r.db.QueryOne("SELECT * FROM credentials WHERE name = '%s' LIMIT 1", name)
 	if err != nil {
 		return pb.Credential{}, nil
 	}
@@ -144,7 +144,7 @@ func (r *RqliteMiddleRepository) GetCredentialByName(name string) (pb.Credential
 }
 
 func (r *RqliteMiddleRepository) GetCredentialByType(t string) (pb.Credential, error) {
-	rows, err := r.db.QueryOne("SELECT id, name, `type` FROM credentials WHERE type = '%s' LIMIT 1", t)
+	rows, err := r.db.QueryOne("SELECT * FROM credentials WHERE type = '%s' LIMIT 1", t)
 	if err != nil {
 		return pb.Credential{}, nil
 	}
@@ -162,7 +162,7 @@ func (r *RqliteMiddleRepository) GetCredentialByType(t string) (pb.Credential, e
 }
 
 func (r *RqliteMiddleRepository) ListCredentials() ([]pb.Credential, error) {
-	rows, err := r.db.QueryOne("SELECT name, `type`, content, `created_at` FROM `credentials` ORDER BY `id` DESC")
+	rows, err := r.db.QueryOne("SELECT * FROM `credentials` ORDER BY `id` DESC")
 	if err != nil {
 		return nil, err
 	}
