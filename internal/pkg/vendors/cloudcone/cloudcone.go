@@ -23,9 +23,9 @@ type InstancesResponse struct {
 			Pvt      int    `json:"pvt,omitempty"`
 			NodeName string `json:"node_name,omitempty"`
 			State    struct {
-				Name  string `json:"name,omitempty" json:"name,omitempty"`
-				Color string `json:"color,omitempty" json:"color,omitempty"`
-				Id    int    `json:"id,omitempty" json:"id,omitempty"`
+				Name  string `json:"name,omitempty"`
+				Color string `json:"color,omitempty"`
+				Id    int    `json:"id,omitempty" `
 			} `json:"state"`
 			Xid    string `json:"xid,omitempty"`
 			Ips    string `json:"ips,omitempty"`
