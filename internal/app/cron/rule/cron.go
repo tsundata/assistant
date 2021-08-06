@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -77,10 +78,11 @@ func (r *cronRuleset) ruleWorker(ctx context.Context, b *rulebot.RuleBot, rule R
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			b.Comp.GetLogger().Info("cron "+rule.Name+": scheduled", zap.String("cron", rule.Name))
 			msgs := func() []result.Result {
 				defer func() {
 					if r := recover(); r != nil {
-						b.Comp.GetLogger().Info("ruleWorker recover " + rule.Name)
+						b.Comp.GetLogger().Warn("ruleWorker recover "+rule.Name, zap.String("cron", rule.Name))
 						if v, ok := r.(error); ok {
 							b.Comp.GetLogger().Error(v)
 						}
@@ -96,7 +98,7 @@ func (r *cronRuleset) ruleWorker(ctx context.Context, b *rulebot.RuleBot, rule R
 		}
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
-			b.Comp.GetLogger().Error(err)
+			b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
 			continue
 		}
 		time.Sleep(2 * time.Second)
