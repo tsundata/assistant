@@ -27,6 +27,11 @@ service MiddleSvc {
   rpc OpenSubscribe(SubscribeRequest) returns (StateReply) {}
   rpc CloseSubscribe(SubscribeRequest) returns (StateReply) {}
   rpc GetSubscribeStatus(SubscribeRequest) returns (StateReply) {}
+  rpc ListCron(CronRequest) returns (CronReply) {}
+  rpc RegisterCron(CronRequest) returns (StateReply) {}
+  rpc StartCron(CronRequest) returns (StateReply) {}
+  rpc StopCron(CronRequest) returns (StateReply) {}
+  rpc GetCronStatus(CronRequest) returns (StateReply) {}
 }
 
 message PageRequest {
@@ -151,6 +156,14 @@ message SubscribeRequest {
 }
 
 message SubscribeReply {
+  repeated string text = 1;
+}
+
+message CronRequest {
+  string text = 1;
+}
+
+message CronReply {
   repeated string text = 1;
 }
 

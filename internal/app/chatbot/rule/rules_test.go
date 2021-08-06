@@ -329,3 +329,63 @@ func TestDeleteRule(t *testing.T) {
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{}, res)
 }
+
+func TestCronListRule(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	gomock.InOrder(
+		middle.EXPECT().ListCron(gomock.Any(), gomock.Any()).Return(&pb.CronReply{Text: []string{"test1"}}, nil),
+	)
+
+	command := "cron list"
+	tokens, err := ParseCommand(command)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := rules[19]
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, tokens)
+	require.Equal(t, []string{"test1"}, res)
+}
+
+func TestCronStartRule(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	gomock.InOrder(
+		middle.EXPECT().StartCron(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
+	)
+
+	command := "cron start test1"
+	tokens, err := ParseCommand(command)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := rules[20]
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, tokens)
+	require.Equal(t, []string{"ok"}, res)
+}
+
+func TestCronStopRule(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	gomock.InOrder(
+		middle.EXPECT().StopCron(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
+	)
+
+	command := "cron stop test1"
+	tokens, err := ParseCommand(command)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := rules[21]
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, tokens)
+	require.Equal(t, []string{"ok"}, res)
+}

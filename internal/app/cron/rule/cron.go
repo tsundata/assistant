@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -66,25 +67,46 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 }
 
 func (r *cronRuleset) ruleWorker(ctx context.Context, b *rulebot.RuleBot, rule Rule) {
+	// register cron
+	_, err := b.Comp.Middle().RegisterCron(ctx, &pb.CronRequest{Text: rule.Name})
+	if err != nil {
+		b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
+		return
+	}
+
 	p, err := cron.ParseUTC(rule.When)
 	if err != nil {
-		b.Comp.GetLogger().Error(err)
+		b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		b.Comp.GetLogger().Error(err)
+		b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
 		return
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
+			// check status
+			state, err := b.Comp.Middle().GetCronStatus(context.Background(), &pb.CronRequest{
+				Text: rule.Name,
+			})
+			if err != nil {
+				b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
+				continue
+			}
+			// stop
+			if !state.State {
+				time.Sleep(30 * time.Second)
+				continue
+			}
+
 			b.Comp.GetLogger().Info("cron "+rule.Name+": scheduled", zap.String("cron", rule.Name))
 			msgs := func() []result.Result {
 				defer func() {
 					if r := recover(); r != nil {
 						b.Comp.GetLogger().Warn("ruleWorker recover "+rule.Name, zap.String("cron", rule.Name))
 						if v, ok := r.(error); ok {
-							b.Comp.GetLogger().Error(v)
+							b.Comp.GetLogger().Error(v, zap.String("cron", rule.Name))
 						}
 					}
 				}()

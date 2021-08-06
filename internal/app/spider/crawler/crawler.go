@@ -108,22 +108,22 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	s.logger.Info("spider "+name+": crawl...", zap.String("spider", name))
 	p, err := cron.ParseUTC(r.When)
 	if err != nil {
-		s.logger.Error(err)
+		s.logger.Error(err, zap.String("spider", name))
 		return
 	}
 	nextTime, err := p.Next(time.Now())
 	if err != nil {
-		s.logger.Error(err)
+		s.logger.Error(err, zap.String("spider", name))
 		return
 	}
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
-			s.logger.Info("spider "+name+": scheduled", zap.String("spider", name))
+			// check status
 			state, err := s.middle.GetSubscribeStatus(context.Background(), &pb.SubscribeRequest{
 				Text: name,
 			})
 			if err != nil {
-				s.logger.Error(err)
+				s.logger.Error(err, zap.String("spider", name))
 				continue
 			}
 			// unsubscribe
@@ -132,6 +132,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 				continue
 			}
 
+			s.logger.Info("spider "+name+": scheduled", zap.String("spider", name))
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {

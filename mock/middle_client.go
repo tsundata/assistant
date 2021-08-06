@@ -196,6 +196,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetCredentials(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCredentials), varargs...)
 }
 
+// GetCronStatus mocks base method.
+func (m *MockMiddleSvcClient) GetCronStatus(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetCronStatus", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCronStatus indicates an expected call of GetCronStatus.
+func (mr *MockMiddleSvcClientMockRecorder) GetCronStatus(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCronStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCronStatus), varargs...)
+}
+
 // GetMaskingCredentials mocks base method.
 func (m *MockMiddleSvcClient) GetMaskingCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.MaskingReply, error) {
 	m.ctrl.T.Helper()
@@ -376,6 +396,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetSubscribeStatus(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetSubscribeStatus), varargs...)
 }
 
+// ListCron mocks base method.
+func (m *MockMiddleSvcClient) ListCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.CronReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListCron", varargs...)
+	ret0, _ := ret[0].(*pb.CronReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCron indicates an expected call of ListCron.
+func (mr *MockMiddleSvcClientMockRecorder) ListCron(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCron", reflect.TypeOf((*MockMiddleSvcClient)(nil).ListCron), varargs...)
+}
+
 // ListSubscribe mocks base method.
 func (m *MockMiddleSvcClient) ListSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.SubscribeReply, error) {
 	m.ctrl.T.Helper()
@@ -416,6 +456,26 @@ func (mr *MockMiddleSvcClientMockRecorder) OpenSubscribe(ctx, in interface{}, op
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).OpenSubscribe), varargs...)
 }
 
+// RegisterCron mocks base method.
+func (m *MockMiddleSvcClient) RegisterCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RegisterCron", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterCron indicates an expected call of RegisterCron.
+func (mr *MockMiddleSvcClientMockRecorder) RegisterCron(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterCron", reflect.TypeOf((*MockMiddleSvcClient)(nil).RegisterCron), varargs...)
+}
+
 // RegisterSubscribe mocks base method.
 func (m *MockMiddleSvcClient) RegisterSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -434,6 +494,46 @@ func (mr *MockMiddleSvcClientMockRecorder) RegisterSubscribe(ctx, in interface{}
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).RegisterSubscribe), varargs...)
+}
+
+// StartCron mocks base method.
+func (m *MockMiddleSvcClient) StartCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "StartCron", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StartCron indicates an expected call of StartCron.
+func (mr *MockMiddleSvcClientMockRecorder) StartCron(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartCron", reflect.TypeOf((*MockMiddleSvcClient)(nil).StartCron), varargs...)
+}
+
+// StopCron mocks base method.
+func (m *MockMiddleSvcClient) StopCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "StopCron", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StopCron indicates an expected call of StopCron.
+func (mr *MockMiddleSvcClientMockRecorder) StopCron(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StopCron", reflect.TypeOf((*MockMiddleSvcClient)(nil).StopCron), varargs...)
 }
 
 // StoreAppOAuth mocks base method.
@@ -599,6 +699,21 @@ func (mr *MockMiddleSvcServerMockRecorder) GetCredentials(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentials", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCredentials), arg0, arg1)
 }
 
+// GetCronStatus mocks base method.
+func (m *MockMiddleSvcServer) GetCronStatus(arg0 context.Context, arg1 *pb.CronRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCronStatus", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCronStatus indicates an expected call of GetCronStatus.
+func (mr *MockMiddleSvcServerMockRecorder) GetCronStatus(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCronStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCronStatus), arg0, arg1)
+}
+
 // GetMaskingCredentials mocks base method.
 func (m *MockMiddleSvcServer) GetMaskingCredentials(arg0 context.Context, arg1 *pb.TextRequest) (*pb.MaskingReply, error) {
 	m.ctrl.T.Helper()
@@ -734,6 +849,21 @@ func (mr *MockMiddleSvcServerMockRecorder) GetSubscribeStatus(arg0, arg1 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetSubscribeStatus), arg0, arg1)
 }
 
+// ListCron mocks base method.
+func (m *MockMiddleSvcServer) ListCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.CronReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListCron", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CronReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCron indicates an expected call of ListCron.
+func (mr *MockMiddleSvcServerMockRecorder) ListCron(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCron", reflect.TypeOf((*MockMiddleSvcServer)(nil).ListCron), arg0, arg1)
+}
+
 // ListSubscribe mocks base method.
 func (m *MockMiddleSvcServer) ListSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
 	m.ctrl.T.Helper()
@@ -764,6 +894,21 @@ func (mr *MockMiddleSvcServerMockRecorder) OpenSubscribe(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).OpenSubscribe), arg0, arg1)
 }
 
+// RegisterCron mocks base method.
+func (m *MockMiddleSvcServer) RegisterCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterCron", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterCron indicates an expected call of RegisterCron.
+func (mr *MockMiddleSvcServerMockRecorder) RegisterCron(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterCron", reflect.TypeOf((*MockMiddleSvcServer)(nil).RegisterCron), arg0, arg1)
+}
+
 // RegisterSubscribe mocks base method.
 func (m *MockMiddleSvcServer) RegisterSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -777,6 +922,36 @@ func (m *MockMiddleSvcServer) RegisterSubscribe(arg0 context.Context, arg1 *pb.S
 func (mr *MockMiddleSvcServerMockRecorder) RegisterSubscribe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).RegisterSubscribe), arg0, arg1)
+}
+
+// StartCron mocks base method.
+func (m *MockMiddleSvcServer) StartCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StartCron", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StartCron indicates an expected call of StartCron.
+func (mr *MockMiddleSvcServerMockRecorder) StartCron(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartCron", reflect.TypeOf((*MockMiddleSvcServer)(nil).StartCron), arg0, arg1)
+}
+
+// StopCron mocks base method.
+func (m *MockMiddleSvcServer) StopCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StopCron", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StopCron indicates an expected call of StopCron.
+func (mr *MockMiddleSvcServerMockRecorder) StopCron(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StopCron", reflect.TypeOf((*MockMiddleSvcServer)(nil).StopCron), arg0, arg1)
 }
 
 // StoreAppOAuth mocks base method.
