@@ -1,11 +1,11 @@
 package component
 
 import (
+	"crypto/rand"
 	"fmt"
 	"html/template"
-	"math/rand"
+	"math/big"
 	"strings"
-	"time"
 )
 
 type Select struct {
@@ -15,8 +15,7 @@ type Select struct {
 }
 
 func (c *Select) GetContent() template.HTML {
-	rand.Seed(time.Now().Unix())
-	id := rand.Int()
+	n, _ := rand.Int(rand.Reader, big.NewInt(1000))
 
 	var o strings.Builder
 	for k, v := range c.Value {
@@ -27,5 +26,5 @@ func (c *Select) GetContent() template.HTML {
 <div class="select">
 	<label for="input-%d">%s:</label>
 	<select name="%s" id="select-%d">%s</select>
-</div>`, id, c.Title, c.Name, id, o.String()))
+</div>`, n.Int64(), c.Title, c.Name, n.Int64(), o.String()))
 }
