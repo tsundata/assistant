@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+const RuleKey = "subscribe:rule"
+
 type Middle struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
@@ -418,4 +420,76 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	}
 
 	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
+}
+
+func (s *Middle) ListSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
+	res, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []string
+	for source, isSubscribe := range res {
+		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
+	}
+
+	return &pb.SubscribeReply{
+		Text: result,
+	}, nil
+}
+
+func (s *Middle) RegisterSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HMGet(ctx, RuleKey, payload.GetText()).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	exist := true
+	if len(resp) == 0 || (len(resp) == 1 && resp[0] == nil) {
+		exist = false
+	}
+
+	if !exist {
+		_, err = s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) OpenSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) CloseSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "false").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetSubscribeStatus(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range resp {
+		if k == payload.GetText() {
+			return &pb.StateReply{
+				State: v == "true",
+			}, nil
+		}
+	}
+	return &pb.StateReply{
+		State: false,
+	}, nil
 }

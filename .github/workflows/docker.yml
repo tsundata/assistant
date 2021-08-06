@@ -141,18 +141,6 @@ jobs:
             ghcr.io/${{ secrets.IMAGE_USER }}/storage:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/storage:${{ steps.meta.outputs.tag }}
 
-      - name: Build and push subscribe
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/subscribe/Dockerfile
-          tags: |
-            ${{ secrets.IMAGE_USER }}/subscribe:latest
-            ${{ secrets.IMAGE_USER }}/subscribe:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/subscribe:latest
-            ghcr.io/${{ secrets.IMAGE_USER }}/subscribe:${{ steps.meta.outputs.tag }}
-
       - name: Build and push task
         uses: docker/build-push-action@v2
         with:

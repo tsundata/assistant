@@ -47,7 +47,7 @@ func TestTodoRemind1(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := rulebot.NewComponent(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
@@ -107,7 +107,7 @@ func TestTodoRemind2(t *testing.T) {
 	}
 
 	comp := rulebot.NewComponent(nil, rdb, nil, nil,
-		nil, nil, nil, nil,
+		nil, nil, nil,
 		todo, nil, nil)
 
 	type args struct {
@@ -165,7 +165,7 @@ func TestTodoRemind3(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := rulebot.NewComponent(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
@@ -224,7 +224,7 @@ func TestTodoRemind4(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := rulebot.NewComponent(nil, rdb, nil, nil,
+	comp := rulebot.NewComponent(nil, rdb, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
@@ -300,11 +300,11 @@ func TestTodoRemind5(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp1 := rulebot.NewComponent(nil, rdb, nil, nil,
+	comp1 := rulebot.NewComponent(nil, rdb, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 
-	comp2 := rulebot.NewComponent(nil, rdb, nil, nil,
+	comp2 := rulebot.NewComponent(nil, rdb, nil,
 		nil, nil, nil, nil,
 		todo, nil, nil)
 

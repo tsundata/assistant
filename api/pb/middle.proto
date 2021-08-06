@@ -22,6 +22,11 @@ service MiddleSvc {
   rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc GetStats(TextRequest) returns (TextReply) {}
   rpc GetRoleImageUrl(TextRequest) returns (TextReply) {}
+  rpc ListSubscribe(SubscribeRequest) returns (SubscribeReply) {}
+  rpc RegisterSubscribe(SubscribeRequest) returns (StateReply) {}
+  rpc OpenSubscribe(SubscribeRequest) returns (StateReply) {}
+  rpc CloseSubscribe(SubscribeRequest) returns (StateReply) {}
+  rpc GetSubscribeStatus(SubscribeRequest) returns (StateReply) {}
 }
 
 message PageRequest {
@@ -140,3 +145,12 @@ message KV {
   string key = 1;
   string value = 2;
 }
+
+message SubscribeRequest {
+  string text = 1;
+}
+
+message SubscribeReply {
+  repeated string text = 1;
+}
+

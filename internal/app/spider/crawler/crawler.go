@@ -29,7 +29,6 @@ type Crawler struct {
 	c         *config.AppConfig
 	rdb       *redis.Client
 	logger    log.Logger
-	subscribe pb.SubscribeSvcClient
 	middle    pb.MiddleSvcClient
 	message   pb.MessageSvcClient
 }
@@ -45,13 +44,11 @@ func (s *Crawler) SetService(
 	c *config.AppConfig,
 	rdb *redis.Client,
 	logger log.Logger,
-	subscribe pb.SubscribeSvcClient,
 	middle pb.MiddleSvcClient,
 	message pb.MessageSvcClient) {
 	s.c = c
 	s.rdb = rdb
 	s.logger = logger
-	s.subscribe = subscribe
 	s.middle = middle
 	s.message = message
 }
@@ -85,7 +82,7 @@ func (s *Crawler) LoadRule() error {
 		}
 
 		// register
-		_, err = s.subscribe.Register(ctx, &pb.SubscribeRequest{
+		_, err = s.middle.RegisterSubscribe(ctx, &pb.SubscribeRequest{
 			Text: r.Name,
 		})
 		if err != nil {
@@ -122,7 +119,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
 			s.logger.Info("spider "+name+": scheduled", zap.String("spider", name))
-			state, err := s.subscribe.Status(context.Background(), &pb.SubscribeRequest{
+			state, err := s.middle.GetSubscribeStatus(context.Background(), &pb.SubscribeRequest{
 				Text: name,
 			})
 			if err != nil {

@@ -36,6 +36,26 @@ func (m *MockMiddleSvcClient) EXPECT() *MockMiddleSvcClientMockRecorder {
 	return m.recorder
 }
 
+// CloseSubscribe mocks base method.
+func (m *MockMiddleSvcClient) CloseSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CloseSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CloseSubscribe indicates an expected call of CloseSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) CloseSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).CloseSubscribe), varargs...)
+}
+
 // CreateCredential mocks base method.
 func (m *MockMiddleSvcClient) CreateCredential(ctx context.Context, in *pb.KVsRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -336,6 +356,86 @@ func (mr *MockMiddleSvcClientMockRecorder) GetStats(ctx, in interface{}, opts ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetStats), varargs...)
 }
 
+// GetSubscribeStatus mocks base method.
+func (m *MockMiddleSvcClient) GetSubscribeStatus(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetSubscribeStatus", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubscribeStatus indicates an expected call of GetSubscribeStatus.
+func (mr *MockMiddleSvcClientMockRecorder) GetSubscribeStatus(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetSubscribeStatus), varargs...)
+}
+
+// ListSubscribe mocks base method.
+func (m *MockMiddleSvcClient) ListSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.SubscribeReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.SubscribeReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSubscribe indicates an expected call of ListSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) ListSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).ListSubscribe), varargs...)
+}
+
+// OpenSubscribe mocks base method.
+func (m *MockMiddleSvcClient) OpenSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "OpenSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// OpenSubscribe indicates an expected call of OpenSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) OpenSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).OpenSubscribe), varargs...)
+}
+
+// RegisterSubscribe mocks base method.
+func (m *MockMiddleSvcClient) RegisterSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RegisterSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterSubscribe indicates an expected call of RegisterSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) RegisterSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).RegisterSubscribe), varargs...)
+}
+
 // StoreAppOAuth mocks base method.
 func (m *MockMiddleSvcClient) StoreAppOAuth(ctx context.Context, in *pb.AppRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -377,6 +477,21 @@ func NewMockMiddleSvcServer(ctrl *gomock.Controller) *MockMiddleSvcServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockMiddleSvcServer) EXPECT() *MockMiddleSvcServerMockRecorder {
 	return m.recorder
+}
+
+// CloseSubscribe mocks base method.
+func (m *MockMiddleSvcServer) CloseSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloseSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CloseSubscribe indicates an expected call of CloseSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) CloseSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).CloseSubscribe), arg0, arg1)
 }
 
 // CreateCredential mocks base method.
@@ -602,6 +717,66 @@ func (m *MockMiddleSvcServer) GetStats(arg0 context.Context, arg1 *pb.TextReques
 func (mr *MockMiddleSvcServerMockRecorder) GetStats(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetStats), arg0, arg1)
+}
+
+// GetSubscribeStatus mocks base method.
+func (m *MockMiddleSvcServer) GetSubscribeStatus(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubscribeStatus", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubscribeStatus indicates an expected call of GetSubscribeStatus.
+func (mr *MockMiddleSvcServerMockRecorder) GetSubscribeStatus(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetSubscribeStatus), arg0, arg1)
+}
+
+// ListSubscribe mocks base method.
+func (m *MockMiddleSvcServer) ListSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.SubscribeReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSubscribe indicates an expected call of ListSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) ListSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).ListSubscribe), arg0, arg1)
+}
+
+// OpenSubscribe mocks base method.
+func (m *MockMiddleSvcServer) OpenSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OpenSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// OpenSubscribe indicates an expected call of OpenSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) OpenSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).OpenSubscribe), arg0, arg1)
+}
+
+// RegisterSubscribe mocks base method.
+func (m *MockMiddleSvcServer) RegisterSubscribe(arg0 context.Context, arg1 *pb.SubscribeRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterSubscribe indicates an expected call of RegisterSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) RegisterSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).RegisterSubscribe), arg0, arg1)
 }
 
 // StoreAppOAuth mocks base method.

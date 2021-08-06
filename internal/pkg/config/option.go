@@ -8,7 +8,6 @@ type SvcAddr struct {
 	Middle    string `json:"middle" yaml:"middle"`
 	Workflow  string `json:"workflow" yaml:"workflow"`
 	User      string `json:"user" yaml:"user"`
-	Subscribe string `json:"subscribe" yaml:"subscribe"`
 	Todo      string `json:"todo" yaml:"todo"`
 	Finance   string `json:"finance" yaml:"finance"`
 	NLP       string `json:"nlp" yaml:"nlp"`

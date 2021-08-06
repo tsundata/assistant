@@ -56,10 +56,6 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	subscribeSvcClient, err := rpcclient.NewSubscribe(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -68,7 +64,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, logLogger, subscribeSvcClient, middleSvcClient, messageSvcClient)
+	application, err := spider.NewApp(appConfig, redisClient, logLogger, middleSvcClient, messageSvcClient)
 	if err != nil {
 		return nil, err
 	}
