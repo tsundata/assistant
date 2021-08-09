@@ -297,3 +297,57 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 		})
 	}
 }
+
+func TestMiddleRepository_ListTags(t *testing.T) {
+	sto, err := CreateMiddleRepository(enum.Middle)
+	if err != nil {
+		t.Fatalf("create middle Repository error, %+v", err)
+	}
+
+	tests := []struct {
+		name    string
+		r       MiddleRepository
+		wantErr bool
+	}{
+		{"case1", sto, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.ListTags()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MysqlMiddleRepository.CreateCredential() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestMiddleRepository_GetOrCreateTag(t *testing.T) {
+	sto, err := CreateMiddleRepository(enum.Middle)
+	if err != nil {
+		t.Fatalf("create middle Repository error, %+v", err)
+	}
+
+	type args struct {
+		tag pb.Tag
+	}
+	tests := []struct {
+		name    string
+		r       MiddleRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{tag: pb.Tag{Name: "test1"}}, false},
+		{"case2", sto, args{tag: pb.Tag{Name: "test2"}}, false},
+		{"case3", sto, args{tag: pb.Tag{Name: "test2"}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetOrCreateTag(tt.args.tag)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MysqlMiddleRepository.CreateCredential() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}

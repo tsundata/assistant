@@ -566,3 +566,37 @@ func (s *Middle) GetCronStatus(ctx context.Context, payload *pb.CronRequest) (*p
 		State: false,
 	}, nil
 }
+
+func (s *Middle) GetOrCreateTag(_ context.Context, payload *pb.TagRequest) (*pb.TagReply, error) {
+	tag, err := s.repo.GetOrCreateTag(pb.Tag{
+		Name: payload.Tag.GetName(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TagReply{Tag: &pb.Tag{
+		Id:        tag.Id,
+		Name:      tag.Name,
+		CreatedAt: tag.CreatedAt,
+	}}, nil
+}
+
+func (s *Middle) GetTags(_ context.Context, _ *pb.TagRequest) (*pb.TagsReply, error) {
+	items, err := s.repo.ListTags()
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []*pb.Tag
+	for _, item := range items {
+		tags = append(tags, &pb.Tag{
+			Id:        item.Id,
+			Name:      item.Name,
+			CreatedAt: item.CreatedAt,
+		})
+	}
+
+	return &pb.TagsReply{
+		Tags: tags,
+	}, nil
+}

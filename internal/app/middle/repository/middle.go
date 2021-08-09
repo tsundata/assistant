@@ -19,6 +19,8 @@ type MiddleRepository interface {
 	GetCredentialByType(t string) (pb.Credential, error)
 	ListCredentials() ([]pb.Credential, error)
 	CreateCredential(credential pb.Credential) (int64, error)
+	ListTags() ([]pb.Tag, error)
+	GetOrCreateTag(tag pb.Tag) (pb.Tag, error)
 }
 
 type RqliteMiddleRepository struct {
@@ -188,4 +190,53 @@ func (r *RqliteMiddleRepository) CreateCredential(credential pb.Credential) (int
 		return 0, err
 	}
 	return res.LastInsertID, nil
+}
+
+func (r *RqliteMiddleRepository) ListTags() ([]pb.Tag, error) {
+	rows, err := r.db.QueryOne("SELECT * FROM `tags` ORDER BY `id` DESC")
+	if err != nil {
+		return nil, err
+	}
+
+	var items []pb.Tag
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return nil, err
+		}
+		var item pb.Tag
+		util.Inject(&item, m)
+		items = append(items, item)
+	}
+
+	return items, nil
+}
+
+func (r *RqliteMiddleRepository) GetOrCreateTag(tag pb.Tag) (pb.Tag, error) {
+	rows, err := r.db.QueryOne("SELECT * FROM tags WHERE name = '%s' LIMIT 1", tag.Name)
+	if err != nil {
+		return pb.Tag{}, nil
+	}
+
+	var find pb.Tag
+	for rows.Next() {
+		m, err := rows.Map()
+		if err != nil {
+			return pb.Tag{}, err
+		}
+		util.Inject(&find, m)
+	}
+
+	if find.Id <= 0 {
+		now := util.Now()
+		res, err := r.db.WriteOne("INSERT INTO `tags` (`name`, `created_at`) VALUES ('%s', '%s')", tag.Name, now)
+		if err != nil {
+			return pb.Tag{}, err
+		}
+		tag.Id = res.LastInsertID
+		tag.CreatedAt = now
+		return tag, nil
+	}
+
+	return find, nil
 }

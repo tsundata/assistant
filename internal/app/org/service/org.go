@@ -5,10 +5,12 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 )
 
-type Org struct{}
+type Org struct {
+	middle pb.MiddleSvcClient
+}
 
-func NewOrg() *Org {
-	return &Org{}
+func NewOrg(middle pb.MiddleSvcClient) *Org {
+	return &Org{middle: middle}
 }
 
 func (o Org) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {

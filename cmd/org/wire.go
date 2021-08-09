@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/org"
+	"github.com/tsundata/assistant/internal/app/org/rpcclient"
 	"github.com/tsundata/assistant/internal/app/org/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -30,6 +31,7 @@ var providerSet = wire.NewSet(
 	etcd.ProviderSet,
 	service.ProviderSet,
 	newrelic.ProviderSet,
+	rpcclient.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

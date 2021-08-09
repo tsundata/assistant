@@ -139,7 +139,7 @@ CREATE TABLE `objectives`
 (
     `id`         INTEGER     NOT NULL,
     `name`       VARCHAR(50) NOT NULL,
-    `tag`        VARCHAR(50) NOT NULL DEFAULT '',
+    `tag_id`     INTEGER     NOT NULL,
     `created_at` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 );
@@ -149,9 +149,17 @@ CREATE TABLE `key_results`
     `id`           INTEGER     NOT NULL,
     `objective_id` INTEGER     NOT NULL,
     `name`         VARCHAR(50) NOT NULL,
-    `tag`          VARCHAR(50) NOT NULL DEFAULT '',
+    `tag_id`       INTEGER     NOT NULL,
     "complete"     TINYINT     NOT NULL,
     `created_at`   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `tags`
+(
+    `id`         INTEGER     NOT NULL,
+    `name`       VARCHAR(50) NOT NULL,
+    `created_at` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 );

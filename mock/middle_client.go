@@ -256,6 +256,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetMenu(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMenu), varargs...)
 }
 
+// GetOrCreateTag mocks base method.
+func (m *MockMiddleSvcClient) GetOrCreateTag(ctx context.Context, in *pb.TagRequest, opts ...grpc.CallOption) (*pb.TagReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetOrCreateTag", varargs...)
+	ret0, _ := ret[0].(*pb.TagReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrCreateTag indicates an expected call of GetOrCreateTag.
+func (mr *MockMiddleSvcClientMockRecorder) GetOrCreateTag(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrCreateTag", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetOrCreateTag), varargs...)
+}
+
 // GetPage mocks base method.
 func (m *MockMiddleSvcClient) GetPage(ctx context.Context, in *pb.PageRequest, opts ...grpc.CallOption) (*pb.PageReply, error) {
 	m.ctrl.T.Helper()
@@ -394,6 +414,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetSubscribeStatus(ctx, in interface{
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetSubscribeStatus), varargs...)
+}
+
+// GetTags mocks base method.
+func (m *MockMiddleSvcClient) GetTags(ctx context.Context, in *pb.TagRequest, opts ...grpc.CallOption) (*pb.TagsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetTags", varargs...)
+	ret0, _ := ret[0].(*pb.TagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTags indicates an expected call of GetTags.
+func (mr *MockMiddleSvcClientMockRecorder) GetTags(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetTags), varargs...)
 }
 
 // ListCron mocks base method.
@@ -744,6 +784,21 @@ func (mr *MockMiddleSvcServerMockRecorder) GetMenu(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMenu), arg0, arg1)
 }
 
+// GetOrCreateTag mocks base method.
+func (m *MockMiddleSvcServer) GetOrCreateTag(arg0 context.Context, arg1 *pb.TagRequest) (*pb.TagReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrCreateTag", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TagReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrCreateTag indicates an expected call of GetOrCreateTag.
+func (mr *MockMiddleSvcServerMockRecorder) GetOrCreateTag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrCreateTag", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetOrCreateTag), arg0, arg1)
+}
+
 // GetPage mocks base method.
 func (m *MockMiddleSvcServer) GetPage(arg0 context.Context, arg1 *pb.PageRequest) (*pb.PageReply, error) {
 	m.ctrl.T.Helper()
@@ -847,6 +902,21 @@ func (m *MockMiddleSvcServer) GetSubscribeStatus(arg0 context.Context, arg1 *pb.
 func (mr *MockMiddleSvcServerMockRecorder) GetSubscribeStatus(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribeStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetSubscribeStatus), arg0, arg1)
+}
+
+// GetTags mocks base method.
+func (m *MockMiddleSvcServer) GetTags(arg0 context.Context, arg1 *pb.TagRequest) (*pb.TagsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTags", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTags indicates an expected call of GetTags.
+func (mr *MockMiddleSvcServerMockRecorder) GetTags(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetTags), arg0, arg1)
 }
 
 // ListCron mocks base method.

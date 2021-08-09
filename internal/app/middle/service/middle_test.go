@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -1023,6 +1024,102 @@ func TestSubscribe_Status(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Subscribe.Status() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMiddle_GetTags(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListTags().Return([]pb.Tag{{
+			Id:        1,
+			Name:      "test1",
+			CreatedAt: util.Now(),
+		}}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo, nil)
+
+	type args struct {
+		in0 context.Context
+		in1 *pb.TagRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Middle
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
+			1,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetTags(tt.args.in0, tt.args.in1)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Middle.GetTags() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && len(got.Tags) != tt.want {
+				t.Errorf("Middle.GetTags() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMiddle_GetOrCreateTag(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetOrCreateTag(gomock.Any()).Return(pb.Tag{
+			Id:        1,
+			Name:      "test1",
+			CreatedAt: util.Now(),
+		}, nil),
+	)
+
+	s := NewMiddle(nil, nil, repo, nil)
+
+	type args struct {
+		in0 context.Context
+		in1 *pb.TagRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Middle
+		args    args
+		want    pb.Tag
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
+			pb.Tag{Id: 1, Name: "test1"},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetOrCreateTag(tt.args.in0, tt.args.in1)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Middle.GetOrCreateTag() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && got.Tag.Id != tt.want.Id && got.Tag.Name != tt.want.Name {
+				t.Errorf("Middle.GetOrCreateTag() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -32,6 +32,8 @@ service MiddleSvc {
   rpc StartCron(CronRequest) returns (StateReply) {}
   rpc StopCron(CronRequest) returns (StateReply) {}
   rpc GetCronStatus(CronRequest) returns (StateReply) {}
+  rpc GetOrCreateTag(TagRequest) returns (TagReply) {}
+  rpc GetTags(TagRequest) returns (TagsReply) {}
 }
 
 message PageRequest {
@@ -167,3 +169,23 @@ message CronReply {
   repeated string text = 1;
 }
 
+message Tag {
+  // @inject_tag: db:"id"
+  int64  id = 1;
+  // @inject_tag: db:"name"
+  string name = 2;
+  // @inject_tag: db:"created_at"
+  string createdAt = 3;
+}
+
+message TagRequest {
+  Tag tag = 1;
+}
+
+message TagReply {
+  Tag tag = 1;
+}
+
+message TagsReply {
+  repeated Tag tags = 1;
+}

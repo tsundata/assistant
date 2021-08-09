@@ -19,10 +19,11 @@ service OrgSvc {
 message Objective {
   // @inject_tag: db:"name"
   string name = 1;
-  // @inject_tag: db:"tag"
   string tag = 2;
+  // @inject_tag: db:"tag_id"
+  int64 tagId = 3;
   // @inject_tag: db:"created_at"
-  string createdAt = 3;
+  string createdAt = 4;
 }
 
 message KeyResult {
@@ -30,14 +31,15 @@ message KeyResult {
   string name = 1;
   // @inject_tag: db:"objective_id"
   int64 objectiveId = 2;
-  // @inject_tag: db:"tag"
   string tag = 3;
+  // @inject_tag: db:"tag_id"
+  int64 tagId = 4;
   // @inject_tag: db:"complete"
-  bool complete = 4;
+  bool complete = 5;
   // @inject_tag: db:"created_at"
-  string createdAt = 5;
+  string createdAt = 6;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 6;
+  string updatedAt = 7;
 }
 
 message ObjectiveRequest {

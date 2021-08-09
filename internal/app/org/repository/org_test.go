@@ -23,7 +23,7 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 	}{
 		{"case1", sto, args{objective: pb.Objective{
 			Name: "obj1",
-			Tag:  "obj1",
+			TagId:  1,
 		}}, false},
 	}
 	for _, tt := range tests {
@@ -130,7 +130,7 @@ func TestOrgRepository_CreateKeyResult(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{keyResult: pb.KeyResult{ObjectiveId: 1, Name: "kr1", Tag: "kr1"}}, false},
+		{"case1", sto, args{keyResult: pb.KeyResult{ObjectiveId: 1, Name: "kr1", TagId: 1}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

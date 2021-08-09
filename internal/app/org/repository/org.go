@@ -64,7 +64,7 @@ func (r *RqliteOrgRepository) ListObjectives() ([]pb.Objective, error) {
 }
 
 func (r *RqliteOrgRepository) CreateObjective(objective pb.Objective) (int64, error) {
-	res, err := r.db.WriteOne("INSERT INTO `objectives` (`name`, `tag`, `created_at`) VALUES ('%s', '%s', '%s')", objective.Name, objective.Tag, util.Now())
+	res, err := r.db.WriteOne("INSERT INTO `objectives` (`name`, `tag_id`, `created_at`) VALUES ('%s', %d, '%s')", objective.Name, objective.TagId, util.Now())
 	if err != nil {
 		return 0, err
 	}
@@ -116,7 +116,7 @@ func (r *RqliteOrgRepository) ListKeyResults() ([]pb.KeyResult, error) {
 }
 
 func (r *RqliteOrgRepository) CreateKeyResult(keyResult pb.KeyResult) (int64, error) {
-	res, err := r.db.WriteOne("INSERT INTO `key_results` (`objective_id`, `name`, `tag`, `complete`, `created_at`, `updated_at`) VALUES (%d, '%s', '%s', 0, '%s', '%s')", keyResult.ObjectiveId, keyResult.Name, keyResult.Tag, util.Now(), util.Now())
+	res, err := r.db.WriteOne("INSERT INTO `key_results` (`objective_id`, `name`, `tag_id`, `complete`, `created_at`, `updated_at`) VALUES (%d, '%s', %d, 0, '%s', '%s')", keyResult.ObjectiveId, keyResult.Name, keyResult.TagId, util.Now(), util.Now())
 	if err != nil {
 		return 0, err
 	}

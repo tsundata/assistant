@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/org"
+	"github.com/tsundata/assistant/internal/app/org/rpcclient"
 	"github.com/tsundata/assistant/internal/app/org/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -32,8 +33,6 @@ func CreateApp(id string) (*app.Application, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	serviceOrg := service.NewOrg()
-	initServer := service.CreateInitServerFn(serviceOrg)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -42,6 +41,20 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	clientOptions, err := rpc.NewClientOptions(tracer)
+	if err != nil {
+		return nil, err
+	}
+	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceOrg := service.NewOrg(middleSvcClient)
+	initServer := service.CreateInitServerFn(serviceOrg)
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
@@ -63,4 +76,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, org.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, org.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, newrelic.ProviderSet, rpcclient.ProviderSet)
