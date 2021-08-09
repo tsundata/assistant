@@ -15,7 +15,7 @@ var rqliteCmd = &cobra.Command{
 	Use:   "rqlite",
 	Short: "import sql to rqlite",
 	Run: func(cmd *cobra.Command, args []string) {
-		sql, err := ioutil.ReadFile("./scripts/sqlite.sql")
+		sql, err := ioutil.ReadFile("./scripts/app.sql")
 		if err != nil {
 			fmt.Println(err)
 			return
