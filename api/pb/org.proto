@@ -1,0 +1,25 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+
+option go_package = "api/pb";
+
+service OrgSvc {
+  rpc CreateObjective(ObjectiveRequest) returns (StateReply) {}
+  rpc GetObjective(ObjectiveRequest) returns (ObjectiveReply) {}
+  rpc GetObjectives(ObjectiveRequest) returns (ObjectiveReply) {}
+  rpc DeleteObjective(ObjectiveRequest) returns (StateReply) {}
+}
+
+message Objective {
+  string name = 1;
+}
+
+message ObjectiveRequest {
+  Objective objective = 1;
+}
+
+message ObjectiveReply {
+  Objective objective = 1;
+}

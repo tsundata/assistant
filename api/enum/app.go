@@ -10,12 +10,12 @@ const (
 	NLP       = "nlp"
 	Spider    = "spider"
 	Storage   = "storage"
-	Subscribe = "subscribe"
 	Task      = "task"
 	Todo      = "todo"
 	User      = "user"
 	Web       = "web"
 	Workflow  = "workflow"
+	Org       = "org"
 
 	RedisAgent  = "redis_agent"
 	ServerAgent = "server_agent"
