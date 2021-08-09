@@ -9,7 +9,7 @@ import (
 func TestTodoRepository_CreateTodo(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	type args struct {
 		todo pb.Todo
@@ -36,7 +36,7 @@ func TestTodoRepository_CreateTodo(t *testing.T) {
 func TestTodoRepository_ListTodos(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	tests := []struct {
 		name    string
@@ -59,7 +59,7 @@ func TestTodoRepository_ListTodos(t *testing.T) {
 func TestTodoRepository_ListRemindTodos(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	tests := []struct {
 		name    string
@@ -82,7 +82,7 @@ func TestTodoRepository_ListRemindTodos(t *testing.T) {
 func TestTodoRepository_GetTodo(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	type args struct {
 		id int64
@@ -109,7 +109,7 @@ func TestTodoRepository_GetTodo(t *testing.T) {
 func TestTodoRepository_CompleteTodo(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	type args struct {
 		id int64
@@ -134,7 +134,7 @@ func TestTodoRepository_CompleteTodo(t *testing.T) {
 func TestTodoRepository_UpdateTodo(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	type args struct {
 		todo pb.Todo
@@ -159,7 +159,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 func TestTodoRepository_DeleteTodo(t *testing.T) {
 	sto, err := CreateTodoRepository(enum.Todo)
 	if err != nil {
-		t.Fatalf("create todo Preposiory error, %+v", err)
+		t.Fatalf("create todo Repository error, %+v", err)
 	}
 	type args struct {
 		id int64

@@ -9,7 +9,7 @@ import (
 func TestWorkflowRepository_GetTriggerByFlag(t *testing.T) {
 	sto, err := CreateWorkflowRepository(enum.Workflow)
 	if err != nil {
-		t.Fatalf("create workflow Preposiory error, %+v", err)
+		t.Fatalf("create workflow Repository error, %+v", err)
 	}
 	type args struct {
 		t    string
@@ -37,7 +37,7 @@ func TestWorkflowRepository_GetTriggerByFlag(t *testing.T) {
 func TestWorkflowRepository_ListTriggersByType(t *testing.T) {
 	sto, err := CreateWorkflowRepository(enum.Workflow)
 	if err != nil {
-		t.Fatalf("create workflow Preposiory error, %+v", err)
+		t.Fatalf("create workflow Repository error, %+v", err)
 	}
 	type args struct {
 		t string
@@ -64,7 +64,7 @@ func TestWorkflowRepository_ListTriggersByType(t *testing.T) {
 func TestWorkflowRepository_CreateTrigger(t *testing.T) {
 	sto, err := CreateWorkflowRepository(enum.Workflow)
 	if err != nil {
-		t.Fatalf("create workflow Preposiory error, %+v", err)
+		t.Fatalf("create workflow Repository error, %+v", err)
 	}
 	type args struct {
 		trigger pb.Trigger
@@ -91,7 +91,7 @@ func TestWorkflowRepository_CreateTrigger(t *testing.T) {
 func TestWorkflowRepository_DeleteTriggerByMessageID(t *testing.T) {
 	sto, err := CreateWorkflowRepository(enum.Workflow)
 	if err != nil {
-		t.Fatalf("create workflow Preposiory error, %+v", err)
+		t.Fatalf("create workflow Repository error, %+v", err)
 	}
 	type args struct {
 		messageID int64

@@ -10,7 +10,7 @@ import (
 func TestMiddleRepository_CreatePage(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	uuid, _ := util.GenerateUUID()
 	type args struct {
@@ -38,7 +38,7 @@ func TestMiddleRepository_CreatePage(t *testing.T) {
 func TestMiddleRepository_GetPageByUUID(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		uuid string
@@ -65,7 +65,7 @@ func TestMiddleRepository_GetPageByUUID(t *testing.T) {
 func TestMiddleRepository_ListApps(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	tests := []struct {
 		name    string
@@ -88,7 +88,7 @@ func TestMiddleRepository_ListApps(t *testing.T) {
 func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		t string
@@ -115,7 +115,7 @@ func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
 func TestMiddleRepository_GetAppByType(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		t string
@@ -142,7 +142,7 @@ func TestMiddleRepository_GetAppByType(t *testing.T) {
 func TestMiddleRepository_UpdateAppByID(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		id    int64
@@ -169,7 +169,7 @@ func TestMiddleRepository_UpdateAppByID(t *testing.T) {
 func TestMiddleRepository_CreateApp(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		app pb.App
@@ -196,7 +196,7 @@ func TestMiddleRepository_CreateApp(t *testing.T) {
 func TestMiddleRepository_GetCredentialByName(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		name string
@@ -223,7 +223,7 @@ func TestMiddleRepository_GetCredentialByName(t *testing.T) {
 func TestMiddleRepository_GetCredentialByType(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
 		t string
@@ -250,7 +250,7 @@ func TestMiddleRepository_GetCredentialByType(t *testing.T) {
 func TestMiddleRepository_ListCredentials(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	tests := []struct {
 		name    string
@@ -273,7 +273,7 @@ func TestMiddleRepository_ListCredentials(t *testing.T) {
 func TestMiddleRepository_CreateCredential(t *testing.T) {
 	sto, err := CreateMiddleRepository(enum.Middle)
 	if err != nil {
-		t.Fatalf("create middle Preposiory error, %+v", err)
+		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	name := util.GeneratePassword(10, "lowercase")
 	type args struct {
