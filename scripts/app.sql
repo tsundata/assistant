@@ -61,6 +61,11 @@ CREATE TABLE `roles`
     PRIMARY KEY (`id`)
 );
 
+INSERT INTO `roles` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
+                     `charisma`,
+                     `talent`, `intellect`)
+VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
+
 CREATE TABLE `role_records`
 (
     `id`          INTEGER     NOT NULL,
