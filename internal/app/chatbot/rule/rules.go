@@ -399,14 +399,17 @@ var rules = []Rule{
 			}
 
 			idStr := tokens[1].Value
-			id, err := strconv.Atoi(idStr)
+			id, err := strconv.ParseInt(idStr, 10, 64)
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
 
-			fmt.Println(id) // todo delete message
+			_, err = comp.Message().Delete(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
 
-			return []string{}
+			return []string{fmt.Sprintf("Deleted %d", id)}
 		},
 	},
 	{
