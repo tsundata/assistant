@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/org"
+	"github.com/tsundata/assistant/internal/app/org/repository"
 	"github.com/tsundata/assistant/internal/app/org/rpcclient"
 	"github.com/tsundata/assistant/internal/app/org/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -17,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -33,6 +35,15 @@ func CreateApp(id string) (*app.Application, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := rqlite.New(appConfig, newrelicApp, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	orgRepository := repository.NewRqliteOrgRepository(conn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -53,12 +64,8 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceOrg := service.NewOrg(middleSvcClient)
+	serviceOrg := service.NewOrg(orgRepository, middleSvcClient)
 	initServer := service.CreateInitServerFn(serviceOrg)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
@@ -76,4 +83,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, org.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, newrelic.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, org.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, newrelic.ProviderSet, rpcclient.ProviderSet, repository.ProviderSet, rqlite.ProviderSet)

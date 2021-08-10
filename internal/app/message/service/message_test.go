@@ -201,7 +201,7 @@ func TestMessage_Delete(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: 1}}},
-			nil,
+			&pb.TextReply{Text: ""},
 			false,
 		},
 		{

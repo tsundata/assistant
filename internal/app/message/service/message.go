@@ -132,7 +132,7 @@ func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.Tex
 		return nil, err
 	}
 
-	return nil, nil
+	return &pb.TextReply{Text: ""}, nil
 }
 
 func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {

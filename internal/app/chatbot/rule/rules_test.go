@@ -319,15 +319,23 @@ func TestRemindRule(t *testing.T) {
 }
 
 func TestDeleteRule(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	message := mock.NewMockMessageSvcClient(ctl)
+	gomock.InOrder(
+		message.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: ""}, nil),
+	)
+
 	command := "del 1"
 	tokens, err := ParseCommand(command)
 	if err != nil {
 		t.Fatal(err)
 	}
 	r := rules[18]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{}, res)
+	require.Equal(t, []string{"Deleted 1"}, res)
 }
 
 func TestCronListRule(t *testing.T) {

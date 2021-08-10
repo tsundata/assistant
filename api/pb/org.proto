@@ -17,29 +17,33 @@ service OrgSvc {
 }
 
 message Objective {
+  // @inject_tag: db:"id"
+  int64 id = 1;
   // @inject_tag: db:"name"
-  string name = 1;
-  string tag = 2;
-  // @inject_tag: db:"tag_id"
-  int64 tagId = 3;
-  // @inject_tag: db:"created_at"
-  string createdAt = 4;
-}
-
-message KeyResult {
-  // @inject_tag: db:"name"
-  string name = 1;
-  // @inject_tag: db:"objective_id"
-  int64 objectiveId = 2;
+  string name = 2;
   string tag = 3;
   // @inject_tag: db:"tag_id"
   int64 tagId = 4;
-  // @inject_tag: db:"complete"
-  bool complete = 5;
   // @inject_tag: db:"created_at"
-  string createdAt = 6;
+  string createdAt = 5;
+}
+
+message KeyResult {
+  // @inject_tag: db:"id"
+  int64 id = 1;
+  // @inject_tag: db:"name"
+  string name = 2;
+  // @inject_tag: db:"objective_id"
+  int64 objectiveId = 3;
+  string tag = 4;
+  // @inject_tag: db:"tag_id"
+  int64 tagId = 5;
+  // @inject_tag: db:"complete"
+  bool complete = 6;
+  // @inject_tag: db:"created_at"
+  string createdAt = 7;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 7;
+  string updatedAt = 8;
 }
 
 message ObjectiveRequest {
