@@ -85,3 +85,13 @@ go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
 # Usage
 gocyclo -over 10 -ignore "_test|Godeps|mock|vendor/" .
 ```
+
+### gosec
+
+```shell
+# Install
+go install github.com/securego/gosec/cmd/gosec@latest
+
+# Usage
+gosec ./...
+```

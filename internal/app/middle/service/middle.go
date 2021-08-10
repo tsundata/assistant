@@ -15,6 +15,9 @@ import (
 	"strings"
 )
 
+const RuleKey = "subscribe:rule"
+const CronKey = "cron:rule"
+
 type Middle struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
@@ -418,4 +421,182 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	}
 
 	return &pb.TextReply{Text: strings.Join(result, "\n")}, nil
+}
+
+func (s *Middle) ListSubscribe(ctx context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
+	res, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []string
+	for source, isSubscribe := range res {
+		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
+	}
+
+	return &pb.SubscribeReply{
+		Text: result,
+	}, nil
+}
+
+func (s *Middle) RegisterSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HMGet(ctx, RuleKey, payload.GetText()).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	exist := true
+	if len(resp) == 0 || (len(resp) == 1 && resp[0] == nil) {
+		exist = false
+	}
+
+	if !exist {
+		_, err = s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) OpenSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) CloseSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "false").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetSubscribeStatus(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range resp {
+		if k == payload.GetText() {
+			return &pb.StateReply{
+				State: v == "true",
+			}, nil
+		}
+	}
+	return &pb.StateReply{
+		State: false,
+	}, nil
+}
+
+func (s *Middle) ListCron(ctx context.Context, _ *pb.CronRequest) (*pb.CronReply, error) {
+	res, err := s.rdb.HGetAll(ctx, CronKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []string
+	for source, isCron := range res {
+		result = append(result, fmt.Sprintf("%s [Cron:%v]", source, isCron))
+	}
+
+	return &pb.CronReply{
+		Text: result,
+	}, nil
+}
+
+func (s *Middle) RegisterCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HMGet(ctx, CronKey, payload.GetText()).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	exist := true
+	if len(resp) == 0 || (len(resp) == 1 && resp[0] == nil) {
+		exist = false
+	}
+
+	if !exist {
+		_, err = s.rdb.HMSet(ctx, CronKey, payload.GetText(), "true").Result()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) StartCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, CronKey, payload.GetText(), "true").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) StopCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
+	_, err := s.rdb.HMSet(ctx, CronKey, payload.GetText(), "false").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetCronStatus(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
+	resp, err := s.rdb.HGetAll(ctx, CronKey).Result()
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range resp {
+		if k == payload.GetText() {
+			return &pb.StateReply{
+				State: v == "true",
+			}, nil
+		}
+	}
+	return &pb.StateReply{
+		State: false,
+	}, nil
+}
+
+func (s *Middle) GetOrCreateTag(_ context.Context, payload *pb.TagRequest) (*pb.TagReply, error) {
+	tag, err := s.repo.GetOrCreateTag(pb.Tag{
+		Name: payload.Tag.GetName(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TagReply{Tag: &pb.Tag{
+		Id:        tag.Id,
+		Name:      tag.Name,
+		CreatedAt: tag.CreatedAt,
+	}}, nil
+}
+
+func (s *Middle) GetTags(_ context.Context, _ *pb.TagRequest) (*pb.TagsReply, error) {
+	items, err := s.repo.ListTags()
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []*pb.Tag
+	for _, item := range items {
+		tags = append(tags, &pb.Tag{
+			Id:        item.Id,
+			Name:      item.Name,
+			CreatedAt: item.CreatedAt,
+		})
+	}
+
+	return &pb.TagsReply{
+		Tags: tags,
+	}, nil
 }

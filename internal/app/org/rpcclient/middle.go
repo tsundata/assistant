@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func NewSubscribe(client *rpc.Client) (pb.SubscribeSvcClient, error) {
-	conn, err := client.Dial(enum.Subscribe, rpc.WithTimeout(time.Second))
+func NewMiddleClient(client *rpc.Client) (pb.MiddleSvcClient, error) {
+	conn, err := client.Dial(enum.Middle, rpc.WithTimeout(time.Second))
 	if err != nil {
-		return nil, errors.Wrap(err, "subscribe client dial error")
+		return nil, errors.Wrap(err, "user client dial error")
 	}
-	c := pb.NewSubscribeSvcClient(conn)
+	c := pb.NewMiddleSvcClient(conn)
 	return c, nil
 }

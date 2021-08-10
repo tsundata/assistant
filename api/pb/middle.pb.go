@@ -907,6 +907,329 @@ func (m *KV) GetValue() string {
 	return ""
 }
 
+type SubscribeRequest struct {
+	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SubscribeRequest) Reset()         { *m = SubscribeRequest{} }
+func (m *SubscribeRequest) String() string { return proto.CompactTextString(m) }
+func (*SubscribeRequest) ProtoMessage()    {}
+func (*SubscribeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{17}
+}
+func (m *SubscribeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubscribeRequest.Unmarshal(m, b)
+}
+func (m *SubscribeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubscribeRequest.Marshal(b, m, deterministic)
+}
+func (m *SubscribeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeRequest.Merge(m, src)
+}
+func (m *SubscribeRequest) XXX_Size() int {
+	return xxx_messageInfo_SubscribeRequest.Size(m)
+}
+func (m *SubscribeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeRequest proto.InternalMessageInfo
+
+func (m *SubscribeRequest) GetText() string {
+	if m != nil {
+		return m.Text
+	}
+	return ""
+}
+
+type SubscribeReply struct {
+	Text                 []string `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SubscribeReply) Reset()         { *m = SubscribeReply{} }
+func (m *SubscribeReply) String() string { return proto.CompactTextString(m) }
+func (*SubscribeReply) ProtoMessage()    {}
+func (*SubscribeReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{18}
+}
+func (m *SubscribeReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubscribeReply.Unmarshal(m, b)
+}
+func (m *SubscribeReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubscribeReply.Marshal(b, m, deterministic)
+}
+func (m *SubscribeReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeReply.Merge(m, src)
+}
+func (m *SubscribeReply) XXX_Size() int {
+	return xxx_messageInfo_SubscribeReply.Size(m)
+}
+func (m *SubscribeReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeReply proto.InternalMessageInfo
+
+func (m *SubscribeReply) GetText() []string {
+	if m != nil {
+		return m.Text
+	}
+	return nil
+}
+
+type CronRequest struct {
+	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CronRequest) Reset()         { *m = CronRequest{} }
+func (m *CronRequest) String() string { return proto.CompactTextString(m) }
+func (*CronRequest) ProtoMessage()    {}
+func (*CronRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{19}
+}
+func (m *CronRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CronRequest.Unmarshal(m, b)
+}
+func (m *CronRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CronRequest.Marshal(b, m, deterministic)
+}
+func (m *CronRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CronRequest.Merge(m, src)
+}
+func (m *CronRequest) XXX_Size() int {
+	return xxx_messageInfo_CronRequest.Size(m)
+}
+func (m *CronRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CronRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CronRequest proto.InternalMessageInfo
+
+func (m *CronRequest) GetText() string {
+	if m != nil {
+		return m.Text
+	}
+	return ""
+}
+
+type CronReply struct {
+	Text                 []string `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CronReply) Reset()         { *m = CronReply{} }
+func (m *CronReply) String() string { return proto.CompactTextString(m) }
+func (*CronReply) ProtoMessage()    {}
+func (*CronReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{20}
+}
+func (m *CronReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CronReply.Unmarshal(m, b)
+}
+func (m *CronReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CronReply.Marshal(b, m, deterministic)
+}
+func (m *CronReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CronReply.Merge(m, src)
+}
+func (m *CronReply) XXX_Size() int {
+	return xxx_messageInfo_CronReply.Size(m)
+}
+func (m *CronReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_CronReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CronReply proto.InternalMessageInfo
+
+func (m *CronReply) GetText() []string {
+	if m != nil {
+		return m.Text
+	}
+	return nil
+}
+
+type Tag struct {
+	// @inject_tag: db:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	// @inject_tag: db:"name"
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" db:"name"`
+	// @inject_tag: db:"created_at"
+	CreatedAt            string   `protobuf:"bytes,3,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Tag) Reset()         { *m = Tag{} }
+func (m *Tag) String() string { return proto.CompactTextString(m) }
+func (*Tag) ProtoMessage()    {}
+func (*Tag) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{21}
+}
+func (m *Tag) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Tag.Unmarshal(m, b)
+}
+func (m *Tag) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Tag.Marshal(b, m, deterministic)
+}
+func (m *Tag) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Tag.Merge(m, src)
+}
+func (m *Tag) XXX_Size() int {
+	return xxx_messageInfo_Tag.Size(m)
+}
+func (m *Tag) XXX_DiscardUnknown() {
+	xxx_messageInfo_Tag.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Tag proto.InternalMessageInfo
+
+func (m *Tag) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Tag) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Tag) GetCreatedAt() string {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return ""
+}
+
+type TagRequest struct {
+	Tag                  *Tag     `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TagRequest) Reset()         { *m = TagRequest{} }
+func (m *TagRequest) String() string { return proto.CompactTextString(m) }
+func (*TagRequest) ProtoMessage()    {}
+func (*TagRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{22}
+}
+func (m *TagRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TagRequest.Unmarshal(m, b)
+}
+func (m *TagRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TagRequest.Marshal(b, m, deterministic)
+}
+func (m *TagRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TagRequest.Merge(m, src)
+}
+func (m *TagRequest) XXX_Size() int {
+	return xxx_messageInfo_TagRequest.Size(m)
+}
+func (m *TagRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TagRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TagRequest proto.InternalMessageInfo
+
+func (m *TagRequest) GetTag() *Tag {
+	if m != nil {
+		return m.Tag
+	}
+	return nil
+}
+
+type TagReply struct {
+	Tag                  *Tag     `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TagReply) Reset()         { *m = TagReply{} }
+func (m *TagReply) String() string { return proto.CompactTextString(m) }
+func (*TagReply) ProtoMessage()    {}
+func (*TagReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{23}
+}
+func (m *TagReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TagReply.Unmarshal(m, b)
+}
+func (m *TagReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TagReply.Marshal(b, m, deterministic)
+}
+func (m *TagReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TagReply.Merge(m, src)
+}
+func (m *TagReply) XXX_Size() int {
+	return xxx_messageInfo_TagReply.Size(m)
+}
+func (m *TagReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_TagReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TagReply proto.InternalMessageInfo
+
+func (m *TagReply) GetTag() *Tag {
+	if m != nil {
+		return m.Tag
+	}
+	return nil
+}
+
+type TagsReply struct {
+	Tags                 []*Tag   `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TagsReply) Reset()         { *m = TagsReply{} }
+func (m *TagsReply) String() string { return proto.CompactTextString(m) }
+func (*TagsReply) ProtoMessage()    {}
+func (*TagsReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_492fc6d32fb115aa, []int{24}
+}
+func (m *TagsReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TagsReply.Unmarshal(m, b)
+}
+func (m *TagsReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TagsReply.Marshal(b, m, deterministic)
+}
+func (m *TagsReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TagsReply.Merge(m, src)
+}
+func (m *TagsReply) XXX_Size() int {
+	return xxx_messageInfo_TagsReply.Size(m)
+}
+func (m *TagsReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_TagsReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TagsReply proto.InternalMessageInfo
+
+func (m *TagsReply) GetTags() []*Tag {
+	if m != nil {
+		return m.Tags
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*PageRequest)(nil), "pb.PageRequest")
 	proto.RegisterType((*PageReply)(nil), "pb.PageReply")
@@ -925,62 +1248,84 @@ func init() {
 	proto.RegisterType((*KVRequest)(nil), "pb.KVRequest")
 	proto.RegisterType((*KVsRequest)(nil), "pb.KVsRequest")
 	proto.RegisterType((*KV)(nil), "pb.KV")
+	proto.RegisterType((*SubscribeRequest)(nil), "pb.SubscribeRequest")
+	proto.RegisterType((*SubscribeReply)(nil), "pb.SubscribeReply")
+	proto.RegisterType((*CronRequest)(nil), "pb.CronRequest")
+	proto.RegisterType((*CronReply)(nil), "pb.CronReply")
+	proto.RegisterType((*Tag)(nil), "pb.Tag")
+	proto.RegisterType((*TagRequest)(nil), "pb.TagRequest")
+	proto.RegisterType((*TagReply)(nil), "pb.TagReply")
+	proto.RegisterType((*TagsReply)(nil), "pb.TagsReply")
 }
 
 func init() { proto.RegisterFile("middle.proto", fileDescriptor_492fc6d32fb115aa) }
 
 var fileDescriptor_492fc6d32fb115aa = []byte{
-	// 788 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0x16, 0x45, 0xea, 0x87, 0xa3, 0x1f, 0xdb, 0x5b, 0x1b, 0x60, 0x5d, 0x1f, 0x84, 0x3d, 0xb4,
-	0x2a, 0xec, 0xaa, 0xae, 0x55, 0x14, 0x28, 0xda, 0x1e, 0xd4, 0x16, 0x10, 0x0a, 0xc1, 0x68, 0x4b,
-	0x25, 0x3a, 0x24, 0xa7, 0x95, 0x38, 0x51, 0x08, 0x51, 0xd4, 0x86, 0x5c, 0x09, 0x76, 0x9e, 0x21,
-	0x4f, 0x90, 0xc7, 0xc9, 0x8b, 0xe4, 0x55, 0x82, 0xdd, 0x25, 0x29, 0x4a, 0xb2, 0x14, 0xe5, 0xc6,
-	0xf9, 0xe6, 0x9b, 0xdf, 0x9d, 0x19, 0x10, 0xea, 0x73, 0xdf, 0xf3, 0x02, 0xec, 0xf0, 0x68, 0x21,
-	0x16, 0xa4, 0xc8, 0xc7, 0x97, 0x30, 0x66, 0x71, 0x22, 0xd3, 0x6b, 0xa8, 0xfd, 0xc7, 0xa6, 0xe8,
-	0xe2, 0x9b, 0x25, 0xc6, 0x82, 0x5c, 0x81, 0xc5, 0xd9, 0x14, 0x1d, 0xa3, 0x65, 0xb4, 0x6b, 0x77,
-	0xd5, 0x0e, 0x1f, 0x77, 0x94, 0x5a, 0xa1, 0xf4, 0x7b, 0xb0, 0x35, 0x99, 0x07, 0x8f, 0x9f, 0xa1,
-	0xbe, 0x33, 0xc0, 0x92, 0x22, 0x69, 0x42, 0xd1, 0xf7, 0x14, 0xc9, 0x74, 0x8b, 0xbe, 0x47, 0x08,
-	0x58, 0xcb, 0xa5, 0xef, 0x39, 0xc5, 0x96, 0xd1, 0xb6, 0x5d, 0xf5, 0x4d, 0xce, 0xa1, 0x24, 0x7c,
-	0x11, 0xa0, 0x63, 0x2a, 0x50, 0x0b, 0xc4, 0x81, 0xca, 0x64, 0x11, 0x0a, 0x0c, 0x85, 0x63, 0x29,
-	0x3c, 0x15, 0xa5, 0x0f, 0xf1, 0xc8, 0xd1, 0x29, 0x69, 0x1f, 0xf2, 0x9b, 0x5c, 0x81, 0x3d, 0x89,
-	0x90, 0x09, 0xf4, 0x7a, 0xc2, 0x29, 0x2b, 0xc5, 0x1a, 0xa0, 0xdf, 0x01, 0xf4, 0x38, 0x4f, 0xab,
-	0xfc, 0x1a, 0x4c, 0xc6, 0x79, 0x92, 0x79, 0x45, 0x66, 0x2e, 0x95, 0x12, 0xa3, 0x6d, 0xb0, 0x7b,
-	0x9c, 0xc7, 0xba, 0xc4, 0x6f, 0xc0, 0x62, 0x9c, 0xc7, 0x8e, 0xd1, 0x32, 0xf3, 0x44, 0x05, 0xd2,
-	0x57, 0x50, 0x55, 0x2e, 0x25, 0x91, 0x80, 0x15, 0xb2, 0xb9, 0xee, 0x85, 0xed, 0xaa, 0xef, 0x2c,
-	0xc9, 0x62, 0x2e, 0x49, 0x59, 0xe8, 0x62, 0x86, 0x61, 0x56, 0xa8, 0x14, 0xc8, 0x15, 0x94, 0xf0,
-	0x41, 0x44, 0xcc, 0xb1, 0x54, 0x9c, 0xb2, 0x8c, 0x33, 0x18, 0xb9, 0x1a, 0xa4, 0x1f, 0x0d, 0x30,
-	0x7b, 0x9c, 0x3f, 0xd5, 0xc8, 0x1d, 0xff, 0x69, 0x1e, 0x66, 0x2e, 0x8f, 0x2c, 0xa6, 0x95, 0x8f,
-	0x79, 0x9e, 0xc6, 0xd4, 0x3d, 0xd4, 0xc2, 0xe1, 0x26, 0x4a, 0xed, 0x92, 0x7b, 0x89, 0xb6, 0xa2,
-	0xb5, 0x19, 0xb0, 0x7e, 0xc4, 0x6a, 0xfe, 0x11, 0x29, 0xd4, 0xfd, 0xb8, 0xb7, 0x14, 0xaf, 0x17,
-	0x91, 0xff, 0x16, 0x3d, 0xc7, 0x6e, 0x19, 0xed, 0xaa, 0xbb, 0x81, 0xd1, 0xbf, 0xe1, 0xf4, 0xaf,
-	0x08, 0x3d, 0x0c, 0x85, 0xcf, 0x82, 0xa4, 0xf5, 0xb7, 0x50, 0x9b, 0xac, 0xb1, 0xe4, 0x05, 0x9a,
-	0xb2, 0x33, 0x6b, 0xaa, 0x9b, 0xa7, 0xd0, 0xf7, 0x06, 0xc0, 0x5a, 0xf7, 0x54, 0xbb, 0x54, 0x6b,
-	0x8a, 0x4f, 0x3c, 0x91, 0x99, 0x6b, 0xe1, 0xfe, 0xa9, 0xdb, 0x68, 0x4e, 0xe9, 0x60, 0x73, 0xca,
-	0x5b, 0xcd, 0xa1, 0x37, 0x50, 0xbf, 0x67, 0xf1, 0xcc, 0x0f, 0xa7, 0xe9, 0xf2, 0x94, 0x7c, 0x81,
-	0xf3, 0xb4, 0xb0, 0xec, 0xc9, 0x15, 0x48, 0x7f, 0x83, 0xb3, 0x5c, 0x95, 0xc9, 0xd0, 0x1e, 0x39,
-	0x63, 0xf4, 0x25, 0x9c, 0xe4, 0x8d, 0xbf, 0x64, 0x3c, 0x5b, 0xeb, 0xda, 0xcd, 0x8d, 0xbc, 0x52,
-	0x98, 0xfe, 0x00, 0x8d, 0x21, 0x0a, 0xe1, 0x87, 0xd3, 0xf8, 0x98, 0x42, 0x7e, 0x81, 0x7a, 0x42,
-	0xd7, 0xec, 0x53, 0x30, 0x67, 0xf8, 0x98, 0xe4, 0x21, 0x3f, 0xe5, 0xd4, 0xac, 0x58, 0xb0, 0x4c,
-	0xf3, 0xd0, 0x02, 0xed, 0x82, 0x3d, 0x18, 0xa5, 0x85, 0x1f, 0x6b, 0xf4, 0x2d, 0xc0, 0x60, 0x14,
-	0xa7, 0x56, 0x0e, 0x98, 0xb3, 0xd5, 0x76, 0x5a, 0x12, 0xa2, 0x37, 0x50, 0x1c, 0x8c, 0x8e, 0xf5,
-	0x7a, 0xf7, 0xa1, 0x0c, 0xf6, 0xbd, 0xba, 0xa0, 0xc3, 0xd5, 0x84, 0x74, 0xd4, 0x8c, 0x31, 0x81,
-	0xea, 0xb6, 0x9d, 0x64, 0x47, 0x4f, 0x07, 0xbd, 0x6c, 0x48, 0xe0, 0x19, 0x3e, 0x08, 0x55, 0x2e,
-	0x2d, 0x90, 0x6b, 0xa8, 0xf4, 0x51, 0x1c, 0x20, 0x67, 0xf7, 0x94, 0x16, 0xc8, 0x0d, 0x54, 0xfb,
-	0x28, 0xfe, 0x8f, 0x9e, 0x47, 0x81, 0x66, 0x6b, 0x4f, 0x07, 0x5d, 0xcb, 0x63, 0xb5, 0x87, 0x9c,
-	0xdd, 0x31, 0x5a, 0x20, 0x77, 0x70, 0x22, 0xc9, 0x2b, 0xe6, 0x07, 0x6c, 0x1c, 0xa0, 0xbc, 0x27,
-	0x3b, 0x46, 0xf5, 0xf4, 0xbe, 0x25, 0x36, 0x3f, 0x41, 0x63, 0x28, 0x16, 0x91, 0x24, 0xff, 0x2b,
-	0xb7, 0x95, 0x34, 0x33, 0x82, 0x36, 0x50, 0xf2, 0x50, 0x30, 0x91, 0x55, 0xf0, 0x2b, 0x34, 0xfb,
-	0x28, 0x72, 0xcb, 0xbc, 0x1b, 0xe5, 0x7c, 0x73, 0x87, 0xb3, 0x0c, 0x7f, 0x87, 0x8b, 0x3e, 0x8a,
-	0x64, 0x49, 0x0e, 0x7a, 0x38, 0x95, 0x40, 0x7e, 0x9b, 0x68, 0x81, 0xfc, 0x01, 0x8d, 0x8d, 0xc0,
-	0xe4, 0x62, 0xeb, 0x54, 0x24, 0xb6, 0x5f, 0x6d, 0xc3, 0xda, 0xfc, 0x67, 0x75, 0x81, 0x98, 0xc0,
-	0xfc, 0x01, 0xd1, 0x33, 0x13, 0xef, 0xaf, 0xb6, 0x0b, 0xb5, 0x3e, 0x8a, 0x74, 0x1f, 0x76, 0x13,
-	0x3d, 0x53, 0x16, 0xf9, 0x75, 0x51, 0x5d, 0x85, 0xb5, 0xd1, 0x9e, 0xe2, 0xf2, 0x3b, 0x43, 0x0b,
-	0xe4, 0x16, 0x1a, 0x3a, 0xbb, 0xd4, 0xaa, 0x91, 0x8c, 0xf3, 0xde, 0xcc, 0xf4, 0x6c, 0xdc, 0x63,
-	0xb8, 0x3c, 0x62, 0x90, 0xf4, 0xd8, 0x49, 0xfb, 0xf8, 0x08, 0x76, 0x57, 0x4d, 0x92, 0xbb, 0x08,
-	0xf0, 0x9f, 0x39, 0x9b, 0xe2, 0x51, 0xb3, 0xfa, 0x67, 0xf5, 0x45, 0x99, 0x71, 0xff, 0x47, 0x3e,
-	0x1e, 0x97, 0xd5, 0x6f, 0x47, 0xf7, 0x53, 0x00, 0x00, 0x00, 0xff, 0xff, 0x33, 0xf1, 0x26, 0xbd,
-	0x96, 0x08, 0x00, 0x00,
+	// 1018 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0xdd, 0x72, 0xeb, 0x34,
+	0x10, 0x4e, 0xe2, 0x24, 0x8d, 0x37, 0x3f, 0x6d, 0x45, 0xcf, 0x8c, 0x29, 0x9d, 0x21, 0x68, 0xf8,
+	0x09, 0x9c, 0x9e, 0x50, 0x5a, 0x86, 0x9f, 0x39, 0x87, 0x8b, 0x50, 0x66, 0x32, 0x4c, 0xe9, 0x14,
+	0x9c, 0xd2, 0x0b, 0xb8, 0x52, 0x62, 0x61, 0x3c, 0x75, 0x6d, 0x61, 0xcb, 0x9d, 0x96, 0x67, 0xe0,
+	0x09, 0x78, 0x19, 0x1e, 0x85, 0x57, 0x39, 0x23, 0xc9, 0x72, 0x94, 0xdf, 0xba, 0x77, 0xd6, 0xee,
+	0xb7, 0xab, 0xdd, 0x4f, 0xab, 0x4f, 0x63, 0xe8, 0xdc, 0x05, 0x9e, 0x17, 0xd2, 0x21, 0x4b, 0x62,
+	0x1e, 0xa3, 0x1a, 0x9b, 0x1e, 0xc2, 0x94, 0xa4, 0xf9, 0x1a, 0xbf, 0x84, 0xf6, 0xcf, 0xc4, 0xa7,
+	0x2e, 0xfd, 0x2b, 0xa3, 0x29, 0x47, 0x47, 0x50, 0x67, 0xc4, 0xa7, 0x4e, 0xb5, 0x5f, 0x1d, 0xb4,
+	0x4f, 0x5b, 0x43, 0x36, 0x1d, 0x4a, 0xb7, 0xb4, 0xe2, 0x4f, 0xc1, 0x56, 0x60, 0x16, 0x3e, 0x3e,
+	0x01, 0xfd, 0xa7, 0x0a, 0x75, 0xb1, 0x44, 0x3d, 0xa8, 0x05, 0x9e, 0x04, 0x59, 0x6e, 0x2d, 0xf0,
+	0x10, 0x82, 0x7a, 0x96, 0x05, 0x9e, 0x53, 0xeb, 0x57, 0x07, 0xb6, 0x2b, 0xbf, 0xd1, 0x01, 0x34,
+	0x78, 0xc0, 0x43, 0xea, 0x58, 0xd2, 0xa8, 0x16, 0xc8, 0x81, 0x9d, 0x59, 0x1c, 0x71, 0x1a, 0x71,
+	0xa7, 0x2e, 0xed, 0x7a, 0x29, 0x72, 0xf0, 0x47, 0x46, 0x9d, 0x86, 0xca, 0x21, 0xbe, 0xd1, 0x11,
+	0xd8, 0xb3, 0x84, 0x12, 0x4e, 0xbd, 0x11, 0x77, 0x9a, 0xd2, 0x31, 0x37, 0xe0, 0x4f, 0x00, 0x46,
+	0x8c, 0xe9, 0x2e, 0xdf, 0x05, 0x8b, 0x30, 0x96, 0x57, 0xbe, 0x23, 0x2a, 0x17, 0x4e, 0x61, 0xc3,
+	0x03, 0xb0, 0x47, 0x8c, 0xa5, 0xaa, 0xc5, 0xf7, 0xa0, 0x4e, 0x18, 0x4b, 0x9d, 0x6a, 0xdf, 0x32,
+	0x81, 0xd2, 0x88, 0xff, 0x80, 0x96, 0x4c, 0x29, 0x80, 0x08, 0xea, 0x11, 0xb9, 0x53, 0x5c, 0xd8,
+	0xae, 0xfc, 0x2e, 0x8a, 0xac, 0x19, 0x45, 0x8a, 0x46, 0xe3, 0x5b, 0x1a, 0x15, 0x8d, 0x8a, 0x05,
+	0x3a, 0x82, 0x06, 0x7d, 0xe0, 0x09, 0x71, 0xea, 0x72, 0x9f, 0xa6, 0xd8, 0xe7, 0xe2, 0xc6, 0x55,
+	0x46, 0xfc, 0x7f, 0x15, 0xac, 0x11, 0x63, 0xeb, 0x88, 0x5c, 0xc9, 0xaf, 0xeb, 0xb0, 0x8c, 0x3a,
+	0x8a, 0x3d, 0xeb, 0xe6, 0x9e, 0x07, 0x7a, 0x4f, 0xc5, 0xa1, 0x5a, 0x6c, 0x27, 0x51, 0x78, 0x33,
+	0xe6, 0xe5, 0xde, 0x1d, 0xe5, 0x2d, 0x0c, 0xf3, 0x43, 0x6c, 0x99, 0x87, 0x88, 0xa1, 0x13, 0xa4,
+	0xa3, 0x8c, 0xff, 0x19, 0x27, 0xc1, 0xdf, 0xd4, 0x73, 0xec, 0x7e, 0x75, 0xd0, 0x72, 0x17, 0x6c,
+	0xf8, 0x07, 0xd8, 0x3b, 0x4f, 0xa8, 0x47, 0x23, 0x1e, 0x90, 0x30, 0xa7, 0xfe, 0x04, 0xda, 0xb3,
+	0xb9, 0x2d, 0x3f, 0x81, 0x9e, 0x60, 0x66, 0x0e, 0x75, 0x4d, 0x08, 0xfe, 0xb7, 0x0a, 0x30, 0xf7,
+	0xad, 0xa3, 0x4b, 0x52, 0x53, 0x5b, 0x73, 0x44, 0x96, 0x41, 0xe1, 0xe6, 0xa9, 0x5b, 0x20, 0xa7,
+	0xb1, 0x95, 0x9c, 0xe6, 0x12, 0x39, 0xf8, 0x18, 0x3a, 0x97, 0x24, 0xbd, 0x0d, 0x22, 0x5f, 0x5f,
+	0x9e, 0x46, 0xc0, 0xe9, 0x9d, 0x6e, 0xac, 0x38, 0x72, 0x69, 0xc4, 0xaf, 0x61, 0xdf, 0xe8, 0x32,
+	0x1f, 0xda, 0x92, 0x33, 0x86, 0x7f, 0x87, 0x5d, 0x33, 0xf8, 0x39, 0xe3, 0xd9, 0x9f, 0xf7, 0x6e,
+	0x2d, 0xd4, 0xa5, 0xcd, 0xf8, 0x15, 0x74, 0x27, 0x94, 0xf3, 0x20, 0xf2, 0xd3, 0x32, 0x8d, 0x7c,
+	0x05, 0x9d, 0x1c, 0xae, 0xd0, 0x7b, 0x60, 0xdd, 0xd2, 0xc7, 0xbc, 0x0e, 0xf1, 0x29, 0xa6, 0xe6,
+	0x9e, 0x84, 0x99, 0xae, 0x43, 0x2d, 0xf0, 0x19, 0xd8, 0x17, 0x37, 0xba, 0xf1, 0xb2, 0x41, 0x1f,
+	0x03, 0x5c, 0xdc, 0xa4, 0x3a, 0xca, 0x01, 0xeb, 0xf6, 0x7e, 0xb9, 0x2c, 0x61, 0xc2, 0xc7, 0x50,
+	0xbb, 0xb8, 0x79, 0x46, 0xd6, 0xbd, 0x49, 0x36, 0x4d, 0x67, 0x49, 0x30, 0xa5, 0xc6, 0x51, 0x70,
+	0xfa, 0xc0, 0x35, 0x9f, 0xe2, 0x1b, 0x7f, 0x08, 0x3d, 0x03, 0x97, 0xb3, 0x9e, 0xa3, 0xac, 0x02,
+	0xf5, 0x01, 0xb4, 0xcf, 0x93, 0x38, 0xda, 0x96, 0xe8, 0x7d, 0xb0, 0x15, 0x64, 0x53, 0x8e, 0x31,
+	0x58, 0xd7, 0xc4, 0x2f, 0x35, 0xe0, 0x0b, 0x23, 0x6b, 0xad, 0x11, 0xc5, 0x6b, 0xe2, 0x1b, 0xa2,
+	0xc8, 0x89, 0x6f, 0x8a, 0xa2, 0x70, 0x0a, 0x1b, 0xfe, 0x08, 0x5a, 0x12, 0x28, 0x2a, 0xda, 0x02,
+	0x1b, 0x80, 0x7d, 0x4d, 0xfc, 0xb9, 0x76, 0x72, 0xe2, 0x2f, 0x68, 0xa7, 0x00, 0x4a, 0xe3, 0xe9,
+	0x7f, 0x6d, 0xb0, 0x2f, 0xe5, 0xb3, 0x34, 0xb9, 0x9f, 0xa1, 0xa1, 0xbc, 0xb8, 0x84, 0x53, 0xf9,
+	0x60, 0xec, 0x16, 0x2f, 0x89, 0x2a, 0xec, 0xb0, 0x2b, 0x63, 0xe9, 0x03, 0x97, 0x89, 0x71, 0x05,
+	0xbd, 0x84, 0x9d, 0x31, 0xe5, 0x5b, 0xc0, 0xc5, 0x23, 0x85, 0x2b, 0xe8, 0x18, 0x5a, 0x63, 0xca,
+	0x7f, 0x49, 0x7e, 0x4d, 0x42, 0x85, 0x56, 0x99, 0xb6, 0xa6, 0x16, 0x2f, 0xc0, 0x06, 0x70, 0xf1,
+	0x38, 0xe0, 0x0a, 0x3a, 0x85, 0x5d, 0x01, 0xbe, 0x27, 0x41, 0x48, 0xa6, 0x21, 0x15, 0x22, 0xbd,
+	0x12, 0xd4, 0xd1, 0x8f, 0x46, 0x1e, 0xf3, 0x05, 0x74, 0x27, 0x3c, 0x4e, 0x04, 0xf8, 0x4a, 0x48,
+	0x20, 0xea, 0x15, 0x00, 0x15, 0x20, 0xd7, 0x13, 0x4e, 0x78, 0xd1, 0xc1, 0xb7, 0xd0, 0x1b, 0x53,
+	0x6e, 0x28, 0xe4, 0xea, 0x2e, 0x07, 0x8b, 0xc2, 0x58, 0x54, 0xf8, 0x06, 0x5e, 0x8c, 0x29, 0xcf,
+	0x95, 0x67, 0x6b, 0x86, 0x3d, 0x61, 0x30, 0x25, 0x0a, 0x57, 0xd0, 0x77, 0xd0, 0x5d, 0xd8, 0x18,
+	0xbd, 0x58, 0xd2, 0xdf, 0x3c, 0xf6, 0x9d, 0x65, 0xb3, 0x0a, 0xff, 0x52, 0xca, 0x3a, 0xe1, 0xd4,
+	0x54, 0x65, 0x75, 0x11, 0xd3, 0xcd, 0xdd, 0x9e, 0x41, 0x7b, 0x4c, 0xb9, 0x16, 0x99, 0xd5, 0x42,
+	0xf7, 0x65, 0x84, 0xa9, 0x41, 0x92, 0x55, 0x98, 0x07, 0x6d, 0x68, 0xce, 0x14, 0x22, 0x5c, 0x41,
+	0x27, 0xd0, 0x55, 0xd5, 0xe9, 0xa8, 0x6e, 0xae, 0x11, 0x1b, 0x2b, 0x53, 0xb3, 0x71, 0x49, 0xa3,
+	0xac, 0xc4, 0x20, 0xa9, 0xb1, 0x13, 0xf1, 0x69, 0x09, 0xf4, 0x99, 0x9c, 0x24, 0x37, 0x0e, 0xe9,
+	0x8f, 0x77, 0xc4, 0xa7, 0xe5, 0x66, 0xf5, 0x35, 0x74, 0x7f, 0x0a, 0x52, 0x5e, 0xa8, 0x0e, 0x92,
+	0x53, 0xb0, 0x2c, 0x56, 0x87, 0x68, 0xc9, 0xaa, 0x83, 0xf7, 0x5d, 0xea, 0x07, 0x29, 0xa7, 0xc9,
+	0x53, 0x09, 0x56, 0x99, 0xf8, 0x1a, 0xba, 0x57, 0x8c, 0x46, 0xcf, 0x0f, 0xfc, 0x06, 0x7a, 0xe7,
+	0x61, 0x9c, 0xd2, 0xe7, 0x47, 0xbe, 0x01, 0x24, 0xf8, 0xd4, 0x40, 0xe1, 0xcb, 0xd2, 0xd2, 0xd1,
+	0xc7, 0xd0, 0x12, 0x54, 0x09, 0x5d, 0x55, 0xc4, 0x1a, 0x22, 0xac, 0x88, 0x2d, 0x24, 0x57, 0x4e,
+	0x53, 0x47, 0x73, 0xb3, 0x3e, 0x62, 0x75, 0x83, 0x21, 0xd8, 0x13, 0x4e, 0x12, 0x5e, 0x16, 0xff,
+	0x0a, 0x5a, 0x13, 0x1e, 0xb3, 0xb2, 0xf0, 0xd3, 0xfc, 0x26, 0xc6, 0x51, 0xde, 0x78, 0x89, 0x98,
+	0x13, 0x29, 0x1b, 0x57, 0x89, 0x9a, 0x72, 0xf9, 0x62, 0x68, 0x11, 0x36, 0xb5, 0x49, 0x0b, 0x3b,
+	0xae, 0xa0, 0xcf, 0xe4, 0x80, 0x0b, 0x09, 0x5f, 0x81, 0x76, 0xf3, 0xb5, 0xbe, 0x71, 0xdf, 0xb7,
+	0x7e, 0x6b, 0x12, 0x16, 0x7c, 0xce, 0xa6, 0xd3, 0xa6, 0xfc, 0x91, 0x38, 0x7b, 0x1b, 0x00, 0x00,
+	0xff, 0xff, 0xa6, 0x6e, 0x39, 0xb3, 0x68, 0x0c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1011,6 +1356,18 @@ type MiddleSvcClient interface {
 	GetMenu(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 	GetStats(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 	GetRoleImageUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	ListSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeReply, error)
+	RegisterSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	OpenSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	CloseSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetSubscribeStatus(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error)
+	RegisterCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
+	StartCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
+	StopCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetCronStatus(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetOrCreateTag(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagReply, error)
+	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagsReply, error)
 }
 
 type middleSvcClient struct {
@@ -1165,6 +1522,114 @@ func (c *middleSvcClient) GetRoleImageUrl(ctx context.Context, in *TextRequest, 
 	return out, nil
 }
 
+func (c *middleSvcClient) ListSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeReply, error) {
+	out := new(SubscribeReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ListSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) RegisterSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/RegisterSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) OpenSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/OpenSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) CloseSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CloseSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetSubscribeStatus(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetSubscribeStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error) {
+	out := new(CronReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ListCron", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) RegisterCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/RegisterCron", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) StartCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/StartCron", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) StopCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/StopCron", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetCronStatus(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCronStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetOrCreateTag(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagReply, error) {
+	out := new(TagReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetOrCreateTag", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagsReply, error) {
+	out := new(TagsReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetTags", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MiddleSvcServer is the server API for MiddleSvc service.
 type MiddleSvcServer interface {
 	CreatePage(context.Context, *PageRequest) (*TextReply, error)
@@ -1183,6 +1648,18 @@ type MiddleSvcServer interface {
 	GetMenu(context.Context, *TextRequest) (*TextReply, error)
 	GetStats(context.Context, *TextRequest) (*TextReply, error)
 	GetRoleImageUrl(context.Context, *TextRequest) (*TextReply, error)
+	ListSubscribe(context.Context, *SubscribeRequest) (*SubscribeReply, error)
+	RegisterSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
+	OpenSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
+	CloseSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
+	GetSubscribeStatus(context.Context, *SubscribeRequest) (*StateReply, error)
+	ListCron(context.Context, *CronRequest) (*CronReply, error)
+	RegisterCron(context.Context, *CronRequest) (*StateReply, error)
+	StartCron(context.Context, *CronRequest) (*StateReply, error)
+	StopCron(context.Context, *CronRequest) (*StateReply, error)
+	GetCronStatus(context.Context, *CronRequest) (*StateReply, error)
+	GetOrCreateTag(context.Context, *TagRequest) (*TagReply, error)
+	GetTags(context.Context, *TagRequest) (*TagsReply, error)
 }
 
 // UnimplementedMiddleSvcServer can be embedded to have forward compatible implementations.
@@ -1236,6 +1713,42 @@ func (*UnimplementedMiddleSvcServer) GetStats(ctx context.Context, req *TextRequ
 }
 func (*UnimplementedMiddleSvcServer) GetRoleImageUrl(ctx context.Context, req *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoleImageUrl not implemented")
+}
+func (*UnimplementedMiddleSvcServer) ListSubscribe(ctx context.Context, req *SubscribeRequest) (*SubscribeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSubscribe not implemented")
+}
+func (*UnimplementedMiddleSvcServer) RegisterSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterSubscribe not implemented")
+}
+func (*UnimplementedMiddleSvcServer) OpenSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenSubscribe not implemented")
+}
+func (*UnimplementedMiddleSvcServer) CloseSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseSubscribe not implemented")
+}
+func (*UnimplementedMiddleSvcServer) GetSubscribeStatus(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSubscribeStatus not implemented")
+}
+func (*UnimplementedMiddleSvcServer) ListCron(ctx context.Context, req *CronRequest) (*CronReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCron not implemented")
+}
+func (*UnimplementedMiddleSvcServer) RegisterCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterCron not implemented")
+}
+func (*UnimplementedMiddleSvcServer) StartCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartCron not implemented")
+}
+func (*UnimplementedMiddleSvcServer) StopCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopCron not implemented")
+}
+func (*UnimplementedMiddleSvcServer) GetCronStatus(ctx context.Context, req *CronRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCronStatus not implemented")
+}
+func (*UnimplementedMiddleSvcServer) GetOrCreateTag(ctx context.Context, req *TagRequest) (*TagReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrCreateTag not implemented")
+}
+func (*UnimplementedMiddleSvcServer) GetTags(ctx context.Context, req *TagRequest) (*TagsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
 }
 
 func RegisterMiddleSvcServer(s *grpc.Server, srv MiddleSvcServer) {
@@ -1530,6 +2043,222 @@ func _MiddleSvc_GetRoleImageUrl_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_ListSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).ListSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/ListSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).ListSubscribe(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_RegisterSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).RegisterSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/RegisterSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).RegisterSubscribe(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_OpenSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).OpenSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/OpenSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).OpenSubscribe(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_CloseSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).CloseSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/CloseSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).CloseSubscribe(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetSubscribeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetSubscribeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetSubscribeStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetSubscribeStatus(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_ListCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CronRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).ListCron(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/ListCron",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).ListCron(ctx, req.(*CronRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_RegisterCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CronRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).RegisterCron(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/RegisterCron",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).RegisterCron(ctx, req.(*CronRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_StartCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CronRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).StartCron(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/StartCron",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).StartCron(ctx, req.(*CronRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_StopCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CronRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).StopCron(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/StopCron",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).StopCron(ctx, req.(*CronRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetCronStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CronRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetCronStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetCronStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetCronStatus(ctx, req.(*CronRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetOrCreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetOrCreateTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetOrCreateTag",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetOrCreateTag(ctx, req.(*TagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetTags",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetTags(ctx, req.(*TagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.MiddleSvc",
 	HandlerType: (*MiddleSvcServer)(nil),
@@ -1597,6 +2326,54 @@ var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRoleImageUrl",
 			Handler:    _MiddleSvc_GetRoleImageUrl_Handler,
+		},
+		{
+			MethodName: "ListSubscribe",
+			Handler:    _MiddleSvc_ListSubscribe_Handler,
+		},
+		{
+			MethodName: "RegisterSubscribe",
+			Handler:    _MiddleSvc_RegisterSubscribe_Handler,
+		},
+		{
+			MethodName: "OpenSubscribe",
+			Handler:    _MiddleSvc_OpenSubscribe_Handler,
+		},
+		{
+			MethodName: "CloseSubscribe",
+			Handler:    _MiddleSvc_CloseSubscribe_Handler,
+		},
+		{
+			MethodName: "GetSubscribeStatus",
+			Handler:    _MiddleSvc_GetSubscribeStatus_Handler,
+		},
+		{
+			MethodName: "ListCron",
+			Handler:    _MiddleSvc_ListCron_Handler,
+		},
+		{
+			MethodName: "RegisterCron",
+			Handler:    _MiddleSvc_RegisterCron_Handler,
+		},
+		{
+			MethodName: "StartCron",
+			Handler:    _MiddleSvc_StartCron_Handler,
+		},
+		{
+			MethodName: "StopCron",
+			Handler:    _MiddleSvc_StopCron_Handler,
+		},
+		{
+			MethodName: "GetCronStatus",
+			Handler:    _MiddleSvc_GetCronStatus_Handler,
+		},
+		{
+			MethodName: "GetOrCreateTag",
+			Handler:    _MiddleSvc_GetOrCreateTag_Handler,
+		},
+		{
+			MethodName: "GetTags",
+			Handler:    _MiddleSvc_GetTags_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

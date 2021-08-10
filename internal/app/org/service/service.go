@@ -7,10 +7,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-func CreateInitServerFn(ps *Subscribe) rpc.InitServer {
+func CreateInitServerFn(ps *Org) rpc.InitServer {
 	return func(s *grpc.Server) {
-		pb.RegisterSubscribeSvcServer(s, ps)
+		pb.RegisterOrgSvcServer(s, ps)
 	}
 }
 
-var ProviderSet = wire.NewSet(NewSubscribe, CreateInitServerFn)
+var ProviderSet = wire.NewSet(NewOrg, CreateInitServerFn)

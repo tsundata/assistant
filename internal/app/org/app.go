@@ -1,4 +1,4 @@
-package subscribe
+package org
 
 import (
 	"github.com/google/wire"

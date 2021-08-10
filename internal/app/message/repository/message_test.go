@@ -10,7 +10,7 @@ import (
 func TestMessageRepository_GetByID(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	type args struct {
@@ -41,7 +41,7 @@ func TestMessageRepository_GetByID(t *testing.T) {
 func TestMessageRepository_GetByUUID(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	type args struct {
@@ -72,7 +72,7 @@ func TestMessageRepository_GetByUUID(t *testing.T) {
 func TestMessageRepository_ListByType(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	type args struct {
@@ -100,7 +100,7 @@ func TestMessageRepository_ListByType(t *testing.T) {
 func TestMessageRepository_List(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	tests := []struct {
@@ -124,7 +124,7 @@ func TestMessageRepository_List(t *testing.T) {
 func TestMessageRepository_Create(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	uuid, err := util.GenerateUUID()
@@ -157,7 +157,7 @@ func TestMessageRepository_Create(t *testing.T) {
 func TestMessageRepository_Delete(t *testing.T) {
 	sto, err := CreateMessageRepository(enum.Message)
 	if err != nil {
-		t.Fatalf("create message Preposiory error, %+v", err)
+		t.Fatalf("create message Repository error, %+v", err)
 	}
 
 	type args struct {

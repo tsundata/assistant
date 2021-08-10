@@ -9,7 +9,7 @@ import (
 func TestUserRepository_GetRole(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		userId int64
@@ -36,7 +36,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 func TestUserRepository_ChangeRoleExp(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		userID int64
@@ -62,7 +62,7 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		userID int64
@@ -94,7 +94,7 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 func TestUserRepository_List(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	tests := []struct {
 		name    string
@@ -121,7 +121,7 @@ func TestUserRepository_List(t *testing.T) {
 func TestUserRepository_Create(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		user pb.User
@@ -153,7 +153,7 @@ func TestUserRepository_Create(t *testing.T) {
 func TestUserRepository_GetByID(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		id int64
@@ -191,7 +191,7 @@ func TestUserRepository_GetByID(t *testing.T) {
 func TestUserRepository_GetByName(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		name string
@@ -229,7 +229,7 @@ func TestUserRepository_GetByName(t *testing.T) {
 func TestUserRepository_Update(t *testing.T) {
 	sto, err := CreateUserRepository(enum.User)
 	if err != nil {
-		t.Fatalf("create user Preposiory error, %+v", err)
+		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
 		in0 pb.User

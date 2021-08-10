@@ -22,7 +22,7 @@ func TestWorkflowCron(t *testing.T) {
 			Return(&pb.WorkflowReply{Text: ""}, nil),
 	)
 
-	comp := rulebot.NewComponent(nil, nil, nil, nil,
+	comp := rulebot.NewComponent(nil, nil, nil,
 		nil, nil, workflow, nil,
 		nil, nil, nil)
 

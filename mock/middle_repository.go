@@ -139,6 +139,21 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(t interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByType), t)
 }
 
+// GetOrCreateTag mocks base method.
+func (m *MockMiddleRepository) GetOrCreateTag(tag pb.Tag) (pb.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrCreateTag", tag)
+	ret0, _ := ret[0].(pb.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrCreateTag indicates an expected call of GetOrCreateTag.
+func (mr *MockMiddleRepositoryMockRecorder) GetOrCreateTag(tag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrCreateTag", reflect.TypeOf((*MockMiddleRepository)(nil).GetOrCreateTag), tag)
+}
+
 // GetPageByUUID mocks base method.
 func (m *MockMiddleRepository) GetPageByUUID(uuid string) (pb.Page, error) {
 	m.ctrl.T.Helper()
@@ -182,6 +197,21 @@ func (m *MockMiddleRepository) ListCredentials() ([]pb.Credential, error) {
 func (mr *MockMiddleRepositoryMockRecorder) ListCredentials() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCredentials", reflect.TypeOf((*MockMiddleRepository)(nil).ListCredentials))
+}
+
+// ListTags mocks base method.
+func (m *MockMiddleRepository) ListTags() ([]pb.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTags")
+	ret0, _ := ret[0].([]pb.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTags indicates an expected call of ListTags.
+func (mr *MockMiddleRepositoryMockRecorder) ListTags() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTags", reflect.TypeOf((*MockMiddleRepository)(nil).ListTags))
 }
 
 // UpdateAppByID mocks base method.

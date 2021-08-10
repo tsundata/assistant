@@ -1,10 +1,10 @@
 package component
 
 import (
+	"crypto/rand"
 	"fmt"
 	"html/template"
-	"math/rand"
-	"time"
+	"math/big"
 )
 
 type Input struct {
@@ -15,11 +15,10 @@ type Input struct {
 }
 
 func (c *Input) GetContent() template.HTML {
-	rand.Seed(time.Now().Unix())
-	id := rand.Int()
+	n, _ := rand.Int(rand.Reader, big.NewInt(1000))
 	return template.HTML(fmt.Sprintf(`
 <div class="input">
 	<label for="input-%d">%s:</label>
   	<input type="%s" id="input-%d" value="%s" name="%s">
-</div>`, id, c.Title, c.Type, id, c.Value, c.Name))
+</div>`, n.Int64(), c.Title, c.Type, n.Int64(), c.Value, c.Name))
 }

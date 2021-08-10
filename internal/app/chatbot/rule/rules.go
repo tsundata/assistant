@@ -140,10 +140,10 @@ var rules = []Rule{
 		Define: "subs list",
 		Help:   `List subscribe`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Subscribe() == nil {
+			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := comp.Subscribe().List(ctx, &pb.SubscribeRequest{})
+			reply, err := comp.Middle().ListSubscribe(ctx, &pb.SubscribeRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -159,14 +159,14 @@ var rules = []Rule{
 		Define: "subs open [string]",
 		Help:   `Open subscribe`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Subscribe() == nil {
+			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
 			if len(tokens) != 3 {
 				return []string{"error args"}
 			}
 
-			reply, err := comp.Subscribe().Open(ctx, &pb.SubscribeRequest{
+			reply, err := comp.Middle().OpenSubscribe(ctx, &pb.SubscribeRequest{
 				Text: tokens[2].Value,
 			})
 			if err != nil {
@@ -183,14 +183,14 @@ var rules = []Rule{
 		Define: `subs close [string]`,
 		Help:   `Close subscribe`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Subscribe() == nil {
+			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
 			if len(tokens) != 3 {
 				return []string{"error args"}
 			}
 
-			reply, err := comp.Subscribe().Close(ctx, &pb.SubscribeRequest{
+			reply, err := comp.Middle().CloseSubscribe(ctx, &pb.SubscribeRequest{
 				Text: tokens[2].Value,
 			})
 			if err != nil {
@@ -425,6 +425,73 @@ var rules = []Rule{
 			fmt.Println(id) // todo delete message
 
 			return []string{}
+		},
+	},
+	{
+		Define: "cron list",
+		Help:   `List cron`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Middle() == nil {
+				return []string{"empty client"}
+			}
+			reply, err := comp.Middle().ListCron(ctx, &pb.CronRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			if reply.GetText() == nil {
+				return []string{"empty subscript"}
+			}
+
+			return reply.GetText()
+		},
+	},
+	{
+		Define: "cron start [string]",
+		Help:   `Start cron`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Middle() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 3 {
+				return []string{"error args"}
+			}
+
+			reply, err := comp.Middle().StartCron(ctx, &pb.CronRequest{
+				Text: tokens[2].Value,
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
+		},
+	},
+	{
+		Define: `cron stop [string]`,
+		Help:   `Stop cron`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Middle() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 3 {
+				return []string{"error args"}
+			}
+
+			reply, err := comp.Middle().StopCron(ctx, &pb.CronRequest{
+				Text: tokens[2].Value,
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
 		},
 	},
 }

@@ -2,4 +2,4 @@ package rpcclient
 
 import "github.com/google/wire"
 
-var ProviderSet = wire.NewSet(NewMessageClient, NewMiddleClient, NewSubscribe)
+var ProviderSet = wire.NewSet(NewMessageClient, NewMiddleClient)

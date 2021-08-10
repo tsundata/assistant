@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	a, err := CreateApp(enum.Subscribe)
+	a, err := CreateApp(enum.Org)
 	if err != nil {
 		panic(err)
 	}

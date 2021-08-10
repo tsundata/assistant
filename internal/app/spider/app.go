@@ -15,7 +15,6 @@ func NewApp(
 	c *config.AppConfig,
 	rdb *redis.Client,
 	logger log.Logger,
-	subscribe pb.SubscribeSvcClient,
 	middle pb.MiddleSvcClient,
 	message pb.MessageSvcClient) (*app.Application, error) {
 
@@ -24,7 +23,7 @@ func NewApp(
 		// Delayed loading
 		time.Sleep(5 * time.Minute)
 		s := crawler.New()
-		s.SetService(c, rdb, logger, subscribe, middle, message)
+		s.SetService(c, rdb, logger, middle, message)
 		err := s.LoadRule()
 		if err != nil {
 			logger.Error(err)

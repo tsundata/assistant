@@ -20,7 +20,6 @@ type Component struct {
 
 	MessageClient     pb.MessageSvcClient
 	MiddleClient      pb.MiddleSvcClient
-	SubscribeClient   pb.SubscribeSvcClient
 	WorkflowSvcClient pb.WorkflowSvcClient
 	StorageClient     pb.StorageSvcClient
 	TodoClient        pb.TodoSvcClient
@@ -34,10 +33,6 @@ func (c Component) Message() pb.MessageSvcClient {
 
 func (c Component) Middle() pb.MiddleSvcClient {
 	return c.MiddleClient
-}
-
-func (c Component) Subscribe() pb.SubscribeSvcClient {
-	return c.SubscribeClient
 }
 
 func (c Component) Workflow() pb.WorkflowSvcClient {
@@ -78,7 +73,6 @@ type IComponent interface {
 	GetLogger() log.Logger
 	Message() pb.MessageSvcClient
 	Middle() pb.MiddleSvcClient
-	Subscribe() pb.SubscribeSvcClient
 	Workflow() pb.WorkflowSvcClient
 	Storage() pb.StorageSvcClient
 	Todo() pb.TodoSvcClient
@@ -93,7 +87,6 @@ func NewComponent(
 
 	messageClient pb.MessageSvcClient,
 	middleClient pb.MiddleSvcClient,
-	subscribeClient pb.SubscribeSvcClient,
 	workflowClient pb.WorkflowSvcClient,
 	storageClient pb.StorageSvcClient,
 	todoClient pb.TodoSvcClient,
@@ -106,7 +99,6 @@ func NewComponent(
 		Logger:            logger,
 		MessageClient:     messageClient,
 		MiddleClient:      middleClient,
-		SubscribeClient:   subscribeClient,
 		WorkflowSvcClient: workflowClient,
 		StorageClient:     storageClient,
 		TodoClient:        todoClient,
