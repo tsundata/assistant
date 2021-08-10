@@ -2,16 +2,13 @@ package rule
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"io"
 	"math/rand"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -281,45 +278,30 @@ var rules = []Rule{
 		Define: `test`,
 		Help:   `Test`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Storage() == nil {
-				return []string{"empty client"}
-			}
-			// upload
-			f, err := os.Open("./README.md")
+			_, err := comp.Message().Send(ctx, &pb.MessageRequest{Message: &pb.Message{Text: "test"}})
 			if err != nil {
-				return []string{"error: " + err.Error()}
+				return []string{err.Error()}
 			}
-
-			buf := make([]byte, 1024)
-			uc, err := comp.Storage().UploadFile(ctx)
+			_, err = comp.Middle().GetSubscribeStatus(ctx, &pb.SubscribeRequest{Text: "example"})
 			if err != nil {
-				return []string{"error: " + err.Error()}
+				return []string{err.Error()}
 			}
-
-			err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Info{Info: &pb.FileInfo{FileType: "md"}}})
+			_, err = comp.NLP().Pinyin(ctx, &pb.TextRequest{Text: "测试"})
 			if err != nil {
-				return []string{"error: " + err.Error()}
+				return []string{err.Error()}
 			}
-
-			for {
-				n, err := f.Read(buf)
-				if errors.Is(err, io.EOF) {
-					break
-				}
-				if err != nil {
-					return []string{"error: " + err.Error()}
-				}
-				err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Chuck{Chuck: buf[:n]}})
-				if err != nil {
-					return []string{"error: " + err.Error()}
-				}
-			}
-
-			_, err = uc.CloseAndRecv()
+			_, err = comp.Todo().GetTodo(ctx, &pb.TodoRequest{Todo: &pb.Todo{Id: 1}})
 			if err != nil {
-				return []string{"error: " + err.Error()}
+				return []string{err.Error()}
 			}
-
+			_, err = comp.User().GetUser(ctx, &pb.UserRequest{User: &pb.User{Id: 1}})
+			if err != nil {
+				return []string{err.Error()}
+			}
+			_, err = comp.Workflow().SyntaxCheck(ctx, &pb.WorkflowRequest{Text: "echo 1"})
+			if err != nil {
+				return []string{err.Error()}
+			}
 			return []string{"test done"}
 		},
 	},
