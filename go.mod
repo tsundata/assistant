@@ -52,7 +52,7 @@ require (
 	github.com/valyala/fasthttp v1.28.0
 	github.com/yuin/goldmark v1.4.0
 	go.etcd.io/etcd/client/v3 v3.5.0
-	go.uber.org/zap v1.18.1
+	go.uber.org/zap v1.19.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/tools v0.1.3 // indirect
