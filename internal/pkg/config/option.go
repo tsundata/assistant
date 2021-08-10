@@ -10,7 +10,7 @@ type SvcAddr struct {
 	User     string `json:"user" yaml:"user"`
 	Todo     string `json:"todo" yaml:"todo"`
 	Finance  string `json:"finance" yaml:"finance"`
-	NLP      string `json:"nlp" yaml:"nlp"`
+	Nlp      string `json:"nlp" yaml:"nlp"`
 	Storage  string `json:"storage" yaml:"storage"`
 	Task     string `json:"task" yaml:"task"`
 	Org      string `json:"org" yaml:"org"`
