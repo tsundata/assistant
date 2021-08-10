@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
@@ -12,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestMiddle_GetMenu(t *testing.T) {
@@ -1120,6 +1122,110 @@ func TestMiddle_GetOrCreateTag(t *testing.T) {
 			}
 			if got != nil && got.Tag.Id != tt.want.Id && got.Tag.Name != tt.want.Name {
 				t.Errorf("Middle.GetOrCreateTag() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSetChartData(t *testing.T) {
+	rdb, err := vendors.CreateRedisClient(enum.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(nil, rdb, nil, nil)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.ChartDataRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Middle
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.ChartDataRequest{ChartData: &pb.ChartData{
+				Title:    "chart1",
+				SubTitle: "sub_title",
+				XAxis:    []string{"01", "02", "03"},
+				Series:   []int64{2, 3, 4},
+			}}},
+			&pb.StateReply{State: true},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.SetChartData(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Subscribe.Close() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Subscribe.Close() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetChartData(t *testing.T) {
+	uuid := "c30b82f7-430a-4c2e-bccd-30e920fc8136"
+	rdb, err := vendors.CreateRedisClient(enum.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := pb.ChartData{
+		Uuid:     uuid,
+		Title:    "chart1",
+		SubTitle: "sub_title",
+		XAxis:    []string{"01", "02", "03"},
+		Series:   []int64{2, 3, 4},
+	}
+	d, err := json.Marshal(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = rdb.Set(context.Background(), fmt.Sprintf("middle:chart:%s", uuid), util.ByteToString(d), time.Hour).Result()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(nil, rdb, nil, nil)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.ChartDataRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Middle
+		args    args
+		want    *pb.ChartDataReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.ChartDataRequest{ChartData: &pb.ChartData{Uuid: uuid}}},
+			&pb.ChartDataReply{ChartData: &data},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetChartData(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Subscribe.Status() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Subscribe.Status() = %v, want %v", got, tt.want)
 			}
 		})
 	}

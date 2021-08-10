@@ -66,6 +66,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Get("page", gc.GetPage)
 		router.Post("webhook/trigger", gc.WebhookTrigger)
 		router.Get("credential", gc.GetCredential)
+		router.Get("chart", gc.GetChart)
 		internal := router.Group("/").Use(auth)
 		internal.Get("apps", gc.GetApps)
 		internal.Post("app/oauth", gc.StoreAppOAuth)

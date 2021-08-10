@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const RuleKey = "subscribe:rule"
@@ -599,4 +600,48 @@ func (s *Middle) GetTags(_ context.Context, _ *pb.TagRequest) (*pb.TagsReply, er
 	return &pb.TagsReply{
 		Tags: tags,
 	}, nil
+}
+
+func (s *Middle) GetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.ChartDataReply, error) {
+	resp, err := s.rdb.Get(ctx, fmt.Sprintf("middle:chart:%s", payload.ChartData.GetUuid())).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var data pb.ChartData
+	err = json.Unmarshal(util.StringToByte(resp), &data)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ChartDataReply{ChartData: &pb.ChartData{
+		Uuid:     data.Uuid,
+		Title:    data.Title,
+		SubTitle: data.SubTitle,
+		XAxis:    data.XAxis,
+		Series:   data.Series,
+	}}, nil
+}
+
+func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.StateReply, error) {
+	uuid, err := util.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
+	data := pb.ChartData{
+		Uuid:     uuid,
+		Title:    payload.ChartData.GetTitle(),
+		SubTitle: payload.ChartData.GetSubTitle(),
+		XAxis:    payload.ChartData.GetXAxis(),
+		Series:   payload.ChartData.GetSeries(),
+	}
+	d, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.rdb.Set(ctx, fmt.Sprintf("middle:chart:%s", uuid), util.ByteToString(d), 12*30*24*time.Hour).Result()
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }

@@ -34,6 +34,8 @@ service MiddleSvc {
   rpc GetCronStatus(CronRequest) returns (StateReply) {}
   rpc GetOrCreateTag(TagRequest) returns (TagReply) {}
   rpc GetTags(TagRequest) returns (TagsReply) {}
+  rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
+  rpc SetChartData(ChartDataRequest) returns (StateReply) {}
 }
 
 message PageRequest {
@@ -188,4 +190,25 @@ message TagReply {
 
 message TagsReply {
   repeated Tag tags = 1;
+}
+
+message ChartData {
+  // @inject_tag: query:"uuid" json:"uuid"
+  string uuid = 1;
+  // @inject_tag: query:"title" json:"title"
+  string title = 2;
+  // @inject_tag: query:"sub_title" json:"sub_title"
+  string subTitle = 3;
+  // @inject_tag: query:"x_axis" json:"x_axis"
+  repeated string xAxis = 4;
+  // @inject_tag: query:"series" json:"series"
+  repeated int64 series = 5;
+}
+
+message ChartDataRequest {
+  ChartData chartData = 1;
+}
+
+message ChartDataReply {
+  ChartData chartData = 1;
 }

@@ -469,6 +469,20 @@ func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
 	return c.JSON(reply)
 }
 
+func (gc *GatewayController) GetChart(c *fiber.Ctx) error {
+	var in pb.ChartDataRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.middleSvc.GetChartData(context.Background(), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
 func (gc *GatewayController) WebhookTrigger(c *fiber.Ctx) error {
 	var in pb.TriggerRequest
 	err := c.BodyParser(&in)

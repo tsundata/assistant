@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"
@@ -129,6 +131,31 @@ func (wc *WebController) Qr(c *fiber.Ctx) error {
 
 	c.Response().Header.Set("Content-Type", "image/png")
 	return c.Send(png)
+}
+
+func (wc *WebController) Chart(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
+	reply, err := wc.gateway.GetChartData(uuid)
+	if err != nil {
+		return err
+	}
+
+	line := charts.NewLine()
+	line.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title:    reply.ChartData.GetTitle(),
+		Subtitle: reply.ChartData.GetSubTitle(),
+	}))
+
+	var lineData []opts.LineData
+	for _, i := range reply.ChartData.GetSeries() {
+		lineData = append(lineData, opts.LineData{Value: i})
+	}
+
+	line.SetXAxis(reply.ChartData.GetXAxis()).
+		AddSeries("Chart", lineData)
+
+	c.Response().Header.Set("Content-Type", "text/html")
+	return line.Render(c.Response().BodyWriter())
 }
 
 func (wc *WebController) Apps(c *fiber.Ctx) error {

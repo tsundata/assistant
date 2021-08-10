@@ -257,6 +257,22 @@ func (c *GatewayClient) GetRoleImage() (result *pb.BytesReply, err error) {
 	return
 }
 
+func (c *GatewayClient) GetChartData(uuid string) (result *pb.ChartDataReply, err error) {
+	resp, err := c.r.R().
+		SetQueryParam("uuid", uuid).
+		Get("chart")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.New(resp.String())
+	}
+
+	err = json.Unmarshal(resp.Body(), &result)
+	return
+}
+
 func (c *GatewayClient) StoreAppOAuth(in *pb.AppRequest) (result *pb.StateReply, err error) {
 	resp, err := c.r.R().
 		SetBody(in).
