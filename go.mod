@@ -10,7 +10,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
-	github.com/go-echarts/go-echarts/v2 v2.2.4 // indirect
+	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-ego/gse v0.67.0
 	github.com/go-redis/redis/v8 v8.11.2
 	github.com/go-resty/resty/v2 v2.6.0

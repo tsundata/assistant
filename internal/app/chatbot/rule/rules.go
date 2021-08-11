@@ -479,6 +479,173 @@ var rules = []Rule{
 			return []string{"failed"}
 		},
 	},
+	{
+		Define: `obj list`,
+		Help:   `List objectives`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+
+			reply, err := comp.Org().GetObjectives(ctx, &pb.ObjectiveRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			var res []string
+			for _, objective := range reply.Objective {
+				res = append(res, fmt.Sprintf("%d: %s #%s", objective.Id, objective.Name, objective.Tag))
+			}
+			if len(res) > 0 {
+				return res
+			}
+
+			return []string{"Empty"}
+		},
+	},
+	{
+		Define: `obj [string] [string]`,
+		Help:   `Create Objective`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 3 {
+				return []string{"error args"}
+			}
+
+			reply, err := comp.Org().CreateObjective(ctx, &pb.ObjectiveRequest{
+				Objective: &pb.Objective{
+					Tag:  tokens[1].Value,
+					Name: tokens[2].Value,
+				},
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
+		},
+	},
+	{
+		Define: `obj delete [number]`,
+		Help:   `Delete objective`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 3 {
+				return []string{"error args"}
+			}
+
+			idStr := tokens[2].Value
+			id, err := strconv.ParseInt(idStr, 10, 64)
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			reply, err := comp.Org().DeleteObjective(ctx, &pb.ObjectiveRequest{
+				Objective: &pb.Objective{Id: id},
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
+		},
+	},
+	{
+		Define: `kr list`,
+		Help:   `List KeyResult`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+
+			reply, err := comp.Org().GetKeyResults(ctx, &pb.KeyResultRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			var res []string
+			for _, result := range reply.Result {
+				res = append(res, fmt.Sprintf("(%d) %d: %s #%s", result.ObjectiveId, result.Id, result.Name, result.Tag))
+			}
+			if len(res) > 0 {
+				return res
+			}
+
+			return []string{"Empty"}
+		},
+	},
+	{
+		Define: `kr [number] [string] [string]`,
+		Help:   `Create KeyResult`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 4 {
+				return []string{"error args"}
+			}
+
+			idStr := tokens[1].Value
+			id, err := strconv.ParseInt(idStr, 10, 64)
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			reply, err := comp.Org().CreateKeyResult(ctx, &pb.KeyResultRequest{
+				KeyResult: &pb.KeyResult{
+					ObjectiveId: id,
+					Tag:         tokens[2].Value,
+					Name:        tokens[3].Value,
+				},
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
+		},
+	},
+	{
+		Define: `kr delete [number]`,
+		Help:   `Delete KeyResult`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Org() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 3 {
+				return []string{"error args"}
+			}
+
+			idStr := tokens[2].Value
+			id, err := strconv.ParseInt(idStr, 10, 64)
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+
+			reply, err := comp.Org().DeleteKeyResult(ctx, &pb.KeyResultRequest{
+				KeyResult: &pb.KeyResult{Id: id},
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetState() {
+				return []string{"ok"}
+			}
+
+			return []string{"failed"}
+		},
+	},
 }
 
 var Options = []rulebot.Option{

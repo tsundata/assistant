@@ -25,6 +25,7 @@ type Component struct {
 	TodoClient        pb.TodoSvcClient
 	UserClient        pb.UserSvcClient
 	NLPClient         pb.NLPSvcClient
+	OrgClient         pb.OrgSvcClient
 }
 
 func (c Component) Message() pb.MessageSvcClient {
@@ -55,6 +56,10 @@ func (c Component) NLP() pb.NLPSvcClient {
 	return c.NLPClient
 }
 
+func (c Component) Org() pb.OrgSvcClient {
+	return c.OrgClient
+}
+
 func (c Component) GetConfig() *config.AppConfig {
 	return c.Conf
 }
@@ -78,6 +83,7 @@ type IComponent interface {
 	Todo() pb.TodoSvcClient
 	User() pb.UserSvcClient
 	NLP() pb.NLPSvcClient
+	Org() pb.OrgSvcClient
 }
 
 func NewComponent(
@@ -92,6 +98,7 @@ func NewComponent(
 	todoClient pb.TodoSvcClient,
 	userClient pb.UserSvcClient,
 	nlpClient pb.NLPSvcClient,
+	orgClient pb.OrgSvcClient,
 ) IComponent {
 	return Component{
 		Conf:              conf,
@@ -104,6 +111,7 @@ func NewComponent(
 		TodoClient:        todoClient,
 		UserClient:        userClient,
 		NLPClient:         nlpClient,
+		OrgClient:         orgClient,
 	}
 }
 

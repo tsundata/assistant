@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewContext(t *testing.T) {
-	ctx := NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	ctx := NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.Nil(t, ctx.Message())
 	require.Nil(t, ctx.Middle())
 	require.Nil(t, ctx.Workflow())

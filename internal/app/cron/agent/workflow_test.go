@@ -24,7 +24,7 @@ func TestWorkflowCron(t *testing.T) {
 
 	comp := rulebot.NewComponent(nil, nil, nil,
 		nil, nil, workflow, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	type args struct {
 		comp rulebot.IComponent

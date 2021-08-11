@@ -15,7 +15,7 @@ import (
 func TestWorkflowDone(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil,
 		nil, nil, nil, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	in := result.DoneResult()
 
@@ -28,7 +28,7 @@ func TestWorkflowError(t *testing.T) {
 
 	comp := rulebot.NewComponent(nil, nil, l,
 		nil, nil, nil, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	in := result.ErrorResult(errors.New("test"))
 
@@ -48,7 +48,7 @@ func TestWorkflowMessage(t *testing.T) {
 
 	comp := rulebot.NewComponent(nil, nil, nil, message,
 		nil, nil, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	in := result.MessageResult("test")
 
@@ -58,7 +58,7 @@ func TestWorkflowMessage(t *testing.T) {
 func TestWorkflowUrl(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil,
 		nil, nil, nil, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	in := result.Result{
 		Kind:    result.Url,
@@ -81,7 +81,7 @@ func TestWorkflowRepos(t *testing.T) {
 
 	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		middle, nil, nil,
-		nil, nil, nil)
+		nil, nil, nil, nil)
 
 	in := result.Result{
 		Kind: result.Repos,
@@ -95,7 +95,7 @@ func TestWorkflowRepos(t *testing.T) {
 func TestWorkflowDefault(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
-		nil, nil)
+		nil, nil, nil)
 
 	in := result.Result{
 		Kind: result.Undefined,
