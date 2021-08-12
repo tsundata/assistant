@@ -78,7 +78,6 @@ query
 	if resp.StatusCode() == http.StatusOK {
 		result := resp.Result().(*AnalyticResponse)
 		return result, nil
-	} else {
-		return nil, fmt.Errorf("cloudflare api error %d", resp.StatusCode())
 	}
+	return nil, fmt.Errorf("cloudflare api error %d", resp.StatusCode())
 }

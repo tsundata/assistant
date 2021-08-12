@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/sdk"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
+	"github.com/tsundata/assistant/internal/pkg/vendors/doctorxiong"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
@@ -50,6 +51,9 @@ var ProviderCredentialOptions = map[string]interface{}{
 	cloudcone.ID: map[string]string{
 		cloudcone.ApiKey:  "Api Key",
 		cloudcone.ApiHash: "Api Hash",
+	},
+	doctorxiong.ID: map[string]string{
+		doctorxiong.Token: "Api Token",
 	},
 }
 
