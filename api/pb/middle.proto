@@ -35,7 +35,8 @@ service MiddleSvc {
   rpc GetOrCreateTag(TagRequest) returns (TagReply) {}
   rpc GetTags(TagRequest) returns (TagsReply) {}
   rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
-  rpc SetChartData(ChartDataRequest) returns (StateReply) {}
+  rpc SetChartData(ChartDataRequest) returns (ChartDataReply) {}
+  rpc GetChartUrl(TextRequest) returns (TextReply) {}
 }
 
 message PageRequest {
@@ -202,7 +203,7 @@ message ChartData {
   // @inject_tag: query:"x_axis" json:"x_axis"
   repeated string xAxis = 4;
   // @inject_tag: query:"series" json:"series"
-  repeated int64 series = 5;
+  repeated double series = 5;
 }
 
 message ChartDataRequest {

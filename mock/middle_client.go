@@ -176,6 +176,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetChartData(ctx, in interface{}, opt
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartData", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetChartData), varargs...)
 }
 
+// GetChartUrl mocks base method.
+func (m *MockMiddleSvcClient) GetChartUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetChartUrl", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetChartUrl indicates an expected call of GetChartUrl.
+func (mr *MockMiddleSvcClientMockRecorder) GetChartUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetChartUrl), varargs...)
+}
+
 // GetCredential mocks base method.
 func (m *MockMiddleSvcClient) GetCredential(ctx context.Context, in *pb.CredentialRequest, opts ...grpc.CallOption) (*pb.CredentialReply, error) {
 	m.ctrl.T.Helper()
@@ -557,14 +577,14 @@ func (mr *MockMiddleSvcClientMockRecorder) RegisterSubscribe(ctx, in interface{}
 }
 
 // SetChartData mocks base method.
-func (m *MockMiddleSvcClient) SetChartData(ctx context.Context, in *pb.ChartDataRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockMiddleSvcClient) SetChartData(ctx context.Context, in *pb.ChartDataRequest, opts ...grpc.CallOption) (*pb.ChartDataReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SetChartData", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
+	ret0, _ := ret[0].(*pb.ChartDataReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -762,6 +782,21 @@ func (m *MockMiddleSvcServer) GetChartData(arg0 context.Context, arg1 *pb.ChartD
 func (mr *MockMiddleSvcServerMockRecorder) GetChartData(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartData", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetChartData), arg0, arg1)
+}
+
+// GetChartUrl mocks base method.
+func (m *MockMiddleSvcServer) GetChartUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetChartUrl", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetChartUrl indicates an expected call of GetChartUrl.
+func (mr *MockMiddleSvcServerMockRecorder) GetChartUrl(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetChartUrl), arg0, arg1)
 }
 
 // GetCredential mocks base method.
@@ -1050,10 +1085,10 @@ func (mr *MockMiddleSvcServerMockRecorder) RegisterSubscribe(arg0, arg1 interfac
 }
 
 // SetChartData mocks base method.
-func (m *MockMiddleSvcServer) SetChartData(arg0 context.Context, arg1 *pb.ChartDataRequest) (*pb.StateReply, error) {
+func (m *MockMiddleSvcServer) SetChartData(arg0 context.Context, arg1 *pb.ChartDataRequest) (*pb.ChartDataReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetChartData", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
+	ret0, _ := ret[0].(*pb.ChartDataReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

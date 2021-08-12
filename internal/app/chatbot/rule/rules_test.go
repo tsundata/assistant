@@ -538,8 +538,11 @@ func TestGetFund(t *testing.T) {
 	defer ctl.Finish()
 
 	finance := mock.NewMockFinanceSvcClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		finance.EXPECT().GetFund(gomock.Any(), gomock.Any()).Return(&pb.FundReply{Name: "test"}, nil),
+		middle.EXPECT().SetChartData(gomock.Any(), gomock.Any()).Return(&pb.ChartDataReply{ChartData: nil}, nil),
+		middle.EXPECT().GetChartUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "http://127.0.0.1:7000/chart/test"}, nil),
 	)
 
 	command := "fund 000001"
@@ -548,9 +551,9 @@ func TestGetFund(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[28]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, finance)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, finance)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"test"}, res)
+	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
 }
 
 func TestGetStock(t *testing.T) {
@@ -570,5 +573,5 @@ func TestGetStock(t *testing.T) {
 	r := rules[29]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, finance)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"test"}, res)
+	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
 }

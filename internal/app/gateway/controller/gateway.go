@@ -301,13 +301,13 @@ func (gc *GatewayController) GetApps(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) GetMessages(c *fiber.Ctx) error {
-	var in pb.MessageRequest
+	var in pb.Message
 	err := c.QueryParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.messageSvc.List(context.Background(), &in)
+	reply, err := gc.messageSvc.List(context.Background(), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}
@@ -413,13 +413,13 @@ func (gc *GatewayController) CreateActionMessage(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) DeleteWorkflowMessage(c *fiber.Ctx) error {
-	var in pb.MessageRequest
+	var in pb.Message
 	err := c.BodyParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.messageSvc.DeleteWorkflowMessage(context.Background(), &in)
+	reply, err := gc.messageSvc.DeleteWorkflowMessage(context.Background(), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}
@@ -427,13 +427,13 @@ func (gc *GatewayController) DeleteWorkflowMessage(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) RunMessage(c *fiber.Ctx) error {
-	var in pb.MessageRequest
+	var in pb.Message
 	err := c.BodyParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.messageSvc.Run(context.Background(), &in)
+	reply, err := gc.messageSvc.Run(context.Background(), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}
@@ -441,13 +441,13 @@ func (gc *GatewayController) RunMessage(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) SendMessage(c *fiber.Ctx) error {
-	var in pb.MessageRequest
+	var in pb.Message
 	err := c.BodyParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.messageSvc.Send(context.Background(), &in)
+	reply, err := gc.messageSvc.Send(context.Background(), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}
@@ -470,13 +470,13 @@ func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) GetChart(c *fiber.Ctx) error {
-	var in pb.ChartDataRequest
+	var in pb.ChartData
 	err := c.QueryParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.middleSvc.GetChartData(context.Background(), &in)
+	reply, err := gc.middleSvc.GetChartData(context.Background(), &pb.ChartDataRequest{ChartData: &in})
 	if err != nil {
 		return err
 	}

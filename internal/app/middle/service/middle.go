@@ -78,6 +78,14 @@ func (s *Middle) GetRoleImageUrl(ctx context.Context, _ *pb.TextRequest) (*pb.Te
 	}, nil
 }
 
+func (s *Middle) GetChartUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	uuid := payload.GetText()
+
+	return &pb.TextReply{
+		Text: fmt.Sprintf("%s/chart/%s", s.conf.Web.Url, uuid),
+	}, nil
+}
+
 func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
 	uuid, err := util.GenerateUUID()
 	if err != nil {
@@ -622,7 +630,7 @@ func (s *Middle) GetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 	}}, nil
 }
 
-func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.StateReply, error) {
+func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.ChartDataReply, error) {
 	uuid, err := util.GenerateUUID()
 	if err != nil {
 		return nil, err
@@ -639,9 +647,9 @@ func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 		return nil, err
 	}
 
-	_, err = s.rdb.Set(ctx, fmt.Sprintf("middle:chart:%s", uuid), util.ByteToString(d), 12*30*24*time.Hour).Result()
+	_, err = s.rdb.Set(ctx, fmt.Sprintf("middle:chart:%s", uuid), util.ByteToString(d), 90*24*time.Hour).Result()
 	if err != nil {
 		return nil, err
 	}
-	return &pb.StateReply{State: true}, nil
+	return &pb.ChartDataReply{ChartData: &pb.ChartData{Uuid: uuid}}, nil
 }

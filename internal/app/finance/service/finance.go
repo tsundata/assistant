@@ -35,7 +35,7 @@ func (f *Finance) DeleteBill(ctx context.Context, payload *pb.BillRequest) (*pb.
 func (f *Finance) GetFund(ctx context.Context, payload *pb.TextRequest) (*pb.FundReply, error) {
 	code := payload.Text
 	now := time.Now()
-	startDate := now.AddDate(0, 0, -30).Format("2006-01-02")
+	startDate := now.AddDate(0, 0, -90).Format("2006-01-02")
 	endDate := now.Format("2006-01-02")
 	dx := doctorxiong.NewDoctorxiong("")
 	resp, err := dx.GetFundDetail(ctx, code, startDate, endDate)
@@ -60,7 +60,7 @@ func (f *Finance) GetFund(ctx context.Context, payload *pb.TextRequest) (*pb.Fun
 	var millionCopiesIncomeDataIncome []float64
 	for _, item := range fund.MillionCopiesIncomeData {
 		millionCopiesIncomeDataDate = append(millionCopiesIncomeDataDate, item[0].(string))
-		f1, _ := strconv.ParseFloat(item[0].(string), 64)
+		f1, _ := strconv.ParseFloat(item[1].(string), 64)
 		millionCopiesIncomeDataIncome = append(millionCopiesIncomeDataIncome, f1)
 	}
 
