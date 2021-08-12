@@ -1,6 +1,7 @@
 package doctorxiong
 
 import (
+	"context"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
@@ -8,7 +9,7 @@ import (
 
 func TestDoctorxiong_GetFundDetail(t *testing.T) {
 	dx := NewDoctorxiong("")
-	resp, err := dx.GetFundDetail("000001", "2021-08-01", "2021-08-31")
+	resp, err := dx.GetFundDetail(context.Background(), "000001", "2021-08-01", "2021-08-31")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -17,7 +18,7 @@ func TestDoctorxiong_GetFundDetail(t *testing.T) {
 
 func TestDoctorxiong_GetFundDetail2(t *testing.T) {
 	dx := NewDoctorxiong("")
-	resp, err := dx.GetFundDetail("003171", "2021-08-01", "2021-08-31")
+	resp, err := dx.GetFundDetail(context.Background(), "003171", "2021-08-01", "2021-08-31")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +27,7 @@ func TestDoctorxiong_GetFundDetail2(t *testing.T) {
 
 func TestDoctorxiong_GetStockDetail(t *testing.T) {
 	dx := NewDoctorxiong("")
-	resp, err := dx.GetStockDetail("sz000001")
+	resp, err := dx.GetStockDetail(context.Background(), "sz000001")
 	if err != nil {
 		t.Fatal(err)
 	}

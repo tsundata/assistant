@@ -89,7 +89,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient)
+	financeSvcClient, err := rpcclient.NewFinanceClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
 	ruleBot := rulebot.New(iComponent)
 	application, err := cron.NewApp(appConfig, logLogger, ruleBot)
 	if err != nil {

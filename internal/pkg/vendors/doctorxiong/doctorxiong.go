@@ -1,6 +1,7 @@
 package doctorxiong
 
 import (
+	"context"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 )
@@ -80,9 +81,10 @@ func NewDoctorxiong(token string) *Doctorxiong {
 	return &Doctorxiong{token: token}
 }
 
-func (v *Doctorxiong) GetFundDetail(code, startDate, endDate string) (*FundDetailResponse, error) {
+func (v *Doctorxiong) GetFundDetail(ctx context.Context, code, startDate, endDate string) (*FundDetailResponse, error) {
 	c := resty.New()
 	resp, err := c.R().
+		SetContext(ctx).
 		//SetHeader("token", v.token).
 		SetQueryParam("code", code).
 		SetQueryParam("startDate", startDate).
@@ -100,9 +102,10 @@ func (v *Doctorxiong) GetFundDetail(code, startDate, endDate string) (*FundDetai
 	return nil, nil
 }
 
-func (v *Doctorxiong) GetStockDetail(code string) (*StockDetailResponse, error) {
+func (v *Doctorxiong) GetStockDetail(ctx context.Context, code string) (*StockDetailResponse, error) {
 	c := resty.New()
 	resp, err := c.R().
+		SetContext(ctx).
 		//SetHeader("token", v.token).
 		SetResult(&StockDetailResponse{}).
 		SetQueryParam("code", code).

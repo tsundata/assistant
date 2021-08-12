@@ -10,6 +10,8 @@ service FinanceSvc {
   rpc GetBill(BillRequest) returns (BillReply) {}
   rpc GetBills(BillRequest) returns (BillsReply) {}
   rpc DeleteBill(BillRequest) returns (StateReply) {}
+  rpc GetFund(TextRequest) returns (FundReply) {}
+  rpc GetStock(TextRequest) returns (StockReply) {}
 }
 
 message BillRequest {
@@ -56,4 +58,58 @@ message Account {
   string name = 2;
   float balance = 3;
   string createdAt = 4;
+}
+
+message FundReply {
+  string code = 1;
+  string name = 2;
+  string type = 3;
+  double netWorth = 4;
+  double expectWorth = 5;
+  double totalWorth = 6;
+  string expectGrowth = 7;
+  string dayGrowth = 8;
+  string lastWeekGrowth = 9;
+  string lastMonthGrowth = 10;
+  string lastThreeMonthsGrowth = 11;
+  string lastSixMonthsGrowth = 12;
+  string lastYearGrowth = 13;
+  string buyMin = 14;
+  string buySourceRate = 15;
+  string buyRate = 16;
+  string manager = 17;
+  string fundScale = 18;
+  string netWorthDate = 19;
+  string expectWorthDate = 20;
+  repeated string netWorthDataDate = 21;
+  repeated double netWorthDataUnit = 22;
+  repeated double netWorthDataIncrease = 23;
+  repeated string millionCopiesIncomeDataDate = 24;
+  repeated double millionCopiesIncomeDataIncome = 25;
+  string millionCopiesIncomeDate = 26;
+  double sevenDaysYearIncome = 27;
+}
+
+message StockReply {
+  string code = 1;
+  string name = 2;
+  string type = 3;
+  string priceChange = 4;
+  string changePercent = 5;
+  string open = 6;
+  string close = 7;
+  string price = 8;
+  string high = 9;
+  string low = 10;
+  string volume = 11;
+  string turnover = 12;
+  string turnoverRate = 13;
+  string totalWorth = 14;
+  string circulationWorth = 15;
+  string date = 16;
+  repeated string buy = 17;
+  repeated string sell = 18;
+  string pb = 19;
+  string spe = 20;
+  string pe = 21;
 }

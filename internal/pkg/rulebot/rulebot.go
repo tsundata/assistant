@@ -26,6 +26,7 @@ type Component struct {
 	UserClient        pb.UserSvcClient
 	NLPClient         pb.NLPSvcClient
 	OrgClient         pb.OrgSvcClient
+	FinanceClient     pb.FinanceSvcClient
 }
 
 func (c Component) Message() pb.MessageSvcClient {
@@ -60,6 +61,10 @@ func (c Component) Org() pb.OrgSvcClient {
 	return c.OrgClient
 }
 
+func (c Component) Finance() pb.FinanceSvcClient {
+	return c.FinanceClient
+}
+
 func (c Component) GetConfig() *config.AppConfig {
 	return c.Conf
 }
@@ -84,6 +89,7 @@ type IComponent interface {
 	User() pb.UserSvcClient
 	NLP() pb.NLPSvcClient
 	Org() pb.OrgSvcClient
+	Finance() pb.FinanceSvcClient
 }
 
 func NewComponent(
@@ -99,6 +105,7 @@ func NewComponent(
 	userClient pb.UserSvcClient,
 	nlpClient pb.NLPSvcClient,
 	orgClient pb.OrgSvcClient,
+	financeClient pb.FinanceSvcClient,
 ) IComponent {
 	return Component{
 		Conf:              conf,
@@ -112,6 +119,7 @@ func NewComponent(
 		UserClient:        userClient,
 		NLPClient:         nlpClient,
 		OrgClient:         orgClient,
+		FinanceClient:     financeClient,
 	}
 }
 

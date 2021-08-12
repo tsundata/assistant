@@ -646,6 +646,54 @@ var rules = []Rule{
 			return []string{"failed"}
 		},
 	},
+	{
+		Define: `fund [string]`,
+		Help:   `Get fund`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Finance() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 2 {
+				return []string{"error args"}
+			}
+
+			reply, err := comp.Finance().GetFund(ctx, &pb.TextRequest{
+				Text: tokens[1].Value,
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetName() != "" {
+				return []string{reply.GetName()}
+			}
+
+			return []string{"failed"}
+		},
+	},
+	{
+		Define: `stock [string]`,
+		Help:   `Get stock`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Finance() == nil {
+				return []string{"empty client"}
+			}
+			if len(tokens) != 2 {
+				return []string{"error args"}
+			}
+
+			reply, err := comp.Finance().GetStock(ctx, &pb.TextRequest{
+				Text: tokens[1].Value,
+			})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			if reply.GetName() != "" {
+				return []string{reply.GetName()}
+			}
+
+			return []string{"failed"}
+		},
+	},
 }
 
 var Options = []rulebot.Option{
