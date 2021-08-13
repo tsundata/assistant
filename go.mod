@@ -14,7 +14,7 @@ require (
 	github.com/go-ego/gse v0.67.0
 	github.com/go-redis/redis/v8 v8.11.2
 	github.com/go-resty/resty/v2 v2.6.0
-	github.com/gofiber/fiber/v2 v2.16.0
+	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
