@@ -3,6 +3,7 @@ package rule
 import (
 	"context"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -145,11 +146,20 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
-			if reply.GetText() == nil {
+			tableString := &strings.Builder{}
+			if len(reply.Subscribe) > 0 {
+				table := tablewriter.NewWriter(tableString)
+				table.SetHeader([]string{"Name", "Subscribe"})
+				for _, v := range reply.Subscribe {
+					table.Append([]string{v.Name, util.BoolToString(v.State)})
+				}
+				table.Render()
+			}
+			if tableString.String() == "" {
 				return []string{"empty subscript"}
 			}
 
-			return reply.GetText()
+			return []string{tableString.String()}
 		},
 	},
 	{
@@ -491,15 +501,21 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			var res []string
-			for _, objective := range reply.Objective {
-				res = append(res, fmt.Sprintf("%d: %s #%s", objective.Id, objective.Name, objective.Tag))
+
+			tableString := &strings.Builder{}
+			if len(reply.Objective) > 0 {
+				table := tablewriter.NewWriter(tableString)
+				table.SetHeader([]string{"Id", "Name", "Tag"})
+				for _, v := range reply.Objective {
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, v.Tag})
+				}
+				table.Render()
 			}
-			if len(res) > 0 {
-				return res
+			if tableString.String() == "" {
+				return []string{"Empty"}
 			}
 
-			return []string{"Empty"}
+			return []string{tableString.String()}
 		},
 	},
 	{
@@ -571,15 +587,21 @@ var rules = []Rule{
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			var res []string
-			for _, result := range reply.Result {
-				res = append(res, fmt.Sprintf("(%d) %d: %s #%s", result.ObjectiveId, result.Id, result.Name, result.Tag))
+
+			tableString := &strings.Builder{}
+			if len(reply.Result) > 0 {
+				table := tablewriter.NewWriter(tableString)
+				table.SetHeader([]string{"Id", "Name", "OID", "Tag", "Complete", "Update"})
+				for _, v := range reply.Result {
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), v.Tag, util.BoolToString(v.Complete), v.UpdatedAt})
+				}
+				table.Render()
 			}
-			if len(res) > 0 {
-				return res
+			if tableString.String() == "" {
+				return []string{"Empty"}
 			}
 
-			return []string{"Empty"}
+			return []string{tableString.String()}
 		},
 	},
 	{

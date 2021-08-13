@@ -34,6 +34,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
+	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/gomega v1.12.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1

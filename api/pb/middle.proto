@@ -156,12 +156,17 @@ message KV {
   string value = 2;
 }
 
+message Subscribe {
+  string name = 1;
+  bool state = 2;
+}
+
 message SubscribeRequest {
   string text = 1;
 }
 
 message SubscribeReply {
-  repeated string text = 1;
+  repeated Subscribe subscribe = 1;
 }
 
 message CronRequest {

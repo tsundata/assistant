@@ -841,7 +841,7 @@ func TestSubscribe_List(t *testing.T) {
 				t.Errorf("Subscribe.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && len(got.Text) != tt.want {
+			if got != nil && len(got.Subscribe) != tt.want {
 				t.Errorf("Subscribe.List() = %v, want %v", got, tt.want)
 			}
 		})

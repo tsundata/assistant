@@ -438,13 +438,16 @@ func (s *Middle) ListSubscribe(ctx context.Context, _ *pb.SubscribeRequest) (*pb
 		return nil, err
 	}
 
-	var result []string
+	var result []*pb.Subscribe
 	for source, isSubscribe := range res {
-		result = append(result, fmt.Sprintf("%s [Subscribe:%v]", source, isSubscribe))
+		result = append(result, &pb.Subscribe{
+			Name:  source,
+			State: util.StringToBool(isSubscribe),
+		})
 	}
 
 	return &pb.SubscribeReply{
-		Text: result,
+		Subscribe: result,
 	}, nil
 }
 

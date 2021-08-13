@@ -62,3 +62,21 @@ func Inject(obj interface{}, data map[string]interface{}) {
 		}
 	}
 }
+
+func StringToBool(i string) bool {
+	if i == "true" {
+		return true
+	}
+	if i == "false" {
+		return false
+	}
+	return false
+}
+
+func BoolToString(i bool) string {
+	if i {
+		return "true"
+	} else {
+		return "false"
+	}
+}

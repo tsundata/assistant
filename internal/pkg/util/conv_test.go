@@ -17,7 +17,7 @@ type demo struct {
 	C string  `db:"c"`
 	D bool    `db:"d"`
 
-	E int64 `db:"e"`
+	E int64  `db:"e"`
 	F string `db:"f"`
 }
 
@@ -40,4 +40,44 @@ func TestInject(t *testing.T) {
 	require.Equal(t, d.D, true)
 	require.Equal(t, d.E, int64(159))
 	require.Equal(t, d.F, now.Format("2006-01-02 15:04:05"))
+}
+
+func TestStringToBool(t *testing.T) {
+	tests := []struct {
+		name string
+		arg  string
+		want bool
+	}{
+		{"case1", "true", true},
+		{"case2", "false", false},
+		{"case3", "1", false},
+		{"case4", "ok", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if r := StringToBool(tt.arg); r != tt.want {
+				t.Errorf("StringToBool() return = %v, want %v", r, tt.want)
+				return
+			}
+		})
+	}
+}
+
+func TestBoolToString(t *testing.T) {
+	tests := []struct {
+		name string
+		arg  bool
+		want string
+	}{
+		{"case1", true, "true"},
+		{"case2", false, "false"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if r := BoolToString(tt.arg); r != tt.want {
+				t.Errorf("StringToBool() return = %v, want %v", r, tt.want)
+				return
+			}
+		})
+	}
 }
