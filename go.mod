@@ -12,7 +12,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-ego/gse v0.67.0
-	github.com/go-redis/redis/v8 v8.11.2
+	github.com/go-redis/redis/v8 v8.11.3
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/gogo/protobuf v1.3.2
@@ -35,7 +35,6 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/gomega v1.12.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/rollbar/rollbar-go v1.4.1
