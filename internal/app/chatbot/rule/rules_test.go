@@ -123,7 +123,7 @@ func TestSubsListRule(t *testing.T) {
 	r := rules[6]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"+-------+-----------+\n| NAME  | SUBSCRIBE |\n+-------+-----------+\n| test1 | true      |\n+-------+-----------+\n"}, res)
+	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
 }
 
 func TestSubsOpenRule(t *testing.T) {
@@ -344,7 +344,7 @@ func TestCronListRule(t *testing.T) {
 
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().ListCron(gomock.Any(), gomock.Any()).Return(&pb.CronReply{Text: []string{"test1"}}, nil),
+		middle.EXPECT().ListCron(gomock.Any(), gomock.Any()).Return(&pb.CronReply{Cron: []*pb.Cron{{Name: "test", State: true}}}, nil),
 	)
 
 	command := "cron list"
@@ -355,7 +355,7 @@ func TestCronListRule(t *testing.T) {
 	r := rules[19]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"test1"}, res)
+	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
 }
 
 func TestCronStartRule(t *testing.T) {
@@ -422,7 +422,7 @@ func TestObjList(t *testing.T) {
 	r := rules[22]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"+----+------+-------+\n| ID | NAME |  TAG  |\n+----+------+-------+\n|  1 | obj  | obj-1 |\n+----+------+-------+\n"}, res)
+	require.Equal(t, []string{"  ID | NAME |  TAG   \n-----+------+--------\n   1 | obj  | obj-1  \n"}, res)
 }
 
 func TestObjCreate(t *testing.T) {
@@ -490,7 +490,7 @@ func TestKrList(t *testing.T) {
 	r := rules[25]
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
-	require.Equal(t, []string{"+----+------+-----+------+----------+--------+\n| ID | NAME | OID | TAG  | COMPLETE | UPDATE |\n+----+------+-----+------+----------+--------+\n|  1 | kr   |   1 | kr-1 | false    |        |\n+----+------+-----+------+----------+--------+\n"}, res)
+	require.Equal(t, []string{"  ID | NAME | OID | TAG  | COMPLETE | UPDATE  \n-----+------+-----+------+----------+---------\n   1 | kr   |   1 | kr-1 | false    |         \n"}, res)
 }
 
 func TestKrCreate(t *testing.T) {

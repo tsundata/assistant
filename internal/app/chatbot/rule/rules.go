@@ -149,6 +149,7 @@ var rules = []Rule{
 			tableString := &strings.Builder{}
 			if len(reply.Subscribe) > 0 {
 				table := tablewriter.NewWriter(tableString)
+				table.SetBorder(false)
 				table.SetHeader([]string{"Name", "Subscribe"})
 				for _, v := range reply.Subscribe {
 					table.Append([]string{v.Name, util.BoolToString(v.State)})
@@ -434,11 +435,21 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
-			if reply.GetText() == nil {
-				return []string{"empty subscript"}
+			tableString := &strings.Builder{}
+			if len(reply.Cron) > 0 {
+				table := tablewriter.NewWriter(tableString)
+				table.SetBorder(false)
+				table.SetHeader([]string{"Name", "IsCron"})
+				for _, v := range reply.Cron {
+					table.Append([]string{v.Name, util.BoolToString(v.State)})
+				}
+				table.Render()
+			}
+			if tableString.String() == "" {
+				return []string{"empty cron"}
 			}
 
-			return reply.GetText()
+			return []string{tableString.String()}
 		},
 	},
 	{
@@ -505,6 +516,7 @@ var rules = []Rule{
 			tableString := &strings.Builder{}
 			if len(reply.Objective) > 0 {
 				table := tablewriter.NewWriter(tableString)
+				table.SetBorder(false)
 				table.SetHeader([]string{"Id", "Name", "Tag"})
 				for _, v := range reply.Objective {
 					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, v.Tag})
@@ -591,6 +603,7 @@ var rules = []Rule{
 			tableString := &strings.Builder{}
 			if len(reply.Result) > 0 {
 				table := tablewriter.NewWriter(tableString)
+				table.SetBorder(false)
 				table.SetHeader([]string{"Id", "Name", "OID", "Tag", "Complete", "Update"})
 				for _, v := range reply.Result {
 					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), v.Tag, util.BoolToString(v.Complete), v.UpdatedAt})

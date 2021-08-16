@@ -1225,3 +1225,56 @@ func TestGetChartData(t *testing.T) {
 		})
 	}
 }
+
+func TestListCron(t *testing.T) {
+	rdb, err := vendors.CreateRedisClient(enum.Middle)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = rdb.Del(context.Background(), CronKey).Result()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = rdb.HMSet(context.Background(), CronKey, "test1", "true").Result()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = rdb.HMSet(context.Background(), CronKey, "test2", "true").Result()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s := NewMiddle(nil, rdb, nil, nil)
+
+	type args struct {
+		ctx context.Context
+		in1 *pb.CronRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Middle
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.CronRequest{}},
+			2,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.ListCron(tt.args.ctx, tt.args.in1)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Cron.List() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && len(got.Cron) != tt.want {
+				t.Errorf("Cron.List() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

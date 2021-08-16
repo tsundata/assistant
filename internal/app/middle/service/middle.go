@@ -513,13 +513,16 @@ func (s *Middle) ListCron(ctx context.Context, _ *pb.CronRequest) (*pb.CronReply
 		return nil, err
 	}
 
-	var result []string
+	var result []*pb.Cron
 	for source, isCron := range res {
-		result = append(result, fmt.Sprintf("%s [Cron:%v]", source, isCron))
+		result = append(result, &pb.Cron{
+			Name:  source,
+			State: util.StringToBool(isCron),
+		})
 	}
 
 	return &pb.CronReply{
-		Text: result,
+		Cron: result,
 	}, nil
 }
 

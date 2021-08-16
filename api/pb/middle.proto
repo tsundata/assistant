@@ -169,12 +169,18 @@ message SubscribeReply {
   repeated Subscribe subscribe = 1;
 }
 
+message Cron {
+  string name = 1;
+  string when = 2;
+  bool state = 3;
+}
+
 message CronRequest {
   string text = 1;
 }
 
 message CronReply {
-  repeated string text = 1;
+  repeated Cron cron = 1;
 }
 
 message Tag {
