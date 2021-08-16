@@ -44,12 +44,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.IMAGE_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
@@ -64,9 +58,6 @@ jobs:
           push: true
           file: build/chatbot/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/chatbot:latest
-            ${{ secrets.IMAGE_USER }}/chatbot:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/chatbot:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/chatbot:${{ steps.meta.outputs.tag }}
 
       - name: Build and push cron
@@ -76,9 +67,6 @@ jobs:
           push: true
           file: build/cron/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/cron:latest
-            ${{ secrets.IMAGE_USER }}/cron:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/cron:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/cron:${{ steps.meta.outputs.tag }}
 
       - name: Build and push gateway
@@ -88,9 +76,6 @@ jobs:
           push: true
           file: build/gateway/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/gateway:latest
-            ${{ secrets.IMAGE_USER }}/gateway:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/gateway:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/gateway:${{ steps.meta.outputs.tag }}
 
       - name: Build and push message
@@ -100,9 +85,6 @@ jobs:
           push: true
           file: build/message/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/message:latest
-            ${{ secrets.IMAGE_USER }}/message:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/message:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/message:${{ steps.meta.outputs.tag }}
 
       - name: Build and push middle
@@ -112,9 +94,6 @@ jobs:
           push: true
           file: build/middle/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/middle:latest
-            ${{ secrets.IMAGE_USER }}/middle:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/middle:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/middle:${{ steps.meta.outputs.tag }}
 
       - name: Build and push spider
@@ -124,9 +103,6 @@ jobs:
           push: true
           file: build/spider/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/spider:latest
-            ${{ secrets.IMAGE_USER }}/spider:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/spider:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/spider:${{ steps.meta.outputs.tag }}
 
       - name: Build and push storage
@@ -136,9 +112,6 @@ jobs:
           push: true
           file: build/storage/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/storage:latest
-            ${{ secrets.IMAGE_USER }}/storage:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/storage:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/storage:${{ steps.meta.outputs.tag }}
 
       - name: Build and push task
@@ -148,9 +121,6 @@ jobs:
           push: true
           file: build/task/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/task:latest
-            ${{ secrets.IMAGE_USER }}/task:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/task:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/task:${{ steps.meta.outputs.tag }}
 
       - name: Build and push web
@@ -160,9 +130,6 @@ jobs:
           push: true
           file: build/web/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/web:latest
-            ${{ secrets.IMAGE_USER }}/web:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/web:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/web:${{ steps.meta.outputs.tag }}
 
       - name: Build and push workflow
@@ -172,9 +139,6 @@ jobs:
           push: true
           file: build/workflow/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/workflow:latest
-            ${{ secrets.IMAGE_USER }}/workflow:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/workflow:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/workflow:${{ steps.meta.outputs.tag }}
 
       - name: Build and push user
@@ -184,9 +148,6 @@ jobs:
           push: true
           file: build/user/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/user:latest
-            ${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/user:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
 
       - name: Build and push todo
@@ -196,9 +157,6 @@ jobs:
           push: true
           file: build/todo/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/todo:latest
-            ${{ secrets.IMAGE_USER }}/todo:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/todo:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/todo:${{ steps.meta.outputs.tag }}
 
       - name: Build and push finance
@@ -208,9 +166,6 @@ jobs:
           push: true
           file: build/finance/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/finance:latest
-            ${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/finance:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
 
       - name: Build and push nlp
@@ -220,9 +175,6 @@ jobs:
           push: true
           file: build/nlp/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/nlp:latest
-            ${{ secrets.IMAGE_USER }}/nlp:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/nlp:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/nlp:${{ steps.meta.outputs.tag }}
 
       - name: Build and push org
@@ -232,7 +184,4 @@ jobs:
           push: true
           file: build/org/Dockerfile
           tags: |
-            ${{ secrets.IMAGE_USER }}/org:latest
-            ${{ secrets.IMAGE_USER }}/org:${{ steps.meta.outputs.tag }}
-            ghcr.io/${{ secrets.IMAGE_USER }}/org:latest
             ghcr.io/${{ secrets.IMAGE_USER }}/org:${{ steps.meta.outputs.tag }}
