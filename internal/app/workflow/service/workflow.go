@@ -257,3 +257,15 @@ func (s *Workflow) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*p
 		Text: docs,
 	}, nil
 }
+
+func (s *Workflow) ListWebhook(_ context.Context, _ *pb.WorkflowRequest) (*pb.WebhooksReply, error) {
+	triggers, err := s.repo.ListTriggersByType("webhook")
+	if err != nil {
+		return nil, err
+	}
+	var flags []string
+	for _, item := range triggers {
+		flags = append(flags, item.Flag)
+	}
+	return &pb.WebhooksReply{Flag: flags}, nil
+}

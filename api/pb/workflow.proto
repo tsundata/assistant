@@ -13,6 +13,7 @@ service WorkflowSvc {
   rpc CreateTrigger(TriggerRequest) returns (StateReply) {}
   rpc DeleteTrigger(TriggerRequest) returns (StateReply) {}
   rpc ActionDoc(WorkflowRequest) returns (WorkflowReply) {}
+  rpc ListWebhook(WorkflowRequest) returns (WebhooksReply) {}
 }
 
 message WorkflowRequest {
@@ -49,4 +50,8 @@ message Trigger {
   string messageText = 9;
   string header = 10;
   string body = 11;
+}
+
+message WebhooksReply {
+  repeated string flag = 1;
 }

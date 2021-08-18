@@ -774,6 +774,31 @@ var rules = []Rule{
 			return []string{"failed"}
 		},
 	},
+	{
+		Define: `webhook list`,
+		Help:   `List webhook`,
+		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+			if comp.Workflow() == nil {
+				return []string{"empty client"}
+			}
+
+			reply, err := comp.Workflow().ListWebhook(ctx, &pb.WorkflowRequest{})
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			var result strings.Builder
+			for _, flag := range reply.Flag {
+				result.WriteString("/webhook/")
+				result.WriteString(flag)
+				result.WriteString("\n")
+			}
+			if result.Len() > 0 {
+				return []string{result.String()}
+			}
+
+			return []string{"failed"}
+		},
+	},
 }
 
 var Options = []rulebot.Option{

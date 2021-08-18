@@ -375,3 +375,47 @@ func TestWorkflow_ActionDoc(t *testing.T) {
 		})
 	}
 }
+
+func TestWorkflow_ListWebhook(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockWorkflowRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListTriggersByType(gomock.Any()).Return([]pb.Trigger{{Flag: "test1"}, {Flag: "test2"}}, nil),
+	)
+
+	s := NewWorkflow(nil, nil, repo, nil, nil, nil)
+
+	type args struct {
+		in0     context.Context
+		payload *pb.WorkflowRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Workflow
+		args    args
+		want    *pb.WebhooksReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.WorkflowRequest{}},
+			&pb.WebhooksReply{Flag: []string{"test1", "test2"}},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.ListWebhook(tt.args.in0, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Workflow.ListWebhook() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Workflow.ListWebhook() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -20,7 +20,8 @@ func TestVersionRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[0]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{version.Info()}, res)
 }
@@ -40,7 +41,8 @@ func TestMenuRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[1]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"menu ..."}, res)
 }
@@ -60,7 +62,8 @@ func TestQrRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[2]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
 }
@@ -72,7 +75,8 @@ func TestUtRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[3]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
@@ -84,7 +88,8 @@ func TestRandRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[4]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 
 	i, err := strconv.ParseInt(res[0], 10, 64)
@@ -101,7 +106,8 @@ func TestPwdRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[5]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, 32, len(res[0]))
 }
@@ -121,7 +127,8 @@ func TestSubsListRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[6]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
 }
@@ -141,7 +148,8 @@ func TestSubsOpenRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[7]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -161,7 +169,8 @@ func TestSubsCloseRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[8]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -181,7 +190,8 @@ func TestViewRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[9]
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"test1"}, res)
 }
@@ -201,7 +211,8 @@ func TestRunRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[10]
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"test1"}, res)
 }
@@ -221,7 +232,8 @@ func TestDocRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[11]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Len(t, res, 1)
 }
@@ -241,7 +253,8 @@ func TestStatsRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[13]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"stats ..."}, res)
 }
@@ -261,7 +274,8 @@ func TestTodoRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[14]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, todo, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, todo, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"success"}, res)
 }
@@ -281,7 +295,8 @@ func TestRoleRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[15]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{`https://web.test/role/test`}, res)
 }
@@ -301,7 +316,8 @@ func TestPinyinRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[16]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nlp, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nlp, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"a1, a2"}, res)
 }
@@ -313,7 +329,8 @@ func TestRemindRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[17]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{}, res)
 }
@@ -333,7 +350,8 @@ func TestDeleteRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[18]
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"Deleted 1"}, res)
 }
@@ -353,7 +371,8 @@ func TestCronListRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[19]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
 }
@@ -373,7 +392,8 @@ func TestCronStartRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[20]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -393,7 +413,8 @@ func TestCronStopRule(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[21]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -420,7 +441,8 @@ func TestObjList(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[22]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"  ID | NAME |  TAG   \n-----+------+--------\n   1 | obj  | obj-1  \n"}, res)
 }
@@ -440,7 +462,8 @@ func TestObjCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[23]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -460,7 +483,8 @@ func TestObjDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[24]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -488,7 +512,8 @@ func TestKrList(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[25]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"  ID | NAME | OID | TAG  | COMPLETE | UPDATE  \n-----+------+-----+------+----------+---------\n   1 | kr   |   1 | kr-1 | false    |         \n"}, res)
 }
@@ -508,7 +533,8 @@ func TestKrCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[26]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -528,7 +554,8 @@ func TestKrDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[27]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, org, nil)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, org, nil)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -551,7 +578,8 @@ func TestGetFund(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[28]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil, nil, nil, nil, nil, nil, finance)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+		nil, nil, nil, nil, nil, finance)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
 }
@@ -571,7 +599,29 @@ func TestGetStock(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := rules[29]
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, finance)
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, finance)
 	res := r.Parse(context.Background(), comp, tokens)
 	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
+}
+
+func TestWebhookList(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	workflow := mock.NewMockWorkflowSvcClient(ctl)
+	gomock.InOrder(
+		workflow.EXPECT().ListWebhook(gomock.Any(), gomock.Any()).Return(&pb.WebhooksReply{Flag: []string{"test1", "test2"}}, nil),
+	)
+
+	command := "webhook list"
+	tokens, err := ParseCommand(command)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := rules[30]
+	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
+		nil, nil, nil, nil, nil, nil)
+	res := r.Parse(context.Background(), comp, tokens)
+	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)
 }
