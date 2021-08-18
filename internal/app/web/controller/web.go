@@ -548,7 +548,7 @@ func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
 	}
 
-	_, err = wc.gateway.DeleteWorkflowMessage(&pb.MessageRequest{Message: &pb.Message{Id: id}})
+	_, err = wc.gateway.DeleteWorkflowMessage(&pb.Message{Id: id})
 	if err != nil {
 		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
 	}

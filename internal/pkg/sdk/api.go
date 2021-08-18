@@ -162,7 +162,7 @@ func (c *GatewayClient) CreateActionMessage(in *pb.TextRequest) (result *pb.Stat
 	return
 }
 
-func (c *GatewayClient) DeleteWorkflowMessage(in *pb.MessageRequest) (result *pb.StateReply, err error) {
+func (c *GatewayClient) DeleteWorkflowMessage(in *pb.Message) (result *pb.StateReply, err error) {
 	resp, err := c.r.R().
 		SetBody(in).
 		Delete("workflow/message")
