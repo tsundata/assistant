@@ -12,6 +12,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"net/url"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -393,6 +395,11 @@ func (s *Middle) CreateSetting(ctx context.Context, payload *pb.KVRequest) (*pb.
 	return &pb.StateReply{State: true}, nil
 }
 
+type countKV struct {
+	key   string
+	value interface{}
+}
+
 func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
 	var result []string
 
@@ -408,8 +415,27 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 	if err != nil {
 		return nil, err
 	}
+	var kvs []countKV
 	for i := 0; i < len(keys); i++ {
-		result = append(result, fmt.Sprintf("%s: %s", strings.ReplaceAll(keys[i], "stats:count:", ""), values[i]))
+		kvs = append(kvs, countKV{
+			key:   keys[i],
+			value: values[i],
+		})
+	}
+	sort.Slice(kvs, func(i, j int) bool {
+		l := 0
+		if v, ok := kvs[i].value.(string); ok {
+			l, _ = strconv.Atoi(v)
+		}
+		r := 0
+		if v, ok := kvs[j].value.(string); ok {
+			r, _ = strconv.Atoi(v)
+		}
+		return l > r
+	})
+
+	for _, i := range kvs {
+		result = append(result, fmt.Sprintf("%s: %s", strings.ReplaceAll(i.key, "stats:count:", ""), i.value))
 	}
 
 	// month
