@@ -23,7 +23,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
-	github.com/influxdata/influxdb-client-go/v2 v2.4.0
+	github.com/influxdata/influxdb-client-go/v2 v2.5.0
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
