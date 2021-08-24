@@ -32,6 +32,8 @@ Assistant Bot is a workflow engine for chatbot
 - Newrelic
 - Cloudflare
 - Email
+- CloudCone
+- DoctorXiong
 
 ## Requirements
 
