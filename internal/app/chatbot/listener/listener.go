@@ -26,6 +26,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, middle pb.MiddleSvcC
 		comp.Middle = middle
 		comp.Todo = todo
 		comp.User = user
+		comp.Bus = bus
 		trigger.Run(context.Background(), comp, m.Text)
 	})
 	if err != nil {
