@@ -80,11 +80,34 @@ func (l *Lexer) Character() (*Token, error) {
 	return token, nil
 }
 
+func (l *Lexer) String() (*Token, error) {
+	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+
+	l.Advance()
+
+	var result []rune
+	for l.CurrentChar != '"' {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	l.Advance()
+
+	s := string(result)
+	token.Type = CharacterToken
+	token.Value = s
+
+	return token, nil
+}
+
 func (l *Lexer) GetNextToken() (*Token, error) {
 	for l.CurrentChar > 0 {
 		if unicode.IsSpace(l.CurrentChar) {
 			l.SkipWhitespace()
 			continue
+		}
+		if l.CurrentChar == '"' {
+			return l.String()
 		}
 		if !unicode.IsSpace(l.CurrentChar) {
 			return l.Character()

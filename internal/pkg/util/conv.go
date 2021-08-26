@@ -45,7 +45,11 @@ func Inject(obj interface{}, data map[string]interface{}) {
 					if tt, ok := vv.(time.Time); ok {
 						f.SetString(tt.Format("2006-01-02 15:04:05"))
 					} else {
-						f.SetString(vv.(string))
+						if vv != nil {
+							f.SetString(vv.(string))
+						} else {
+							f.SetString("")
+						}
 					}
 				case reflect.Float64:
 					if !f.OverflowFloat(vv.(float64)) {

@@ -12,14 +12,27 @@ func TestRegexRule(t *testing.T) {
 	var testRules = []Rule{
 		{
 			Define: `test`,
-			Help:  `Test info`,
+			Help:   `Test info`,
 			Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 				return []string{"test"}
 			},
 		},
 		{
+			Define: `todo [string]`,
+			Help:   `todo something`,
+			Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
+				if len(tokens) != 2 {
+					return []string{"error args"}
+				}
+
+				return []string{
+					tokens[1].Value,
+				}
+			},
+		},
+		{
 			Define: `add [number] [number]`,
-			Help:  `Addition`,
+			Help:   `Addition`,
 			Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 				if len(tokens) != 3 {
 					return []string{"error args"}
@@ -49,12 +62,15 @@ func TestRegexRule(t *testing.T) {
 	b := rulebot.New(nil)
 	b.SetOptions(options...)
 
-	res := b.Process(context.Background(),"test")
+	res := b.Process(context.Background(), "test")
 	require.Contains(t, res.MessageProviderOut(), "test")
 
-	res2 := b.Process(context.Background(),"add 1 2")
+	res2 := b.Process(context.Background(), "add 1 2")
 	require.Contains(t, res2.MessageProviderOut(), "3")
 
-	res3 := b.Process(context.Background(),"help")
+	res3 := b.Process(context.Background(), "help")
 	require.Len(t, res3.MessageProviderOut(), 1)
+
+	res4 := b.Process(context.Background(), `todo "a b c"`)
+	require.Contains(t, res4.MessageProviderOut(), "a b c")
 }
