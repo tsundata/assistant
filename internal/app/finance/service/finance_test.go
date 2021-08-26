@@ -121,6 +121,7 @@ func TestFinance_DeleteBill(t *testing.T) {
 }
 
 func TestFinance_GetFund(t *testing.T) {
+	t.SkipNow()
 	s := NewFinance()
 
 	type args struct {
@@ -148,6 +149,7 @@ func TestFinance_GetFund(t *testing.T) {
 }
 
 func TestFinance_GetStock(t *testing.T) {
+	t.SkipNow()
 	s := NewFinance()
 
 	type args struct {
