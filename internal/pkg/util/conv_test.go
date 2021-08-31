@@ -42,6 +42,23 @@ func TestInject(t *testing.T) {
 	require.Equal(t, d.F, now.Format("2006-01-02 15:04:05"))
 }
 
+func BenchmarkInject(b *testing.B) {
+	now := time.Now()
+	target := &demo{}
+	data := map[string]interface{}{
+		"a": int64(123),
+		"b": 456.789,
+		"c": "test",
+		"d": int64(1),
+
+		"e": float64(159),
+		"f": now,
+	}
+	for i := 0; i < b.N; i++ {
+		Inject(target, data)
+	}
+}
+
 func TestStringToBool(t *testing.T) {
 	tests := []struct {
 		name string
