@@ -44,6 +44,10 @@ type Storage struct {
 	Adapter string `json:"adapter" yaml:"adapter"`
 }
 
+type Jwt struct {
+	Secret string `json:"secret" yaml:"secret"`
+}
+
 // === Middleware ===
 
 // Rqlite config

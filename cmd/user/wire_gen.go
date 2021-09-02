@@ -55,7 +55,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	userRepository := repository.NewRqliteUserRepository(logLogger, rqliteConn)
-	serviceUser := service.NewUser(redisClient, userRepository)
+	serviceUser := service.NewUser(appConfig, redisClient, userRepository)
 	initServer := service.CreateInitServerFn(serviceUser)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {

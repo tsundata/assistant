@@ -245,7 +245,7 @@ func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
-	var in pb.TextRequest
+	var in pb.AuthRequest
 	err := c.BodyParser(&in)
 	if err != nil {
 		return err

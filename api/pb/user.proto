@@ -6,15 +6,26 @@ import "base.proto";
 option go_package = "api/pb";
 
 service UserSvc {
-  rpc Authorization(TextRequest) returns (StateReply) {}
+  rpc GetAuthToken(AuthRequest) returns (AuthReply) {}
+  rpc Authorization(AuthRequest) returns (AuthReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
   rpc GetRoleImage(RoleRequest) returns (BytesReply) {}
-  rpc GetAuthToken(TextRequest) returns (TextReply) {}
   rpc CreateUser(UserRequest) returns (UserReply) {}
   rpc GetUser(UserRequest) returns (UserReply) {}
   rpc GetUserByName(UserRequest) returns (UserReply) {}
   rpc GetUsers(UserRequest) returns (UsersReply) {}
   rpc UpdateUser(UserRequest) returns (StateReply) {}
+}
+
+message AuthRequest {
+  int64 id = 1;
+  string token = 2;
+}
+
+message AuthReply {
+  bool state = 1;
+  int64 id = 2;
+  string token = 3;
 }
 
 message RoleRequest {

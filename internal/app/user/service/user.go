@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"github.com/fogleman/gg"
 	"github.com/go-redis/redis/v8"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/freetype/truetype"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
-	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"time"
@@ -19,46 +20,53 @@ import (
 const AuthKey = "user:auth:token"
 
 type User struct {
+	conf *config.AppConfig
 	rdb  *redis.Client
 	repo repository.UserRepository
 }
 
-func NewUser(rdb *redis.Client, repo repository.UserRepository) *User {
-	return &User{rdb: rdb, repo: repo}
+func NewUser(conf *config.AppConfig, rdb *redis.Client, repo repository.UserRepository) *User {
+	return &User{conf: conf, rdb: rdb, repo: repo}
 }
 
-func (s *User) GetAuthToken(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	var uuid string
-	uuid, err := s.rdb.Get(ctx, AuthKey).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
+func (s *User) GetAuthToken(_ context.Context, payload *pb.AuthRequest) (*pb.AuthReply, error) {
+	// jwt
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  payload.Id,
+		"nbf": time.Now().Unix(),
+	})
+
+	tokenString, err := token.SignedString(s.conf.Jwt.Secret)
+	if err != nil {
 		return nil, err
 	}
-	uuid = util.ExtractUUID(uuid)
-	if errors.Is(err, redis.Nil) || uuid == "" {
-		uuid, err = util.GenerateUUID()
-		if err != nil {
-			return nil, err
-		}
 
-		status := s.rdb.Set(ctx, AuthKey, uuid, 60*time.Minute)
-		if status.Err() != nil {
-			return nil, err
-		}
-	}
-
-	return &pb.TextReply{Text: uuid}, nil
+	return &pb.AuthReply{Token: tokenString}, nil
 }
 
-func (s *User) Authorization(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	uuid, err := s.rdb.Get(ctx, AuthKey).Result()
+func (s *User) Authorization(_ context.Context, payload *pb.AuthRequest) (*pb.AuthReply, error) {
+	// jwt
+	token, err := jwt.Parse(payload.Token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return s.conf.Jwt.Secret, nil
+	})
 	if err != nil {
-		return &pb.StateReply{
-			State: false,
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		fmt.Println(claims)
+		return &pb.AuthReply{
+			State: true,
+			Id:    claims["id"].(int64),
 		}, nil
 	}
 
-	return &pb.StateReply{
-		State: payload.GetText() == uuid,
+	return &pb.AuthReply{
+		State: false,
 	}, nil
 }
 

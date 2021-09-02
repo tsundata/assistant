@@ -50,3 +50,5 @@ gateway:
 
 storage:
   adapter: dropbox
+jwt:
+  secret:
