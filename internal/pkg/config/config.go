@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
+	"github.com/appleboy/gorush/config"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -27,16 +28,19 @@ type AppConfig struct {
 	Gateway Gateway `json:"gateway" yaml:"gateway"`
 	Storage Storage `json:"storage" yaml:"storage"`
 
-	Rqlite   Rqlite   `json:"rqlite" yaml:"rqlite"`
-	Redis    Redis    `json:"redis" yaml:"redis"`
-	Influx   Influx   `json:"influx" yaml:"influx"`
-	Jaeger   Jaeger   `json:"jaeger" yaml:"jaeger"`
-	Nats     Nats     `json:"nats" yaml:"nats"`
+	Rqlite Rqlite `json:"rqlite" yaml:"rqlite"`
+	Redis  Redis  `json:"redis" yaml:"redis"`
+	Influx Influx `json:"influx" yaml:"influx"`
+	Jaeger Jaeger `json:"jaeger" yaml:"jaeger"`
+	Nats   Nats   `json:"nats" yaml:"nats"`
 
 	Slack    Slack    `json:"slack" yaml:"slack"`
 	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
 	Telegram Telegram `json:"telegram" yaml:"telegram"`
 	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`
+
+	// Notification
+	config.ConfYaml
 }
 
 func NewConfig(id string, kv *etcd.Client) *AppConfig {

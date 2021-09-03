@@ -50,3 +50,26 @@ gateway:
 
 storage:
   adapter: dropbox
+
+android:
+  enabled: true
+  apikey: "YOUR_API_KEY"
+  max_retry: 0 # resend fail notification, default value zero is disabled
+
+huawei:
+  enabled: false
+  appsecret: "YOUR_APP_SECRET"
+  appid: "YOUR_APP_ID"
+  max_retry: 0 # resend fail notification, default value zero is disabled
+
+ios:
+  enabled: false
+  key_path: "key.pem"
+  key_base64: "" # load iOS key from base64 input
+  key_type: "pem" # could be pem, p12 or p8 type
+  password: "" # certificate password, default as empty string.
+  production: false
+  max_concurrent_pushes: 100 # just for push ios notification
+  max_retry: 0 # resend fail notification, default value zero is disabled
+  key_id: "" # KeyID from developer account (Certificates, Identifiers & Profiles -> Keys)
+  team_id: "" # TeamID from developer account (View Account -> Membership)
