@@ -38,7 +38,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/rollbar/rollbar-go v1.4.1
-	github.com/shirou/gopsutil/v3 v3.21.7
+	github.com/shirou/gopsutil/v3 v3.21.8
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.4
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
