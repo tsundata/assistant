@@ -6,6 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	recoverMiddleware "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/websocket/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -24,6 +26,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// Middleware
 		router.Use(recoverMiddleware.New())
+		router.Use(requestid.New())
 		router.Use(cors.New(cors.Config{
 			AllowOrigins: "*",
 		}))
@@ -39,7 +42,15 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				NewRelicApp: gc.nr.Application(),
 			},
 		))
+		router.Use("/ws", func(c *fiber.Ctx)error {
+			if websocket.IsWebSocketUpgrade(c) {
+				c.Locals("allowed", true)
+				return c.Next()
+			}
+			return fiber.ErrUpgradeRequired
+		})
 
+		// route
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)
 		router.Post("/telegram/event", gc.TelegramEvent)
@@ -82,6 +93,10 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Post("message/send", gc.SendMessage)
 		internal.Get("role/image", gc.GetRoleImage)
 
+		// ws
+		router.Get("/ws/:id", websocket.New(gc.WSDemo))
+
+		// 404
 		router.Use(func(c *fiber.Ctx) error {
 			return c.Status(http.StatusNotFound).SendString("Unsupported path")
 		})

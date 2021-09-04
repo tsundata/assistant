@@ -6,6 +6,8 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
+	github.com/andybalholm/brotli v1.0.3 // indirect
+	github.com/fasthttp/websocket v1.4.3 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fogleman/gg v1.3.0
@@ -15,6 +17,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/gofiber/fiber/v2 v2.18.0
+	github.com/gofiber/websocket/v2 v2.0.9 // indirect
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
@@ -25,6 +28,7 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.5.0
 	github.com/jarcoal/httpmock v1.0.8
+	github.com/klauspost/compress v1.13.5 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
@@ -56,6 +60,7 @@ require (
 	go.uber.org/zap v1.19.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
+	golang.org/x/sys v0.0.0-20210903071746-97244b99971b // indirect
 	golang.org/x/tools v0.1.3 // indirect
 	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v2 v2.4.0
