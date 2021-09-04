@@ -29,7 +29,7 @@ require (
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.12.0
-	github.com/newrelic/go-agent/v3 v3.14.1
+	github.com/newrelic/go-agent/v3 v3.15.0
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
