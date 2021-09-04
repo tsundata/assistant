@@ -42,7 +42,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				NewRelicApp: gc.nr.Application(),
 			},
 		))
-		router.Use("/ws", func(c *fiber.Ctx)error {
+		router.Use("/ws", func(c *fiber.Ctx) error {
 			if websocket.IsWebSocketUpgrade(c) {
 				c.Locals("allowed", true)
 				return c.Next()
@@ -50,11 +50,19 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			return fiber.ErrUpgradeRequired
 		})
 
+		// ws
+		router.Get("/ws/:id", websocket.New(gc.WSDemo))
+
 		// route
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)
 		router.Post("/telegram/event", gc.TelegramEvent)
 		router.Post("/debug/event", gc.DebugEvent)
+		router.Post("auth", gc.Authorization)
+		router.Get("page", gc.GetPage)
+		router.Post("webhook/trigger", gc.WebhookTrigger)
+		router.Get("credential", gc.GetCredential)
+		router.Get("chart", gc.GetChart)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -73,12 +81,8 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			}
 			return c.Next()
 		}
-		router.Post("auth", gc.Authorization)
-		router.Get("page", gc.GetPage)
-		router.Post("webhook/trigger", gc.WebhookTrigger)
-		router.Get("credential", gc.GetCredential)
-		router.Get("chart", gc.GetChart)
-		internal := router.Group("/").Use(auth)
+		internal := router.Group("/")
+		internal.Use(auth)
 		internal.Get("apps", gc.GetApps)
 		internal.Post("app/oauth", gc.StoreAppOAuth)
 		internal.Get("messages", gc.GetMessages)
@@ -92,9 +96,6 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Post("message/run", gc.RunMessage)
 		internal.Post("message/send", gc.SendMessage)
 		internal.Get("role/image", gc.GetRoleImage)
-
-		// ws
-		router.Get("/ws/:id", websocket.New(gc.WSDemo))
 
 		// 404
 		router.Use(func(c *fiber.Ctx) error {
