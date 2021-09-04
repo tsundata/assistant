@@ -2,6 +2,7 @@ package rule
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
@@ -9,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
-	"math/rand"
+	"math/big"
 	"strconv"
 	"strings"
 	"time"
@@ -96,20 +97,23 @@ var rules = []Rule{
 
 			minArg := tokens[1].Value
 			maxArg := tokens[2].Value
-			min, err := strconv.Atoi(minArg)
+			min, err := strconv.ParseInt(minArg, 10, 64)
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
-			max, err := strconv.Atoi(maxArg)
+			max, err := strconv.ParseInt(maxArg, 10, 64)
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
 
-			rand.Seed(time.Now().Unix())
-			t := rand.Intn(max-min) + min
+			nBing, err := rand.Int(rand.Reader, big.NewInt(max+1-max))
+			if err != nil {
+				return []string{"error call: " + err.Error()}
+			}
+			t := nBing.Int64() + min
 
 			return []string{
-				strconv.Itoa(t),
+				strconv.FormatInt(t, 10),
 			}
 		},
 	},
