@@ -8,20 +8,26 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/nlp/classifier"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"strings"
 )
 
 type NLP struct {
-	conf *config.AppConfig
-	seg  *gse.Segmenter
+	conf   *config.AppConfig
+	logger log.Logger
+	seg    *gse.Segmenter
 }
 
-func NewNLP(conf *config.AppConfig) *NLP {
+func NewNLP(conf *config.AppConfig, logger log.Logger) *NLP {
 	// gse preload dict
-	seg := gse.New("zh", "alpha")
+	seg, err := gse.New("zh", "alpha")
+	if err != nil {
+		logger.Error(err)
+	}
 	return &NLP{
-		conf: conf,
-		seg:  &seg,
+		conf:   conf,
+		logger: logger,
+		seg:    &seg,
 	}
 }
 
