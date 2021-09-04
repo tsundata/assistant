@@ -50,8 +50,12 @@ func FetchPocket(ctx context.Context, comp rulebot.IComponent) []result.Result {
 
 	var r []result.Result
 	for _, item := range resp.List {
+		uuid, err := util.GenerateUUID()
+		if err != nil {
+			continue
+		}
 		r = append(r, result.Result{
-			ID:   util.SHA1(item.ResolvedUrl),
+			ID:   uuid,
 			Kind: result.Url,
 			Content: map[string]string{
 				"title": item.ResolvedTitle,

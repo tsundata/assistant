@@ -39,8 +39,12 @@ func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.R
 	}
 	var r []result.Result
 	for _, item := range *repos {
+		uuid, err := util.GenerateUUID()
+		if err != nil {
+			continue
+		}
 		r = append(r, result.Result{
-			ID:   util.SHA1(*item.HTMLURL),
+			ID:   uuid,
 			Kind: result.Repos,
 			Content: map[string]string{
 				"name":  *item.FullName,
