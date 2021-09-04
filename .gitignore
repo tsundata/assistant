@@ -22,3 +22,4 @@ configs/*.yml
 configs/*.conf
 deployments/docker-compose/tmp
 deployments/docker-compose/.env
+*.sarif

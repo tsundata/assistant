@@ -11,6 +11,7 @@ tasks:
     desc: Check befor submitting the code
     cmds:
       - task: lint
+      - task: secure
       - task: test
       - task: coverage
       - echo "Both done"
@@ -30,6 +31,11 @@ tasks:
     desc: Run golangci-lint check
     cmds:
       - golangci-lint run ./... --timeout=5m
+
+  secure:
+    desc: Run Gosec Security Scanner
+    cmds:
+      - gosec ./...
 
   proto:
     desc: Generate proto.pb.go
