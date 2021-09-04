@@ -242,7 +242,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	}
 
 	// check send
-	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n"))))
+	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n")))) // #nosec
 	isSet, err := s.rdb.SetNX(context.Background(), key, time.Now().Unix(), 24*time.Hour).Result()
 	if err != nil || !isSet {
 		return

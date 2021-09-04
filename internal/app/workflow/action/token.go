@@ -20,7 +20,7 @@ const (
 	TokenColon          = ":"
 	TokenComma          = ","
 	TokenID             = "ID"
-	TokenIntegerConst   = "INTEGER_CONST"
+	TokenIntegerConst   = "INTEGER_CONST" // #nosec
 	TokenFloatConst     = "FLOAT_CONST"
 	TokenStringConst    = "STRING_CONST"
 	TokenMessageConst   = "MESSAGE_CONST"
