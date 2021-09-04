@@ -44,6 +44,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	conn, err := nats.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	bus := event.NewNatsBus(conn, newrelicApp)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -80,7 +85,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, logLogger, newrelicApp, messageSvcClient, middleSvcClient, workflowSvcClient, chatbotSvcClient, userSvcClient)
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, logLogger, newrelicApp, bus, messageSvcClient, middleSvcClient, workflowSvcClient, chatbotSvcClient, userSvcClient)
 	v := controller.CreateInitControllersFn(gatewayController)
 	server, err := http.New(appConfig, v, logLogger)
 	if err != nil {

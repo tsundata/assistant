@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/chat"
+	"github.com/tsundata/assistant/internal/app/gateway/chat"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"log"
 	"net/http"
@@ -53,10 +53,13 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		})
 
 		// ws
+		h := chat.NewHub(gc.bus, gc.chatbotSvc, gc.messageSvc)
+		go h.Run()
+		go h.EventHandle()
 		router.Get("/ws/:uuid", websocket.New(func(conn *websocket.Conn) {
 			room := conn.Params("uuid")
 			log.Println(conn.Query("token"))
-			chat.ServeWs(conn, room)
+			chat.ServeWs(h, conn, room)
 		}))
 
 		// route

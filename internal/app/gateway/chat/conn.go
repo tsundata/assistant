@@ -33,7 +33,7 @@ type connection struct {
 func (s subscription) readPump() {
 	c := s.conn
 	defer func() {
-		h.unregister <- s
+		s.h.unregister <- s
 		_ = c.ws.Close()
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
@@ -48,7 +48,7 @@ func (s subscription) readPump() {
 			break
 		}
 		m := message{msg, s.room}
-		h.broadcast <- m
+		s.h.incoming <- m
 	}
 }
 
@@ -85,9 +85,9 @@ func (s *subscription) writePump() {
 }
 
 // ServeWs handles websocket requests from the peer.
-func ServeWs(conn *websocket.Conn, room string) {
+func ServeWs(h *Hub, conn *websocket.Conn, room string) {
 	c := &connection{send: make(chan []byte, 256), ws: conn}
-	s := subscription{c, room}
+	s := subscription{c, room, h}
 	h.register <- s
 	go s.writePump()
 	s.readPump()
