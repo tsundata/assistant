@@ -3,10 +3,10 @@ package chat
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
@@ -41,11 +41,12 @@ type Hub struct {
 
 	// system
 	bus        event.Bus
+	logger     log.Logger
 	chatbotSvc pb.ChatbotSvcClient
 	messageSvc pb.MessageSvcClient
 }
 
-func NewHub(bus event.Bus, chatbotSvc pb.ChatbotSvcClient, messageSvc pb.MessageSvcClient) *Hub {
+func NewHub(bus event.Bus, logger log.Logger, chatbotSvc pb.ChatbotSvcClient, messageSvc pb.MessageSvcClient) *Hub {
 	return &Hub{
 		broadcast:  make(chan message, 1024),
 		incoming:   make(chan message, 1024),
@@ -53,6 +54,7 @@ func NewHub(bus event.Bus, chatbotSvc pb.ChatbotSvcClient, messageSvc pb.Message
 		unregister: make(chan subscription),
 		rooms:      make(map[string]map[*connection]bool),
 		bus:        bus,
+		logger:     logger,
 		chatbotSvc: chatbotSvc,
 		messageSvc: messageSvc,
 	}
@@ -96,7 +98,7 @@ func (h *Hub) Run() {
 			// chatbot handle
 			reply, err := h.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: util.ByteToString(m.data)})
 			if err != nil {
-				fmt.Println(err)
+				h.logger.Error(err)
 				continue
 			}
 
@@ -116,7 +118,7 @@ func (h *Hub) Run() {
 			// or create message
 			uuid, err := util.GenerateUUID()
 			if err != nil {
-				fmt.Println(err)
+				h.logger.Error(err)
 				continue
 			}
 			_, err = h.messageSvc.Create(context.Background(), &pb.MessageRequest{
@@ -126,7 +128,7 @@ func (h *Hub) Run() {
 				},
 			})
 			if err != nil {
-				fmt.Println(err)
+				h.logger.Error(err)
 				continue
 			}
 		}
@@ -138,7 +140,7 @@ func (h *Hub) EventHandle() {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
-			fmt.Println(err)
+			h.logger.Error(err)
 			return
 		}
 
@@ -148,6 +150,6 @@ func (h *Hub) EventHandle() {
 		}
 	})
 	if err != nil {
-		fmt.Println(err)
+		h.logger.Error(err)
 	}
 }
