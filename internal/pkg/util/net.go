@@ -7,7 +7,7 @@ import (
 
 // GetAvailablePort returns a port at random
 func GetAvailablePort() int {
-	l, _ := net.Listen("tcp", ":0") // listen on localhost
+	l, _ := net.Listen("tcp", ":0") // listen on localhost #nosec
 	defer func() { _ = l.Close() }()
 	port := l.Addr().(*net.TCPAddr).Port
 

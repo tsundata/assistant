@@ -35,6 +35,7 @@ var configCmd = &cobra.Command{
 				return nil
 			}
 
+			path = filepath.Clean(path)
 			data, err := ioutil.ReadFile(path)
 			if err != nil {
 				return err

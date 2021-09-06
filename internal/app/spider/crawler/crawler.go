@@ -2,7 +2,7 @@ package crawler
 
 import (
 	"context"
-	"crypto/md5"
+	"crypto/md5" // #nosec
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,11 +26,11 @@ type Crawler struct {
 	outCh chan rule.Result
 	jobs  map[string]rule.Rule
 
-	c         *config.AppConfig
-	rdb       *redis.Client
-	logger    log.Logger
-	middle    pb.MiddleSvcClient
-	message   pb.MessageSvcClient
+	c       *config.AppConfig
+	rdb     *redis.Client
+	logger  log.Logger
+	middle  pb.MiddleSvcClient
+	message pb.MessageSvcClient
 }
 
 func New() *Crawler {
@@ -136,7 +136,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			result := func() []string {
 				defer func() {
 					if r := recover(); r != nil {
-						s.logger.Warn("ruleWorker recover " + name, zap.String("spider", name))
+						s.logger.Warn("ruleWorker recover "+name, zap.String("spider", name))
 						if v, ok := r.(error); ok {
 							s.logger.Error(v, zap.String("spider", name))
 						}
@@ -242,7 +242,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	}
 
 	// check send
-	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n"))))
+	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n")))) // #nosec
 	isSet, err := s.rdb.SetNX(context.Background(), key, time.Now().Unix(), 24*time.Hour).Result()
 	if err != nil || !isSet {
 		return
