@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
+	"github.com/appleboy/gorush/config"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -38,6 +39,9 @@ type AppConfig struct {
 	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
 	Telegram Telegram `json:"telegram" yaml:"telegram"`
 	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`
+
+	// Notification
+	config.ConfYaml
 }
 
 func NewConfig(id string, kv *etcd.Client) *AppConfig {

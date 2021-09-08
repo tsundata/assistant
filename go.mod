@@ -6,6 +6,7 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
+	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fogleman/gg v1.3.0
@@ -16,7 +17,7 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/gofiber/fiber/v2 v2.18.0
 	github.com/gogo/protobuf v1.3.2
-	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
@@ -28,7 +29,6 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
-	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats.go v1.12.1
 	github.com/newrelic/go-agent/v3 v3.15.0
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
@@ -55,7 +55,6 @@ require (
 	github.com/yuin/goldmark v1.4.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.19.0
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/tools v0.1.3 // indirect
 	google.golang.org/grpc v1.40.0
