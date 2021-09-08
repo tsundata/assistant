@@ -37,14 +37,14 @@ func (m *MockUserSvcClient) EXPECT() *MockUserSvcClientMockRecorder {
 }
 
 // Authorization mocks base method.
-func (m *MockUserSvcClient) Authorization(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+func (m *MockUserSvcClient) Authorization(ctx context.Context, in *pb.AuthRequest, opts ...grpc.CallOption) (*pb.AuthReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Authorization", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
+	ret0, _ := ret[0].(*pb.AuthReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,14 +77,14 @@ func (mr *MockUserSvcClientMockRecorder) CreateUser(ctx, in interface{}, opts ..
 }
 
 // GetAuthToken mocks base method.
-func (m *MockUserSvcClient) GetAuthToken(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+func (m *MockUserSvcClient) GetAuthToken(ctx context.Context, in *pb.AuthRequest, opts ...grpc.CallOption) (*pb.AuthReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetAuthToken", varargs...)
-	ret0, _ := ret[0].(*pb.TextReply)
+	ret0, _ := ret[0].(*pb.AuthReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -240,10 +240,10 @@ func (m *MockUserSvcServer) EXPECT() *MockUserSvcServerMockRecorder {
 }
 
 // Authorization mocks base method.
-func (m *MockUserSvcServer) Authorization(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
+func (m *MockUserSvcServer) Authorization(arg0 context.Context, arg1 *pb.AuthRequest) (*pb.AuthReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Authorization", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
+	ret0, _ := ret[0].(*pb.AuthReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -270,10 +270,10 @@ func (mr *MockUserSvcServerMockRecorder) CreateUser(arg0, arg1 interface{}) *gom
 }
 
 // GetAuthToken mocks base method.
-func (m *MockUserSvcServer) GetAuthToken(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+func (m *MockUserSvcServer) GetAuthToken(arg0 context.Context, arg1 *pb.AuthRequest) (*pb.AuthReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAuthToken", arg0, arg1)
-	ret0, _ := ret[0].(*pb.TextReply)
+	ret0, _ := ret[0].(*pb.AuthReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

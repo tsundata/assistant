@@ -12,19 +12,20 @@ func BoolInt(b bool) int {
 	return 0
 }
 
-func Inject(obj interface{}, data map[string]interface{}) {
-	t := reflect.TypeOf(obj)
-	v := reflect.ValueOf(obj)
+func Inject(target interface{}, data map[string]interface{}) {
+	t := reflect.TypeOf(target)
+	v := reflect.ValueOf(target)
 	if t.Kind() != reflect.Ptr {
 		return
 	}
 
-	for i := 0; i < t.Elem().NumField(); i++ {
-		field := t.Elem().Field(i)
-		db, ok := field.Tag.Lookup("db")
-		if ok {
+	tElem := t.Elem()
+	vElem := v.Elem()
+	for i := 0; i < tElem.NumField(); i++ {
+		field := tElem.Field(i)
+		if db, ok := field.Tag.Lookup("db"); ok {
 			if vv, ok := data[db]; ok {
-				f := v.Elem().Field(i)
+				f := vElem.Field(i)
 				if !f.IsValid() || !f.CanSet() {
 					continue
 				}

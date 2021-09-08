@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -13,16 +14,20 @@ import (
 )
 
 func TestUser_Authorization(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	rdb, err := vendors.CreateRedisClient(enum.User)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rdb.Set(context.Background(), AuthKey, "test", time.Hour)
 
-	s := NewUser(rdb, nil)
+	s := NewUser(conf, rdb, nil)
 	type args struct {
 		ctx     context.Context
-		payload *pb.TextRequest
+		payload *pb.AuthRequest
 	}
 	tests := []struct {
 		name    string
@@ -34,7 +39,7 @@ func TestUser_Authorization(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			args{context.Background(), &pb.AuthRequest{Token: "test"}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -54,6 +59,10 @@ func TestUser_Authorization(t *testing.T) {
 }
 
 func TestUser_GetRole(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -62,7 +71,7 @@ func TestUser_GetRole(t *testing.T) {
 		repo.EXPECT().GetRole(gomock.Any()).Return(pb.Role{Profession: "super"}, nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		in0     context.Context
@@ -100,6 +109,10 @@ func TestUser_GetRole(t *testing.T) {
 }
 
 func TestUser_GetRoleImage(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -119,7 +132,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -150,17 +163,21 @@ func TestUser_GetRoleImage(t *testing.T) {
 }
 
 func TestUser_GetAuthToken(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	rdb, err := vendors.CreateRedisClient(enum.User)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rdb.Set(context.Background(), AuthKey, "04a2e287-c394-4cf3-902e-ed2a84b85c5a", time.Hour)
 
-	s := NewUser(rdb, nil)
+	s := NewUser(conf,rdb, nil)
 
 	type args struct {
 		ctx context.Context
-		in1 *pb.TextRequest
+		in1 *pb.AuthRequest
 	}
 	tests := []struct {
 		name    string
@@ -172,7 +189,7 @@ func TestUser_GetAuthToken(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{context.Background(), &pb.AuthRequest{}},
 			&pb.TextReply{Text: "04a2e287-c394-4cf3-902e-ed2a84b85c5a"},
 			false,
 		},
@@ -192,6 +209,10 @@ func TestUser_GetAuthToken(t *testing.T) {
 }
 
 func TestUser_CreateUser(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -200,7 +221,7 @@ func TestUser_CreateUser(t *testing.T) {
 		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -236,6 +257,10 @@ func TestUser_CreateUser(t *testing.T) {
 }
 
 func TestUser_GetUser(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -244,7 +269,7 @@ func TestUser_GetUser(t *testing.T) {
 		repo.EXPECT().GetByID(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -280,6 +305,10 @@ func TestUser_GetUser(t *testing.T) {
 }
 
 func TestUser_GetUserByName(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -288,7 +317,7 @@ func TestUser_GetUserByName(t *testing.T) {
 		repo.EXPECT().GetByName(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -324,6 +353,10 @@ func TestUser_GetUserByName(t *testing.T) {
 }
 
 func TestUser_GetUsers(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -332,7 +365,7 @@ func TestUser_GetUsers(t *testing.T) {
 		repo.EXPECT().List().Return([]pb.User{{Id: 1, Name: "test"}}, nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -368,6 +401,10 @@ func TestUser_GetUsers(t *testing.T) {
 }
 
 func TestUser_UpdateUser(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -376,7 +413,7 @@ func TestUser_UpdateUser(t *testing.T) {
 		repo.EXPECT().Update(gomock.Any()).Return(nil),
 	)
 
-	s := NewUser(nil, repo)
+	s := NewUser(conf,nil, repo)
 
 	type args struct {
 		ctx     context.Context

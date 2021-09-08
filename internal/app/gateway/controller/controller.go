@@ -52,7 +52,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				return c.SendStatus(http.StatusForbidden)
 			}
 			token = strings.ReplaceAll(token, "Bearer ", "")
-			reply, err := gc.userSvc.Authorization(context.Background(), &pb.TextRequest{Text: token})
+			reply, err := gc.userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
 			if err != nil {
 				gc.logger.Error(err)
 				return c.SendStatus(http.StatusForbidden)

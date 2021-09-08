@@ -36,11 +36,11 @@ func (s *Middle) GetMenu(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply,
 	if s.user == nil {
 		return nil, errors.New("empty user client")
 	}
-	reply, err := s.user.GetAuthToken(ctx, &pb.TextRequest{})
+	reply, err := s.user.GetAuthToken(ctx, &pb.AuthRequest{})
 	if err != nil {
 		return nil, err
 	}
-	uuid := reply.GetText()
+	uuid := reply.GetToken()
 
 	return &pb.TextReply{
 		Text: fmt.Sprintf(`
@@ -69,11 +69,11 @@ func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextR
 }
 
 func (s *Middle) GetRoleImageUrl(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	reply, err := s.user.GetAuthToken(ctx, &pb.TextRequest{})
+	reply, err := s.user.GetAuthToken(ctx, &pb.AuthRequest{})
 	if err != nil {
 		return nil, err
 	}
-	uuid := reply.GetText()
+	uuid := reply.GetToken()
 
 	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/role/%s", s.conf.Web.Url, uuid),

@@ -26,12 +26,13 @@ type AppConfig struct {
 	Web     Web     `json:"web" yaml:"web"`
 	Gateway Gateway `json:"gateway" yaml:"gateway"`
 	Storage Storage `json:"storage" yaml:"storage"`
+	Jwt     Jwt     `json:"jwt" yaml:"jwt"`
 
-	Rqlite   Rqlite   `json:"rqlite" yaml:"rqlite"`
-	Redis    Redis    `json:"redis" yaml:"redis"`
-	Influx   Influx   `json:"influx" yaml:"influx"`
-	Jaeger   Jaeger   `json:"jaeger" yaml:"jaeger"`
-	Nats     Nats     `json:"nats" yaml:"nats"`
+	Rqlite Rqlite `json:"rqlite" yaml:"rqlite"`
+	Redis  Redis  `json:"redis" yaml:"redis"`
+	Influx Influx `json:"influx" yaml:"influx"`
+	Jaeger Jaeger `json:"jaeger" yaml:"jaeger"`
+	Nats   Nats   `json:"nats" yaml:"nats"`
 
 	Slack    Slack    `json:"slack" yaml:"slack"`
 	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
