@@ -6,9 +6,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	recoverMiddleware "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/websocket/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/gateway/chat"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -24,6 +28,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// Middleware
 		router.Use(recoverMiddleware.New())
+		router.Use(requestid.New())
 		router.Use(cors.New(cors.Config{
 			AllowOrigins: "*",
 		}))
@@ -39,11 +44,34 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				NewRelicApp: gc.nr.Application(),
 			},
 		))
+		router.Use("/ws", func(c *fiber.Ctx) error {
+			if websocket.IsWebSocketUpgrade(c) {
+				c.Locals("allowed", true)
+				return c.Next()
+			}
+			return fiber.ErrUpgradeRequired
+		})
 
+		// ws
+		h := chat.NewHub(gc.bus, gc.chatbotSvc, gc.messageSvc)
+		go h.Run()
+		go h.EventHandle()
+		router.Get("/ws/:uuid", websocket.New(func(conn *websocket.Conn) {
+			room := conn.Params("uuid")
+			log.Println(conn.Query("token"))
+			chat.ServeWs(h, conn, room)
+		}))
+
+		// route
 		router.Get("/", gc.Index)
 		router.Post("/slack/event", gc.SlackEvent)
 		router.Post("/telegram/event", gc.TelegramEvent)
 		router.Post("/debug/event", gc.DebugEvent)
+		router.Post("auth", gc.Authorization)
+		router.Get("page", gc.GetPage)
+		router.Post("webhook/trigger", gc.WebhookTrigger)
+		router.Get("credential", gc.GetCredential)
+		router.Get("chart", gc.GetChart)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -62,12 +90,8 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			}
 			return c.Next()
 		}
-		router.Post("auth", gc.Authorization)
-		router.Get("page", gc.GetPage)
-		router.Post("webhook/trigger", gc.WebhookTrigger)
-		router.Get("credential", gc.GetCredential)
-		router.Get("chart", gc.GetChart)
-		internal := router.Group("/").Use(auth)
+		internal := router.Group("/")
+		internal.Use(auth)
 		internal.Get("apps", gc.GetApps)
 		internal.Post("app/oauth", gc.StoreAppOAuth)
 		internal.Get("messages", gc.GetMessages)
@@ -82,6 +106,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Post("message/send", gc.SendMessage)
 		internal.Get("role/image", gc.GetRoleImage)
 
+		// 404
 		router.Use(func(c *fiber.Ctx) error {
 			return c.Status(http.StatusNotFound).SendString("Unsupported path")
 		})
