@@ -53,7 +53,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		})
 
 		// ws
-		h := chat.NewHub(gc.bus, gc.chatbotSvc, gc.messageSvc)
+		h := chat.NewHub(gc.bus, gc.logger, gc.chatbotSvc, gc.messageSvc)
 		go h.Run()
 		go h.EventHandle()
 		router.Get("/ws/:uuid", websocket.New(func(conn *websocket.Conn) {
