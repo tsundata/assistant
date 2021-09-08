@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"crypto/sha1" // #nosec
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -50,12 +51,11 @@ func FetchPocket(ctx context.Context, comp rulebot.IComponent) []result.Result {
 
 	var r []result.Result
 	for _, item := range resp.List {
-		uuid, err := util.GenerateUUID()
-		if err != nil {
-			continue
-		}
+		s := sha1.New()                              // #nosec
+		s.Write(util.StringToByte(item.ResolvedUrl)) // #nosec
+		bs := s.Sum(nil)
 		r = append(r, result.Result{
-			ID:   uuid,
+			ID:   util.ByteToString(bs),
 			Kind: result.Url,
 			Content: map[string]string{
 				"title": item.ResolvedTitle,

@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"crypto/sha1" // #nosec
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
@@ -39,12 +40,11 @@ func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.R
 	}
 	var r []result.Result
 	for _, item := range *repos {
-		uuid, err := util.GenerateUUID()
-		if err != nil {
-			continue
-		}
+		s := sha1.New()                           // #nosec
+		s.Write(util.StringToByte(*item.HTMLURL)) // #nosec
+		bs := s.Sum(nil)
 		r = append(r, result.Result{
-			ID:   uuid,
+			ID:   util.ByteToString(bs),
 			Kind: result.Repos,
 			Content: map[string]string{
 				"name":  *item.FullName,
