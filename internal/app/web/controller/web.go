@@ -340,7 +340,7 @@ func (wc *WebController) CredentialsCreate(c *fiber.Ctx) error {
             })
             document.querySelector(".button").insertAdjacentHTML("beforebegin", o)
         }
-    })`, d, h)))
+    })`, d, h))) // #nosec
 
 	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
 	return c.SendString(string(comp.GetContent()))

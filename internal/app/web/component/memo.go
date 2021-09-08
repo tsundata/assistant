@@ -27,5 +27,5 @@ func (c *Memo) GetContent() template.HTML {
 	<div class="tags">%s</div>
 	<div class="content">%s</div>
 </div>
-`, c.Time, tags.String(), c.Content.GetContent()))
+`, c.Time, tags.String(), c.Content.GetContent())) // #nosec
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func TestNLP_Pinyin(t *testing.T) {
-	s := NewNLP(nil)
+	s := NewNLP(nil, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -52,7 +52,7 @@ func TestNLP_Pinyin(t *testing.T) {
 }
 
 func TestNLP_Segmentation(t *testing.T) {
-	s := NewNLP(nil)
+	s := NewNLP(nil, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -98,7 +98,7 @@ func TestNLP_Classifier(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewNLP(conf)
+	s := NewNLP(conf, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest

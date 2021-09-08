@@ -20,5 +20,5 @@ func (c *Input) GetContent() template.HTML {
 <div class="input">
 	<label for="input-%d">%s:</label>
   	<input type="%s" id="input-%d" value="%s" name="%s">
-</div>`, n.Int64(), c.Title, c.Type, n.Int64(), c.Value, c.Name))
+</div>`, n.Int64(), c.Title, c.Type, n.Int64(), c.Value, c.Name)) // #nosec
 }

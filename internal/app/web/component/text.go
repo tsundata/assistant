@@ -11,5 +11,5 @@ type Text struct {
 }
 
 func (c *Text) GetContent() template.HTML {
-	return template.HTML(fmt.Sprintf(`<div class="text">%s</div>`, c.Title))
+	return template.HTML(fmt.Sprintf(`<div class="text">%s</div>`, c.Title)) // #nosec
 }

@@ -26,5 +26,5 @@ func (c *Select) GetContent() template.HTML {
 <div class="select">
 	<label for="input-%d">%s:</label>
 	<select name="%s" id="select-%d">%s</select>
-</div>`, n.Int64(), c.Title, c.Name, n.Int64(), o.String()))
+</div>`, n.Int64(), c.Title, c.Name, n.Int64(), o.String())) // #nosec
 }

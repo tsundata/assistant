@@ -17,5 +17,5 @@ func (c *App) GetContent() template.HTML {
 <div class="app">
 	<a href="%s"><i class="fa fa-%s fa-4x"></i>
 	<span>%s</span></a>
-</div>`, c.URL, c.Icon, c.Text))
+</div>`, c.URL, c.Icon, c.Text)) // #nosec
 }

@@ -25,5 +25,5 @@ func (c *Page) GetContent() template.HTML {
 	<div class="content">
 		%s
 	</div>
-</div>`, c.Title, action, c.Content.GetContent()))
+</div>`, c.Title, action, c.Content.GetContent())) // #nosec
 }

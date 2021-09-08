@@ -24,5 +24,5 @@ func (c *Form) GetContent() template.HTML {
 	<button type="submit">Submit</button>
 	<button type="reset">Reset</button>
 </div>
-</form>`, c.Action, c.Method, buf.String()))
+</form>`, c.Action, c.Method, buf.String())) // #nosec
 }

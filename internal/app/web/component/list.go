@@ -14,5 +14,5 @@ func (c *List) GetContent() template.HTML {
 	for _, item := range c.Items {
 		buf.WriteString(string(item.GetContent()))
 	}
-	return template.HTML(buf.String())
+	return template.HTML(buf.String()) // #nosec
 }

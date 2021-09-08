@@ -69,7 +69,7 @@ type Result struct {
 }
 
 func document(url string) (*goquery.Document, error) {
-	res, err := http.Get(url)
+	res, err := http.Get(url) // #nosec
 	if err != nil {
 		return nil, err
 	}

@@ -24,5 +24,5 @@ func (c *LinkButton) GetContent() template.HTML {
 		</a>
 	</p>
 </div>
-`, c.Title, c.URL, c.Name))
+`, c.Title, c.URL, c.Name)) // #nosec
 }

@@ -256,5 +256,5 @@ func (c *Html) GetContent() template.HTML {
         }
 	}
 </script>
-</html>`, title, iconLink, codeEditorLink, c.css, c.Page.GetContent(), codeEditorScript, c.js))
+</html>`, title, iconLink, codeEditorLink, c.css, c.Page.GetContent(), codeEditorScript, c.js)) // #nosec
 }

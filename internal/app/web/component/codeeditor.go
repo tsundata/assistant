@@ -10,5 +10,5 @@ type CodeEditor struct {
 }
 
 func (c *CodeEditor) GetContent() template.HTML {
-	return template.HTML(fmt.Sprintf(`<textarea id="code" name="%s" placeholder="Code goes here..."></textarea>`, c.Name))
+	return template.HTML(fmt.Sprintf(`<textarea id="code" name="%s" placeholder="Code goes here..."></textarea>`, c.Name)) // #nosec
 }

@@ -20,5 +20,5 @@ func (c *Script) GetContent() template.HTML {
 		<div class="action-btn" onclick="if(confirm('Is it running?')){ window.location = '/script/%s/run?id=%d' }">Run</div>
 	</div> 
 	<pre>%s</pre>
-</div>`, c.ID, c.UUID, c.ID, c.UUID, c.ID, c.Content))
+</div>`, c.ID, c.UUID, c.ID, c.UUID, c.ID, c.Content)) // #nosec
 }
