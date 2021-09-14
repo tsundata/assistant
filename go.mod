@@ -50,7 +50,7 @@ require (
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/valyala/fasthttp v1.29.0
+	github.com/valyala/fasthttp v1.30.0
 	github.com/yuin/goldmark v1.4.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.19.1
