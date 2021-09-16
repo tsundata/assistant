@@ -89,10 +89,7 @@ func (s *Middle) GetChartUrl(_ context.Context, payload *pb.TextRequest) (*pb.Te
 }
 
 func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		return nil, err
-	}
+	uuid := util.UUID()
 
 	page := pb.Page{
 		Uuid:    uuid,
@@ -101,7 +98,7 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 		Content: payload.Page.GetContent(),
 	}
 
-	_, err = s.repo.CreatePage(page)
+	_, err := s.repo.CreatePage(page)
 	if err != nil {
 		return nil, err
 	}
@@ -663,10 +660,7 @@ func (s *Middle) GetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 }
 
 func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.ChartDataReply, error) {
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		return nil, err
-	}
+	uuid := util.UUID()
 	data := pb.ChartData{
 		Uuid:     uuid,
 		Title:    payload.ChartData.GetTitle(),

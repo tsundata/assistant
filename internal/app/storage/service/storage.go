@@ -54,10 +54,7 @@ func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
 	}
 
 	// store
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		return err
-	}
+	uuid := util.UUID()
 
 	f, err := fs.FS(s.conf.Storage.Adapter)
 	if err != nil {

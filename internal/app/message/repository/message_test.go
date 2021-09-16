@@ -127,11 +127,6 @@ func TestMessageRepository_Create(t *testing.T) {
 		t.Fatalf("create message Repository error, %+v", err)
 	}
 
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		t.Fatalf("generate uuid error, %+v", err)
-	}
-
 	type args struct {
 		message pb.Message
 	}
@@ -141,7 +136,7 @@ func TestMessageRepository_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{message: pb.Message{Uuid: uuid, Text: "test"}}, false},
+		{"case1", sto, args{message: pb.Message{Uuid: util.UUID(), Text: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

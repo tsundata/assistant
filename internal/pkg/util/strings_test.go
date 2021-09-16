@@ -24,11 +24,8 @@ func TestGeneratePassword(t *testing.T) {
 	require.Len(t, pwd2, 0)
 }
 
-func TestGenerateUUID(t *testing.T) {
-	uuid, err := GenerateUUID()
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestUUID(t *testing.T) {
+	uuid := UUID()
 	require.Len(t, uuid, 36)
 }
 

@@ -12,7 +12,7 @@ func TestMiddleRepository_CreatePage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create middle Repository error, %+v", err)
 	}
-	uuid, _ := util.GenerateUUID()
+	uuid := util.UUID()
 	type args struct {
 		page pb.Page
 	}

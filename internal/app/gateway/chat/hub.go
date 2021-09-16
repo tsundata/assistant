@@ -116,7 +116,7 @@ func (h *Hub) Run() {
 			}
 
 			// or create message
-			uuid, err := util.GenerateUUID()
+			uuid:= util.UUID()
 			if err != nil {
 				h.logger.Error(err)
 				continue

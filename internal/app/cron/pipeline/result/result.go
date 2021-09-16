@@ -22,8 +22,7 @@ type Result struct {
 }
 
 func id() (i string) {
-	i, _ = util.GenerateUUID()
-	return
+	return util.UUID()
 }
 
 func ErrorResult(err error) Result {

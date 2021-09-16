@@ -214,10 +214,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// store message
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		return nil, err
-	}
+	uuid := util.UUID()
 	id, err := m.repo.Create(pb.Message{
 		Uuid: uuid,
 		Type: enum.MessageTypeAction,

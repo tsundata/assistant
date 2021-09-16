@@ -49,10 +49,7 @@ func NewConfig(id string, kv *etcd.Client) *AppConfig {
 	xc.kv = kv
 	xc.Name = id
 
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		panic(err)
-	}
+	uuid:= util.UUID()
 	xc.ID = uuid
 
 	xc.readConfig()

@@ -107,6 +107,9 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			}
 		}()
 	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

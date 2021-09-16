@@ -192,11 +192,7 @@ func (gc *GatewayController) TelegramEvent(c *fiber.Ctx) error {
 	}
 
 	// or create message
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		gc.logger.Error(err)
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
-	}
+	uuid:= util.UUID()
 	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Message: &pb.Message{
 			Uuid: uuid,
@@ -231,10 +227,7 @@ func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 	}
 
 	// or create message
-	uuid, err := util.GenerateUUID()
-	if err != nil {
-		return err
-	}
+	uuid:= util.UUID()
 	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
 		Message: &pb.Message{
 			Uuid: uuid,

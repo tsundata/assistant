@@ -3,6 +3,7 @@ module github.com/tsundata/assistant
 go 1.16
 
 require (
+	entgo.io/ent v0.9.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
@@ -17,6 +18,7 @@ require (
 	github.com/go-ego/gse v0.69.3
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/go-resty/resty/v2 v2.6.0
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gofiber/fiber/v2 v2.18.0
 	github.com/gofiber/websocket/v2 v2.0.9
 	github.com/gogo/protobuf v1.3.2
@@ -24,6 +26,7 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
