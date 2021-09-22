@@ -3,6 +3,7 @@ module github.com/tsundata/assistant
 go 1.16
 
 require (
+	cloud.google.com/go/kms v0.2.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/RichardKnop/machinery/v2 v2.0.11
@@ -44,7 +45,7 @@ require (
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
 	github.com/spaolacci/murmur3 v1.1.0
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.8.1
+	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.9.1
 	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
@@ -54,7 +55,6 @@ require (
 	github.com/yuin/goldmark v1.4.1
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v2 v2.4.0
