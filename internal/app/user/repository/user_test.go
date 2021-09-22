@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"testing"
@@ -12,7 +13,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
-		userId int64
+		userId int
 	}
 	tests := []struct {
 		name    string
@@ -24,7 +25,7 @@ func TestUserRepository_GetRole(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetRole(tt.args.userId)
+			_, err := tt.r.GetRole(context.Background(), tt.args.userId)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetRole() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -52,7 +53,7 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.ChangeRoleExp(tt.args.userID, tt.args.exp); (err != nil) != tt.wantErr {
+			if err := tt.r.ChangeRoleExp(context.Background(),tt.args.userID, tt.args.exp); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.ChangeRoleExp() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -84,7 +85,7 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.ChangeRoleAttr(tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
+			if err := tt.r.ChangeRoleAttr(context.Background(),tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.ChangeRoleAttr() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -109,7 +110,7 @@ func TestUserRepository_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.List()
+			_, err := tt.r.List(context.Background())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -124,7 +125,7 @@ func TestUserRepository_Create(t *testing.T) {
 		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
-		user pb.User
+		user *pb.User
 	}
 	tests := []struct {
 		name    string
@@ -135,13 +136,13 @@ func TestUserRepository_Create(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{pb.User{Name: "test", Mobile: "", Remark: ""}},
+			args{&pb.User{Name: "create", Mobile: "", Remark: ""}},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.Create(tt.args.user)
+			_, err := tt.r.Create(context.Background(),tt.args.user)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -174,12 +175,12 @@ func TestUserRepository_GetByID(t *testing.T) {
 			"case2",
 			sto,
 			args{id: 99999999},
-			false,
+			true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetByID(tt.args.id)
+			_, err := tt.r.GetByID(context.Background(),tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -212,12 +213,12 @@ func TestUserRepository_GetByName(t *testing.T) {
 			"case2",
 			sto,
 			args{name: "not_found"},
-			false,
+			true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetByName(tt.args.name)
+			_, err := tt.r.GetByName(context.Background(),tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -232,7 +233,7 @@ func TestUserRepository_Update(t *testing.T) {
 		t.Fatalf("create user Repository error, %+v", err)
 	}
 	type args struct {
-		in0 pb.User
+		in0 *pb.User
 	}
 	tests := []struct {
 		name    string
@@ -243,13 +244,13 @@ func TestUserRepository_Update(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{pb.User{Id: 2, Name: "update"}},
+			args{&pb.User{Id: 2, Name: "update"}},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.Update(tt.args.in0); (err != nil) != tt.wantErr {
+			if err := tt.r.Update(context.Background(),tt.args.in0); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

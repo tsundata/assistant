@@ -2,13 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"time"
 )
 
 type Todo struct {
@@ -23,38 +21,19 @@ func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) *
 
 func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
 	var err error
-	var remindAt time.Time
-	if payload.Todo.GetRemindAt() != "" {
-		remindAt, err = time.ParseInLocation("2006-01-02 15:04", payload.Todo.GetRemindAt(), time.Local)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var endAt time.Time
-	if payload.Todo.GetRepeatEndAt() != "" {
-		endAt, err = time.ParseInLocation("2006-01-02 15:04", payload.Todo.GetRepeatEndAt(), time.Local)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	fmt.Println(remindAt) // fixme
-	fmt.Println(endAt)    // fixme
-
 	todo := pb.Todo{
 		Content:        payload.Todo.GetContent(),
 		Priority:       payload.Todo.GetPriority(),
 		IsRemindAtTime: payload.Todo.GetIsRemindAtTime(),
-		RemindAt:       "", //&remindAt, fixme
+		RemindAt:       0, //&remindAt, fixme
 		RepeatMethod:   payload.Todo.GetRepeatMethod(),
 		RepeatRule:     payload.Todo.GetRepeatRule(),
-		RepeatEndAt:    "", //&endAt, fixme
+		RepeatEndAt:    0, //&endAt, fixme
 		Category:       "",
 		Remark:         payload.Todo.GetRemark(),
 		Complete:       false,
 	}
-	_, err = s.repo.CreateTodo(todo)
+	_, err = s.repo.CreateTodo(ctx, &todo)
 	if err != nil {
 		return nil, err
 	}
@@ -70,8 +49,8 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Todo) GetTodo(_ context.Context, payload *pb.TodoRequest) (*pb.TodoReply, error) {
-	find, err := s.repo.GetTodo(payload.Todo.GetId())
+func (s *Todo) GetTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.TodoReply, error) {
+	find, err := s.repo.GetTodo(ctx, payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -86,8 +65,8 @@ func (s *Todo) GetTodo(_ context.Context, payload *pb.TodoRequest) (*pb.TodoRepl
 	}, nil
 }
 
-func (s *Todo) GetTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
-	items, err := s.repo.ListTodos()
+func (s *Todo) GetTodos(ctx context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
+	items, err := s.repo.ListTodos(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +84,8 @@ func (s *Todo) GetTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, e
 	return &pb.TodosReply{Todos: res}, nil
 }
 
-func (s *Todo) DeleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.DeleteTodo(payload.Todo.GetId())
+func (s *Todo) DeleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+	err := s.repo.DeleteTodo(ctx, payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -114,8 +93,8 @@ func (s *Todo) DeleteTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.UpdateTodo(pb.Todo{
+func (s *Todo) UpdateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+	err := s.repo.UpdateTodo(ctx, &pb.Todo{
 		Id:      payload.Todo.GetId(),
 		Content: payload.Todo.GetContent(),
 	})
@@ -127,7 +106,7 @@ func (s *Todo) UpdateTodo(_ context.Context, payload *pb.TodoRequest) (*pb.State
 }
 
 func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	err := s.repo.CompleteTodo(payload.Todo.GetId())
+	err := s.repo.CompleteTodo(ctx, payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +118,7 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 			return nil, err
 		}
 
-		find, err := s.repo.GetTodo(payload.Todo.GetId())
+		find, err := s.repo.GetTodo(ctx, payload.Todo.GetId())
 		if err != nil {
 			return nil, err
 		}
@@ -153,8 +132,8 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Todo) GetRemindTodos(_ context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
-	items, err := s.repo.ListRemindTodos()
+func (s *Todo) GetRemindTodos(ctx context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
+	items, err := s.repo.ListRemindTodos(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -11,15 +11,15 @@ import (
 	"go.uber.org/zap"
 )
 
-func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
-	err := bus.Subscribe(context.Background(), event.RoleChangeExpSubject, func(msg *nats.Msg) {
+func RegisterEventHandler(ctx context.Context, bus event.Bus, logger log.Logger, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
+	err := bus.Subscribe(ctx, event.RoleChangeExpSubject, func(msg *nats.Msg) {
 		var role pb.Role
 		err := json.Unmarshal(msg.Data, &role)
 		if err != nil {
 			logger.Error(err, zap.Any("event", event.RoleChangeExpSubject))
 			return
 		}
-		err = repo.ChangeRoleExp(role.UserId, role.Exp)
+		err = repo.ChangeRoleExp(ctx, role.UserId, role.Exp)
 		if err != nil {
 			logger.Error(err, zap.Any("event", event.RoleChangeExpSubject))
 			return
@@ -29,7 +29,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.User
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), event.RoleChangeAttrSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(ctx, event.RoleChangeAttrSubject, func(msg *nats.Msg) {
 		var data pb.AttrChange
 		err := json.Unmarshal(msg.Data, &data)
 		if err != nil {
@@ -37,13 +37,13 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, repo repository.User
 			return
 		}
 
-		res, err := nlpClient.Classifier(context.Background(), &pb.TextRequest{Text: data.Content})
+		res, err := nlpClient.Classifier(ctx, &pb.TextRequest{Text: data.Content})
 		if err != nil {
 			logger.Error(err, zap.Any("event", event.RoleChangeAttrSubject))
 			return
 		}
 
-		err = repo.ChangeRoleAttr(data.UserId, res.Text, 1)
+		err = repo.ChangeRoleAttr(ctx, data.UserId, res.Text, 1)
 		if err != nil {
 			logger.Error(err, zap.Any("event", event.RoleChangeAttrSubject))
 			return

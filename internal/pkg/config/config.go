@@ -29,6 +29,7 @@ type AppConfig struct {
 	Storage Storage `json:"storage" yaml:"storage"`
 	Jwt     Jwt     `json:"jwt" yaml:"jwt"`
 
+	Mysql  Mysql  `json:"mysql" yaml:"mysql"`
 	Rqlite Rqlite `json:"rqlite" yaml:"rqlite"`
 	Redis  Redis  `json:"redis" yaml:"redis"`
 	Influx Influx `json:"influx" yaml:"influx"`
@@ -49,7 +50,7 @@ func NewConfig(id string, kv *etcd.Client) *AppConfig {
 	xc.kv = kv
 	xc.Name = id
 
-	uuid:= util.UUID()
+	uuid := util.UUID()
 	xc.ID = uuid
 
 	xc.readConfig()

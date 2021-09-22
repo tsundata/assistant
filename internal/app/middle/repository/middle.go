@@ -1,33 +1,163 @@
 package repository
 
 import (
+	"context"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"gorm.io/gorm"
 	"time"
 )
 
 type MiddleRepository interface {
-	CreatePage(page pb.Page) (int64, error)
-	GetPageByUUID(uuid string) (pb.Page, error)
-	ListApps() ([]pb.App, error)
-	GetAvailableAppByType(t string) (pb.App, error)
-	GetAppByType(t string) (pb.App, error)
-	UpdateAppByID(id int64, token, extra string) error
-	CreateApp(app pb.App) (int64, error)
-	GetCredentialByName(name string) (pb.Credential, error)
-	GetCredentialByType(t string) (pb.Credential, error)
-	ListCredentials() ([]pb.Credential, error)
-	CreateCredential(credential pb.Credential) (int64, error)
-	ListTags() ([]pb.Tag, error)
-	GetOrCreateTag(tag pb.Tag) (pb.Tag, error)
+	CreatePage(ctx context.Context, page *pb.Page) (int64, error)
+	GetPageByUUID(ctx context.Context, uuid string) (*pb.Page, error)
+	ListApps(ctx context.Context, ) ([]*pb.App, error)
+	GetAvailableAppByType(ctx context.Context, t string) (*pb.App, error)
+	GetAppByType(ctx context.Context, t string) (*pb.App, error)
+	UpdateAppByID(ctx context.Context, id int64, token, extra string) error
+	CreateApp(ctx context.Context, app *pb.App) (int64, error)
+	GetCredentialByName(ctx context.Context, name string) (*pb.Credential, error)
+	GetCredentialByType(ctx context.Context, t string) (*pb.Credential, error)
+	ListCredentials(ctx context.Context, ) ([]*pb.Credential, error)
+	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
+	ListTags(ctx context.Context, ) ([]*pb.Tag, error)
+	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (*pb.Tag, error)
+}
+
+type MysqlMiddleRepository struct {
+	db *mysql.Conn
+}
+
+func NewMysqlMiddleRepository(db *mysql.Conn) MiddleRepository {
+	return &MysqlMiddleRepository{db: db}
+}
+
+func (r *MysqlMiddleRepository) CreatePage(ctx context.Context, page *pb.Page) (int64, error) {
+	err := r.db.WithContext(ctx).Create(&page).Error
+	if err != nil {
+		return 0, err
+	}
+	return page.Id, nil
+}
+
+func (r *MysqlMiddleRepository) GetPageByUUID(ctx context.Context, uuid string) (*pb.Page, error) {
+	var find pb.Page
+	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) ListApps(ctx context.Context) ([]*pb.App, error) {
+	var items []*pb.App
+	err := r.db.WithContext(ctx).Order("created_at DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) GetAvailableAppByType(ctx context.Context, t string) (*pb.App, error) {
+	var find pb.App
+	err := r.db.WithContext(ctx).Where("type = ?", t).Where("token <> ?", "").First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) GetAppByType(ctx context.Context, t string) (*pb.App, error) {
+	var find pb.App
+	err := r.db.WithContext(ctx).Where("type = ?", t).Last(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) UpdateAppByID(ctx context.Context, id int64, token, extra string) error {
+	return r.db.WithContext(ctx).Model(&pb.App{}).Where("id = ?", id).Update("token", token).
+		Update("extra", extra).Error
+}
+
+func (r *MysqlMiddleRepository) CreateApp(ctx context.Context, app *pb.App) (int64, error) {
+	err := r.db.WithContext(ctx).Create(&app).Error
+	if err != nil {
+		return 0, err
+	}
+	return app.Id, nil
+}
+
+func (r *MysqlMiddleRepository) GetCredentialByName(ctx context.Context, name string) (*pb.Credential, error) {
+	var find pb.Credential
+	err := r.db.WithContext(ctx).Where("name = ?", name).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) GetCredentialByType(ctx context.Context, t string) (*pb.Credential, error) {
+	var find pb.Credential
+	err := r.db.WithContext(ctx).Where("type = ?", t).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) ListCredentials(ctx context.Context) ([]*pb.Credential, error) {
+	var items []*pb.Credential
+	err := r.db.WithContext(ctx).Order("id DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error) {
+	err := r.db.WithContext(ctx).Create(&credential).Error
+	if err != nil {
+		return 0, err
+	}
+	return credential.Id, nil
+}
+
+func (r *MysqlMiddleRepository) ListTags(ctx context.Context) ([]*pb.Tag, error) {
+	var items []*pb.Tag
+	err := r.db.WithContext(ctx).Order("id DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (*pb.Tag, error) {
+	var find pb.Tag
+	err := r.db.WithContext(ctx).Where("name = ?", tag.Name).First(&find).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	if find.Id <= 0 {
+		err = r.db.WithContext(ctx).Create(&tag).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &find, nil
 }
 
 type RqliteMiddleRepository struct {
 	db *rqlite.Conn
 }
 
-func NewRqliteMiddleRepository(db *rqlite.Conn) MiddleRepository {
+func NewRqliteMiddleRepository(db *rqlite.Conn) *RqliteMiddleRepository {
 	return &RqliteMiddleRepository{db: db}
 }
 
@@ -234,7 +364,7 @@ func (r *RqliteMiddleRepository) GetOrCreateTag(tag pb.Tag) (pb.Tag, error) {
 			return pb.Tag{}, err
 		}
 		tag.Id = res.LastInsertID
-		tag.CreatedAt = now
+		tag.CreatedAt = time.Now().Unix()
 		return tag, nil
 	}
 

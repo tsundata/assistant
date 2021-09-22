@@ -44,11 +44,17 @@ type Storage struct {
 	Adapter string `json:"adapter" yaml:"adapter"`
 }
 
+// Jwt config
 type Jwt struct {
 	Secret string `json:"secret" yaml:"secret"`
 }
 
 // === Middleware ===
+
+// Mysql config
+type Mysql struct {
+	Dsn string `json:"dsn" yaml:"dsn"`
+}
 
 // Rqlite config
 type Rqlite struct {

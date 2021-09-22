@@ -40,8 +40,9 @@ tasks:
   proto:
     desc: Generate proto.pb.go
     cmds:
-      - go run github.com/tsundata/assistant/cmd/cli clear
-      - protoc -I api/pb ./api/pb/*.proto --gogo_out=plugins=grpc:.
+#      - go run github.com/tsundata/assistant/cmd/cli clear
+#      - protoc -I api/pb -I C:\Users\Administrator\go\pkg\mod\github.com\gogo\protobuf@v1.3.2 -I C:/Users/Administrator/go/pkg/mod/github.com/protocolbuffers/protobuf@v3.18.0+incompatible/src ./api/pb/*.proto --gogo_out=plugins=grpc:.
+#      - protoc -I api/pb ./api/pb/*.proto --gogo_out=plugins=grpc:.
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - protoc-go-inject-tag -input=./api/pb/todo.pb.go
       - protoc-go-inject-tag -input=./api/pb/workflow.pb.go

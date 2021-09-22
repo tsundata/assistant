@@ -113,7 +113,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
 	)
 
 	s := NewWorkflow(bus, nil, repo, nil, nil, nil)
@@ -170,10 +170,10 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().
-			ListTriggersByType("cron").
+			ListTriggersByType(gomock.Any(), "cron").
 			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 		repo.EXPECT().
-			ListTriggersByType("cron").
+			ListTriggersByType(gomock.Any(), "cron").
 			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 	)
 
@@ -225,9 +225,9 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().CreateTrigger(gomock.Any()).Return(int64(1), nil),
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
-		repo.EXPECT().CreateTrigger(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
+		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewWorkflow(nil, nil, repo, nil, nil, nil)
@@ -251,10 +251,10 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 					Kind:      enum.MessageTypeAction,
 					Type:      "webhook",
 					MessageId: 1,
-					MessageText: `
-cron "* * * * *"
-webhook "test"
-`,
+					//					MessageText: `
+					//cron "* * * * *"
+					//webhook "test"
+					//`,
 				},
 			}},
 			&pb.StateReply{State: true},
@@ -281,8 +281,8 @@ func TestWorkflow_DeleteTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteTriggerByMessageID(gomock.Any()).Return(nil),
-		repo.EXPECT().DeleteTriggerByMessageID(gomock.Any()).Return(errors.New("not record")),
+		repo.EXPECT().DeleteTriggerByMessageID(gomock.Any(), gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteTriggerByMessageID(gomock.Any(), gomock.Any()).Return(errors.New("not record")),
 	)
 
 	s := NewWorkflow(nil, nil, repo, nil, nil, nil)
@@ -382,7 +382,7 @@ func TestWorkflow_ListWebhook(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTriggersByType(gomock.Any()).Return([]pb.Trigger{{Flag: "test1"}, {Flag: "test2"}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), gomock.Any()).Return([]pb.Trigger{{Flag: "test1"}, {Flag: "test2"}}, nil),
 	)
 
 	s := NewWorkflow(nil, nil, repo, nil, nil, nil)

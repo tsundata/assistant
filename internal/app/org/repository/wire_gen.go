@@ -10,7 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
-	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -23,21 +23,14 @@ func CreateOrgRepository(id string) (OrgRepository, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
-	app, err := newrelic.New(appConfig, logger)
+	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	logLogger := log.NewAppLogger(logger)
-	conn, err := rqlite.New(appConfig, app, logLogger)
-	if err != nil {
-		return nil, err
-	}
-	orgRepository := NewRqliteOrgRepository(conn)
+	orgRepository := NewMysqlOrgRepository(conn)
 	return orgRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet)

@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -26,18 +27,14 @@ func CreateUserRepository(id string) (UserRepository, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	app, err := newrelic.New(appConfig, logger)
+	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	conn, err := rqlite.New(appConfig, app, logLogger)
-	if err != nil {
-		return nil, err
-	}
-	userRepository := NewRqliteUserRepository(logLogger, conn)
+	userRepository := NewMysqlUserRepository(logLogger, conn)
 	return userRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, rqlite.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet)

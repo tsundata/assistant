@@ -353,7 +353,8 @@ var rules = []Rule{
 				table.SetBorder(false)
 				table.SetHeader([]string{"Id", "Priority", "Content", "Complete", "Update"})
 				for _, v := range reply.Todos {
-					table.Append([]string{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete), v.UpdatedAt})
+					updatedAt := time.Unix(v.UpdatedAt, 0).Format("2006-01-02 15:04:05")
+					table.Append([]string{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete), updatedAt})
 				}
 				table.Render()
 			}
@@ -553,7 +554,7 @@ var rules = []Rule{
 				table.SetBorder(false)
 				table.SetHeader([]string{"Id", "Name", "Tag"})
 				for _, v := range reply.Objective {
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, v.Tag})
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, ""}) // todo tag
 				}
 				table.Render()
 			}
@@ -607,7 +608,7 @@ var rules = []Rule{
 
 			reply, err := comp.Org().CreateObjective(ctx, &pb.ObjectiveRequest{
 				Objective: &pb.Objective{
-					Tag:  tokens[1].Value,
+					//Tag:  tokens[1].Value, // todo tag
 					Name: tokens[2].Value,
 				},
 			})
@@ -640,7 +641,8 @@ var rules = []Rule{
 				table.SetBorder(false)
 				table.SetHeader([]string{"Id", "Name", "OID", "Tag", "Complete", "Update"})
 				for _, v := range reply.Result {
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), v.Tag, util.BoolToString(v.Complete), v.UpdatedAt})
+					updatedAt := time.Unix(v.UpdatedAt, 0).Format("2006-01-02 15:04:05")
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), "", util.BoolToString(v.Complete), updatedAt}) // todo tag
 				}
 				table.Render()
 			}
@@ -671,8 +673,8 @@ var rules = []Rule{
 			reply, err := comp.Org().CreateKeyResult(ctx, &pb.KeyResultRequest{
 				KeyResult: &pb.KeyResult{
 					ObjectiveId: id,
-					Tag:         tokens[2].Value,
-					Name:        tokens[3].Value,
+					//Tag:         tokens[2].Value,// todo tag
+					Name: tokens[3].Value,
 				},
 			})
 			if err != nil {

@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,103 +36,103 @@ func (m *MockTodoRepository) EXPECT() *MockTodoRepositoryMockRecorder {
 }
 
 // CompleteTodo mocks base method.
-func (m *MockTodoRepository) CompleteTodo(id int64) error {
+func (m *MockTodoRepository) CompleteTodo(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CompleteTodo", id)
+	ret := m.ctrl.Call(m, "CompleteTodo", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CompleteTodo indicates an expected call of CompleteTodo.
-func (mr *MockTodoRepositoryMockRecorder) CompleteTodo(id interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) CompleteTodo(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).CompleteTodo), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).CompleteTodo), ctx, id)
 }
 
 // CreateTodo mocks base method.
-func (m *MockTodoRepository) CreateTodo(todo pb.Todo) (int64, error) {
+func (m *MockTodoRepository) CreateTodo(ctx context.Context, todo *pb.Todo) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTodo", todo)
+	ret := m.ctrl.Call(m, "CreateTodo", ctx, todo)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateTodo indicates an expected call of CreateTodo.
-func (mr *MockTodoRepositoryMockRecorder) CreateTodo(todo interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) CreateTodo(ctx, todo interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoRepository)(nil).CreateTodo), todo)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTodo", reflect.TypeOf((*MockTodoRepository)(nil).CreateTodo), ctx, todo)
 }
 
 // DeleteTodo mocks base method.
-func (m *MockTodoRepository) DeleteTodo(id int64) error {
+func (m *MockTodoRepository) DeleteTodo(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTodo", id)
+	ret := m.ctrl.Call(m, "DeleteTodo", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteTodo indicates an expected call of DeleteTodo.
-func (mr *MockTodoRepositoryMockRecorder) DeleteTodo(id interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) DeleteTodo(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).DeleteTodo), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).DeleteTodo), ctx, id)
 }
 
 // GetTodo mocks base method.
-func (m *MockTodoRepository) GetTodo(id int64) (pb.Todo, error) {
+func (m *MockTodoRepository) GetTodo(ctx context.Context, id int64) (*pb.Todo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTodo", id)
-	ret0, _ := ret[0].(pb.Todo)
+	ret := m.ctrl.Call(m, "GetTodo", ctx, id)
+	ret0, _ := ret[0].(*pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTodo indicates an expected call of GetTodo.
-func (mr *MockTodoRepositoryMockRecorder) GetTodo(id interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) GetTodo(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoRepository)(nil).GetTodo), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoRepository)(nil).GetTodo), ctx, id)
 }
 
 // ListRemindTodos mocks base method.
-func (m *MockTodoRepository) ListRemindTodos() ([]pb.Todo, error) {
+func (m *MockTodoRepository) ListRemindTodos(ctx context.Context) ([]*pb.Todo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListRemindTodos")
-	ret0, _ := ret[0].([]pb.Todo)
+	ret := m.ctrl.Call(m, "ListRemindTodos", ctx)
+	ret0, _ := ret[0].([]*pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListRemindTodos indicates an expected call of ListRemindTodos.
-func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos() *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRemindTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListRemindTodos))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRemindTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListRemindTodos), ctx)
 }
 
 // ListTodos mocks base method.
-func (m *MockTodoRepository) ListTodos() ([]pb.Todo, error) {
+func (m *MockTodoRepository) ListTodos(ctx context.Context) ([]*pb.Todo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListTodos")
-	ret0, _ := ret[0].([]pb.Todo)
+	ret := m.ctrl.Call(m, "ListTodos", ctx)
+	ret0, _ := ret[0].([]*pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListTodos indicates an expected call of ListTodos.
-func (mr *MockTodoRepositoryMockRecorder) ListTodos() *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) ListTodos(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListTodos))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListTodos), ctx)
 }
 
 // UpdateTodo mocks base method.
-func (m *MockTodoRepository) UpdateTodo(todo pb.Todo) error {
+func (m *MockTodoRepository) UpdateTodo(ctx context.Context, todo *pb.Todo) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTodo", todo)
+	ret := m.ctrl.Call(m, "UpdateTodo", ctx, todo)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTodo indicates an expected call of UpdateTodo.
-func (mr *MockTodoRepositoryMockRecorder) UpdateTodo(todo interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) UpdateTodo(ctx, todo interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoRepository)(nil).UpdateTodo), todo)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTodo", reflect.TypeOf((*MockTodoRepository)(nil).UpdateTodo), ctx, todo)
 }

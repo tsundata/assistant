@@ -68,7 +68,7 @@ func TestUser_GetRole(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any()).Return(pb.Role{Profession: "super"}, nil),
+		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(pb.Role{Profession: "super"}, nil),
 	)
 
 	s := NewUser(conf,nil, repo)
@@ -118,7 +118,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any()).Return(pb.Role{
+		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(pb.Role{
 			Id:          1,
 			Profession:  "super",
 			Level:       60,
@@ -218,7 +218,7 @@ func TestUser_CreateUser(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().Create(gomock.Any(),gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewUser(conf,nil, repo)
@@ -266,7 +266,7 @@ func TestUser_GetUser(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
+		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
 	s := NewUser(conf,nil, repo)
@@ -314,7 +314,7 @@ func TestUser_GetUserByName(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByName(gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
+		repo.EXPECT().GetByName(gomock.Any(),gomock.Any()).Return(pb.User{Id: 1, Name: "test"}, nil),
 	)
 
 	s := NewUser(conf,nil, repo)
@@ -362,7 +362,7 @@ func TestUser_GetUsers(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List().Return([]pb.User{{Id: 1, Name: "test"}}, nil),
+		repo.EXPECT().List(gomock.Any()).Return([]pb.User{{Id: 1, Name: "test"}}, nil),
 	)
 
 	s := NewUser(conf,nil, repo)
@@ -410,7 +410,7 @@ func TestUser_UpdateUser(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().Update(gomock.Any()).Return(nil),
+		repo.EXPECT().Update(gomock.Any(),gomock.Any()).Return(nil),
 	)
 
 	s := NewUser(conf,nil, repo)

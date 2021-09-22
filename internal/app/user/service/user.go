@@ -70,8 +70,8 @@ func (s *User) Authorization(_ context.Context, payload *pb.AuthRequest) (*pb.Au
 	}, nil
 }
 
-func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleReply, error) {
-	find, err := s.repo.GetRole(payload.GetId())
+func (s *User) GetRole(ctx context.Context, payload *pb.RoleRequest) (*pb.RoleReply, error) {
+	find, err := s.repo.GetRole(ctx, int(payload.Id))
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +88,8 @@ func (s *User) GetRole(_ context.Context, payload *pb.RoleRequest) (*pb.RoleRepl
 	}}, nil
 }
 
-func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.BytesReply, error) {
-	find, err := s.repo.GetRole(payload.GetId())
+func (s *User) GetRoleImage(ctx context.Context, payload *pb.RoleRequest) (*pb.BytesReply, error) {
+	find, err := s.repo.GetRole(ctx, int(payload.Id))
 	if err != nil {
 		return nil, err
 	}
@@ -137,13 +137,13 @@ func (s *User) GetRoleImage(_ context.Context, payload *pb.RoleRequest) (*pb.Byt
 	return &pb.BytesReply{Data: buf.Bytes()}, nil
 }
 
-func (s *User) CreateUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	user := pb.User{
+func (s *User) CreateUser(ctx context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	user := &pb.User{
 		Name:   payload.User.GetName(),
 		Mobile: payload.User.GetMobile(),
 		Remark: payload.User.GetRemark(),
 	}
-	id, err := s.repo.Create(user)
+	id, err := s.repo.Create(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +152,8 @@ func (s *User) CreateUser(_ context.Context, payload *pb.UserRequest) (*pb.UserR
 	}}, nil
 }
 
-func (s *User) GetUser(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	find, err := s.repo.GetByID(payload.User.GetId())
+func (s *User) GetUser(ctx context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	find, err := s.repo.GetByID(ctx, payload.User.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -168,8 +168,8 @@ func (s *User) GetUser(_ context.Context, payload *pb.UserRequest) (*pb.UserRepl
 	}, nil
 }
 
-func (s *User) GetUserByName(_ context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	find, err := s.repo.GetByName(payload.User.GetName())
+func (s *User) GetUserByName(ctx context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
+	find, err := s.repo.GetByName(ctx, payload.User.GetName())
 	if err != nil {
 		return nil, err
 	}
@@ -184,8 +184,8 @@ func (s *User) GetUserByName(_ context.Context, payload *pb.UserRequest) (*pb.Us
 	}, nil
 }
 
-func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, error) {
-	items, err := s.repo.List()
+func (s *User) GetUsers(ctx context.Context, _ *pb.UserRequest) (*pb.UsersReply, error) {
+	items, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -203,8 +203,8 @@ func (s *User) GetUsers(_ context.Context, _ *pb.UserRequest) (*pb.UsersReply, e
 	return &pb.UsersReply{Users: res}, nil
 }
 
-func (s *User) UpdateUser(_ context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
-	err := s.repo.Update(pb.User{
+func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
+	err := s.repo.Update(ctx, &pb.User{
 		Id:     payload.User.GetId(),
 		Name:   payload.User.GetName(),
 		Mobile: payload.User.GetMobile(),

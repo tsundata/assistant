@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,60 +36,60 @@ func (m *MockWorkflowRepository) EXPECT() *MockWorkflowRepositoryMockRecorder {
 }
 
 // CreateTrigger mocks base method.
-func (m *MockWorkflowRepository) CreateTrigger(trigger pb.Trigger) (int64, error) {
+func (m *MockWorkflowRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTrigger", trigger)
+	ret := m.ctrl.Call(m, "CreateTrigger", ctx, trigger)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateTrigger indicates an expected call of CreateTrigger.
-func (mr *MockWorkflowRepositoryMockRecorder) CreateTrigger(trigger interface{}) *gomock.Call {
+func (mr *MockWorkflowRepositoryMockRecorder) CreateTrigger(ctx, trigger interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowRepository)(nil).CreateTrigger), trigger)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockWorkflowRepository)(nil).CreateTrigger), ctx, trigger)
 }
 
 // DeleteTriggerByMessageID mocks base method.
-func (m *MockWorkflowRepository) DeleteTriggerByMessageID(messageID int64) error {
+func (m *MockWorkflowRepository) DeleteTriggerByMessageID(ctx context.Context, messageID int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTriggerByMessageID", messageID)
+	ret := m.ctrl.Call(m, "DeleteTriggerByMessageID", ctx, messageID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteTriggerByMessageID indicates an expected call of DeleteTriggerByMessageID.
-func (mr *MockWorkflowRepositoryMockRecorder) DeleteTriggerByMessageID(messageID interface{}) *gomock.Call {
+func (mr *MockWorkflowRepositoryMockRecorder) DeleteTriggerByMessageID(ctx, messageID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTriggerByMessageID", reflect.TypeOf((*MockWorkflowRepository)(nil).DeleteTriggerByMessageID), messageID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTriggerByMessageID", reflect.TypeOf((*MockWorkflowRepository)(nil).DeleteTriggerByMessageID), ctx, messageID)
 }
 
 // GetTriggerByFlag mocks base method.
-func (m *MockWorkflowRepository) GetTriggerByFlag(t, flag string) (pb.Trigger, error) {
+func (m *MockWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (*pb.Trigger, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTriggerByFlag", t, flag)
-	ret0, _ := ret[0].(pb.Trigger)
+	ret := m.ctrl.Call(m, "GetTriggerByFlag", ctx, t, flag)
+	ret0, _ := ret[0].(*pb.Trigger)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTriggerByFlag indicates an expected call of GetTriggerByFlag.
-func (mr *MockWorkflowRepositoryMockRecorder) GetTriggerByFlag(t, flag interface{}) *gomock.Call {
+func (mr *MockWorkflowRepositoryMockRecorder) GetTriggerByFlag(ctx, t, flag interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTriggerByFlag", reflect.TypeOf((*MockWorkflowRepository)(nil).GetTriggerByFlag), t, flag)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTriggerByFlag", reflect.TypeOf((*MockWorkflowRepository)(nil).GetTriggerByFlag), ctx, t, flag)
 }
 
 // ListTriggersByType mocks base method.
-func (m *MockWorkflowRepository) ListTriggersByType(t string) ([]pb.Trigger, error) {
+func (m *MockWorkflowRepository) ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListTriggersByType", t)
-	ret0, _ := ret[0].([]pb.Trigger)
+	ret := m.ctrl.Call(m, "ListTriggersByType", ctx, t)
+	ret0, _ := ret[0].([]*pb.Trigger)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListTriggersByType indicates an expected call of ListTriggersByType.
-func (mr *MockWorkflowRepositoryMockRecorder) ListTriggersByType(t interface{}) *gomock.Call {
+func (mr *MockWorkflowRepositoryMockRecorder) ListTriggersByType(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTriggersByType", reflect.TypeOf((*MockWorkflowRepository)(nil).ListTriggersByType), t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTriggersByType", reflect.TypeOf((*MockWorkflowRepository)(nil).ListTriggersByType), ctx, t)
 }

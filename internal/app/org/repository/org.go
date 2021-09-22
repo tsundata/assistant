@@ -1,27 +1,97 @@
 package repository
 
 import (
+	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type OrgRepository interface {
-	GetObjectiveByID(id int64) (pb.Objective, error)
-	ListObjectives() ([]pb.Objective, error)
-	CreateObjective(objective pb.Objective) (int64, error)
-	DeleteObjective(id int64) error
-	GetKeyResultByID(id int64) (pb.KeyResult, error)
-	ListKeyResults() ([]pb.KeyResult, error)
-	CreateKeyResult(keyResult pb.KeyResult) (int64, error)
-	DeleteKeyResult(id int64) error
+	GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error)
+	ListObjectives(ctx context.Context, ) ([]*pb.Objective, error)
+	CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error)
+	DeleteObjective(ctx context.Context, id int64) error
+	GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error)
+	ListKeyResults(ctx context.Context, ) ([]*pb.KeyResult, error)
+	CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error)
+	DeleteKeyResult(ctx context.Context, id int64) error
+}
+
+type MysqlOrgRepository struct {
+	db *mysql.Conn
+}
+
+func NewMysqlOrgRepository(db *mysql.Conn) OrgRepository {
+	return &MysqlOrgRepository{db: db}
+}
+
+func (r *MysqlOrgRepository) GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error) {
+	var objective pb.Objective
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&objective).Error
+	if err != nil {
+		return nil, err
+	}
+	return &objective, nil
+}
+
+func (r *MysqlOrgRepository) ListObjectives(ctx context.Context) ([]*pb.Objective, error) {
+	var objectives []*pb.Objective
+	err := r.db.WithContext(ctx).Order("id DESC").Find(&objectives).Error
+	if err != nil {
+		return nil, err
+	}
+	return objectives, nil
+}
+
+func (r *MysqlOrgRepository) CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error) {
+	err := r.db.WithContext(ctx).Create(&objective).Error
+	if err != nil {
+		return 0, err
+	}
+	return objective.Id, nil
+}
+
+func (r *MysqlOrgRepository) DeleteObjective(ctx context.Context, id int64) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Objective{}).Error
+}
+
+func (r *MysqlOrgRepository) GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error) {
+	var keyResult pb.KeyResult
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&keyResult).Error
+	if err != nil {
+		return nil, err
+	}
+	return &keyResult, nil
+}
+
+func (r *MysqlOrgRepository) ListKeyResults(ctx context.Context) ([]*pb.KeyResult, error) {
+	var keyResult []*pb.KeyResult
+	err := r.db.WithContext(ctx).Order("id DESC").Find(&keyResult).Error
+	if err != nil {
+		return nil, err
+	}
+	return keyResult, nil
+}
+
+func (r *MysqlOrgRepository) CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error) {
+	err := r.db.WithContext(ctx).Create(&keyResult).Error
+	if err != nil {
+		return 0, err
+	}
+	return keyResult.Id, nil
+}
+
+func (r *MysqlOrgRepository) DeleteKeyResult(ctx context.Context, id int64) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.KeyResult{}).Error
 }
 
 type RqliteOrgRepository struct {
 	db *rqlite.Conn
 }
 
-func NewRqliteOrgRepository(db *rqlite.Conn) OrgRepository {
+func NewRqliteOrgRepository(db *rqlite.Conn) *RqliteOrgRepository {
 	return &RqliteOrgRepository{db: db}
 }
 

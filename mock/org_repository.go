@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,119 +36,119 @@ func (m *MockOrgRepository) EXPECT() *MockOrgRepositoryMockRecorder {
 }
 
 // CreateKeyResult mocks base method.
-func (m *MockOrgRepository) CreateKeyResult(keyResult pb.KeyResult) (int64, error) {
+func (m *MockOrgRepository) CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateKeyResult", keyResult)
+	ret := m.ctrl.Call(m, "CreateKeyResult", ctx, keyResult)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateKeyResult indicates an expected call of CreateKeyResult.
-func (mr *MockOrgRepositoryMockRecorder) CreateKeyResult(keyResult interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) CreateKeyResult(ctx, keyResult interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResult", reflect.TypeOf((*MockOrgRepository)(nil).CreateKeyResult), keyResult)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResult", reflect.TypeOf((*MockOrgRepository)(nil).CreateKeyResult), ctx, keyResult)
 }
 
 // CreateObjective mocks base method.
-func (m *MockOrgRepository) CreateObjective(objective pb.Objective) (int64, error) {
+func (m *MockOrgRepository) CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateObjective", objective)
+	ret := m.ctrl.Call(m, "CreateObjective", ctx, objective)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateObjective indicates an expected call of CreateObjective.
-func (mr *MockOrgRepositoryMockRecorder) CreateObjective(objective interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) CreateObjective(ctx, objective interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateObjective", reflect.TypeOf((*MockOrgRepository)(nil).CreateObjective), objective)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateObjective", reflect.TypeOf((*MockOrgRepository)(nil).CreateObjective), ctx, objective)
 }
 
 // DeleteKeyResult mocks base method.
-func (m *MockOrgRepository) DeleteKeyResult(id int64) error {
+func (m *MockOrgRepository) DeleteKeyResult(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteKeyResult", id)
+	ret := m.ctrl.Call(m, "DeleteKeyResult", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteKeyResult indicates an expected call of DeleteKeyResult.
-func (mr *MockOrgRepositoryMockRecorder) DeleteKeyResult(id interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) DeleteKeyResult(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteKeyResult", reflect.TypeOf((*MockOrgRepository)(nil).DeleteKeyResult), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteKeyResult", reflect.TypeOf((*MockOrgRepository)(nil).DeleteKeyResult), ctx, id)
 }
 
 // DeleteObjective mocks base method.
-func (m *MockOrgRepository) DeleteObjective(id int64) error {
+func (m *MockOrgRepository) DeleteObjective(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteObjective", id)
+	ret := m.ctrl.Call(m, "DeleteObjective", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteObjective indicates an expected call of DeleteObjective.
-func (mr *MockOrgRepositoryMockRecorder) DeleteObjective(id interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) DeleteObjective(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteObjective", reflect.TypeOf((*MockOrgRepository)(nil).DeleteObjective), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteObjective", reflect.TypeOf((*MockOrgRepository)(nil).DeleteObjective), ctx, id)
 }
 
 // GetKeyResultByID mocks base method.
-func (m *MockOrgRepository) GetKeyResultByID(id int64) (pb.KeyResult, error) {
+func (m *MockOrgRepository) GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetKeyResultByID", id)
-	ret0, _ := ret[0].(pb.KeyResult)
+	ret := m.ctrl.Call(m, "GetKeyResultByID", ctx, id)
+	ret0, _ := ret[0].(*pb.KeyResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetKeyResultByID indicates an expected call of GetKeyResultByID.
-func (mr *MockOrgRepositoryMockRecorder) GetKeyResultByID(id interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) GetKeyResultByID(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultByID", reflect.TypeOf((*MockOrgRepository)(nil).GetKeyResultByID), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultByID", reflect.TypeOf((*MockOrgRepository)(nil).GetKeyResultByID), ctx, id)
 }
 
 // GetObjectiveByID mocks base method.
-func (m *MockOrgRepository) GetObjectiveByID(id int64) (pb.Objective, error) {
+func (m *MockOrgRepository) GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetObjectiveByID", id)
-	ret0, _ := ret[0].(pb.Objective)
+	ret := m.ctrl.Call(m, "GetObjectiveByID", ctx, id)
+	ret0, _ := ret[0].(*pb.Objective)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetObjectiveByID indicates an expected call of GetObjectiveByID.
-func (mr *MockOrgRepositoryMockRecorder) GetObjectiveByID(id interface{}) *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) GetObjectiveByID(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectiveByID", reflect.TypeOf((*MockOrgRepository)(nil).GetObjectiveByID), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectiveByID", reflect.TypeOf((*MockOrgRepository)(nil).GetObjectiveByID), ctx, id)
 }
 
 // ListKeyResults mocks base method.
-func (m *MockOrgRepository) ListKeyResults() ([]pb.KeyResult, error) {
+func (m *MockOrgRepository) ListKeyResults(ctx context.Context) ([]*pb.KeyResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListKeyResults")
-	ret0, _ := ret[0].([]pb.KeyResult)
+	ret := m.ctrl.Call(m, "ListKeyResults", ctx)
+	ret0, _ := ret[0].([]*pb.KeyResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListKeyResults indicates an expected call of ListKeyResults.
-func (mr *MockOrgRepositoryMockRecorder) ListKeyResults() *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) ListKeyResults(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResults", reflect.TypeOf((*MockOrgRepository)(nil).ListKeyResults))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResults", reflect.TypeOf((*MockOrgRepository)(nil).ListKeyResults), ctx)
 }
 
 // ListObjectives mocks base method.
-func (m *MockOrgRepository) ListObjectives() ([]pb.Objective, error) {
+func (m *MockOrgRepository) ListObjectives(ctx context.Context) ([]*pb.Objective, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListObjectives")
-	ret0, _ := ret[0].([]pb.Objective)
+	ret := m.ctrl.Call(m, "ListObjectives", ctx)
+	ret0, _ := ret[0].([]*pb.Objective)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListObjectives indicates an expected call of ListObjectives.
-func (mr *MockOrgRepositoryMockRecorder) ListObjectives() *gomock.Call {
+func (mr *MockOrgRepositoryMockRecorder) ListObjectives(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListObjectives", reflect.TypeOf((*MockOrgRepository)(nil).ListObjectives))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListObjectives", reflect.TypeOf((*MockOrgRepository)(nil).ListObjectives), ctx)
 }

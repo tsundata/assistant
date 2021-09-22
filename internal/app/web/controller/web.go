@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type WebController struct {
@@ -168,17 +169,17 @@ func (wc *WebController) Apps(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	for _, app := range reply.GetApps() {
+	for _, item := range reply.GetApps() {
 		authStr := "Unauthorized"
-		authorizedURL := fmt.Sprintf("/app/%s?uuid=%s", app.GetType(), uuid)
-		if app.GetIsAuthorized() {
-			authStr = "Authorized"
-			authorizedURL = "javascript:void(0);"
-		}
+		authorizedURL := fmt.Sprintf("/app/%s?uuid=%s", item.GetType(), uuid)
+		//if app.GetIsAuthorized() { todo
+		//	authStr = "Authorized"
+		//	authorizedURL = "javascript:void(0);"
+		//}
 		items = append(items, &component.App{
-			Name: app.GetTitle(),
+			//Name: app.GetTitle(),
 			Icon: "rocket",
-			Text: fmt.Sprintf("%s (%s)", app.GetType(), authStr),
+			Text: fmt.Sprintf("%s (%s)", item.GetType(), authStr),
 			URL:  authorizedURL,
 		})
 	}
@@ -231,8 +232,9 @@ func (wc *WebController) Memo(c *fiber.Ctx) error {
 			text = buf.String()
 		}
 
+		createdAt := time.Unix(item.CreatedAt, 0).Format("2006-01-02 15:04:05")
 		items = append(items, &component.Memo{
-			Time: item.GetCreatedAt(),
+			Time: createdAt,
 			Content: &component.Text{
 				Title: text,
 			},
@@ -599,6 +601,8 @@ func (wc *WebController) Webhook(c *fiber.Ctx) error {
 			Type:   "webhook",
 			Flag:   flag,
 			Secret: secret,
+		},
+		Info: &pb.TriggerInfo{
 			Header: c.Request().Header.String(),
 			Body:   util.ByteToString(c.Request().Body()),
 		},

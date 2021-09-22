@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"testing"
@@ -13,7 +14,7 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 	}
 
 	type args struct {
-		objective pb.Objective
+		objective *pb.Objective
 	}
 	tests := []struct {
 		name    string
@@ -21,14 +22,14 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{objective: pb.Objective{
-			Name: "obj1",
-			TagId:  1,
+		{"case1", sto, args{objective: &pb.Objective{
+			Name:  "obj1",
+			TagId: 1,
 		}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.CreateObjective(tt.args.objective)
+			_, err := tt.r.CreateObjective(context.Background(), tt.args.objective)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.CreateObjective() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -56,7 +57,7 @@ func TestOrgRepository_GetObjectiveByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetObjectiveByID(tt.args.id)
+			_, err := tt.r.GetObjectiveByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.GetObjectiveByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -80,7 +81,7 @@ func TestOrgRepository_ListObjectives(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListObjectives()
+			_, err := tt.r.ListObjectives(context.Background())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.ListObjectives() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -108,7 +109,7 @@ func TestOrgRepository_DeleteObjective(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.DeleteObjective(tt.args.id); (err != nil) != tt.wantErr {
+			if err := tt.r.DeleteObjective(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.DeleteObjective() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -122,7 +123,7 @@ func TestOrgRepository_CreateKeyResult(t *testing.T) {
 	}
 
 	type args struct {
-		keyResult pb.KeyResult
+		keyResult *pb.KeyResult
 	}
 	tests := []struct {
 		name    string
@@ -130,11 +131,11 @@ func TestOrgRepository_CreateKeyResult(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{keyResult: pb.KeyResult{ObjectiveId: 1, Name: "kr1", TagId: 1}}, false},
+		{"case1", sto, args{keyResult: &pb.KeyResult{ObjectiveId: 1, Name: "kr1", TagId: 1}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.CreateKeyResult(tt.args.keyResult)
+			_, err := tt.r.CreateKeyResult(context.Background(), tt.args.keyResult)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.CreateKeyResult() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -162,7 +163,7 @@ func TestOrgRepository_GetKeyResultByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetKeyResultByID(tt.args.id)
+			_, err := tt.r.GetKeyResultByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.GetKeyResultByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -186,7 +187,7 @@ func TestOrgRepository_ListKeyResults(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListKeyResults()
+			_, err := tt.r.ListKeyResults(context.Background())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.ListKeyResults() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -214,7 +215,7 @@ func TestOrgRepository_DeleteKeyResult(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.DeleteKeyResult(tt.args.id); (err != nil) != tt.wantErr {
+			if err := tt.r.DeleteKeyResult(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("OrgRepository.DeleteKeyResult() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

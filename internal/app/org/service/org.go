@@ -16,42 +16,43 @@ func NewOrg(repo repository.OrgRepository, middle pb.MiddleSvcClient) *Org {
 }
 
 func (o *Org) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
-	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.Objective.GetTag()}})
+	//reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.Objective.GetTag()}})// todo
+	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: ""}})
 	if err != nil {
 		return nil, err
 	}
 	item := pb.Objective{
-		Name:  payload.Objective.GetName(),
-		Tag:   payload.Objective.GetTag(),
+		Name: payload.Objective.GetName(),
+		//Tag:   payload.Objective.GetTag(),// todo
 		TagId: reply.Tag.GetId(),
 	}
 
-	_, err = o.repo.CreateObjective(item)
+	_, err = o.repo.CreateObjective(ctx, &item)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Org) GetObjective(_ context.Context, payload *pb.ObjectiveRequest) (*pb.ObjectiveReply, error) {
-	find, err := o.repo.GetObjectiveByID(payload.Objective.GetId())
+func (o *Org) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.ObjectiveReply, error) {
+	find, err := o.repo.GetObjectiveByID(ctx, payload.Objective.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.ObjectiveReply{
 		Objective: &pb.Objective{
-			Id:        find.Id,
-			Name:      find.Name,
-			Tag:       find.Tag,
+			Id:   find.Id,
+			Name: find.Name,
+			//Tag:       find.Tag,// todo
 			TagId:     find.TagId,
 			CreatedAt: find.CreatedAt,
 		},
 	}, nil
 }
 
-func (o *Org) GetObjectives(_ context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
-	items, err := o.repo.ListObjectives()
+func (o *Org) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
+	items, err := o.repo.ListObjectives(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +60,9 @@ func (o *Org) GetObjectives(_ context.Context, _ *pb.ObjectiveRequest) (*pb.Obje
 	var res []*pb.Objective
 	for _, item := range items {
 		res = append(res, &pb.Objective{
-			Id:        item.Id,
-			Name:      item.Name,
-			Tag:       item.Tag,
+			Id:   item.Id,
+			Name: item.Name,
+			//Tag:       item.Tag,// todo
 			TagId:     item.TagId,
 			CreatedAt: item.CreatedAt,
 		})
@@ -70,8 +71,8 @@ func (o *Org) GetObjectives(_ context.Context, _ *pb.ObjectiveRequest) (*pb.Obje
 	return &pb.ObjectivesReply{Objective: res}, nil
 }
 
-func (o *Org) DeleteObjective(_ context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
-	err := o.repo.DeleteObjective(payload.Objective.GetId())
+func (o *Org) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
+	err := o.repo.DeleteObjective(ctx, payload.Objective.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -80,26 +81,27 @@ func (o *Org) DeleteObjective(_ context.Context, payload *pb.ObjectiveRequest) (
 }
 
 func (o *Org) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
-	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.KeyResult.GetTag()}})
+	//reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.KeyResult.GetTag()}}) // todo
+	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: ""}})
 	if err != nil {
 		return nil, err
 	}
 	item := pb.KeyResult{
 		ObjectiveId: payload.KeyResult.GetObjectiveId(),
 		Name:        payload.KeyResult.GetName(),
-		Tag:         payload.KeyResult.GetTag(),
-		TagId:       reply.Tag.GetId(),
+		//Tag:         payload.KeyResult.GetTag(),// todo
+		TagId: reply.Tag.GetId(),
 	}
 
-	_, err = o.repo.CreateKeyResult(item)
+	_, err = o.repo.CreateKeyResult(ctx, &item)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Org) GetKeyResult(_ context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
-	find, err := o.repo.GetKeyResultByID(payload.KeyResult.GetId())
+func (o *Org) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
+	find, err := o.repo.GetKeyResultByID(ctx, payload.KeyResult.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -109,17 +111,17 @@ func (o *Org) GetKeyResult(_ context.Context, payload *pb.KeyResultRequest) (*pb
 			Id:          find.Id,
 			Name:        find.Name,
 			ObjectiveId: find.ObjectiveId,
-			Tag:         find.Tag,
-			TagId:       find.TagId,
-			Complete:    find.Complete,
-			CreatedAt:   find.CreatedAt,
-			UpdatedAt:   find.UpdatedAt,
+			//Tag:         find.Tag,// todo
+			TagId:     find.TagId,
+			Complete:  find.Complete,
+			CreatedAt: find.CreatedAt,
+			UpdatedAt: find.UpdatedAt,
 		},
 	}, nil
 }
 
-func (o *Org) GetKeyResults(_ context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
-	items, err := o.repo.ListKeyResults()
+func (o *Org) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
+	items, err := o.repo.ListKeyResults(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -127,9 +129,9 @@ func (o *Org) GetKeyResults(_ context.Context, _ *pb.KeyResultRequest) (*pb.KeyR
 	var res []*pb.KeyResult
 	for _, item := range items {
 		res = append(res, &pb.KeyResult{
-			Id:          item.Id,
-			Name:        item.Name,
-			Tag:         item.Tag,
+			Id:   item.Id,
+			Name: item.Name,
+			//Tag:         item.Tag, // todo
 			TagId:       item.TagId,
 			ObjectiveId: item.ObjectiveId,
 			Complete:    item.Complete,
@@ -141,8 +143,8 @@ func (o *Org) GetKeyResults(_ context.Context, _ *pb.KeyResultRequest) (*pb.KeyR
 	return &pb.KeyResultsReply{Result: res}, nil
 }
 
-func (o *Org) DeleteKeyResult(_ context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
-	err := o.repo.DeleteKeyResult(payload.KeyResult.GetId())
+func (o *Org) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
+	err := o.repo.DeleteKeyResult(ctx, payload.KeyResult.GetId())
 	if err != nil {
 		return nil, err
 	}

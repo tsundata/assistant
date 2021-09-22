@@ -6,11 +6,13 @@ package pb
 import (
 	context "context"
 	fmt "fmt"
-	proto "github.com/gogo/protobuf/proto"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -22,7 +24,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type WordsReply struct {
 	Text                 []string `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
@@ -38,16 +40,25 @@ func (*WordsReply) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6ebd3cd177a18baf, []int{0}
 }
 func (m *WordsReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_WordsReply.Unmarshal(m, b)
+	return m.Unmarshal(b)
 }
 func (m *WordsReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_WordsReply.Marshal(b, m, deterministic)
+	if deterministic {
+		return xxx_messageInfo_WordsReply.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
 }
 func (m *WordsReply) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_WordsReply.Merge(m, src)
 }
 func (m *WordsReply) XXX_Size() int {
-	return xxx_messageInfo_WordsReply.Size(m)
+	return m.Size()
 }
 func (m *WordsReply) XXX_DiscardUnknown() {
 	xxx_messageInfo_WordsReply.DiscardUnknown(m)
@@ -69,7 +80,7 @@ func init() {
 func init() { proto.RegisterFile("nlp.proto", fileDescriptor_6ebd3cd177a18baf) }
 
 var fileDescriptor_6ebd3cd177a18baf = []byte{
-	// 176 bytes of a gzipped FileDescriptorProto
+	// 193 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcc, 0xcb, 0x29, 0xd0,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x92, 0xe2, 0x4a, 0x4a, 0x2c, 0x4e, 0x85,
 	0xf0, 0x95, 0x14, 0xb8, 0xb8, 0xc2, 0xf3, 0x8b, 0x52, 0x8a, 0x83, 0x52, 0x0b, 0x72, 0x2a, 0x85,
@@ -79,8 +90,10 @@ var fileDescriptor_6ebd3cd177a18baf = []byte{
 	0xa9, 0x85, 0xa5, 0xa9, 0xc5, 0x25, 0x52, 0x7c, 0x20, 0x01, 0x84, 0x49, 0x4a, 0x0c, 0x42, 0x86,
 	0x5c, 0x3c, 0xc1, 0xa9, 0xe9, 0xb9, 0xa9, 0x79, 0x25, 0x89, 0x25, 0x99, 0xf9, 0x44, 0x69, 0xd1,
 	0xe3, 0xe2, 0x72, 0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x2d, 0xc2, 0xd4, 0xc0, 0x8b,
-	0x10, 0x00, 0xab, 0x77, 0xe2, 0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03,
-	0xfb, 0xc6, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xb6, 0x49, 0x4c, 0xdb, 0xea, 0x00, 0x00, 0x00,
+	0x10, 0x00, 0xab, 0x77, 0x92, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f,
+	0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63, 0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62,
+	0x03, 0xfb, 0xce, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xd9, 0x6a, 0xbd, 0xe9, 0xfa, 0x00, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -234,3 +247,242 @@ var _NLPSvc_serviceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "nlp.proto",
 }
+
+func (m *WordsReply) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WordsReply) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WordsReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Text) > 0 {
+		for iNdEx := len(m.Text) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Text[iNdEx])
+			copy(dAtA[i:], m.Text[iNdEx])
+			i = encodeVarintNlp(dAtA, i, uint64(len(m.Text[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintNlp(dAtA []byte, offset int, v uint64) int {
+	offset -= sovNlp(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *WordsReply) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Text) > 0 {
+		for _, s := range m.Text {
+			l = len(s)
+			n += 1 + l + sovNlp(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func sovNlp(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozNlp(x uint64) (n int) {
+	return sovNlp(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *WordsReply) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowNlp
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WordsReply: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WordsReply: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Text", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNlp
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthNlp
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNlp
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Text = append(m.Text, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipNlp(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthNlp
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipNlp(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowNlp
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowNlp
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowNlp
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthNlp
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupNlp
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthNlp
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthNlp        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowNlp          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupNlp = fmt.Errorf("proto: unexpected end of group")
+)

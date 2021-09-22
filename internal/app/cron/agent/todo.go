@@ -31,16 +31,17 @@ func TodoRemind(ctx context.Context, comp rulebot.IComponent) []result.Result {
 	var res []result.Result
 	for _, todo := range reply.GetTodos() {
 		remindKey := fmt.Sprintf("cron:todo_remind:%d:last_remind_at", todo.Id)
-		if todo.RemindAt == time.Now().Format(HourLayout) {
-			res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
+		remindAt := time.Unix(todo.RemindAt, 0).Format(HourLayout)
+		if remindAt == time.Now().Format(HourLayout) {
+			res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), remindAt)))
 			comp.GetRedis().Set(ctx, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 			continue
 		}
 
 		if todo.RepeatMethod != "" {
 			// RepeatEndAt
-			if todo.RepeatEndAt != "" {
-				endAt, _ := time.ParseInLocation(HourLayout, todo.RepeatEndAt, time.Local)
+			if todo.RepeatEndAt != 0 {
+				endAt := time.Unix(todo.RepeatEndAt, 0)
 				if endAt.Before(time.Now()) {
 					continue
 				}
@@ -52,19 +53,19 @@ func TodoRemind(ctx context.Context, comp rulebot.IComponent) []result.Result {
 			isRemind := false
 			switch todo.RepeatMethod {
 			case enum.RepeatDaily:
-				isRemind, err = util.IsDaily(todo.RemindAt, lastRemindAt, nowTime)
+				isRemind, err = util.IsDaily(remindAt, lastRemindAt, nowTime)
 			case enum.RepeatWeekly:
-				isRemind, err = util.IsWeekly(todo.RemindAt, lastRemindAt, nowTime)
+				isRemind, err = util.IsWeekly(remindAt, lastRemindAt, nowTime)
 			case enum.RepeatMonthly:
-				isRemind, err = util.IsMonthly(todo.RemindAt, lastRemindAt, nowTime)
+				isRemind, err = util.IsMonthly(remindAt, lastRemindAt, nowTime)
 			case enum.RepeatAnnually:
-				isRemind, err = util.IsAnnually(todo.RemindAt, lastRemindAt, nowTime)
+				isRemind, err = util.IsAnnually(remindAt, lastRemindAt, nowTime)
 			}
 			if err != nil {
 				continue
 			}
 			if isRemind {
-				res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), todo.RemindAt)))
+				res = append(res, result.MessageResult(fmt.Sprintf("Todo #%d Remind: %s %s", todo.Id, todo.GetContent(), remindAt)))
 				comp.GetRedis().Set(ctx, remindKey, time.Now().Format(HourLayout), redis.KeepTTL)
 				continue
 			}

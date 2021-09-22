@@ -2,6 +2,13 @@ syntax = "proto3";
 package pb;
 
 import "base.proto";
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
 
 option go_package = "api/pb";
 
@@ -48,7 +55,7 @@ message PageReply {
 }
 
 message Page {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: query:"uuid" db:"uuid"
   string uuid = 2;
@@ -59,7 +66,9 @@ message Page {
   // @inject_tag: query:"type" db:"type"
   string type = 5;
   // @inject_tag: db:"created_at"
-  string createdAt = 6;
+  int64 createdAt = 6;
+  // @inject_tag: db:"created_at"
+  int64 updatedAt = 7;
 }
 
 message AppRequest {
@@ -78,7 +87,7 @@ message AppReply {
 }
 
 message App {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"type"
   string type = 2;
@@ -89,10 +98,12 @@ message App {
   // @inject_tag: db:"extra"
   string extra = 5;
   // @inject_tag: db:"created_at"
-  string createdAt = 6;
+  int64 createdAt = 6;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 7;
+  int64 updatedAt = 7;
+}
 
+message AppInfo {
   string title = 8;
   bool isAuthorized = 9;
 }
@@ -102,7 +113,7 @@ message CredentialsReply {
 }
 
 message Credential {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64  id = 1;
   // @inject_tag: db:"name"
   string name = 2;
@@ -111,9 +122,9 @@ message Credential {
   // @inject_tag: db:"content"
   string content = 4;
   // @inject_tag: db:"created_at"
-  string createdAt = 5;
+  int64 createdAt = 5;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 6;
+  int64 updatedAt = 6;
 }
 
 message MaskingReply {
@@ -184,12 +195,14 @@ message CronReply {
 }
 
 message Tag {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64  id = 1;
   // @inject_tag: db:"name"
   string name = 2;
   // @inject_tag: db:"created_at"
-  string createdAt = 3;
+  int64 createdAt = 3;
+  // @inject_tag: db:"created_at"
+  int64 updatedAt = 4;
 }
 
 message TagRequest {

@@ -18,7 +18,7 @@ func TestMessage_List(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List().Return([]pb.Message{{
+		repo.EXPECT().List(gomock.Any()).Return([]pb.Message{{
 			Id:   1,
 			Text: "test",
 		}}, nil),
@@ -65,7 +65,7 @@ func TestMessage_Get(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any()).Return(pb.Message{
+		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).Return(pb.Message{
 			Id:   1,
 			Text: "test",
 			Uuid: "test",
@@ -127,9 +127,9 @@ func TestMessage_Create(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any()).Return(pb.Message{Id: 2}, nil),
-		repo.EXPECT().GetByUUID(gomock.Any()).Return(pb.Message{Id: 0}, nil),
-		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(pb.Message{Id: 2}, nil),
+		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(pb.Message{Id: 0}, nil),
+		repo.EXPECT().Create(gomock.Any(),gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewMessage(bus, nil, nil, repo, nil)
@@ -180,8 +180,8 @@ func TestMessage_Delete(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().Delete(gomock.Any()).Return(nil),
-		repo.EXPECT().Delete(gomock.Any()).Return(errors.New("not record")),
+		repo.EXPECT().Delete(gomock.Any(),gomock.Any()).Return(nil),
+		repo.EXPECT().Delete(gomock.Any(),gomock.Any()).Return(errors.New("not record")),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, nil)
@@ -233,12 +233,12 @@ func TestMessage_Run(t *testing.T) {
 	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any()).
+		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).
 			Return(pb.Message{Id: 1, Text: "test", Type: enum.MessageTypeAction}, nil),
 		workflow.EXPECT().RunAction(gomock.Any(), gomock.Any()).
 			Return(&pb.WorkflowReply{Text: "ok"}, nil),
 
-		repo.EXPECT().GetByID(gomock.Any()).
+		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).
 			Return(pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
 	)
 
@@ -290,7 +290,7 @@ func TestMessage_GetActionMessages(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListByType(gomock.Any()).Return([]pb.Message{{Id: 1, Text: "test"}}, nil),
+		repo.EXPECT().ListByType(gomock.Any(),gomock.Any()).Return([]pb.Message{{Id: 1, Text: "test"}}, nil),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, nil)
@@ -336,7 +336,7 @@ func TestMessage_CreateActionMessage(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		workflow.EXPECT().SyntaxCheck(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
-		repo.EXPECT().Create(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().Create(gomock.Any(),gomock.Any()).Return(int64(1), nil),
 		workflow.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
@@ -389,7 +389,7 @@ func TestMessage_DeleteWorkflowMessage(t *testing.T) {
 	workflow := mock.NewMockWorkflowSvcClient(ctl)
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().Delete(gomock.Any()).Return(nil),
+		repo.EXPECT().Delete(gomock.Any(),gomock.Any()).Return(nil),
 		workflow.EXPECT().DeleteTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 

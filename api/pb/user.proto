@@ -2,6 +2,13 @@ syntax = "proto3";
 package pb;
 
 import "base.proto";
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
 
 option go_package = "api/pb";
 
@@ -57,7 +64,7 @@ message BytesReply {
 }
 
 message User {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"name"
   string name = 2;
@@ -66,13 +73,15 @@ message User {
   // @inject_tag: db:"remark"
   string remark = 4;
   // @inject_tag: db:"created_at"
-  string createdAt = 5;
+  int64 createdAt = 5;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 6;
+  int64 updatedAt = 6;
+  // @inject_tag: db:"role"
+  Role role = 8;
 }
 
 message Role {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"user_id"
   int64 userId = 2;
@@ -95,9 +104,9 @@ message Role {
   // @inject_tag: db:"intellect"
   int64 intellect = 11;
   // @inject_tag: db:"created_at"
-  string createdAt = 12;
+  int64 createdAt = 12;
   // @inject_tag: db:"updated_at"
-  string updatedAt = 13;
+  int64 updatedAt = 13;
 }
 
 message Equipment {

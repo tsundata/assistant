@@ -2,6 +2,13 @@ syntax = "proto3";
 package pb;
 
 import "base.proto";
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
 
 option go_package = "api/pb";
 
@@ -30,7 +37,7 @@ message MessagesReply {
 }
 
 message Message {
-  // @inject_tag: db:"id"
+  // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"uuid"
   string uuid = 2;
@@ -41,7 +48,9 @@ message Message {
   // @inject_tag: db:"channel"
   string channel = 5;
   // @inject_tag: db:"created_at"
-  string createdAt = 6;
+  int64 createdAt = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 7;
 }
 
 message Action {

@@ -18,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
@@ -50,11 +51,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rqliteConn, err := rqlite.New(appConfig, newrelicApp, logLogger)
+	mysqlConn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	userRepository := repository.NewRqliteUserRepository(logLogger, rqliteConn)
+	userRepository := repository.NewMysqlUserRepository(logLogger, mysqlConn)
 	serviceUser := service.NewUser(appConfig, redisClient, userRepository)
 	initServer := service.CreateInitServerFn(serviceUser)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
@@ -90,4 +91,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, rqlite.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, rqlite.ProviderSet, mysql.ProviderSet)

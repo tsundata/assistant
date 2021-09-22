@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,90 +36,90 @@ func (m *MockMessageRepository) EXPECT() *MockMessageRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockMessageRepository) Create(message pb.Message) (int64, error) {
+func (m *MockMessageRepository) Create(ctx context.Context, message *pb.Message) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", message)
+	ret := m.ctrl.Call(m, "Create", ctx, message)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockMessageRepositoryMockRecorder) Create(message interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) Create(ctx, message interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageRepository)(nil).Create), message)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageRepository)(nil).Create), ctx, message)
 }
 
 // Delete mocks base method.
-func (m *MockMessageRepository) Delete(id int64) error {
+func (m *MockMessageRepository) Delete(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", id)
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockMessageRepositoryMockRecorder) Delete(id interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageRepository)(nil).Delete), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageRepository)(nil).Delete), ctx, id)
 }
 
 // GetByID mocks base method.
-func (m *MockMessageRepository) GetByID(id int64) (pb.Message, error) {
+func (m *MockMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Message, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByID", id)
-	ret0, _ := ret[0].(pb.Message)
+	ret := m.ctrl.Call(m, "GetByID", ctx, id)
+	ret0, _ := ret[0].(*pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByID indicates an expected call of GetByID.
-func (mr *MockMessageRepositoryMockRecorder) GetByID(id interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockMessageRepository)(nil).GetByID), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockMessageRepository)(nil).GetByID), ctx, id)
 }
 
 // GetByUUID mocks base method.
-func (m *MockMessageRepository) GetByUUID(uuid string) (pb.Message, error) {
+func (m *MockMessageRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Message, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUUID", uuid)
-	ret0, _ := ret[0].(pb.Message)
+	ret := m.ctrl.Call(m, "GetByUUID", ctx, uuid)
+	ret0, _ := ret[0].(*pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByUUID indicates an expected call of GetByUUID.
-func (mr *MockMessageRepositoryMockRecorder) GetByUUID(uuid interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), uuid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), ctx, uuid)
 }
 
 // List mocks base method.
-func (m *MockMessageRepository) List() ([]pb.Message, error) {
+func (m *MockMessageRepository) List(ctx context.Context) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List")
-	ret0, _ := ret[0].([]pb.Message)
+	ret := m.ctrl.Call(m, "List", ctx)
+	ret0, _ := ret[0].([]*pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List.
-func (mr *MockMessageRepositoryMockRecorder) List() *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) List(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageRepository)(nil).List))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageRepository)(nil).List), ctx)
 }
 
 // ListByType mocks base method.
-func (m *MockMessageRepository) ListByType(t string) ([]pb.Message, error) {
+func (m *MockMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListByType", t)
-	ret0, _ := ret[0].([]pb.Message)
+	ret := m.ctrl.Call(m, "ListByType", ctx, t)
+	ret0, _ := ret[0].([]*pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListByType indicates an expected call of ListByType.
-func (mr *MockMessageRepositoryMockRecorder) ListByType(t interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) ListByType(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByType", reflect.TypeOf((*MockMessageRepository)(nil).ListByType), t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByType", reflect.TypeOf((*MockMessageRepository)(nil).ListByType), ctx, t)
 }

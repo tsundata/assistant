@@ -228,7 +228,7 @@ func TestTodoList(t *testing.T) {
 				Priority:  1,
 				Content:   "todo",
 				Complete:  true,
-				UpdatedAt: "2000-01-01 01:00:00",
+				UpdatedAt: 946659600,
 			},
 		}}, nil),
 	)
@@ -370,7 +370,7 @@ func TestObjList(t *testing.T) {
 			{
 				Id:    1,
 				Name:  "obj",
-				Tag:   "obj-1",
+				//Tag:   "obj-1",
 				TagId: 1,
 			},
 		}}, nil),
@@ -426,7 +426,7 @@ func TestKrList(t *testing.T) {
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "kr",
-				Tag:         "kr-1",
+				//Tag:         "kr-1",
 				TagId:       1,
 			},
 		}}, nil),

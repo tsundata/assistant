@@ -100,7 +100,7 @@ func (s *Workflow) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (
 }
 
 func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	trigger, err := s.repo.GetTriggerByFlag(payload.Trigger.GetType(), payload.Trigger.GetFlag())
+	trigger, err := s.repo.GetTriggerByFlag(ctx, payload.Trigger.GetType(), payload.Trigger.GetFlag())
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 }
 
 func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	triggers, err := s.repo.ListTriggersByType("cron")
+	triggers, err := s.repo.ListTriggersByType(ctx, "cron")
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 	return &pb.WorkflowReply{}, nil
 }
 
-func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
+func (s *Workflow) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
 	var trigger pb.Trigger
 	trigger.Type = payload.Trigger.GetType()
 	trigger.Kind = payload.Trigger.GetKind()
@@ -177,10 +177,10 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 
 	switch payload.Trigger.GetKind() {
 	case enum.MessageTypeAction:
-		if payload.Trigger.GetMessageText() == "" {
+		if payload.Info.GetMessageText() == "" {
 			return nil, errors.New("empty action")
 		}
-		p, err := action.NewParser(action.NewLexer([]rune(payload.Trigger.GetMessageText())))
+		p, err := action.NewParser(action.NewLexer([]rune(payload.Info.GetMessageText())))
 		if err != nil {
 			return nil, err
 		}
@@ -204,7 +204,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			trigger.When = symbolTable.Cron.When
 
 			// store
-			_, err = s.repo.CreateTrigger(trigger)
+			_, err = s.repo.CreateTrigger(ctx, &trigger)
 			if err != nil {
 				return nil, err
 			}
@@ -215,7 +215,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			trigger.Flag = symbolTable.Webhook.Flag
 			trigger.Secret = symbolTable.Webhook.Secret
 
-			find, err := s.repo.GetTriggerByFlag(trigger.Type, trigger.Flag)
+			find, err := s.repo.GetTriggerByFlag(ctx, trigger.Type, trigger.Flag)
 			if err != nil {
 				return nil, err
 			}
@@ -225,7 +225,7 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 			}
 
 			// store
-			_, err = s.repo.CreateTrigger(trigger)
+			_, err = s.repo.CreateTrigger(ctx, &trigger)
 			if err != nil {
 				return nil, err
 			}
@@ -237,8 +237,8 @@ func (s *Workflow) CreateTrigger(_ context.Context, payload *pb.TriggerRequest) 
 	}
 }
 
-func (s *Workflow) DeleteTrigger(_ context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
-	err := s.repo.DeleteTriggerByMessageID(payload.Trigger.GetMessageId())
+func (s *Workflow) DeleteTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
+	err := s.repo.DeleteTriggerByMessageID(ctx, payload.Trigger.GetMessageId())
 	if err != nil {
 		return &pb.StateReply{State: false}, err
 	}
@@ -258,8 +258,8 @@ func (s *Workflow) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*p
 	}, nil
 }
 
-func (s *Workflow) ListWebhook(_ context.Context, _ *pb.WorkflowRequest) (*pb.WebhooksReply, error) {
-	triggers, err := s.repo.ListTriggersByType("webhook")
+func (s *Workflow) ListWebhook(ctx context.Context, _ *pb.WorkflowRequest) (*pb.WebhooksReply, error) {
+	triggers, err := s.repo.ListTriggersByType(ctx, "webhook")
 	if err != nil {
 		return nil, err
 	}

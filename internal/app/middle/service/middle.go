@@ -88,7 +88,7 @@ func (s *Middle) GetChartUrl(_ context.Context, payload *pb.TextRequest) (*pb.Te
 	}, nil
 }
 
-func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
+func (s *Middle) CreatePage(ctx context.Context, payload *pb.PageRequest) (*pb.TextReply, error) {
 	uuid := util.UUID()
 
 	page := pb.Page{
@@ -98,7 +98,7 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 		Content: payload.Page.GetContent(),
 	}
 
-	_, err := s.repo.CreatePage(page)
+	_, err := s.repo.CreatePage(ctx, &page)
 	if err != nil {
 		return nil, err
 	}
@@ -108,8 +108,8 @@ func (s *Middle) CreatePage(_ context.Context, payload *pb.PageRequest) (*pb.Tex
 	}, nil
 }
 
-func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
-	find, err := s.repo.GetPageByUUID(payload.Page.GetUuid())
+func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.PageReply, error) {
+	find, err := s.repo.GetPageByUUID(ctx, payload.Page.GetUuid())
 	if err != nil {
 		return nil, err
 	}
@@ -124,8 +124,8 @@ func (s *Middle) GetPage(_ context.Context, payload *pb.PageRequest) (*pb.PageRe
 	}, nil
 }
 
-func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
-	apps, err := s.repo.ListApps()
+func (s *Middle) GetApps(ctx context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
+	apps, err := s.repo.ListApps(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -140,22 +140,22 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 	for _, app := range apps {
 		haveApps[app.Type] = true
 		res = append(res, &pb.App{
-			Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type),
-			IsAuthorized: app.Token != "",
-			Type:         app.Type,
-			Name:         app.Name,
-			Token:        app.Token,
-			Extra:        app.Extra,
-			CreatedAt:    app.CreatedAt,
+			//Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type), todo
+			//IsAuthorized: app.Token != "",todo
+			Type:      app.Type,
+			Name:      app.Name,
+			Token:     app.Token,
+			Extra:     app.Extra,
+			CreatedAt: app.CreatedAt,
 		})
 	}
 
 	for k := range providerApps {
 		if _, ok := haveApps[k]; !ok {
 			res = append(res, &pb.App{
-				Title:        fmt.Sprintf("%s (%s)", k, k),
-				IsAuthorized: false,
-				Type:         k,
+				//Title:        fmt.Sprintf("%s (%s)", k, k),todo
+				//IsAuthorized: false,todo
+				Type: k,
 			})
 		}
 	}
@@ -165,8 +165,8 @@ func (s *Middle) GetApps(_ context.Context, _ *pb.TextRequest) (*pb.AppsReply, e
 	}, nil
 }
 
-func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
-	find, err := s.repo.GetAvailableAppByType(payload.GetText())
+func (s *Middle) GetAvailableApp(ctx context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
+	find, err := s.repo.GetAvailableAppByType(ctx, payload.GetText())
 	if err != nil {
 		return nil, err
 	}
@@ -196,25 +196,25 @@ func (s *Middle) GetAvailableApp(_ context.Context, payload *pb.TextRequest) (*p
 	}, nil
 }
 
-func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
+func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
 	if payload.App.GetToken() == "" {
 		return &pb.StateReply{
 			State: false,
 		}, nil
 	}
 
-	app, err := s.repo.GetAppByType(payload.App.GetType())
+	app, err := s.repo.GetAppByType(ctx, payload.App.GetType())
 	if err != nil {
 		return nil, err
 	}
 
 	if app.Id > 0 {
-		err = s.repo.UpdateAppByID(app.Id, payload.App.GetToken(), payload.App.GetExtra())
+		err = s.repo.UpdateAppByID(ctx, app.Id, payload.App.GetToken(), payload.App.GetExtra())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		_, err = s.repo.CreateApp(pb.App{
+		_, err = s.repo.CreateApp(ctx, &pb.App{
 			Name:  payload.App.GetName(),
 			Type:  payload.App.GetType(),
 			Token: payload.App.GetToken(),
@@ -230,13 +230,13 @@ func (s *Middle) StoreAppOAuth(_ context.Context, payload *pb.AppRequest) (*pb.S
 	}, nil
 }
 
-func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
-	var find pb.Credential
+func (s *Middle) GetCredential(ctx context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
+	var find *pb.Credential
 	var err error
 	if payload.GetName() != "" {
-		find, err = s.repo.GetCredentialByName(payload.GetName())
+		find, err = s.repo.GetCredentialByName(ctx, payload.GetName())
 	} else if payload.GetType() != "" {
-		find, err = s.repo.GetCredentialByType(payload.GetType())
+		find, err = s.repo.GetCredentialByType(ctx, payload.GetType())
 	}
 	if err != nil {
 		return nil, err
@@ -266,8 +266,8 @@ func (s *Middle) GetCredential(_ context.Context, payload *pb.CredentialRequest)
 	}, nil
 }
 
-func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
-	items, err := s.repo.ListCredentials()
+func (s *Middle) GetCredentials(ctx context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
+	items, err := s.repo.ListCredentials(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -287,8 +287,8 @@ func (s *Middle) GetCredentials(_ context.Context, _ *pb.TextRequest) (*pb.Crede
 	}, nil
 }
 
-func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
-	items, err := s.repo.ListCredentials()
+func (s *Middle) GetMaskingCredentials(ctx context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
+	items, err := s.repo.ListCredentials(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +327,7 @@ func (s *Middle) GetMaskingCredentials(_ context.Context, _ *pb.TextRequest) (*p
 	}, nil
 }
 
-func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*pb.StateReply, error) {
+func (s *Middle) CreateCredential(ctx context.Context, payload *pb.KVsRequest) (*pb.StateReply, error) {
 	name := ""
 	category := ""
 	m := make(map[string]string)
@@ -348,7 +348,7 @@ func (s *Middle) CreateCredential(_ context.Context, payload *pb.KVsRequest) (*p
 		return nil, err
 	}
 
-	_, err = s.repo.CreateCredential(pb.Credential{Name: name, Type: category, Content: util.ByteToString(data)})
+	_, err = s.repo.CreateCredential(ctx, &pb.Credential{Name: name, Type: category, Content: util.ByteToString(data)})
 	if err != nil {
 		return nil, err
 	}
@@ -605,8 +605,8 @@ func (s *Middle) GetCronStatus(ctx context.Context, payload *pb.CronRequest) (*p
 	}, nil
 }
 
-func (s *Middle) GetOrCreateTag(_ context.Context, payload *pb.TagRequest) (*pb.TagReply, error) {
-	tag, err := s.repo.GetOrCreateTag(pb.Tag{
+func (s *Middle) GetOrCreateTag(ctx context.Context, payload *pb.TagRequest) (*pb.TagReply, error) {
+	tag, err := s.repo.GetOrCreateTag(ctx, &pb.Tag{
 		Name: payload.Tag.GetName(),
 	})
 	if err != nil {
@@ -619,8 +619,8 @@ func (s *Middle) GetOrCreateTag(_ context.Context, payload *pb.TagRequest) (*pb.
 	}}, nil
 }
 
-func (s *Middle) GetTags(_ context.Context, _ *pb.TagRequest) (*pb.TagsReply, error) {
-	items, err := s.repo.ListTags()
+func (s *Middle) GetTags(ctx context.Context, _ *pb.TagRequest) (*pb.TagsReply, error) {
+	items, err := s.repo.ListTags(ctx)
 	if err != nil {
 		return nil, err
 	}

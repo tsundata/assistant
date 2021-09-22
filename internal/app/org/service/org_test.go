@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/tsundata/assistant/api/pb"
 )
@@ -22,7 +22,7 @@ func TestOrg_CreateObjective(t *testing.T) {
 			Id:   1,
 			Name: "test",
 		}}, nil),
-		repo.EXPECT().CreateObjective(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewOrg(repo, middle)
@@ -40,7 +40,7 @@ func TestOrg_CreateObjective(t *testing.T) {
 	}{
 		{"case1", s, args{context.Background(), &pb.ObjectiveRequest{Objective: &pb.Objective{
 			Name: "obj1",
-			Tag:  "test",
+			//Tag:  "test",
 		}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
@@ -61,13 +61,13 @@ func TestOrg_GetObjective(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	now := util.Now()
+	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetObjectiveByID(gomock.Any()).Return(pb.Objective{
-			Id:        1,
-			Name:      "obj1",
-			Tag:       "test",
+		repo.EXPECT().GetObjectiveByID(gomock.Any(), gomock.Any()).Return(pb.Objective{
+			Id:   1,
+			Name: "obj1",
+			//Tag:       "test",
 			TagId:     1,
 			CreatedAt: now,
 		}, nil),
@@ -88,9 +88,9 @@ func TestOrg_GetObjective(t *testing.T) {
 	}{
 		{"case1", s, args{context.Background(), &pb.ObjectiveRequest{Objective: &pb.Objective{Id: 1}}},
 			&pb.ObjectiveReply{Objective: &pb.Objective{
-				Id:        1,
-				Name:      "obj1",
-				Tag:       "test",
+				Id:   1,
+				Name: "obj1",
+				//Tag:       "test",
 				TagId:     1,
 				CreatedAt: now,
 			}}, false,
@@ -114,14 +114,14 @@ func TestOrg_GetObjectives(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	now := util.Now()
+	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListObjectives().Return([]pb.Objective{
+		repo.EXPECT().ListObjectives(gomock.Any()).Return([]pb.Objective{
 			{
-				Id:        1,
-				Name:      "obj1",
-				Tag:       "test",
+				Id:   1,
+				Name: "obj1",
+				//Tag:       "test",
 				TagId:     1,
 				CreatedAt: now,
 			},
@@ -143,9 +143,9 @@ func TestOrg_GetObjectives(t *testing.T) {
 	}{
 		{"case1", s, args{context.Background(), &pb.ObjectiveRequest{}}, &pb.ObjectivesReply{Objective: []*pb.Objective{
 			{
-				Id:        1,
-				Name:      "obj1",
-				Tag:       "test",
+				Id:   1,
+				Name: "obj1",
+				//Tag:       "test",
 				TagId:     1,
 				CreatedAt: now,
 			},
@@ -171,7 +171,7 @@ func TestOrg_DeleteObjective(t *testing.T) {
 
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteObjective(gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewOrg(repo, nil)
@@ -215,7 +215,7 @@ func TestOrg_CreateKeyResult(t *testing.T) {
 			Id:   1,
 			Name: "test",
 		}}, nil),
-		repo.EXPECT().CreateKeyResult(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewOrg(repo, middle)
@@ -234,7 +234,7 @@ func TestOrg_CreateKeyResult(t *testing.T) {
 		{"case1", s, args{context.Background(), &pb.KeyResultRequest{KeyResult: &pb.KeyResult{
 			ObjectiveId: 1,
 			Name:        "obj1",
-			Tag:         "test",
+			//Tag:         "test",
 		}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
@@ -255,16 +255,16 @@ func TestOrg_GetKeyResult(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	now := util.Now()
+	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetKeyResultByID(gomock.Any()).Return(pb.KeyResult{
+		repo.EXPECT().GetKeyResultByID(gomock.Any(), gomock.Any()).Return(pb.KeyResult{
 			Id:          1,
 			ObjectiveId: 1,
 			Name:        "obj1",
-			Tag:         "test",
-			TagId:       1,
-			CreatedAt:   now,
+			//Tag:         "test",
+			TagId:     1,
+			CreatedAt: now,
 		}, nil),
 	)
 
@@ -286,9 +286,9 @@ func TestOrg_GetKeyResult(t *testing.T) {
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "obj1",
-				Tag:         "test",
-				TagId:       1,
-				CreatedAt:   now,
+				//Tag:         "test",
+				TagId:     1,
+				CreatedAt: now,
 			}}, false,
 		},
 	}
@@ -310,17 +310,17 @@ func TestOrg_GetKeyResults(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	now := util.Now()
+	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListKeyResults().Return([]pb.KeyResult{
+		repo.EXPECT().ListKeyResults(gomock.Any()).Return([]pb.KeyResult{
 			{
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "obj1",
-				Tag:         "test",
-				TagId:       1,
-				CreatedAt:   now,
+				//Tag:         "test",
+				TagId:     1,
+				CreatedAt: now,
 			},
 		}, nil),
 	)
@@ -343,9 +343,9 @@ func TestOrg_GetKeyResults(t *testing.T) {
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "obj1",
-				Tag:         "test",
-				TagId:       1,
-				CreatedAt:   now,
+				//Tag:         "test",
+				TagId:     1,
+				CreatedAt: now,
 			},
 		}}, false},
 	}
@@ -369,7 +369,7 @@ func TestOrg_DeleteKeyResult(t *testing.T) {
 
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteKeyResult(gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewOrg(repo, nil)

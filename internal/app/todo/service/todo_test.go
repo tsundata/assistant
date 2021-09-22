@@ -23,7 +23,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().CreateTodo(gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
 	s := NewTodo(bus, nil, repo)
@@ -61,7 +61,7 @@ func TestTodo_GetTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTodo(gomock.Any()).Return(pb.Todo{Content: "test"}, nil),
+		repo.EXPECT().GetTodo(gomock.Any(), gomock.Any()).Return(pb.Todo{Content: "test"}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -103,7 +103,7 @@ func TestTodo_GetTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTodos().Return([]pb.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListTodos(gomock.Any()).Return([]pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -149,7 +149,7 @@ func TestTodo_DeleteTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteTodo(gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteTodo(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -193,7 +193,7 @@ func TestTodo_UpdateTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().UpdateTodo(gomock.Any()).Return(nil),
+		repo.EXPECT().UpdateTodo(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -237,7 +237,7 @@ func TestTodo_CompleteTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().CompleteTodo(gomock.Any()).Return(nil),
+		repo.EXPECT().CompleteTodo(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -281,7 +281,7 @@ func TestTodo_GetRemindTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListRemindTodos().Return([]pb.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListRemindTodos(gomock.Any()).Return([]pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)

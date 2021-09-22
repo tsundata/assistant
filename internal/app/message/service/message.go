@@ -38,8 +38,8 @@ func NewMessage(
 	}
 }
 
-func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
-	messages, err := m.repo.List()
+func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
+	messages, err := m.repo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +59,8 @@ func (m *Message) List(_ context.Context, _ *pb.MessageRequest) (*pb.MessagesRep
 	}, nil
 }
 
-func (m *Message) Get(_ context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	message, err := m.repo.GetByID(payload.Message.GetId())
+func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+	message, err := m.repo.GetByID(ctx, payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	message.Text = strings.TrimSpace(payload.Message.GetText())
 
 	// check
-	find, err := m.repo.GetByUUID(message.Uuid)
+	find, err := m.repo.GetByUUID(ctx, message.Uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}
 
 	// store
-	id, err := m.repo.Create(message)
+	id, err := m.repo.Create(ctx, &message)
 	if err != nil {
 		return nil, err
 	}
@@ -126,8 +126,8 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}, nil
 }
 
-func (m *Message) Delete(_ context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
-	err := m.repo.Delete(payload.Message.GetId())
+func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
+	err := m.repo.Delete(ctx, payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 
 func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	var reply string
-	message, err := m.repo.GetByID(payload.Message.GetId())
+	message, err := m.repo.GetByID(ctx, payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -179,9 +179,9 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	}, nil
 }
 
-func (m *Message) GetActionMessages(_ context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
-	var items []pb.Message
-	items, err := m.repo.ListByType(enum.MessageTypeAction)
+func (m *Message) GetActionMessages(ctx context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
+	var items []*pb.Message
+	items, err := m.repo.ListByType(ctx, enum.MessageTypeAction)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 
 	// store message
 	uuid := util.UUID()
-	id, err := m.repo.Create(pb.Message{
+	id, err := m.repo.Create(ctx, &pb.Message{
 		Uuid: uuid,
 		Type: enum.MessageTypeAction,
 		Text: payload.GetText(),
@@ -227,8 +227,10 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	// check/create trigger
 	_, err = m.workflow.CreateTrigger(ctx, &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
-			Kind:        enum.MessageTypeAction,
-			MessageId:   id,
+			Kind:      enum.MessageTypeAction,
+			MessageId: id,
+		},
+		Info: &pb.TriggerInfo{
 			MessageText: payload.GetText(),
 		},
 	})
@@ -240,7 +242,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 }
 
 func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
-	err := m.repo.Delete(payload.Message.GetId())
+	err := m.repo.Delete(ctx, payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
