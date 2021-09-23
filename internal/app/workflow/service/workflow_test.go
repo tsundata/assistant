@@ -113,7 +113,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Trigger{MessageId: 1, Secret: "test"}, nil),
 	)
 
 	s := NewWorkflow(bus, nil, repo, nil, nil, nil)
@@ -171,10 +171,10 @@ func TestWorkflow_CronTrigger(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().
 			ListTriggersByType(gomock.Any(), "cron").
-			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
+			Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 		repo.EXPECT().
 			ListTriggersByType(gomock.Any(), "cron").
-			Return([]pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
+			Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 	)
 
 	s := NewWorkflow(bus, rdb, repo, nil, nil, nil)
@@ -226,7 +226,7 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Trigger{}, nil),
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
@@ -251,10 +251,12 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 					Kind:      enum.MessageTypeAction,
 					Type:      "webhook",
 					MessageId: 1,
-					//					MessageText: `
-					//cron "* * * * *"
-					//webhook "test"
-					//`,
+				},
+				Info: &pb.TriggerInfo{
+					MessageText: `
+					cron "* * * * *"
+					webhook "test"
+					`,
 				},
 			}},
 			&pb.StateReply{State: true},
@@ -382,7 +384,7 @@ func TestWorkflow_ListWebhook(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTriggersByType(gomock.Any(), gomock.Any()).Return([]pb.Trigger{{Flag: "test1"}, {Flag: "test2"}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), gomock.Any()).Return([]*pb.Trigger{{Flag: "test1"}, {Flag: "test2"}}, nil),
 	)
 
 	s := NewWorkflow(nil, nil, repo, nil, nil, nil)

@@ -18,7 +18,7 @@ func TestMessage_List(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List(gomock.Any()).Return([]pb.Message{{
+		repo.EXPECT().List(gomock.Any()).Return([]*pb.Message{{
 			Id:   1,
 			Text: "test",
 		}}, nil),
@@ -65,7 +65,7 @@ func TestMessage_Get(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).Return(pb.Message{
+		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).Return(&pb.Message{
 			Id:   1,
 			Text: "test",
 			Uuid: "test",
@@ -127,8 +127,8 @@ func TestMessage_Create(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(pb.Message{Id: 2}, nil),
-		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(pb.Message{Id: 0}, nil),
+		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(&pb.Message{Id: 2}, nil),
+		repo.EXPECT().GetByUUID(gomock.Any(),gomock.Any()).Return(&pb.Message{Id: 0}, nil),
 		repo.EXPECT().Create(gomock.Any(),gomock.Any()).Return(int64(1), nil),
 	)
 
@@ -234,12 +234,12 @@ func TestMessage_Run(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).
-			Return(pb.Message{Id: 1, Text: "test", Type: enum.MessageTypeAction}, nil),
+			Return(&pb.Message{Id: 1, Text: "test", Type: enum.MessageTypeAction}, nil),
 		workflow.EXPECT().RunAction(gomock.Any(), gomock.Any()).
 			Return(&pb.WorkflowReply{Text: "ok"}, nil),
 
 		repo.EXPECT().GetByID(gomock.Any(),gomock.Any()).
-			Return(pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
+			Return(&pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, workflow)
@@ -290,7 +290,7 @@ func TestMessage_GetActionMessages(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListByType(gomock.Any(),gomock.Any()).Return([]pb.Message{{Id: 1, Text: "test"}}, nil),
+		repo.EXPECT().ListByType(gomock.Any(),gomock.Any()).Return([]*pb.Message{{Id: 1, Text: "test"}}, nil),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, nil)

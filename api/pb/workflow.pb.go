@@ -7,13 +7,11 @@ import (
 	context "context"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/golang/protobuf/proto"
+	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	io "io"
 	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type WorkflowRequest struct {
 	Text string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
@@ -39,25 +37,16 @@ func (*WorkflowRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{0}
 }
 func (m *WorkflowRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_WorkflowRequest.Unmarshal(m, b)
 }
 func (m *WorkflowRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_WorkflowRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_WorkflowRequest.Marshal(b, m, deterministic)
 }
 func (m *WorkflowRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_WorkflowRequest.Merge(m, src)
 }
 func (m *WorkflowRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_WorkflowRequest.Size(m)
 }
 func (m *WorkflowRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_WorkflowRequest.DiscardUnknown(m)
@@ -90,25 +79,16 @@ func (*WorkflowReply) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{1}
 }
 func (m *WorkflowReply) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_WorkflowReply.Unmarshal(m, b)
 }
 func (m *WorkflowReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_WorkflowReply.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_WorkflowReply.Marshal(b, m, deterministic)
 }
 func (m *WorkflowReply) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_WorkflowReply.Merge(m, src)
 }
 func (m *WorkflowReply) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_WorkflowReply.Size(m)
 }
 func (m *WorkflowReply) XXX_DiscardUnknown() {
 	xxx_messageInfo_WorkflowReply.DiscardUnknown(m)
@@ -135,25 +115,16 @@ func (*TriggerRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{2}
 }
 func (m *TriggerRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_TriggerRequest.Unmarshal(m, b)
 }
 func (m *TriggerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TriggerRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_TriggerRequest.Marshal(b, m, deterministic)
 }
 func (m *TriggerRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_TriggerRequest.Merge(m, src)
 }
 func (m *TriggerRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_TriggerRequest.Size(m)
 }
 func (m *TriggerRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_TriggerRequest.DiscardUnknown(m)
@@ -201,25 +172,16 @@ func (*Trigger) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{3}
 }
 func (m *Trigger) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_Trigger.Unmarshal(m, b)
 }
 func (m *Trigger) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Trigger.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_Trigger.Marshal(b, m, deterministic)
 }
 func (m *Trigger) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Trigger.Merge(m, src)
 }
 func (m *Trigger) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_Trigger.Size(m)
 }
 func (m *Trigger) XXX_DiscardUnknown() {
 	xxx_messageInfo_Trigger.DiscardUnknown(m)
@@ -296,25 +258,16 @@ func (*TriggerInfo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{4}
 }
 func (m *TriggerInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_TriggerInfo.Unmarshal(m, b)
 }
 func (m *TriggerInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TriggerInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_TriggerInfo.Marshal(b, m, deterministic)
 }
 func (m *TriggerInfo) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_TriggerInfo.Merge(m, src)
 }
 func (m *TriggerInfo) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_TriggerInfo.Size(m)
 }
 func (m *TriggerInfo) XXX_DiscardUnknown() {
 	xxx_messageInfo_TriggerInfo.DiscardUnknown(m)
@@ -354,25 +307,16 @@ func (*WebhooksReply) Descriptor() ([]byte, []int) {
 	return fileDescriptor_892c7f566756b0be, []int{5}
 }
 func (m *WebhooksReply) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_WebhooksReply.Unmarshal(m, b)
 }
 func (m *WebhooksReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_WebhooksReply.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_WebhooksReply.Marshal(b, m, deterministic)
 }
 func (m *WebhooksReply) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_WebhooksReply.Merge(m, src)
 }
 func (m *WebhooksReply) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_WebhooksReply.Size(m)
 }
 func (m *WebhooksReply) XXX_DiscardUnknown() {
 	xxx_messageInfo_WebhooksReply.DiscardUnknown(m)
@@ -399,39 +343,38 @@ func init() {
 func init() { proto.RegisterFile("workflow.proto", fileDescriptor_892c7f566756b0be) }
 
 var fileDescriptor_892c7f566756b0be = []byte{
-	// 503 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0xcf, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x93, 0x76, 0x6d, 0xcd, 0x1b, 0x9a, 0xc5, 0x51, 0x64, 0x28, 0x12, 0x4a, 0x16, 0xc1,
-	0x83, 0x74, 0xa1, 0xba, 0xca, 0x1e, 0xd7, 0xee, 0x65, 0xc1, 0x53, 0xba, 0x20, 0xa8, 0x97, 0xfc,
-	0x78, 0x4d, 0x43, 0x6b, 0x26, 0x26, 0xb3, 0x76, 0xf3, 0x5f, 0x78, 0xf4, 0x9f, 0xf1, 0xbe, 0xe0,
-	0xa5, 0x47, 0x8f, 0x6e, 0xfb, 0x8f, 0xc8, 0xcc, 0x24, 0xbb, 0x51, 0x4a, 0xa1, 0xb7, 0xef, 0x7c,
-	0xde, 0xfb, 0xce, 0xbc, 0x1f, 0x21, 0x60, 0x2f, 0x79, 0x3e, 0x9f, 0x2e, 0xf8, 0x72, 0x98, 0xe5,
-	0x5c, 0x70, 0xda, 0xca, 0x82, 0x3e, 0x04, 0x7e, 0x81, 0xfa, 0xdc, 0x7f, 0x12, 0xf3, 0x98, 0x2b,
-	0x79, 0x2c, 0x95, 0xa6, 0xee, 0x29, 0x1c, 0x7e, 0xa8, 0x7c, 0x1e, 0x7e, 0xbd, 0xc2, 0x42, 0x50,
-	0x0a, 0x07, 0x02, 0xaf, 0x05, 0x33, 0x07, 0xe6, 0x0b, 0xcb, 0x53, 0x5a, 0xb1, 0x32, 0x43, 0xd6,
-	0xaa, 0x58, 0x99, 0xa1, 0x7b, 0x04, 0xbd, 0x7b, 0x6b, 0xb6, 0x28, 0xb7, 0x19, 0xdd, 0xcf, 0x60,
-	0x5f, 0xe6, 0x49, 0x1c, 0x63, 0x5e, 0x5f, 0xff, 0x1c, 0xba, 0x42, 0x13, 0x95, 0x48, 0x46, 0x64,
-	0x98, 0x05, 0xc3, 0x3a, 0xa9, 0x8e, 0xd1, 0x23, 0x38, 0x48, 0xd2, 0x29, 0x57, 0x2f, 0x92, 0xd1,
-	0x61, 0x23, 0xe7, 0x22, 0x9d, 0x72, 0x4f, 0x05, 0xdd, 0x9f, 0x26, 0x74, 0x2b, 0x4a, 0x6d, 0x68,
-	0x25, 0x91, 0xba, 0xb2, 0xed, 0xb5, 0x92, 0x68, 0x5b, 0xc9, 0x92, 0xcd, 0x93, 0x34, 0x62, 0x6d,
-	0xcd, 0xa4, 0x96, 0x6c, 0xba, 0xf0, 0x63, 0x76, 0xa0, 0x99, 0xd4, 0xf4, 0x29, 0x74, 0x0a, 0x0c,
-	0x73, 0x14, 0xec, 0x81, 0xa2, 0xd5, 0x49, 0xe6, 0x2e, 0x67, 0x98, 0xb2, 0x8e, 0xce, 0x95, 0x9a,
-	0x3e, 0x03, 0xeb, 0x0b, 0x16, 0x85, 0x1f, 0xe3, 0x45, 0xc4, 0xba, 0xea, 0xf9, 0x7b, 0x20, 0xa3,
-	0x61, 0x8e, 0xbe, 0xc0, 0xe8, 0x4c, 0xb0, 0x87, 0x3a, 0x7a, 0x07, 0xdc, 0x4f, 0x40, 0x1a, 0x4d,
-	0xd1, 0x01, 0x90, 0xca, 0x79, 0x29, 0xe7, 0x68, 0xa9, 0x57, 0x9a, 0x48, 0x16, 0x36, 0x43, 0x3f,
-	0xc2, 0x9c, 0x81, 0x2e, 0x4c, 0x9f, 0x64, 0x61, 0x01, 0x8f, 0x4a, 0x46, 0x74, 0x61, 0x52, 0xab,
-	0xfd, 0x60, 0x30, 0xe3, 0x7c, 0x5e, 0xdc, 0xed, 0x47, 0x75, 0x6a, 0x0e, 0xda, 0x75, 0xa7, 0xa3,
-	0x5f, 0x6d, 0x20, 0xf5, 0x16, 0x27, 0xdf, 0x42, 0xfa, 0x1a, 0xc8, 0xa4, 0x4c, 0x85, 0x7f, 0x3d,
-	0x9e, 0x61, 0x38, 0xa7, 0x8f, 0xe5, 0xdc, 0xff, 0xfb, 0x40, 0xfa, 0xb6, 0x84, 0x13, 0xe1, 0x0b,
-	0x54, 0xf7, 0xba, 0x06, 0x3d, 0x01, 0xcb, 0xbb, 0x4a, 0xcf, 0x42, 0x91, 0xf0, 0x74, 0xbb, 0xe7,
-	0xd1, 0xbf, 0x50, 0xdb, 0x4e, 0xc1, 0xae, 0x2a, 0xac, 0x97, 0x48, 0x9b, 0xdf, 0xc2, 0x2e, 0xeb,
-	0x1b, 0x20, 0xe3, 0x9c, 0xa7, 0x7b, 0xfb, 0x4e, 0xa0, 0x37, 0x56, 0xe3, 0xdf, 0xe5, 0xdc, 0xd6,
-	0x60, 0xef, 0x1c, 0x17, 0xb8, 0xbf, 0xcd, 0xd2, 0x43, 0x39, 0xe7, 0xe1, 0x1e, 0x73, 0x79, 0x0b,
-	0xe4, 0x7d, 0x52, 0x88, 0x6a, 0x36, 0xbb, 0x8c, 0xcd, 0xfd, 0xba, 0xc6, 0xbb, 0x97, 0x37, 0xb7,
-	0x8e, 0xb9, 0xba, 0x75, 0x8c, 0x9b, 0xb5, 0x63, 0xae, 0xd6, 0x8e, 0xf9, 0x67, 0xed, 0x98, 0xdf,
-	0x37, 0x8e, 0xf1, 0x63, 0xe3, 0x18, 0xab, 0x8d, 0x63, 0xfc, 0xde, 0x38, 0xc6, 0xc7, 0x8e, 0x9f,
-	0x25, 0xc7, 0x59, 0x10, 0x74, 0xd4, 0x2f, 0xe0, 0xd5, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x97,
-	0x90, 0x13, 0x3d, 0x3a, 0x04, 0x00, 0x00,
+	// 486 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0xcd, 0x6a, 0xdb, 0x40,
+	0x10, 0xc7, 0x25, 0xdb, 0xb5, 0xab, 0x59, 0xac, 0xd0, 0x6d, 0x29, 0x8b, 0x09, 0xc2, 0x28, 0x14,
+	0x7a, 0x72, 0xc0, 0x6d, 0x5a, 0x72, 0x4c, 0x9d, 0x4b, 0xa0, 0x27, 0x39, 0x50, 0x68, 0x7b, 0xd1,
+	0xc7, 0x58, 0x16, 0x76, 0xb5, 0xaa, 0xb4, 0xa9, 0xa3, 0xb7, 0xe8, 0x0b, 0xf5, 0x5e, 0xe8, 0x25,
+	0xc7, 0x5e, 0x83, 0x5f, 0xa4, 0xec, 0xae, 0x14, 0xab, 0x41, 0x18, 0x7c, 0xfb, 0xef, 0x6f, 0xe6,
+	0xbf, 0x3b, 0x1f, 0x12, 0xd8, 0x1b, 0x9e, 0xaf, 0x16, 0x6b, 0xbe, 0x99, 0x64, 0x39, 0x17, 0x9c,
+	0x76, 0xb2, 0x60, 0x04, 0x81, 0x5f, 0xa0, 0x3e, 0x8f, 0x5e, 0xc4, 0x3c, 0xe6, 0x4a, 0x9e, 0x4a,
+	0xa5, 0xa9, 0x7b, 0x0e, 0x47, 0x9f, 0x2a, 0x9f, 0x87, 0xdf, 0x6f, 0xb0, 0x10, 0x94, 0x42, 0x4f,
+	0xe0, 0xad, 0x60, 0xe6, 0xd8, 0x7c, 0x6d, 0x79, 0x4a, 0x2b, 0x56, 0x66, 0xc8, 0x3a, 0x15, 0x2b,
+	0x33, 0x74, 0x4f, 0x60, 0xb8, 0xb3, 0x66, 0xeb, 0xb2, 0xcd, 0xe8, 0x7e, 0x05, 0xfb, 0x3a, 0x4f,
+	0xe2, 0x18, 0xf3, 0xfa, 0xfa, 0x57, 0x30, 0x10, 0x9a, 0xa8, 0x44, 0x32, 0x25, 0x93, 0x2c, 0x98,
+	0xd4, 0x49, 0x75, 0x8c, 0x9e, 0x40, 0x2f, 0x49, 0x17, 0x5c, 0xbd, 0x48, 0xa6, 0x47, 0x8d, 0x9c,
+	0xab, 0x74, 0xc1, 0x3d, 0x15, 0x74, 0x7f, 0x99, 0x30, 0xa8, 0x28, 0xb5, 0xa1, 0x93, 0x44, 0xea,
+	0xca, 0xae, 0xd7, 0x49, 0xa2, 0xb6, 0x92, 0x25, 0x5b, 0x25, 0x69, 0xc4, 0xba, 0x9a, 0x49, 0x2d,
+	0xd9, 0x62, 0xed, 0xc7, 0xac, 0xa7, 0x99, 0xd4, 0xf4, 0x25, 0xf4, 0x0b, 0x0c, 0x73, 0x14, 0xec,
+	0x89, 0xa2, 0xd5, 0x49, 0xe6, 0x6e, 0x96, 0x98, 0xb2, 0xbe, 0xce, 0x95, 0x9a, 0x1e, 0x83, 0xf5,
+	0x0d, 0x8b, 0xc2, 0x8f, 0xf1, 0x2a, 0x62, 0x03, 0xf5, 0xfc, 0x0e, 0xc8, 0x68, 0x98, 0xa3, 0x2f,
+	0x30, 0xba, 0x10, 0xec, 0xa9, 0x8e, 0x3e, 0x00, 0xf7, 0x0b, 0x90, 0x46, 0x53, 0x74, 0x0c, 0xa4,
+	0x72, 0x5e, 0xcb, 0x39, 0x5a, 0xea, 0x95, 0x26, 0x92, 0x85, 0x2d, 0xd1, 0x8f, 0x30, 0x67, 0xa0,
+	0x0b, 0xd3, 0x27, 0x59, 0x58, 0xc0, 0xa3, 0x92, 0x11, 0x5d, 0x98, 0xd4, 0x6a, 0x3f, 0x18, 0x2c,
+	0x39, 0x5f, 0x15, 0x0f, 0xfb, 0x51, 0x9d, 0x9a, 0xe3, 0x6e, 0xdd, 0xe9, 0xf4, 0x4f, 0x17, 0x48,
+	0xbd, 0xc5, 0xf9, 0x8f, 0x90, 0xbe, 0x05, 0x32, 0x2f, 0x53, 0xe1, 0xdf, 0xce, 0x96, 0x18, 0xae,
+	0xe8, 0x73, 0x39, 0xf7, 0x47, 0x1f, 0xc8, 0xc8, 0x96, 0x70, 0x2e, 0x7c, 0x81, 0xea, 0x5e, 0xd7,
+	0xa0, 0x67, 0x60, 0x79, 0x37, 0xe9, 0x45, 0x28, 0x12, 0x9e, 0xb6, 0x7b, 0x9e, 0xfd, 0x0f, 0xb5,
+	0xed, 0x1c, 0xec, 0xaa, 0xc2, 0x7a, 0x89, 0xb4, 0xf9, 0x2d, 0xec, 0xb3, 0xbe, 0x03, 0x32, 0xcb,
+	0x79, 0x7a, 0xb0, 0xef, 0x0c, 0x86, 0x33, 0x35, 0xfe, 0x7d, 0xce, 0xb6, 0x06, 0x87, 0x97, 0xb8,
+	0xc6, 0xc3, 0x6d, 0x96, 0x1e, 0xca, 0x25, 0x0f, 0x0f, 0x98, 0xcb, 0x7b, 0x20, 0x1f, 0x93, 0x42,
+	0x54, 0xb3, 0xd9, 0x67, 0x6c, 0xee, 0xd7, 0x35, 0x3e, 0x1c, 0xff, 0xbe, 0x77, 0xcc, 0xbb, 0x7b,
+	0xc7, 0xf8, 0xb9, 0x75, 0x8c, 0xbb, 0xad, 0x63, 0xfc, 0xdd, 0x3a, 0xc6, 0xe7, 0xbe, 0x9f, 0x25,
+	0xa7, 0x59, 0x10, 0xf4, 0xd5, 0x2f, 0xff, 0xe6, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xeb, 0x28,
+	0x56, 0xd5, 0x2a, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -765,1302 +708,3 @@ var _WorkflowSvc_serviceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "workflow.proto",
 }
-
-func (m *WorkflowRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *WorkflowRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *WorkflowRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Type) > 0 {
-		i -= len(m.Type)
-		copy(dAtA[i:], m.Type)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Type)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Text) > 0 {
-		i -= len(m.Text)
-		copy(dAtA[i:], m.Text)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Text)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *WorkflowReply) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *WorkflowReply) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *WorkflowReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Text) > 0 {
-		i -= len(m.Text)
-		copy(dAtA[i:], m.Text)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Text)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TriggerRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TriggerRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TriggerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Info != nil {
-		{
-			size, err := m.Info.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWorkflow(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Trigger != nil {
-		{
-			size, err := m.Trigger.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWorkflow(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Trigger) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Trigger) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Trigger) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.CreatedAt != 0 {
-		i = encodeVarintWorkflow(dAtA, i, uint64(m.CreatedAt))
-		i--
-		dAtA[i] = 0x40
-	}
-	if m.MessageId != 0 {
-		i = encodeVarintWorkflow(dAtA, i, uint64(m.MessageId))
-		i--
-		dAtA[i] = 0x38
-	}
-	if len(m.When) > 0 {
-		i -= len(m.When)
-		copy(dAtA[i:], m.When)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.When)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.Secret) > 0 {
-		i -= len(m.Secret)
-		copy(dAtA[i:], m.Secret)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Secret)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.Flag) > 0 {
-		i -= len(m.Flag)
-		copy(dAtA[i:], m.Flag)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Flag)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Kind) > 0 {
-		i -= len(m.Kind)
-		copy(dAtA[i:], m.Kind)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Kind)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Type) > 0 {
-		i -= len(m.Type)
-		copy(dAtA[i:], m.Type)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Type)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Id != 0 {
-		i = encodeVarintWorkflow(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TriggerInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TriggerInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TriggerInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Body) > 0 {
-		i -= len(m.Body)
-		copy(dAtA[i:], m.Body)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Body)))
-		i--
-		dAtA[i] = 0x5a
-	}
-	if len(m.Header) > 0 {
-		i -= len(m.Header)
-		copy(dAtA[i:], m.Header)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Header)))
-		i--
-		dAtA[i] = 0x52
-	}
-	if len(m.MessageText) > 0 {
-		i -= len(m.MessageText)
-		copy(dAtA[i:], m.MessageText)
-		i = encodeVarintWorkflow(dAtA, i, uint64(len(m.MessageText)))
-		i--
-		dAtA[i] = 0x4a
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *WebhooksReply) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *WebhooksReply) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *WebhooksReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Flag) > 0 {
-		for iNdEx := len(m.Flag) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Flag[iNdEx])
-			copy(dAtA[i:], m.Flag[iNdEx])
-			i = encodeVarintWorkflow(dAtA, i, uint64(len(m.Flag[iNdEx])))
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func encodeVarintWorkflow(dAtA []byte, offset int, v uint64) int {
-	offset -= sovWorkflow(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *WorkflowRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Text)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	return n
-}
-
-func (m *WorkflowReply) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Text)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	return n
-}
-
-func (m *TriggerRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Trigger != nil {
-		l = m.Trigger.Size()
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	if m.Info != nil {
-		l = m.Info.Size()
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	return n
-}
-
-func (m *Trigger) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovWorkflow(uint64(m.Id))
-	}
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Kind)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Flag)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Secret)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.When)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	if m.MessageId != 0 {
-		n += 1 + sovWorkflow(uint64(m.MessageId))
-	}
-	if m.CreatedAt != 0 {
-		n += 1 + sovWorkflow(uint64(m.CreatedAt))
-	}
-	return n
-}
-
-func (m *TriggerInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.MessageText)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Header)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	l = len(m.Body)
-	if l > 0 {
-		n += 1 + l + sovWorkflow(uint64(l))
-	}
-	return n
-}
-
-func (m *WebhooksReply) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Flag) > 0 {
-		for _, s := range m.Flag {
-			l = len(s)
-			n += 1 + l + sovWorkflow(uint64(l))
-		}
-	}
-	return n
-}
-
-func sovWorkflow(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozWorkflow(x uint64) (n int) {
-	return sovWorkflow(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *WorkflowRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: WorkflowRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: WorkflowRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Text", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Text = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *WorkflowReply) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: WorkflowReply: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: WorkflowReply: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Text", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Text = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TriggerRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TriggerRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TriggerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Trigger", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Trigger == nil {
-				m.Trigger = &Trigger{}
-			}
-			if err := m.Trigger.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Info == nil {
-				m.Info = &TriggerInfo{}
-			}
-			if err := m.Info.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Trigger) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Trigger: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Trigger: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Kind", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Kind = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Flag", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Flag = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Secret", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Secret = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field When", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.When = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MessageId", wireType)
-			}
-			m.MessageId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MessageId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
-			}
-			m.CreatedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.CreatedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TriggerInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TriggerInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TriggerInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MessageText", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MessageText = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Header = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 11:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Body", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Body = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *WebhooksReply) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: WebhooksReply: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: WebhooksReply: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Flag", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Flag = append(m.Flag, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWorkflow(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWorkflow
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipWorkflow(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowWorkflow
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowWorkflow
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthWorkflow
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupWorkflow
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthWorkflow
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
-
-var (
-	ErrInvalidLengthWorkflow        = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowWorkflow          = fmt.Errorf("proto: integer overflow")
-	ErrUnexpectedEndOfGroupWorkflow = fmt.Errorf("proto: unexpected end of group")
-)

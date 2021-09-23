@@ -26,9 +26,7 @@ service MiddleSvc {
   rpc GetSettings(TextRequest) returns (SettingsReply) {}
   rpc GetSetting(TextRequest) returns (SettingReply) {}
   rpc CreateSetting(KVRequest) returns (StateReply) {}
-  rpc GetMenu(TextRequest) returns (TextReply) {}
   rpc GetStats(TextRequest) returns (TextReply) {}
-  rpc GetRoleImageUrl(TextRequest) returns (TextReply) {}
   rpc ListSubscribe(SubscribeRequest) returns (SubscribeReply) {}
   rpc RegisterSubscribe(SubscribeRequest) returns (StateReply) {}
   rpc OpenSubscribe(SubscribeRequest) returns (StateReply) {}

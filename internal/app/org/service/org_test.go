@@ -64,7 +64,7 @@ func TestOrg_GetObjective(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetObjectiveByID(gomock.Any(), gomock.Any()).Return(pb.Objective{
+		repo.EXPECT().GetObjectiveByID(gomock.Any(), gomock.Any()).Return(&pb.Objective{
 			Id:   1,
 			Name: "obj1",
 			//Tag:       "test",
@@ -117,7 +117,7 @@ func TestOrg_GetObjectives(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListObjectives(gomock.Any()).Return([]pb.Objective{
+		repo.EXPECT().ListObjectives(gomock.Any()).Return([]*pb.Objective{
 			{
 				Id:   1,
 				Name: "obj1",
@@ -258,7 +258,7 @@ func TestOrg_GetKeyResult(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetKeyResultByID(gomock.Any(), gomock.Any()).Return(pb.KeyResult{
+		repo.EXPECT().GetKeyResultByID(gomock.Any(), gomock.Any()).Return(&pb.KeyResult{
 			Id:          1,
 			ObjectiveId: 1,
 			Name:        "obj1",
@@ -313,7 +313,7 @@ func TestOrg_GetKeyResults(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOrgRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListKeyResults(gomock.Any()).Return([]pb.KeyResult{
+		repo.EXPECT().ListKeyResults(gomock.Any()).Return([]*pb.KeyResult{
 			{
 				Id:          1,
 				ObjectiveId: 1,

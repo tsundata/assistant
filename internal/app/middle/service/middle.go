@@ -32,51 +32,9 @@ func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.Middle
 	return &Middle{rdb: rdb, repo: repo, conf: conf, user: user}
 }
 
-func (s *Middle) GetMenu(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	if s.user == nil {
-		return nil, errors.New("empty user client")
-	}
-	reply, err := s.user.GetAuthToken(ctx, &pb.AuthRequest{})
-	if err != nil {
-		return nil, err
-	}
-	uuid := reply.GetToken()
-
-	return &pb.TextReply{
-		Text: fmt.Sprintf(`
-Memo
-%s/memo/%s
-
-Apps
-%s/apps/%s
-
-Credentials
-%s/credentials/%s
-
-Setting
-%s/setting/%s
-
-Action
-%s/action/%s
-`, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid, s.conf.Web.Url, uuid),
-	}, nil
-}
-
 func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	return &pb.TextReply{
 		Text: fmt.Sprintf("%s/qr/%s", s.conf.Web.Url, url.QueryEscape(payload.GetText())),
-	}, nil
-}
-
-func (s *Middle) GetRoleImageUrl(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply, error) {
-	reply, err := s.user.GetAuthToken(ctx, &pb.AuthRequest{})
-	if err != nil {
-		return nil, err
-	}
-	uuid := reply.GetToken()
-
-	return &pb.TextReply{
-		Text: fmt.Sprintf("%s/role/%s", s.conf.Web.Url, uuid),
 	}, nil
 }
 

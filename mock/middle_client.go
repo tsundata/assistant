@@ -276,26 +276,6 @@ func (mr *MockMiddleSvcClientMockRecorder) GetMaskingCredentials(ctx, in interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMaskingCredentials), varargs...)
 }
 
-// GetMenu mocks base method.
-func (m *MockMiddleSvcClient) GetMenu(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetMenu", varargs...)
-	ret0, _ := ret[0].(*pb.TextReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetMenu indicates an expected call of GetMenu.
-func (mr *MockMiddleSvcClientMockRecorder) GetMenu(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMenu), varargs...)
-}
-
 // GetOrCreateTag mocks base method.
 func (m *MockMiddleSvcClient) GetOrCreateTag(ctx context.Context, in *pb.TagRequest, opts ...grpc.CallOption) (*pb.TagReply, error) {
 	m.ctrl.T.Helper()
@@ -354,26 +334,6 @@ func (mr *MockMiddleSvcClientMockRecorder) GetQrUrl(ctx, in interface{}, opts ..
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetQrUrl), varargs...)
-}
-
-// GetRoleImageUrl mocks base method.
-func (m *MockMiddleSvcClient) GetRoleImageUrl(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetRoleImageUrl", varargs...)
-	ret0, _ := ret[0].(*pb.TextReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
-func (mr *MockMiddleSvcClientMockRecorder) GetRoleImageUrl(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetRoleImageUrl), varargs...)
 }
 
 // GetSetting mocks base method.
@@ -859,21 +819,6 @@ func (mr *MockMiddleSvcServerMockRecorder) GetMaskingCredentials(arg0, arg1 inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMaskingCredentials), arg0, arg1)
 }
 
-// GetMenu mocks base method.
-func (m *MockMiddleSvcServer) GetMenu(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMenu", arg0, arg1)
-	ret0, _ := ret[0].(*pb.TextReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetMenu indicates an expected call of GetMenu.
-func (mr *MockMiddleSvcServerMockRecorder) GetMenu(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMenu", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMenu), arg0, arg1)
-}
-
 // GetOrCreateTag mocks base method.
 func (m *MockMiddleSvcServer) GetOrCreateTag(arg0 context.Context, arg1 *pb.TagRequest) (*pb.TagReply, error) {
 	m.ctrl.T.Helper()
@@ -917,21 +862,6 @@ func (m *MockMiddleSvcServer) GetQrUrl(arg0 context.Context, arg1 *pb.TextReques
 func (mr *MockMiddleSvcServerMockRecorder) GetQrUrl(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQrUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetQrUrl), arg0, arg1)
-}
-
-// GetRoleImageUrl mocks base method.
-func (m *MockMiddleSvcServer) GetRoleImageUrl(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRoleImageUrl", arg0, arg1)
-	ret0, _ := ret[0].(*pb.TextReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetRoleImageUrl indicates an expected call of GetRoleImageUrl.
-func (mr *MockMiddleSvcServerMockRecorder) GetRoleImageUrl(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleImageUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetRoleImageUrl), arg0, arg1)
 }
 
 // GetSetting mocks base method.

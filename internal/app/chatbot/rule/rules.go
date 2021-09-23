@@ -25,25 +25,6 @@ var rules = []Rule{
 		},
 	},
 	{
-		Define: `menu`,
-		Help:   `Show menu`,
-		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Middle() == nil {
-				return []string{"empty client"}
-			}
-			reply, err := comp.Middle().GetMenu(ctx, &pb.TextRequest{})
-			if err != nil {
-				return []string{"error call: " + err.Error()}
-			}
-
-			if reply.GetText() == "" {
-				return []string{"empty menu"}
-			}
-
-			return []string{reply.GetText()}
-		},
-	},
-	{
 		Define: `qr [string]`,
 		Help:   `Generate QR code`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
@@ -385,20 +366,6 @@ var rules = []Rule{
 				return []string{"failed"}
 			}
 			return []string{"success"}
-		},
-	},
-	{
-		Define: `role`,
-		Help:   "Role info",
-		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
-			if comp.Middle() == nil {
-				return []string{"empty client"}
-			}
-			reply, err := comp.Middle().GetRoleImageUrl(ctx, &pb.TextRequest{})
-			if err != nil {
-				return []string{"error call: " + err.Error()}
-			}
-			return []string{reply.GetText()}
 		},
 	},
 	{

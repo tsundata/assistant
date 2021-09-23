@@ -16,52 +16,6 @@ import (
 	"time"
 )
 
-func TestMiddle_GetMenu(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	conf, err := config.CreateAppConfig(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	user := mock.NewMockUserSvcClient(ctl)
-	gomock.InOrder(
-		user.EXPECT().
-			GetAuthToken(gomock.Any(), gomock.Any()).
-			Return(&pb.TextReply{Text: "test"}, nil),
-	)
-
-	s := NewMiddle(conf, nil, nil, user)
-
-	type args struct {
-		in0 context.Context
-		in1 *pb.TextRequest
-	}
-	tests := []struct {
-		name    string
-		s       *Middle
-		args    args
-		wantErr bool
-	}{
-		{
-			"case1",
-			s,
-			args{context.Background(), &pb.TextRequest{}},
-			false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.s.GetMenu(tt.args.in0, tt.args.in1)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Middle.GetMenu() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
 func TestMiddle_GetQrUrl(t *testing.T) {
 	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
@@ -148,7 +102,7 @@ func TestMiddle_GetPage(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetPageByUUID(gomock.Any(), gomock.Any()).Return(pb.Page{
+		repo.EXPECT().GetPageByUUID(gomock.Any(), gomock.Any()).Return(&pb.Page{
 			Id:      1,
 			Uuid:    "test",
 			Type:    "html",
@@ -205,7 +159,7 @@ func TestMiddle_GetApps(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListApps(gomock.Any()).Return([]pb.App{{
+		repo.EXPECT().ListApps(gomock.Any()).Return([]*pb.App{{
 			Id:    1,
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
@@ -253,7 +207,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAvailableAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAvailableAppByType(gomock.Any(), gomock.Any()).Return(&pb.App{
 			Id:    1,
 			Name:  "github",
 			Type:  "github",
@@ -303,7 +257,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(&pb.App{
 			Id:    1,
 			Name:  "github",
 			Type:  "github",
@@ -311,7 +265,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 			Token: "test",
 		}, nil),
 		repo.EXPECT().UpdateAppByID(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
-		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(&pb.App{
 			Id: 0,
 		}, nil),
 		repo.EXPECT().CreateApp(gomock.Any(), gomock.Any()).Return(int64(1), nil),
@@ -372,13 +326,13 @@ func TestMiddle_GetCredential(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetCredentialByName(gomock.Any(), gomock.Any()).Return(pb.Credential{
+		repo.EXPECT().GetCredentialByName(gomock.Any(), gomock.Any()).Return(&pb.Credential{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
 		}, nil),
-		repo.EXPECT().GetCredentialByType(gomock.Any(), gomock.Any()).Return(pb.Credential{
+		repo.EXPECT().GetCredentialByType(gomock.Any(), gomock.Any()).Return(&pb.Credential{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
@@ -442,7 +396,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials(gomock.Any()).Return([]pb.Credential{{
+		repo.EXPECT().ListCredentials(gomock.Any()).Return([]*pb.Credential{{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
@@ -491,7 +445,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials(gomock.Any()).Return([]pb.Credential{{
+		repo.EXPECT().ListCredentials(gomock.Any()).Return([]*pb.Credential{{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
@@ -744,57 +698,6 @@ func TestMiddle_GetStats(t *testing.T) {
 	}
 }
 
-func TestMiddle_GetRoleImageUrl(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	user := mock.NewMockUserSvcClient(ctl)
-	gomock.InOrder(
-		user.EXPECT().
-			GetAuthToken(gomock.Any(), gomock.Any()).
-			Return(&pb.TextReply{Text: "test"}, nil),
-	)
-
-	conf, err := config.CreateAppConfig(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	s := NewMiddle(conf, nil, nil, user)
-
-	type args struct {
-		ctx context.Context
-		in1 *pb.TextRequest
-	}
-	tests := []struct {
-		name    string
-		s       *Middle
-		args    args
-		want    *pb.TextReply
-		wantErr bool
-	}{
-		{
-			"case1",
-			s,
-			args{context.Background(), &pb.TextRequest{}},
-			&pb.TextReply{Text: fmt.Sprintf("%s/role/%s", conf.Web.Url, "test")},
-			false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetRoleImageUrl(tt.args.ctx, tt.args.in1)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Middle.GetRoleImageUrl() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Middle.GetRoleImageUrl() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestSubscribe_List(t *testing.T) {
 	rdb, err := vendors.CreateRedisClient(enum.Middle)
 	if err != nil {
@@ -1037,7 +940,7 @@ func TestMiddle_GetTags(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTags(gomock.Any()).Return([]pb.Tag{{
+		repo.EXPECT().ListTags(gomock.Any()).Return([]*pb.Tag{{
 			Id:        1,
 			Name:      "test1",
 			CreatedAt: time.Now().Unix(),
@@ -1085,7 +988,7 @@ func TestMiddle_GetOrCreateTag(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(pb.Tag{
+		repo.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(&pb.Tag{
 			Id:        1,
 			Name:      "test1",
 			CreatedAt: time.Now().Unix(),

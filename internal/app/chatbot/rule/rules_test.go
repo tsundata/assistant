@@ -43,22 +43,6 @@ func TestVersionRule(t *testing.T) {
 	require.Equal(t, []string{version.Info()}, res)
 }
 
-func TestMenuRule(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	middle := mock.NewMockMiddleSvcClient(ctl)
-	gomock.InOrder(
-		middle.EXPECT().GetMenu(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "menu ..."}, nil),
-	)
-
-	command := "menu"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
-		nil, nil, nil, nil, nil, nil)
-	res := parseRule(t, comp, command)
-	require.Equal(t, []string{"menu ..."}, res)
-}
-
 func TestQrRule(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -254,22 +238,6 @@ func TestTodoRule(t *testing.T) {
 		nil, todo, nil, nil, nil, nil)
 	res := parseRule(t, comp, command)
 	require.Equal(t, []string{"success"}, res)
-}
-
-func TestRoleRule(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	middle := mock.NewMockMiddleSvcClient(ctl)
-	gomock.InOrder(
-		middle.EXPECT().GetRoleImageUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://web.test/role/test"}, nil),
-	)
-
-	command := "role"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
-		nil, nil, nil, nil, nil, nil)
-	res := parseRule(t, comp, command)
-	require.Equal(t, []string{`https://web.test/role/test`}, res)
 }
 
 func TestPinyinRule(t *testing.T) {

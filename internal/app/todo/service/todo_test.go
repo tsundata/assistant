@@ -61,7 +61,7 @@ func TestTodo_GetTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTodo(gomock.Any(), gomock.Any()).Return(pb.Todo{Content: "test"}, nil),
+		repo.EXPECT().GetTodo(gomock.Any(), gomock.Any()).Return(&pb.Todo{Content: "test"}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -103,7 +103,7 @@ func TestTodo_GetTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTodos(gomock.Any()).Return([]pb.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListTodos(gomock.Any()).Return([]*pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)
@@ -281,7 +281,7 @@ func TestTodo_GetRemindTodos(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListRemindTodos(gomock.Any()).Return([]pb.Todo{{Content: "test"}}, nil),
+		repo.EXPECT().ListRemindTodos(gomock.Any()).Return([]*pb.Todo{{Content: "test"}}, nil),
 	)
 
 	s := NewTodo(nil, nil, repo)

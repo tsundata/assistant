@@ -12,6 +12,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"time"
@@ -36,7 +37,7 @@ func (s *User) GetAuthToken(_ context.Context, payload *pb.AuthRequest) (*pb.Aut
 		"nbf": time.Now().Unix(),
 	})
 
-	tokenString, err := token.SignedString(s.conf.Jwt.Secret)
+	tokenString, err := token.SignedString(util.StringToByte(s.conf.Jwt.Secret))
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,7 @@ func (s *User) Authorization(_ context.Context, payload *pb.AuthRequest) (*pb.Au
 			return nil, errors.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return s.conf.Jwt.Secret, nil
+		return util.StringToByte(s.conf.Jwt.Secret), nil
 	})
 	if err != nil {
 		return nil, err
@@ -61,7 +62,7 @@ func (s *User) Authorization(_ context.Context, payload *pb.AuthRequest) (*pb.Au
 		fmt.Println(claims)
 		return &pb.AuthReply{
 			State: true,
-			Id:    claims["id"].(int64),
+			Id:    int64(claims["id"].(float64)),
 		}, nil
 	}
 
