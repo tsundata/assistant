@@ -221,7 +221,7 @@ func TestTodoList(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, todo, nil, nil, nil, nil)
 	res := parseRule(t, comp, command)
-	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE |       UPDATE         \n-----+----------+---------+----------+----------------------\n   1 |        1 | todo    | true     | 2000-01-01 01:00:00  \n"}, res)
+	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
 }
 
 func TestTodoRule(t *testing.T) {
@@ -402,7 +402,7 @@ func TestKrList(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil, nil, org, nil)
 	res := parseRule(t, comp, command)
-	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE |       UPDATE         \n-----+------+-----+----------+----------------------\n   1 | kr   |   1 | false    | 1970-01-01 08:00:00  \n"}, res)
+	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}, res)
 }
 
 func TestKrCreate(t *testing.T) {

@@ -332,10 +332,9 @@ var rules = []Rule{
 			if len(reply.Todos) > 0 {
 				table := tablewriter.NewWriter(tableString)
 				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Priority", "Content", "Complete", "Update"})
+				table.SetHeader([]string{"Id", "Priority", "Content", "Complete"})
 				for _, v := range reply.Todos {
-					updatedAt := time.Unix(v.UpdatedAt, 0).Format("2006-01-02 15:04:05")
-					table.Append([]string{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete), updatedAt})
+					table.Append([]string{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete)})
 				}
 				table.Render()
 			}
@@ -606,10 +605,9 @@ var rules = []Rule{
 			if len(reply.Result) > 0 {
 				table := tablewriter.NewWriter(tableString)
 				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Name", "OID", "Complete", "Update"})
+				table.SetHeader([]string{"Id", "Name", "OID", "Complete"})
 				for _, v := range reply.Result {
-					updatedAt := time.Unix(v.UpdatedAt, 0).Format("2006-01-02 15:04:05")
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), util.BoolToString(v.Complete), updatedAt})
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), util.BoolToString(v.Complete)})
 				}
 				table.Render()
 			}
