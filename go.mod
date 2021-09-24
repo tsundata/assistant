@@ -37,7 +37,7 @@ require (
 	github.com/klauspost/compress v1.13.5 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mozillazg/go-pinyin v0.18.0
-	github.com/nats-io/nats.go v1.12.2
+	github.com/nats-io/nats.go v1.12.3
 	github.com/newrelic/go-agent/v3 v3.15.0
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
@@ -56,7 +56,6 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.9.1
-	github.com/tsundata/gorqlite v0.0.0-20210716091649-ef1e088f96dd
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/valyala/fasthttp v1.30.0
