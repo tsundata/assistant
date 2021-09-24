@@ -56,11 +56,6 @@ type Mysql struct {
 	Dsn string `json:"dsn" yaml:"dsn"`
 }
 
-// Rqlite config
-type Rqlite struct {
-	Url string `json:"url" yaml:"url"`
-}
-
 // Redis config
 type Redis struct {
 	Addr     string `json:"addr" yaml:"addr"`

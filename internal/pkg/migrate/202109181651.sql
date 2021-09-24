@@ -1,4 +1,4 @@
-CREATE TABLE `apps`
+create table if not exists `apps`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `name`       varchar(16)      NOT NULL DEFAULT '',
@@ -12,7 +12,7 @@ CREATE TABLE `apps`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `credentials`
+create table if not exists `credentials`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `name`       varchar(16)      NOT NULL DEFAULT '',
@@ -26,7 +26,7 @@ CREATE TABLE `credentials`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `messages`
+create table if not exists `messages`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `uuid`       varchar(36)      NOT NULL DEFAULT '',
@@ -41,7 +41,7 @@ CREATE TABLE `messages`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `pages`
+create table if not exists `pages`
 (
     `id`         int(11) unsigned                       NOT NULL AUTO_INCREMENT,
     `uuid`       varchar(36) CHARACTER SET utf8mb4      NOT NULL DEFAULT '',
@@ -57,7 +57,7 @@ CREATE TABLE `pages`
   COLLATE = utf8mb4_unicode_ci;
 
 
-CREATE TABLE `triggers`
+create table if not exists `triggers`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `type`       varchar(16)      NOT NULL DEFAULT '',
@@ -72,7 +72,7 @@ CREATE TABLE `triggers`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `todos`
+create table if not exists `todos`
 (
     `id`                INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `content`           VARCHAR(1024)    NOT NULL DEFAULT '',
@@ -92,7 +92,7 @@ CREATE TABLE `todos`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `roles`
+create table if not exists `roles`
 (
     `id`          INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     INT(10)          NOT NULL,
@@ -112,12 +112,12 @@ CREATE TABLE `roles`
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4;
 
-INSERT INTO `roles` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`, `charisma`,
+INSERT INTO `roles` (`user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`, `charisma`,
                      `talent`, `intellect`)
-VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
+VALUES (1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
 
-CREATE TABLE `role_records`
+create table if not exists `role_records`
 (
     `id`          INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     INT(10)          NOT NULL,
@@ -138,13 +138,13 @@ CREATE TABLE `role_records`
     DEFAULT CHARSET = utf8mb4;
 
 
-INSERT INTO `role_records` (`id`, `user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
+INSERT INTO `role_records` (`user_id`, `profession`, `exp`, `level`, `strength`, `culture`, `environment`,
                             `charisma`,
                             `talent`, `intellect`)
-VALUES (1, 1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
+VALUES (1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
 
-CREATE TABLE `users`
+create table if not exists `users`
 (
     `id`         INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`       VARCHAR(50)      NOT NULL,
@@ -158,11 +158,11 @@ CREATE TABLE `users`
     DEFAULT CHARSET = utf8mb4;
 
 
-INSERT INTO `users` (`id`, `name`, `mobile`, `remark`, `created_at`, `updated_at`)
-VALUES (1, 'me', '', '', '1625068800', '1625068800');
+INSERT INTO `users` (`name`, `mobile`, `remark`, `created_at`, `updated_at`)
+VALUES ('me', '', '', '1625068800', '1625068800');
 
 
-CREATE TABLE `objectives`
+create table if not exists `objectives`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `name`       varchar(50)      NOT NULL DEFAULT '',
@@ -174,7 +174,7 @@ CREATE TABLE `objectives`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `key_results`
+create table if not exists `key_results`
 (
     `id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
     `objective_id` int(11)          NOT NULL,
@@ -188,7 +188,7 @@ CREATE TABLE `key_results`
   DEFAULT CHARSET = utf8mb4;
 
 
-CREATE TABLE `tags`
+create table if not exists `tags`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `name`       varchar(50)      NOT NULL DEFAULT '',

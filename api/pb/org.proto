@@ -55,6 +55,7 @@ message KeyResult {
 
 message ObjectiveRequest {
   Objective objective = 1;
+  string tag = 2;
 }
 
 message ObjectiveReply {
@@ -67,6 +68,7 @@ message ObjectivesReply {
 
 message KeyResultRequest {
   KeyResult keyResult = 1;
+  string tag = 2;
 }
 
 message KeyResultReply {

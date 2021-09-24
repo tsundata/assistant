@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -19,7 +18,6 @@ var testProviderSet = wire.NewSet(
 	etcd.ProviderSet,
 	ProviderSet,
 	rollbar.ProviderSet,
-	rqlite.ProviderSet,
 	newrelic.ProviderSet,
 	mysql.ProviderSet,
 )

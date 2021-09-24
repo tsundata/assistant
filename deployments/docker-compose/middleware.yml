@@ -35,13 +35,17 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
 
-  rqlite:
-    image: rqlite/rqlite:latest
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: db
+      MYSQL_PASSWORD: 123456
     volumes:
-      - ./tmp/rqlite/data:/rqlite/file/data
+      - ./tmp/mysql/data:/var/lib/mysql
     ports:
-      - '4001:4001'
-      - '4002:4002'
+      - "3306:3306"
 
  etcd:
    image: bitnami/etcd:3.5.0

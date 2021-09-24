@@ -41,7 +41,7 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-1. Install rqlite, Redis, influx, jaeger, nats, etcd
+1. Install MySQL, Redis, influx, jaeger, nats, etcd
 
 2. Import sql files
 

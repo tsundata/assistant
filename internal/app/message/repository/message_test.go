@@ -5,6 +5,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"os"
 	"testing"
 )
 
@@ -16,7 +17,8 @@ func TestMain(m *testing.M) {
 	uuid1 = util.UUID()
 	uuid2 = util.UUID()
 	uuid3 = util.UUID()
-	m.Run()
+	code := m.Run()
+	os.Exit(code)
 }
 
 func TestMessageRepository_Create(t *testing.T) {

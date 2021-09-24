@@ -27,11 +27,14 @@ jobs:
         ports:
           - 2379:2379
           - 2380:2380
-      rqlite:
-        image: rqlite/rqlite:6.0.2
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_USER: db
+          MYSQL_PASSWORD: 123456
         ports:
-          - 4001:4001
-          - 4002:4002
+          - 3306:3306
 
     steps:
       - uses: actions/checkout@v2
@@ -67,11 +70,7 @@ jobs:
 
       ### Test ###
 
-      - name: Setup rqlite
-        run: |
-          task cli -- rqlite
-
-      - name: Import Config
+      - name: Import Config and Migrate
         run: |
           export ETCD_ADDRESS=127.0.0.1:2379
           cp configs/common.yml.example configs/common.yml
@@ -80,6 +79,7 @@ jobs:
           cp configs/classifier.yml.example configs/classifier.yml
           ls -all configs
           go run github.com/tsundata/assistant/cmd/cli config
+          go run github.com/tsundata/assistant/cmd/cli migrate
 
       - name: Run test cases
         run: |

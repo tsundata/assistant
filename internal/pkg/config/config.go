@@ -30,7 +30,6 @@ type AppConfig struct {
 	Jwt     Jwt     `json:"jwt" yaml:"jwt"`
 
 	Mysql  Mysql  `json:"mysql" yaml:"mysql"`
-	Rqlite Rqlite `json:"rqlite" yaml:"rqlite"`
 	Redis  Redis  `json:"redis" yaml:"redis"`
 	Influx Influx `json:"influx" yaml:"influx"`
 	Jaeger Jaeger `json:"jaeger" yaml:"jaeger"`

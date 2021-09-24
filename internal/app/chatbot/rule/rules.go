@@ -519,9 +519,9 @@ var rules = []Rule{
 			if len(reply.Objective) > 0 {
 				table := tablewriter.NewWriter(tableString)
 				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Name", "Tag"})
+				table.SetHeader([]string{"Id", "Name"})
 				for _, v := range reply.Objective {
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, ""}) // todo tag
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name})
 				}
 				table.Render()
 			}
@@ -606,10 +606,10 @@ var rules = []Rule{
 			if len(reply.Result) > 0 {
 				table := tablewriter.NewWriter(tableString)
 				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Name", "OID", "Tag", "Complete", "Update"})
+				table.SetHeader([]string{"Id", "Name", "OID", "Complete", "Update"})
 				for _, v := range reply.Result {
 					updatedAt := time.Unix(v.UpdatedAt, 0).Format("2006-01-02 15:04:05")
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), "", util.BoolToString(v.Complete), updatedAt}) // todo tag
+					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), util.BoolToString(v.Complete), updatedAt})
 				}
 				table.Render()
 			}

@@ -18,7 +18,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/middleware/rqlite"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
@@ -40,7 +39,6 @@ var providerSet = wire.NewSet(
 	service.ProviderSet,
 	rpcclient.ProviderSet,
 	newrelic.ProviderSet,
-	rqlite.ProviderSet,
 	mysql.ProviderSet,
 )
 

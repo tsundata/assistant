@@ -338,7 +338,6 @@ func TestObjList(t *testing.T) {
 			{
 				Id:    1,
 				Name:  "obj",
-				//Tag:   "obj-1",
 				TagId: 1,
 			},
 		}}, nil),
@@ -348,7 +347,7 @@ func TestObjList(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil, nil, org, nil)
 	res := parseRule(t, comp, command)
-	require.Equal(t, []string{"  ID | NAME |  TAG   \n-----+------+--------\n   1 | obj  | obj-1  \n"}, res)
+	require.Equal(t, []string{"  ID | NAME  \n-----+-------\n   1 | obj   \n"}, res)
 }
 
 func TestObjCreate(t *testing.T) {
@@ -394,7 +393,6 @@ func TestKrList(t *testing.T) {
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "kr",
-				//Tag:         "kr-1",
 				TagId:       1,
 			},
 		}}, nil),
@@ -404,7 +402,7 @@ func TestKrList(t *testing.T) {
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil, nil, org, nil)
 	res := parseRule(t, comp, command)
-	require.Equal(t, []string{"  ID | NAME | OID | TAG  | COMPLETE | UPDATE  \n-----+------+-----+------+----------+---------\n   1 | kr   |   1 | kr-1 | false    |         \n"}, res)
+	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE |       UPDATE         \n-----+------+-----+----------+----------------------\n   1 | kr   |   1 | false    | 1970-01-01 08:00:00  \n"}, res)
 }
 
 func TestKrCreate(t *testing.T) {

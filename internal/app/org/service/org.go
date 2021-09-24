@@ -16,14 +16,12 @@ func NewOrg(repo repository.OrgRepository, middle pb.MiddleSvcClient) *Org {
 }
 
 func (o *Org) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
-	//reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.Objective.GetTag()}})// todo
-	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: ""}})
+	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.Tag}})
 	if err != nil {
 		return nil, err
 	}
 	item := pb.Objective{
-		Name: payload.Objective.GetName(),
-		//Tag:   payload.Objective.GetTag(),// todo
+		Name:  payload.Objective.GetName(),
 		TagId: reply.Tag.GetId(),
 	}
 
@@ -42,9 +40,8 @@ func (o *Org) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*
 
 	return &pb.ObjectiveReply{
 		Objective: &pb.Objective{
-			Id:   find.Id,
-			Name: find.Name,
-			//Tag:       find.Tag,// todo
+			Id:        find.Id,
+			Name:      find.Name,
 			TagId:     find.TagId,
 			CreatedAt: find.CreatedAt,
 		},
@@ -60,9 +57,8 @@ func (o *Org) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.Ob
 	var res []*pb.Objective
 	for _, item := range items {
 		res = append(res, &pb.Objective{
-			Id:   item.Id,
-			Name: item.Name,
-			//Tag:       item.Tag,// todo
+			Id:        item.Id,
+			Name:      item.Name,
 			TagId:     item.TagId,
 			CreatedAt: item.CreatedAt,
 		})
@@ -81,16 +77,14 @@ func (o *Org) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 }
 
 func (o *Org) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
-	//reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.KeyResult.GetTag()}}) // todo
-	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: ""}})
+	reply, err := o.middle.GetOrCreateTag(ctx, &pb.TagRequest{Tag: &pb.Tag{Name: payload.Tag}})
 	if err != nil {
 		return nil, err
 	}
 	item := pb.KeyResult{
 		ObjectiveId: payload.KeyResult.GetObjectiveId(),
 		Name:        payload.KeyResult.GetName(),
-		//Tag:         payload.KeyResult.GetTag(),// todo
-		TagId: reply.Tag.GetId(),
+		TagId:       reply.Tag.GetId(),
 	}
 
 	_, err = o.repo.CreateKeyResult(ctx, &item)
@@ -111,11 +105,10 @@ func (o *Org) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*
 			Id:          find.Id,
 			Name:        find.Name,
 			ObjectiveId: find.ObjectiveId,
-			//Tag:         find.Tag,// todo
-			TagId:     find.TagId,
-			Complete:  find.Complete,
-			CreatedAt: find.CreatedAt,
-			UpdatedAt: find.UpdatedAt,
+			TagId:       find.TagId,
+			Complete:    find.Complete,
+			CreatedAt:   find.CreatedAt,
+			UpdatedAt:   find.UpdatedAt,
 		},
 	}, nil
 }
@@ -129,9 +122,8 @@ func (o *Org) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.Ke
 	var res []*pb.KeyResult
 	for _, item := range items {
 		res = append(res, &pb.KeyResult{
-			Id:   item.Id,
-			Name: item.Name,
-			//Tag:         item.Tag, // todo
+			Id:          item.Id,
+			Name:        item.Name,
 			TagId:       item.TagId,
 			ObjectiveId: item.ObjectiveId,
 			Complete:    item.Complete,

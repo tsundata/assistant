@@ -1,7 +1,22 @@
 package migrate
 
-import "github.com/go-gormigrate/gormigrate/v2"
+import (
+	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+)
 
-var Sets = []*gormigrate.Migration{
-	m202109181651,
+func Run(conn *mysql.Conn) {
+	// migrate
+	m := gormigrate.New(conn.DB, &gormigrate.Options{
+		TableName:                 "migrations",
+		IDColumnName:              "id",
+		IDColumnSize:              255,
+		UseTransaction:            true,
+		ValidateUnknownMigrations: false,
+	}, []*gormigrate.Migration{
+		m202109181651,
+	})
+	if err := m.Migrate(); err != nil {
+		panic(err)
+	}
 }
