@@ -2,11 +2,9 @@ package repository
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"gorm.io/gorm"
 )
 
 type MessageRepository interface {
@@ -29,7 +27,7 @@ func NewMysqlMessageRepository(db *mysql.Conn) MessageRepository {
 func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&message).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil {
 		return nil, err
 	}
 	return &message, nil
@@ -38,7 +36,7 @@ func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Mes
 func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&message).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil {
 		return nil, err
 	}
 	return &message, nil

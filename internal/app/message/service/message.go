@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
@@ -12,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
 	"github.com/valyala/fasthttp"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -85,10 +87,10 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 
 	// check
 	find, err := m.repo.GetByUUID(ctx, message.Uuid)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if find.Id > 0 {
+	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
 		return &pb.MessageReply{
 			Message: &pb.Message{
 				Id:   find.Id,
