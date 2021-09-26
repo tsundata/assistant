@@ -48,9 +48,6 @@ jobs:
       - name: Install Task
         uses: arduino/setup-task@v1
 
-      - name: Get dependencies
-        run: go mod download
-
       ### Lint ###
 
       - name: golangci-lint

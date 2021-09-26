@@ -43,18 +43,17 @@ create table if not exists `messages`
 
 create table if not exists `pages`
 (
-    `id`         int(11) unsigned                       NOT NULL AUTO_INCREMENT,
-    `uuid`       varchar(36) CHARACTER SET utf8mb4      NOT NULL DEFAULT '',
-    `type`       varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    `title`      varchar(256) CHARACTER SET utf8mb4     NOT NULL DEFAULT '',
-    `content`    text CHARACTER SET utf8mb4             NOT NULL,
-    `created_at` int(11)                                NOT NULL DEFAULT '0',
-    `updated_at` int(11)                                NOT NULL DEFAULT '0',
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `uuid`       varchar(36)      NOT NULL DEFAULT '',
+    `type`       varchar(10)      NOT NULL DEFAULT '',
+    `title`      varchar(256)     NOT NULL DEFAULT '',
+    `content`    text             NOT NULL,
+    `created_at` int(11)          NOT NULL DEFAULT '0',
+    `updated_at` int(11)          NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+  DEFAULT CHARSET = utf8mb4;
 
 
 create table if not exists `triggers`
