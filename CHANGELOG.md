@@ -1,4 +1,146 @@
 
+<a name="v0.2"></a>
+## [v0.2](https://github.com/tsundata/assistant/compare/v0.1.1...v0.2) (2021-09-26)
+
+### Bug Fixes
+
+* ineffectual assignment to err
+
+### Code Refactoring
+
+* repository
+* uuid
+* print log
+* ws router
+
+### Features
+
+* ws handle message
+* room chat
+* ws controller
+* push notification
+* user auth jwt
+
+### Pull Requests
+
+* Merge pull request [#113](https://github.com/tsundata/assistant/issues/113) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.12.3
+* Merge pull request [#110](https://github.com/tsundata/assistant/issues/110) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.19.0
+* Merge pull request [#111](https://github.com/tsundata/assistant/issues/111) from tsundata/dependabot/go_modules/github.com/spf13/viper-1.9.0
+* Merge pull request [#112](https://github.com/tsundata/assistant/issues/112) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.12.2
+* Merge pull request [#109](https://github.com/tsundata/assistant/issues/109) from tsundata/dependabot/go_modules/github.com/go-ego/gse-0.69.5
+* Merge pull request [#108](https://github.com/tsundata/assistant/issues/108) from tsundata/dependabot/go_modules/github.com/influxdata/influxdb-client-go/v2-2.5.1
+* Merge pull request [#107](https://github.com/tsundata/assistant/issues/107) from tsundata/dependabot/go_modules/github.com/slack-go/slack-0.9.5
+* Merge pull request [#106](https://github.com/tsundata/assistant/issues/106) from tsundata/dependabot/go_modules/github.com/tidwall/gjson-1.9.1
+* Merge pull request [#105](https://github.com/tsundata/assistant/issues/105) from tsundata/dependabot/go_modules/github.com/yuin/goldmark-1.4.1
+* Merge pull request [#103](https://github.com/tsundata/assistant/issues/103) from tsundata/dependabot/go_modules/github.com/valyala/fasthttp-1.30.0
+* Merge pull request [#104](https://github.com/tsundata/assistant/issues/104) from tsundata/dependabot/go_modules/github.com/go-ego/gse-0.69.3
+* Merge pull request [#102](https://github.com/tsundata/assistant/issues/102) from tsundata/dependabot/go_modules/go.uber.org/zap-1.19.1
+
+
+<a name="v0.1.1"></a>
+## [v0.1.1](https://github.com/tsundata/assistant/compare/v0.1...v0.1.1) (2021-09-08)
+
+### Bug Fixes
+
+* github pocket id filter
+
+
+<a name="v0.1"></a>
+## [v0.1](https://github.com/tsundata/assistant/compare/v0.0.27...v0.1) (2021-09-08)
+
+### Bug Fixes
+
+* gse new
+* file path provided as taint input
+* weak cryptographic primitive
+* weak random generator
+* message trigger
+* delete workflow message
+* svc addr select
+* use crypto/rand
+* duplicate struct tag "json"
+* service connection refused
+
+### Code Refactoring
+
+* list cron rpc
+* remove subscribe service
+* cron log
+
+### Features
+
+* command support string
+* todo list command
+* webhook list command
+* sort stats result
+* update go version 1.17
+* fund chart
+* fund, stock detail service
+* doctorxiong vendor api
+* org command
+* chart
+* delete message command
+* test command
+* middle tag service
+* org repository
+* org service
+* cron command
+* cloudcone billing
+
+### Pull Requests
+
+* Merge pull request [#101](https://github.com/tsundata/assistant/issues/101) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.12.1
+* Merge pull request [#99](https://github.com/tsundata/assistant/issues/99) from tsundata/dependabot/go_modules/github.com/go-ego/gse-0.69.2
+* Merge pull request [#96](https://github.com/tsundata/assistant/issues/96) from tsundata/dependabot/go_modules/github.com/tidwall/gjson-1.9.0
+* Merge pull request [#100](https://github.com/tsundata/assistant/issues/100) from tsundata/dependabot/go_modules/github.com/newrelic/go-agent/v3-3.15.0
+* Merge pull request [#98](https://github.com/tsundata/assistant/issues/98) from tsundata/dependabot/go_modules/github.com/shirou/gopsutil/v3-3.21.8
+* Merge pull request [#94](https://github.com/tsundata/assistant/issues/94) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.12.0
+* Merge pull request [#95](https://github.com/tsundata/assistant/issues/95) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.18.0
+* Merge pull request [#93](https://github.com/tsundata/assistant/issues/93) from tsundata/dependabot/go_modules/github.com/influxdata/influxdb-client-go/v2-2.5.0
+* Merge pull request [#91](https://github.com/tsundata/assistant/issues/91) from tsundata/dependabot/go_modules/google.golang.org/grpc-1.40.0
+* Merge pull request [#92](https://github.com/tsundata/assistant/issues/92) from tsundata/dependabot/go_modules/github.com/valyala/fasthttp-1.29.0
+* Merge pull request [#89](https://github.com/tsundata/assistant/issues/89) from tsundata/dependabot/go_modules/github.com/go-redis/redis/v8-8.11.3
+* Merge pull request [#90](https://github.com/tsundata/assistant/issues/90) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.17.0
+* Merge pull request [#88](https://github.com/tsundata/assistant/issues/88) from tsundata/dependabot/go_modules/go.uber.org/zap-1.19.0
+* Merge pull request [#87](https://github.com/tsundata/assistant/issues/87) from tsundata/dependabot/go_modules/google.golang.org/grpc-1.39.1
+* Merge pull request [#86](https://github.com/tsundata/assistant/issues/86) from tsundata/dependabot/go_modules/github.com/go-redis/redis/v8-8.11.2
+* Merge pull request [#84](https://github.com/tsundata/assistant/issues/84) from tsundata/dependabot/go_modules/github.com/shirou/gopsutil/v3-3.21.7
+* Merge pull request [#85](https://github.com/tsundata/assistant/issues/85) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.16.0
+* Merge pull request [#83](https://github.com/tsundata/assistant/issues/83) from tsundata/dependabot/go_modules/github.com/slack-go/slack-0.9.4
+* Merge pull request [#82](https://github.com/tsundata/assistant/issues/82) from tsundata/dependabot/go_modules/github.com/go-redis/redis/v8-8.11.1
+
+
+<a name="v0.0.27"></a>
+## [v0.0.27](https://github.com/tsundata/assistant/compare/v0.0.26...v0.0.27) (2021-07-27)
+
+### Bug Fixes
+
+* subscribe register
+* gateway request limit number
+* json.Unmarshal
+* GetAvailableApp
+* sdk error message
+* webhook action trigger
+
+### Code Refactoring
+
+* remove consul, update go.mod
+* config use etcd
+
+### Features
+
+* etcd config file
+* update zap, gjson, grpc, slack, gopsutil version
+
+
+<a name="v0.0.26"></a>
+## [v0.0.26](https://github.com/tsundata/assistant/compare/v0.0.25...v0.0.26) (2021-07-22)
+
+### Code Refactoring
+
+* rpc discovery, enum app
+
+
 <a name="v0.0.25"></a>
 ## [v0.0.25](https://github.com/tsundata/assistant/compare/v0.0.24...v0.0.25) (2021-07-22)
 
