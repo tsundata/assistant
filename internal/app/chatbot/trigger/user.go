@@ -47,7 +47,7 @@ func (t *User) Handle(ctx context.Context, comp *ctx.Component) {
 			continue
 		}
 
-		res, err := comp.User.GetUserByName(ctx, &pb.UserRequest{User: &pb.User{Name: user}})
+		res, err := comp.User.GetUserByName(ctx, &pb.UserRequest{User: &pb.User{Nickname: user}})
 		if err != nil {
 			comp.Logger.Error(err)
 			continue

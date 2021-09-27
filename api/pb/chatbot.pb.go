@@ -6,6 +6,7 @@ package pb
 import (
 	context "context"
 	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -25,10 +26,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ChatbotRequest struct {
-	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Text string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
 }
 
 func (m *ChatbotRequest) Reset()         { *m = ChatbotRequest{} }
@@ -63,10 +61,7 @@ func (m *ChatbotRequest) GetText() string {
 }
 
 type ChatbotReply struct {
-	Text                 []string `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Text []string `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
 }
 
 func (m *ChatbotReply) Reset()         { *m = ChatbotReply{} }
@@ -100,24 +95,266 @@ func (m *ChatbotReply) GetText() []string {
 	return nil
 }
 
+type BotSettingRequest struct {
+	Kvs []*KV `protobuf:"bytes,1,rep,name=kvs,proto3" json:"kvs,omitempty"`
+}
+
+func (m *BotSettingRequest) Reset()         { *m = BotSettingRequest{} }
+func (m *BotSettingRequest) String() string { return proto.CompactTextString(m) }
+func (*BotSettingRequest) ProtoMessage()    {}
+func (*BotSettingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{2}
+}
+func (m *BotSettingRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BotSettingRequest.Unmarshal(m, b)
+}
+func (m *BotSettingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BotSettingRequest.Marshal(b, m, deterministic)
+}
+func (m *BotSettingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BotSettingRequest.Merge(m, src)
+}
+func (m *BotSettingRequest) XXX_Size() int {
+	return xxx_messageInfo_BotSettingRequest.Size(m)
+}
+func (m *BotSettingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_BotSettingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BotSettingRequest proto.InternalMessageInfo
+
+func (m *BotSettingRequest) GetKvs() []*KV {
+	if m != nil {
+		return m.Kvs
+	}
+	return nil
+}
+
+type Bot struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"uuid"
+	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	// @inject_tag: db:"name"
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// @inject_tag: db:"avatar"
+	Avatar string `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+}
+
+func (m *Bot) Reset()         { *m = Bot{} }
+func (m *Bot) String() string { return proto.CompactTextString(m) }
+func (*Bot) ProtoMessage()    {}
+func (*Bot) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{3}
+}
+func (m *Bot) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Bot.Unmarshal(m, b)
+}
+func (m *Bot) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Bot.Marshal(b, m, deterministic)
+}
+func (m *Bot) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Bot.Merge(m, src)
+}
+func (m *Bot) XXX_Size() int {
+	return xxx_messageInfo_Bot.Size(m)
+}
+func (m *Bot) XXX_DiscardUnknown() {
+	xxx_messageInfo_Bot.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Bot proto.InternalMessageInfo
+
+func (m *Bot) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Bot) GetUuid() string {
+	if m != nil {
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *Bot) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Bot) GetAvatar() string {
+	if m != nil {
+		return m.Avatar
+	}
+	return ""
+}
+
+func (m *Bot) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *Bot) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+type BotRequest struct {
+	Bot *Bot `protobuf:"bytes,1,opt,name=bot,proto3" json:"bot,omitempty"`
+}
+
+func (m *BotRequest) Reset()         { *m = BotRequest{} }
+func (m *BotRequest) String() string { return proto.CompactTextString(m) }
+func (*BotRequest) ProtoMessage()    {}
+func (*BotRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{4}
+}
+func (m *BotRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BotRequest.Unmarshal(m, b)
+}
+func (m *BotRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BotRequest.Marshal(b, m, deterministic)
+}
+func (m *BotRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BotRequest.Merge(m, src)
+}
+func (m *BotRequest) XXX_Size() int {
+	return xxx_messageInfo_BotRequest.Size(m)
+}
+func (m *BotRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_BotRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BotRequest proto.InternalMessageInfo
+
+func (m *BotRequest) GetBot() *Bot {
+	if m != nil {
+		return m.Bot
+	}
+	return nil
+}
+
+type BotReply struct {
+	Bot *Bot `protobuf:"bytes,1,opt,name=bot,proto3" json:"bot,omitempty"`
+}
+
+func (m *BotReply) Reset()         { *m = BotReply{} }
+func (m *BotReply) String() string { return proto.CompactTextString(m) }
+func (*BotReply) ProtoMessage()    {}
+func (*BotReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{5}
+}
+func (m *BotReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BotReply.Unmarshal(m, b)
+}
+func (m *BotReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BotReply.Marshal(b, m, deterministic)
+}
+func (m *BotReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BotReply.Merge(m, src)
+}
+func (m *BotReply) XXX_Size() int {
+	return xxx_messageInfo_BotReply.Size(m)
+}
+func (m *BotReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_BotReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BotReply proto.InternalMessageInfo
+
+func (m *BotReply) GetBot() *Bot {
+	if m != nil {
+		return m.Bot
+	}
+	return nil
+}
+
+type BotsReply struct {
+	Bots []*Bot `protobuf:"bytes,1,rep,name=bots,proto3" json:"bots,omitempty"`
+}
+
+func (m *BotsReply) Reset()         { *m = BotsReply{} }
+func (m *BotsReply) String() string { return proto.CompactTextString(m) }
+func (*BotsReply) ProtoMessage()    {}
+func (*BotsReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{6}
+}
+func (m *BotsReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BotsReply.Unmarshal(m, b)
+}
+func (m *BotsReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BotsReply.Marshal(b, m, deterministic)
+}
+func (m *BotsReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BotsReply.Merge(m, src)
+}
+func (m *BotsReply) XXX_Size() int {
+	return xxx_messageInfo_BotsReply.Size(m)
+}
+func (m *BotsReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_BotsReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BotsReply proto.InternalMessageInfo
+
+func (m *BotsReply) GetBots() []*Bot {
+	if m != nil {
+		return m.Bots
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*ChatbotRequest)(nil), "pb.ChatbotRequest")
 	proto.RegisterType((*ChatbotReply)(nil), "pb.ChatbotReply")
+	proto.RegisterType((*BotSettingRequest)(nil), "pb.BotSettingRequest")
+	proto.RegisterType((*Bot)(nil), "pb.Bot")
+	proto.RegisterType((*BotRequest)(nil), "pb.BotRequest")
+	proto.RegisterType((*BotReply)(nil), "pb.BotReply")
+	proto.RegisterType((*BotsReply)(nil), "pb.BotsReply")
 }
 
 func init() { proto.RegisterFile("chatbot.proto", fileDescriptor_acc44097314201ac) }
 
 var fileDescriptor_acc44097314201ac = []byte{
-	// 139 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4d, 0xce, 0x48, 0x2c,
-	0x49, 0xca, 0x2f, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x52, 0xe1,
-	0xe2, 0x73, 0x86, 0x08, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x09, 0x71, 0xb1, 0x94,
-	0xa4, 0x56, 0x94, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0x4a, 0x5c, 0x3c,
-	0x70, 0x55, 0x05, 0x39, 0x95, 0x48, 0x6a, 0x98, 0x61, 0x6a, 0x8c, 0xec, 0xb8, 0xb8, 0xa0, 0x6a,
-	0x82, 0xcb, 0x92, 0x85, 0x0c, 0xb8, 0xd8, 0x3c, 0x12, 0xf3, 0x52, 0x72, 0x52, 0x85, 0x84, 0xf4,
-	0x0a, 0x92, 0xf4, 0x50, 0xed, 0x90, 0x12, 0x40, 0x11, 0x2b, 0xc8, 0xa9, 0x54, 0x62, 0x70, 0xe2,
-	0x88, 0x62, 0x4b, 0x2c, 0xc8, 0xd4, 0x2f, 0x48, 0x4a, 0x62, 0x03, 0x3b, 0xcf, 0x18, 0x10, 0x00,
-	0x00, 0xff, 0xff, 0xab, 0xf1, 0x9d, 0x90, 0xaf, 0x00, 0x00, 0x00,
+	// 398 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xcd, 0x6a, 0xdb, 0x40,
+	0x10, 0xc7, 0xf5, 0xe1, 0xca, 0xf5, 0xf8, 0x03, 0x77, 0x69, 0x8b, 0xaa, 0x1a, 0x51, 0x44, 0x4b,
+	0x4d, 0xa1, 0x76, 0x71, 0x8f, 0x3d, 0x55, 0x3d, 0xb4, 0xd0, 0x9b, 0x4c, 0x72, 0xc8, 0x6d, 0xd7,
+	0x5a, 0x1c, 0x11, 0xc7, 0xbb, 0xb1, 0x46, 0x26, 0x7e, 0x8b, 0xe4, 0xad, 0x72, 0x74, 0x6e, 0xb9,
+	0x1a, 0xbf, 0x48, 0xd8, 0x5d, 0x49, 0x8e, 0x09, 0xe4, 0x36, 0xf3, 0x9b, 0xdf, 0xce, 0x8a, 0xff,
+	0x0a, 0xba, 0xb3, 0x73, 0x8a, 0x4c, 0xe0, 0x48, 0xae, 0x04, 0x0a, 0xe2, 0x48, 0x16, 0x00, 0xa3,
+	0x39, 0x37, 0x7d, 0xf0, 0x76, 0x2e, 0xe6, 0x42, 0x97, 0x63, 0x55, 0x19, 0x1a, 0x7d, 0x86, 0xde,
+	0x1f, 0x73, 0x2c, 0xe1, 0x57, 0x05, 0xcf, 0x91, 0x10, 0x68, 0x20, 0xbf, 0x46, 0xdf, 0xfe, 0x64,
+	0x0f, 0x5b, 0x89, 0xae, 0xa3, 0x08, 0x3a, 0xb5, 0x25, 0x17, 0x9b, 0x27, 0x8e, 0x5b, 0x3b, 0xdf,
+	0xe1, 0x4d, 0x2c, 0x70, 0xca, 0x11, 0xb3, 0xe5, 0xbc, 0x5a, 0xe6, 0x83, 0x7b, 0xb1, 0xce, 0xb5,
+	0xd7, 0x9e, 0x78, 0x23, 0xc9, 0x46, 0xff, 0x4f, 0x13, 0x85, 0xa2, 0x5b, 0x1b, 0xdc, 0x58, 0x20,
+	0xe9, 0x81, 0x93, 0xa5, 0xfa, 0x32, 0x37, 0x71, 0xb2, 0x54, 0xad, 0x2e, 0x8a, 0x2c, 0xf5, 0x1d,
+	0x73, 0xbd, 0xaa, 0x15, 0x5b, 0xd2, 0x4b, 0xee, 0x37, 0x0c, 0x53, 0x35, 0x79, 0x0f, 0x1e, 0x5d,
+	0x53, 0xa4, 0x2b, 0xff, 0x95, 0xa6, 0x65, 0x47, 0x06, 0xd0, 0x9a, 0xad, 0x38, 0x45, 0x9e, 0xfe,
+	0x46, 0xdf, 0xd3, 0x6b, 0x0f, 0x40, 0x4d, 0x0b, 0x99, 0x96, 0xd3, 0xa6, 0x99, 0xd6, 0x20, 0xfa,
+	0x0a, 0x10, 0x1f, 0x82, 0xf8, 0x00, 0x2e, 0x13, 0x26, 0x87, 0xf6, 0xa4, 0xa9, 0xbe, 0x5d, 0x0d,
+	0x15, 0x8b, 0xbe, 0xc0, 0xeb, 0xb8, 0xca, 0xe2, 0x05, 0x6d, 0x08, 0xad, 0x58, 0x60, 0x6e, 0xbc,
+	0x8f, 0xd0, 0x60, 0x02, 0xab, 0x2c, 0x6a, 0x51, 0xc3, 0xc9, 0xbd, 0x0d, 0x50, 0x26, 0x3c, 0x5d,
+	0xcf, 0xc8, 0x0f, 0xf0, 0xfe, 0xd1, 0x65, 0xba, 0xe0, 0x84, 0x28, 0xef, 0xf8, 0x85, 0x82, 0xfe,
+	0x11, 0x93, 0x8b, 0x4d, 0x64, 0x91, 0x21, 0x78, 0x7f, 0x39, 0xea, 0x40, 0xab, 0xcd, 0xa5, 0xdd,
+	0xa9, 0x7b, 0x63, 0x7e, 0x83, 0xa6, 0x31, 0xf3, 0x67, 0x6a, 0xb7, 0xec, 0xf3, 0xca, 0xfd, 0x05,
+	0xfd, 0x13, 0x9d, 0xce, 0xe1, 0x65, 0xc9, 0xbb, 0x52, 0x3a, 0x7e, 0xe9, 0x40, 0xef, 0x9a, 0x22,
+	0x45, 0x5e, 0x1e, 0x8e, 0x07, 0x77, 0xbb, 0xd0, 0xde, 0xee, 0x42, 0xeb, 0x66, 0x1f, 0x5a, 0xdb,
+	0x7d, 0x68, 0x3d, 0xec, 0x43, 0xeb, 0xcc, 0xa3, 0x32, 0x1b, 0x4b, 0xc6, 0x3c, 0xfd, 0xff, 0xfd,
+	0x7c, 0x0c, 0x00, 0x00, 0xff, 0xff, 0xa6, 0xcf, 0xfd, 0xba, 0xb6, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -133,6 +370,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ChatbotSvcClient interface {
 	Handle(ctx context.Context, in *ChatbotRequest, opts ...grpc.CallOption) (*ChatbotReply, error)
+	GetBot(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*BotReply, error)
+	GetBots(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*BotsReply, error)
+	UpdateBotSetting(ctx context.Context, in *BotSettingRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type chatbotSvcClient struct {
@@ -152,9 +392,39 @@ func (c *chatbotSvcClient) Handle(ctx context.Context, in *ChatbotRequest, opts 
 	return out, nil
 }
 
+func (c *chatbotSvcClient) GetBot(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*BotReply, error) {
+	out := new(BotReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetBot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) GetBots(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*BotsReply, error) {
+	out := new(BotsReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetBots", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) UpdateBotSetting(ctx context.Context, in *BotSettingRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/UpdateBotSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatbotSvcServer is the server API for ChatbotSvc service.
 type ChatbotSvcServer interface {
 	Handle(context.Context, *ChatbotRequest) (*ChatbotReply, error)
+	GetBot(context.Context, *BotRequest) (*BotReply, error)
+	GetBots(context.Context, *BotRequest) (*BotsReply, error)
+	UpdateBotSetting(context.Context, *BotSettingRequest) (*StateReply, error)
 }
 
 // UnimplementedChatbotSvcServer can be embedded to have forward compatible implementations.
@@ -163,6 +433,15 @@ type UnimplementedChatbotSvcServer struct {
 
 func (*UnimplementedChatbotSvcServer) Handle(ctx context.Context, req *ChatbotRequest) (*ChatbotReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Handle not implemented")
+}
+func (*UnimplementedChatbotSvcServer) GetBot(ctx context.Context, req *BotRequest) (*BotReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBot not implemented")
+}
+func (*UnimplementedChatbotSvcServer) GetBots(ctx context.Context, req *BotRequest) (*BotsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBots not implemented")
+}
+func (*UnimplementedChatbotSvcServer) UpdateBotSetting(ctx context.Context, req *BotSettingRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBotSetting not implemented")
 }
 
 func RegisterChatbotSvcServer(s *grpc.Server, srv ChatbotSvcServer) {
@@ -187,6 +466,60 @@ func _ChatbotSvc_Handle_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotSvc_GetBot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).GetBot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/GetBot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).GetBot(ctx, req.(*BotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_GetBots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).GetBots(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/GetBots",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).GetBots(ctx, req.(*BotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_UpdateBotSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BotSettingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).UpdateBotSetting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/UpdateBotSetting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).UpdateBotSetting(ctx, req.(*BotSettingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.ChatbotSvc",
 	HandlerType: (*ChatbotSvcServer)(nil),
@@ -194,6 +527,18 @@ var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Handle",
 			Handler:    _ChatbotSvc_Handle_Handler,
+		},
+		{
+			MethodName: "GetBot",
+			Handler:    _ChatbotSvc_GetBot_Handler,
+		},
+		{
+			MethodName: "GetBots",
+			Handler:    _ChatbotSvc_GetBots_Handler,
+		},
+		{
+			MethodName: "UpdateBotSetting",
+			Handler:    _ChatbotSvc_UpdateBotSetting_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

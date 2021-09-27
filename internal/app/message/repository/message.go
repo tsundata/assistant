@@ -14,6 +14,10 @@ type MessageRepository interface {
 	List(ctx context.Context, ) ([]*pb.Message, error)
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
+	GetGroup(ctx context.Context, id int64) (*pb.Group, error)
+	ListGroup(ctx context.Context, ) ([]*pb.Group, error)
+	CreateGroup(ctx context.Context, group *pb.Group) (int64, error)
+	DeleteGroup(ctx context.Context, id int64) error
 }
 
 type MysqlMessageRepository struct {
@@ -70,4 +74,20 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 
 func (r *MysqlMessageRepository) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Message{}).Error
+}
+
+func (r *MysqlMessageRepository) GetGroup(ctx context.Context, id int64) (*pb.Group, error) {
+	panic("implement me")
+}
+
+func (r *MysqlMessageRepository) ListGroup(ctx context.Context) ([]*pb.Group, error) {
+	panic("implement me")
+}
+
+func (r *MysqlMessageRepository) CreateGroup(ctx context.Context, group *pb.Group) (int64, error) {
+	panic("implement me")
+}
+
+func (r *MysqlMessageRepository) DeleteGroup(ctx context.Context, id int64) error {
+	panic("implement me")
 }

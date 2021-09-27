@@ -146,7 +146,9 @@ VALUES (1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 create table if not exists `users`
 (
     `id`         INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name`       VARCHAR(50)      NOT NULL,
+    `username`   VARCHAR(50)      NOT NULL,
+    `password`   VARCHAR(50)      NOT NULL DEFAULT '',
+    `nickname`   VARCHAR(50)      NOT NULL DEFAULT '',
     `mobile`     VARCHAR(50)      NOT NULL DEFAULT '',
     `remark`     VARCHAR(50)      NOT NULL DEFAULT '',
     `created_at` int(11)          NOT NULL DEFAULT '0',
@@ -157,8 +159,8 @@ create table if not exists `users`
     DEFAULT CHARSET = utf8mb4;
 
 
-INSERT INTO `users` (`name`, `mobile`, `remark`, `created_at`, `updated_at`)
-VALUES ('me', '', '', '1625068800', '1625068800');
+INSERT INTO `users` (`username`, `nickname`, `mobile`, `remark`, `created_at`, `updated_at`)
+VALUES ('admin', 'me', '', '', '1625068800', '1625068800');
 
 
 create table if not exists `objectives`

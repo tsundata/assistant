@@ -18,8 +18,11 @@ type UserRepository interface {
 	List(ctx context.Context) ([]*pb.User, error)
 	Create(ctx context.Context, user *pb.User) (int64, error)
 	GetByID(ctx context.Context, id int64) (*pb.User, error)
-	GetByName(ctx context.Context, name string) (*pb.User, error)
+	GetByName(ctx context.Context, username string) (*pb.User, error)
 	Update(ctx context.Context, user *pb.User) error
+	ListDevice(ctx context.Context, userID int64) ([]*pb.Device, error)
+	CreateDevice(ctx context.Context, device *pb.Device) (int64, error)
+	GetDevice(ctx context.Context, id int64) (*pb.Device, error)
 }
 
 type MysqlUserRepository struct {
@@ -125,9 +128,9 @@ func (r *MysqlUserRepository) GetByID(ctx context.Context, id int64) (*pb.User, 
 	return &find, nil
 }
 
-func (r *MysqlUserRepository) GetByName(ctx context.Context, name string) (*pb.User, error) {
+func (r *MysqlUserRepository) GetByName(ctx context.Context, username string) (*pb.User, error) {
 	var find pb.User
-	err := r.db.WithContext(ctx).Where("name = ?", name).First(&find).Error
+	err := r.db.WithContext(ctx).Where("username = ?", username).First(&find).Error
 	if err != nil {
 		return nil, err
 	}
@@ -136,8 +139,20 @@ func (r *MysqlUserRepository) GetByName(ctx context.Context, name string) (*pb.U
 
 func (r *MysqlUserRepository) Update(ctx context.Context, user *pb.User) error {
 	return r.db.WithContext(ctx).Model(&pb.User{}).Where("id = ?", user.Id).
-		Update("name", user.Name).
+		Update("nickname", user.Nickname).
 		Update("mobile", user.Mobile).
 		Update("remark", user.Remark).
 		Error
+}
+
+func (r *MysqlUserRepository) ListDevice(ctx context.Context, userID int64) ([]*pb.Device, error) {
+	panic("implement me")
+}
+
+func (r *MysqlUserRepository) CreateDevice(ctx context.Context, device *pb.Device) (int64, error) {
+	panic("implement me")
+}
+
+func (r *MysqlUserRepository) GetDevice(ctx context.Context, id int64) (*pb.Device, error) {
+	panic("implement me")
 }

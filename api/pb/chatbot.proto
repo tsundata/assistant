@@ -1,10 +1,22 @@
 syntax = "proto3";
 package pb;
 
+import "base.proto";
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
+
 option go_package = "api/pb";
 
 service ChatbotSvc {
   rpc Handle(ChatbotRequest) returns (ChatbotReply) {}
+  rpc GetBot(BotRequest) returns (BotReply) {}
+  rpc GetBots(BotRequest) returns (BotsReply) {}
+  rpc UpdateBotSetting(BotSettingRequest) returns (StateReply) {}
 }
 
 message ChatbotRequest {
@@ -14,3 +26,35 @@ message ChatbotRequest {
 message ChatbotReply {
   repeated string text = 1;
 }
+
+message BotSettingRequest {
+  repeated KV kvs = 1;
+}
+
+message Bot {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"uuid"
+  string uuid = 2;
+  // @inject_tag: db:"name"
+  string name = 4;
+  // @inject_tag: db:"avatar"
+  string avatar = 5;
+  // @inject_tag: db:"created_at"
+  int64 createdAt = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 7;
+}
+
+message BotRequest {
+  Bot bot = 1;
+}
+
+message BotReply {
+  Bot bot = 1;
+}
+
+message BotsReply {
+  repeated Bot bots = 1;
+}
+

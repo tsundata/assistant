@@ -22,6 +22,9 @@ service MessageSvc {
   rpc GetActionMessages(TextRequest) returns (ActionReply) {}
   rpc CreateActionMessage(TextRequest) returns (StateReply) {}
   rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
+  rpc GetGroups(GroupRequest) returns (GroupsReply) {}
+  rpc CreateGroup(GroupRequest) returns (StateReply) {}
+  rpc GetGroup(GroupRequest) returns (GroupRequest) {}
 }
 
 message MessageRequest {
@@ -47,6 +50,23 @@ message Message {
   string type = 4;
   // @inject_tag: db:"channel"
   string channel = 5;
+  // @inject_tag: db:"created_at"
+  int64 createdAt = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 7;
+}
+
+message Group {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"uuid"
+  string uuid = 2;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 3;
+  // @inject_tag: db:"name"
+  string name = 4;
+  // @inject_tag: db:"avatar"
+  string avatar = 5;
   // @inject_tag: db:"created_at"
   int64 createdAt = 6;
   // @inject_tag: db:"updated_at"
@@ -95,4 +115,16 @@ message Notification {
     High = 1;
   }
   Priority priority = 16;
+}
+
+message GroupRequest {
+  Group group = 1;
+}
+
+message GroupReply {
+  Group group = 1;
+}
+
+message GroupsReply {
+  repeated Group groups = 1;
 }

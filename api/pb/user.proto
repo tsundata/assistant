@@ -13,6 +13,7 @@ option (gogoproto.goproto_enum_prefix_all) = false;
 option go_package = "api/pb";
 
 service UserSvc {
+  rpc Login(LoginRequest) returns (AuthReply) {}
   rpc GetAuthToken(AuthRequest) returns (AuthReply) {}
   rpc Authorization(AuthRequest) returns (AuthReply) {}
   rpc GetRole(RoleRequest) returns (RoleReply) {}
@@ -22,6 +23,12 @@ service UserSvc {
   rpc GetUserByName(UserRequest) returns (UserReply) {}
   rpc GetUsers(UserRequest) returns (UsersReply) {}
   rpc UpdateUser(UserRequest) returns (StateReply) {}
+  rpc BindDevice(DeviceRequest) returns (StateReply) {}
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
 }
 
 message AuthRequest {
@@ -63,28 +70,45 @@ message BytesReply {
   bytes data = 1;
 }
 
-message User {
+message Device {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
   // @inject_tag: db:"name"
-  string name = 2;
-  // @inject_tag: db:"mobile"
-  string mobile = 3;
-  // @inject_tag: db:"remark"
-  string remark = 4;
+  string name = 3;
   // @inject_tag: db:"created_at"
   int64 createdAt = 5;
   // @inject_tag: db:"updated_at"
   int64 updatedAt = 6;
+}
+
+message User {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"username"
+  string username = 2;
+  // @inject_tag: db:"password"
+  string password = 3;
+  // @inject_tag: db:"name"
+  string nickname = 4;
+  // @inject_tag: db:"mobile"
+  string mobile = 5;
+  // @inject_tag: db:"remark"
+  string remark = 6;
+  // @inject_tag: db:"created_at"
+  int64 createdAt = 7;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 8;
   // @inject_tag: db:"role"
-  Role role = 8;
+  Role role = 9;
 }
 
 message Role {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"user_id"
-  int64 userId = 2;
+  int64 user_id = 2;
   // @inject_tag: db:"profession"
   string profession = 3;
   // @inject_tag: db:"exp"
@@ -130,4 +154,8 @@ message Quest {
 message AttrChange {
   int64 userId = 1;
   string content = 2;
+}
+
+message DeviceRequest {
+  Device device = 1;
 }

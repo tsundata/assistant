@@ -78,6 +78,21 @@ func (mr *MockUserRepositoryMockRecorder) Create(ctx, user interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, user)
 }
 
+// CreateDevice mocks base method.
+func (m *MockUserRepository) CreateDevice(ctx context.Context, device *pb.Device) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateDevice", ctx, device)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateDevice indicates an expected call of CreateDevice.
+func (mr *MockUserRepositoryMockRecorder) CreateDevice(ctx, device interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDevice", reflect.TypeOf((*MockUserRepository)(nil).CreateDevice), ctx, device)
+}
+
 // GetByID mocks base method.
 func (m *MockUserRepository) GetByID(ctx context.Context, id int64) (*pb.User, error) {
 	m.ctrl.T.Helper()
@@ -94,18 +109,33 @@ func (mr *MockUserRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomock.C
 }
 
 // GetByName mocks base method.
-func (m *MockUserRepository) GetByName(ctx context.Context, name string) (*pb.User, error) {
+func (m *MockUserRepository) GetByName(ctx context.Context, username string) (*pb.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByName", ctx, name)
+	ret := m.ctrl.Call(m, "GetByName", ctx, username)
 	ret0, _ := ret[0].(*pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByName indicates an expected call of GetByName.
-func (mr *MockUserRepositoryMockRecorder) GetByName(ctx, name interface{}) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) GetByName(ctx, username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByName", reflect.TypeOf((*MockUserRepository)(nil).GetByName), ctx, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByName", reflect.TypeOf((*MockUserRepository)(nil).GetByName), ctx, username)
+}
+
+// GetDevice mocks base method.
+func (m *MockUserRepository) GetDevice(ctx context.Context, id int64) (*pb.Device, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDevice", ctx, id)
+	ret0, _ := ret[0].(*pb.Device)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDevice indicates an expected call of GetDevice.
+func (mr *MockUserRepositoryMockRecorder) GetDevice(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDevice", reflect.TypeOf((*MockUserRepository)(nil).GetDevice), ctx, id)
 }
 
 // GetRole mocks base method.
@@ -136,6 +166,21 @@ func (m *MockUserRepository) List(ctx context.Context) ([]*pb.User, error) {
 func (mr *MockUserRepositoryMockRecorder) List(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockUserRepository)(nil).List), ctx)
+}
+
+// ListDevice mocks base method.
+func (m *MockUserRepository) ListDevice(ctx context.Context, userID int64) ([]*pb.Device, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListDevice", ctx, userID)
+	ret0, _ := ret[0].([]*pb.Device)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListDevice indicates an expected call of ListDevice.
+func (mr *MockUserRepositoryMockRecorder) ListDevice(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListDevice", reflect.TypeOf((*MockUserRepository)(nil).ListDevice), ctx, userID)
 }
 
 // Update mocks base method.

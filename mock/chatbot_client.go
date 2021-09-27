@@ -36,6 +36,46 @@ func (m *MockChatbotSvcClient) EXPECT() *MockChatbotSvcClientMockRecorder {
 	return m.recorder
 }
 
+// GetBot mocks base method.
+func (m *MockChatbotSvcClient) GetBot(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.BotReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetBot", varargs...)
+	ret0, _ := ret[0].(*pb.BotReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBot indicates an expected call of GetBot.
+func (mr *MockChatbotSvcClientMockRecorder) GetBot(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBot", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetBot), varargs...)
+}
+
+// GetBots mocks base method.
+func (m *MockChatbotSvcClient) GetBots(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.BotsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetBots", varargs...)
+	ret0, _ := ret[0].(*pb.BotsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBots indicates an expected call of GetBots.
+func (mr *MockChatbotSvcClientMockRecorder) GetBots(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBots", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetBots), varargs...)
+}
+
 // Handle mocks base method.
 func (m *MockChatbotSvcClient) Handle(ctx context.Context, in *pb.ChatbotRequest, opts ...grpc.CallOption) (*pb.ChatbotReply, error) {
 	m.ctrl.T.Helper()
@@ -54,6 +94,26 @@ func (mr *MockChatbotSvcClientMockRecorder) Handle(ctx, in interface{}, opts ...
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcClient)(nil).Handle), varargs...)
+}
+
+// UpdateBotSetting mocks base method.
+func (m *MockChatbotSvcClient) UpdateBotSetting(ctx context.Context, in *pb.BotSettingRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateBotSetting", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBotSetting indicates an expected call of UpdateBotSetting.
+func (mr *MockChatbotSvcClientMockRecorder) UpdateBotSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBotSetting", reflect.TypeOf((*MockChatbotSvcClient)(nil).UpdateBotSetting), varargs...)
 }
 
 // MockChatbotSvcServer is a mock of ChatbotSvcServer interface.
@@ -79,6 +139,36 @@ func (m *MockChatbotSvcServer) EXPECT() *MockChatbotSvcServerMockRecorder {
 	return m.recorder
 }
 
+// GetBot mocks base method.
+func (m *MockChatbotSvcServer) GetBot(arg0 context.Context, arg1 *pb.BotRequest) (*pb.BotReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBot", arg0, arg1)
+	ret0, _ := ret[0].(*pb.BotReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBot indicates an expected call of GetBot.
+func (mr *MockChatbotSvcServerMockRecorder) GetBot(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBot", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetBot), arg0, arg1)
+}
+
+// GetBots mocks base method.
+func (m *MockChatbotSvcServer) GetBots(arg0 context.Context, arg1 *pb.BotRequest) (*pb.BotsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBots", arg0, arg1)
+	ret0, _ := ret[0].(*pb.BotsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBots indicates an expected call of GetBots.
+func (mr *MockChatbotSvcServerMockRecorder) GetBots(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBots", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetBots), arg0, arg1)
+}
+
 // Handle mocks base method.
 func (m *MockChatbotSvcServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
 	m.ctrl.T.Helper()
@@ -92,4 +182,19 @@ func (m *MockChatbotSvcServer) Handle(arg0 context.Context, arg1 *pb.ChatbotRequ
 func (mr *MockChatbotSvcServerMockRecorder) Handle(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcServer)(nil).Handle), arg0, arg1)
+}
+
+// UpdateBotSetting mocks base method.
+func (m *MockChatbotSvcServer) UpdateBotSetting(arg0 context.Context, arg1 *pb.BotSettingRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBotSetting", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBotSetting indicates an expected call of UpdateBotSetting.
+func (mr *MockChatbotSvcServerMockRecorder) UpdateBotSetting(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBotSetting", reflect.TypeOf((*MockChatbotSvcServer)(nil).UpdateBotSetting), arg0, arg1)
 }

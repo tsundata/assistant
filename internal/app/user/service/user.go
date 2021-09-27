@@ -18,8 +18,6 @@ import (
 	"time"
 )
 
-const AuthKey = "user:auth:token"
-
 type User struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
@@ -28,6 +26,10 @@ type User struct {
 
 func NewUser(conf *config.AppConfig, rdb *redis.Client, repo repository.UserRepository) *User {
 	return &User{conf: conf, rdb: rdb, repo: repo}
+}
+
+func (s *User) Login(ctx context.Context, payload *pb.LoginRequest) (*pb.AuthReply, error) {
+	panic("implement me")
 }
 
 func (s *User) GetAuthToken(_ context.Context, payload *pb.AuthRequest) (*pb.AuthReply, error) {
@@ -140,9 +142,9 @@ func (s *User) GetRoleImage(ctx context.Context, payload *pb.RoleRequest) (*pb.B
 
 func (s *User) CreateUser(ctx context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
 	user := &pb.User{
-		Name:   payload.User.GetName(),
-		Mobile: payload.User.GetMobile(),
-		Remark: payload.User.GetRemark(),
+		Nickname: payload.User.GetNickname(),
+		Mobile:   payload.User.GetMobile(),
+		Remark:   payload.User.GetRemark(),
 	}
 	id, err := s.repo.Create(ctx, user)
 	if err != nil {
@@ -161,26 +163,26 @@ func (s *User) GetUser(ctx context.Context, payload *pb.UserRequest) (*pb.UserRe
 
 	return &pb.UserReply{
 		User: &pb.User{
-			Id:     find.Id,
-			Name:   find.Name,
-			Mobile: find.Mobile,
-			Remark: find.Remark,
+			Id:       find.Id,
+			Nickname: find.Nickname,
+			Mobile:   find.Mobile,
+			Remark:   find.Remark,
 		},
 	}, nil
 }
 
 func (s *User) GetUserByName(ctx context.Context, payload *pb.UserRequest) (*pb.UserReply, error) {
-	find, err := s.repo.GetByName(ctx, payload.User.GetName())
+	find, err := s.repo.GetByName(ctx, payload.User.GetNickname())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.UserReply{
 		User: &pb.User{
-			Id:     find.Id,
-			Name:   find.Name,
-			Mobile: find.Mobile,
-			Remark: find.Remark,
+			Id:       find.Id,
+			Nickname: find.Nickname,
+			Mobile:   find.Mobile,
+			Remark:   find.Remark,
 		},
 	}, nil
 }
@@ -194,10 +196,10 @@ func (s *User) GetUsers(ctx context.Context, _ *pb.UserRequest) (*pb.UsersReply,
 	var res []*pb.User
 	for _, item := range items {
 		res = append(res, &pb.User{
-			Id:     item.Id,
-			Name:   item.Name,
-			Mobile: item.Mobile,
-			Remark: item.Remark,
+			Id:       item.Id,
+			Nickname: item.Nickname,
+			Mobile:   item.Mobile,
+			Remark:   item.Remark,
 		})
 	}
 
@@ -206,14 +208,18 @@ func (s *User) GetUsers(ctx context.Context, _ *pb.UserRequest) (*pb.UsersReply,
 
 func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.StateReply, error) {
 	err := s.repo.Update(ctx, &pb.User{
-		Id:     payload.User.GetId(),
-		Name:   payload.User.GetName(),
-		Mobile: payload.User.GetMobile(),
-		Remark: payload.User.GetRemark(),
+		Id:       payload.User.GetId(),
+		Nickname: payload.User.GetNickname(),
+		Mobile:   payload.User.GetMobile(),
+		Remark:   payload.User.GetRemark(),
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.StateReply{State: true}, nil
+}
+
+func (s *User) BindDevice(ctx context.Context, payload *pb.DeviceRequest) (*pb.StateReply, error) {
+	panic("implement me")
 }

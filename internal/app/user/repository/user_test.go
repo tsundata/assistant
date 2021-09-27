@@ -53,7 +53,7 @@ func TestUserRepository_ChangeRoleExp(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.ChangeRoleExp(context.Background(),tt.args.userID, tt.args.exp); (err != nil) != tt.wantErr {
+			if err := tt.r.ChangeRoleExp(context.Background(), tt.args.userID, tt.args.exp); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.ChangeRoleExp() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -85,7 +85,7 @@ func TestUserRepository_ChangeRoleAttr(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.ChangeRoleAttr(context.Background(),tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
+			if err := tt.r.ChangeRoleAttr(context.Background(), tt.args.userID, string(tt.args.attr), tt.args.val); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.ChangeRoleAttr() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -136,13 +136,13 @@ func TestUserRepository_Create(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{&pb.User{Name: "create", Mobile: "", Remark: ""}},
+			args{&pb.User{Nickname: "create", Mobile: "", Remark: ""}},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.Create(context.Background(),tt.args.user)
+			_, err := tt.r.Create(context.Background(), tt.args.user)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -180,7 +180,7 @@ func TestUserRepository_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetByID(context.Background(),tt.args.id)
+			_, err := tt.r.GetByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -206,7 +206,7 @@ func TestUserRepository_GetByName(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{name: "me"},
+			args{name: "admin"},
 			false,
 		},
 		{
@@ -218,7 +218,7 @@ func TestUserRepository_GetByName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetByName(context.Background(),tt.args.name)
+			_, err := tt.r.GetByName(context.Background(), tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -244,13 +244,13 @@ func TestUserRepository_Update(t *testing.T) {
 		{
 			"case1",
 			sto,
-			args{&pb.User{Id: 2, Name: "update"}},
+			args{&pb.User{Id: 2, Nickname: "update"}},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.r.Update(context.Background(),tt.args.in0); (err != nil) != tt.wantErr {
+			if err := tt.r.Update(context.Background(), tt.args.in0); (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

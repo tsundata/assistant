@@ -56,6 +56,26 @@ func (mr *MockUserSvcClientMockRecorder) Authorization(ctx, in interface{}, opts
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserSvcClient)(nil).Authorization), varargs...)
 }
 
+// BindDevice mocks base method.
+func (m *MockUserSvcClient) BindDevice(ctx context.Context, in *pb.DeviceRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "BindDevice", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BindDevice indicates an expected call of BindDevice.
+func (mr *MockUserSvcClientMockRecorder) BindDevice(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BindDevice", reflect.TypeOf((*MockUserSvcClient)(nil).BindDevice), varargs...)
+}
+
 // CreateUser mocks base method.
 func (m *MockUserSvcClient) CreateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.UserReply, error) {
 	m.ctrl.T.Helper()
@@ -196,6 +216,26 @@ func (mr *MockUserSvcClientMockRecorder) GetUsers(ctx, in interface{}, opts ...i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserSvcClient)(nil).GetUsers), varargs...)
 }
 
+// Login mocks base method.
+func (m *MockUserSvcClient) Login(ctx context.Context, in *pb.LoginRequest, opts ...grpc.CallOption) (*pb.AuthReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Login", varargs...)
+	ret0, _ := ret[0].(*pb.AuthReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Login indicates an expected call of Login.
+func (mr *MockUserSvcClientMockRecorder) Login(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserSvcClient)(nil).Login), varargs...)
+}
+
 // UpdateUser mocks base method.
 func (m *MockUserSvcClient) UpdateUser(ctx context.Context, in *pb.UserRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -252,6 +292,21 @@ func (m *MockUserSvcServer) Authorization(arg0 context.Context, arg1 *pb.AuthReq
 func (mr *MockUserSvcServerMockRecorder) Authorization(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorization", reflect.TypeOf((*MockUserSvcServer)(nil).Authorization), arg0, arg1)
+}
+
+// BindDevice mocks base method.
+func (m *MockUserSvcServer) BindDevice(arg0 context.Context, arg1 *pb.DeviceRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BindDevice", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BindDevice indicates an expected call of BindDevice.
+func (mr *MockUserSvcServerMockRecorder) BindDevice(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BindDevice", reflect.TypeOf((*MockUserSvcServer)(nil).BindDevice), arg0, arg1)
 }
 
 // CreateUser mocks base method.
@@ -357,6 +412,21 @@ func (m *MockUserSvcServer) GetUsers(arg0 context.Context, arg1 *pb.UserRequest)
 func (mr *MockUserSvcServerMockRecorder) GetUsers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserSvcServer)(nil).GetUsers), arg0, arg1)
+}
+
+// Login mocks base method.
+func (m *MockUserSvcServer) Login(arg0 context.Context, arg1 *pb.LoginRequest) (*pb.AuthReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Login", arg0, arg1)
+	ret0, _ := ret[0].(*pb.AuthReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Login indicates an expected call of Login.
+func (mr *MockUserSvcServerMockRecorder) Login(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserSvcServer)(nil).Login), arg0, arg1)
 }
 
 // UpdateUser mocks base method.

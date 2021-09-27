@@ -256,3 +256,15 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 
 	return &pb.StateReply{State: true}, nil
 }
+
+func (m *Message) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupsReply, error) {
+	panic("implement me")
+}
+
+func (m *Message) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (m *Message) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupRequest, error) {
+	panic("implement me")
+}

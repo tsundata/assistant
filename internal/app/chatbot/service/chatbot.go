@@ -21,10 +21,10 @@ func NewChatbot(
 	todo pb.TodoSvcClient,
 	bot *rulebot.RuleBot) *Chatbot {
 	return &Chatbot{
-		logger:   logger,
-		bot:      bot,
-		middle:   middle,
-		todo:     todo,
+		logger: logger,
+		bot:    bot,
+		middle: middle,
+		todo:   todo,
 	}
 }
 
@@ -34,4 +34,16 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	return &pb.ChatbotReply{
 		Text: out,
 	}, nil
+}
+
+func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) GetBots(ctx context.Context, payload *pb.BotRequest) (*pb.BotsReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) UpdateBotSetting(ctx context.Context, payload *pb.BotSettingRequest) (*pb.StateReply, error) {
+	panic("implement me")
 }

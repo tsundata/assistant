@@ -14,3 +14,8 @@ message TextReply {
 message StateReply {
   bool state = 1;
 }
+
+message KV {
+  string key = 1;
+  string value = 2;
+}

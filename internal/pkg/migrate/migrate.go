@@ -15,6 +15,7 @@ func Run(conn *mysql.Conn) {
 		ValidateUnknownMigrations: false,
 	}, []*gormigrate.Migration{
 		m202109181651,
+		m202109271035,
 	})
 	if err := m.Migrate(); err != nil {
 		panic(err)

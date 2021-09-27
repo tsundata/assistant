@@ -110,3 +110,4 @@ tasks:
       - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go
       - mockgen -package=mock -source=./internal/app/workflow/repository/workflow.go -destination=./mock/workflow_repository.go
       - mockgen -package=mock -source=./internal/app/org/repository/org.go -destination=./mock/org_repository.go
+      - mockgen -package=mock -source=./internal/app/chatbot/repository/chatbot.go -destination=./mock/chatbot_repository.go
