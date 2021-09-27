@@ -16,7 +16,4 @@ const (
 	Web       = "web"
 	Workflow  = "workflow"
 	Org       = "org"
-
-	RedisAgent  = "redis_agent"
-	ServerAgent = "server_agent"
 )
