@@ -55,19 +55,31 @@ func (l *AppLogger) Warn(msg string, fields ...interface{}) {
 
 func (l *AppLogger) Error(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	rollbar.Error(err)
+	extras := make(map[string]interface{})
+	for _, kv := range kvs {
+		extras[kv.Key] = kv.Interface
+	}
+	rollbar.ErrorWithExtras("error", err, extras)
 	l.logger.Error(err.Error(), kvs...)
 }
 
 func (l *AppLogger) Panic(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	rollbar.Error(err)
+	extras := make(map[string]interface{})
+	for _, kv := range kvs {
+		extras[kv.Key] = kv.Interface
+	}
+	rollbar.ErrorWithExtras("critical", err, extras)
 	l.logger.Panic(err.Error(), kvs...)
 }
 
 func (l *AppLogger) Fatal(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	rollbar.Error(err)
+	extras := make(map[string]interface{})
+	for _, kv := range kvs {
+		extras[kv.Key] = kv.Interface
+	}
+	rollbar.ErrorWithExtras("critical", err, extras)
 	l.logger.Fatal(err.Error(), kvs...)
 }
 

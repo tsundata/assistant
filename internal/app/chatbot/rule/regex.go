@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"go.uber.org/zap"
 	"strings"
 	"unicode"
 )
@@ -37,13 +38,13 @@ func (r regexRuleset) ParseRule(ctx context.Context, b *rulebot.RuleBot, in stri
 		tokens, err := ParseCommand(in)
 		if err != nil {
 			if b.Comp.GetLogger() != nil {
-				b.Comp.GetLogger().Error(err)
+				b.Comp.GetLogger().Error(err, zap.Any("rule", in))
 			}
 		}
 		check, err := SyntaxCheck(rule.Define, tokens)
 		if err != nil {
 			if b.Comp.GetLogger() != nil {
-				b.Comp.GetLogger().Error(err)
+				b.Comp.GetLogger().Error(err, zap.Any("rule", in))
 			}
 		}
 		if !check {
