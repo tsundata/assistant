@@ -258,13 +258,25 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 }
 
 func (m *Message) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupsReply, error) {
-	panic("implement me")
+	groups, err := m.repo.ListGroup(ctx, payload.Group.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GroupsReply{Groups: groups}, nil
 }
 
 func (m *Message) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	_, err := m.repo.CreateGroup(ctx, payload.Group)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
-func (m *Message) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupRequest, error) {
-	panic("implement me")
+func (m *Message) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupReply, error) {
+	group, err := m.repo.GetGroupByUUID(ctx, payload.Group.GetUuid())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GroupReply{Group: group}, nil
 }

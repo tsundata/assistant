@@ -24,7 +24,7 @@ service MessageSvc {
   rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
   rpc GetGroups(GroupRequest) returns (GroupsReply) {}
   rpc CreateGroup(GroupRequest) returns (StateReply) {}
-  rpc GetGroup(GroupRequest) returns (GroupRequest) {}
+  rpc GetGroup(GroupRequest) returns (GroupReply) {}
 }
 
 message MessageRequest {

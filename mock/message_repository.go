@@ -138,6 +138,21 @@ func (mr *MockMessageRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockMessageRepository)(nil).GetGroup), ctx, id)
 }
 
+// GetGroupByUUID mocks base method.
+func (m *MockMessageRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupByUUID", ctx, uuid)
+	ret0, _ := ret[0].(*pb.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupByUUID indicates an expected call of GetGroupByUUID.
+func (mr *MockMessageRepositoryMockRecorder) GetGroupByUUID(ctx, uuid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetGroupByUUID), ctx, uuid)
+}
+
 // List mocks base method.
 func (m *MockMessageRepository) List(ctx context.Context) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()
@@ -169,16 +184,16 @@ func (mr *MockMessageRepositoryMockRecorder) ListByType(ctx, t interface{}) *gom
 }
 
 // ListGroup mocks base method.
-func (m *MockMessageRepository) ListGroup(ctx context.Context) ([]*pb.Group, error) {
+func (m *MockMessageRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListGroup", ctx)
+	ret := m.ctrl.Call(m, "ListGroup", ctx, userId)
 	ret0, _ := ret[0].([]*pb.Group)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListGroup indicates an expected call of ListGroup.
-func (mr *MockMessageRepositoryMockRecorder) ListGroup(ctx interface{}) *gomock.Call {
+func (mr *MockMessageRepositoryMockRecorder) ListGroup(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroup", reflect.TypeOf((*MockMessageRepository)(nil).ListGroup), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroup", reflect.TypeOf((*MockMessageRepository)(nil).ListGroup), ctx, userId)
 }

@@ -15,7 +15,8 @@ type MessageRepository interface {
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
 	GetGroup(ctx context.Context, id int64) (*pb.Group, error)
-	ListGroup(ctx context.Context, ) ([]*pb.Group, error)
+	GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error)
+	ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error)
 	CreateGroup(ctx context.Context, group *pb.Group) (int64, error)
 	DeleteGroup(ctx context.Context, id int64) error
 }
@@ -48,7 +49,7 @@ func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (*p
 
 func (r *MysqlMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {
 	var messages []*pb.Message
-	err := r.db.WithContext(ctx).Order("id DESC").Find(&messages).Error
+	err := r.db.WithContext(ctx).Where("type = ?", t).Order("id DESC").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}
@@ -77,17 +78,40 @@ func (r *MysqlMessageRepository) Delete(ctx context.Context, id int64) error {
 }
 
 func (r *MysqlMessageRepository) GetGroup(ctx context.Context, id int64) (*pb.Group, error) {
-	panic("implement me")
+	var find pb.Group
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
 }
 
-func (r *MysqlMessageRepository) ListGroup(ctx context.Context) ([]*pb.Group, error) {
-	panic("implement me")
+func (r *MysqlMessageRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
+	var find pb.Group
+	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
+}
+
+func (r *MysqlMessageRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {
+	var list []*pb.Group
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("id DESC").Find(&list).Error
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (r *MysqlMessageRepository) CreateGroup(ctx context.Context, group *pb.Group) (int64, error) {
-	panic("implement me")
+	err := r.db.WithContext(ctx).Create(&group).Error
+	if err != nil {
+		return 0, err
+	}
+	return group.Id, nil
 }
 
 func (r *MysqlMessageRepository) DeleteGroup(ctx context.Context, id int64) error {
-	panic("implement me")
+	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Group{}).Error
 }

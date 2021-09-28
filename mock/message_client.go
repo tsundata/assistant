@@ -177,14 +177,14 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 }
 
 // GetGroup mocks base method.
-func (m *MockMessageSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupRequest, error) {
+func (m *MockMessageSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetGroup", varargs...)
-	ret0, _ := ret[0].(*pb.GroupRequest)
+	ret0, _ := ret[0].(*pb.GroupReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -405,10 +405,10 @@ func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interfa
 }
 
 // GetGroup mocks base method.
-func (m *MockMessageSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupRequest, error) {
+func (m *MockMessageSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroup", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GroupRequest)
+	ret0, _ := ret[0].(*pb.GroupReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
