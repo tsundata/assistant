@@ -43,9 +43,9 @@ This project requires Go 1.16 or newer
 
 1. Install MySQL, Redis, influx, jaeger, nats, etcd
 
-2. Import sql files
+2. Import Configuration to etcd
 
-3. Import Configuration to etcd
+3. Database migrate
 
 4. Set Environment
    
