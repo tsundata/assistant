@@ -1,0 +1,31 @@
+basePath: /
+definitions:
+  pb.TextRequest:
+    properties:
+      text:
+        type: string
+    type: object
+host: localhost:5000
+info:
+  contact: {}
+  license:
+    name: MIT
+    url: https://github.com/tsundata/assistant/blob/main/LICENSE
+  title: Flow App API
+  version: "1.0"
+paths:
+  /apps:
+    get:
+      consumes:
+      - application/json
+      description: get apps
+      operationId: get-apps
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.TextRequest'
+      summary: Get Apps
+swagger: "2.0"

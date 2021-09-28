@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -10,6 +11,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	_ "github.com/tsundata/assistant/docs"
 	"github.com/tsundata/assistant/internal/app/gateway/chat"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"log"
@@ -51,6 +53,9 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			}
 			return fiber.ErrUpgradeRequired
 		})
+
+		// swagger
+		router.Get("/swagger/*", swagger.Handler)
 
 		// ws
 		h := chat.NewHub(gc.bus, gc.logger, gc.chatbotSvc, gc.messageSvc)

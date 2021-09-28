@@ -282,6 +282,14 @@ func (gc *GatewayController) StoreAppOAuth(c *fiber.Ctx) error {
 	return c.JSON(reply)
 }
 
+// GetApps godoc
+// @Summary Get Apps
+// @Description get apps
+// @ID get-apps
+// @Accept json
+// @Produce json
+// @Success 200 {object} pb.TextRequest
+// @Router /apps [get]
 func (gc *GatewayController) GetApps(c *fiber.Ctx) error {
 	var in pb.TextRequest
 	err := c.QueryParser(&in)
