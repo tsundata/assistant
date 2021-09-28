@@ -36,26 +36,20 @@ func (s *User) Login(ctx context.Context, payload *pb.LoginRequest) (*pb.AuthRep
 	find, err := s.repo.GetByName(ctx, payload.Username)
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			if s.logger != nil {
-				s.logger.Error(err)
-			}
+			s.logger.Error(err)
 		}
 		return &pb.AuthReply{State: false}, nil
 	}
 
 	err = bcrypt.CompareHashAndPassword(util.StringToByte(find.Password), util.StringToByte(payload.Password))
 	if err != nil {
-		if s.logger != nil {
-			s.logger.Error(err)
-		}
+		s.logger.Error(err)
 		return &pb.AuthReply{State: false}, nil
 	}
 
 	reply, err := s.GetAuthToken(ctx, &pb.AuthRequest{Id: find.Id})
 	if err != nil {
-		if s.logger != nil {
-			s.logger.Error(err)
-		}
+		s.logger.Error(err)
 		return &pb.AuthReply{State: false}, nil
 	}
 

@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -36,7 +37,9 @@ func TestUser_Login(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewUser(conf, nil, nil, repo)
+	logger := log.NewAppLogger(log.NewZapLogger(nil))
+
+	s := NewUser(conf, logger, nil, repo)
 	type args struct {
 		ctx     context.Context
 		payload *pb.LoginRequest
