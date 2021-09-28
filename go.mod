@@ -61,6 +61,7 @@ require (
 	github.com/yuin/goldmark v1.4.1
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.uber.org/zap v1.19.1
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/sys v0.0.0-20210903071746-97244b99971b // indirect
 	google.golang.org/grpc v1.40.0

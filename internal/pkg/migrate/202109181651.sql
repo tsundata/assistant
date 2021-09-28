@@ -147,7 +147,7 @@ create table if not exists `users`
 (
     `id`         INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `username`   VARCHAR(50)      NOT NULL,
-    `password`   VARCHAR(50)      NOT NULL DEFAULT '',
+    `password`   VARCHAR(256)     NOT NULL DEFAULT '',
     `nickname`   VARCHAR(50)      NOT NULL DEFAULT '',
     `mobile`     VARCHAR(50)      NOT NULL DEFAULT '',
     `remark`     VARCHAR(50)      NOT NULL DEFAULT '',
@@ -159,8 +159,9 @@ create table if not exists `users`
     DEFAULT CHARSET = utf8mb4;
 
 
-INSERT INTO `users` (`username`, `nickname`, `mobile`, `remark`, `created_at`, `updated_at`)
-VALUES ('admin', 'me', '', '', '1625068800', '1625068800');
+INSERT INTO `users` (`username`, `password`, `nickname`, `mobile`, `remark`, `created_at`, `updated_at`)
+VALUES ('admin', '$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu', 'me', '', '', '1625068800',
+        '1625068800');
 
 
 create table if not exists `objectives`

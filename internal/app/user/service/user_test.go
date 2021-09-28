@@ -14,6 +14,69 @@ import (
 	"time"
 )
 
+func TestUser_Login(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockUserRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{
+			Id:       1,
+			Username: "admin",
+			Password: "$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu",
+		}, nil),
+		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{
+			Id:       1,
+			Username: "admin",
+			Password: "$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu",
+		}, nil),
+	)
+
+	s := NewUser(conf, nil, nil, repo)
+	type args struct {
+		ctx     context.Context
+		payload *pb.LoginRequest
+	}
+	tests := []struct {
+		name    string
+		s       *User
+		args    args
+		want    *pb.AuthReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.LoginRequest{Username: "admin", Password: "123456"}},
+			&pb.AuthReply{State: true},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.LoginRequest{Username: "admin", Password: "err_pwd"}},
+			&pb.AuthReply{State: false},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.Login(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("User.Login() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && got.State != tt.want.State {
+				t.Errorf("User.Login() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestUser_Authorization(t *testing.T) {
 	conf, err := config.CreateAppConfig(enum.User)
 	if err != nil {
@@ -30,7 +93,7 @@ func TestUser_Authorization(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewUser(conf, nil, nil)
+	s := NewUser(conf, nil, nil, nil)
 	type args struct {
 		ctx     context.Context
 		payload *pb.AuthRequest
@@ -77,7 +140,7 @@ func TestUser_GetRole(t *testing.T) {
 		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(&pb.Role{Profession: "super"}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		in0     context.Context
@@ -138,7 +201,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -174,7 +237,7 @@ func TestUser_GetAuthToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewUser(conf, nil, nil)
+	s := NewUser(conf, nil, nil, nil)
 
 	type args struct {
 		ctx context.Context
@@ -217,7 +280,7 @@ func TestUser_CreateUser(t *testing.T) {
 		repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -265,7 +328,7 @@ func TestUser_GetUser(t *testing.T) {
 		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(&pb.User{Id: 1, Nickname: "test"}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -313,7 +376,7 @@ func TestUser_GetUserByName(t *testing.T) {
 		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{Id: 1, Nickname: "test"}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -361,7 +424,7 @@ func TestUser_GetUsers(t *testing.T) {
 		repo.EXPECT().List(gomock.Any()).Return([]*pb.User{{Id: 1, Nickname: "test"}}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -409,7 +472,7 @@ func TestUser_UpdateUser(t *testing.T) {
 		repo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		ctx     context.Context
@@ -459,7 +522,7 @@ func TestUser_BindDevice(t *testing.T) {
 		repo.EXPECT().ListDevice(gomock.Any(), gomock.Any()).Return([]*pb.Device{{UserId: 1, Name: "test"}}, nil),
 	)
 
-	s := NewUser(conf, nil, repo)
+	s := NewUser(conf, nil, nil, repo)
 
 	type args struct {
 		in0     context.Context

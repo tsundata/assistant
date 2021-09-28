@@ -12,24 +12,54 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/image/font/gofont/goregular"
+	"gorm.io/gorm"
 	"image/png"
 	"time"
 )
 
 type User struct {
-	conf *config.AppConfig
-	rdb  *redis.Client
-	repo repository.UserRepository
+	conf   *config.AppConfig
+	logger log.Logger
+	rdb    *redis.Client
+	repo   repository.UserRepository
 }
 
-func NewUser(conf *config.AppConfig, rdb *redis.Client, repo repository.UserRepository) *User {
-	return &User{conf: conf, rdb: rdb, repo: repo}
+func NewUser(conf *config.AppConfig, logger log.Logger, rdb *redis.Client, repo repository.UserRepository) *User {
+	return &User{conf: conf, logger: logger, rdb: rdb, repo: repo}
 }
 
 func (s *User) Login(ctx context.Context, payload *pb.LoginRequest) (*pb.AuthReply, error) {
-	panic("implement me")
+	find, err := s.repo.GetByName(ctx, payload.Username)
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			if s.logger != nil {
+				s.logger.Error(err)
+			}
+		}
+		return &pb.AuthReply{State: false}, nil
+	}
+
+	err = bcrypt.CompareHashAndPassword(util.StringToByte(find.Password), util.StringToByte(payload.Password))
+	if err != nil {
+		if s.logger != nil {
+			s.logger.Error(err)
+		}
+		return &pb.AuthReply{State: false}, nil
+	}
+
+	reply, err := s.GetAuthToken(ctx, &pb.AuthRequest{Id: find.Id})
+	if err != nil {
+		if s.logger != nil {
+			s.logger.Error(err)
+		}
+		return &pb.AuthReply{State: false}, nil
+	}
+
+	return &pb.AuthReply{State: true, Token: reply.Token}, nil
 }
 
 func (s *User) GetAuthToken(_ context.Context, payload *pb.AuthRequest) (*pb.AuthReply, error) {
