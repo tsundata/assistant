@@ -146,13 +146,26 @@ func (r *MysqlUserRepository) Update(ctx context.Context, user *pb.User) error {
 }
 
 func (r *MysqlUserRepository) ListDevice(ctx context.Context, userID int64) ([]*pb.Device, error) {
-	panic("implement me")
+	var devices []*pb.Device
+	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&devices).Error; err != nil {
+		return nil, err
+	}
+	return devices, nil
 }
 
 func (r *MysqlUserRepository) CreateDevice(ctx context.Context, device *pb.Device) (int64, error) {
-	panic("implement me")
+	err := r.db.WithContext(ctx).Create(&device).Error
+	if err != nil {
+		return 0, err
+	}
+	return device.Id, nil
 }
 
 func (r *MysqlUserRepository) GetDevice(ctx context.Context, id int64) (*pb.Device, error) {
-	panic("implement me")
+	var find pb.Device
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	return &find, nil
 }

@@ -443,3 +443,58 @@ func TestUser_UpdateUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_BindDevice(t *testing.T) {
+	conf, err := config.CreateAppConfig(enum.User)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockUserRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListDevice(gomock.Any(), gomock.Any()).Return([]*pb.Device{}, nil),
+		repo.EXPECT().CreateDevice(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().ListDevice(gomock.Any(), gomock.Any()).Return([]*pb.Device{{UserId: 1, Name: "test"}}, nil),
+	)
+
+	s := NewUser(conf, nil, repo)
+
+	type args struct {
+		in0     context.Context
+		payload *pb.DeviceRequest
+	}
+	tests := []struct {
+		name    string
+		s       *User
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.DeviceRequest{Device: &pb.Device{UserId: 1, Name: "test"}}}, &pb.StateReply{
+			State: true,
+		}, false},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.DeviceRequest{Device: &pb.Device{UserId: 1, Name: "test"}}}, &pb.StateReply{
+			State: true,
+		}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.BindDevice(tt.args.in0, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("User.BindDevice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("User.BindDevice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

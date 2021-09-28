@@ -221,5 +221,22 @@ func (s *User) UpdateUser(ctx context.Context, payload *pb.UserRequest) (*pb.Sta
 }
 
 func (s *User) BindDevice(ctx context.Context, payload *pb.DeviceRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	devices, err := s.repo.ListDevice(ctx, payload.Device.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	isBind := false
+	for _, item := range devices {
+		if item.Name == payload.Device.GetName() {
+			isBind = true
+		}
+	}
+	if isBind {
+		return &pb.StateReply{State: true}, nil
+	}
+	_, err = s.repo.CreateDevice(ctx, payload.Device)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }

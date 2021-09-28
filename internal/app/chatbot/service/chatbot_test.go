@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"github.com/golang/mock/gomock"
-	"github.com/tsundata/assistant/api/enum"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
-	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/mock"
 )
 
 func TestChatbot_Handle(t *testing.T) {
@@ -24,7 +24,7 @@ func TestChatbot_Handle(t *testing.T) {
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	todo := mock.NewMockTodoSvcClient(ctl)
 
-	s := NewChatbot(nil, middle, todo, bot)
+	s := NewChatbot(nil, nil, middle, todo, bot)
 
 	type args struct {
 		in0     context.Context
@@ -54,6 +54,159 @@ func TestChatbot_Handle(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Chatbot.Handle() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_GetBot(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
+
+	item := &pb.Bot{
+		Id:        1,
+		Uuid:      "1",
+		Name:      "test",
+		Avatar:    "test",
+		CreatedAt: 0,
+		UpdatedAt: 0,
+	}
+	gomock.InOrder(
+		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(item, nil),
+	)
+
+	s := NewChatbot(nil, repo, middle, todo, bot)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.BotRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.BotReply
+		wantErr bool
+	}{
+		{"case1", s, args{context.Background(), &pb.BotRequest{Bot: &pb.Bot{Uuid: "1"}}},
+			&pb.BotReply{Bot: item}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetBot(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.GetBot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.GetBot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_GetBots(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
+
+	items := []*pb.Bot{
+		{
+			Id:        1,
+			Uuid:      "1",
+			Name:      "test",
+			Avatar:    "test",
+			CreatedAt: 0,
+			UpdatedAt: 0,
+		},
+	}
+	gomock.InOrder(
+		repo.EXPECT().List(gomock.Any()).Return(items, nil),
+	)
+
+	s := NewChatbot(nil, repo, middle, todo, bot)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.BotRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.BotsReply
+		wantErr bool
+	}{
+		{"case1", s, args{context.Background(), &pb.BotRequest{}}, &pb.BotsReply{Bots: items}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetBots(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.GetBots() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.GetBots() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_UpdateBotSetting(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
+	todo := mock.NewMockTodoSvcClient(ctl)
+
+	s := NewChatbot(nil, repo, middle, todo, bot)
+
+	type args struct {
+		ctx     context.Context
+		payload *pb.BotSettingRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		{"case1", s, args{context.Background(), &pb.BotSettingRequest{}}, &pb.StateReply{State: true}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.UpdateBotSetting(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.UpdateBotSetting() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.UpdateBotSetting() = %v, want %v", got, tt.want)
 			}
 		})
 	}

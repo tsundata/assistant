@@ -256,3 +256,105 @@ func TestUserRepository_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestUserRepository_CreateDevice(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
+	if err != nil {
+		t.Fatalf("create user Repository error, %+v", err)
+	}
+	type args struct {
+		user *pb.Device
+	}
+	tests := []struct {
+		name    string
+		r       UserRepository
+		args    args
+		wantErr bool
+	}{
+		{
+			"case1",
+			sto,
+			args{&pb.Device{UserId: 1, Name: "test"}},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.CreateDevice(context.Background(), tt.args.user)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.CreateDevice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestUserRepository_GetDevice(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
+	if err != nil {
+		t.Fatalf("create user Repository error, %+v", err)
+	}
+	type args struct {
+		id int64
+	}
+	tests := []struct {
+		name    string
+		r       UserRepository
+		args    args
+		wantErr bool
+	}{
+		{
+			"case1",
+			sto,
+			args{id: 1},
+			false,
+		},
+		{
+			"case2",
+			sto,
+			args{id: 99999999},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetDevice(context.Background(), tt.args.id)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.GetDevice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestUserRepository_ListDevice(t *testing.T) {
+	sto, err := CreateUserRepository(enum.User)
+	if err != nil {
+		t.Fatalf("create user Repository error, %+v", err)
+	}
+	type args struct {
+		userID int64
+	}
+	tests := []struct {
+		name    string
+		r       UserRepository
+		args    args
+		wantErr bool
+	}{
+		{
+			"case1",
+			sto,
+			args{1},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.ListDevice(context.Background(), tt.args.userID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.List() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
