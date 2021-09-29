@@ -316,7 +316,7 @@ func TestMiddleRepository_ListTags(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.ListTags(context.Background())
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlMiddleRepository.CreateCredential() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("MysqlMiddleRepository.ListTags() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
@@ -346,7 +346,37 @@ func TestMiddleRepository_GetOrCreateTag(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetOrCreateTag(context.Background(), tt.args.tag)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MysqlMiddleRepository.CreateCredential() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("MysqlMiddleRepository.GetOrCreateTag() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestMiddleRepository_GetOrCreateNode(t *testing.T) {
+	sto, err := CreateMiddleRepository(enum.Middle)
+	if err != nil {
+		t.Fatalf("create middle Repository error, %+v", err)
+	}
+
+	type args struct {
+		node *pb.Node
+	}
+	tests := []struct {
+		name    string
+		r       MiddleRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{node: &pb.Node{Ip: "127.0.0.1", Port: 5000}}, false},
+		{"case2", sto, args{node: &pb.Node{Ip: "127.0.0.1", Port: 5001}}, false},
+		{"case3", sto, args{node: &pb.Node{Ip: "127.0.0.1", Port: 5001}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetOrCreateNode(context.Background(), tt.args.node)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MysqlMiddleRepository.GetOrCreateNode() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

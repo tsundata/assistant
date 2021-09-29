@@ -24,7 +24,7 @@ var m202109271035 = &gormigrate.Migration{
 				return err
 			}
 		}
-		err := tx.AutoMigrate(&pb.Group{}, &pb.Device{}, &pb.Bot{})// fixme
+		err := tx.AutoMigrate(&pb.Group{}, &pb.Device{}, &pb.Bot{}, &pb.Node{}) // fixme
 		if err != nil {
 			return err
 		}

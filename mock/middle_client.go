@@ -256,6 +256,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetCronStatus(ctx, in interface{}, op
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCronStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCronStatus), varargs...)
 }
 
+// GetGlobalId mocks base method.
+func (m *MockMiddleSvcClient) GetGlobalId(ctx context.Context, in *pb.IdRequest, opts ...grpc.CallOption) (*pb.IdReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetGlobalId", varargs...)
+	ret0, _ := ret[0].(*pb.IdReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGlobalId indicates an expected call of GetGlobalId.
+func (mr *MockMiddleSvcClientMockRecorder) GetGlobalId(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlobalId", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetGlobalId), varargs...)
+}
+
 // GetMaskingCredentials mocks base method.
 func (m *MockMiddleSvcClient) GetMaskingCredentials(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.MaskingReply, error) {
 	m.ctrl.T.Helper()
@@ -802,6 +822,21 @@ func (m *MockMiddleSvcServer) GetCronStatus(arg0 context.Context, arg1 *pb.CronR
 func (mr *MockMiddleSvcServerMockRecorder) GetCronStatus(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCronStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCronStatus), arg0, arg1)
+}
+
+// GetGlobalId mocks base method.
+func (m *MockMiddleSvcServer) GetGlobalId(arg0 context.Context, arg1 *pb.IdRequest) (*pb.IdReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGlobalId", arg0, arg1)
+	ret0, _ := ret[0].(*pb.IdReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGlobalId indicates an expected call of GetGlobalId.
+func (mr *MockMiddleSvcServerMockRecorder) GetGlobalId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlobalId", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetGlobalId), arg0, arg1)
 }
 
 // GetMaskingCredentials mocks base method.

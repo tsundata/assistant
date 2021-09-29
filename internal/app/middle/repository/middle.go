@@ -22,6 +22,7 @@ type MiddleRepository interface {
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
 	ListTags(ctx context.Context, ) ([]*pb.Tag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (*pb.Tag, error)
+	GetOrCreateNode(ctx context.Context, node *pb.Node) (*pb.Node, error)
 }
 
 type MysqlMiddleRepository struct {
@@ -142,6 +143,23 @@ func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag)
 
 	if find.Id <= 0 {
 		err = r.db.WithContext(ctx).Create(&tag).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &find, nil
+}
+
+func (r *MysqlMiddleRepository) GetOrCreateNode(ctx context.Context, node *pb.Node) (*pb.Node, error) {
+	var find pb.Node
+	err := r.db.WithContext(ctx).Where("ip = ? AND port = ?", node.Ip, node.Port).First(&find).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	if find.Id <= 0 {
+		err = r.db.WithContext(ctx).Create(&node).Error
 		if err != nil {
 			return nil, err
 		}

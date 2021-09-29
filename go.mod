@@ -11,6 +11,7 @@ require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/arsmn/fiber-swagger/v2 v2.17.0
+	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/fasthttp/websocket v1.4.3 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect

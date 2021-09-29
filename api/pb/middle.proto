@@ -42,6 +42,7 @@ service MiddleSvc {
   rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc SetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc GetChartUrl(TextRequest) returns (TextReply) {}
+  rpc GetGlobalId(IdRequest) returns (IdReply) {}
 }
 
 message PageRequest {
@@ -65,7 +66,7 @@ message Page {
   string type = 5;
   // @inject_tag: db:"created_at"
   int64 createdAt = 6;
-  // @inject_tag: db:"created_at"
+  // @inject_tag: db:"updated_at"
   int64 updatedAt = 7;
 }
 
@@ -194,7 +195,7 @@ message Tag {
   string name = 2;
   // @inject_tag: db:"created_at"
   int64 createdAt = 3;
-  // @inject_tag: db:"created_at"
+  // @inject_tag: db:"updated_at"
   int64 updatedAt = 4;
 }
 
@@ -229,4 +230,26 @@ message ChartDataRequest {
 
 message ChartDataReply {
   ChartData chartData = 1;
+}
+
+message Node {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64  id = 1;
+  // @inject_tag: db:"ip"
+  string ip = 2;
+  // @inject_tag: db:"port"
+  int64 port = 3;
+  // @inject_tag: db:"created_at"
+  int64 createdAt = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 5;
+}
+
+message IdRequest {
+  string ip = 1;
+  int64 port = 2;
+}
+
+message IdReply {
+  int64 id = 1;
 }
