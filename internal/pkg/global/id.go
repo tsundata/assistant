@@ -10,9 +10,21 @@ import (
 	"strings"
 )
 
-func ID(ctx context.Context, conf *config.AppConfig, client pb.IdSvcClient, service string) int64 {
+type ID struct {
+	conf   *config.AppConfig
+	client pb.IdSvcClient
+}
+
+func NewID(conf *config.AppConfig, client pb.IdSvcClient) *ID {
+	return &ID{
+		conf:   conf,
+		client: client,
+	}
+}
+
+func (i *ID) Generate(ctx context.Context) int64 {
 	ip := util.GetLocalIP4()
-	svcAddr := discovery.SvcAddr(conf, service)
+	svcAddr := discovery.SvcAddr(i.conf, i.conf.Name)
 	s := strings.Split(svcAddr, ":")
 	if len(s) != 2 {
 		panic("error service addr")
@@ -21,7 +33,7 @@ func ID(ctx context.Context, conf *config.AppConfig, client pb.IdSvcClient, serv
 	if err != nil {
 		panic(err)
 	}
-	idReply, err := client.GetGlobalId(ctx, &pb.IdRequest{Ip: ip, Port: port})
+	idReply, err := i.client.GetGlobalId(ctx, &pb.IdRequest{Ip: ip, Port: port})
 	if err != nil {
 		panic(err)
 	}

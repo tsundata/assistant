@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/message/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
@@ -26,6 +27,7 @@ var testProviderSet = wire.NewSet(
 	rpcclient.ProviderSet,
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
+	global.ProviderSet,
 )
 
 func CreateMessageRepository(id string) (MessageRepository, error) {

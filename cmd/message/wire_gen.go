@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -46,10 +47,6 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
-	mysqlConn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -70,7 +67,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := repository.NewMysqlMessageRepository(appConfig, mysqlConn, idSvcClient)
+	globalID := global.NewID(appConfig, idSvcClient)
+	mysqlConn, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	messageRepository := repository.NewMysqlMessageRepository(globalID, mysqlConn)
 	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -94,4 +96,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet)
