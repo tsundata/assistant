@@ -32,6 +32,7 @@ func (r *MysqlIdRepository) GetOrCreateNode(ctx context.Context, node *pb.Node) 
 		if err != nil {
 			return nil, err
 		}
+		return node, nil
 	}
 
 	return &find, nil

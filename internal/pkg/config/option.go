@@ -3,6 +3,7 @@ package config
 // === App ===
 
 type SvcAddr struct {
+	Id       string `json:"id" yaml:"id"`
 	Chatbot  string `json:"chatbot" yaml:"chatbot"`
 	Message  string `json:"message" yaml:"message"`
 	Middle   string `json:"middle" yaml:"middle"`

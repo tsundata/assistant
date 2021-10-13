@@ -50,7 +50,6 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := repository.NewMysqlMessageRepository(mysqlConn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -67,6 +66,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	messageRepository := repository.NewMysqlMessageRepository(appConfig, mysqlConn, idSvcClient)
 	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err

@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 )
 
@@ -22,11 +24,13 @@ type MessageRepository interface {
 }
 
 type MysqlMessageRepository struct {
-	db *mysql.Conn
+	conf  *config.AppConfig
+	db    *mysql.Conn
+	idSvc pb.IdSvcClient
 }
 
-func NewMysqlMessageRepository(db *mysql.Conn) MessageRepository {
-	return &MysqlMessageRepository{db: db}
+func NewMysqlMessageRepository(conf *config.AppConfig, db *mysql.Conn, idSvc pb.IdSvcClient) MessageRepository {
+	return &MysqlMessageRepository{conf: conf, db: db, idSvc: idSvc}
 }
 
 func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Message, error) {
@@ -66,6 +70,7 @@ func (r *MysqlMessageRepository) List(ctx context.Context) ([]*pb.Message, error
 }
 
 func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message) (int64, error) {
+	message.Id = global.ID(ctx, r.conf, r.idSvc, enum.Message)
 	err := r.db.WithContext(ctx).Create(&message).Error
 	if err != nil {
 		return 0, err
@@ -105,6 +110,7 @@ func (r *MysqlMessageRepository) ListGroup(ctx context.Context, userId int64) ([
 }
 
 func (r *MysqlMessageRepository) CreateGroup(ctx context.Context, group *pb.Group) (int64, error) {
+	group.Id = global.ID(ctx, r.conf, r.idSvc, enum.Message)
 	err := r.db.WithContext(ctx).Create(&group).Error
 	if err != nil {
 		return 0, err

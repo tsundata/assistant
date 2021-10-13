@@ -7,10 +7,13 @@ package repository
 
 import (
 	"github.com/google/wire"
+	"github.com/tsundata/assistant/internal/app/message/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
+	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -27,10 +30,33 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := NewMysqlMessageRepository(conn)
+	rollbarRollbar := rollbar.New(appConfig)
+	logger := log.NewZapLogger(rollbarRollbar)
+	logLogger := log.NewAppLogger(logger)
+	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	tracer, err := jaeger.New(configuration)
+	if err != nil {
+		return nil, err
+	}
+	clientOptions, err := rpc.NewClientOptions(tracer)
+	if err != nil {
+		return nil, err
+	}
+	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	messageRepository := NewMysqlMessageRepository(appConfig, conn, idSvcClient)
 	return messageRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet, rpcclient.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet)

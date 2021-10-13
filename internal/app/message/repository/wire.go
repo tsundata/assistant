@@ -4,10 +4,13 @@ package repository
 
 import (
 	"github.com/google/wire"
+	"github.com/tsundata/assistant/internal/app/message/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
+	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -20,6 +23,9 @@ var testProviderSet = wire.NewSet(
 	rollbar.ProviderSet,
 	mysql.ProviderSet,
 	newrelic.ProviderSet,
+	rpcclient.ProviderSet,
+	rpc.ProviderSet,
+	jaeger.ProviderSet,
 )
 
 func CreateMessageRepository(id string) (MessageRepository, error) {
