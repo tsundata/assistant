@@ -51,6 +51,15 @@ jobs:
           username: ${{ secrets.IMAGE_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build and push id
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: build/id/Dockerfile
+          tags: |
+            ghcr.io/${{ secrets.IMAGE_USER }}/id:${{ steps.meta.outputs.tag }}
+
       - name: Build and push chatbot
         uses: docker/build-push-action@v2
         with:

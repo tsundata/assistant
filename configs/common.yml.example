@@ -32,6 +32,7 @@ newrelic:
   license:
 
 svc_addr:
+  id: 127.0.0.1:6012
   chatbot: 127.0.0.1:6000
   message: 127.0.0.1:6001
   middle: 127.0.0.1:6002

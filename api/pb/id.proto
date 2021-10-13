@@ -1,0 +1,38 @@
+syntax = "proto3";
+package pb;
+
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
+
+option go_package = "api/pb";
+
+service IdSvc {
+  rpc GetGlobalId(IdRequest) returns (IdReply) {}
+}
+
+message Node {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64  id = 1;
+  // @inject_tag: db:"ip"
+  string ip = 2;
+  // @inject_tag: db:"port"
+  int64 port = 3;
+  // @inject_tag: db:"created_at"
+  int64 createdAt = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updatedAt = 5;
+}
+
+message IdRequest {
+  string ip = 1;
+  int64 port = 2;
+}
+
+message IdReply {
+  int64 id = 1;
+}

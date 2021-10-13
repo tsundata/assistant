@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bwmarrin/snowflake"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
@@ -637,19 +636,4 @@ func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 		return nil, err
 	}
 	return &pb.ChartDataReply{ChartData: &pb.ChartData{Uuid: uuid}}, nil
-}
-
-func (s *Middle) GetGlobalId(ctx context.Context, request *pb.IdRequest) (*pb.IdReply, error) {
-	node, err := s.repo.GetOrCreateNode(ctx, &pb.Node{Ip: request.Ip, Port: request.Port})
-	if err != nil {
-		return nil, err
-	}
-	if node.Id <= 0 {
-		return nil, errors.New("error node")
-	}
-	sNode, err := snowflake.NewNode(node.Id)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.IdReply{Id: sNode.Generate().Int64()}, nil
 }

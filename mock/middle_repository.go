@@ -140,21 +140,6 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(ctx, t interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByType), ctx, t)
 }
 
-// GetOrCreateNode mocks base method.
-func (m *MockMiddleRepository) GetOrCreateNode(ctx context.Context, node *pb.Node) (*pb.Node, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOrCreateNode", ctx, node)
-	ret0, _ := ret[0].(*pb.Node)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOrCreateNode indicates an expected call of GetOrCreateNode.
-func (mr *MockMiddleRepositoryMockRecorder) GetOrCreateNode(ctx, node interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrCreateNode", reflect.TypeOf((*MockMiddleRepository)(nil).GetOrCreateNode), ctx, node)
-}
-
 // GetOrCreateTag mocks base method.
 func (m *MockMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (*pb.Tag, error) {
 	m.ctrl.T.Helper()

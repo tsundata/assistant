@@ -95,6 +95,7 @@ tasks:
   mock:
     desc: Generate mock files
     cmds:
+      - mockgen -package=mock -source=./api/pb/id.pb.go -destination=./mock/id_client.go
       - mockgen -package=mock -source=./api/pb/message.pb.go -destination=./mock/message_client.go
       - mockgen -package=mock -source=./api/pb/middle.pb.go -destination=./mock/middle_client.go
       - mockgen -package=mock -source=./api/pb/nlp.pb.go -destination=./mock/nlp_client.go
@@ -104,6 +105,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/chatbot.pb.go -destination=./mock/chatbot_client.go
       - mockgen -package=mock -source=./api/pb/org.pb.go -destination=./mock/org_client.go
       - mockgen -package=mock -source=./api/pb/finance.pb.go -destination=./mock/finance_client.go
+      - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
       - mockgen -package=mock -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_repository.go
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
@@ -116,3 +118,8 @@ tasks:
     desc: Generate Swagger docs
     cmds:
       - swag init --dir ./cmd/gateway --parseDependency --parseDepth 2
+
+  migrate:
+    desc: Database migration
+    cmds:
+      - go run github.com/tsundata/assistant/cmd/cli migrate
