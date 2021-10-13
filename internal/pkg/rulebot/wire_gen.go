@@ -21,18 +21,14 @@ import (
 // Injectors from wire.go:
 
 func CreateRuleBot(id string) (*RuleBot, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig, app)
+	client, err := redis.New(appConfig, app)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +85,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	iComponent := NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
+	iComponent := NewComponent(appConfig, client, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
 	ruleBot := New(iComponent)
 	return ruleBot, nil
 }

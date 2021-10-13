@@ -17,11 +17,7 @@ import (
 // Injectors from wire.go:
 
 func CreateQueueServer(id string) (*machinery.Server, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	server, err := New(appConfig)
 	if err != nil {
 		return nil, err

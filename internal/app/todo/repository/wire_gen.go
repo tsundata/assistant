@@ -18,11 +18,7 @@ import (
 // Injectors from wire.go:
 
 func CreateTodoRepository(id string) (TodoRepository, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err

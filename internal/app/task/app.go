@@ -22,7 +22,7 @@ func NewApp(
 	message pb.MessageSvcClient,
 	workflow pb.WorkflowSvcClient) (*app.Application, error) {
 
-	a, err := app.New(c, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

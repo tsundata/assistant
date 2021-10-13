@@ -21,11 +21,7 @@ import (
 // Injectors from wire.go:
 
 func CreateMessageRepository(id string) (MessageRepository, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -45,11 +41,11 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	client, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	idSvcClient, err := rpcclient.NewIdClient(client)
 	if err != nil {
 		return nil, err
 	}

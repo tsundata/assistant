@@ -28,11 +28,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -51,6 +47,10 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	serviceTask := service.NewTask(server)
 	initServer := service.CreateInitServerFn(serviceTask)
+	rpcServer, err := rpc.NewServer(appConfig, initServer)
+	if err != nil {
+		return nil, err
+	}
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -59,27 +59,19 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	rpcServer, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
 	clientOptions, err := rpc.NewClientOptions(tracer)
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	client, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(client)
 	if err != nil {
 		return nil, err
 	}
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(client)
 	if err != nil {
 		return nil, err
 	}

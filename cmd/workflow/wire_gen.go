@@ -29,11 +29,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -46,7 +42,7 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
-	redisClient, err := redis.New(appConfig, newrelicApp)
+	client, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -79,13 +75,13 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceWorkflow := service.NewWorkflow(bus, redisClient, workflowRepository, messageSvcClient, middleSvcClient, logLogger)
+	serviceWorkflow := service.NewWorkflow(bus, client, workflowRepository, messageSvcClient, middleSvcClient, logLogger)
 	initServer := service.CreateInitServerFn(serviceWorkflow)
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
+	server, err := rpc.NewServer(appConfig, initServer)
 	if err != nil {
 		return nil, err
 	}
-	application, err := workflow.NewApp(appConfig, bus, logLogger, server, redisClient, middleSvcClient, messageSvcClient)
+	application, err := workflow.NewApp(appConfig, bus, logLogger, server, client, middleSvcClient, messageSvcClient)
 	if err != nil {
 		return nil, err
 	}

@@ -2,37 +2,29 @@ package rpc
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
-	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
-	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/log"
-	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 	"net"
 )
 
 type Server struct {
 	conf   *config.AppConfig
-	logger log.Logger
 	server *grpc.Server
 }
 
 type InitServer func(s *grpc.Server)
 
-func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init InitServer, tracer opentracing.Tracer, rdb *redis.Client, nc *newrelic.App) (*Server, error) {
+func NewServer(opt *config.AppConfig, init InitServer) (*Server, error) {
 	// recovery
 	recoveryOpts := []grpcrecovery.Option{
 		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -45,20 +37,12 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 			grpcmiddleware.ChainStreamServer(
 				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
 				rollbar.StreamServerInterceptor(),
-				grpc_zap.StreamServerInterceptor(z),
-				otgrpc.OpenTracingStreamServerInterceptor(tracer),
-				redisMiddle.StatsStreamServerInterceptor(rdb),
-				nrgrpc.StreamServerInterceptor(nc.Application()),
 			),
 		),
 		grpc.UnaryInterceptor(
 			grpcmiddleware.ChainUnaryServer(
 				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
 				rollbar.UnaryServerInterceptor(),
-				grpc_zap.UnaryServerInterceptor(z),
-				otgrpc.OpenTracingServerInterceptor(tracer),
-				redisMiddle.StatsUnaryServerInterceptor(rdb),
-				nrgrpc.UnaryServerInterceptor(nc.Application()),
 			),
 		),
 	)
@@ -66,7 +50,6 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 
 	return &Server{
 		conf:   opt,
-		logger: logger,
 		server: gs,
 	}, nil
 }
@@ -87,18 +70,18 @@ func (s *Server) Start() error {
 	}
 
 	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
-	s.logger.Info("rpc server starting ... ", zap.String("addr", addr), zap.String("uuid", s.conf.ID))
+	log.Println("rpc server starting ... ", zap.String("addr", addr), zap.String("uuid", s.conf.ID))
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		s.logger.Error(err)
+		log.Println(err)
 		return err
 	}
 
 	go func() {
 		err = s.server.Serve(lis)
 		if err != nil {
-			s.logger.Fatal(err)
+			log.Fatal(err)
 		}
 	}()
 
@@ -110,7 +93,7 @@ func (s *Server) Register(f func(gs *grpc.Server) error) error {
 }
 
 func (s *Server) Stop() error {
-	s.logger.Info("grpc server stopping ...")
+	log.Println("grpc server stopping ...")
 	s.server.GracefulStop()
 	return nil
 }

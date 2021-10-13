@@ -29,11 +29,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -62,26 +58,22 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	client, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	idSvcClient, err := rpcclient.NewIdClient(client)
 	if err != nil {
 		return nil, err
 	}
 	messageRepository := repository.NewMysqlMessageRepository(appConfig, mysqlConn, idSvcClient)
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(client)
 	if err != nil {
 		return nil, err
 	}
 	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
+	server, err := rpc.NewServer(appConfig, initServer)
 	if err != nil {
 		return nil, err
 	}

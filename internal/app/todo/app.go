@@ -9,7 +9,7 @@ import (
 )
 
 func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server) (*app.Application, error) {
-	a, err := app.New(c, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

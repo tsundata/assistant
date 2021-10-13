@@ -24,18 +24,14 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
+	client, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +60,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, logLogger, middleSvcClient, messageSvcClient)
+	application, err := spider.NewApp(appConfig, client, logLogger, middleSvcClient, messageSvcClient)
 	if err != nil {
 		return nil, err
 	}

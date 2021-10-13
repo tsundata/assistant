@@ -17,11 +17,7 @@ import (
 // Injectors from wire.go:
 
 func CreateNats(id string) (*nats.Conn, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats2.New(appConfig)
 	if err != nil {
 		return nil, err

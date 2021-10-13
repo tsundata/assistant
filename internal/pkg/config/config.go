@@ -44,16 +44,17 @@ type AppConfig struct {
 	config.ConfYaml
 }
 
-func NewConfig(id string, kv *etcd.Client) *AppConfig {
+func NewConfig(id string) *AppConfig {
 	var xc AppConfig
-	xc.kv = kv
 	xc.Name = id
 
 	uuid := util.UUID()
 	xc.ID = uuid
 
-	xc.readConfig()
-	go xc.watch()
+	xc.Rpc = Rpc{
+		Host: "0.0.0.0",
+		Port: 6012,
+	}
 
 	return &xc
 }

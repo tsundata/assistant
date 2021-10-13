@@ -20,7 +20,7 @@ func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Serve
 		return nil, err
 	}
 
-	a, err := app.New(c, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

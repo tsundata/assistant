@@ -26,11 +26,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
@@ -38,12 +34,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
+	client, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
 	gatewayClient := sdk.NewGatewayClient(appConfig)
-	webController := controller.NewWebController(appConfig, redisClient, logLogger, gatewayClient)
+	webController := controller.NewWebController(appConfig, client, logLogger, gatewayClient)
 	v := controller.CreateInitControllersFn(webController)
 	server, err := http.New(appConfig, v, logLogger)
 	if err != nil {

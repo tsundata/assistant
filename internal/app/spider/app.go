@@ -32,7 +32,7 @@ func NewApp(
 		s.Daemon()
 	}()
 
-	a, err := app.New(c, logger)
+	a, err := app.New(c)
 	if err != nil {
 		return nil, err
 	}

@@ -8,60 +8,24 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/id"
-	"github.com/tsundata/assistant/internal/app/id/repository"
 	"github.com/tsundata/assistant/internal/app/id/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
-	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
-	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
-	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
-	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
 // Injectors from wire.go:
 
 func CreateApp(id2 string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id2, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
-	logLogger := log.NewAppLogger(logger)
-	conn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	idRepository := repository.NewMysqlMiddleRepository(conn)
-	serviceId := service.NewId(idRepository)
+	appConfig := config.NewConfig(id2)
+	serviceId := service.NewId()
 	initServer := service.CreateInitServerFn(serviceId)
-	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
+	server, err := rpc.NewServer(appConfig, initServer)
 	if err != nil {
 		return nil, err
 	}
-	tracer, err := jaeger.New(configuration)
-	if err != nil {
-		return nil, err
-	}
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	application, err := id.NewApp(appConfig, logLogger, server)
+	application, err := id.NewApp(appConfig, server)
 	if err != nil {
 		return nil, err
 	}
@@ -70,4 +34,4 @@ func CreateApp(id2 string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, id.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, newrelic.ProviderSet, repository.ProviderSet, mysql.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, jaeger.ProviderSet, rpc.ProviderSet, id.ProviderSet, service.ProviderSet)

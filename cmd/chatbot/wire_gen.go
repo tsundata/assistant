@@ -30,11 +30,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -64,15 +60,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	client, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(client)
 	if err != nil {
 		return nil, err
 	}
-	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
+	todoSvcClient, err := rpcclient.NewTodoClient(client)
 	if err != nil {
 		return nil, err
 	}
@@ -80,31 +76,31 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
+	messageSvcClient, err := rpcclient.NewMessageClient(client)
 	if err != nil {
 		return nil, err
 	}
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	workflowSvcClient, err := rpcclient.NewWorkflowClient(client)
 	if err != nil {
 		return nil, err
 	}
-	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(client)
 	if err != nil {
 		return nil, err
 	}
-	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
+	userSvcClient, err := rpcclient.NewUserClient(client)
 	if err != nil {
 		return nil, err
 	}
-	nlpSvcClient, err := rpcclient.NewNLPClient(rpcClient)
+	nlpSvcClient, err := rpcclient.NewNLPClient(client)
 	if err != nil {
 		return nil, err
 	}
-	orgSvcClient, err := rpcclient.NewOrgClient(rpcClient)
+	orgSvcClient, err := rpcclient.NewOrgClient(client)
 	if err != nil {
 		return nil, err
 	}
-	financeSvcClient, err := rpcclient.NewFinanceClient(rpcClient)
+	financeSvcClient, err := rpcclient.NewFinanceClient(client)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +108,7 @@ func CreateApp(id string) (*app.Application, error) {
 	ruleBot := rulebot.New(iComponent)
 	serviceChatbot := service.NewChatbot(logLogger, chatbotRepository, middleSvcClient, todoSvcClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
+	server, err := rpc.NewServer(appConfig, initServer)
 	if err != nil {
 		return nil, err
 	}

@@ -27,11 +27,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
@@ -52,25 +48,17 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	client, err := rpc.NewClient(clientOptions, appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
-	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(client)
 	if err != nil {
 		return nil, err
 	}
 	serviceOrg := service.NewOrg(orgRepository, middleSvcClient)
 	initServer := service.CreateInitServerFn(serviceOrg)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
+	server, err := rpc.NewServer(appConfig, initServer)
 	if err != nil {
 		return nil, err
 	}

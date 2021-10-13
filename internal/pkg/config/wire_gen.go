@@ -13,11 +13,7 @@ import (
 // Injectors from wire.go:
 
 func CreateAppConfig(id string) (*AppConfig, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := NewConfig(id, client)
+	appConfig := NewConfig(id)
 	return appConfig, nil
 }
 

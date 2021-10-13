@@ -20,7 +20,7 @@ func NewApp(c *config.AppConfig, logger log.Logger, bot *rulebot.RuleBot) (*app.
 		logger.Info("start cron rule bot")
 	}()
 
-	a, err := app.New(c, logger)
+	a, err := app.New(c)
 	if err != nil {
 		return nil, err
 	}

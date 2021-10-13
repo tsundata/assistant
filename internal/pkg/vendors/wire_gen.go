@@ -19,22 +19,18 @@ import (
 // Injectors from wire.go:
 
 func CreateRedisClient(id string) (*redis.Client, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
-	redisClient, err := redis2.New(appConfig, app)
+	client, err := redis2.New(appConfig, app)
 	if err != nil {
 		return nil, err
 	}
-	return redisClient, nil
+	return client, nil
 }
 
 // wire.go:

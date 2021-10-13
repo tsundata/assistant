@@ -26,7 +26,7 @@ func NewApp(
 		return nil, err
 	}
 
-	a, err := app.New(c, logger, app.RPCServerOption(rs))
+	a, err := app.New(c, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

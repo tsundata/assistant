@@ -29,11 +29,7 @@ import (
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
-	client, err := etcd.New()
-	if err != nil {
-		return nil, err
-	}
-	appConfig := config.NewConfig(id, client)
+	appConfig := config.NewConfig(id)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -46,7 +42,7 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
-	redisClient, err := redis.New(appConfig, newrelicApp)
+	client, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -55,17 +51,17 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	userRepository := repository.NewMysqlUserRepository(logLogger, mysqlConn)
-	serviceUser := service.NewUser(appConfig, logLogger, redisClient, userRepository)
+	serviceUser := service.NewUser(appConfig, logLogger, client, userRepository)
 	initServer := service.CreateInitServerFn(serviceUser)
+	server, err := rpc.NewServer(appConfig, initServer)
+	if err != nil {
+		return nil, err
+	}
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
 	}
 	tracer, err := jaeger.New(configuration)
-	if err != nil {
-		return nil, err
-	}
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
