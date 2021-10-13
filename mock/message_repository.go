@@ -138,6 +138,21 @@ func (mr *MockMessageRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockMessageRepository)(nil).GetGroup), ctx, id)
 }
 
+// GetGroupBySequence mocks base method.
+func (m *MockMessageRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (*pb.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(*pb.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBySequence indicates an expected call of GetGroupBySequence.
+func (mr *MockMessageRepositoryMockRecorder) GetGroupBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBySequence", reflect.TypeOf((*MockMessageRepository)(nil).GetGroupBySequence), ctx, userId, sequence)
+}
+
 // GetGroupByUUID mocks base method.
 func (m *MockMessageRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
 	m.ctrl.T.Helper()

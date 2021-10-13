@@ -59,18 +59,20 @@ message Message {
 message Group {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 2;
   // @inject_tag: db:"uuid"
-  string uuid = 2;
+  string uuid = 3;
   // @inject_tag: db:"user_id"
-  int64 user_id = 3;
+  int64 user_id = 4;
   // @inject_tag: db:"name"
-  string name = 4;
+  string name = 5;
   // @inject_tag: db:"avatar"
-  string avatar = 5;
+  string avatar = 6;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 6;
+  int64 createdAt = 7;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 7;
+  int64 updatedAt = 8;
 }
 
 message Action {

@@ -68,11 +68,12 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
+	locker := global.NewLocker(client)
 	mysqlConn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := repository.NewMysqlMessageRepository(globalID, mysqlConn)
+	messageRepository := repository.NewMysqlMessageRepository(globalID, locker, mysqlConn)
 	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
 	if err != nil {
 		return nil, err

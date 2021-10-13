@@ -51,11 +51,12 @@ func CreateMessageRepository(id string) (MessageRepository, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
+	locker := global.NewLocker(client)
 	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := NewMysqlMessageRepository(globalID, conn)
+	messageRepository := NewMysqlMessageRepository(globalID, locker, conn)
 	return messageRepository, nil
 }
 

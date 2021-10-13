@@ -10,7 +10,7 @@ import (
 )
 
 type Client struct {
-	cli *clientv3.Client
+	*clientv3.Client
 }
 
 func New() (*Client, error) {
@@ -29,15 +29,15 @@ func New() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{cli: cli}, nil
+	return &Client{cli}, nil
 }
 
 func (c *Client) Put(ctx context.Context, key, val string, opts ...clientv3.OpOption) (*clientv3.PutResponse, error) {
-	return c.cli.Put(ctx, key, val, opts...)
+	return c.Client.Put(ctx, key, val, opts...)
 }
 
 func (c *Client) Get(ctx context.Context, key string, opts ...clientv3.OpOption) (*clientv3.GetResponse, error) {
-	return c.cli.Get(ctx, key, opts...)
+	return c.Client.Get(ctx, key, opts...)
 }
 
 var ProviderSet = wire.NewSet(New)

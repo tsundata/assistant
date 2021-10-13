@@ -66,9 +66,6 @@ func TestMessageRepository_GetByID(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"id=1", sto, args{id: 1}, true},//todo
-		{"id=2", sto, args{id: 2}, true},//todo
-		{"id=3", sto, args{id: 3}, true},//todo
 		{"id=99999", sto, args{id: 99999}, true},
 	}
 	for _, tt := range tests {
@@ -236,16 +233,13 @@ func TestMessageRepository_GetGroup(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"id=1", sto, args{id: 1}, true},//todo
-		{"id=2", sto, args{id: 2}, true},//todo
-		{"id=3", sto, args{id: 3}, true},//todo
 		{"id=99999", sto, args{id: 99999}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetGroup(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("MessageRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("MessageRepository.GetGroup() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
@@ -277,6 +271,38 @@ func TestMessageRepository_GetGroupByUUID(t *testing.T) {
 			_, err := tt.r.GetGroupByUUID(context.Background(), tt.args.uuid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MessageRepository.GetGroupByUUID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestMessageRepository_GetGroupBySequence(t *testing.T) {
+	sto, err := CreateMessageRepository(enum.Message)
+	if err != nil {
+		t.Fatalf("create message Repository error, %+v", err)
+	}
+
+	type args struct {
+		userId   int64
+		sequence int64
+	}
+	tests := []struct {
+		name    string
+		r       MessageRepository
+		args    args
+		wantErr bool
+	}{
+		{"id=1", sto, args{userId: 1, sequence: 1}, false},
+		{"id=2", sto, args{userId: 1, sequence: 2}, false},
+		{"id=3", sto, args{userId: 1, sequence: 3}, false},
+		{"id=99999", sto, args{userId: 1, sequence: 99999}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetGroupBySequence(context.Background(), tt.args.userId, tt.args.sequence)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MessageRepository.GetGroupBySequence() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

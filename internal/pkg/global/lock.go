@@ -3,7 +3,7 @@ package global
 import (
 	"context"
 	"github.com/pkg/errors"
-	"go.etcd.io/etcd/client/v3"
+	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"go.etcd.io/etcd/client/v3/concurrency"
 	"strings"
 	"sync"
@@ -11,11 +11,11 @@ import (
 )
 
 type Locker struct {
-	client *clientv3.Client
+	client *etcd.Client
 	op     *Operation
 }
 
-func NewLocker(client *clientv3.Client) *Locker {
+func NewLocker(client *etcd.Client) *Locker {
 	return &Locker{client: client, op: &Operation{
 		AcquireTimeout: 5 * time.Second,
 		TTL:            10 * time.Second,
@@ -61,7 +61,7 @@ func (l *Locker) Acquire(key string, opts ...LockerOpt) (*Lock, error) {
 	}
 
 	ttl := int(op.TTL / time.Second)
-	session, err := concurrency.NewSession(l.client, concurrency.WithTTL(ttl))
+	session, err := concurrency.NewSession(l.client.Client, concurrency.WithTTL(ttl))
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,9 @@ func (l *Lock) Release() error {
 	l.Lock()
 	defer l.Unlock()
 
-	defer l.session.Close()
+	defer func() {
+		_ = l.session.Close()
+	}()
 	return l.mutex.Unlock(context.Background())
 }
 
