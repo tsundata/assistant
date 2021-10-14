@@ -1,0 +1,4 @@
+version: v1
+directories:
+  - api/pb
+  - vendor/github.com/gogo/protobuf

@@ -17,7 +17,7 @@ message FileRequest {
 }
 
 message FileInfo {
-  string fileType = 1;
+  string file_type = 1;
 }
 
 message FileReply {

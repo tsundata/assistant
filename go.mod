@@ -11,7 +11,7 @@ require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/arsmn/fiber-swagger/v2 v2.17.0
-	github.com/bwmarrin/snowflake v0.3.0 // indirect
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/fasthttp/websocket v1.4.3 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
@@ -76,6 +76,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.6 // indirect
 	google.golang.org/grpc v1.40.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15

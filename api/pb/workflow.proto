@@ -51,13 +51,13 @@ message Trigger {
   // @inject_tag: db:"when"
   string when = 6;
   // @inject_tag: db:"message_id"
-  int64 messageId = 7;
+  int64 message_id = 7;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 8;
+  int64 created_at = 8;
 }
 
 message TriggerInfo {
-  string messageText = 9;
+  string message_text = 9;
   string header = 10;
   string body = 11;
 }

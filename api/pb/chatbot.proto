@@ -41,9 +41,9 @@ message Bot {
   // @inject_tag: db:"avatar"
   string avatar = 5;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 6;
+  int64 created_at = 6;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 7;
+  int64 updated_at = 7;
 }
 
 message BotRequest {

@@ -5,8 +5,8 @@ create table if not exists `apps`
     `type`       varchar(12)         NOT NULL DEFAULT '',
     `token`      varchar(256)        NOT NULL DEFAULT '',
     `extra`      varchar(2048)       NOT NULL DEFAULT '',
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -18,8 +18,8 @@ create table if not exists `credentials`
     `name`       varchar(16)         NOT NULL DEFAULT '',
     `type`       varchar(12)         NOT NULL DEFAULT '',
     `content`    varchar(2048)       NOT NULL DEFAULT '',
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `name` (`name`)
 ) ENGINE = InnoDB
@@ -33,8 +33,8 @@ create table if not exists `messages`
     `type`       varchar(12)         NOT NULL DEFAULT '',
     `channel`    varchar(20)         NOT NULL DEFAULT '',
     `text`       varchar(2048)       NOT NULL DEFAULT '',
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
@@ -48,8 +48,8 @@ create table if not exists `pages`
     `type`       varchar(10)         NOT NULL DEFAULT '',
     `title`      varchar(256)        NOT NULL DEFAULT '',
     `content`    text                NOT NULL,
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE = InnoDB
@@ -64,8 +64,8 @@ create table if not exists `triggers`
     `flag`       varchar(128)        NOT NULL DEFAULT '',
     `secret`     varchar(128)        NOT NULL DEFAULT '',
     `when`       varchar(128)        NOT NULL DEFAULT '',
-    `message_id` int(11)             NOT NULL,
-    `created_at` int(11)             NOT NULL DEFAULT '0',
+    `message_id` INT(10)             NOT NULL,
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -77,15 +77,15 @@ create table if not exists `todos`
     `content`           VARCHAR(1024)       NOT NULL DEFAULT '',
     `priority`          TINYINT(4)          NOT NULL DEFAULT '0',
     `is_remind_at_time` TINYINT(4)          NOT NULL DEFAULT '0',
-    `remind_at`         int(11)             NOT NULL DEFAULT '0',
+    `remind_at`         INT(10)             NOT NULL DEFAULT '0',
     `repeat_method`     VARCHAR(50)         NOT NULL,
     `repeat_rule`       VARCHAR(256)        NOT NULL DEFAULT '',
-    `repeat_end_at`     int(11)             NOT NULL DEFAULT '0',
+    `repeat_end_at`     INT(10)             NOT NULL DEFAULT '0',
     `category`          VARCHAR(50)         NOT NULL,
     `remark`            VARCHAR(1024)       NOT NULL,
     `complete`          TINYINT(4)          NOT NULL DEFAULT '0',
-    `created_at`        int(11)             NOT NULL DEFAULT '0',
-    `updated_at`        int(11)             NOT NULL DEFAULT '0',
+    `created_at`        INT(10)             NOT NULL DEFAULT '0',
+    `updated_at`        INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -96,16 +96,16 @@ create table if not exists `roles`
     `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     INT(10)             NOT NULL,
     `profession`  VARCHAR(50)         NOT NULL,
-    `exp`         INT(11)             NOT NULL DEFAULT '0',
-    `level`       INT(11)             NOT NULL DEFAULT '1',
-    `strength`    INT(11)             NOT NULL DEFAULT '0',
-    `culture`     INT(11)             NOT NULL DEFAULT '0',
-    `environment` INT(11)             NOT NULL DEFAULT '0',
-    `charisma`    INT(11)             NOT NULL DEFAULT '0',
-    `talent`      INT(11)             NOT NULL DEFAULT '0',
-    `intellect`   INT(11)             NOT NULL DEFAULT '0',
-    `created_at`  int(11)             NOT NULL DEFAULT '0',
-    `updated_at`  int(11)             NOT NULL DEFAULT '0',
+    `exp`         INT(10)             NOT NULL DEFAULT '0',
+    `level`       INT(10)             NOT NULL DEFAULT '1',
+    `strength`    INT(10)             NOT NULL DEFAULT '0',
+    `culture`     INT(10)             NOT NULL DEFAULT '0',
+    `environment` INT(10)             NOT NULL DEFAULT '0',
+    `charisma`    INT(10)             NOT NULL DEFAULT '0',
+    `talent`      INT(10)             NOT NULL DEFAULT '0',
+    `intellect`   INT(10)             NOT NULL DEFAULT '0',
+    `created_at`  INT(10)             NOT NULL DEFAULT '0',
+    `updated_at`  INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE
 )
     ENGINE = InnoDB
@@ -121,16 +121,16 @@ create table if not exists `role_records`
     `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     INT(10)             NOT NULL,
     `profession`  VARCHAR(50)         NOT NULL,
-    `exp`         INT(11)             NOT NULL DEFAULT '0',
-    `level`       INT(11)             NOT NULL DEFAULT '0',
-    `strength`    INT(11)             NOT NULL DEFAULT '0',
-    `culture`     INT(11)             NOT NULL DEFAULT '0',
-    `environment` INT(11)             NOT NULL DEFAULT '0',
-    `charisma`    INT(11)             NOT NULL DEFAULT '0',
-    `talent`      INT(11)             NOT NULL DEFAULT '0',
-    `intellect`   INT(11)             NOT NULL DEFAULT '0',
-    `created_at`  int(11)             NOT NULL DEFAULT '0',
-    `updated_at`  int(11)             NOT NULL DEFAULT '0',
+    `exp`         INT(10)             NOT NULL DEFAULT '0',
+    `level`       INT(10)             NOT NULL DEFAULT '0',
+    `strength`    INT(10)             NOT NULL DEFAULT '0',
+    `culture`     INT(10)             NOT NULL DEFAULT '0',
+    `environment` INT(10)             NOT NULL DEFAULT '0',
+    `charisma`    INT(10)             NOT NULL DEFAULT '0',
+    `talent`      INT(10)             NOT NULL DEFAULT '0',
+    `intellect`   INT(10)             NOT NULL DEFAULT '0',
+    `created_at`  INT(10)             NOT NULL DEFAULT '0',
+    `updated_at`  INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE
 )
     ENGINE = InnoDB
@@ -151,8 +151,8 @@ create table if not exists `users`
     `nickname`   VARCHAR(50)         NOT NULL DEFAULT '',
     `mobile`     VARCHAR(50)         NOT NULL DEFAULT '',
     `remark`     VARCHAR(50)         NOT NULL DEFAULT '',
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE
 )
     ENGINE = InnoDB
@@ -168,9 +168,9 @@ create table if not exists `objectives`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`       varchar(50)         NOT NULL DEFAULT '',
-    `tag_id`     int(11)             NOT NULL,
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `tag_id`     INT(10)             NOT NULL,
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -179,12 +179,12 @@ create table if not exists `objectives`
 create table if not exists `key_results`
 (
     `id`           BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `objective_id` int(11)             NOT NULL,
+    `objective_id` INT(10)             NOT NULL,
     `name`         varchar(50)         NOT NULL DEFAULT '',
-    `tag_id`       int(11)             NOT NULL,
+    `tag_id`       INT(10)             NOT NULL,
     `complete`     TINYINT(4)          NOT NULL DEFAULT '0',
-    `created_at`   int(11)             NOT NULL DEFAULT '0',
-    `updated_at`   int(11)             NOT NULL DEFAULT '0',
+    `created_at`   INT(10)             NOT NULL DEFAULT '0',
+    `updated_at`   INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -194,8 +194,8 @@ create table if not exists `tags`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`       varchar(50)         NOT NULL DEFAULT '',
-    `created_at` int(11)             NOT NULL DEFAULT '0',
-    `updated_at` int(11)             NOT NULL DEFAULT '0',
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

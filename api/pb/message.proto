@@ -51,9 +51,9 @@ message Message {
   // @inject_tag: db:"channel"
   string channel = 5;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 6;
+  int64 created_at = 6;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 7;
+  int64 updated_at = 7;
 }
 
 message Group {
@@ -70,9 +70,9 @@ message Group {
   // @inject_tag: db:"avatar"
   string avatar = 6;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 7;
+  int64 created_at = 7;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 8;
+  int64 updated_at = 8;
 }
 
 message Action {
@@ -89,12 +89,12 @@ message Alert {
   string body = 2;
   string subtitle = 3;
   string action = 4;
-  string actionLocKey = 5;
-  string launchImage = 6;
-  string locKey = 7;
-  string titleLocKey = 8;
-  repeated string locArgs = 9;
-  repeated string titleLocArgs = 10;
+  string action_loc_key = 5;
+  string launch_image = 6;
+  string loc_key = 7;
+  string title_loc_key = 8;
+  repeated string loc_args = 9;
+  repeated string title_loc_args = 10;
 }
 
 message Notification {
@@ -108,13 +108,14 @@ message Notification {
   string category = 8;
   Alert alert = 9;
   string sound = 10;
-  bool contentAvailable = 11;
-  string threadID = 12;
-  bool mutableContent = 13;
+  bool content_available = 11;
+  string thread_id = 12;
+  bool mutable_content = 13;
   string image = 15;
   enum Priority {
-    Normal = 0;
-    High = 1;
+    PRIORITY_UNSPECIFIED = 0;
+    PRIORITY_NORMAL = 1;
+    PRIORITY_HIGH = 2;
   }
   Priority priority = 16;
 }

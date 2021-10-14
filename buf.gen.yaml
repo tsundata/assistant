@@ -1,0 +1,6 @@
+version: v1
+plugins:
+  - name: gogo
+    out: ./
+  - name: go-grpc
+    out: ./

@@ -4,13 +4,9 @@
 package pb
 
 import (
-	context "context"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -31,11 +27,11 @@ type Objective struct {
 	// @inject_tag: db:"name"
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" db:"name"`
 	// @inject_tag: db:"tag_id"
-	TagId int64 `protobuf:"varint,4,opt,name=tagId,proto3" json:"tagId,omitempty" db:"tag_id"`
+	TagId int64 `protobuf:"varint,4,opt,name=tag_id,json=tagId,proto3" json:"tag_id,omitempty" db:"tag_id"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,5,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *Objective) Reset()         { *m = Objective{} }
@@ -103,15 +99,15 @@ type KeyResult struct {
 	// @inject_tag: db:"name"
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" db:"name"`
 	// @inject_tag: db:"objective_id"
-	ObjectiveId int64 `protobuf:"varint,3,opt,name=objectiveId,proto3" json:"objectiveId,omitempty" db:"objective_id"`
+	ObjectiveId int64 `protobuf:"varint,3,opt,name=objective_id,json=objectiveId,proto3" json:"objective_id,omitempty" db:"objective_id"`
 	// @inject_tag: db:"tag_id"
-	TagId int64 `protobuf:"varint,5,opt,name=tagId,proto3" json:"tagId,omitempty" db:"tag_id"`
+	TagId int64 `protobuf:"varint,5,opt,name=tag_id,json=tagId,proto3" json:"tag_id,omitempty" db:"tag_id"`
 	// @inject_tag: db:"complete"
 	Complete bool `protobuf:"varint,6,opt,name=complete,proto3" json:"complete,omitempty" db:"complete"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,7,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *KeyResult) Reset()         { *m = KeyResult{} }
@@ -301,7 +297,7 @@ func (m *ObjectivesReply) GetObjective() []*Objective {
 }
 
 type KeyResultRequest struct {
-	KeyResult *KeyResult `protobuf:"bytes,1,opt,name=keyResult,proto3" json:"keyResult,omitempty"`
+	KeyResult *KeyResult `protobuf:"bytes,1,opt,name=key_result,json=keyResult,proto3" json:"key_result,omitempty"`
 	Tag       string     `protobuf:"bytes,2,opt,name=tag,proto3" json:"tag,omitempty"`
 }
 
@@ -344,7 +340,7 @@ func (m *KeyResultRequest) GetTag() string {
 }
 
 type KeyResultReply struct {
-	KeyResult *KeyResult `protobuf:"bytes,1,opt,name=keyResult,proto3" json:"keyResult,omitempty"`
+	KeyResult *KeyResult `protobuf:"bytes,1,opt,name=key_result,json=keyResult,proto3" json:"key_result,omitempty"`
 }
 
 func (m *KeyResultReply) Reset()         { *m = KeyResultReply{} }
@@ -427,366 +423,36 @@ func init() {
 func init() { proto.RegisterFile("org.proto", fileDescriptor_ccb462779e28924f) }
 
 var fileDescriptor_ccb462779e28924f = []byte{
-	// 460 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcb, 0x6a, 0xdb, 0x40,
-	0x14, 0xd5, 0x23, 0x56, 0xad, 0x9b, 0xc6, 0x32, 0x13, 0x2d, 0x84, 0x08, 0x42, 0x08, 0x0a, 0x86,
-	0x82, 0x03, 0xe9, 0xa6, 0x29, 0x6d, 0xa1, 0x0f, 0x28, 0xa1, 0x8b, 0x10, 0x65, 0xd7, 0x9d, 0x1e,
-	0x83, 0x50, 0xeb, 0x54, 0x53, 0x69, 0x1c, 0xc8, 0xb2, 0x7f, 0xd0, 0x3f, 0xea, 0xb6, 0xcb, 0x2c,
-	0xbb, 0x0d, 0xde, 0xf4, 0x33, 0x8a, 0x46, 0xd2, 0xcc, 0x28, 0xb1, 0x63, 0x6b, 0x77, 0xe7, 0x9c,
-	0x7b, 0x2e, 0xe7, 0xdc, 0x19, 0x09, 0xcc, 0xa2, 0xcc, 0xe6, 0xa4, 0x2c, 0x68, 0x81, 0x34, 0x12,
-	0xbb, 0x10, 0x47, 0x15, 0x6e, 0xce, 0xae, 0x9d, 0x15, 0x59, 0xc1, 0xca, 0xe3, 0xba, 0x6a, 0xd0,
-	0xe0, 0xa7, 0x0a, 0xe6, 0x79, 0xfc, 0x15, 0x27, 0x34, 0xbf, 0xc6, 0x68, 0x02, 0x5a, 0x9e, 0x3a,
-	0xaa, 0xaf, 0xce, 0xf4, 0x50, 0xcb, 0x53, 0x84, 0x60, 0xef, 0x7b, 0x74, 0x85, 0x1d, 0xcd, 0x57,
-	0x67, 0x66, 0xc8, 0x6a, 0x64, 0xc3, 0x88, 0x46, 0xd9, 0x59, 0xea, 0xec, 0xb1, 0xb6, 0xe6, 0x80,
-	0x8e, 0xc0, 0x4c, 0x4a, 0x1c, 0x51, 0x9c, 0xbe, 0xa3, 0xce, 0x88, 0x31, 0x02, 0xa8, 0xd9, 0x25,
-	0x49, 0x5b, 0x76, 0xdc, 0xb0, 0x1c, 0x08, 0x7e, 0xab, 0x60, 0x7e, 0xc6, 0x37, 0x21, 0xae, 0x96,
-	0x0b, 0xba, 0x93, 0x07, 0x1f, 0xf6, 0x8b, 0xce, 0xf4, 0x59, 0xea, 0xe8, 0xac, 0x59, 0x86, 0x84,
-	0xcb, 0x91, 0xec, 0xd2, 0x85, 0x71, 0x52, 0x5c, 0x91, 0x05, 0xa6, 0xd8, 0x31, 0x7c, 0x75, 0x36,
-	0x0e, 0xf9, 0xb9, 0x9f, 0xe0, 0xc9, 0xb0, 0x04, 0x17, 0x30, 0xe5, 0x4b, 0x0c, 0xf1, 0x8f, 0x25,
-	0xae, 0x28, 0x7a, 0x0e, 0x26, 0x37, 0xc4, 0xe2, 0xec, 0x9f, 0x1c, 0xcc, 0x49, 0x3c, 0x17, 0x8d,
-	0x82, 0x47, 0x53, 0xd0, 0x69, 0x94, 0xb5, 0x19, 0xeb, 0x32, 0x78, 0x03, 0x13, 0x69, 0x24, 0x59,
-	0xdc, 0x0c, 0x1a, 0x18, 0xbc, 0x05, 0x8b, 0xe3, 0xd5, 0x5a, 0xbd, 0xfe, 0xa8, 0xfe, 0x02, 0xa6,
-	0xfc, 0x4a, 0xa4, 0x44, 0xdf, 0x3a, 0x4c, 0x36, 0x20, 0x1a, 0x05, 0xbf, 0x3e, 0x91, 0x34, 0xb2,
-	0x75, 0xb4, 0xf3, 0xc0, 0xe0, 0x25, 0x58, 0x1c, 0x6f, 0x13, 0x3d, 0x03, 0xa3, 0xec, 0xc4, 0xfa,
-	0x43, 0x71, 0x4b, 0x9e, 0xfc, 0xd3, 0xc1, 0x38, 0x2f, 0xb3, 0xcb, 0xeb, 0x04, 0x9d, 0x82, 0xf5,
-	0x81, 0xdd, 0xa9, 0x78, 0xf3, 0x76, 0x7f, 0x07, 0x4d, 0x56, 0x77, 0x52, 0xa3, 0x97, 0x34, 0xa2,
-	0xcd, 0xf2, 0x03, 0x05, 0xbd, 0x82, 0xa7, 0x9f, 0x30, 0xdd, 0xa6, 0x43, 0xf7, 0xd0, 0x46, 0xfb,
-	0x1a, 0x0e, 0x64, 0x6d, 0xb5, 0x41, 0x7c, 0xd8, 0x43, 0xab, 0x4e, 0x7d, 0x0a, 0xd6, 0x47, 0x5c,
-	0xbf, 0xd1, 0xe1, 0xa6, 0x79, 0x5e, 0xf1, 0x7d, 0xd9, 0xfd, 0x25, 0x6d, 0xc9, 0xbb, 0x4d, 0x87,
-	0xee, 0xa1, 0x72, 0x5e, 0x71, 0x5d, 0x1b, 0xc4, 0x87, 0x3d, 0xf4, 0x61, 0xde, 0xc1, 0xa6, 0xdf,
-	0x1f, 0xfd, 0xb9, 0xf3, 0xd4, 0xdb, 0x3b, 0x4f, 0xf9, 0xb5, 0xf2, 0x94, 0xdb, 0x95, 0xa7, 0xfc,
-	0x5d, 0x79, 0xca, 0x17, 0x23, 0x22, 0xf9, 0x31, 0x89, 0x63, 0x83, 0xfd, 0xf3, 0x5e, 0xfc, 0x0f,
-	0x00, 0x00, 0xff, 0xff, 0xef, 0x65, 0x33, 0x1a, 0x26, 0x05, 0x00, 0x00,
-}
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
-
-// OrgSvcClient is the client API for OrgSvc service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type OrgSvcClient interface {
-	CreateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectiveReply, error)
-	GetObjectives(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectivesReply, error)
-	DeleteObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error)
-	CreateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultReply, error)
-	GetKeyResults(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultsReply, error)
-	DeleteKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
-}
-
-type orgSvcClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewOrgSvcClient(cc *grpc.ClientConn) OrgSvcClient {
-	return &orgSvcClient{cc}
-}
-
-func (c *orgSvcClient) CreateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/CreateObjective", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) GetObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectiveReply, error) {
-	out := new(ObjectiveReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/GetObjective", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) GetObjectives(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectivesReply, error) {
-	out := new(ObjectivesReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/GetObjectives", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) DeleteObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/DeleteObjective", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) CreateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/CreateKeyResult", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) GetKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultReply, error) {
-	out := new(KeyResultReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/GetKeyResult", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) GetKeyResults(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultsReply, error) {
-	out := new(KeyResultsReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/GetKeyResults", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orgSvcClient) DeleteKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.OrgSvc/DeleteKeyResult", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// OrgSvcServer is the server API for OrgSvc service.
-type OrgSvcServer interface {
-	CreateObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
-	GetObjective(context.Context, *ObjectiveRequest) (*ObjectiveReply, error)
-	GetObjectives(context.Context, *ObjectiveRequest) (*ObjectivesReply, error)
-	DeleteObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
-	CreateKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
-	GetKeyResult(context.Context, *KeyResultRequest) (*KeyResultReply, error)
-	GetKeyResults(context.Context, *KeyResultRequest) (*KeyResultsReply, error)
-	DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
-}
-
-// UnimplementedOrgSvcServer can be embedded to have forward compatible implementations.
-type UnimplementedOrgSvcServer struct {
-}
-
-func (*UnimplementedOrgSvcServer) CreateObjective(ctx context.Context, req *ObjectiveRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateObjective not implemented")
-}
-func (*UnimplementedOrgSvcServer) GetObjective(ctx context.Context, req *ObjectiveRequest) (*ObjectiveReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetObjective not implemented")
-}
-func (*UnimplementedOrgSvcServer) GetObjectives(ctx context.Context, req *ObjectiveRequest) (*ObjectivesReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetObjectives not implemented")
-}
-func (*UnimplementedOrgSvcServer) DeleteObjective(ctx context.Context, req *ObjectiveRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteObjective not implemented")
-}
-func (*UnimplementedOrgSvcServer) CreateKeyResult(ctx context.Context, req *KeyResultRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyResult not implemented")
-}
-func (*UnimplementedOrgSvcServer) GetKeyResult(ctx context.Context, req *KeyResultRequest) (*KeyResultReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetKeyResult not implemented")
-}
-func (*UnimplementedOrgSvcServer) GetKeyResults(ctx context.Context, req *KeyResultRequest) (*KeyResultsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetKeyResults not implemented")
-}
-func (*UnimplementedOrgSvcServer) DeleteKeyResult(ctx context.Context, req *KeyResultRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteKeyResult not implemented")
-}
-
-func RegisterOrgSvcServer(s *grpc.Server, srv OrgSvcServer) {
-	s.RegisterService(&_OrgSvc_serviceDesc, srv)
-}
-
-func _OrgSvc_CreateObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ObjectiveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).CreateObjective(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/CreateObjective",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).CreateObjective(ctx, req.(*ObjectiveRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_GetObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ObjectiveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).GetObjective(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/GetObjective",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).GetObjective(ctx, req.(*ObjectiveRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_GetObjectives_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ObjectiveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).GetObjectives(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/GetObjectives",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).GetObjectives(ctx, req.(*ObjectiveRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_DeleteObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ObjectiveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).DeleteObjective(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/DeleteObjective",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).DeleteObjective(ctx, req.(*ObjectiveRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_CreateKeyResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KeyResultRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).CreateKeyResult(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/CreateKeyResult",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).CreateKeyResult(ctx, req.(*KeyResultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_GetKeyResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KeyResultRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).GetKeyResult(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/GetKeyResult",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).GetKeyResult(ctx, req.(*KeyResultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_GetKeyResults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KeyResultRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).GetKeyResults(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/GetKeyResults",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).GetKeyResults(ctx, req.(*KeyResultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrgSvc_DeleteKeyResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KeyResultRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrgSvcServer).DeleteKeyResult(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.OrgSvc/DeleteKeyResult",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrgSvcServer).DeleteKeyResult(ctx, req.(*KeyResultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _OrgSvc_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.OrgSvc",
-	HandlerType: (*OrgSvcServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateObjective",
-			Handler:    _OrgSvc_CreateObjective_Handler,
-		},
-		{
-			MethodName: "GetObjective",
-			Handler:    _OrgSvc_GetObjective_Handler,
-		},
-		{
-			MethodName: "GetObjectives",
-			Handler:    _OrgSvc_GetObjectives_Handler,
-		},
-		{
-			MethodName: "DeleteObjective",
-			Handler:    _OrgSvc_DeleteObjective_Handler,
-		},
-		{
-			MethodName: "CreateKeyResult",
-			Handler:    _OrgSvc_CreateKeyResult_Handler,
-		},
-		{
-			MethodName: "GetKeyResult",
-			Handler:    _OrgSvc_GetKeyResult_Handler,
-		},
-		{
-			MethodName: "GetKeyResults",
-			Handler:    _OrgSvc_GetKeyResults_Handler,
-		},
-		{
-			MethodName: "DeleteKeyResult",
-			Handler:    _OrgSvc_DeleteKeyResult_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "org.proto",
+	// 481 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0xf5, 0x47, 0x63, 0xe2, 0x69, 0x6b, 0x47, 0xdb, 0x20, 0x59, 0x16, 0x58, 0xc1, 0x12, 0x52,
+	0x24, 0x50, 0x2a, 0x95, 0x0b, 0x45, 0x50, 0xa9, 0x80, 0x84, 0x2a, 0x0e, 0x15, 0xee, 0x8d, 0x4b,
+	0xb4, 0xb6, 0x57, 0x96, 0x69, 0x8a, 0x17, 0x7b, 0x53, 0x29, 0x77, 0x7e, 0x00, 0xff, 0x89, 0x0b,
+	0xc7, 0x1e, 0xb9, 0x46, 0xb9, 0xf0, 0x33, 0x90, 0xd7, 0xf6, 0xda, 0x4e, 0x08, 0xa9, 0x6f, 0xe3,
+	0xf7, 0xe6, 0x8d, 0xde, 0x9b, 0xd9, 0x04, 0xf4, 0x24, 0x8d, 0x26, 0x34, 0x4d, 0x58, 0x82, 0x14,
+	0xea, 0xdb, 0xe0, 0xe3, 0x8c, 0x14, 0xdf, 0xf6, 0x30, 0x4a, 0xa2, 0x84, 0x97, 0xc7, 0x79, 0x55,
+	0xa0, 0xee, 0x77, 0x19, 0xf4, 0x4b, 0xff, 0x0b, 0x09, 0x58, 0x7c, 0x4b, 0x90, 0x01, 0x4a, 0x1c,
+	0x5a, 0xf2, 0x48, 0x1e, 0xab, 0x9e, 0x12, 0x87, 0x08, 0xc1, 0xde, 0x57, 0x7c, 0x43, 0x2c, 0x65,
+	0x24, 0x8f, 0x75, 0x8f, 0xd7, 0xe8, 0x21, 0x68, 0x0c, 0x47, 0xd3, 0x38, 0xb4, 0xf6, 0x78, 0x5f,
+	0x8f, 0xe1, 0xe8, 0x22, 0x44, 0x8f, 0x01, 0x82, 0x94, 0x60, 0x46, 0xc2, 0x29, 0x66, 0x56, 0x8f,
+	0x53, 0x7a, 0x89, 0x9c, 0xb3, 0x9c, 0x9e, 0xd3, 0xb0, 0xa2, 0xfb, 0x05, 0x5d, 0x22, 0xe7, 0xcc,
+	0xfd, 0x29, 0x83, 0xfe, 0x91, 0x2c, 0x3c, 0x92, 0xcd, 0x67, 0xec, 0x5e, 0x36, 0x9e, 0xc0, 0x41,
+	0x52, 0xf9, 0xce, 0xcd, 0xa8, 0xbc, 0x7b, 0x5f, 0x60, 0x17, 0x61, 0xc3, 0x69, 0xaf, 0xe9, 0xd4,
+	0x86, 0x7e, 0x90, 0xdc, 0xd0, 0x19, 0x61, 0xc4, 0xd2, 0x46, 0xf2, 0xb8, 0xef, 0x89, 0xef, 0xb5,
+	0x14, 0x0f, 0x3a, 0xa6, 0xf8, 0x04, 0x03, 0xb1, 0x4b, 0x8f, 0x7c, 0x9b, 0x93, 0x8c, 0xa1, 0x67,
+	0xa0, 0x0b, 0x4f, 0x3c, 0xd2, 0xfe, 0xc9, 0xe1, 0x84, 0xfa, 0x93, 0xba, 0xb1, 0xe6, 0xd1, 0x00,
+	0x54, 0x86, 0xa3, 0x32, 0x67, 0x5e, 0xba, 0x6f, 0xc0, 0x68, 0x8c, 0xa4, 0xb3, 0x45, 0xa7, 0x81,
+	0xee, 0x19, 0x98, 0x02, 0xcf, 0xfe, 0xa9, 0x57, 0xff, 0xab, 0xf7, 0x60, 0x20, 0xce, 0x52, 0x25,
+	0x7a, 0x0e, 0x70, 0x4d, 0x16, 0xd3, 0x94, 0x83, 0x4d, 0x07, 0x75, 0xa7, 0x7e, 0x2d, 0x6e, 0xb9,
+	0x19, 0xe9, 0x0c, 0x8c, 0xc6, 0xcc, 0xdc, 0x52, 0xa7, 0x89, 0xee, 0x4b, 0x30, 0x05, 0x5e, 0x66,
+	0x7a, 0x0a, 0x9a, 0x10, 0xab, 0x9b, 0xe2, 0x92, 0x3c, 0xf9, 0xa3, 0x82, 0x76, 0x99, 0x46, 0x57,
+	0xb7, 0x01, 0x3a, 0x05, 0xf3, 0x1d, 0x3f, 0x6b, 0xfd, 0xf8, 0x87, 0xed, 0x2d, 0x14, 0x69, 0x6d,
+	0x23, 0x47, 0xaf, 0x18, 0x66, 0xc5, 0xfa, 0x5d, 0x09, 0xbd, 0x82, 0x83, 0x0f, 0x84, 0xed, 0xd2,
+	0xa1, 0x35, 0xb4, 0xd0, 0xbe, 0x86, 0xc3, 0xa6, 0x36, 0xdb, 0x22, 0x3e, 0x6a, 0xa1, 0x59, 0xa5,
+	0x3e, 0x05, 0xf3, 0x3d, 0xc9, 0xdf, 0x69, 0x77, 0xd3, 0x22, 0x6f, 0xfd, 0x2b, 0x1b, 0xb6, 0x97,
+	0xb4, 0x23, 0xef, 0x2e, 0x1d, 0x5a, 0x43, 0x9b, 0x79, 0xeb, 0x73, 0x6d, 0x11, 0x1f, 0xb5, 0xd0,
+	0xcd, 0xbc, 0x9d, 0x4d, 0xbf, 0x7d, 0xf4, 0x6b, 0xe9, 0xc8, 0x77, 0x4b, 0x47, 0xfa, 0xb1, 0x72,
+	0xa4, 0xbb, 0x95, 0x23, 0xfd, 0x5e, 0x39, 0xd2, 0x67, 0x0d, 0xd3, 0xf8, 0x98, 0xfa, 0xbe, 0xc6,
+	0xff, 0xfc, 0x5e, 0xfc, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xc4, 0x37, 0x7c, 0xb3, 0x2f, 0x05, 0x00,
+	0x00,
 }

@@ -23,9 +23,9 @@ message Node {
   // @inject_tag: db:"port"
   int64 port = 3;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 4;
+  int64 created_at = 4;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 5;
+  int64 updated_at = 5;
 }
 
 message IdRequest {

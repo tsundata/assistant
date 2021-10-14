@@ -46,19 +46,19 @@ message Todo {
   // @inject_tag: db:"priority"
   int64 priority = 5;
   // @inject_tag: db:"is_remind_at_time"
-  bool isRemindAtTime = 6;
+  bool is_remind_at_time = 6;
   // @inject_tag: db:"remind_at"
-  int64 remindAt = 7;
+  int64 remind_at = 7;
   // @inject_tag: db:"repeat_method"
-  string repeatMethod = 8;
+  string repeat_method = 8;
   // @inject_tag: db:"repeat_rule"
-  string repeatRule = 9;
+  string repeat_rule = 9;
   // @inject_tag: db:"repeat_end_at"
-  int64 repeatEndAt = 10;
+  int64 repeat_end_at = 10;
   // @inject_tag: db:"complete"
   bool complete = 11;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 12;
+  int64 created_at = 12;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 13;
+  int64 updated_at = 13;
 }

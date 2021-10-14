@@ -33,69 +33,69 @@ message Bill {
   string payee = 3;
   string description = 4;
   float amount = 5;
-  string createdAt = 6;
-  string updatedAt = 7;
+  string created_at = 6;
+  string updated_at = 7;
 }
 
 message BillRecord {
   int64 id = 1;
-  int64 billId = 2;
+  int64 bill_id = 2;
   string posting = 3;
   float amount = 4;
 }
 
 message Assets {
   int64 id = 1;
-  int64 accountId = 2;
+  int64 account_id = 2;
   string name = 3;
   string category = 4;
   float balance = 5;
-  string createdAt = 6;
+  string created_at = 6;
 }
 
 message Account {
   int64 id = 1;
   string name = 2;
   float balance = 3;
-  string createdAt = 4;
+  string created_at = 4;
 }
 
 message FundReply {
   string code = 1;
   string name = 2;
   string type = 3;
-  double netWorth = 4;
-  double expectWorth = 5;
-  double totalWorth = 6;
-  string expectGrowth = 7;
-  string dayGrowth = 8;
-  string lastWeekGrowth = 9;
-  string lastMonthGrowth = 10;
-  string lastThreeMonthsGrowth = 11;
-  string lastSixMonthsGrowth = 12;
-  string lastYearGrowth = 13;
-  string buyMin = 14;
-  string buySourceRate = 15;
-  string buyRate = 16;
+  double net_worth = 4;
+  double expect_worth = 5;
+  double total_worth = 6;
+  string expect_growth = 7;
+  string day_growth = 8;
+  string last_week_growth = 9;
+  string last_month_growth = 10;
+  string last_three_months_growth = 11;
+  string last_six_months_growth = 12;
+  string last_year_growth = 13;
+  string buy_min = 14;
+  string buy_source_rate = 15;
+  string buy_rate = 16;
   string manager = 17;
-  string fundScale = 18;
-  string netWorthDate = 19;
-  string expectWorthDate = 20;
-  repeated string netWorthDataDate = 21;
-  repeated double netWorthDataUnit = 22;
-  repeated double netWorthDataIncrease = 23;
-  repeated string millionCopiesIncomeDataDate = 24;
-  repeated double millionCopiesIncomeDataIncome = 25;
-  string millionCopiesIncomeDate = 26;
-  double sevenDaysYearIncome = 27;
+  string fund_scale = 18;
+  string net_worth_date = 19;
+  string expect_worth_date = 20;
+  repeated string net_worth_data_date = 21;
+  repeated double net_worth_data_unit = 22;
+  repeated double net_worth_data_increase = 23;
+  repeated string million_copies_income_data_date = 24;
+  repeated double million_copies_income_data_income = 25;
+  string million_copies_income_date = 26;
+  double seven_days_year_income = 27;
 }
 
 message StockReply {
   string code = 1;
   string name = 2;
   string type = 3;
-  string priceChange = 4;
-  string changePercent = 5;
+  string price_change = 4;
+  string change_percent = 5;
   string open = 6;
   string close = 7;
   string price = 8;
@@ -103,9 +103,9 @@ message StockReply {
   string low = 10;
   string volume = 11;
   string turnover = 12;
-  string turnoverRate = 13;
-  string totalWorth = 14;
-  string circulationWorth = 15;
+  string turnover_rate = 13;
+  string total_worth = 14;
+  string circulation_worth = 15;
   string date = 16;
   repeated string buy = 17;
   repeated string sell = 18;

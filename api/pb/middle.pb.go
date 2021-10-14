@@ -4,13 +4,9 @@
 package pb
 
 import (
-	context "context"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -107,9 +103,9 @@ type Page struct {
 	// @inject_tag: query:"type" db:"type"
 	Type string `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty" query:"type" db:"type"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *Page) Reset()         { *m = Page{} }
@@ -326,9 +322,9 @@ type App struct {
 	// @inject_tag: db:"extra"
 	Extra string `protobuf:"bytes,5,opt,name=extra,proto3" json:"extra,omitempty" db:"extra"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *App) Reset()         { *m = App{} }
@@ -406,7 +402,7 @@ func (m *App) GetUpdatedAt() int64 {
 
 type AppInfo struct {
 	Title        string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
-	IsAuthorized bool   `protobuf:"varint,9,opt,name=isAuthorized,proto3" json:"isAuthorized,omitempty"`
+	IsAuthorized bool   `protobuf:"varint,9,opt,name=is_authorized,json=isAuthorized,proto3" json:"is_authorized,omitempty"`
 }
 
 func (m *AppInfo) Reset()         { *m = AppInfo{} }
@@ -492,9 +488,9 @@ type Credential struct {
 	// @inject_tag: db:"content"
 	Content string `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty" db:"content"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,5,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,6,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *Credential) Reset()         { *m = Credential{} }
@@ -1090,9 +1086,9 @@ type Tag struct {
 	// @inject_tag: db:"name"
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" db:"name"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,3,opt,name=createdAt,proto3" json:"createdAt,omitempty" db:"created_at"`
+	CreatedAt int64 `protobuf:"varint,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,4,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" db:"updated_at"`
+	UpdatedAt int64 `protobuf:"varint,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *Tag) Reset()         { *m = Tag{} }
@@ -1258,9 +1254,9 @@ type ChartData struct {
 	// @inject_tag: query:"title" json:"title"
 	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title" query:"title"`
 	// @inject_tag: query:"sub_title" json:"sub_title"
-	SubTitle string `protobuf:"bytes,3,opt,name=subTitle,proto3" json:"sub_title" query:"sub_title"`
+	SubTitle string `protobuf:"bytes,3,opt,name=sub_title,json=subTitle,proto3" json:"sub_title" query:"sub_title"`
 	// @inject_tag: query:"x_axis" json:"x_axis"
-	XAxis []string `protobuf:"bytes,4,rep,name=xAxis,proto3" json:"x_axis" query:"x_axis"`
+	XAxis []string `protobuf:"bytes,4,rep,name=x_axis,json=xAxis,proto3" json:"x_axis" query:"x_axis"`
 	// @inject_tag: query:"series" json:"series"
 	Series []float64 `protobuf:"fixed64,5,rep,packed,name=series,proto3" json:"series" query:"series"`
 }
@@ -1325,7 +1321,7 @@ func (m *ChartData) GetSeries() []float64 {
 }
 
 type ChartDataRequest struct {
-	ChartData *ChartData `protobuf:"bytes,1,opt,name=chartData,proto3" json:"chartData,omitempty"`
+	ChartData *ChartData `protobuf:"bytes,1,opt,name=chart_data,json=chartData,proto3" json:"chart_data,omitempty"`
 }
 
 func (m *ChartDataRequest) Reset()         { *m = ChartDataRequest{} }
@@ -1360,7 +1356,7 @@ func (m *ChartDataRequest) GetChartData() *ChartData {
 }
 
 type ChartDataReply struct {
-	ChartData *ChartData `protobuf:"bytes,1,opt,name=chartData,proto3" json:"chartData,omitempty"`
+	ChartData *ChartData `protobuf:"bytes,1,opt,name=chart_data,json=chartData,proto3" json:"chart_data,omitempty"`
 }
 
 func (m *ChartDataReply) Reset()         { *m = ChartDataReply{} }
@@ -1430,1170 +1426,83 @@ func init() {
 func init() { proto.RegisterFile("middle.proto", fileDescriptor_492fc6d32fb115aa) }
 
 var fileDescriptor_492fc6d32fb115aa = []byte{
-	// 1218 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x57, 0x4d, 0x73, 0xe3, 0x44,
-	0x13, 0xb6, 0x2d, 0xdb, 0xb1, 0x3a, 0xb6, 0x93, 0xd5, 0xeb, 0x7d, 0x4b, 0x84, 0x54, 0xca, 0x4c,
-	0x15, 0x8b, 0x97, 0x64, 0x93, 0x90, 0xf0, 0xbd, 0xbb, 0x45, 0x99, 0xa4, 0x2a, 0x45, 0x85, 0xad,
-	0x80, 0x1c, 0x72, 0x80, 0xd3, 0xd8, 0x9e, 0x55, 0x54, 0x71, 0xa4, 0x41, 0x1a, 0x87, 0x84, 0x0b,
-	0x37, 0xce, 0x9c, 0xb9, 0x73, 0xe1, 0x97, 0x70, 0xdc, 0x23, 0xd7, 0xad, 0xfc, 0x11, 0x6a, 0xbe,
-	0xa4, 0x71, 0xfc, 0xb1, 0x0a, 0xdc, 0xd4, 0x3d, 0xcf, 0x33, 0xd3, 0xdd, 0xd3, 0xd3, 0x8f, 0x0d,
-	0xf5, 0xcb, 0x60, 0x38, 0x1c, 0x91, 0x6d, 0x1a, 0x47, 0x2c, 0x72, 0x4a, 0xb4, 0xbf, 0x06, 0x7d,
-	0x9c, 0x28, 0x7b, 0xad, 0xe5, 0x47, 0x7e, 0x24, 0x3e, 0x77, 0xf8, 0x97, 0xf4, 0xa2, 0x4d, 0x58,
-	0xfe, 0x06, 0xfb, 0xc4, 0x23, 0x3f, 0x8e, 0x49, 0xc2, 0x9c, 0x75, 0x28, 0x53, 0xec, 0x13, 0xb7,
-	0xd8, 0x2e, 0x76, 0x96, 0xf7, 0x6a, 0xdb, 0xb4, 0xbf, 0x2d, 0x96, 0x85, 0x17, 0x3d, 0x06, 0x5b,
-	0x82, 0xe9, 0xe8, 0xe6, 0x0d, 0xd0, 0x3f, 0x8b, 0x50, 0xe6, 0xa6, 0xd3, 0x84, 0x52, 0x30, 0x14,
-	0x20, 0xcb, 0x2b, 0x05, 0x43, 0xc7, 0x81, 0xf2, 0x78, 0x1c, 0x0c, 0xdd, 0x52, 0xbb, 0xd8, 0xb1,
-	0x3d, 0xf1, 0xed, 0xb4, 0xa0, 0xc2, 0x02, 0x36, 0x22, 0xae, 0x25, 0x9c, 0xd2, 0x70, 0x5c, 0x58,
-	0x1a, 0x44, 0x21, 0x23, 0x21, 0x73, 0xcb, 0xc2, 0xaf, 0x4d, 0xbe, 0x07, 0xbb, 0xa1, 0xc4, 0xad,
-	0xc8, 0x3d, 0xf8, 0xb7, 0xb3, 0x0e, 0xf6, 0x20, 0x26, 0x98, 0x91, 0x61, 0x97, 0xb9, 0x55, 0x71,
-	0x5c, 0xe6, 0xe0, 0xab, 0x63, 0x3a, 0x54, 0xab, 0x4b, 0x72, 0x35, 0x75, 0xa0, 0xf7, 0x00, 0xba,
-	0x94, 0xea, 0x1a, 0xbc, 0x05, 0x16, 0xa6, 0x54, 0xe5, 0xb5, 0xc4, 0xf3, 0xe2, 0x8b, 0xdc, 0x87,
-	0x3a, 0x60, 0x77, 0x29, 0x4d, 0x64, 0x01, 0xde, 0x86, 0x32, 0xa6, 0x34, 0x71, 0x8b, 0x6d, 0xcb,
-	0x04, 0x0a, 0x27, 0x7a, 0x09, 0x35, 0xb1, 0x25, 0x07, 0x3a, 0x50, 0x0e, 0xf1, 0xa5, 0xac, 0x94,
-	0xed, 0x89, 0xef, 0x34, 0x85, 0x92, 0x91, 0x02, 0x2f, 0x43, 0x74, 0x41, 0xc2, 0xb4, 0x0c, 0xdc,
-	0x70, 0xd6, 0xa1, 0x42, 0xae, 0x59, 0x8c, 0xdd, 0xb2, 0x38, 0xa7, 0xca, 0xcf, 0x39, 0x3e, 0xf3,
-	0xa4, 0x13, 0xfd, 0x51, 0x04, 0xab, 0x4b, 0xe9, 0xac, 0x32, 0x4f, 0xed, 0xaf, 0xe3, 0xb0, 0x8c,
-	0x38, 0xd2, 0x33, 0xcb, 0xe6, 0x99, 0x2d, 0x7d, 0xa6, 0xac, 0xb0, 0x34, 0xfe, 0x53, 0x89, 0x0f,
-	0x60, 0xa9, 0x4b, 0xe9, 0x57, 0xe1, 0xcb, 0x28, 0xbb, 0xed, 0x9a, 0x79, 0xdb, 0x08, 0xea, 0x41,
-	0xd2, 0x1d, 0xb3, 0xf3, 0x28, 0x0e, 0x7e, 0x26, 0x43, 0xd7, 0x6e, 0x17, 0x3b, 0x35, 0x6f, 0xc2,
-	0x87, 0x0e, 0x61, 0xf5, 0x20, 0x26, 0x43, 0x12, 0xb2, 0x00, 0x8f, 0xd4, 0x2d, 0xec, 0xc2, 0xf2,
-	0x20, 0xf3, 0xa9, 0xcb, 0x68, 0xf2, 0x22, 0x65, 0x50, 0xcf, 0x84, 0xa0, 0xdf, 0x8b, 0x00, 0xd9,
-	0xda, 0xac, 0xca, 0x89, 0x2a, 0x95, 0x66, 0xdc, 0x96, 0x65, 0x54, 0x73, 0x7e, 0x7b, 0x4e, 0xd4,
-	0xa9, 0xb2, 0xb0, 0x4e, 0xd5, 0xbb, 0x75, 0xda, 0x82, 0xfa, 0x0b, 0x9c, 0x5c, 0x04, 0xa1, 0xaf,
-	0x5f, 0x59, 0x25, 0x60, 0xe4, 0x52, 0x27, 0x96, 0xde, 0xbe, 0x70, 0xa2, 0xa7, 0xf0, 0xc0, 0xc8,
-	0x52, 0xf5, 0x6f, 0xce, 0x76, 0x43, 0x3f, 0xc0, 0x8a, 0x49, 0xbe, 0x4f, 0xa7, 0xb6, 0xb3, 0xdc,
-	0xad, 0x89, 0xb8, 0xb4, 0x1b, 0x3d, 0x81, 0x46, 0x8f, 0x30, 0x16, 0x84, 0x7e, 0x92, 0x27, 0x91,
-	0x8f, 0xa1, 0xae, 0xe0, 0x12, 0xbd, 0x0a, 0xd6, 0x05, 0xb9, 0x51, 0x71, 0xf0, 0x4f, 0xde, 0x35,
-	0x57, 0x78, 0x34, 0xd6, 0x71, 0x48, 0x03, 0xed, 0x83, 0x7d, 0x7c, 0xa6, 0x13, 0xcf, 0x4b, 0x7a,
-	0x04, 0x70, 0x7c, 0x96, 0x68, 0x96, 0x0b, 0xd6, 0xc5, 0xd5, 0xdd, 0xb0, 0xb8, 0x0b, 0x7d, 0x04,
-	0x76, 0x6f, 0xdc, 0x4f, 0x06, 0x71, 0xd0, 0x27, 0x33, 0x4b, 0xd3, 0x82, 0x4a, 0xc2, 0x30, 0x93,
-	0xdb, 0xd7, 0x3c, 0x69, 0xa0, 0x47, 0xb0, 0x9a, 0xd2, 0x8c, 0x3b, 0x61, 0xe4, 0x9a, 0x69, 0x36,
-	0xff, 0x46, 0xcf, 0xa1, 0x69, 0xe0, 0x78, 0xd6, 0x9b, 0x60, 0x27, 0xda, 0xa3, 0x02, 0x6a, 0xf0,
-	0x80, 0x32, 0x58, 0xb6, 0x8e, 0x0e, 0xa1, 0x7c, 0x10, 0x47, 0xe1, 0xbc, 0x3b, 0xfb, 0xe9, 0x9c,
-	0x84, 0xfa, 0xce, 0xf8, 0x77, 0x16, 0xac, 0x65, 0x06, 0xfb, 0x0e, 0x2c, 0xf3, 0x5d, 0x16, 0xc5,
-	0xf9, 0x18, 0x6c, 0x09, 0x51, 0x53, 0x7f, 0x10, 0x47, 0xa1, 0x8a, 0xae, 0x26, 0xdf, 0x59, 0x14,
-	0x7a, 0xc2, 0x8b, 0x08, 0x58, 0xa7, 0xd8, 0xcf, 0xf5, 0xa4, 0x26, 0x1e, 0x89, 0xb5, 0xf0, 0x91,
-	0x94, 0x67, 0xcc, 0xeb, 0x53, 0xec, 0x1b, 0xf3, 0x9a, 0x61, 0xdf, 0x9c, 0xd7, 0x7c, 0x91, 0xfb,
-	0xd0, 0xbb, 0x50, 0x13, 0x40, 0x1e, 0xf9, 0x02, 0x58, 0x07, 0xec, 0x53, 0xec, 0x67, 0x63, 0x9d,
-	0x61, 0x7f, 0x62, 0xac, 0x73, 0xa0, 0x70, 0xa2, 0x5f, 0xc0, 0x3e, 0x38, 0xc7, 0x31, 0x3b, 0xc4,
-	0x0c, 0xa7, 0x52, 0x56, 0x9c, 0x25, 0x65, 0x25, 0x73, 0xb8, 0xad, 0x41, 0x2d, 0x19, 0xf7, 0x4f,
-	0x0d, 0x8d, 0x4b, 0x6d, 0xce, 0xb8, 0xee, 0x5e, 0x07, 0x89, 0x98, 0xef, 0xb6, 0x27, 0x0d, 0xe7,
-	0xff, 0x50, 0x4d, 0x48, 0x1c, 0x90, 0xc4, 0xad, 0xb4, 0xad, 0x4e, 0xd1, 0x53, 0x16, 0xfa, 0x02,
-	0x56, 0xd3, 0x00, 0x74, 0x01, 0x36, 0xc1, 0x1e, 0x68, 0x9f, 0xca, 0x4f, 0xb4, 0x4d, 0x06, 0xcc,
-	0xd6, 0x79, 0xd7, 0x19, 0x1b, 0xa8, 0xae, 0xcb, 0x4d, 0xdf, 0xfb, 0xb5, 0x0e, 0xf6, 0x0b, 0xf1,
-	0x33, 0xa3, 0x77, 0x35, 0x70, 0xb6, 0xc5, 0x24, 0xc5, 0x8c, 0x08, 0xa9, 0x5f, 0x49, 0x7f, 0x03,
-	0xc8, 0xc0, 0xd6, 0xc4, 0x36, 0xa7, 0xe4, 0x9a, 0x89, 0x83, 0x50, 0xc1, 0xd9, 0x84, 0xa5, 0x23,
-	0xc2, 0x16, 0x80, 0xd3, 0x9f, 0x17, 0xa8, 0xe0, 0x6c, 0x41, 0xed, 0x88, 0xb0, 0x6f, 0xe3, 0xef,
-	0xe2, 0x91, 0x44, 0xcb, 0x9d, 0x16, 0x6e, 0xcd, 0xd5, 0x79, 0x0e, 0x38, 0x15, 0x6e, 0x54, 0x70,
-	0xf6, 0x60, 0x85, 0x83, 0xaf, 0x70, 0x30, 0xc2, 0xfd, 0x11, 0xe1, 0x02, 0x3a, 0x45, 0xaa, 0x6b,
-	0x41, 0x57, 0x9c, 0x0f, 0xa0, 0xd1, 0x63, 0x51, 0xcc, 0xc1, 0x27, 0x5c, 0x93, 0x9c, 0x66, 0x0a,
-	0x90, 0x04, 0x61, 0xf7, 0xf8, 0xab, 0xd2, 0x94, 0xcf, 0xa0, 0x79, 0x44, 0x98, 0x21, 0x59, 0xd3,
-	0xa7, 0xb4, 0x26, 0x95, 0x2a, 0x8d, 0xf0, 0x19, 0x3c, 0x3c, 0x22, 0x4c, 0x49, 0xc1, 0xc2, 0x1d,
-	0x56, 0xb9, 0xc3, 0xd4, 0x0c, 0x54, 0x70, 0x9e, 0x43, 0x63, 0xe2, 0x60, 0xe7, 0xe1, 0x1d, 0x41,
-	0x54, 0xdc, 0xff, 0xdd, 0x75, 0x4b, 0xfa, 0x87, 0x42, 0x67, 0x31, 0x23, 0xa6, 0x4c, 0xca, 0xc9,
-	0x98, 0xcc, 0xcf, 0x76, 0x1f, 0x96, 0x8f, 0x08, 0xd3, 0x53, 0x7f, 0x3a, 0xd0, 0x07, 0x82, 0x61,
-	0x8a, 0x82, 0xa8, 0x2a, 0x64, 0xa4, 0x39, 0xc9, 0x99, 0xca, 0x80, 0x0a, 0xce, 0x2e, 0x34, 0x64,
-	0x74, 0x9a, 0xd5, 0x50, 0x43, 0x7b, 0x6e, 0x64, 0xb2, 0x93, 0xb8, 0x2b, 0xc9, 0xd1, 0x49, 0x4f,
-	0xa1, 0xf1, 0x75, 0x90, 0xb0, 0x6c, 0xf4, 0xb7, 0x26, 0x67, 0xb0, 0xe2, 0x39, 0x77, 0xbc, 0x9a,
-	0xfc, 0xc0, 0x23, 0x7e, 0x90, 0x30, 0x12, 0xbf, 0x69, 0x83, 0xe9, 0x38, 0x3f, 0x81, 0xc6, 0x09,
-	0x25, 0xe1, 0xfd, 0x89, 0x9f, 0x42, 0xf3, 0x60, 0x14, 0x25, 0xe4, 0xfe, 0xcc, 0x67, 0xe0, 0xf0,
-	0xd2, 0x68, 0x20, 0x5f, 0x1b, 0x27, 0xb9, 0xd9, 0x5b, 0x50, 0xe3, 0xa5, 0x12, 0x3a, 0xb4, 0x92,
-	0x6a, 0x81, 0x59, 0xd8, 0x54, 0x39, 0xc4, 0x5d, 0xd7, 0x75, 0x6d, 0x66, 0x33, 0xa6, 0x0f, 0xd8,
-	0x06, 0xbb, 0xc7, 0x70, 0xcc, 0xf2, 0xe2, 0x9f, 0x40, 0xad, 0xc7, 0x22, 0x9a, 0x17, 0xbe, 0xa7,
-	0xde, 0x49, 0x14, 0xaa, 0xc4, 0x73, 0x70, 0x76, 0xc5, 0xa3, 0x3e, 0x89, 0x65, 0x0f, 0x0a, 0xb9,
-	0xd3, 0x1a, 0x61, 0x4e, 0x0e, 0xad, 0x3b, 0xa8, 0xe0, 0xbc, 0x2f, 0x46, 0x13, 0x57, 0x98, 0x29,
-	0x68, 0x43, 0xd9, 0xe9, 0x7b, 0xf8, 0x1c, 0xea, 0x3c, 0xa2, 0x54, 0x63, 0x5a, 0x93, 0x93, 0xd8,
-	0xec, 0xbd, 0xc9, 0x31, 0x2e, 0xb9, 0xbd, 0x7f, 0xcb, 0xdd, 0x11, 0x8f, 0x57, 0xb8, 0x73, 0xcd,
-	0xdb, 0x2f, 0xd7, 0xff, 0x7a, 0xbd, 0x51, 0x7c, 0xf5, 0x7a, 0xa3, 0xf0, 0xdb, 0xed, 0x46, 0xe1,
-	0xd5, 0xed, 0x46, 0xe1, 0xef, 0xdb, 0x8d, 0xc2, 0xf7, 0x55, 0x4c, 0x83, 0x1d, 0xda, 0xef, 0x57,
-	0xc5, 0xbf, 0xcb, 0xfd, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x88, 0xce, 0xaf, 0x2a, 0x93, 0x0e,
-	0x00, 0x00,
-}
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
-
-// MiddleSvcClient is the client API for MiddleSvc service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type MiddleSvcClient interface {
-	CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TextReply, error)
-	GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageReply, error)
-	GetQrUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
-	GetApps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error)
-	GetAvailableApp(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppReply, error)
-	StoreAppOAuth(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*CredentialsReply, error)
-	GetMaskingCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MaskingReply, error)
-	GetCredential(ctx context.Context, in *CredentialRequest, opts ...grpc.CallOption) (*CredentialReply, error)
-	CreateCredential(ctx context.Context, in *KVsRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetSettings(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingsReply, error)
-	GetSetting(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingReply, error)
-	CreateSetting(ctx context.Context, in *KVRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetStats(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
-	ListSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeReply, error)
-	RegisterSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
-	OpenSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
-	CloseSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetSubscribeStatus(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
-	ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error)
-	RegisterCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
-	StartCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
-	StopCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetCronStatus(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetOrCreateTag(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagReply, error)
-	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagsReply, error)
-	GetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error)
-	SetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error)
-	GetChartUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
-}
-
-type middleSvcClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewMiddleSvcClient(cc *grpc.ClientConn) MiddleSvcClient {
-	return &middleSvcClient{cc}
-}
-
-func (c *middleSvcClient) CreatePage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TextReply, error) {
-	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CreatePage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageReply, error) {
-	out := new(PageReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetPage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetQrUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
-	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetQrUrl", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetApps(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppsReply, error) {
-	out := new(AppsReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetApps", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetAvailableApp(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*AppReply, error) {
-	out := new(AppReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetAvailableApp", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) StoreAppOAuth(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/StoreAppOAuth", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*CredentialsReply, error) {
-	out := new(CredentialsReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCredentials", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetMaskingCredentials(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MaskingReply, error) {
-	out := new(MaskingReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetMaskingCredentials", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetCredential(ctx context.Context, in *CredentialRequest, opts ...grpc.CallOption) (*CredentialReply, error) {
-	out := new(CredentialReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCredential", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) CreateCredential(ctx context.Context, in *KVsRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CreateCredential", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetSettings(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingsReply, error) {
-	out := new(SettingsReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetSettings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetSetting(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*SettingReply, error) {
-	out := new(SettingReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) CreateSetting(ctx context.Context, in *KVRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CreateSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetStats(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
-	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetStats", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) ListSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeReply, error) {
-	out := new(SubscribeReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ListSubscribe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) RegisterSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/RegisterSubscribe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) OpenSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/OpenSubscribe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) CloseSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CloseSubscribe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetSubscribeStatus(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetSubscribeStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error) {
-	out := new(CronReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ListCron", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) RegisterCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/RegisterCron", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) StartCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/StartCron", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) StopCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/StopCron", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetCronStatus(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCronStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetOrCreateTag(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagReply, error) {
-	out := new(TagReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetOrCreateTag", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagsReply, error) {
-	out := new(TagsReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetTags", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error) {
-	out := new(ChartDataReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetChartData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) SetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error) {
-	out := new(ChartDataReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/SetChartData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *middleSvcClient) GetChartUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
-	out := new(TextReply)
-	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetChartUrl", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// MiddleSvcServer is the server API for MiddleSvc service.
-type MiddleSvcServer interface {
-	CreatePage(context.Context, *PageRequest) (*TextReply, error)
-	GetPage(context.Context, *PageRequest) (*PageReply, error)
-	GetQrUrl(context.Context, *TextRequest) (*TextReply, error)
-	GetApps(context.Context, *TextRequest) (*AppsReply, error)
-	GetAvailableApp(context.Context, *TextRequest) (*AppReply, error)
-	StoreAppOAuth(context.Context, *AppRequest) (*StateReply, error)
-	GetCredentials(context.Context, *TextRequest) (*CredentialsReply, error)
-	GetMaskingCredentials(context.Context, *TextRequest) (*MaskingReply, error)
-	GetCredential(context.Context, *CredentialRequest) (*CredentialReply, error)
-	CreateCredential(context.Context, *KVsRequest) (*StateReply, error)
-	GetSettings(context.Context, *TextRequest) (*SettingsReply, error)
-	GetSetting(context.Context, *TextRequest) (*SettingReply, error)
-	CreateSetting(context.Context, *KVRequest) (*StateReply, error)
-	GetStats(context.Context, *TextRequest) (*TextReply, error)
-	ListSubscribe(context.Context, *SubscribeRequest) (*SubscribeReply, error)
-	RegisterSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
-	OpenSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
-	CloseSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
-	GetSubscribeStatus(context.Context, *SubscribeRequest) (*StateReply, error)
-	ListCron(context.Context, *CronRequest) (*CronReply, error)
-	RegisterCron(context.Context, *CronRequest) (*StateReply, error)
-	StartCron(context.Context, *CronRequest) (*StateReply, error)
-	StopCron(context.Context, *CronRequest) (*StateReply, error)
-	GetCronStatus(context.Context, *CronRequest) (*StateReply, error)
-	GetOrCreateTag(context.Context, *TagRequest) (*TagReply, error)
-	GetTags(context.Context, *TagRequest) (*TagsReply, error)
-	GetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
-	SetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
-	GetChartUrl(context.Context, *TextRequest) (*TextReply, error)
-}
-
-// UnimplementedMiddleSvcServer can be embedded to have forward compatible implementations.
-type UnimplementedMiddleSvcServer struct {
-}
-
-func (*UnimplementedMiddleSvcServer) CreatePage(ctx context.Context, req *PageRequest) (*TextReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePage not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetPage(ctx context.Context, req *PageRequest) (*PageReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetQrUrl(ctx context.Context, req *TextRequest) (*TextReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetQrUrl not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetApps(ctx context.Context, req *TextRequest) (*AppsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetApps not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetAvailableApp(ctx context.Context, req *TextRequest) (*AppReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableApp not implemented")
-}
-func (*UnimplementedMiddleSvcServer) StoreAppOAuth(ctx context.Context, req *AppRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StoreAppOAuth not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetCredentials(ctx context.Context, req *TextRequest) (*CredentialsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCredentials not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetMaskingCredentials(ctx context.Context, req *TextRequest) (*MaskingReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMaskingCredentials not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetCredential(ctx context.Context, req *CredentialRequest) (*CredentialReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCredential not implemented")
-}
-func (*UnimplementedMiddleSvcServer) CreateCredential(ctx context.Context, req *KVsRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetSettings(ctx context.Context, req *TextRequest) (*SettingsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetSetting(ctx context.Context, req *TextRequest) (*SettingReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSetting not implemented")
-}
-func (*UnimplementedMiddleSvcServer) CreateSetting(ctx context.Context, req *KVRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateSetting not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetStats(ctx context.Context, req *TextRequest) (*TextReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
-}
-func (*UnimplementedMiddleSvcServer) ListSubscribe(ctx context.Context, req *SubscribeRequest) (*SubscribeReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSubscribe not implemented")
-}
-func (*UnimplementedMiddleSvcServer) RegisterSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterSubscribe not implemented")
-}
-func (*UnimplementedMiddleSvcServer) OpenSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OpenSubscribe not implemented")
-}
-func (*UnimplementedMiddleSvcServer) CloseSubscribe(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CloseSubscribe not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetSubscribeStatus(ctx context.Context, req *SubscribeRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSubscribeStatus not implemented")
-}
-func (*UnimplementedMiddleSvcServer) ListCron(ctx context.Context, req *CronRequest) (*CronReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListCron not implemented")
-}
-func (*UnimplementedMiddleSvcServer) RegisterCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterCron not implemented")
-}
-func (*UnimplementedMiddleSvcServer) StartCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StartCron not implemented")
-}
-func (*UnimplementedMiddleSvcServer) StopCron(ctx context.Context, req *CronRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StopCron not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetCronStatus(ctx context.Context, req *CronRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCronStatus not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetOrCreateTag(ctx context.Context, req *TagRequest) (*TagReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrCreateTag not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetTags(ctx context.Context, req *TagRequest) (*TagsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetChartData(ctx context.Context, req *ChartDataRequest) (*ChartDataReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChartData not implemented")
-}
-func (*UnimplementedMiddleSvcServer) SetChartData(ctx context.Context, req *ChartDataRequest) (*ChartDataReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetChartData not implemented")
-}
-func (*UnimplementedMiddleSvcServer) GetChartUrl(ctx context.Context, req *TextRequest) (*TextReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChartUrl not implemented")
-}
-
-func RegisterMiddleSvcServer(s *grpc.Server, srv MiddleSvcServer) {
-	s.RegisterService(&_MiddleSvc_serviceDesc, srv)
-}
-
-func _MiddleSvc_CreatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).CreatePage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/CreatePage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).CreatePage(ctx, req.(*PageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetPage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetPage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetPage(ctx, req.(*PageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetQrUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetQrUrl(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetQrUrl",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetQrUrl(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetApps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetApps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetApps",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetApps(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetAvailableApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetAvailableApp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetAvailableApp",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetAvailableApp(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_StoreAppOAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).StoreAppOAuth(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/StoreAppOAuth",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).StoreAppOAuth(ctx, req.(*AppRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetCredentials(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetCredentials",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetCredentials(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetMaskingCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetMaskingCredentials(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetMaskingCredentials",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetMaskingCredentials(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CredentialRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetCredential(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetCredential",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetCredential(ctx, req.(*CredentialRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_CreateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KVsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).CreateCredential(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/CreateCredential",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).CreateCredential(ctx, req.(*KVsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetSettings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetSettings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetSettings(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetSetting(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_CreateSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KVRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).CreateSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/CreateSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).CreateSetting(ctx, req.(*KVRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetStats",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetStats(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_ListSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).ListSubscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/ListSubscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).ListSubscribe(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_RegisterSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).RegisterSubscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/RegisterSubscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).RegisterSubscribe(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_OpenSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).OpenSubscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/OpenSubscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).OpenSubscribe(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_CloseSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).CloseSubscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/CloseSubscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).CloseSubscribe(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetSubscribeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetSubscribeStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetSubscribeStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetSubscribeStatus(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_ListCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CronRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).ListCron(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/ListCron",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).ListCron(ctx, req.(*CronRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_RegisterCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CronRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).RegisterCron(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/RegisterCron",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).RegisterCron(ctx, req.(*CronRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_StartCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CronRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).StartCron(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/StartCron",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).StartCron(ctx, req.(*CronRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_StopCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CronRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).StopCron(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/StopCron",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).StopCron(ctx, req.(*CronRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetCronStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CronRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetCronStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetCronStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetCronStatus(ctx, req.(*CronRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetOrCreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TagRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetOrCreateTag(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetOrCreateTag",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetOrCreateTag(ctx, req.(*TagRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TagRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetTags(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetTags",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetTags(ctx, req.(*TagRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetChartData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChartDataRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetChartData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetChartData",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetChartData(ctx, req.(*ChartDataRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_SetChartData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChartDataRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).SetChartData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/SetChartData",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).SetChartData(ctx, req.(*ChartDataRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MiddleSvc_GetChartUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MiddleSvcServer).GetChartUrl(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MiddleSvc/GetChartUrl",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MiddleSvcServer).GetChartUrl(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.MiddleSvc",
-	HandlerType: (*MiddleSvcServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreatePage",
-			Handler:    _MiddleSvc_CreatePage_Handler,
-		},
-		{
-			MethodName: "GetPage",
-			Handler:    _MiddleSvc_GetPage_Handler,
-		},
-		{
-			MethodName: "GetQrUrl",
-			Handler:    _MiddleSvc_GetQrUrl_Handler,
-		},
-		{
-			MethodName: "GetApps",
-			Handler:    _MiddleSvc_GetApps_Handler,
-		},
-		{
-			MethodName: "GetAvailableApp",
-			Handler:    _MiddleSvc_GetAvailableApp_Handler,
-		},
-		{
-			MethodName: "StoreAppOAuth",
-			Handler:    _MiddleSvc_StoreAppOAuth_Handler,
-		},
-		{
-			MethodName: "GetCredentials",
-			Handler:    _MiddleSvc_GetCredentials_Handler,
-		},
-		{
-			MethodName: "GetMaskingCredentials",
-			Handler:    _MiddleSvc_GetMaskingCredentials_Handler,
-		},
-		{
-			MethodName: "GetCredential",
-			Handler:    _MiddleSvc_GetCredential_Handler,
-		},
-		{
-			MethodName: "CreateCredential",
-			Handler:    _MiddleSvc_CreateCredential_Handler,
-		},
-		{
-			MethodName: "GetSettings",
-			Handler:    _MiddleSvc_GetSettings_Handler,
-		},
-		{
-			MethodName: "GetSetting",
-			Handler:    _MiddleSvc_GetSetting_Handler,
-		},
-		{
-			MethodName: "CreateSetting",
-			Handler:    _MiddleSvc_CreateSetting_Handler,
-		},
-		{
-			MethodName: "GetStats",
-			Handler:    _MiddleSvc_GetStats_Handler,
-		},
-		{
-			MethodName: "ListSubscribe",
-			Handler:    _MiddleSvc_ListSubscribe_Handler,
-		},
-		{
-			MethodName: "RegisterSubscribe",
-			Handler:    _MiddleSvc_RegisterSubscribe_Handler,
-		},
-		{
-			MethodName: "OpenSubscribe",
-			Handler:    _MiddleSvc_OpenSubscribe_Handler,
-		},
-		{
-			MethodName: "CloseSubscribe",
-			Handler:    _MiddleSvc_CloseSubscribe_Handler,
-		},
-		{
-			MethodName: "GetSubscribeStatus",
-			Handler:    _MiddleSvc_GetSubscribeStatus_Handler,
-		},
-		{
-			MethodName: "ListCron",
-			Handler:    _MiddleSvc_ListCron_Handler,
-		},
-		{
-			MethodName: "RegisterCron",
-			Handler:    _MiddleSvc_RegisterCron_Handler,
-		},
-		{
-			MethodName: "StartCron",
-			Handler:    _MiddleSvc_StartCron_Handler,
-		},
-		{
-			MethodName: "StopCron",
-			Handler:    _MiddleSvc_StopCron_Handler,
-		},
-		{
-			MethodName: "GetCronStatus",
-			Handler:    _MiddleSvc_GetCronStatus_Handler,
-		},
-		{
-			MethodName: "GetOrCreateTag",
-			Handler:    _MiddleSvc_GetOrCreateTag_Handler,
-		},
-		{
-			MethodName: "GetTags",
-			Handler:    _MiddleSvc_GetTags_Handler,
-		},
-		{
-			MethodName: "GetChartData",
-			Handler:    _MiddleSvc_GetChartData_Handler,
-		},
-		{
-			MethodName: "SetChartData",
-			Handler:    _MiddleSvc_SetChartData_Handler,
-		},
-		{
-			MethodName: "GetChartUrl",
-			Handler:    _MiddleSvc_GetChartUrl_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "middle.proto",
+	// 1244 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x57, 0xcf, 0x73, 0xe3, 0xb4,
+	0x17, 0x8f, 0xe3, 0x24, 0x8d, 0x5f, 0x93, 0xb4, 0xf5, 0x37, 0xfd, 0x8e, 0xe9, 0x96, 0x4e, 0x10,
+	0xc3, 0x92, 0xa5, 0xdd, 0xb6, 0xb4, 0xfc, 0xde, 0x5d, 0x86, 0xd0, 0xce, 0x74, 0x98, 0xb2, 0x53,
+	0x70, 0x4a, 0x0f, 0x70, 0xe8, 0x28, 0x89, 0xd6, 0xf5, 0x34, 0xb5, 0x8d, 0xa5, 0x94, 0x94, 0x1b,
+	0x17, 0xce, 0xfc, 0x01, 0xdc, 0xb9, 0xf0, 0x87, 0x70, 0xdc, 0x23, 0xd7, 0x9d, 0xfe, 0x23, 0x8c,
+	0x24, 0xcb, 0x56, 0x9a, 0x1f, 0x9b, 0xc2, 0x4d, 0x7a, 0xfa, 0x7c, 0x9e, 0xde, 0x7b, 0x92, 0xde,
+	0xc7, 0x86, 0xca, 0x95, 0xdf, 0xeb, 0xf5, 0xc9, 0x76, 0x14, 0x87, 0x2c, 0xb4, 0xf3, 0x51, 0x67,
+	0x0d, 0x3a, 0x98, 0x26, 0xf3, 0xb5, 0xba, 0x17, 0x7a, 0xa1, 0x18, 0xee, 0xf0, 0x91, 0xb4, 0xa2,
+	0x4d, 0x58, 0xfc, 0x06, 0x7b, 0xc4, 0x25, 0x3f, 0x0e, 0x08, 0x65, 0xf6, 0x3a, 0x14, 0x22, 0xec,
+	0x11, 0xc7, 0x68, 0x18, 0xcd, 0xc5, 0xbd, 0xf2, 0x76, 0xd4, 0xd9, 0x16, 0xcb, 0xc2, 0x8a, 0x1e,
+	0x81, 0x25, 0xc1, 0x51, 0xff, 0xe6, 0x35, 0xd0, 0x3f, 0x0d, 0x28, 0xf0, 0xa9, 0x5d, 0x83, 0xbc,
+	0xdf, 0x13, 0x20, 0xd3, 0xcd, 0xfb, 0x3d, 0xdb, 0x86, 0xc2, 0x60, 0xe0, 0xf7, 0x9c, 0x7c, 0xc3,
+	0x68, 0x5a, 0xae, 0x18, 0xdb, 0x75, 0x28, 0x32, 0x9f, 0xf5, 0x89, 0x63, 0x0a, 0xa3, 0x9c, 0xd8,
+	0x0e, 0x2c, 0x74, 0xc3, 0x80, 0x91, 0x80, 0x39, 0x05, 0x61, 0x57, 0x53, 0xee, 0x83, 0xdd, 0x44,
+	0xc4, 0x29, 0x4a, 0x1f, 0x7c, 0x6c, 0xbf, 0x09, 0xd0, 0x8d, 0x09, 0x66, 0xa4, 0x77, 0x8e, 0x99,
+	0x53, 0x12, 0xfb, 0x59, 0x89, 0xa5, 0xc5, 0xf8, 0xf2, 0x20, 0xea, 0xa9, 0xe5, 0x05, 0xb9, 0x9c,
+	0x58, 0x5a, 0x0c, 0xbd, 0x0b, 0xd0, 0x8a, 0x22, 0x55, 0x85, 0x37, 0xc0, 0xc4, 0x51, 0x94, 0x64,
+	0xb6, 0xc0, 0x33, 0xe3, 0x8b, 0xdc, 0x86, 0x9a, 0x60, 0xb5, 0xa2, 0x88, 0xca, 0x12, 0x3c, 0x80,
+	0x02, 0x8e, 0x22, 0xea, 0x18, 0x0d, 0x53, 0x07, 0x0a, 0x23, 0x7a, 0x01, 0x65, 0xe1, 0x92, 0x03,
+	0x6d, 0x28, 0x04, 0xf8, 0x4a, 0xd6, 0xca, 0x72, 0xc5, 0x38, 0x4d, 0x22, 0xaf, 0x25, 0xc1, 0x0b,
+	0x11, 0x5e, 0x92, 0x20, 0x2d, 0x04, 0x9f, 0xd8, 0xeb, 0x50, 0x24, 0x43, 0x16, 0x63, 0xa7, 0x20,
+	0xf6, 0x29, 0xf1, 0x7d, 0x8e, 0xcf, 0x5c, 0x69, 0x44, 0x7f, 0x18, 0x60, 0xb6, 0xa2, 0x68, 0x52,
+	0xa1, 0xc7, 0xfc, 0xab, 0x38, 0x4c, 0x2d, 0x8e, 0x74, 0xcf, 0x82, 0xbe, 0x67, 0x5d, 0xed, 0x29,
+	0x6b, 0x2c, 0x27, 0xff, 0xb1, 0xc8, 0x87, 0xb0, 0xd0, 0x8a, 0xa2, 0xaf, 0x82, 0x17, 0x61, 0x76,
+	0xe2, 0x65, 0xfd, 0xc4, 0xdf, 0x86, 0xaa, 0x4f, 0xcf, 0xf1, 0x80, 0x5d, 0x84, 0xb1, 0xff, 0x33,
+	0xe9, 0x39, 0x56, 0xc3, 0x68, 0x96, 0xdd, 0x8a, 0x4f, 0x5b, 0xa9, 0x0d, 0x1d, 0xc2, 0xf2, 0x41,
+	0x4c, 0x7a, 0x24, 0x60, 0x3e, 0xee, 0x27, 0x07, 0xb1, 0x0b, 0x8b, 0xdd, 0xcc, 0x96, 0x9c, 0x47,
+	0x8d, 0xd7, 0x29, 0x83, 0xba, 0x3a, 0x04, 0xfd, 0x6e, 0x00, 0x64, 0x6b, 0x93, 0x8a, 0x27, 0x0a,
+	0x95, 0x9f, 0x70, 0x60, 0xa6, 0x56, 0xd0, 0xe9, 0x77, 0x74, 0xb4, 0x54, 0xc5, 0xd9, 0xa5, 0x2a,
+	0xdd, 0x2d, 0xd5, 0x16, 0x54, 0x9e, 0x63, 0x7a, 0xe9, 0x07, 0x9e, 0x7a, 0x6c, 0x45, 0x9f, 0x91,
+	0x2b, 0x95, 0x5a, 0x7a, 0x05, 0x84, 0x11, 0x3d, 0x81, 0x15, 0x2d, 0xcf, 0xe4, 0x12, 0xcf, 0x79,
+	0xe7, 0xd0, 0x0f, 0xb0, 0xa4, 0x93, 0xef, 0x73, 0x5d, 0x1b, 0x59, 0xf6, 0xe6, 0x48, 0x5c, 0xca,
+	0x8c, 0x1e, 0x43, 0xb5, 0x4d, 0x18, 0xf3, 0x03, 0x8f, 0xce, 0x93, 0xc8, 0x47, 0x50, 0x49, 0xe0,
+	0x12, 0xbd, 0x0c, 0xe6, 0x25, 0xb9, 0x49, 0xe2, 0xe0, 0x43, 0x7e, 0x71, 0xae, 0x71, 0x7f, 0xa0,
+	0xe2, 0x90, 0x13, 0xb4, 0x0f, 0xd6, 0xf1, 0x99, 0x4a, 0x7c, 0x5e, 0xd2, 0x43, 0x80, 0xe3, 0x33,
+	0xaa, 0x58, 0x0e, 0x98, 0x97, 0xd7, 0x77, 0xc3, 0xe2, 0x26, 0xf4, 0x21, 0x58, 0xed, 0x41, 0x87,
+	0x76, 0x63, 0xbf, 0x43, 0x26, 0x96, 0xa6, 0x0e, 0x45, 0xca, 0x30, 0x93, 0xee, 0xcb, 0xae, 0x9c,
+	0xa0, 0x87, 0xb0, 0x9c, 0xd2, 0xb4, 0x33, 0x61, 0x64, 0xc8, 0x14, 0x9b, 0x8f, 0xd1, 0x33, 0xa8,
+	0x69, 0x38, 0x9e, 0xf5, 0x26, 0x58, 0x54, 0x59, 0x92, 0x80, 0xaa, 0x3c, 0xa0, 0x0c, 0x96, 0xad,
+	0xa3, 0x43, 0x28, 0x1c, 0xc4, 0x61, 0x30, 0xed, 0xcc, 0x7e, 0xba, 0x20, 0x81, 0x3a, 0x33, 0x3e,
+	0xce, 0x82, 0x35, 0xf5, 0x60, 0xdf, 0x82, 0x45, 0xee, 0x65, 0x56, 0x9c, 0x8f, 0xc0, 0x92, 0x90,
+	0xa4, 0xf9, 0x77, 0xe3, 0x30, 0x48, 0xa2, 0x2b, 0xcb, 0x97, 0x16, 0x06, 0xae, 0xb0, 0x22, 0x0f,
+	0xcc, 0x53, 0xec, 0xcd, 0xf5, 0xa8, 0x46, 0x9f, 0x89, 0x39, 0xfb, 0x99, 0x14, 0x26, 0xb4, 0xed,
+	0x53, 0xec, 0x69, 0x6d, 0x9b, 0x61, 0x4f, 0x6f, 0xdb, 0x7c, 0x91, 0xdb, 0xd0, 0x3b, 0x50, 0x16,
+	0x40, 0x1e, 0xfb, 0x0c, 0x58, 0x13, 0xac, 0x53, 0xec, 0x65, 0xdd, 0x9d, 0x61, 0x6f, 0xa4, 0xbb,
+	0x73, 0xa0, 0x30, 0xa2, 0x5f, 0x0c, 0xb0, 0x0e, 0x2e, 0x70, 0xcc, 0x0e, 0x31, 0xc3, 0xa9, 0xa8,
+	0x19, 0x93, 0x44, 0x2d, 0xaf, 0xb7, 0xb8, 0x07, 0xe2, 0x6c, 0xcf, 0x75, 0xb9, 0x2b, 0xd3, 0x41,
+	0xe7, 0x54, 0x2c, 0xae, 0x42, 0x69, 0x78, 0x8e, 0x87, 0x3e, 0x15, 0x9d, 0xde, 0x72, 0x8b, 0xc3,
+	0xd6, 0xd0, 0xa7, 0xf6, 0xff, 0xa1, 0x44, 0x49, 0xec, 0x13, 0xea, 0x14, 0x1b, 0x66, 0xd3, 0x70,
+	0x93, 0x19, 0xfa, 0x02, 0x96, 0xd3, 0x10, 0x54, 0x0d, 0xb6, 0x00, 0xba, 0xdc, 0x76, 0xde, 0xc3,
+	0x0c, 0x27, 0x39, 0x8a, 0xcb, 0x93, 0x21, 0xad, 0xae, 0x1a, 0xa2, 0xcf, 0xa1, 0xa6, 0x79, 0xe0,
+	0x49, 0xdf, 0x8b, 0xbf, 0xf7, 0x6b, 0x05, 0xac, 0xe7, 0xe2, 0xa3, 0xa3, 0x7d, 0xdd, 0xb5, 0xb7,
+	0x45, 0x4b, 0xc5, 0x8c, 0x08, 0xe1, 0x5f, 0x4a, 0xbf, 0x08, 0x64, 0x68, 0x6b, 0xc2, 0xcd, 0x29,
+	0x19, 0x32, 0xb1, 0x13, 0xca, 0xd9, 0x9b, 0xb0, 0x70, 0x44, 0xd8, 0x0c, 0x70, 0xfa, 0xb1, 0x81,
+	0x72, 0xf6, 0x16, 0x94, 0x8f, 0x08, 0xfb, 0x36, 0xfe, 0x2e, 0xee, 0x4b, 0xb4, 0xf4, 0x34, 0xd3,
+	0x35, 0x57, 0xea, 0x29, 0xe0, 0x54, 0xc4, 0x51, 0xce, 0xde, 0x83, 0x25, 0x0e, 0xbe, 0xc6, 0x7e,
+	0x1f, 0x77, 0xfa, 0x84, 0x8b, 0xe9, 0x18, 0xa9, 0xa2, 0xc4, 0x3d, 0xe1, 0xbc, 0x0f, 0xd5, 0x36,
+	0x0b, 0x63, 0x0e, 0x3e, 0xe1, 0xe2, 0x64, 0xd7, 0x52, 0x80, 0x24, 0x88, 0x79, 0x9b, 0x3f, 0x2e,
+	0x45, 0xf9, 0x14, 0x6a, 0x47, 0x84, 0x69, 0xda, 0x35, 0xbe, 0x4b, 0x7d, 0x54, 0xb2, 0xd2, 0x08,
+	0x9f, 0xc2, 0xea, 0x11, 0x61, 0x89, 0x22, 0xcc, 0xf4, 0xb0, 0xcc, 0x0d, 0xba, 0x74, 0xa0, 0x9c,
+	0xfd, 0x0c, 0xaa, 0x23, 0x1b, 0xdb, 0xab, 0x77, 0x94, 0x31, 0xe1, 0xfe, 0xef, 0xae, 0x59, 0xd2,
+	0x3f, 0x10, 0x82, 0x8b, 0x19, 0xd1, 0xf5, 0x52, 0x36, 0x48, 0x3a, 0x3d, 0xdb, 0x7d, 0x58, 0x3c,
+	0x22, 0x4c, 0x35, 0xff, 0xf1, 0x40, 0x57, 0x04, 0x43, 0xd7, 0x06, 0x51, 0x55, 0xc8, 0x48, 0x53,
+	0x92, 0xd3, 0x05, 0x02, 0xe5, 0xec, 0x5d, 0xa8, 0xca, 0xe8, 0x14, 0xab, 0x9a, 0xf4, 0xee, 0xa9,
+	0x91, 0xc9, 0x9b, 0xc4, 0x4d, 0x74, 0x8e, 0x9b, 0xf4, 0x04, 0xaa, 0x5f, 0xfb, 0x94, 0x65, 0x0a,
+	0x50, 0x1f, 0x6d, 0xc5, 0x09, 0xcf, 0xbe, 0x63, 0x55, 0xe4, 0x15, 0x97, 0x78, 0x3e, 0x65, 0x24,
+	0x7e, 0x9d, 0x83, 0xf1, 0x38, 0x3f, 0x86, 0xea, 0x49, 0x44, 0x82, 0xfb, 0x13, 0x3f, 0x81, 0xda,
+	0x41, 0x3f, 0xa4, 0xe4, 0xfe, 0xcc, 0xa7, 0x60, 0xf3, 0xd2, 0x28, 0x20, 0x5f, 0x1b, 0xd0, 0xb9,
+	0xd9, 0x5b, 0x50, 0xe6, 0xa5, 0x12, 0x72, 0xb4, 0x94, 0x4a, 0x82, 0x5e, 0xd8, 0x54, 0x40, 0xc4,
+	0x59, 0x57, 0x54, 0x6d, 0x26, 0x33, 0xc6, 0x37, 0xd8, 0x06, 0xab, 0xcd, 0x70, 0xcc, 0xe6, 0xc5,
+	0x3f, 0x86, 0x72, 0x9b, 0x85, 0xd1, 0xbc, 0xf0, 0xbd, 0xe4, 0x9d, 0x84, 0x41, 0x92, 0xf8, 0x1c,
+	0x9c, 0x5d, 0xf1, 0xa8, 0x4f, 0x62, 0x79, 0x07, 0x85, 0xea, 0x29, 0xa1, 0xd0, 0x3b, 0x87, 0x12,
+	0x1f, 0x94, 0xb3, 0xdf, 0x13, 0xad, 0x89, 0xcb, 0xcc, 0x18, 0xb4, 0x9a, 0xcc, 0xd3, 0xf7, 0xf0,
+	0x19, 0x54, 0x78, 0x44, 0xa9, 0xce, 0xd4, 0x47, 0x3b, 0xb1, 0x7e, 0xf7, 0x46, 0xfb, 0xb8, 0xe4,
+	0xb6, 0xff, 0x2d, 0x77, 0x47, 0x3c, 0x5e, 0x61, 0x9e, 0xab, 0xdf, 0x7e, 0xb9, 0xfe, 0xd7, 0xab,
+	0x0d, 0xe3, 0xe5, 0xab, 0x8d, 0xdc, 0x6f, 0xb7, 0x1b, 0xb9, 0x97, 0xb7, 0x1b, 0xb9, 0xbf, 0x6f,
+	0x37, 0x72, 0xdf, 0x97, 0x70, 0xe4, 0xef, 0x44, 0x9d, 0x4e, 0x49, 0xfc, 0x6b, 0xee, 0xff, 0x13,
+	0x00, 0x00, 0xff, 0xff, 0xc2, 0x63, 0xaa, 0x7a, 0xa1, 0x0e, 0x00, 0x00,
 }

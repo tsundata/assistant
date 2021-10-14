@@ -64,9 +64,9 @@ message Page {
   // @inject_tag: query:"type" db:"type"
   string type = 5;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 6;
+  int64 created_at = 6;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 7;
+  int64 updated_at = 7;
 }
 
 message AppRequest {
@@ -96,14 +96,14 @@ message App {
   // @inject_tag: db:"extra"
   string extra = 5;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 6;
+  int64 created_at = 6;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 7;
+  int64 updated_at = 7;
 }
 
 message AppInfo {
   string title = 8;
-  bool isAuthorized = 9;
+  bool is_authorized = 9;
 }
 
 message CredentialsReply {
@@ -120,9 +120,9 @@ message Credential {
   // @inject_tag: db:"content"
   string content = 4;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 5;
+  int64 created_at = 5;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 6;
+  int64 updated_at = 6;
 }
 
 message MaskingReply {
@@ -193,9 +193,9 @@ message Tag {
   // @inject_tag: db:"name"
   string name = 2;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 3;
+  int64 created_at = 3;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 4;
+  int64 updated_at = 4;
 }
 
 message TagRequest {
@@ -216,17 +216,17 @@ message ChartData {
   // @inject_tag: query:"title" json:"title"
   string title = 2;
   // @inject_tag: query:"sub_title" json:"sub_title"
-  string subTitle = 3;
+  string sub_title = 3;
   // @inject_tag: query:"x_axis" json:"x_axis"
-  repeated string xAxis = 4;
+  repeated string x_axis = 4;
   // @inject_tag: query:"series" json:"series"
   repeated double series = 5;
 }
 
 message ChartDataRequest {
-  ChartData chartData = 1;
+  ChartData chart_data = 1;
 }
 
 message ChartDataReply {
-  ChartData chartData = 1;
+  ChartData chart_data = 1;
 }

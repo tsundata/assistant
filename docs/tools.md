@@ -95,3 +95,12 @@ go install github.com/securego/gosec/cmd/gosec@latest
 # Usage
 gosec ./...
 ```
+
+### buf
+
+```shell
+GO111MODULE=on GOBIN=/usr/local/bin go get \
+  github.com/bufbuild/buf/cmd/buf \
+  github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking \
+  github.com/bufbuild/buf/cmd/protoc-gen-buf-lint
+```

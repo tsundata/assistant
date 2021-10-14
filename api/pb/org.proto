@@ -29,11 +29,11 @@ message Objective {
   // @inject_tag: db:"name"
   string name = 2;
   // @inject_tag: db:"tag_id"
-  int64 tagId = 4;
+  int64 tag_id = 4;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 5;
+  int64 created_at = 5;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 8;
+  int64 updated_at = 8;
 }
 
 message KeyResult {
@@ -42,15 +42,15 @@ message KeyResult {
   // @inject_tag: db:"name"
   string name = 2;
   // @inject_tag: db:"objective_id"
-  int64 objectiveId = 3;
+  int64 objective_id = 3;
   // @inject_tag: db:"tag_id"
-  int64 tagId = 5;
+  int64 tag_id = 5;
   // @inject_tag: db:"complete"
   bool complete = 6;
   // @inject_tag: db:"created_at"
-  int64 createdAt = 7;
+  int64 created_at = 7;
   // @inject_tag: db:"updated_at"
-  int64 updatedAt = 8;
+  int64 updated_at = 8;
 }
 
 message ObjectiveRequest {
@@ -67,12 +67,12 @@ message ObjectivesReply {
 }
 
 message KeyResultRequest {
-  KeyResult keyResult = 1;
+  KeyResult key_result = 1;
   string tag = 2;
 }
 
 message KeyResultReply {
-  KeyResult keyResult = 1;
+  KeyResult key_result = 1;
 }
 
 message KeyResultsReply {
