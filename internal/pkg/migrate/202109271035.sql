@@ -2,7 +2,7 @@ CREATE TABLE `groups`
 (
     `id`         BIGINT(19)   NOT NULL AUTO_INCREMENT,
     `sequence`   INT(10)      NOT NULL,
-    `uuid`       varchar(32)  NULL DEFAULT NULL,
+    `uuid`       varchar(36)  NULL DEFAULT NULL,
     `user_id`    BIGINT(19)   NULL DEFAULT NULL,
     `name`       varchar(20)  NULL DEFAULT NULL,
     `avatar`     varchar(256) NULL DEFAULT NULL,
