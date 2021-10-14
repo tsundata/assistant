@@ -4,3 +4,4 @@ plugins:
     out: ./
   - name: go-grpc
     out: ./
+    opt: require_unimplemented_servers=false

@@ -39,21 +39,19 @@ func (c *taskSvcClient) Delay(ctx context.Context, in *JobRequest, opts ...grpc.
 }
 
 // TaskSvcServer is the server API for TaskSvc service.
-// All implementations must embed UnimplementedTaskSvcServer
+// All implementations should embed UnimplementedTaskSvcServer
 // for forward compatibility
 type TaskSvcServer interface {
 	Delay(context.Context, *JobRequest) (*StateReply, error)
-	mustEmbedUnimplementedTaskSvcServer()
 }
 
-// UnimplementedTaskSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedTaskSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedTaskSvcServer struct {
 }
 
 func (UnimplementedTaskSvcServer) Delay(context.Context, *JobRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delay not implemented")
 }
-func (UnimplementedTaskSvcServer) mustEmbedUnimplementedTaskSvcServer() {}
 
 // UnsafeTaskSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TaskSvcServer will

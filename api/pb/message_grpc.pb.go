@@ -149,7 +149,7 @@ func (c *messageSvcClient) GetGroup(ctx context.Context, in *GroupRequest, opts 
 }
 
 // MessageSvcServer is the server API for MessageSvc service.
-// All implementations must embed UnimplementedMessageSvcServer
+// All implementations should embed UnimplementedMessageSvcServer
 // for forward compatibility
 type MessageSvcServer interface {
 	List(context.Context, *MessageRequest) (*MessagesReply, error)
@@ -164,10 +164,9 @@ type MessageSvcServer interface {
 	GetGroups(context.Context, *GroupRequest) (*GroupsReply, error)
 	CreateGroup(context.Context, *GroupRequest) (*StateReply, error)
 	GetGroup(context.Context, *GroupRequest) (*GroupReply, error)
-	mustEmbedUnimplementedMessageSvcServer()
 }
 
-// UnimplementedMessageSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedMessageSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedMessageSvcServer struct {
 }
 
@@ -207,7 +206,6 @@ func (UnimplementedMessageSvcServer) CreateGroup(context.Context, *GroupRequest)
 func (UnimplementedMessageSvcServer) GetGroup(context.Context, *GroupRequest) (*GroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
 }
-func (UnimplementedMessageSvcServer) mustEmbedUnimplementedMessageSvcServer() {}
 
 // UnsafeMessageSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MessageSvcServer will

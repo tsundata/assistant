@@ -71,7 +71,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			Category:         in.Category,
 			Sound:            in.Sound,
 			ContentAvailable: in.ContentAvailable,
-			ThreadID:         in.ThreadID,
+			ThreadID:         in.ThreadId,
 			MutableContent:   in.MutableContent,
 			Image:            in.Image,
 			Priority:         strings.ToLower(in.GetPriority().String()),

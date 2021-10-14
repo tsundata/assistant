@@ -39,21 +39,19 @@ func (c *idSvcClient) GetGlobalId(ctx context.Context, in *IdRequest, opts ...gr
 }
 
 // IdSvcServer is the server API for IdSvc service.
-// All implementations must embed UnimplementedIdSvcServer
+// All implementations should embed UnimplementedIdSvcServer
 // for forward compatibility
 type IdSvcServer interface {
 	GetGlobalId(context.Context, *IdRequest) (*IdReply, error)
-	mustEmbedUnimplementedIdSvcServer()
 }
 
-// UnimplementedIdSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedIdSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedIdSvcServer struct {
 }
 
 func (UnimplementedIdSvcServer) GetGlobalId(context.Context, *IdRequest) (*IdReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGlobalId not implemented")
 }
-func (UnimplementedIdSvcServer) mustEmbedUnimplementedIdSvcServer() {}
 
 // UnsafeIdSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to IdSvcServer will

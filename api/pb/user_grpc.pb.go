@@ -139,7 +139,7 @@ func (c *userSvcClient) BindDevice(ctx context.Context, in *DeviceRequest, opts 
 }
 
 // UserSvcServer is the server API for UserSvc service.
-// All implementations must embed UnimplementedUserSvcServer
+// All implementations should embed UnimplementedUserSvcServer
 // for forward compatibility
 type UserSvcServer interface {
 	Login(context.Context, *LoginRequest) (*AuthReply, error)
@@ -153,10 +153,9 @@ type UserSvcServer interface {
 	GetUsers(context.Context, *UserRequest) (*UsersReply, error)
 	UpdateUser(context.Context, *UserRequest) (*StateReply, error)
 	BindDevice(context.Context, *DeviceRequest) (*StateReply, error)
-	mustEmbedUnimplementedUserSvcServer()
 }
 
-// UnimplementedUserSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedUserSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedUserSvcServer struct {
 }
 
@@ -193,7 +192,6 @@ func (UnimplementedUserSvcServer) UpdateUser(context.Context, *UserRequest) (*St
 func (UnimplementedUserSvcServer) BindDevice(context.Context, *DeviceRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindDevice not implemented")
 }
-func (UnimplementedUserSvcServer) mustEmbedUnimplementedUserSvcServer() {}
 
 // UnsafeUserSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to UserSvcServer will

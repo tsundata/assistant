@@ -69,17 +69,16 @@ func (c *chatbotSvcClient) UpdateBotSetting(ctx context.Context, in *BotSettingR
 }
 
 // ChatbotSvcServer is the server API for ChatbotSvc service.
-// All implementations must embed UnimplementedChatbotSvcServer
+// All implementations should embed UnimplementedChatbotSvcServer
 // for forward compatibility
 type ChatbotSvcServer interface {
 	Handle(context.Context, *ChatbotRequest) (*ChatbotReply, error)
 	GetBot(context.Context, *BotRequest) (*BotReply, error)
 	GetBots(context.Context, *BotRequest) (*BotsReply, error)
 	UpdateBotSetting(context.Context, *BotSettingRequest) (*StateReply, error)
-	mustEmbedUnimplementedChatbotSvcServer()
 }
 
-// UnimplementedChatbotSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedChatbotSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedChatbotSvcServer struct {
 }
 
@@ -95,7 +94,6 @@ func (UnimplementedChatbotSvcServer) GetBots(context.Context, *BotRequest) (*Bot
 func (UnimplementedChatbotSvcServer) UpdateBotSetting(context.Context, *BotSettingRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBotSetting not implemented")
 }
-func (UnimplementedChatbotSvcServer) mustEmbedUnimplementedChatbotSvcServer() {}
 
 // UnsafeChatbotSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to ChatbotSvcServer will

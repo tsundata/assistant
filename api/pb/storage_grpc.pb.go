@@ -64,21 +64,19 @@ func (x *storageSvcUploadFileClient) CloseAndRecv() (*FileReply, error) {
 }
 
 // StorageSvcServer is the server API for StorageSvc service.
-// All implementations must embed UnimplementedStorageSvcServer
+// All implementations should embed UnimplementedStorageSvcServer
 // for forward compatibility
 type StorageSvcServer interface {
 	UploadFile(StorageSvc_UploadFileServer) error
-	mustEmbedUnimplementedStorageSvcServer()
 }
 
-// UnimplementedStorageSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedStorageSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedStorageSvcServer struct {
 }
 
 func (UnimplementedStorageSvcServer) UploadFile(StorageSvc_UploadFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
-func (UnimplementedStorageSvcServer) mustEmbedUnimplementedStorageSvcServer() {}
 
 // UnsafeStorageSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to StorageSvcServer will

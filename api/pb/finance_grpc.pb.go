@@ -89,7 +89,7 @@ func (c *financeSvcClient) GetStock(ctx context.Context, in *TextRequest, opts .
 }
 
 // FinanceSvcServer is the server API for FinanceSvc service.
-// All implementations must embed UnimplementedFinanceSvcServer
+// All implementations should embed UnimplementedFinanceSvcServer
 // for forward compatibility
 type FinanceSvcServer interface {
 	CreateBill(context.Context, *BillRequest) (*StateReply, error)
@@ -98,10 +98,9 @@ type FinanceSvcServer interface {
 	DeleteBill(context.Context, *BillRequest) (*StateReply, error)
 	GetFund(context.Context, *TextRequest) (*FundReply, error)
 	GetStock(context.Context, *TextRequest) (*StockReply, error)
-	mustEmbedUnimplementedFinanceSvcServer()
 }
 
-// UnimplementedFinanceSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedFinanceSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedFinanceSvcServer struct {
 }
 
@@ -123,7 +122,6 @@ func (UnimplementedFinanceSvcServer) GetFund(context.Context, *TextRequest) (*Fu
 func (UnimplementedFinanceSvcServer) GetStock(context.Context, *TextRequest) (*StockReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStock not implemented")
 }
-func (UnimplementedFinanceSvcServer) mustEmbedUnimplementedFinanceSvcServer() {}
 
 // UnsafeFinanceSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to FinanceSvcServer will

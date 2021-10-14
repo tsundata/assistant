@@ -109,7 +109,7 @@ func (c *workflowSvcClient) ListWebhook(ctx context.Context, in *WorkflowRequest
 }
 
 // WorkflowSvcServer is the server API for WorkflowSvc service.
-// All implementations must embed UnimplementedWorkflowSvcServer
+// All implementations should embed UnimplementedWorkflowSvcServer
 // for forward compatibility
 type WorkflowSvcServer interface {
 	SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error)
@@ -120,10 +120,9 @@ type WorkflowSvcServer interface {
 	DeleteTrigger(context.Context, *TriggerRequest) (*StateReply, error)
 	ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 	ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error)
-	mustEmbedUnimplementedWorkflowSvcServer()
 }
 
-// UnimplementedWorkflowSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedWorkflowSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedWorkflowSvcServer struct {
 }
 
@@ -151,7 +150,6 @@ func (UnimplementedWorkflowSvcServer) ActionDoc(context.Context, *WorkflowReques
 func (UnimplementedWorkflowSvcServer) ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListWebhook not implemented")
 }
-func (UnimplementedWorkflowSvcServer) mustEmbedUnimplementedWorkflowSvcServer() {}
 
 // UnsafeWorkflowSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to WorkflowSvcServer will

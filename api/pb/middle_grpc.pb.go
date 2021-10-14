@@ -319,7 +319,7 @@ func (c *middleSvcClient) GetChartUrl(ctx context.Context, in *TextRequest, opts
 }
 
 // MiddleSvcServer is the server API for MiddleSvc service.
-// All implementations must embed UnimplementedMiddleSvcServer
+// All implementations should embed UnimplementedMiddleSvcServer
 // for forward compatibility
 type MiddleSvcServer interface {
 	CreatePage(context.Context, *PageRequest) (*TextReply, error)
@@ -351,10 +351,9 @@ type MiddleSvcServer interface {
 	GetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
 	SetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
 	GetChartUrl(context.Context, *TextRequest) (*TextReply, error)
-	mustEmbedUnimplementedMiddleSvcServer()
 }
 
-// UnimplementedMiddleSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedMiddleSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedMiddleSvcServer struct {
 }
 
@@ -445,7 +444,6 @@ func (UnimplementedMiddleSvcServer) SetChartData(context.Context, *ChartDataRequ
 func (UnimplementedMiddleSvcServer) GetChartUrl(context.Context, *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChartUrl not implemented")
 }
-func (UnimplementedMiddleSvcServer) mustEmbedUnimplementedMiddleSvcServer() {}
 
 // UnsafeMiddleSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MiddleSvcServer will

@@ -99,7 +99,7 @@ func (c *todoSvcClient) CompleteTodo(ctx context.Context, in *TodoRequest, opts 
 }
 
 // TodoSvcServer is the server API for TodoSvc service.
-// All implementations must embed UnimplementedTodoSvcServer
+// All implementations should embed UnimplementedTodoSvcServer
 // for forward compatibility
 type TodoSvcServer interface {
 	CreateTodo(context.Context, *TodoRequest) (*StateReply, error)
@@ -109,10 +109,9 @@ type TodoSvcServer interface {
 	DeleteTodo(context.Context, *TodoRequest) (*StateReply, error)
 	UpdateTodo(context.Context, *TodoRequest) (*StateReply, error)
 	CompleteTodo(context.Context, *TodoRequest) (*StateReply, error)
-	mustEmbedUnimplementedTodoSvcServer()
 }
 
-// UnimplementedTodoSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedTodoSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedTodoSvcServer struct {
 }
 
@@ -137,7 +136,6 @@ func (UnimplementedTodoSvcServer) UpdateTodo(context.Context, *TodoRequest) (*St
 func (UnimplementedTodoSvcServer) CompleteTodo(context.Context, *TodoRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteTodo not implemented")
 }
-func (UnimplementedTodoSvcServer) mustEmbedUnimplementedTodoSvcServer() {}
 
 // UnsafeTodoSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TodoSvcServer will

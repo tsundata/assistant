@@ -109,7 +109,7 @@ func (c *orgSvcClient) DeleteKeyResult(ctx context.Context, in *KeyResultRequest
 }
 
 // OrgSvcServer is the server API for OrgSvc service.
-// All implementations must embed UnimplementedOrgSvcServer
+// All implementations should embed UnimplementedOrgSvcServer
 // for forward compatibility
 type OrgSvcServer interface {
 	CreateObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
@@ -120,10 +120,9 @@ type OrgSvcServer interface {
 	GetKeyResult(context.Context, *KeyResultRequest) (*KeyResultReply, error)
 	GetKeyResults(context.Context, *KeyResultRequest) (*KeyResultsReply, error)
 	DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
-	mustEmbedUnimplementedOrgSvcServer()
 }
 
-// UnimplementedOrgSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedOrgSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedOrgSvcServer struct {
 }
 
@@ -151,7 +150,6 @@ func (UnimplementedOrgSvcServer) GetKeyResults(context.Context, *KeyResultReques
 func (UnimplementedOrgSvcServer) DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteKeyResult not implemented")
 }
-func (UnimplementedOrgSvcServer) mustEmbedUnimplementedOrgSvcServer() {}
 
 // UnsafeOrgSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to OrgSvcServer will

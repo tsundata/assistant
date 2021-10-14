@@ -59,16 +59,15 @@ func (c *nLPSvcClient) Classifier(ctx context.Context, in *TextRequest, opts ...
 }
 
 // NLPSvcServer is the server API for NLPSvc service.
-// All implementations must embed UnimplementedNLPSvcServer
+// All implementations should embed UnimplementedNLPSvcServer
 // for forward compatibility
 type NLPSvcServer interface {
 	Pinyin(context.Context, *TextRequest) (*WordsReply, error)
 	Segmentation(context.Context, *TextRequest) (*WordsReply, error)
 	Classifier(context.Context, *TextRequest) (*TextReply, error)
-	mustEmbedUnimplementedNLPSvcServer()
 }
 
-// UnimplementedNLPSvcServer must be embedded to have forward compatible implementations.
+// UnimplementedNLPSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedNLPSvcServer struct {
 }
 
@@ -81,7 +80,6 @@ func (UnimplementedNLPSvcServer) Segmentation(context.Context, *TextRequest) (*W
 func (UnimplementedNLPSvcServer) Classifier(context.Context, *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Classifier not implemented")
 }
-func (UnimplementedNLPSvcServer) mustEmbedUnimplementedNLPSvcServer() {}
 
 // UnsafeNLPSvcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to NLPSvcServer will
