@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 )
 
@@ -18,11 +19,12 @@ type OrgRepository interface {
 }
 
 type MysqlOrgRepository struct {
+	id *global.ID
 	db *mysql.Conn
 }
 
-func NewMysqlOrgRepository(db *mysql.Conn) OrgRepository {
-	return &MysqlOrgRepository{db: db}
+func NewMysqlOrgRepository(id *global.ID, db *mysql.Conn) OrgRepository {
+	return &MysqlOrgRepository{id: id, db: db}
 }
 
 func (r *MysqlOrgRepository) GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error) {
@@ -44,6 +46,7 @@ func (r *MysqlOrgRepository) ListObjectives(ctx context.Context) ([]*pb.Objectiv
 }
 
 func (r *MysqlOrgRepository) CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error) {
+	objective.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&objective).Error
 	if err != nil {
 		return 0, err
@@ -74,6 +77,7 @@ func (r *MysqlOrgRepository) ListKeyResults(ctx context.Context) ([]*pb.KeyResul
 }
 
 func (r *MysqlOrgRepository) CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error) {
+	keyResult.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&keyResult).Error
 	if err != nil {
 		return 0, err

@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -47,11 +48,6 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
-	mysqlConn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	chatbotRepository := repository.NewMysqlChatbotRepository(mysqlConn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -68,6 +64,16 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	globalID := global.NewID(appConfig, idSvcClient)
+	mysqlConn, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	chatbotRepository := repository.NewMysqlChatbotRepository(globalID, mysqlConn)
 	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -125,4 +131,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, nats.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, nats.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet)

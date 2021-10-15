@@ -68,16 +68,20 @@ func TestMiddleRepository_ListApps(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create middle Repository error, %+v", err)
 	}
+	type args struct {
+		userId int64
+	}
 	tests := []struct {
 		name    string
 		r       MiddleRepository
+		args    args
 		wantErr bool
 	}{
-		{"case1", sto, false},
+		{"case1", sto, args{userId: 1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListApps(context.Background())
+			_, err := tt.r.ListApps(context.Background(), tt.args.userId)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.ListApps() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -181,7 +185,7 @@ func TestMiddleRepository_CreateApp(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{app: &pb.App{Name: "test"}}, false},
+		{"case1", sto, args{app: &pb.App{UserId: 1, Name: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

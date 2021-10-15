@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 )
 
@@ -15,11 +16,12 @@ type ChatbotRepository interface {
 }
 
 type MysqlChatbotRepository struct {
+	id *global.ID
 	db *mysql.Conn
 }
 
-func NewMysqlChatbotRepository(db *mysql.Conn) ChatbotRepository {
-	return &MysqlChatbotRepository{db: db}
+func NewMysqlChatbotRepository(id *global.ID, db *mysql.Conn) ChatbotRepository {
+	return &MysqlChatbotRepository{id: id, db: db}
 }
 
 func (r *MysqlChatbotRepository) GetByID(ctx context.Context, id int64) (*pb.Bot, error) {
@@ -50,6 +52,7 @@ func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 }
 
 func (r *MysqlChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {
+	bot.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&bot).Error
 	if err != nil {
 		return 0, err

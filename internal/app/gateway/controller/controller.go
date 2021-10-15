@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/websocket/v2"
 	"github.com/google/wire"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	_ "github.com/tsundata/assistant/docs"
 	"github.com/tsundata/assistant/internal/app/gateway/chat"
@@ -93,6 +94,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			if !reply.GetState() {
 				return c.SendStatus(http.StatusForbidden)
 			}
+			c.Locals(enum.AuthKey, reply.Id)
 			return c.Next()
 		}
 		internal := router.Group("/")

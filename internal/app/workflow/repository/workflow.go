@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 )
 
@@ -14,11 +15,12 @@ type WorkflowRepository interface {
 }
 
 type MysqlWorkflowRepository struct {
+	id *global.ID
 	db *mysql.Conn
 }
 
-func NewMysqlWorkflowRepository(db *mysql.Conn) WorkflowRepository {
-	return &MysqlWorkflowRepository{db: db}
+func NewMysqlWorkflowRepository(id *global.ID, db *mysql.Conn) WorkflowRepository {
+	return &MysqlWorkflowRepository{id: id, db: db}
 }
 
 func (r *MysqlWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (*pb.Trigger, error) {
@@ -43,6 +45,7 @@ func (r *MysqlWorkflowRepository) ListTriggersByType(ctx context.Context, t stri
 }
 
 func (r *MysqlWorkflowRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
+	trigger.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&trigger).Error
 	if err != nil {
 		return 0, err

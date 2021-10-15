@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
@@ -27,11 +28,12 @@ type UserRepository interface {
 
 type MysqlUserRepository struct {
 	logger log.Logger
+	id     *global.ID
 	db     *mysql.Conn
 }
 
-func NewMysqlUserRepository(logger log.Logger, db *mysql.Conn) UserRepository {
-	return &MysqlUserRepository{logger: logger, db: db}
+func NewMysqlUserRepository(logger log.Logger, id *global.ID, db *mysql.Conn) UserRepository {
+	return &MysqlUserRepository{logger: logger, id: id, db: db}
 }
 
 func (r *MysqlUserRepository) GetRole(ctx context.Context, userID int) (*pb.Role, error) {
@@ -93,9 +95,9 @@ func (r *MysqlUserRepository) ChangeRoleAttr(ctx context.Context, userID int64, 
 func (r *MysqlUserRepository) roleRecord(ctx context.Context, userId int64, exp int64, attr string, val int64) {
 	var err error
 	if attr != "" {
-		err = r.db.WithContext(ctx).Exec(fmt.Sprintf("INSERT INTO `role_records` (`profession`, `user_id`, `exp`, `%s`) VALUES ('', ?, ?, ?)", attr), userId, exp, val).Error
+		err = r.db.WithContext(ctx).Exec(fmt.Sprintf("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`, `%s`) VALUES (?, '', ?, ?, ?)", attr), r.id.Generate(ctx), userId, exp, val).Error
 	} else {
-		err = r.db.WithContext(ctx).Exec("INSERT INTO `role_records` (`profession`, `user_id`, `exp`) VALUES ('', ?, ?)", userId, exp).Error
+		err = r.db.WithContext(ctx).Exec("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`) VALUES (?, '', ?, ?)", r.id.Generate(ctx), userId, exp).Error
 	}
 	if err != nil {
 		r.logger.Error(err)
@@ -154,6 +156,7 @@ func (r *MysqlUserRepository) ListDevice(ctx context.Context, userID int64) ([]*
 }
 
 func (r *MysqlUserRepository) CreateDevice(ctx context.Context, device *pb.Device) (int64, error) {
+	device.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&device).Error
 	if err != nil {
 		return 0, err

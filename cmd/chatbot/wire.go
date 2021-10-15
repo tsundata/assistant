@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -42,6 +43,7 @@ var providerSet = wire.NewSet(
 	newrelic.ProviderSet,
 	mysql.ProviderSet,
 	repository.ProviderSet,
+	global.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

@@ -53,7 +53,7 @@ func TestOrgRepository_GetObjectiveByID(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"id=1", sto, args{id: 1}, false},
+		{"id=1", sto, args{id: 1}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestOrgRepository_GetKeyResultByID(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{id: 1}, false},
+		{"case1", sto, args{id: 1}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

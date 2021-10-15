@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -43,11 +44,6 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	middleRepository := repository.NewMysqlMiddleRepository(conn)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -64,6 +60,16 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	globalID := global.NewID(appConfig, idSvcClient)
+	conn, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	middleRepository := repository.NewMysqlMiddleRepository(globalID, conn)
 	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -83,4 +89,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet)

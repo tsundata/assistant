@@ -304,12 +304,6 @@ func TestUserRepository_GetDevice(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"case1",
-			sto,
-			args{id: 1},
-			false,
-		},
-		{
 			"case2",
 			sto,
 			args{id: 99999999},

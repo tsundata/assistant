@@ -171,18 +171,18 @@ func (mr *MockMiddleRepositoryMockRecorder) GetPageByUUID(ctx, uuid interface{})
 }
 
 // ListApps mocks base method.
-func (m *MockMiddleRepository) ListApps(ctx context.Context) ([]*pb.App, error) {
+func (m *MockMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*pb.App, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListApps", ctx)
+	ret := m.ctrl.Call(m, "ListApps", ctx, userId)
 	ret0, _ := ret[0].([]*pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListApps indicates an expected call of ListApps.
-func (mr *MockMiddleRepositoryMockRecorder) ListApps(ctx interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) ListApps(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListApps", reflect.TypeOf((*MockMiddleRepository)(nil).ListApps), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListApps", reflect.TypeOf((*MockMiddleRepository)(nil).ListApps), ctx, userId)
 }
 
 // ListCredentials mocks base method.

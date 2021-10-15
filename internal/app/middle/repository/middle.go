@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
 )
@@ -11,7 +12,7 @@ import (
 type MiddleRepository interface {
 	CreatePage(ctx context.Context, page *pb.Page) (int64, error)
 	GetPageByUUID(ctx context.Context, uuid string) (*pb.Page, error)
-	ListApps(ctx context.Context, ) ([]*pb.App, error)
+	ListApps(ctx context.Context, userId int64) ([]*pb.App, error)
 	GetAvailableAppByType(ctx context.Context, t string) (*pb.App, error)
 	GetAppByType(ctx context.Context, t string) (*pb.App, error)
 	UpdateAppByID(ctx context.Context, id int64, token, extra string) error
@@ -25,14 +26,16 @@ type MiddleRepository interface {
 }
 
 type MysqlMiddleRepository struct {
+	id *global.ID
 	db *mysql.Conn
 }
 
-func NewMysqlMiddleRepository(db *mysql.Conn) MiddleRepository {
-	return &MysqlMiddleRepository{db: db}
+func NewMysqlMiddleRepository(id *global.ID, db *mysql.Conn) MiddleRepository {
+	return &MysqlMiddleRepository{id: id, db: db}
 }
 
 func (r *MysqlMiddleRepository) CreatePage(ctx context.Context, page *pb.Page) (int64, error) {
+	page.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&page).Error
 	if err != nil {
 		return 0, err
@@ -49,9 +52,9 @@ func (r *MysqlMiddleRepository) GetPageByUUID(ctx context.Context, uuid string) 
 	return &find, nil
 }
 
-func (r *MysqlMiddleRepository) ListApps(ctx context.Context) ([]*pb.App, error) {
+func (r *MysqlMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*pb.App, error) {
 	var items []*pb.App
-	err := r.db.WithContext(ctx).Order("created_at DESC").Find(&items).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("created_at DESC").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +85,7 @@ func (r *MysqlMiddleRepository) UpdateAppByID(ctx context.Context, id int64, tok
 }
 
 func (r *MysqlMiddleRepository) CreateApp(ctx context.Context, app *pb.App) (int64, error) {
+	app.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&app).Error
 	if err != nil {
 		return 0, err
@@ -117,6 +121,7 @@ func (r *MysqlMiddleRepository) ListCredentials(ctx context.Context) ([]*pb.Cred
 }
 
 func (r *MysqlMiddleRepository) CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error) {
+	credential.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&credential).Error
 	if err != nil {
 		return 0, err
@@ -141,6 +146,7 @@ func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag)
 	}
 
 	if find.Id <= 0 {
+		tag.Id = r.id.Generate(ctx)
 		err = r.db.WithContext(ctx).Create(&tag).Error
 		if err != nil {
 			return nil, err

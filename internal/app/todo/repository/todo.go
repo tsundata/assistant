@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 )
 
@@ -17,14 +18,16 @@ type TodoRepository interface {
 }
 
 type MysqlTodoRepository struct {
+	id *global.ID
 	db *mysql.Conn
 }
 
-func NewMysqlTodoRepository(db *mysql.Conn) TodoRepository {
-	return &MysqlTodoRepository{db: db}
+func NewMysqlTodoRepository(id *global.ID, db *mysql.Conn) TodoRepository {
+	return &MysqlTodoRepository{id: id, db: db}
 }
 
 func (r *MysqlTodoRepository) CreateTodo(ctx context.Context, todo *pb.Todo) (int64, error) {
+	todo.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&todo)
 	if err != nil {
 		return 0, nil

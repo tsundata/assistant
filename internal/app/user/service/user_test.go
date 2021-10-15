@@ -63,7 +63,7 @@ func TestUser_Login(t *testing.T) {
 			s,
 			args{context.Background(), &pb.LoginRequest{Username: "admin", Password: "err_pwd"}},
 			&pb.AuthReply{State: false},
-			false,
+			true,
 		},
 	}
 	for _, tt := range tests {

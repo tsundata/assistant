@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
@@ -37,7 +38,7 @@ func TestMiddle_GetQrUrl(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			args{md.MockIncomingContext(), &pb.TextRequest{Text: "test"}},
 			false,
 		},
 	}
@@ -81,7 +82,7 @@ func TestMiddle_CreatePage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.PageRequest{Page: &pb.Page{Type: "html", Title: "title", Content: "test"}}},
+			args{md.MockIncomingContext(), &pb.PageRequest{Page: &pb.Page{Type: "html", Title: "title", Content: "test"}}},
 			false,
 		},
 	}
@@ -127,7 +128,7 @@ func TestMiddle_GetPage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.PageRequest{Page: &pb.Page{Uuid: "test"}}},
+			args{md.MockIncomingContext(), &pb.PageRequest{Page: &pb.Page{Uuid: "test"}}},
 			&pb.PageReply{
 				Page: &pb.Page{
 					Uuid:    "test",
@@ -159,7 +160,7 @@ func TestMiddle_GetApps(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListApps(gomock.Any()).Return([]*pb.App{{
+		repo.EXPECT().ListApps(gomock.Any(), gomock.Any()).Return([]*pb.App{{
 			Id:    1,
 			Type:  "github",
 			Extra: `{"name": "github", "type":"github", "key": "test"}`,
@@ -182,7 +183,7 @@ func TestMiddle_GetApps(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{md.MockIncomingContext(), &pb.TextRequest{}},
 			3,
 			false,
 		},
@@ -232,7 +233,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{Text: "github"}},
+			args{md.MockIncomingContext(), &pb.TextRequest{Text: "github"}},
 			&pb.AppReply{Name: "github", Type: "github", Token: "test", Extra: []*pb.KV{}},
 			false,
 		},
@@ -287,21 +288,21 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
+			args{md.MockIncomingContext(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
+			args{md.MockIncomingContext(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "test", Extra: "{}"}}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case3",
 			s,
-			args{context.Background(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "", Extra: "{}"}}},
+			args{md.MockIncomingContext(), &pb.AppRequest{App: &pb.App{Type: "github", Token: "", Extra: "{}"}}},
 			&pb.StateReply{State: false},
 			false,
 		},
@@ -356,7 +357,7 @@ func TestMiddle_GetCredential(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.CredentialRequest{Name: "github"}},
+			args{md.MockIncomingContext(), &pb.CredentialRequest{Name: "github"}},
 			&pb.CredentialReply{
 				Name:    "github",
 				Type:    "github",
@@ -367,7 +368,7 @@ func TestMiddle_GetCredential(t *testing.T) {
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.CredentialRequest{Type: "github"}},
+			args{md.MockIncomingContext(), &pb.CredentialRequest{Type: "github"}},
 			&pb.CredentialReply{
 				Name:    "github",
 				Type:    "github",
@@ -420,7 +421,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{md.MockIncomingContext(), &pb.TextRequest{}},
 			1,
 			false,
 		},
@@ -469,7 +470,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{md.MockIncomingContext(), &pb.TextRequest{}},
 			1,
 			false,
 		},
@@ -513,7 +514,7 @@ func TestMiddle_CreateCredential(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.KVsRequest{Kvs: []*pb.KV{
+			args{md.MockIncomingContext(), &pb.KVsRequest{Kvs: []*pb.KV{
 				{Key: "name", Value: "github"},
 				{Key: "type", Value: "github"},
 				{Key: "key", Value: "123456"},
@@ -524,7 +525,7 @@ func TestMiddle_CreateCredential(t *testing.T) {
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.KVsRequest{Kvs: []*pb.KV{
+			args{md.MockIncomingContext(), &pb.KVsRequest{Kvs: []*pb.KV{
 				{Key: "name", Value: ""},
 				{Key: "type", Value: "github"},
 				{Key: "key", Value: "123456"},
@@ -568,7 +569,7 @@ func TestMiddle_GetSettings(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{md.MockIncomingContext(), &pb.TextRequest{}},
 			false,
 		},
 	}
@@ -604,7 +605,7 @@ func TestMiddle_GetSetting(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{Text: "test"}},
+			args{md.MockIncomingContext(), &pb.TextRequest{Text: "test"}},
 			false,
 		},
 	}
@@ -641,7 +642,7 @@ func TestMiddle_CreateSetting(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.KVRequest{Key: "test", Value: "test"}},
+			args{md.MockIncomingContext(), &pb.KVRequest{Key: "test", Value: "test"}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -683,7 +684,7 @@ func TestMiddle_GetStats(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TextRequest{}},
+			args{md.MockIncomingContext(), &pb.TextRequest{}},
 			false,
 		},
 	}
@@ -732,7 +733,7 @@ func TestSubscribe_List(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{}},
 			2,
 			false,
 		},
@@ -773,7 +774,7 @@ func TestSubscribe_Register(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{Text: "test"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test"}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -814,7 +815,7 @@ func TestSubscribe_Open(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{Text: "test"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test"}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -855,7 +856,7 @@ func TestSubscribe_Close(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{Text: "test"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test"}},
 			&pb.StateReply{State: true},
 			false,
 		},
@@ -908,14 +909,14 @@ func TestSubscribe_Status(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{Text: "test1"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test1"}},
 			&pb.StateReply{State: true},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.SubscribeRequest{Text: "test2"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test2"}},
 			&pb.StateReply{State: false},
 			false,
 		},
@@ -963,7 +964,7 @@ func TestMiddle_GetTags(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
+			args{md.MockIncomingContext(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
 			1,
 			false,
 		},
@@ -1011,7 +1012,7 @@ func TestMiddle_GetOrCreateTag(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
+			args{md.MockIncomingContext(), &pb.TagRequest{Tag: &pb.Tag{Name: "test1"}}},
 			pb.Tag{Id: 1, Name: "test1"},
 			false,
 		},
@@ -1051,7 +1052,7 @@ func TestSetChartData(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.ChartDataRequest{ChartData: &pb.ChartData{
+			args{md.MockIncomingContext(), &pb.ChartDataRequest{ChartData: &pb.ChartData{
 				Title:    "chart1",
 				SubTitle: "sub_title",
 				XAxis:    []string{"01", "02", "03"},
@@ -1110,7 +1111,7 @@ func TestGetChartData(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.ChartDataRequest{ChartData: &pb.ChartData{Uuid: uuid}}},
+			args{md.MockIncomingContext(), &pb.ChartDataRequest{ChartData: &pb.ChartData{Uuid: uuid}}},
 			&pb.ChartDataReply{ChartData: &data},
 			false,
 		},
@@ -1163,7 +1164,7 @@ func TestListCron(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.CronRequest{}},
+			args{md.MockIncomingContext(), &pb.CronRequest{}},
 			2,
 			false,
 		},

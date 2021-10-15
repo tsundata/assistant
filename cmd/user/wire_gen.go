@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -50,13 +51,6 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	mysqlConn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	userRepository := repository.NewMysqlUserRepository(logLogger, mysqlConn)
-	serviceUser := service.NewUser(appConfig, logLogger, redisClient, userRepository)
-	initServer := service.CreateInitServerFn(serviceUser)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -65,15 +59,27 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
 	clientOptions, err := rpc.NewClientOptions(tracer)
 	if err != nil {
 		return nil, err
 	}
 	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	globalID := global.NewID(appConfig, idSvcClient)
+	mysqlConn, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	userRepository := repository.NewMysqlUserRepository(logLogger, globalID, mysqlConn)
+	serviceUser := service.NewUser(appConfig, logLogger, redisClient, userRepository)
+	initServer := service.CreateInitServerFn(serviceUser)
+	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
@@ -90,4 +96,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, user.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet)

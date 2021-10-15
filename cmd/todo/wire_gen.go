@@ -9,10 +9,12 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/todo"
 	"github.com/tsundata/assistant/internal/app/todo/repository"
+	"github.com/tsundata/assistant/internal/app/todo/rpcclient"
 	"github.com/tsundata/assistant/internal/app/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
@@ -45,13 +47,6 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
-	mysqlConn, err := mysql.New(appConfig)
-	if err != nil {
-		return nil, err
-	}
-	todoRepository := repository.NewMysqlTodoRepository(mysqlConn)
-	serviceTodo := service.NewTodo(bus, logLogger, todoRepository)
-	initServer := service.CreateInitServerFn(serviceTodo)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -60,6 +55,26 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	clientOptions, err := rpc.NewClientOptions(tracer)
+	if err != nil {
+		return nil, err
+	}
+	rpcClient, err := rpc.NewClient(clientOptions, appConfig, logLogger)
+	if err != nil {
+		return nil, err
+	}
+	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	globalID := global.NewID(appConfig, idSvcClient)
+	mysqlConn, err := mysql.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	todoRepository := repository.NewMysqlTodoRepository(globalID, mysqlConn)
+	serviceTodo := service.NewTodo(bus, logLogger, todoRepository)
+	initServer := service.CreateInitServerFn(serviceTodo)
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
@@ -77,4 +92,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, todo.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, repository.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet, global.ProviderSet, rpcclient.ProviderSet)

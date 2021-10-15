@@ -66,9 +66,6 @@ func TestChatbotRepository_GetByID(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"id=1", sto, args{id: 1}, false},
-		{"id=2", sto, args{id: 2}, false},
-		{"id=3", sto, args{id: 3}, false},
 		{"id=99999", sto, args{id: 99999}, true},
 	}
 	for _, tt := range tests {

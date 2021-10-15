@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
@@ -24,6 +24,8 @@ import (
 	"net"
 )
 
+var ErrGrpcUnauthenticated = status.Error(codes.Unauthenticated, "grpc unauthenticated")
+
 type Server struct {
 	conf   *config.AppConfig
 	logger log.Logger
@@ -34,28 +36,28 @@ type InitServer func(s *grpc.Server)
 
 func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init InitServer, tracer opentracing.Tracer, rdb *redis.Client, nc *newrelic.App) (*Server, error) {
 	// recovery
-	recoveryOpts := []grpcrecovery.Option{
-		grpcrecovery.WithRecoveryHandler(func(p interface{}) (err error) {
+	recoveryOpts := []grpcRecovery.Option{
+		grpcRecovery.WithRecoveryHandler(func(p interface{}) (err error) {
 			return status.Errorf(codes.Unknown, "panic triggered: %v", p)
 		}),
 	}
 
 	gs := grpc.NewServer(
 		grpc.StreamInterceptor(
-			grpcmiddleware.ChainStreamServer(
-				grpcrecovery.StreamServerInterceptor(recoveryOpts...),
+			grpcMiddleware.ChainStreamServer(
+				grpcRecovery.StreamServerInterceptor(recoveryOpts...),
 				rollbar.StreamServerInterceptor(),
-				grpc_zap.StreamServerInterceptor(z),
+				grpcZap.StreamServerInterceptor(z),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
 				nrgrpc.StreamServerInterceptor(nc.Application()),
 			),
 		),
 		grpc.UnaryInterceptor(
-			grpcmiddleware.ChainUnaryServer(
-				grpcrecovery.UnaryServerInterceptor(recoveryOpts...),
+			grpcMiddleware.ChainUnaryServer(
+				grpcRecovery.UnaryServerInterceptor(recoveryOpts...),
 				rollbar.UnaryServerInterceptor(),
-				grpc_zap.UnaryServerInterceptor(z),
+				grpcZap.UnaryServerInterceptor(z),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
 				nrgrpc.UnaryServerInterceptor(nc.Application()),

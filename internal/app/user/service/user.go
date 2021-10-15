@@ -38,19 +38,19 @@ func (s *User) Login(ctx context.Context, payload *pb.LoginRequest) (*pb.AuthRep
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			s.logger.Error(err)
 		}
-		return &pb.AuthReply{State: false}, nil
+		return &pb.AuthReply{State: false}, errors.New("username/password invalid")
 	}
 
 	err = bcrypt.CompareHashAndPassword(util.StringToByte(find.Password), util.StringToByte(payload.Password))
 	if err != nil {
 		s.logger.Error(err)
-		return &pb.AuthReply{State: false}, nil
+		return &pb.AuthReply{State: false}, errors.New("username/password invalid")
 	}
 
 	reply, err := s.GetAuthToken(ctx, &pb.AuthRequest{Id: find.Id})
 	if err != nil {
 		s.logger.Error(err)
-		return &pb.AuthReply{State: false}, nil
+		return &pb.AuthReply{State: false}, errors.New("username/password invalid")
 	}
 
 	return &pb.AuthReply{State: true, Token: reply.Token}, nil
@@ -85,7 +85,6 @@ func (s *User) Authorization(_ context.Context, payload *pb.AuthRequest) (*pb.Au
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims)
 		return &pb.AuthReply{
 			State: true,
 			Id:    int64(claims["id"].(float64)),

@@ -146,7 +146,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{todo: &pb.Todo{Id: 1, Content: "test"}}, false},
+		{"case1", sto, args{todo: &pb.Todo{Id: 1448946120695771136, Content: "test update"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
