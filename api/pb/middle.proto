@@ -87,18 +87,20 @@ message AppReply {
 message App {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
   // @inject_tag: db:"type"
-  string type = 2;
+  string type = 3;
   // @inject_tag: db:"name"
-  string name = 3;
+  string name = 4;
   // @inject_tag: db:"token"
-  string token = 4;
+  string token = 5;
   // @inject_tag: db:"extra"
-  string extra = 5;
+  string extra = 6;
   // @inject_tag: db:"created_at"
-  int64 created_at = 6;
+  int64 created_at = 7;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 7;
+  int64 updated_at = 8;
 }
 
 message AppInfo {

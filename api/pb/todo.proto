@@ -37,28 +37,30 @@ message TodosReply {
 message Todo {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
   // @inject_tag: db:"content"
-  string content = 2;
+  string content = 3;
   // @inject_tag: db:"category"
-  string category = 3;
+  string category = 4;
   // @inject_tag: db:"remark"
-  string remark = 4;
+  string remark = 5;
   // @inject_tag: db:"priority"
-  int64 priority = 5;
+  int64 priority = 6;
   // @inject_tag: db:"is_remind_at_time"
-  bool is_remind_at_time = 6;
+  bool is_remind_at_time = 7;
   // @inject_tag: db:"remind_at"
-  int64 remind_at = 7;
+  int64 remind_at = 8;
   // @inject_tag: db:"repeat_method"
-  string repeat_method = 8;
+  string repeat_method = 9;
   // @inject_tag: db:"repeat_rule"
-  string repeat_rule = 9;
+  string repeat_rule = 10;
   // @inject_tag: db:"repeat_end_at"
-  int64 repeat_end_at = 10;
+  int64 repeat_end_at = 11;
   // @inject_tag: db:"complete"
-  bool complete = 11;
+  bool complete = 12;
   // @inject_tag: db:"created_at"
-  int64 created_at = 12;
+  int64 created_at = 13;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 13;
+  int64 updated_at = 14;
 }
