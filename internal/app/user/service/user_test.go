@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
@@ -219,7 +220,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.RoleRequest{Id: 1}},
+			args{md.MockIncomingContext(), &pb.RoleRequest{Id: 1}},
 			false,
 		},
 	}

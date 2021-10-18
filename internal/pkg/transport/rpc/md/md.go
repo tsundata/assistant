@@ -6,14 +6,11 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"google.golang.org/grpc/metadata"
 	"strconv"
-	"time"
 )
 
 func Outgoing(c *fiber.Ctx) context.Context {
 	val := c.Locals(enum.AuthKey)
 	md := metadata.New(map[string]string{})
-	md.Append("test", "IncomingIncomingIncoming")
-	md.Append("time", time.Now().String())
 	if id, ok := val.(int64); ok {
 		md.Append(enum.AuthKey, strconv.Itoa(int(id)))
 	}
@@ -35,5 +32,5 @@ func FromIncoming(ctx context.Context) (int64, bool) {
 }
 
 func MockIncomingContext() context.Context {
-	return metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{"id": "1"}))
+	return metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{"id": strconv.Itoa(enum.SuperUserID)}))
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
-	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -497,7 +496,6 @@ func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	in.Id = enum.SuperUserID // default
 
 	reply, err := gc.userSvc.GetRoleImage(md.Outgoing(c), &in)
 	if err != nil {

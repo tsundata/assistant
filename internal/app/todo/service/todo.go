@@ -7,6 +7,8 @@ import (
 	"github.com/tsundata/assistant/internal/app/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
 type Todo struct {
@@ -20,6 +22,11 @@ func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) *
 }
 
 func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+	id, ok := md.FromIncoming(ctx)
+	if !ok {
+		return nil, rpc.ErrGrpcUnauthenticated
+	}
+
 	var err error
 	todo := pb.Todo{
 		Content:        payload.Todo.GetContent(),
@@ -39,7 +46,7 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCreatedExp})
+		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: id, Exp: enum.TodoCreatedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -106,13 +113,18 @@ func (s *Todo) UpdateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 }
 
 func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+	id, ok := md.FromIncoming(ctx)
+	if !ok {
+		return nil, rpc.ErrGrpcUnauthenticated
+	}
+
 	err := s.repo.CompleteTodo(ctx, payload.Todo.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	if s.bus != nil {
-		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: enum.SuperUserID, Exp: enum.TodoCompletedExp})
+		err = s.bus.Publish(ctx, event.RoleChangeExpSubject, pb.Role{UserId: id, Exp: enum.TodoCompletedExp})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err
@@ -122,7 +134,7 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 		if err != nil {
 			return nil, err
 		}
-		err = s.bus.Publish(ctx, event.RoleChangeAttrSubject, pb.AttrChange{UserId: enum.SuperUserID, Content: find.Content})
+		err = s.bus.Publish(ctx, event.RoleChangeAttrSubject, pb.AttrChange{UserId: id, Content: find.Content})
 		if err != nil {
 			s.logger.Error(err)
 			return nil, err

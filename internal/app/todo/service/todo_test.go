@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
@@ -39,7 +40,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 		want    *pb.StateReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Content: "test"}}}, &pb.StateReply{State: true}, false},
+		{"case1", s, args{md.MockIncomingContext(), &pb.TodoRequest{Todo: &pb.Todo{Content: "test"}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -256,7 +257,7 @@ func TestTodo_CompleteTodo(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.TodoRequest{Todo: &pb.Todo{Id: 1}}},
+			args{md.MockIncomingContext(), &pb.TodoRequest{Todo: &pb.Todo{Id: 1}}},
 			&pb.StateReply{State: true},
 			false,
 		},
