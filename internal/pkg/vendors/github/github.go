@@ -308,7 +308,7 @@ func NewGithub(clientId, clientSecret, redirectURI, accessToken string) *Github 
 	v := &Github{clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI, accessToken: accessToken}
 
 	v.c = resty.New()
-	v.c.SetHostURL("https://api.github.com")
+	v.c.SetBaseURL("https://api.github.com")
 	v.c.SetTimeout(time.Minute)
 
 	return v

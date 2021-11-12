@@ -17,7 +17,7 @@ type GatewayClient struct {
 
 func NewGatewayClient(c *config.AppConfig) *GatewayClient {
 	client := resty.New()
-	client.SetHostURL(c.Gateway.Url)
+	client.SetBaseURL(c.Gateway.Url)
 	client.SetTimeout(time.Minute)
 	return &GatewayClient{r: client}
 }

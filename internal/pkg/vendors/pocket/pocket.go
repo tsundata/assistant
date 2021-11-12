@@ -70,7 +70,7 @@ func NewPocket(clientId, clientSecret, redirectURI, accessToken string) *Pocket 
 	v := &Pocket{clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI, accessToken: accessToken}
 
 	v.c = resty.New()
-	v.c.SetHostURL("https://getpocket.com")
+	v.c.SetBaseURL("https://getpocket.com")
 	v.c.SetTimeout(time.Minute)
 
 	return v

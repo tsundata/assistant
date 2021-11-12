@@ -52,7 +52,7 @@ func NewTelegram(token string) *Telegram {
 	}
 
 	v.c = resty.New()
-	v.c.SetHostURL(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
+	v.c.SetBaseURL(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
 	v.c.SetTimeout(time.Minute)
 
 	return v

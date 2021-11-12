@@ -205,7 +205,7 @@ func TestApps(t *testing.T) {
 
 func getToken() string {
 	r := resty.New()
-	r.SetHostURL(GatewayBaseURL)
+	r.SetBaseURL(GatewayBaseURL)
 	resp, err := r.R().SetBody("menu").Post("/debug/event")
 	if err != nil {
 		panic(err)
