@@ -5,7 +5,7 @@ go 1.16
 require (
 	cloud.google.com/go/kms v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
-	github.com/PuerkitoBio/goquery v1.7.1
+	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/RichardKnop/machinery/v2 v2.0.11
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
