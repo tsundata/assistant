@@ -14,9 +14,3 @@ const (
 	MessageTypeRich     = "rich"
 	MessageTypeAction   = "action"
 )
-
-const (
-	PlatformSlack    = "slack"
-	PlatformTelegram = "telegram"
-	PlatformDiscord  = "discord"
-)

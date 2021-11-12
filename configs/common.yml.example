@@ -17,13 +17,6 @@ nats:
 mysql:
   dsn: root:123456@tcp(127.0.0.1:3306)/test?parseTime=True&charset=utf8mb4&loc=Local
 
-slack:
-  verification:
-  signing:
-  token:
-  webhook:
-    - name:
-      url:
 rollbar:
   token:
   environment: # production development
