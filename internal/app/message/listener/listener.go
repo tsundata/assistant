@@ -11,10 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/transport/http"
-	"github.com/tsundata/assistant/internal/pkg/util"
-	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
-	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"strings"
 )
@@ -35,18 +31,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			return
 		}
 
-		client := http.NewClient()
-		webhook := slack.ChannelSelect(m.Channel, config.Slack.Webhook)
-		resp, err := client.PostJSON(webhook, map[string]interface{}{
-			"text": m.Text,
-		})
-		if err != nil {
-			logger.Error(err, zap.Any("event", event.MessageSendSubject))
-			return
-		}
-
-		_ = util.ByteToString(resp.Body())
-		fasthttp.ReleaseResponse(resp)
+		// todo send message
 	})
 	if err != nil {
 		return err
