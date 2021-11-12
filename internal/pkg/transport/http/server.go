@@ -75,4 +75,4 @@ func (s *Server) Stop() error {
 	return nil
 }
 
-var ProviderSet = wire.NewSet(New, NewClient)
+var ProviderSet = wire.NewSet(New)

@@ -16,13 +16,13 @@ require (
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-ego/gse v0.69.15
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
-	github.com/go-redis/redis/v8 v8.11.3
+	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.21.0
 	github.com/gofiber/websocket/v2 v2.0.12
 	github.com/gogo/protobuf v1.3.2
-	github.com/golang-jwt/jwt/v4 v4.0.0
+	github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
@@ -33,7 +33,7 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.5.1
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats.go v1.12.3
-	github.com/newrelic/go-agent/v3 v3.15.0
+	github.com/newrelic/go-agent/v3 v3.15.1
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
@@ -48,7 +48,7 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/swag v1.7.3
+	github.com/swaggo/swag v1.7.4
 	github.com/tidwall/gjson v1.11.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
@@ -60,6 +60,6 @@ require (
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.1.2
+	gorm.io/driver/mysql v1.1.3
 	gorm.io/gorm v1.22.2
 )

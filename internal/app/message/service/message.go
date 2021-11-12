@@ -9,10 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/util"
-	"github.com/tsundata/assistant/internal/pkg/vendors/slack"
-	"github.com/valyala/fasthttp"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -141,17 +138,8 @@ func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.State
 	if payload.Message.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
-	client := http.NewClient()
-	webhook := slack.ChannelSelect(payload.Message.GetChannel(), m.config.Slack.Webhook)
-	resp, err := client.PostJSON(webhook, map[string]interface{}{
-		"text": payload.Message.GetText(),
-	})
-	if err != nil {
-		return nil, err
-	}
 
-	_ = util.ByteToString(resp.Body())
-	fasthttp.ReleaseResponse(resp)
+	// todo send message
 
 	return &pb.StateReply{
 		State: true,
