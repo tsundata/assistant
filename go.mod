@@ -9,7 +9,7 @@ require (
 	github.com/RichardKnop/machinery/v2 v2.0.11
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
-	github.com/arsmn/fiber-swagger/v2 v2.17.0
+	github.com/arsmn/fiber-swagger/v2 v2.20.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
@@ -19,7 +19,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.19.0
+	github.com/gofiber/fiber/v2 v2.20.2
 	github.com/gofiber/websocket/v2 v2.0.10
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.0.0
@@ -42,7 +42,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/rollbar/rollbar-go v1.4.1
+	github.com/rollbar/rollbar-go v1.4.2
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/slack-go/slack v0.9.5
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
@@ -51,12 +51,12 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.3
-	github.com/tidwall/gjson v1.9.1
+	github.com/tidwall/gjson v1.11.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/valyala/fasthttp v1.30.0
 	github.com/yuin/goldmark v1.4.1
-	go.etcd.io/etcd/client/v3 v3.5.0
+	go.etcd.io/etcd/client/v3 v3.5.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
