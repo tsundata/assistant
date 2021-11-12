@@ -27,7 +27,6 @@ Assistant Bot is a workflow engine for chatbot
 - Pocket
 - Pushover
 - Dropbox
-- Slack
 - Rollbar
 - Newrelic
 - Cloudflare
