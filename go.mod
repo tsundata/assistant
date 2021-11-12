@@ -14,7 +14,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-echarts/go-echarts/v2 v2.2.4
-	github.com/go-ego/gse v0.69.5
+	github.com/go-ego/gse v0.69.15
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/go-resty/resty/v2 v2.7.0
@@ -61,7 +61,6 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.40.0
-	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
