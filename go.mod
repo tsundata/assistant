@@ -17,7 +17,7 @@ require (
 	github.com/go-ego/gse v0.69.5
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-redis/redis/v8 v8.11.3
-	github.com/go-resty/resty/v2 v2.6.0
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.20.2
 	github.com/gofiber/websocket/v2 v2.0.10
