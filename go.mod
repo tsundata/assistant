@@ -32,8 +32,8 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.5.1
 	github.com/mozillazg/go-pinyin v0.18.0
-	github.com/nats-io/nats.go v1.13.0
-	github.com/newrelic/go-agent/v3 v3.15.0
+	github.com/nats-io/nats.go v1.12.3
+	github.com/newrelic/go-agent/v3 v3.15.1
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
