@@ -89,28 +89,10 @@ type Nats struct {
 
 // === Vendor ===
 
-// Slack config
-type Slack struct {
-	Verification string         `json:"verification" yaml:"verification"`
-	Signing      string         `json:"signing" yaml:"signing"`
-	Token        string         `json:"token" yaml:"token"`
-	Webhook      []SlackWebhook `json:"webhook" yaml:"webhook"`
-}
-
-type SlackWebhook struct {
-	Name string `json:"name" yaml:"name"`
-	Url  string `json:"url" yaml:"url"`
-}
-
 // Rollbar config
 type Rollbar struct {
 	Token       string `json:"token" yaml:"token"`
 	Environment string `json:"environment" yaml:"environment"`
-}
-
-// Telegram config
-type Telegram struct {
-	Token string `json:"token" yaml:"token"`
 }
 
 // Newrelic config
