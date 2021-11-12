@@ -35,9 +35,7 @@ type AppConfig struct {
 	Jaeger Jaeger `json:"jaeger" yaml:"jaeger"`
 	Nats   Nats   `json:"nats" yaml:"nats"`
 
-	Slack    Slack    `json:"slack" yaml:"slack"`
 	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
-	Telegram Telegram `json:"telegram" yaml:"telegram"`
 	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`
 
 	// Notification
