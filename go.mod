@@ -53,13 +53,13 @@ require (
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/valyala/fasthttp v1.31.0
-	github.com/yuin/goldmark v1.4.3
+	github.com/yuin/goldmark v1.4.4
 	go.etcd.io/etcd/client/v3 v3.5.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.1.3
-	gorm.io/gorm v1.22.2
+	gorm.io/driver/mysql v1.2.0
+	gorm.io/gorm v1.22.3
 )
