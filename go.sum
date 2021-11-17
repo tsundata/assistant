@@ -328,12 +328,11 @@ github.com/gobuffalo/packr/v2 v2.0.9/go.mod h1:emmyGweYTm6Kdper+iywB6YK5YzuKchGt
 github.com/gobuffalo/packr/v2 v2.2.0/go.mod h1:CaAwI0GPIAv+5wKLtv8Afwl+Cm78K/I/VCm/3ptBN+0=
 github.com/gobuffalo/syncx v0.0.0-20190224160051-33c29581e754/go.mod h1:HhnNqWY95UYwwW3uSASeV7vtgYkT2t16hJgV3AEPUpw=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
-github.com/gofiber/fiber/v2 v2.20.1/go.mod h1:/LdZHMUXZvTTo7gU4+b1hclqCAdoQphNQ9bi9gutPyI=
 github.com/gofiber/fiber/v2 v2.20.2/go.mod h1:/LdZHMUXZvTTo7gU4+b1hclqCAdoQphNQ9bi9gutPyI=
-github.com/gofiber/fiber/v2 v2.21.0 h1:tdRNrgqWqcHWBwE3o51oAleEVsil4Ro02zd2vMEuP4Q=
-github.com/gofiber/fiber/v2 v2.21.0/go.mod h1:MR1usVH3JHYRyQwMe2eZXRSZHRX38fkV+A7CPB+DlDQ=
-github.com/gofiber/websocket/v2 v2.0.12 h1:jKwTrXiOut9UGOGEzFTAD6gq+/78mM3NcrI05VbxjAU=
-github.com/gofiber/websocket/v2 v2.0.12/go.mod h1:lQRy0u5ACJfiez/e/bhGeYvM0/M940Y3NFw14U3/otI=
+github.com/gofiber/fiber/v2 v2.22.0 h1:+iyKK4ooDH6z0lAHdaWO1AFIB/DZ9AVo6vz8VZIA0EU=
+github.com/gofiber/fiber/v2 v2.22.0/go.mod h1:MR1usVH3JHYRyQwMe2eZXRSZHRX38fkV+A7CPB+DlDQ=
+github.com/gofiber/websocket/v2 v2.0.13 h1:4snJcyCfqMQmpHSkJdn9Ve3YDd0jOd9sAOOfkqTr3Xs=
+github.com/gofiber/websocket/v2 v2.0.13/go.mod h1:Ee9fDQTn+r3z0aFhXCUs+kQ8SqtMq6VNivMRAiouKSk=
 github.com/gofrs/uuid v3.2.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/gofrs/uuid v4.0.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/gogo/googleapis v1.1.0/go.mod h1:gf4bu3Q80BeJ6H1S1vYPm8/ELATdvryBaNFGgqEef3s=
@@ -1621,8 +1620,8 @@ gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776/go.mod h1:K4uyk7z7BCEPqu6E+C
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b h1:h8qDotaEPuJATrMmW04NCwg7v22aHH28wwpauUhK9Oo=
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gorm.io/driver/mysql v1.0.1/go.mod h1:KtqSthtg55lFp3S5kUXqlGaelnWpKitn4k1xZTnoiPw=
-gorm.io/driver/mysql v1.1.3 h1:+5g1UElqN0sr2gZqmg9djlu1zT3cErHiscc6+IbLHgw=
-gorm.io/driver/mysql v1.1.3/go.mod h1:4P/X9vSc3WTrhTLZ259cpFd6xKNYiSSdSZngkSBGIMM=
+gorm.io/driver/mysql v1.2.0 h1:l8+9VwjjyzEkw0PNPBOr2JHhLOGVk7XEnl5hk42bcvs=
+gorm.io/driver/mysql v1.2.0/go.mod h1:4RQmTg4okPghdt+kbe6e1bTXIQp7Ny1NnBn/3Z6ghjk=
 gorm.io/driver/postgres v1.0.0 h1:Yh4jyFQ0a7F+JPU0Gtiam/eKmpT/XFc1FKxotGqc6FM=
 gorm.io/driver/postgres v1.0.0/go.mod h1:wtMFcOzmuA5QigNsgEIb7O5lhvH1tHAF1RbWmLWV4to=
 gorm.io/driver/sqlite v1.1.1 h1:qtWqNAEUyi7gYSUAJXeiAMz0lUOdakZF5ia9Fqnp5G4=
