@@ -30,7 +30,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
-	github.com/influxdata/influxdb-client-go/v2 v2.5.1
+	github.com/influxdata/influxdb-client-go/v2 v2.6.0
 	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats.go v1.13.0
 	github.com/newrelic/go-agent/v3 v3.15.1
@@ -49,7 +49,7 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.5
-	github.com/tidwall/gjson v1.11.0
+	github.com/tidwall/gjson v1.12.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/valyala/fasthttp v1.31.0
