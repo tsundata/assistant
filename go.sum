@@ -947,8 +947,8 @@ github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69
 github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 h1:+iNTcqQJy0OZ5jk6a5NLib47eqXK8uYcPX+O4+cBpEM=
 github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2/go.mod h1:lKJPbtWzJ9JhsTN1k1gZgleJWY/cqq0psdoMmaThG3w=
 github.com/swaggo/swag v1.7.3/go.mod h1:zD8h6h4SPv7t3l+4BKdRquqW1ASWjKZgT6Qv9z3kNqI=
-github.com/swaggo/swag v1.7.5 h1:ZMxuVDmGJ09Lgn9l7TGfEaT/4xWowQqAatzgjgrnOHE=
-github.com/swaggo/swag v1.7.5/go.mod h1:7vLqNYEtYoIsD14wXgy9oDS65MNiDANrPtbk9rnLuj0=
+github.com/swaggo/swag v1.7.6 h1:UbAqHyXkW2J+cDjs5S43MkuYR7a6stB7Am7SK8NBmRg=
+github.com/swaggo/swag v1.7.6/go.mod h1:7vLqNYEtYoIsD14wXgy9oDS65MNiDANrPtbk9rnLuj0=
 github.com/syndtr/goleveldb v1.0.0 h1:fBdIW9lB4Iz0n9khmH8w27SJ3QEJ7+IgjPEwGSZiFdE=
 github.com/syndtr/goleveldb v1.0.0/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpPAyBWyWuQ=
 github.com/tedsuo/ifrit v0.0.0-20180802180643-bea94bb476cc/go.mod h1:eyZnKCc955uh98WQvzOm0dgAeLnf2O0Rz0LPoC5ze+0=
