@@ -49,7 +49,7 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.6
-	github.com/tidwall/gjson v1.12.0
+	github.com/tidwall/gjson v1.12.1
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/valyala/fasthttp v1.31.0
