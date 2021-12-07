@@ -48,7 +48,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.6
 	github.com/tidwall/gjson v1.12.1
-	github.com/uber/jaeger-client-go v2.29.1+incompatible
+	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/fasthttp v1.31.0
 	github.com/yuin/goldmark v1.4.4
 	go.etcd.io/etcd/client/v3 v3.5.1
