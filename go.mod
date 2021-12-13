@@ -29,7 +29,7 @@ require (
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.6.0
-	github.com/mozillazg/go-pinyin v0.18.0
+	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/nats-io/nats.go v1.13.0
 	github.com/newrelic/go-agent/v3 v3.15.2
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
