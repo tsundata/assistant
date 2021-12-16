@@ -26,7 +26,7 @@ func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 	)
 
 	o.GrpcDialOptions = append(o.GrpcDialOptions,
-		grpc.WithInsecure(),
+		grpc.WithInsecure(), //nolint
 		grpc.WithUnaryInterceptor(
 			grpcMiddleware.ChainUnaryClient(
 				otgrpc.OpenTracingClientInterceptor(tracer),
