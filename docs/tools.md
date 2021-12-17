@@ -104,3 +104,9 @@ GO111MODULE=on GOBIN=/usr/local/bin go get \
   github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking \
   github.com/bufbuild/buf/cmd/protoc-gen-buf-lint
 ```
+
+### wire
+
+```shell
+go install github.com/google/wire/cmd/wire@latest
+```

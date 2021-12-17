@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/org/repository"
+	"github.com/tsundata/assistant/internal/app/bot/org/repository"
 )
 
 type Org struct {

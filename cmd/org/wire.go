@@ -4,10 +4,10 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/org"
-	"github.com/tsundata/assistant/internal/app/org/repository"
-	"github.com/tsundata/assistant/internal/app/org/rpcclient"
-	"github.com/tsundata/assistant/internal/app/org/service"
+	"github.com/tsundata/assistant/internal/app/bot/org"
+	"github.com/tsundata/assistant/internal/app/bot/org/repository"
+	"github.com/tsundata/assistant/internal/app/bot/org/rpcclient"
+	"github.com/tsundata/assistant/internal/app/bot/org/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/global"

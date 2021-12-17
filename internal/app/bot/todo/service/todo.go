@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/todo/repository"
+	"github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"

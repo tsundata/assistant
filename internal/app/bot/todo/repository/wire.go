@@ -4,7 +4,7 @@ package repository
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/org/rpcclient"
+	"github.com/tsundata/assistant/internal/app/bot/todo/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -30,6 +30,6 @@ var testProviderSet = wire.NewSet(
 	jaeger.ProviderSet,
 )
 
-func CreateOrgRepository(id string) (OrgRepository, error) {
+func CreateTodoRepository(id string) (TodoRepository, error) {
 	panic(wire.Build(testProviderSet))
 }

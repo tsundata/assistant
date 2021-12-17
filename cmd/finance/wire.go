@@ -4,8 +4,8 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/finance"
-	"github.com/tsundata/assistant/internal/app/finance/service"
+	"github.com/tsundata/assistant/internal/app/bot/finance"
+	"github.com/tsundata/assistant/internal/app/bot/finance/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
