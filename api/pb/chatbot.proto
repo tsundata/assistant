@@ -38,12 +38,20 @@ message Bot {
   string uuid = 2;
   // @inject_tag: db:"name"
   string name = 4;
+  // @inject_tag: db:"identifier"
+  string identifier = 5;
+  // @inject_tag: db:"detail"
+  string detail = 6;
   // @inject_tag: db:"avatar"
-  string avatar = 5;
+  string avatar = 7;
+  // @inject_tag: db:"extend"
+  string extend = 8;
+  // @inject_tag: db:"status"
+  int32 status = 9;
   // @inject_tag: db:"created_at"
-  int64 created_at = 6;
+  int64 created_at = 10;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 7;
+  int64 updated_at = 11;
 }
 
 message BotRequest {

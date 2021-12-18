@@ -74,6 +74,7 @@ CREATE TABLE `group_settings`
 create table if not exists `messages`
 (
     `id`            BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `sequence`      INT(10)             NOT NULL,
     `uuid`          varchar(36)         NOT NULL DEFAULT '',
     `sender`        BIGINT(19)          NOT NULL,
     `sender_type`   VARCHAR(20)         NOT NULL,

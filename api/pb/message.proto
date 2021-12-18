@@ -42,18 +42,28 @@ message MessagesReply {
 message Message {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 2;
   // @inject_tag: db:"uuid"
-  string uuid = 2;
-  // @inject_tag: db:"text"
-  string text = 3;
+  string uuid = 3;
+  // @inject_tag: db:"sender"
+  int64 sender = 4;
+  // @inject_tag: db:"sender_type"
+  string sender_type = 5;
+  // @inject_tag: db:"receiver"
+  int64 receiver = 6;
+  // @inject_tag: db:"receiver_type"
+  string receiver_type = 7;
   // @inject_tag: db:"type"
-  string type = 4;
-  // @inject_tag: db:"channel"
-  string channel = 5;
+  string type = 8;
+  // @inject_tag: db:"text"
+  string text = 9;
+  // @inject_tag: db:"status"
+  int32 status = 10;
   // @inject_tag: db:"created_at"
-  int64 created_at = 6;
+  int64 created_at = 11;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 7;
+  int64 updated_at = 12;
 }
 
 message Group {
@@ -61,18 +71,78 @@ message Group {
   int64 id = 1;
   // @inject_tag: db:"sequence"
   int64 sequence = 2;
+  // @inject_tag: db:"type"
+  int32 type = 3;
   // @inject_tag: db:"uuid"
-  string uuid = 3;
+  string uuid = 4;
   // @inject_tag: db:"user_id"
-  int64 user_id = 4;
+  int64 user_id = 5;
   // @inject_tag: db:"name"
-  string name = 5;
+  string name = 6;
   // @inject_tag: db:"avatar"
-  string avatar = 6;
+  string avatar = 7;
   // @inject_tag: db:"created_at"
-  int64 created_at = 7;
+  int64 created_at = 8;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 8;
+  int64 updated_at = 9;
+}
+
+message GroupBot {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"group_id"
+  int64 group_id = 2;
+  // @inject_tag: db:"bot_id"
+  int64 bot_id = 3;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 5;
+}
+
+message GroupBotSetting {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"group_id"
+  int64 group_id = 2;
+  // @inject_tag: db:"bot_id"
+  int64 bot_id = 3;
+  // @inject_tag: db:"key"
+  string key = 4;
+  // @inject_tag: db:"value"
+  string value = 5;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 7;
+}
+
+message GroupSetting {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"group_id"
+  int64 group_id = 2;
+  // @inject_tag: db:"key"
+  string key = 3;
+  // @inject_tag: db:"value"
+  string value = 4;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 5;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 6;
+}
+
+message GroupTag {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"group_id"
+  int64 group_id = 2;
+  // @inject_tag: db:"tag"
+  string tag = 3;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 5;
 }
 
 message Action {
