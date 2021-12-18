@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-//go:embed 202109181651.sql
-var sql202109181651 string
+//go:embed bots.sql
+var sqlBots string
 
-var m202109181651 = &gormigrate.Migration{
-	ID: "202109181651",
+var mBots = &gormigrate.Migration{
+	ID: "bots",
 	Migrate: func(tx *gorm.DB) error {
-		s := strings.Split(sql202109181651, ";")
+		s := strings.Split(sqlBots, ";")
 		for _, item := range s {
 			item := strings.TrimSpace(item)
 			if item == "" {
