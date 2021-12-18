@@ -276,7 +276,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	// send
 	_, err = s.message.Send(context.Background(), &pb.MessageRequest{
 		Message: &pb.Message{
-			Channel: channel,
+			// Channel: channel, fixme
 			Text:    text,
 		},
 	})

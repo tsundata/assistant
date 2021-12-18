@@ -99,10 +99,10 @@ gosec ./...
 ### buf
 
 ```shell
-GO111MODULE=on GOBIN=/usr/local/bin go get \
-  github.com/bufbuild/buf/cmd/buf \
-  github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking \
-  github.com/bufbuild/buf/cmd/protoc-gen-buf-lint
+# Install
+go install github.com/bufbuild/buf/cmd/buf@latest
+go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@latest 
+go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@latest
 ```
 
 ### wire

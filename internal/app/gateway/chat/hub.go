@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -146,7 +147,7 @@ func (h *Hub) EventHandle() {
 
 		h.broadcast <- message{
 			data: util.StringToByte(m.Text),
-			room: m.Channel,
+			room: fmt.Sprintf("group:%d", m.Receiver), // todo
 		}
 	})
 	if err != nil {
