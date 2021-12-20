@@ -73,8 +73,30 @@ func (r *MysqlMessageRepository) List(ctx context.Context) ([]*pb.Message, error
 }
 
 func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message) (int64, error) {
+	l, err := r.locker.Acquire(fmt.Sprintf("message:message:create:%d", message.UserId))
+	if err != nil {
+		return 0, err
+	}
+	defer func() {
+		_ = l.Release()
+	}()
+
+	var max pb.Message
+	err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").First(&max).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, err
+	}
+
+	// sequence
+	sequence := int64(0)
+	if max.Sequence > 0 {
+		sequence = max.Sequence
+	}
+	sequence += 1
+
 	message.Id = r.id.Generate(ctx)
-	err := r.db.WithContext(ctx).Create(&message).Error
+	message.Sequence = sequence
+	err = r.db.WithContext(ctx).Create(&message).Error
 	if err != nil {
 		return 0, err
 	}

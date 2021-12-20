@@ -89,6 +89,7 @@ create table if not exists `messages`
     `updated_at`    INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`),
+    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
     INDEX `sender` (`sender`) USING BTREE,
     INDEX `receiver` (`receiver`) USING BTREE
 ) ENGINE = InnoDB
