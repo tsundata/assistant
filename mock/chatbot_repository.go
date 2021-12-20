@@ -79,6 +79,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockChatbotRepository)(nil).GetByID), ctx, id)
 }
 
+// GetByIdentifier mocks base method.
+func (m *MockChatbotRepository) GetByIdentifier(ctx context.Context, uuid string) (*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIdentifier", ctx, uuid)
+	ret0, _ := ret[0].(*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIdentifier indicates an expected call of GetByIdentifier.
+func (mr *MockChatbotRepositoryMockRecorder) GetByIdentifier(ctx, uuid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdentifier", reflect.TypeOf((*MockChatbotRepository)(nil).GetByIdentifier), ctx, uuid)
+}
+
 // GetByUUID mocks base method.
 func (m *MockChatbotRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error) {
 	m.ctrl.T.Helper()

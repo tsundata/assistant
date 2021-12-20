@@ -108,12 +108,12 @@ tasks:
       - mockgen -package=mock -source=./api/pb/org_grpc.pb.go -destination=./mock/org_client.go
       - mockgen -package=mock -source=./api/pb/finance_grpc.pb.go -destination=./mock/finance_client.go
       - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
-      - mockgen -package=mock -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_repository.go
+      - mockgen -package=mock -source=./internal/app/bot/todo/repository/todo.go -destination=./mock/todo_repository.go
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
       - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go
       - mockgen -package=mock -source=./internal/app/workflow/repository/workflow.go -destination=./mock/workflow_repository.go
-      - mockgen -package=mock -source=./internal/app/org/repository/org.go -destination=./mock/org_repository.go
+      - mockgen -package=mock -source=./internal/app/bot/org/repository/org.go -destination=./mock/org_repository.go
       - mockgen -package=mock -source=./internal/app/chatbot/repository/chatbot.go -destination=./mock/chatbot_repository.go
 
   swag:

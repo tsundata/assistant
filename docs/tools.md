@@ -42,7 +42,7 @@ golangci-lint run
 
 ```shell
 # Install
-go install github.com/golang/mock/mockgen@v1.6.0
+go install github.com/golang/mock/mockgen@latest
 # Output
 mockgen -source=./internal/app/todo/repository/todo.go -destination=./mock/todo_repository.go -package=mock
 
