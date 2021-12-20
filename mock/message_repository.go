@@ -50,21 +50,6 @@ func (mr *MockMessageRepositoryMockRecorder) Create(ctx, message interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageRepository)(nil).Create), ctx, message)
 }
 
-// CreateGroup mocks base method.
-func (m *MockMessageRepository) CreateGroup(ctx context.Context, group *pb.Group) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateGroup", ctx, group)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateGroup indicates an expected call of CreateGroup.
-func (mr *MockMessageRepositoryMockRecorder) CreateGroup(ctx, group interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockMessageRepository)(nil).CreateGroup), ctx, group)
-}
-
 // Delete mocks base method.
 func (m *MockMessageRepository) Delete(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -77,20 +62,6 @@ func (m *MockMessageRepository) Delete(ctx context.Context, id int64) error {
 func (mr *MockMessageRepositoryMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageRepository)(nil).Delete), ctx, id)
-}
-
-// DeleteGroup mocks base method.
-func (m *MockMessageRepository) DeleteGroup(ctx context.Context, id int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteGroup", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteGroup indicates an expected call of DeleteGroup.
-func (mr *MockMessageRepositoryMockRecorder) DeleteGroup(ctx, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroup", reflect.TypeOf((*MockMessageRepository)(nil).DeleteGroup), ctx, id)
 }
 
 // GetByID mocks base method.
@@ -123,51 +94,6 @@ func (mr *MockMessageRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), ctx, uuid)
 }
 
-// GetGroup mocks base method.
-func (m *MockMessageRepository) GetGroup(ctx context.Context, id int64) (*pb.Group, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroup", ctx, id)
-	ret0, _ := ret[0].(*pb.Group)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroup indicates an expected call of GetGroup.
-func (mr *MockMessageRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockMessageRepository)(nil).GetGroup), ctx, id)
-}
-
-// GetGroupBySequence mocks base method.
-func (m *MockMessageRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (*pb.Group, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupBySequence", ctx, userId, sequence)
-	ret0, _ := ret[0].(*pb.Group)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroupBySequence indicates an expected call of GetGroupBySequence.
-func (mr *MockMessageRepositoryMockRecorder) GetGroupBySequence(ctx, userId, sequence interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBySequence", reflect.TypeOf((*MockMessageRepository)(nil).GetGroupBySequence), ctx, userId, sequence)
-}
-
-// GetGroupByUUID mocks base method.
-func (m *MockMessageRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupByUUID", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Group)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroupByUUID indicates an expected call of GetGroupByUUID.
-func (mr *MockMessageRepositoryMockRecorder) GetGroupByUUID(ctx, uuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetGroupByUUID), ctx, uuid)
-}
-
 // List mocks base method.
 func (m *MockMessageRepository) List(ctx context.Context) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()
@@ -196,19 +122,4 @@ func (m *MockMessageRepository) ListByType(ctx context.Context, t string) ([]*pb
 func (mr *MockMessageRepositoryMockRecorder) ListByType(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByType", reflect.TypeOf((*MockMessageRepository)(nil).ListByType), ctx, t)
-}
-
-// ListGroup mocks base method.
-func (m *MockMessageRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListGroup", ctx, userId)
-	ret0, _ := ret[0].([]*pb.Group)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListGroup indicates an expected call of ListGroup.
-func (mr *MockMessageRepositoryMockRecorder) ListGroup(ctx, userId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroup", reflect.TypeOf((*MockMessageRepository)(nil).ListGroup), ctx, userId)
 }

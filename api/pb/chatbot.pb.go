@@ -126,6 +126,429 @@ func (m *BotSettingRequest) GetKvs() []*KV {
 	return nil
 }
 
+type Group struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"sequence"
+	Sequence int64 `protobuf:"varint,2,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	// @inject_tag: db:"type"
+	Type int32 `protobuf:"varint,3,opt,name=type,proto3" json:"type,omitempty"`
+	// @inject_tag: db:"uuid"
+	Uuid string `protobuf:"bytes,4,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	// @inject_tag: db:"user_id"
+	UserId int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag: db:"name"
+	Name string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	// @inject_tag: db:"avatar"
+	Avatar string `protobuf:"bytes,7,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (m *Group) Reset()         { *m = Group{} }
+func (m *Group) String() string { return proto.CompactTextString(m) }
+func (*Group) ProtoMessage()    {}
+func (*Group) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{3}
+}
+func (m *Group) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Group.Unmarshal(m, b)
+}
+func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
+}
+func (m *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(m, src)
+}
+func (m *Group) XXX_Size() int {
+	return xxx_messageInfo_Group.Size(m)
+}
+func (m *Group) XXX_DiscardUnknown() {
+	xxx_messageInfo_Group.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Group proto.InternalMessageInfo
+
+func (m *Group) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Group) GetSequence() int64 {
+	if m != nil {
+		return m.Sequence
+	}
+	return 0
+}
+
+func (m *Group) GetType() int32 {
+	if m != nil {
+		return m.Type
+	}
+	return 0
+}
+
+func (m *Group) GetUuid() string {
+	if m != nil {
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *Group) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *Group) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Group) GetAvatar() string {
+	if m != nil {
+		return m.Avatar
+	}
+	return ""
+}
+
+func (m *Group) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *Group) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+type GroupBot struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"group_id"
+	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// @inject_tag: db:"bot_id"
+	BotId int64 `protobuf:"varint,3,opt,name=bot_id,json=botId,proto3" json:"bot_id,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (m *GroupBot) Reset()         { *m = GroupBot{} }
+func (m *GroupBot) String() string { return proto.CompactTextString(m) }
+func (*GroupBot) ProtoMessage()    {}
+func (*GroupBot) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{4}
+}
+func (m *GroupBot) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupBot.Unmarshal(m, b)
+}
+func (m *GroupBot) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupBot.Marshal(b, m, deterministic)
+}
+func (m *GroupBot) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupBot.Merge(m, src)
+}
+func (m *GroupBot) XXX_Size() int {
+	return xxx_messageInfo_GroupBot.Size(m)
+}
+func (m *GroupBot) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupBot.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupBot proto.InternalMessageInfo
+
+func (m *GroupBot) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *GroupBot) GetGroupId() int64 {
+	if m != nil {
+		return m.GroupId
+	}
+	return 0
+}
+
+func (m *GroupBot) GetBotId() int64 {
+	if m != nil {
+		return m.BotId
+	}
+	return 0
+}
+
+func (m *GroupBot) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *GroupBot) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+type GroupBotSetting struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"group_id"
+	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// @inject_tag: db:"bot_id"
+	BotId int64 `protobuf:"varint,3,opt,name=bot_id,json=botId,proto3" json:"bot_id,omitempty"`
+	// @inject_tag: db:"key"
+	Key string `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
+	// @inject_tag: db:"value"
+	Value string `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (m *GroupBotSetting) Reset()         { *m = GroupBotSetting{} }
+func (m *GroupBotSetting) String() string { return proto.CompactTextString(m) }
+func (*GroupBotSetting) ProtoMessage()    {}
+func (*GroupBotSetting) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{5}
+}
+func (m *GroupBotSetting) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupBotSetting.Unmarshal(m, b)
+}
+func (m *GroupBotSetting) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupBotSetting.Marshal(b, m, deterministic)
+}
+func (m *GroupBotSetting) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupBotSetting.Merge(m, src)
+}
+func (m *GroupBotSetting) XXX_Size() int {
+	return xxx_messageInfo_GroupBotSetting.Size(m)
+}
+func (m *GroupBotSetting) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupBotSetting.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupBotSetting proto.InternalMessageInfo
+
+func (m *GroupBotSetting) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *GroupBotSetting) GetGroupId() int64 {
+	if m != nil {
+		return m.GroupId
+	}
+	return 0
+}
+
+func (m *GroupBotSetting) GetBotId() int64 {
+	if m != nil {
+		return m.BotId
+	}
+	return 0
+}
+
+func (m *GroupBotSetting) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *GroupBotSetting) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *GroupBotSetting) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *GroupBotSetting) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+type GroupSetting struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"group_id"
+	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// @inject_tag: db:"key"
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// @inject_tag: db:"value"
+	Value string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (m *GroupSetting) Reset()         { *m = GroupSetting{} }
+func (m *GroupSetting) String() string { return proto.CompactTextString(m) }
+func (*GroupSetting) ProtoMessage()    {}
+func (*GroupSetting) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{6}
+}
+func (m *GroupSetting) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupSetting.Unmarshal(m, b)
+}
+func (m *GroupSetting) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupSetting.Marshal(b, m, deterministic)
+}
+func (m *GroupSetting) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupSetting.Merge(m, src)
+}
+func (m *GroupSetting) XXX_Size() int {
+	return xxx_messageInfo_GroupSetting.Size(m)
+}
+func (m *GroupSetting) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupSetting.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupSetting proto.InternalMessageInfo
+
+func (m *GroupSetting) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *GroupSetting) GetGroupId() int64 {
+	if m != nil {
+		return m.GroupId
+	}
+	return 0
+}
+
+func (m *GroupSetting) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *GroupSetting) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *GroupSetting) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *GroupSetting) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+type GroupTag struct {
+	// @inject_tag: db:"id" gorm:"primaryKey"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: db:"group_id"
+	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// @inject_tag: db:"tag"
+	Tag string `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	// @inject_tag: db:"created_at"
+	CreatedAt int64 `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// @inject_tag: db:"updated_at"
+	UpdatedAt int64 `protobuf:"varint,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (m *GroupTag) Reset()         { *m = GroupTag{} }
+func (m *GroupTag) String() string { return proto.CompactTextString(m) }
+func (*GroupTag) ProtoMessage()    {}
+func (*GroupTag) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{7}
+}
+func (m *GroupTag) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupTag.Unmarshal(m, b)
+}
+func (m *GroupTag) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupTag.Marshal(b, m, deterministic)
+}
+func (m *GroupTag) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupTag.Merge(m, src)
+}
+func (m *GroupTag) XXX_Size() int {
+	return xxx_messageInfo_GroupTag.Size(m)
+}
+func (m *GroupTag) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupTag.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupTag proto.InternalMessageInfo
+
+func (m *GroupTag) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *GroupTag) GetGroupId() int64 {
+	if m != nil {
+		return m.GroupId
+	}
+	return 0
+}
+
+func (m *GroupTag) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *GroupTag) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *GroupTag) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
 type Bot struct {
 	// @inject_tag: db:"id" gorm:"primaryKey"
 	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -153,7 +576,7 @@ func (m *Bot) Reset()         { *m = Bot{} }
 func (m *Bot) String() string { return proto.CompactTextString(m) }
 func (*Bot) ProtoMessage()    {}
 func (*Bot) Descriptor() ([]byte, []int) {
-	return fileDescriptor_acc44097314201ac, []int{3}
+	return fileDescriptor_acc44097314201ac, []int{8}
 }
 func (m *Bot) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Bot.Unmarshal(m, b)
@@ -251,7 +674,7 @@ func (m *BotRequest) Reset()         { *m = BotRequest{} }
 func (m *BotRequest) String() string { return proto.CompactTextString(m) }
 func (*BotRequest) ProtoMessage()    {}
 func (*BotRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_acc44097314201ac, []int{4}
+	return fileDescriptor_acc44097314201ac, []int{9}
 }
 func (m *BotRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BotRequest.Unmarshal(m, b)
@@ -286,7 +709,7 @@ func (m *BotReply) Reset()         { *m = BotReply{} }
 func (m *BotReply) String() string { return proto.CompactTextString(m) }
 func (*BotReply) ProtoMessage()    {}
 func (*BotReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_acc44097314201ac, []int{5}
+	return fileDescriptor_acc44097314201ac, []int{10}
 }
 func (m *BotReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BotReply.Unmarshal(m, b)
@@ -321,7 +744,7 @@ func (m *BotsReply) Reset()         { *m = BotsReply{} }
 func (m *BotsReply) String() string { return proto.CompactTextString(m) }
 func (*BotsReply) ProtoMessage()    {}
 func (*BotsReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_acc44097314201ac, []int{6}
+	return fileDescriptor_acc44097314201ac, []int{11}
 }
 func (m *BotsReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BotsReply.Unmarshal(m, b)
@@ -348,47 +771,177 @@ func (m *BotsReply) GetBots() []*Bot {
 	return nil
 }
 
+type GroupRequest struct {
+	Group *Group `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+}
+
+func (m *GroupRequest) Reset()         { *m = GroupRequest{} }
+func (m *GroupRequest) String() string { return proto.CompactTextString(m) }
+func (*GroupRequest) ProtoMessage()    {}
+func (*GroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{12}
+}
+func (m *GroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupRequest.Unmarshal(m, b)
+}
+func (m *GroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupRequest.Marshal(b, m, deterministic)
+}
+func (m *GroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupRequest.Merge(m, src)
+}
+func (m *GroupRequest) XXX_Size() int {
+	return xxx_messageInfo_GroupRequest.Size(m)
+}
+func (m *GroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupRequest proto.InternalMessageInfo
+
+func (m *GroupRequest) GetGroup() *Group {
+	if m != nil {
+		return m.Group
+	}
+	return nil
+}
+
+type GroupReply struct {
+	Group *Group `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+}
+
+func (m *GroupReply) Reset()         { *m = GroupReply{} }
+func (m *GroupReply) String() string { return proto.CompactTextString(m) }
+func (*GroupReply) ProtoMessage()    {}
+func (*GroupReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{13}
+}
+func (m *GroupReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupReply.Unmarshal(m, b)
+}
+func (m *GroupReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupReply.Marshal(b, m, deterministic)
+}
+func (m *GroupReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupReply.Merge(m, src)
+}
+func (m *GroupReply) XXX_Size() int {
+	return xxx_messageInfo_GroupReply.Size(m)
+}
+func (m *GroupReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupReply proto.InternalMessageInfo
+
+func (m *GroupReply) GetGroup() *Group {
+	if m != nil {
+		return m.Group
+	}
+	return nil
+}
+
+type GroupsReply struct {
+	Groups []*Group `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
+}
+
+func (m *GroupsReply) Reset()         { *m = GroupsReply{} }
+func (m *GroupsReply) String() string { return proto.CompactTextString(m) }
+func (*GroupsReply) ProtoMessage()    {}
+func (*GroupsReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_acc44097314201ac, []int{14}
+}
+func (m *GroupsReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupsReply.Unmarshal(m, b)
+}
+func (m *GroupsReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupsReply.Marshal(b, m, deterministic)
+}
+func (m *GroupsReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupsReply.Merge(m, src)
+}
+func (m *GroupsReply) XXX_Size() int {
+	return xxx_messageInfo_GroupsReply.Size(m)
+}
+func (m *GroupsReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupsReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupsReply proto.InternalMessageInfo
+
+func (m *GroupsReply) GetGroups() []*Group {
+	if m != nil {
+		return m.Groups
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*ChatbotRequest)(nil), "pb.ChatbotRequest")
 	proto.RegisterType((*ChatbotReply)(nil), "pb.ChatbotReply")
 	proto.RegisterType((*BotSettingRequest)(nil), "pb.BotSettingRequest")
+	proto.RegisterType((*Group)(nil), "pb.Group")
+	proto.RegisterType((*GroupBot)(nil), "pb.GroupBot")
+	proto.RegisterType((*GroupBotSetting)(nil), "pb.GroupBotSetting")
+	proto.RegisterType((*GroupSetting)(nil), "pb.GroupSetting")
+	proto.RegisterType((*GroupTag)(nil), "pb.GroupTag")
 	proto.RegisterType((*Bot)(nil), "pb.Bot")
 	proto.RegisterType((*BotRequest)(nil), "pb.BotRequest")
 	proto.RegisterType((*BotReply)(nil), "pb.BotReply")
 	proto.RegisterType((*BotsReply)(nil), "pb.BotsReply")
+	proto.RegisterType((*GroupRequest)(nil), "pb.GroupRequest")
+	proto.RegisterType((*GroupReply)(nil), "pb.GroupReply")
+	proto.RegisterType((*GroupsReply)(nil), "pb.GroupsReply")
 }
 
 func init() { proto.RegisterFile("chatbot.proto", fileDescriptor_acc44097314201ac) }
 
 var fileDescriptor_acc44097314201ac = []byte{
-	// 450 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0x87, 0xed, 0x38, 0x75, 0x9a, 0x49, 0x5b, 0x95, 0x15, 0xa0, 0x25, 0x80, 0x55, 0x59, 0x20,
-	0x22, 0x24, 0x52, 0x14, 0x8e, 0x9c, 0x6a, 0x0e, 0x20, 0x71, 0x73, 0x04, 0x07, 0x2e, 0x68, 0x9d,
-	0x1d, 0xc2, 0x8a, 0xe0, 0x35, 0xf1, 0x38, 0x6a, 0xdf, 0x82, 0xc7, 0xe2, 0x58, 0x6e, 0x5c, 0xab,
-	0x3c, 0x06, 0x17, 0xb4, 0x7f, 0xec, 0x36, 0x42, 0xea, 0x6d, 0x7e, 0xdf, 0x7c, 0x1e, 0x5b, 0xe3,
-	0x81, 0xc3, 0xc5, 0x57, 0x41, 0x85, 0xa6, 0x69, 0xb5, 0xd6, 0xa4, 0x59, 0xaf, 0x2a, 0xc6, 0x50,
-	0x88, 0x1a, 0x5d, 0x1e, 0xdf, 0x5d, 0xea, 0xa5, 0xb6, 0xe5, 0xa9, 0xa9, 0x1c, 0x4d, 0x9f, 0xc0,
-	0xd1, 0x1b, 0xf7, 0x58, 0x8e, 0x3f, 0x1a, 0xac, 0x89, 0x31, 0xe8, 0x13, 0x9e, 0x13, 0x0f, 0x4f,
-	0xc2, 0xc9, 0x30, 0xb7, 0x75, 0x9a, 0xc2, 0x41, 0x67, 0x55, 0xab, 0x8b, 0x1b, 0x4e, 0xd4, 0x39,
-	0x2f, 0xe0, 0x4e, 0xa6, 0x69, 0x8e, 0x44, 0xaa, 0x5c, 0xb6, 0xc3, 0x38, 0x44, 0xdf, 0x36, 0xb5,
-	0xf5, 0x46, 0xb3, 0x78, 0x5a, 0x15, 0xd3, 0xf7, 0x1f, 0x73, 0x83, 0xd2, 0xbf, 0x21, 0x44, 0x99,
-	0x26, 0x76, 0x04, 0x3d, 0x25, 0xed, 0xcb, 0xa2, 0xbc, 0xa7, 0xa4, 0x19, 0xdd, 0x34, 0x4a, 0xf2,
-	0x9e, 0x7b, 0xbd, 0xa9, 0x0d, 0x2b, 0xc5, 0x77, 0xe4, 0x7d, 0xc7, 0x4c, 0xcd, 0x12, 0x00, 0x25,
-	0xb1, 0x24, 0xf5, 0x45, 0xe1, 0x9a, 0xef, 0xd9, 0xce, 0x0d, 0xc2, 0xee, 0x43, 0x2c, 0x91, 0x84,
-	0x5a, 0xf1, 0xd8, 0xf6, 0x7c, 0x32, 0x5c, 0x6c, 0x04, 0x89, 0x35, 0x1f, 0x38, 0xee, 0x92, 0xe1,
-	0x78, 0x4e, 0x58, 0x4a, 0xbe, 0xef, 0xb8, 0x4b, 0x86, 0xd7, 0x24, 0xa8, 0xa9, 0xf9, 0xf0, 0x24,
-	0x9c, 0xec, 0xe5, 0x3e, 0xb1, 0xc7, 0x00, 0x8b, 0x35, 0x0a, 0x42, 0xf9, 0x59, 0x10, 0x07, 0xfb,
-	0xfd, 0x43, 0x4f, 0xce, 0xc8, 0xb4, 0x9b, 0x4a, 0xb6, 0xed, 0x91, 0x6b, 0x7b, 0x72, 0x46, 0xe9,
-	0x33, 0x80, 0xec, 0x7a, 0xe5, 0x0f, 0x20, 0x2a, 0xb4, 0xdb, 0xf8, 0x68, 0x36, 0x30, 0x5b, 0x32,
-	0x4d, 0xc3, 0xd2, 0xa7, 0xb0, 0x9f, 0xb5, 0x5b, 0xbf, 0x45, 0x9b, 0xc0, 0x30, 0xd3, 0x54, 0x3b,
-	0xef, 0x21, 0xf4, 0x0b, 0x4d, 0xed, 0xd6, 0x3b, 0xd1, 0xc2, 0xd9, 0xef, 0x10, 0xc0, 0xff, 0xcb,
-	0xf9, 0x66, 0xc1, 0x5e, 0x42, 0xfc, 0x4e, 0x94, 0x72, 0x85, 0x8c, 0x19, 0x6f, 0xf7, 0x16, 0xc6,
-	0xc7, 0x3b, 0xac, 0x5a, 0x5d, 0xa4, 0x01, 0x9b, 0x40, 0xfc, 0x16, 0xc9, 0xfe, 0xba, 0x76, 0xb2,
-	0xb7, 0x0f, 0xba, 0xec, 0xcc, 0xe7, 0x30, 0x70, 0x66, 0xfd, 0x9f, 0x7a, 0xe8, 0x73, 0xdd, 0xba,
-	0xaf, 0xe1, 0xf8, 0x83, 0xdd, 0xce, 0xf5, 0x0d, 0xb1, 0x7b, 0x5e, 0xda, 0xbd, 0xa9, 0xb1, 0x9d,
-	0x35, 0x27, 0x41, 0xe8, 0x1f, 0xce, 0x1e, 0xfd, 0xba, 0x4a, 0xc2, 0xcb, 0xab, 0x24, 0xf8, 0xb9,
-	0x4d, 0x82, 0xcb, 0x6d, 0x12, 0xfc, 0xd9, 0x26, 0xc1, 0xa7, 0x58, 0x54, 0xea, 0xb4, 0x2a, 0x8a,
-	0xd8, 0x5e, 0xfa, 0xab, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x8f, 0x07, 0x0b, 0x6e, 0x20, 0x03,
-	0x00, 0x00,
+	// 736 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0x8e, 0xe3, 0xd8, 0x89, 0x27, 0xfd, 0x09, 0xab, 0xb6, 0xb8, 0x01, 0x42, 0xb1, 0x40, 0x44,
+	0x48, 0x4d, 0x4b, 0x39, 0x72, 0x6a, 0x7a, 0x28, 0x15, 0x37, 0x17, 0x38, 0x70, 0xa9, 0xd6, 0xf1,
+	0x12, 0xac, 0x86, 0xd8, 0xc4, 0xe3, 0xa8, 0x79, 0x00, 0x2e, 0x9c, 0x78, 0x03, 0x9e, 0x83, 0x37,
+	0xe0, 0xd8, 0x23, 0x27, 0xa4, 0xaa, 0x12, 0x2f, 0xc1, 0x05, 0xed, 0x9f, 0x9b, 0x3a, 0x6d, 0x10,
+	0x3f, 0xb7, 0x99, 0x6f, 0xbe, 0xd9, 0xfd, 0xc6, 0xb3, 0x33, 0x86, 0xc5, 0xde, 0x5b, 0x8a, 0x41,
+	0x8c, 0x9d, 0x64, 0x14, 0x63, 0x4c, 0xca, 0x49, 0xd0, 0x84, 0x80, 0xa6, 0x4c, 0xfa, 0xcd, 0x95,
+	0x7e, 0xdc, 0x8f, 0x85, 0xb9, 0xc5, 0x2d, 0x89, 0x7a, 0xf7, 0x61, 0x69, 0x4f, 0xa6, 0xf9, 0xec,
+	0x7d, 0xc6, 0x52, 0x24, 0x04, 0x2a, 0xc8, 0x4e, 0xd0, 0x35, 0x36, 0x8c, 0xb6, 0xe3, 0x0b, 0xdb,
+	0xf3, 0x60, 0x21, 0x67, 0x25, 0x83, 0xc9, 0x14, 0xc7, 0xcc, 0x39, 0x9b, 0x70, 0xa3, 0x1b, 0xe3,
+	0x21, 0x43, 0x8c, 0x86, 0x7d, 0x7d, 0x98, 0x0b, 0xe6, 0xf1, 0x38, 0x15, 0xbc, 0xfa, 0x8e, 0xdd,
+	0x49, 0x82, 0xce, 0xf3, 0x57, 0x3e, 0x87, 0xbc, 0xef, 0x06, 0x58, 0xfb, 0xa3, 0x38, 0x4b, 0xc8,
+	0x12, 0x94, 0xa3, 0x50, 0x5c, 0x67, 0xfa, 0xe5, 0x28, 0x24, 0x4d, 0xa8, 0xa5, 0x3c, 0x7d, 0xd8,
+	0x63, 0x6e, 0x59, 0xa0, 0xb9, 0x2f, 0x2e, 0x9e, 0x24, 0xcc, 0x35, 0x37, 0x8c, 0xb6, 0xe5, 0x0b,
+	0x9b, 0x63, 0x59, 0x16, 0x85, 0x6e, 0x45, 0x0a, 0xe6, 0x36, 0xb9, 0x09, 0xd5, 0x2c, 0x65, 0xa3,
+	0xa3, 0x28, 0x74, 0x2d, 0x71, 0x84, 0xcd, 0xdd, 0x83, 0x90, 0x93, 0x87, 0xf4, 0x1d, 0x73, 0x6d,
+	0x49, 0xe6, 0x36, 0x59, 0x03, 0x9b, 0x8e, 0x29, 0xd2, 0x91, 0x5b, 0x15, 0xa8, 0xf2, 0xc8, 0x1d,
+	0x80, 0xde, 0x88, 0x51, 0x64, 0xe1, 0x11, 0x45, 0xb7, 0x26, 0xce, 0x71, 0x14, 0xb2, 0x8b, 0x3c,
+	0x9c, 0x25, 0xa1, 0x0e, 0x3b, 0x32, 0xac, 0x90, 0x5d, 0xf4, 0x3e, 0x1a, 0x50, 0x13, 0x05, 0x76,
+	0x63, 0x9c, 0xa9, 0x71, 0x1d, 0x6a, 0x7d, 0x1e, 0xe3, 0x02, 0x65, 0x8d, 0x55, 0xe1, 0x1f, 0x84,
+	0x64, 0x15, 0xec, 0x20, 0x46, 0x1e, 0x30, 0x45, 0xc0, 0x0a, 0x62, 0x3c, 0x08, 0x0b, 0x62, 0x2a,
+	0xf3, 0xc5, 0x58, 0x45, 0x31, 0x5f, 0x0c, 0x58, 0xd6, 0x62, 0x54, 0x8b, 0xfe, 0x83, 0xa6, 0x06,
+	0x98, 0xc7, 0x6c, 0xa2, 0x3e, 0x3c, 0x37, 0xc9, 0x0a, 0x58, 0x63, 0x3a, 0xc8, 0x98, 0x50, 0xe0,
+	0xf8, 0xd2, 0x29, 0x68, 0xb7, 0xe7, 0x6b, 0xaf, 0x16, 0xb5, 0x7f, 0x36, 0x60, 0x41, 0x68, 0xff,
+	0x0b, 0xe1, 0x4a, 0xa1, 0x79, 0x85, 0xc2, 0xca, 0xf5, 0x0a, 0xad, 0xf9, 0x0a, 0xed, 0xa2, 0xc2,
+	0x0f, 0xba, 0xd5, 0x2f, 0xe8, 0x9f, 0xaa, 0x43, 0xda, 0xd7, 0xea, 0x90, 0xf6, 0xff, 0xb1, 0xcb,
+	0x3f, 0x0d, 0x30, 0xaf, 0x7a, 0x6d, 0x7a, 0x42, 0xca, 0x53, 0x13, 0xa2, 0x07, 0xa1, 0x32, 0x35,
+	0x08, 0x2d, 0x80, 0x28, 0x64, 0x43, 0x8c, 0xde, 0x44, 0x6c, 0xa4, 0x5a, 0x38, 0x85, 0xf0, 0x41,
+	0x09, 0x19, 0xd2, 0x68, 0xa0, 0xc6, 0x47, 0x79, 0xd7, 0x0e, 0xd0, 0x1a, 0xd8, 0xec, 0x04, 0xd9,
+	0x30, 0x14, 0xc3, 0xe3, 0xf8, 0xca, 0xe3, 0x78, 0x8a, 0x14, 0xb3, 0x54, 0x4c, 0x8d, 0xe5, 0x2b,
+	0xaf, 0x50, 0x3d, 0xcc, 0xaf, 0xbe, 0x5e, 0xac, 0xfe, 0x21, 0x40, 0xf7, 0x62, 0x8d, 0xad, 0x83,
+	0x19, 0xc4, 0x72, 0x8b, 0xd5, 0x77, 0xaa, 0x7c, 0xf3, 0xf0, 0x20, 0xc7, 0xbc, 0x07, 0x50, 0xeb,
+	0xea, 0x4d, 0x36, 0x87, 0xd6, 0x06, 0xa7, 0x1b, 0x63, 0x2a, 0x79, 0xb7, 0xa0, 0x12, 0xc4, 0xa8,
+	0x37, 0x59, 0x4e, 0x14, 0xa0, 0xb7, 0xa5, 0x1e, 0xa8, 0xbe, 0xfb, 0x2e, 0x58, 0xa2, 0xc5, 0xea,
+	0x58, 0x87, 0xb3, 0x25, 0x41, 0xe2, 0xde, 0x26, 0x80, 0x4a, 0xe0, 0x67, 0xff, 0x96, 0xbe, 0x0d,
+	0x75, 0xe1, 0x2b, 0x2d, 0xf7, 0xc0, 0x16, 0xb8, 0x56, 0x33, 0x95, 0xa0, 0x02, 0x3b, 0x3f, 0xca,
+	0x00, 0x6a, 0x63, 0x1f, 0x8e, 0x7b, 0x64, 0x1b, 0xec, 0x67, 0x74, 0x18, 0x0e, 0x18, 0x21, 0x9c,
+	0x7b, 0x79, 0xe3, 0x37, 0x1b, 0x97, 0xb0, 0x64, 0x30, 0xf1, 0x4a, 0xa4, 0x0d, 0xf6, 0x3e, 0x43,
+	0xf1, 0x98, 0x74, 0xad, 0x8a, 0xbd, 0x90, 0xfb, 0x92, 0xf9, 0x08, 0xaa, 0x92, 0x99, 0xce, 0x50,
+	0x17, 0x95, 0x9f, 0x6a, 0xee, 0x53, 0x68, 0xbc, 0x14, 0xfd, 0x9a, 0x5a, 0x43, 0xab, 0x8a, 0x74,
+	0xf9, 0xcf, 0xd1, 0x14, 0x67, 0x1d, 0x22, 0x45, 0xa6, 0x93, 0xb7, 0xc1, 0xd9, 0x67, 0x28, 0x3f,
+	0x04, 0x69, 0x5c, 0xd4, 0xac, 0x12, 0x96, 0x73, 0x24, 0xbf, 0xee, 0x31, 0xd4, 0xf7, 0xc4, 0xeb,
+	0x91, 0x3f, 0x9a, 0xd9, 0x9c, 0xd9, 0x4b, 0x3a, 0x50, 0xd3, 0x97, 0x5c, 0xc7, 0xbf, 0xe8, 0x9c,
+	0x57, 0xea, 0xde, 0xfe, 0x7a, 0xd6, 0x32, 0x4e, 0xcf, 0x5a, 0xa5, 0x4f, 0xe7, 0xad, 0xd2, 0xe9,
+	0x79, 0xab, 0xf4, 0xed, 0xbc, 0x55, 0x7a, 0x6d, 0xd3, 0x24, 0xda, 0x4a, 0x82, 0xc0, 0x16, 0x3f,
+	0xd9, 0x27, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0xaa, 0x46, 0x6d, 0xc7, 0x9b, 0x07, 0x00, 0x00,
 }

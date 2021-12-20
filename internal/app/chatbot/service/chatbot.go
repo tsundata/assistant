@@ -59,3 +59,27 @@ func (s *Chatbot) GetBots(ctx context.Context, _ *pb.BotRequest) (*pb.BotsReply,
 func (s *Chatbot) UpdateBotSetting(_ context.Context, _ *pb.BotSettingRequest) (*pb.StateReply, error) {
 	return &pb.StateReply{State: true}, nil
 }
+
+func (s *Chatbot) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupsReply, error) {
+	groups, err := s.repo.ListGroup(ctx, payload.Group.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GroupsReply{Groups: groups}, nil
+}
+
+func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
+	_, err := s.repo.CreateGroup(ctx, payload.Group)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupReply, error) {
+	group, err := s.repo.GetGroupByUUID(ctx, payload.Group.GetUuid())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GroupReply{Group: group}, nil
+}

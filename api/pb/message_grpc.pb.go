@@ -27,9 +27,6 @@ type MessageSvcClient interface {
 	GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error)
 	CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
 	DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupsReply, error)
-	CreateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupReply, error)
 }
 
 type messageSvcClient struct {
@@ -121,33 +118,6 @@ func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *Messag
 	return out, nil
 }
 
-func (c *messageSvcClient) GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupsReply, error) {
-	out := new(GroupsReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetGroups", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *messageSvcClient) CreateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/CreateGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *messageSvcClient) GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupReply, error) {
-	out := new(GroupReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // MessageSvcServer is the server API for MessageSvc service.
 // All implementations should embed UnimplementedMessageSvcServer
 // for forward compatibility
@@ -161,9 +131,6 @@ type MessageSvcServer interface {
 	GetActionMessages(context.Context, *TextRequest) (*ActionReply, error)
 	CreateActionMessage(context.Context, *TextRequest) (*StateReply, error)
 	DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error)
-	GetGroups(context.Context, *GroupRequest) (*GroupsReply, error)
-	CreateGroup(context.Context, *GroupRequest) (*StateReply, error)
-	GetGroup(context.Context, *GroupRequest) (*GroupReply, error)
 }
 
 // UnimplementedMessageSvcServer should be embedded to have forward compatible implementations.
@@ -196,15 +163,6 @@ func (UnimplementedMessageSvcServer) CreateActionMessage(context.Context, *TextR
 }
 func (UnimplementedMessageSvcServer) DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteWorkflowMessage not implemented")
-}
-func (UnimplementedMessageSvcServer) GetGroups(context.Context, *GroupRequest) (*GroupsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroups not implemented")
-}
-func (UnimplementedMessageSvcServer) CreateGroup(context.Context, *GroupRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
-}
-func (UnimplementedMessageSvcServer) GetGroup(context.Context, *GroupRequest) (*GroupReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
 }
 
 // UnsafeMessageSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -380,60 +338,6 @@ func _MessageSvc_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageSvc_GetGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageSvcServer).GetGroups(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MessageSvc/GetGroups",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).GetGroups(ctx, req.(*GroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MessageSvc_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageSvcServer).CreateGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MessageSvc/CreateGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).CreateGroup(ctx, req.(*GroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MessageSvc_GetGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageSvcServer).GetGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MessageSvc/GetGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).GetGroup(ctx, req.(*GroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // MessageSvc_ServiceDesc is the grpc.ServiceDesc for MessageSvc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -476,18 +380,6 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteWorkflowMessage",
 			Handler:    _MessageSvc_DeleteWorkflowMessage_Handler,
-		},
-		{
-			MethodName: "GetGroups",
-			Handler:    _MessageSvc_GetGroups_Handler,
-		},
-		{
-			MethodName: "CreateGroup",
-			Handler:    _MessageSvc_CreateGroup_Handler,
-		},
-		{
-			MethodName: "GetGroup",
-			Handler:    _MessageSvc_GetGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -52,11 +52,12 @@ func CreateChatbotRepository(id string) (ChatbotRepository, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
+	locker := global.NewLocker(client)
 	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	chatbotRepository := NewMysqlChatbotRepository(globalID, conn)
+	chatbotRepository := NewMysqlChatbotRepository(globalID, locker, conn)
 	return chatbotRepository, nil
 }
 

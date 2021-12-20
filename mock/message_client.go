@@ -76,26 +76,6 @@ func (mr *MockMessageSvcClientMockRecorder) CreateActionMessage(ctx, in interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).CreateActionMessage), varargs...)
 }
 
-// CreateGroup mocks base method.
-func (m *MockMessageSvcClient) CreateGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "CreateGroup", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateGroup indicates an expected call of CreateGroup.
-func (mr *MockMessageSvcClientMockRecorder) CreateGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).CreateGroup), varargs...)
-}
-
 // Delete mocks base method.
 func (m *MockMessageSvcClient) Delete(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -174,46 +154,6 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcClient)(nil).GetActionMessages), varargs...)
-}
-
-// GetGroup mocks base method.
-func (m *MockMessageSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetGroup", varargs...)
-	ret0, _ := ret[0].(*pb.GroupReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroup indicates an expected call of GetGroup.
-func (mr *MockMessageSvcClientMockRecorder) GetGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).GetGroup), varargs...)
-}
-
-// GetGroups mocks base method.
-func (m *MockMessageSvcClient) GetGroups(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupsReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetGroups", varargs...)
-	ret0, _ := ret[0].(*pb.GroupsReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroups indicates an expected call of GetGroups.
-func (mr *MockMessageSvcClientMockRecorder) GetGroups(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockMessageSvcClient)(nil).GetGroups), varargs...)
 }
 
 // List mocks base method.
@@ -329,21 +269,6 @@ func (mr *MockMessageSvcServerMockRecorder) CreateActionMessage(arg0, arg1 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).CreateActionMessage), arg0, arg1)
 }
 
-// CreateGroup mocks base method.
-func (m *MockMessageSvcServer) CreateGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateGroup", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateGroup indicates an expected call of CreateGroup.
-func (mr *MockMessageSvcServerMockRecorder) CreateGroup(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).CreateGroup), arg0, arg1)
-}
-
 // Delete mocks base method.
 func (m *MockMessageSvcServer) Delete(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -402,36 +327,6 @@ func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.
 func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcServer)(nil).GetActionMessages), arg0, arg1)
-}
-
-// GetGroup mocks base method.
-func (m *MockMessageSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroup", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GroupReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroup indicates an expected call of GetGroup.
-func (mr *MockMessageSvcServerMockRecorder) GetGroup(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).GetGroup), arg0, arg1)
-}
-
-// GetGroups mocks base method.
-func (m *MockMessageSvcServer) GetGroups(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupsReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroups", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GroupsReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroups indicates an expected call of GetGroups.
-func (mr *MockMessageSvcServerMockRecorder) GetGroups(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockMessageSvcServer)(nil).GetGroups), arg0, arg1)
 }
 
 // List mocks base method.

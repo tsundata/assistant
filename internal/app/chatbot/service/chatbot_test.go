@@ -211,3 +211,153 @@ func TestChatbot_UpdateBotSetting(t *testing.T) {
 		})
 	}
 }
+
+func TestMessage_GetGroups(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListGroup(gomock.Any(), gomock.Any()).Return([]*pb.Group{{
+			Id:     1,
+			UserId: 1,
+			Name:   "test",
+		}}, nil),
+	)
+
+	s := NewChatbot(nil, repo, nil, nil, nil)
+
+	type args struct {
+		in0 context.Context
+		in1 *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		m       *Chatbot
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{UserId: 1}}},
+			1,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.m.GetGroups(tt.args.in0, tt.args.in1)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Message.List() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && len(got.Groups) != tt.want {
+				t.Errorf("Message.List() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMessage_GetGroup(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().GetGroupByUUID(gomock.Any(), gomock.Any()).Return(&pb.Group{
+			Id: 1,
+		}, nil),
+	)
+
+	s := NewChatbot(nil, repo, nil, nil, nil)
+
+	type args struct {
+		in0     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		m       *Chatbot
+		args    args
+		want    *pb.GroupReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Uuid: "1"}}},
+			&pb.GroupReply{
+				Group: &pb.Group{
+					Id: 1,
+				},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.m.GetGroup(tt.args.in0, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != nil && (got.Group.Id != tt.want.Group.Id) {
+				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMessage_CreateGroup(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mock.NewMockChatbotRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(2), nil),
+	)
+
+	s := NewChatbot(nil, repo, nil, nil, nil)
+
+	type args struct {
+		in0     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		m       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		{
+			"case1",
+			s,
+			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Name: "demo1", UserId: 1}}},
+			&pb.StateReply{State: true},
+			false,
+		},
+		{
+			"case2",
+			s,
+			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Name: "demo2", UserId: 2}}},
+			&pb.StateReply{State: true},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.m.CreateGroup(tt.args.in0, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Message.Create() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Message.Create() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

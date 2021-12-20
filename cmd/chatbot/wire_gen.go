@@ -70,11 +70,12 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
+	locker := global.NewLocker(client)
 	mysqlConn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	chatbotRepository := repository.NewMysqlChatbotRepository(globalID, mysqlConn)
+	chatbotRepository := repository.NewMysqlChatbotRepository(globalID, locker, mysqlConn)
 	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err

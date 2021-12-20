@@ -36,6 +36,26 @@ func (m *MockChatbotSvcClient) EXPECT() *MockChatbotSvcClientMockRecorder {
 	return m.recorder
 }
 
+// CreateGroup mocks base method.
+func (m *MockChatbotSvcClient) CreateGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateGroup", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateGroup indicates an expected call of CreateGroup.
+func (mr *MockChatbotSvcClientMockRecorder) CreateGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockChatbotSvcClient)(nil).CreateGroup), varargs...)
+}
+
 // GetBot mocks base method.
 func (m *MockChatbotSvcClient) GetBot(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.BotReply, error) {
 	m.ctrl.T.Helper()
@@ -74,6 +94,46 @@ func (mr *MockChatbotSvcClientMockRecorder) GetBots(ctx, in interface{}, opts ..
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBots", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetBots), varargs...)
+}
+
+// GetGroup mocks base method.
+func (m *MockChatbotSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetGroup", varargs...)
+	ret0, _ := ret[0].(*pb.GroupReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroup indicates an expected call of GetGroup.
+func (mr *MockChatbotSvcClientMockRecorder) GetGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroup), varargs...)
+}
+
+// GetGroups mocks base method.
+func (m *MockChatbotSvcClient) GetGroups(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetGroups", varargs...)
+	ret0, _ := ret[0].(*pb.GroupsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroups indicates an expected call of GetGroups.
+func (mr *MockChatbotSvcClientMockRecorder) GetGroups(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroups), varargs...)
 }
 
 // Handle mocks base method.
@@ -139,6 +199,21 @@ func (m *MockChatbotSvcServer) EXPECT() *MockChatbotSvcServerMockRecorder {
 	return m.recorder
 }
 
+// CreateGroup mocks base method.
+func (m *MockChatbotSvcServer) CreateGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateGroup", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateGroup indicates an expected call of CreateGroup.
+func (mr *MockChatbotSvcServerMockRecorder) CreateGroup(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockChatbotSvcServer)(nil).CreateGroup), arg0, arg1)
+}
+
 // GetBot mocks base method.
 func (m *MockChatbotSvcServer) GetBot(arg0 context.Context, arg1 *pb.BotRequest) (*pb.BotReply, error) {
 	m.ctrl.T.Helper()
@@ -167,6 +242,36 @@ func (m *MockChatbotSvcServer) GetBots(arg0 context.Context, arg1 *pb.BotRequest
 func (mr *MockChatbotSvcServerMockRecorder) GetBots(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBots", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetBots), arg0, arg1)
+}
+
+// GetGroup mocks base method.
+func (m *MockChatbotSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroup", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GroupReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroup indicates an expected call of GetGroup.
+func (mr *MockChatbotSvcServerMockRecorder) GetGroup(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroup), arg0, arg1)
+}
+
+// GetGroups mocks base method.
+func (m *MockChatbotSvcServer) GetGroups(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroups", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GroupsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroups indicates an expected call of GetGroups.
+func (mr *MockChatbotSvcServerMockRecorder) GetGroups(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroups), arg0, arg1)
 }
 
 // Handle mocks base method.
