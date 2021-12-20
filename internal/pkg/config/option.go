@@ -4,6 +4,7 @@ package config
 
 type SvcAddr struct {
 	Id       string `json:"id" yaml:"id"`
+	Dtm      string `json:"dtm" yaml:"dtm"`
 	Chatbot  string `json:"chatbot" yaml:"chatbot"`
 	Message  string `json:"message" yaml:"message"`
 	Middle   string `json:"middle" yaml:"middle"`

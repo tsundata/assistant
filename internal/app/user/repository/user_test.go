@@ -220,7 +220,7 @@ func TestUserRepository_GetByName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetByName(context.Background(), tt.args.name)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserRepository.GetByName() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

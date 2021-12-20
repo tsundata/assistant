@@ -10,6 +10,7 @@ import (
 type ChatbotRepository interface {
 	GetByID(ctx context.Context, id int64) (*pb.Bot, error)
 	GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error)
+	GetByIdentifier(ctx context.Context, uuid string) (*pb.Bot, error)
 	List(ctx context.Context, ) ([]*pb.Bot, error)
 	Create(ctx context.Context, message *pb.Bot) (int64, error)
 	Delete(ctx context.Context, id int64) error
@@ -36,6 +37,15 @@ func (r *MysqlChatbotRepository) GetByID(ctx context.Context, id int64) (*pb.Bot
 func (r *MysqlChatbotRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&bot).Error
+	if err != nil {
+		return nil, err
+	}
+	return &bot, nil
+}
+
+func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier string) (*pb.Bot, error) {
+	var bot pb.Bot
+	err := r.db.WithContext(ctx).Where("identifier = ?", identifier).First(&bot).Error
 	if err != nil {
 		return nil, err
 	}

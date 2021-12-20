@@ -10,7 +10,8 @@ CREATE TABLE `groups`
     `created_at` INT(10)      NOT NULL,
     `updated_at` INT(10)      NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE
+    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
+    UNIQUE INDEX `uuid` (`uuid`) USING BTREE
 )
     ENGINE = InnoDB;
 
@@ -74,6 +75,7 @@ CREATE TABLE `group_settings`
 create table if not exists `messages`
 (
     `id`            BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`       BIGINT(19)          NOT NULL,
     `sequence`      INT(10)             NOT NULL,
     `uuid`          varchar(36)         NOT NULL DEFAULT '',
     `sender`        BIGINT(19)          NOT NULL,
@@ -105,7 +107,9 @@ CREATE TABLE `bots`
     `status`     TINYINT(2)    NOT NULL,
     `created_at` INT(10)       NOT NULL,
     `updated_at` INT(10)       NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uuid` (`uuid`) USING BTREE,
+    UNIQUE INDEX `identifier` (`identifier`) USING BTREE
 )
     ENGINE = InnoDB;
 

@@ -11,12 +11,16 @@ import (
 
 var (
 	uuid1, uuid2, uuid3 string
+	identifier1, identifier2, identifier3 string
 )
 
 func TestMain(m *testing.M) {
 	uuid1 = util.UUID()
 	uuid2 = util.UUID()
 	uuid3 = util.UUID()
+	identifier1 = "a_bot"
+	identifier2 = "b_bot"
+	identifier3 = "c_bot"
 	code := m.Run()
 	os.Exit(code)
 }
@@ -36,9 +40,9 @@ func TestChatbotRepository_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{bot: &pb.Bot{Uuid: uuid1, Name: "test1"}}, false},
-		{"case2", sto, args{bot: &pb.Bot{Uuid: uuid2, Name: "test2"}}, false},
-		{"case3", sto, args{bot: &pb.Bot{Uuid: uuid3, Name: "test3"}}, false},
+		{"case1", sto, args{bot: &pb.Bot{Uuid: uuid1, Name: "test1", Identifier: identifier1}}, false},
+		{"case2", sto, args{bot: &pb.Bot{Uuid: uuid2, Name: "test2", Identifier: identifier2}}, false},
+		{"case3", sto, args{bot: &pb.Bot{Uuid: uuid3, Name: "test3", Identifier: identifier3}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,6 +108,37 @@ func TestChatbotRepository_GetByUUID(t *testing.T) {
 			_, err := tt.r.GetByUUID(context.Background(), tt.args.uuid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChatbotRepository.GetByUUID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_GetByIdentifier(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create bot Repository error, %+v", err)
+	}
+
+	type args struct {
+		identifier string
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"identifier=1", sto, args{identifier: identifier1}, false},
+		{"identifier=2", sto, args{identifier: identifier2}, false},
+		{"identifier=3", sto, args{identifier: identifier3}, false},
+		{"identifier=404", sto, args{identifier: "404"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.GetByIdentifier(context.Background(), tt.args.identifier)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.GetByIdentifier() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
