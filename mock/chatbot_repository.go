@@ -94,10 +94,10 @@ func (mr *MockChatbotRepositoryMockRecorder) DeleteGroup(ctx, id interface{}) *g
 }
 
 // GetByID mocks base method.
-func (m *MockChatbotRepository) GetByID(ctx context.Context, id int64) (*pb.Bot, error) {
+func (m *MockChatbotRepository) GetByID(ctx context.Context, id int64) (pb.Bot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
-	ret0, _ := ret[0].(*pb.Bot)
+	ret0, _ := ret[0].(pb.Bot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -109,10 +109,10 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomoc
 }
 
 // GetByIdentifier mocks base method.
-func (m *MockChatbotRepository) GetByIdentifier(ctx context.Context, uuid string) (*pb.Bot, error) {
+func (m *MockChatbotRepository) GetByIdentifier(ctx context.Context, uuid string) (pb.Bot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByIdentifier", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Bot)
+	ret0, _ := ret[0].(pb.Bot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -124,10 +124,10 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByIdentifier(ctx, uuid interface
 }
 
 // GetByUUID mocks base method.
-func (m *MockChatbotRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error) {
+func (m *MockChatbotRepository) GetByUUID(ctx context.Context, uuid string) (pb.Bot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUUID", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Bot)
+	ret0, _ := ret[0].(pb.Bot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -139,10 +139,10 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *g
 }
 
 // GetGroup mocks base method.
-func (m *MockChatbotRepository) GetGroup(ctx context.Context, id int64) (*pb.Group, error) {
+func (m *MockChatbotRepository) GetGroup(ctx context.Context, id int64) (pb.Group, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroup", ctx, id)
-	ret0, _ := ret[0].(*pb.Group)
+	ret0, _ := ret[0].(pb.Group)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -154,10 +154,10 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomo
 }
 
 // GetGroupBySequence mocks base method.
-func (m *MockChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (*pb.Group, error) {
+func (m *MockChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroupBySequence", ctx, userId, sequence)
-	ret0, _ := ret[0].(*pb.Group)
+	ret0, _ := ret[0].(pb.Group)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -169,10 +169,10 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupBySequence(ctx, userId, seq
 }
 
 // GetGroupByUUID mocks base method.
-func (m *MockChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
+func (m *MockChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroupByUUID", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Group)
+	ret0, _ := ret[0].(pb.Group)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -45,7 +45,7 @@ func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotRe
 	if err != nil {
 		return nil, err
 	}
-	return &pb.BotReply{Bot: bot}, nil
+	return &pb.BotReply{Bot: &bot}, nil
 }
 
 func (s *Chatbot) GetBots(ctx context.Context, _ *pb.BotRequest) (*pb.BotsReply, error) {
@@ -81,5 +81,5 @@ func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.G
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GroupReply{Group: group}, nil
+	return &pb.GroupReply{Group: &group}, nil
 }

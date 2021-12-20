@@ -8,7 +8,7 @@ import (
 )
 
 type WorkflowRepository interface {
-	GetTriggerByFlag(ctx context.Context, t, flag string) (*pb.Trigger, error)
+	GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error)
 	ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error)
 	CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error)
 	DeleteTriggerByMessageID(ctx context.Context, messageID int64) error
@@ -23,16 +23,16 @@ func NewMysqlWorkflowRepository(id *global.ID, db *mysql.Conn) WorkflowRepositor
 	return &MysqlWorkflowRepository{id: id, db: db}
 }
 
-func (r *MysqlWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (*pb.Trigger, error) {
+func (r *MysqlWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error) {
 	var trigger pb.Trigger
 	err := r.db.WithContext(ctx).
 		Where("type = ?", t).
 		Where("flag = ?", flag).
 		First(&trigger).Error
 	if err != nil {
-		return nil, err
+		return pb.Trigger{}, err
 	}
-	return &trigger, nil
+	return trigger, nil
 }
 
 func (r *MysqlWorkflowRepository) ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error) {

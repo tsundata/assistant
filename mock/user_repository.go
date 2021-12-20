@@ -94,10 +94,10 @@ func (mr *MockUserRepositoryMockRecorder) CreateDevice(ctx, device interface{}) 
 }
 
 // GetByID mocks base method.
-func (m *MockUserRepository) GetByID(ctx context.Context, id int64) (*pb.User, error) {
+func (m *MockUserRepository) GetByID(ctx context.Context, id int64) (pb.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
-	ret0, _ := ret[0].(*pb.User)
+	ret0, _ := ret[0].(pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -109,10 +109,10 @@ func (mr *MockUserRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomock.C
 }
 
 // GetByName mocks base method.
-func (m *MockUserRepository) GetByName(ctx context.Context, username string) (*pb.User, error) {
+func (m *MockUserRepository) GetByName(ctx context.Context, username string) (pb.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByName", ctx, username)
-	ret0, _ := ret[0].(*pb.User)
+	ret0, _ := ret[0].(pb.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -124,10 +124,10 @@ func (mr *MockUserRepositoryMockRecorder) GetByName(ctx, username interface{}) *
 }
 
 // GetDevice mocks base method.
-func (m *MockUserRepository) GetDevice(ctx context.Context, id int64) (*pb.Device, error) {
+func (m *MockUserRepository) GetDevice(ctx context.Context, id int64) (pb.Device, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDevice", ctx, id)
-	ret0, _ := ret[0].(*pb.Device)
+	ret0, _ := ret[0].(pb.Device)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -139,10 +139,10 @@ func (mr *MockUserRepositoryMockRecorder) GetDevice(ctx, id interface{}) *gomock
 }
 
 // GetRole mocks base method.
-func (m *MockUserRepository) GetRole(ctx context.Context, userID int) (*pb.Role, error) {
+func (m *MockUserRepository) GetRole(ctx context.Context, userID int) (pb.Role, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRole", ctx, userID)
-	ret0, _ := ret[0].(*pb.Role)
+	ret0, _ := ret[0].(pb.Role)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

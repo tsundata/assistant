@@ -65,10 +65,10 @@ func (mr *MockWorkflowRepositoryMockRecorder) DeleteTriggerByMessageID(ctx, mess
 }
 
 // GetTriggerByFlag mocks base method.
-func (m *MockWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (*pb.Trigger, error) {
+func (m *MockWorkflowRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTriggerByFlag", ctx, t, flag)
-	ret0, _ := ret[0].(*pb.Trigger)
+	ret0, _ := ret[0].(pb.Trigger)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

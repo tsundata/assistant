@@ -196,8 +196,8 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb
 }
 
 func (s *Middle) GetCredential(ctx context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
-	var find *pb.Credential
 	var err error
+	var find pb.Credential
 	if payload.GetName() != "" {
 		find, err = s.repo.GetCredentialByName(ctx, payload.GetName())
 	} else if payload.GetType() != "" {

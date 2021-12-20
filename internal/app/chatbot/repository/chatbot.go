@@ -11,15 +11,15 @@ import (
 )
 
 type ChatbotRepository interface {
-	GetByID(ctx context.Context, id int64) (*pb.Bot, error)
-	GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error)
-	GetByIdentifier(ctx context.Context, uuid string) (*pb.Bot, error)
+	GetByID(ctx context.Context, id int64) (pb.Bot, error)
+	GetByUUID(ctx context.Context, uuid string) (pb.Bot, error)
+	GetByIdentifier(ctx context.Context, uuid string) (pb.Bot, error)
 	List(ctx context.Context, ) ([]*pb.Bot, error)
 	Create(ctx context.Context, message *pb.Bot) (int64, error)
 	Delete(ctx context.Context, id int64) error
-	GetGroup(ctx context.Context, id int64) (*pb.Group, error)
-	GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error)
-	GetGroupBySequence(ctx context.Context, userId, sequence int64) (*pb.Group, error)
+	GetGroup(ctx context.Context, id int64) (pb.Group, error)
+	GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error)
+	GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error)
 	ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error)
 	CreateGroup(ctx context.Context, group *pb.Group) (int64, error)
 	DeleteGroup(ctx context.Context, id int64) error
@@ -35,31 +35,31 @@ func NewMysqlChatbotRepository(id *global.ID, locker *global.Locker, db *mysql.C
 	return &MysqlChatbotRepository{id: id, locker: locker, db: db}
 }
 
-func (r *MysqlChatbotRepository) GetByID(ctx context.Context, id int64) (*pb.Bot, error) {
+func (r *MysqlChatbotRepository) GetByID(ctx context.Context, id int64) (pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&bot).Error
 	if err != nil {
-		return nil, err
+		return pb.Bot{}, err
 	}
-	return &bot, nil
+	return bot, nil
 }
 
-func (r *MysqlChatbotRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Bot, error) {
+func (r *MysqlChatbotRepository) GetByUUID(ctx context.Context, uuid string) (pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&bot).Error
 	if err != nil {
-		return nil, err
+		return pb.Bot{}, err
 	}
-	return &bot, nil
+	return bot, nil
 }
 
-func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier string) (*pb.Bot, error) {
+func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).Where("identifier = ?", identifier).First(&bot).Error
 	if err != nil {
-		return nil, err
+		return pb.Bot{}, err
 	}
-	return &bot, nil
+	return bot, nil
 }
 
 func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
@@ -84,31 +84,31 @@ func (r *MysqlChatbotRepository) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Bot{}).Error
 }
 
-func (r *MysqlChatbotRepository) GetGroup(ctx context.Context, id int64) (*pb.Group, error) {
+func (r *MysqlChatbotRepository) GetGroup(ctx context.Context, id int64) (pb.Group, error) {
 	var find pb.Group
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&find).Error
 	if err != nil {
-		return nil, err
+		return pb.Group{}, err
 	}
-	return &find, nil
+	return find, nil
 }
 
-func (r *MysqlChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (*pb.Group, error) {
+func (r *MysqlChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error) {
 	var find pb.Group
 	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&find).Error
 	if err != nil {
-		return nil, err
+		return pb.Group{}, err
 	}
-	return &find, nil
+	return find, nil
 }
 
-func (r *MysqlChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (*pb.Group, error) {
+func (r *MysqlChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error) {
 	var find pb.Group
 	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).First(&find).Error
 	if err != nil {
-		return nil, err
+		return pb.Group{}, err
 	}
-	return &find, nil
+	return find, nil
 }
 
 func (r *MysqlChatbotRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {

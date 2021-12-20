@@ -65,10 +65,10 @@ func (mr *MockMessageRepositoryMockRecorder) Delete(ctx, id interface{}) *gomock
 }
 
 // GetByID mocks base method.
-func (m *MockMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Message, error) {
+func (m *MockMessageRepository) GetByID(ctx context.Context, id int64) (pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
-	ret0, _ := ret[0].(*pb.Message)
+	ret0, _ := ret[0].(pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -80,10 +80,10 @@ func (mr *MockMessageRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomoc
 }
 
 // GetByUUID mocks base method.
-func (m *MockMessageRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Message, error) {
+func (m *MockMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUUID", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Message)
+	ret0, _ := ret[0].(pb.Message)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -12,8 +12,8 @@ import (
 )
 
 type MessageRepository interface {
-	GetByID(ctx context.Context, id int64) (*pb.Message, error)
-	GetByUUID(ctx context.Context, uuid string) (*pb.Message, error)
+	GetByID(ctx context.Context, id int64) (pb.Message, error)
+	GetByUUID(ctx context.Context, uuid string) (pb.Message, error)
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
 	List(ctx context.Context, ) ([]*pb.Message, error)
 	Create(ctx context.Context, message *pb.Message) (int64, error)
@@ -30,22 +30,22 @@ func NewMysqlMessageRepository(id *global.ID, locker *global.Locker, db *mysql.C
 	return &MysqlMessageRepository{id: id, locker: locker, db: db}
 }
 
-func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (*pb.Message, error) {
+func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&message).Error
 	if err != nil {
-		return nil, err
+		return pb.Message{}, err
 	}
-	return &message, nil
+	return message, nil
 }
 
-func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (*pb.Message, error) {
+func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&message).Error
 	if err != nil {
-		return nil, err
+		return pb.Message{}, err
 	}
-	return &message, nil
+	return message, nil
 }
 
 func (r *MysqlMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {

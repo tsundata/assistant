@@ -36,10 +36,10 @@ func (m *MockIdRepository) EXPECT() *MockIdRepositoryMockRecorder {
 }
 
 // GetOrCreateNode mocks base method.
-func (m *MockIdRepository) GetOrCreateNode(ctx context.Context, node *pb.Node) (*pb.Node, error) {
+func (m *MockIdRepository) GetOrCreateNode(ctx context.Context, node *pb.Node) (pb.Node, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrCreateNode", ctx, node)
-	ret0, _ := ret[0].(*pb.Node)
+	ret0, _ := ret[0].(pb.Node)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

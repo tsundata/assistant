@@ -81,10 +81,10 @@ func (mr *MockMiddleRepositoryMockRecorder) CreatePage(ctx, page interface{}) *g
 }
 
 // GetAppByType mocks base method.
-func (m *MockMiddleRepository) GetAppByType(ctx context.Context, t string) (*pb.App, error) {
+func (m *MockMiddleRepository) GetAppByType(ctx context.Context, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAppByType", ctx, t)
-	ret0, _ := ret[0].(*pb.App)
+	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -96,10 +96,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetAppByType(ctx, t interface{}) *go
 }
 
 // GetAvailableAppByType mocks base method.
-func (m *MockMiddleRepository) GetAvailableAppByType(ctx context.Context, t string) (*pb.App, error) {
+func (m *MockMiddleRepository) GetAvailableAppByType(ctx context.Context, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAvailableAppByType", ctx, t)
-	ret0, _ := ret[0].(*pb.App)
+	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -111,10 +111,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(ctx, t interfa
 }
 
 // GetCredentialByName mocks base method.
-func (m *MockMiddleRepository) GetCredentialByName(ctx context.Context, name string) (*pb.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByName(ctx context.Context, name string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredentialByName", ctx, name)
-	ret0, _ := ret[0].(*pb.Credential)
+	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -126,10 +126,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByName(ctx, name interf
 }
 
 // GetCredentialByType mocks base method.
-func (m *MockMiddleRepository) GetCredentialByType(ctx context.Context, t string) (*pb.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByType(ctx context.Context, t string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCredentialByType", ctx, t)
-	ret0, _ := ret[0].(*pb.Credential)
+	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -141,10 +141,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(ctx, t interface
 }
 
 // GetOrCreateTag mocks base method.
-func (m *MockMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (*pb.Tag, error) {
+func (m *MockMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrCreateTag", ctx, tag)
-	ret0, _ := ret[0].(*pb.Tag)
+	ret0, _ := ret[0].(pb.Tag)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -156,10 +156,10 @@ func (mr *MockMiddleRepositoryMockRecorder) GetOrCreateTag(ctx, tag interface{})
 }
 
 // GetPageByUUID mocks base method.
-func (m *MockMiddleRepository) GetPageByUUID(ctx context.Context, uuid string) (*pb.Page, error) {
+func (m *MockMiddleRepository) GetPageByUUID(ctx context.Context, uuid string) (pb.Page, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPageByUUID", ctx, uuid)
-	ret0, _ := ret[0].(*pb.Page)
+	ret0, _ := ret[0].(pb.Page)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
