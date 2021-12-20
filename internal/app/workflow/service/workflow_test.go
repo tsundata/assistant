@@ -113,7 +113,7 @@ func TestWorkflow_WebhookTrigger(t *testing.T) {
 
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Trigger{MessageId: 1, Secret: "test"}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
 	)
 
 	s := NewWorkflow(bus, nil, repo, nil, nil, nil)
@@ -226,7 +226,7 @@ func TestWorkflow_CreateTrigger(t *testing.T) {
 	repo := mock.NewMockWorkflowRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
-		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Trigger{}, nil),
+		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 

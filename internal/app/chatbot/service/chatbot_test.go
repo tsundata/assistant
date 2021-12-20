@@ -72,7 +72,7 @@ func TestChatbot_GetBot(t *testing.T) {
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	todo := mock.NewMockTodoSvcClient(ctl)
 
-	item := &pb.Bot{
+	item := pb.Bot{
 		Id:        1,
 		Uuid:      "1",
 		Name:      "test",
@@ -98,7 +98,7 @@ func TestChatbot_GetBot(t *testing.T) {
 		wantErr bool
 	}{
 		{"case1", s, args{context.Background(), &pb.BotRequest{Bot: &pb.Bot{Uuid: "1"}}},
-			&pb.BotReply{Bot: item}, false},
+			&pb.BotReply{Bot: &item}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -266,7 +266,7 @@ func TestMessage_GetGroup(t *testing.T) {
 
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetGroupByUUID(gomock.Any(), gomock.Any()).Return(&pb.Group{
+		repo.EXPECT().GetGroupByUUID(gomock.Any(), gomock.Any()).Return(pb.Group{
 			Id: 1,
 		}, nil),
 	)

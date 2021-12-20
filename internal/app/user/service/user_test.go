@@ -26,12 +26,12 @@ func TestUser_Login(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{
+		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(pb.User{
 			Id:       1,
 			Username: "admin",
 			Password: "$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu",
 		}, nil),
-		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{
+		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(pb.User{
 			Id:       1,
 			Username: "admin",
 			Password: "$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu",
@@ -141,7 +141,7 @@ func TestUser_GetRole(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(&pb.Role{Profession: "super"}, nil),
+		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(pb.Role{Profession: "super"}, nil),
 	)
 
 	s := NewUser(conf, nil, nil, repo)
@@ -191,7 +191,7 @@ func TestUser_GetRoleImage(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(&pb.Role{
+		repo.EXPECT().GetRole(gomock.Any(), gomock.Any()).Return(pb.Role{
 			Id:          1,
 			Profession:  "super",
 			Level:       60,
@@ -329,7 +329,7 @@ func TestUser_GetUser(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(&pb.User{Id: 1, Nickname: "test"}, nil),
+		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(pb.User{Id: 1, Nickname: "test"}, nil),
 	)
 
 	s := NewUser(conf, nil, nil, repo)
@@ -377,7 +377,7 @@ func TestUser_GetUserByName(t *testing.T) {
 
 	repo := mock.NewMockUserRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(&pb.User{Id: 1, Nickname: "test"}, nil),
+		repo.EXPECT().GetByName(gomock.Any(), gomock.Any()).Return(pb.User{Id: 1, Nickname: "test"}, nil),
 	)
 
 	s := NewUser(conf, nil, nil, repo)

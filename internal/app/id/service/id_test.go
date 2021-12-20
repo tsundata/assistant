@@ -15,10 +15,10 @@ func TestGetGlobalId(t *testing.T) {
 
 	repo := mock.NewMockIdRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetOrCreateNode(gomock.Any(), gomock.Any()).Return(&pb.Node{
+		repo.EXPECT().GetOrCreateNode(gomock.Any(), gomock.Any()).Return(pb.Node{
 			Id: 1,
 		}, nil),
-		repo.EXPECT().GetOrCreateNode(gomock.Any(), gomock.Any()).Return(&pb.Node{
+		repo.EXPECT().GetOrCreateNode(gomock.Any(), gomock.Any()).Return(pb.Node{
 			Id: 2,
 		}, nil),
 	)
