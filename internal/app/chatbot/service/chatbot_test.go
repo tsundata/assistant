@@ -8,6 +8,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/chatbot/repository"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/rulebot"
 	"github.com/tsundata/assistant/mock"
 )
@@ -357,6 +359,282 @@ func TestMessage_CreateGroup(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Message.Create() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewChatbot(t *testing.T) {
+	type args struct {
+		logger log.Logger
+		repo   repository.ChatbotRepository
+		middle pb.MiddleSvcClient
+		todo   pb.TodoSvcClient
+		bot    *rulebot.RuleBot
+	}
+	tests := []struct {
+		name string
+		args args
+		want *Chatbot
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewChatbot(tt.args.logger, tt.args.repo, tt.args.middle, tt.args.todo, tt.args.bot); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewChatbot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_GetGroups(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.GroupsReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetGroups(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.GetGroups() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.GetGroups() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_CreateGroup(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.CreateGroup(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.CreateGroup() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.CreateGroup() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_GetGroup(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.GroupReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.GetGroup(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.GetGroup() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.GetGroup() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_CreateGroupBot(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupBotRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.CreateGroupBot(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.CreateGroupBot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.CreateGroupBot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_DeleteGroupBot(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupBotRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.DeleteGroupBot(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.DeleteGroupBot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.DeleteGroupBot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_UpdateGroupBotSetting(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.BotSettingRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.UpdateGroupBotSetting(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.UpdateGroupBotSetting() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.UpdateGroupBotSetting() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_UpdateGroupSetting(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupSettingRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.UpdateGroupSetting(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.UpdateGroupSetting() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.UpdateGroupSetting() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_DeleteGroup(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		payload *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.DeleteGroup(tt.args.ctx, tt.args.payload)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.DeleteGroup() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.DeleteGroup() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestChatbot_UpdateGroup(t *testing.T) {
+	type args struct {
+		ctx     context.Context
+		request *pb.GroupRequest
+	}
+	tests := []struct {
+		name    string
+		s       *Chatbot
+		args    args
+		want    *pb.StateReply
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.UpdateGroup(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Chatbot.UpdateGroup() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Chatbot.UpdateGroup() = %v, want %v", got, tt.want)
 			}
 		})
 	}
