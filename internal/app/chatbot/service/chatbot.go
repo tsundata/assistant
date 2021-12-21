@@ -85,25 +85,49 @@ func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.G
 }
 
 func (s *Chatbot) CreateGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	err := s.repo.CreateGroupBot(ctx, payload.GroupId, payload.Bot)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Chatbot) DeleteGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	err := s.repo.DeleteGroupBot(ctx, payload.GroupId, payload.Bot.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Chatbot) UpdateGroupBotSetting(ctx context.Context, payload *pb.BotSettingRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	err := s.repo.UpdateGroupBotSetting(ctx, payload.GroupId, payload.BotId, payload.Kvs)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Chatbot) UpdateGroupSetting(ctx context.Context, payload *pb.GroupSettingRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	err := s.repo.UpdateGroupSetting(ctx, payload.GroupId, payload.Kvs)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Chatbot) DeleteGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
-	panic("implement me")
+	err := s.repo.DeleteGroup(ctx, payload.Group.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) UpdateGroup(ctx context.Context, request *pb.GroupRequest) (*pb.StateReply, error) {
-	panic("implement me")
+func (s *Chatbot) UpdateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
+	err := s.repo.UpdateGroup(ctx, payload.Group)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
 }
