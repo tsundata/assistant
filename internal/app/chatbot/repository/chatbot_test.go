@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	uuid1, uuid2, uuid3 string
+	uuid1, uuid2, uuid3                   string
 	identifier1, identifier2, identifier3 string
 )
 
@@ -195,8 +195,8 @@ func TestChatbotRepository_Delete(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_CreateGroup(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_CreateGroup(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -225,8 +225,8 @@ func TestMessageRepository_CreateGroup(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_GetGroup(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_GetGroup(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -253,8 +253,8 @@ func TestMessageRepository_GetGroup(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_GetGroupByUUID(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_GetGroupByUUID(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -284,8 +284,8 @@ func TestMessageRepository_GetGroupByUUID(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_GetGroupBySequence(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_GetGroupBySequence(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -316,8 +316,8 @@ func TestMessageRepository_GetGroupBySequence(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_ListGroup(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_ListGroup(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -344,8 +344,8 @@ func TestMessageRepository_ListGroup(t *testing.T) {
 	}
 }
 
-func TestMessageRepository_DeleteGroup(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Message)
+func TestChatbotRepository_DeleteGroup(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
 	if err != nil {
 		t.Fatalf("create chatbot Repository error, %+v", err)
 	}
@@ -365,6 +365,251 @@ func TestMessageRepository_DeleteGroup(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.DeleteGroup(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("ChatbotRepository.DeleteGroup() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_ListGroupBot(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.ListGroupBot(context.Background(), tt.args.groupId)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.ListGroupBot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_CreateGroupBot(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+		bot     *pb.Bot
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1, &pb.Bot{Id: 1, Name: "a_bot"}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.CreateGroupBot(context.Background(), tt.args.groupId, tt.args.bot); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.CreateGroupBot() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_DeleteGroupBot(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+		botId   int64
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1, 1}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.DeleteGroupBot(context.Background(), tt.args.groupId, tt.args.botId); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.DeleteGroupBot() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_UpdateGroup(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		group *pb.Group
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{&pb.Group{Id: 1, Name: "update"}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.UpdateGroup(context.Background(), tt.args.group); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.UpdateGroup() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_UpdateGroupSetting(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+		kvs     []*pb.KV
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1, []*pb.KV{{Key: "k", Value: "v"}}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.UpdateGroupSetting(context.Background(), tt.args.groupId, tt.args.kvs); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.UpdateGroupSetting() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_UpdateGroupBotSetting(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+		botId   int64
+		kvs     []*pb.KV
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1, 1, []*pb.KV{{Key: "k", Value: "u"}}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.UpdateGroupBotSetting(context.Background(), tt.args.groupId, tt.args.botId, tt.args.kvs); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.UpdateGroupBotSetting() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_ListGroupTag(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		groupId int64
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.ListGroupTag(context.Background(), tt.args.groupId)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.ListGroupTag() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_CreateGroupTag(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		tag *pb.GroupTag
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{&pb.GroupTag{GroupId: 1, Tag: "t"}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.r.CreateGroupTag(context.Background(), tt.args.tag)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.CreateGroupTag() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestChatbotRepository_DeleteGroupTag(t *testing.T) {
+	sto, err := CreateChatbotRepository(enum.Chatbot)
+	if err != nil {
+		t.Fatalf("create chatbot Repository error, %+v", err)
+	}
+
+	type args struct {
+		id int64
+	}
+	tests := []struct {
+		name    string
+		r       ChatbotRepository
+		args    args
+		wantErr bool
+	}{
+		{"case1", sto, args{1}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.r.DeleteGroupTag(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
+				t.Errorf("ChatbotRepository.DeleteGroupTag() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

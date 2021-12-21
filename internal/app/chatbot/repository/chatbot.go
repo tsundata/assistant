@@ -199,7 +199,7 @@ func (r *MysqlChatbotRepository) DeleteGroup(ctx context.Context, id int64) erro
 }
 
 func (r *MysqlChatbotRepository) UpdateGroup(ctx context.Context, group *pb.Group) error {
-	return r.db.WithContext(ctx).Where("id = ?", group.Id).Update("name", group.Name).Error
+	return r.db.WithContext(ctx).Model(&pb.Group{}).Where("id = ?", group.Id).Update("name", group.Name).Error
 }
 
 func (r *MysqlChatbotRepository) UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error {
