@@ -36,18 +36,18 @@ func (m *MockChatbotRepository) EXPECT() *MockChatbotRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockChatbotRepository) Create(ctx context.Context, message *pb.Bot) (int64, error) {
+func (m *MockChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", ctx, message)
+	ret := m.ctrl.Call(m, "Create", ctx, bot)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockChatbotRepositoryMockRecorder) Create(ctx, message interface{}) *gomock.Call {
+func (mr *MockChatbotRepositoryMockRecorder) Create(ctx, bot interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockChatbotRepository)(nil).Create), ctx, message)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockChatbotRepository)(nil).Create), ctx, bot)
 }
 
 // CreateGroup mocks base method.
@@ -63,6 +63,20 @@ func (m *MockChatbotRepository) CreateGroup(ctx context.Context, group *pb.Group
 func (mr *MockChatbotRepositoryMockRecorder) CreateGroup(ctx, group interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockChatbotRepository)(nil).CreateGroup), ctx, group)
+}
+
+// CreateGroupBot mocks base method.
+func (m *MockChatbotRepository) CreateGroupBot(ctx context.Context, groupId int64, bot *pb.Bot) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateGroupBot", ctx, groupId, bot)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateGroupBot indicates an expected call of CreateGroupBot.
+func (mr *MockChatbotRepositoryMockRecorder) CreateGroupBot(ctx, groupId, bot interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).CreateGroupBot), ctx, groupId, bot)
 }
 
 // Delete mocks base method.
@@ -91,6 +105,20 @@ func (m *MockChatbotRepository) DeleteGroup(ctx context.Context, id int64) error
 func (mr *MockChatbotRepositoryMockRecorder) DeleteGroup(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroup", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroup), ctx, id)
+}
+
+// DeleteGroupBot mocks base method.
+func (m *MockChatbotRepository) DeleteGroupBot(ctx context.Context, groupId, botId int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteGroupBot", ctx, groupId, botId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteGroupBot indicates an expected call of DeleteGroupBot.
+func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupBot(ctx, groupId, botId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupBot), ctx, groupId, botId)
 }
 
 // GetByID mocks base method.
@@ -211,4 +239,61 @@ func (m *MockChatbotRepository) ListGroup(ctx context.Context, userId int64) ([]
 func (mr *MockChatbotRepositoryMockRecorder) ListGroup(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroup", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroup), ctx, userId)
+}
+
+// ListGroupBot mocks base method.
+func (m *MockChatbotRepository) ListGroupBot(ctx context.Context, groupId int64) ([]*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListGroupBot", ctx, groupId)
+	ret0, _ := ret[0].([]*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListGroupBot indicates an expected call of ListGroupBot.
+func (mr *MockChatbotRepositoryMockRecorder) ListGroupBot(ctx, groupId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupBot), ctx, groupId)
+}
+
+// UpdateGroup mocks base method.
+func (m *MockChatbotRepository) UpdateGroup(ctx context.Context, group *pb.Group) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroup", ctx, group)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateGroup indicates an expected call of UpdateGroup.
+func (mr *MockChatbotRepositoryMockRecorder) UpdateGroup(ctx, group interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroup", reflect.TypeOf((*MockChatbotRepository)(nil).UpdateGroup), ctx, group)
+}
+
+// UpdateGroupBotSetting mocks base method.
+func (m *MockChatbotRepository) UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupBotSetting", ctx, groupId, botId, kvs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateGroupBotSetting indicates an expected call of UpdateGroupBotSetting.
+func (mr *MockChatbotRepositoryMockRecorder) UpdateGroupBotSetting(ctx, groupId, botId, kvs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupBotSetting", reflect.TypeOf((*MockChatbotRepository)(nil).UpdateGroupBotSetting), ctx, groupId, botId, kvs)
+}
+
+// UpdateGroupSetting mocks base method.
+func (m *MockChatbotRepository) UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupSetting", ctx, groupId, kvs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateGroupSetting indicates an expected call of UpdateGroupSetting.
+func (mr *MockChatbotRepositoryMockRecorder) UpdateGroupSetting(ctx, groupId, kvs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupSetting", reflect.TypeOf((*MockChatbotRepository)(nil).UpdateGroupSetting), ctx, groupId, kvs)
 }

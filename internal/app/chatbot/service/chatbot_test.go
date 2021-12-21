@@ -145,7 +145,7 @@ func TestChatbot_GetBots(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		payload *pb.BotRequest
+		payload *pb.BotsRequest
 	}
 	tests := []struct {
 		name    string
@@ -154,7 +154,7 @@ func TestChatbot_GetBots(t *testing.T) {
 		want    *pb.BotsReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.BotRequest{}}, &pb.BotsReply{Bots: items}, false},
+		{"case1", s, args{context.Background(), &pb.BotsRequest{}}, &pb.BotsReply{Bots: items}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

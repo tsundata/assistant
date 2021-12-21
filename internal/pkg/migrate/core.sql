@@ -31,14 +31,10 @@ CREATE TABLE `group_bots`
 
 CREATE TABLE `group_bot_settings`
 (
-    `id`         BIGINT(19)    NOT NULL AUTO_INCREMENT,
-    `group_id`   BIGINT(19)    NOT NULL,
-    `bot_id`     BIGINT(19)    NOT NULL,
-    `key`        VARCHAR(50)   NOT NULL,
-    `value`      VARCHAR(1000) NOT NULL,
-    `created_at` INT(10)       NOT NULL,
-    `updated_at` INT(10)       NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
+    `group_id` BIGINT(19)    NOT NULL,
+    `bot_id`   BIGINT(19)    NOT NULL,
+    `key`      VARCHAR(50)   NOT NULL,
+    `value`    VARCHAR(1000) NOT NULL,
     INDEX `group_id` (`group_id`) USING BTREE,
     INDEX `bot_id` (`bot_id`) USING BTREE
 )
@@ -60,13 +56,9 @@ CREATE TABLE `group_tags`
 
 CREATE TABLE `group_settings`
 (
-    `id`         BIGINT(19)    NOT NULL AUTO_INCREMENT,
-    `group_id`   BIGINT(19)    NOT NULL,
-    `key`        VARCHAR(50)   NOT NULL,
-    `value`      VARCHAR(1000) NOT NULL,
-    `created_at` INT(10)       NOT NULL,
-    `updated_at` INT(10)       NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
+    `group_id` BIGINT(19)    NOT NULL,
+    `key`      VARCHAR(50)   NOT NULL,
+    `value`    VARCHAR(1000) NOT NULL,
     INDEX `group_id` (`group_id`) USING BTREE
 )
     ENGINE = InnoDB;

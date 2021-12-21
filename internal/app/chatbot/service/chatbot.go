@@ -48,7 +48,7 @@ func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotRe
 	return &pb.BotReply{Bot: &bot}, nil
 }
 
-func (s *Chatbot) GetBots(ctx context.Context, _ *pb.BotRequest) (*pb.BotsReply, error) {
+func (s *Chatbot) GetBots(ctx context.Context, _ *pb.BotsRequest) (*pb.BotsReply, error) {
 	bots, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
@@ -82,4 +82,28 @@ func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.G
 		return nil, err
 	}
 	return &pb.GroupReply{Group: &group}, nil
+}
+
+func (s *Chatbot) CreateGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) DeleteGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) UpdateGroupBotSetting(ctx context.Context, payload *pb.BotSettingRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) UpdateGroupSetting(ctx context.Context, payload *pb.GroupSettingRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) DeleteGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
+	panic("implement me")
+}
+
+func (s *Chatbot) UpdateGroup(ctx context.Context, request *pb.GroupRequest) (*pb.StateReply, error) {
+	panic("implement me")
 }
