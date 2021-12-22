@@ -9,10 +9,14 @@ import (
 )
 
 func Outgoing(c *fiber.Ctx) context.Context {
-	val := c.Locals(enum.AuthKey)
 	md := metadata.Pairs()
-	if id, ok := val.(int64); ok {
+	idVal := c.Locals(enum.AuthKey)
+	if id, ok := idVal.(int64); ok {
 		md.Set(enum.AuthKey, strconv.Itoa(int(id)))
+	}
+	requestIdVal := c.Locals(enum.RequestIdKey)
+	if requestId, ok := requestIdVal.(string); ok {
+		md.Set(enum.RequestIdKey, requestId)
 	}
 	return metadata.NewOutgoingContext(context.Background(), md)
 }

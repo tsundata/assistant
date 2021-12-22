@@ -31,7 +31,9 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// Middleware
 		router.Use(recoverMiddleware.New())
-		router.Use(requestid.New())
+		router.Use(requestid.New(requestid.Config{
+			ContextKey: enum.RequestIdKey,
+		}))
 		router.Use(cors.New(cors.Config{
 			AllowOrigins: "*",
 		}))
