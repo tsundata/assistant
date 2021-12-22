@@ -19,3 +19,10 @@ func TestSliceDiff(t *testing.T) {
 	diff = StringSliceDiff(s4, s1)
 	require.Len(t, diff, 3)
 }
+
+func TestIn(t *testing.T) {
+	require.True(t, In([]string{"a", "a"}, "a"))
+	require.True(t, In([]string{"a", "b", "c"}, "a"))
+	require.False(t, In([]string{"a", "b", "c"}, "d"))
+	require.False(t, In([]string{}, "a"))
+}

@@ -7,7 +7,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
@@ -22,10 +21,7 @@ func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) *
 }
 
 func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	id, ok := md.FromIncoming(ctx)
-	if !ok {
-		return nil, rpc.ErrGrpcUnauthenticated
-	}
+	id, _ := md.FromIncoming(ctx)
 
 	var err error
 	todo := pb.Todo{
@@ -113,10 +109,7 @@ func (s *Todo) UpdateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 }
 
 func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
-	id, ok := md.FromIncoming(ctx)
-	if !ok {
-		return nil, rpc.ErrGrpcUnauthenticated
-	}
+	id, _ := md.FromIncoming(ctx)
 
 	err := s.repo.CompleteTodo(ctx, payload.Todo.GetId())
 	if err != nil {

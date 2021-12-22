@@ -10,9 +10,9 @@ import (
 
 func Outgoing(c *fiber.Ctx) context.Context {
 	val := c.Locals(enum.AuthKey)
-	md := metadata.New(map[string]string{})
+	md := metadata.Pairs()
 	if id, ok := val.(int64); ok {
-		md.Append(enum.AuthKey, strconv.Itoa(int(id)))
+		md.Set(enum.AuthKey, strconv.Itoa(int(id)))
 	}
 	return metadata.NewOutgoingContext(context.Background(), md)
 }
@@ -31,6 +31,22 @@ func FromIncoming(ctx context.Context) (int64, bool) {
 	return 0, false
 }
 
+func TraceContext(ctx context.Context) context.Context {
+	inMD := metadata.Pairs()
+	outMD := metadata.Pairs()
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		inMD = md
+	}
+	if md, ok := metadata.FromOutgoingContext(ctx); ok {
+		outMD = md
+	}
+	return metadata.NewOutgoingContext(ctx, metadata.Join(inMD, outMD))
+}
+
 func MockIncomingContext() context.Context {
-	return metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{"id": strconv.Itoa(enum.SuperUserID)}))
+	return metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{enum.AuthKey: strconv.Itoa(enum.SuperUserID)}))
+}
+
+func MockOutgoingContext() context.Context {
+	return metadata.NewOutgoingContext(context.Background(), metadata.New(map[string]string{enum.AuthKey: strconv.Itoa(enum.SuperUserID)}))
 }

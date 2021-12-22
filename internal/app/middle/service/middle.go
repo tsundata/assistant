@@ -9,7 +9,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -85,10 +84,7 @@ func (s *Middle) GetPage(ctx context.Context, payload *pb.PageRequest) (*pb.Page
 }
 
 func (s *Middle) GetApps(ctx context.Context, _ *pb.TextRequest) (*pb.AppsReply, error) {
-	id, ok := md.FromIncoming(ctx)
-	if !ok {
-		return nil, rpc.ErrGrpcUnauthenticated
-	}
+	id, _ := md.FromIncoming(ctx)
 
 	apps, err := s.repo.ListApps(ctx, id)
 	if err != nil {

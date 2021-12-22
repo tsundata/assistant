@@ -13,7 +13,6 @@ import (
 	"github.com/tsundata/assistant/internal/app/user/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"golang.org/x/crypto/bcrypt"
@@ -117,10 +116,7 @@ func (s *User) GetRole(ctx context.Context, payload *pb.RoleRequest) (*pb.RoleRe
 }
 
 func (s *User) GetRoleImage(ctx context.Context, _ *pb.RoleRequest) (*pb.BytesReply, error) {
-	id, ok := md.FromIncoming(ctx)
-	if !ok {
-		return nil, rpc.ErrGrpcUnauthenticated
-	}
+	id, _ := md.FromIncoming(ctx)
 
 	find, err := s.repo.GetRole(ctx, int(id))
 	if err != nil {

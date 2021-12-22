@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
@@ -63,7 +62,7 @@ func (gc *GatewayController) Index(c *fiber.Ctx) error {
 func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 	// chatbot handle
 	text := util.ByteToString(c.Body())
-	reply, err := gc.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: text})
+	reply, err := gc.chatbotSvc.Handle(md.MockOutgoingContext(), &pb.ChatbotRequest{Text: text})
 	if err != nil {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -74,7 +73,7 @@ func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
 
 	// or create message
 	uuid := util.UUID()
-	messageReply, err := gc.messageSvc.Create(context.Background(), &pb.MessageRequest{
+	messageReply, err := gc.messageSvc.Create(md.MockOutgoingContext(), &pb.MessageRequest{
 		Message: &pb.Message{
 			Uuid: uuid,
 			Text: text,

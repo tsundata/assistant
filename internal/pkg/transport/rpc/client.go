@@ -5,6 +5,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
+	"github.com/tsundata/assistant/internal/pkg/auth"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
@@ -31,12 +32,14 @@ func NewClientOptions(tracer opentracing.Tracer) (*ClientOptions, error) {
 			grpcMiddleware.ChainUnaryClient(
 				otgrpc.OpenTracingClientInterceptor(tracer),
 				nrgrpc.UnaryClientInterceptor,
+				auth.UnaryClientInterceptor(),
 			),
 		),
 		grpc.WithStreamInterceptor(
 			grpcMiddleware.ChainStreamClient(
 				otgrpc.OpenTracingStreamClientInterceptor(tracer),
 				nrgrpc.StreamClientInterceptor,
+				auth.StreamClientInterceptor(),
 			),
 		),
 	)

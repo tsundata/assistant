@@ -16,3 +16,12 @@ func StringSliceDiff(s1, s2 []string) []string {
 	}
 	return diff
 }
+
+func In(s1 []string, check string) bool {
+	for _, item := range s1 {
+		if check == item {
+			return true
+		}
+	}
+	return false
+}

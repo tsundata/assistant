@@ -11,6 +11,7 @@ import (
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/tsundata/assistant/internal/pkg/auth"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
@@ -23,8 +24,6 @@ import (
 	"google.golang.org/grpc/status"
 	"net"
 )
-
-var ErrGrpcUnauthenticated = status.Error(codes.Unauthenticated, "grpc unauthenticated")
 
 type Server struct {
 	conf   *config.AppConfig
@@ -51,6 +50,7 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
 				nrgrpc.StreamServerInterceptor(nc.Application()),
+				auth.StreamServerInterceptor(),
 			),
 		),
 		grpc.UnaryInterceptor(
@@ -61,6 +61,7 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
 				nrgrpc.UnaryServerInterceptor(nc.Application()),
+				auth.UnaryServerInterceptor(),
 			),
 		),
 	)
