@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/gateway/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -12,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/version"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"net/http"
 	"strings"
 )
@@ -23,11 +25,12 @@ type GatewayController struct {
 	nr     *newrelic.App
 	bus    event.Bus
 
-	messageSvc  pb.MessageSvcClient
-	middleSvc   pb.MiddleSvcClient
-	workflowSvc pb.WorkflowSvcClient
-	userSvc     pb.UserSvcClient
-	chatbotSvc  pb.ChatbotSvcClient
+	messageSvc   pb.MessageSvcClient
+	middleSvc    pb.MiddleSvcClient
+	workflowSvc  pb.WorkflowSvcClient
+	userSvc      pb.UserSvcClient
+	chatbotSvc   pb.ChatbotSvcClient
+	healthClient *rpcclient.HealthClient
 }
 
 func NewGatewayController(
@@ -40,18 +43,20 @@ func NewGatewayController(
 	middleSvc pb.MiddleSvcClient,
 	workflowSvc pb.WorkflowSvcClient,
 	chatbotSvc pb.ChatbotSvcClient,
-	userSvc pb.UserSvcClient) *GatewayController {
+	userSvc pb.UserSvcClient,
+	healthClient *rpcclient.HealthClient) *GatewayController {
 	return &GatewayController{
-		opt:         opt,
-		rdb:         rdb,
-		logger:      logger,
-		nr:          nr,
-		bus:         bus,
-		messageSvc:  messageSvc,
-		middleSvc:   middleSvc,
-		workflowSvc: workflowSvc,
-		userSvc:     userSvc,
-		chatbotSvc:  chatbotSvc,
+		opt:          opt,
+		rdb:          rdb,
+		logger:       logger,
+		nr:           nr,
+		bus:          bus,
+		messageSvc:   messageSvc,
+		middleSvc:    middleSvc,
+		workflowSvc:  workflowSvc,
+		userSvc:      userSvc,
+		chatbotSvc:   chatbotSvc,
+		healthClient: healthClient,
 	}
 }
 
@@ -343,4 +348,20 @@ func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(reply)
+}
+
+func (gc *GatewayController) Health(c *fiber.Ctx) error {
+	str := strings.Builder{}
+	gc.healthClient.Status.Range(func(key, value interface{}) bool {
+		if service, ok := key.(string); ok {
+			str.WriteString(service)
+			str.WriteString(": ")
+		}
+		if status, ok := value.(grpc_health_v1.HealthCheckResponse_ServingStatus); ok {
+			str.WriteString(strings.ToLower(grpc_health_v1.HealthCheckResponse_ServingStatus_name[int32(status)]))
+			str.WriteString("\n")
+		}
+		return true
+	})
+	return c.SendString(str.String())
 }

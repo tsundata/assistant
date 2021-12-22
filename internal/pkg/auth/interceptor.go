@@ -10,6 +10,8 @@ import (
 )
 
 var ignoreFullMethod = []string{
+	"/grpc.health.v1.Health/Check",
+	"/grpc.health.v1.Health/Watch",
 	"/pb.IdSvc/GetGlobalId",
 	"/pb.UserSvc/Login",
 	"/pb.UserSvc/Authorization",

@@ -21,6 +21,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"net"
 )
@@ -97,6 +99,11 @@ func (s *Server) Start() error {
 		s.logger.Error(err)
 		return err
 	}
+
+	// health check
+	healthCheck := health.NewServer()
+	grpc_health_v1.RegisterHealthServer(s.server, healthCheck)
+	healthCheck.SetServingStatus(s.conf.Name, grpc_health_v1.HealthCheckResponse_SERVING)
 
 	go func() {
 		err = s.server.Serve(lis)

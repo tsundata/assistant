@@ -75,6 +75,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Post("/debug/event", gc.DebugEvent)
 		router.Post("auth", gc.Authorization)
 		router.Post("webhook/trigger", gc.WebhookTrigger)
+		router.Get("/health", gc.Health)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
