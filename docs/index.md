@@ -1,60 +1,42 @@
-# Assistant Bot
+# Environment
 
-![Build](https://github.com/tsundata/assistant/workflows/Build/badge.svg)
-![CodeQL](https://github.com/tsundata/assistant/workflows/CodeQL/badge.svg)
-![Lint](https://github.com/tsundata/assistant/workflows/Lint/badge.svg)
-[![codecov](https://codecov.io/gh/tsundata/assistant/branch/main/graph/badge.svg?token=ZDTxMN5H92)](https://codecov.io/gh/tsundata/assistant)
-[![Go Report Card](https://goreportcard.com/badge/github.com/tsundata/assistant)](https://goreportcard.com/report/github.com/tsundata/assistant)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/tsundata/assistant)
-![GitHub](https://img.shields.io/github/license/tsundata/assistant)
+## ETCD_ADDRESS
 
-Assistant Bot is a workflow engine for chatbot
+> etcd server host
 
-## Features
+## ETCD_USERNAME
 
-- Chat bot
-- Message Publish/Subscribe Hub
-- Message Cron, Trigger, Task, Pipeline
-- Workflow Action ([Syntax](./doc/action_syntax.md))
+> etcd server auth user
 
-## Architecture
+## ETCD_PASSWORD
 
-<img src="architecture.png" alt="Architecture" align="center" width="100%" /> 
+> etcd server auth password
 
-## Applications used
 
-- Github
-- Pocket
-- Pushover
-- Dropbox
-- Rollbar
-- Newrelic
-- Cloudflare
-- Email
 
-## Requirements
+# App port
 
-This project requires Go 1.16 or newer
+## HTTP
 
-## Installation
+- gateway:5000 ---> 30005
+- web:7000 ---> 30007
 
-1. Install MySQL, Redis, influx, jaeger, nats, etcd
+## RPC
 
-2. Import sql files
+- chatbot:6000
+- message:6001
+- middle:6002
+- workflow:6003
+- user:6004
+- todo:6006
+- finance:6007
+- nlp:6008
+- storage:6009
+- task:6010
+- org:6011
 
-3. Import Configuration to etcd
 
-4. Set Environment
 
-   See [env.md](env.md)
+# dev
 
-5. Build binary
-   ```
-   task build
-   ```
-
-6. Run App binary
-
-# License
-
-Assistant Bot is licensed under the [MIT license](https://opensource.org/licenses/MIT).
+> https://csacademy.com/app/graph_editor/
