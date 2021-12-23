@@ -96,33 +96,9 @@ func (h *Hub) Run() {
 				}
 			}
 		case m := <-h.incoming:
-			// chatbot handle
-			reply, err := h.chatbotSvc.Handle(context.Background(), &pb.ChatbotRequest{Text: util.ByteToString(m.data)})
-			if err != nil {
-				h.logger.Error(err)
-				continue
-			}
-
-			if len(reply.GetText()) > 0 {
-				for _, item := range reply.GetText() {
-					if item != "" {
-						// send message
-						h.broadcast <- message{
-							data: util.StringToByte(item),
-							room: m.room,
-						}
-					}
-				}
-				continue
-			}
-
-			// or create message
+			// create message
 			uuid:= util.UUID()
-			if err != nil {
-				h.logger.Error(err)
-				continue
-			}
-			_, err = h.messageSvc.Create(context.Background(), &pb.MessageRequest{
+			_, err := h.messageSvc.Create(context.Background(), &pb.MessageRequest{
 				Message: &pb.Message{
 					Uuid: uuid,
 					Text: util.ByteToString(m.data),

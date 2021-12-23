@@ -10,33 +10,40 @@ import (
 )
 
 type Chatbot struct {
-	logger log.Logger
-	bot    *rulebot.RuleBot
-	repo   repository.ChatbotRepository
-	middle pb.MiddleSvcClient
-	todo   pb.TodoSvcClient
+	logger  log.Logger
+	bot     *rulebot.RuleBot
+	repo    repository.ChatbotRepository
+	message pb.MessageSvcClient
+	middle  pb.MiddleSvcClient
+	todo    pb.TodoSvcClient
 }
 
 func NewChatbot(
 	logger log.Logger,
 	repo repository.ChatbotRepository,
+	message pb.MessageSvcClient,
 	middle pb.MiddleSvcClient,
 	todo pb.TodoSvcClient,
 	bot *rulebot.RuleBot) *Chatbot {
 	return &Chatbot{
-		logger: logger,
-		bot:    bot,
-		repo:   repo,
-		middle: middle,
-		todo:   todo,
+		logger:  logger,
+		bot:     bot,
+		repo:    repo,
+		message: message,
+		middle:  middle,
+		todo:    todo,
 	}
 }
 
 func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
+	reply, err := s.message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId}})
+	if err != nil {
+		return nil, err
+	}
 	s.bot.SetOptions(rule.Options...)
-	out := s.bot.Process(ctx, payload.GetText()).MessageProviderOut()
+	s.bot.Process(ctx, reply.Message.Text).MessageProviderOut()
 	return &pb.ChatbotReply{
-		Text: out,
+		State: true,
 	}, nil
 }
 

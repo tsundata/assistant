@@ -106,22 +106,19 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}
 
 	// store
-	id, err := m.repo.Create(ctx, &message)
+	_, err = m.repo.Create(ctx, &message)
 	if err != nil {
 		return nil, err
 	}
 
-	// trigger
-	err = m.bus.Publish(ctx, event.MessageTriggerSubject, message)
+	// bot handle
+	err = m.bus.Publish(ctx, event.MessageHandleSubject, message)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.MessageReply{
-		Message: &pb.Message{
-			Id:   id,
-			Uuid: message.Uuid,
-		},
+		Message: &message,
 	}, nil
 }
 

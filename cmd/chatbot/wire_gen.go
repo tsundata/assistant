@@ -76,6 +76,10 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	chatbotRepository := repository.NewMysqlChatbotRepository(globalID, locker, mysqlConn)
+	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
 	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -85,10 +89,6 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -118,13 +118,13 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
 	ruleBot := rulebot.New(iComponent)
-	serviceChatbot := service.NewChatbot(logLogger, chatbotRepository, middleSvcClient, todoSvcClient, ruleBot)
+	serviceChatbot := service.NewChatbot(logLogger, chatbotRepository, messageSvcClient, middleSvcClient, todoSvcClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, middleSvcClient, todoSvcClient, userSvcClient)
+	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, messageSvcClient, middleSvcClient, todoSvcClient, userSvcClient, chatbotRepository, ruleBot)
 	if err != nil {
 		return nil, err
 	}

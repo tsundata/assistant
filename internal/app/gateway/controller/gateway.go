@@ -10,11 +10,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"net/http"
 	"strings"
 )
 
@@ -62,32 +60,6 @@ func NewGatewayController(
 
 func (gc *GatewayController) Index(c *fiber.Ctx) error {
 	return c.SendString(fmt.Sprintf("Gateway %s", version.Version))
-}
-
-func (gc *GatewayController) DebugEvent(c *fiber.Ctx) error {
-	// chatbot handle
-	text := util.ByteToString(c.Body())
-	reply, err := gc.chatbotSvc.Handle(md.MockOutgoingContext(), &pb.ChatbotRequest{Text: text})
-	if err != nil {
-		gc.logger.Error(err)
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
-	}
-	if len(reply.GetText()) > 0 {
-		return c.Send(util.StringToByte(strings.Join(reply.GetText(), "\n")))
-	}
-
-	// or create message
-	uuid := util.UUID()
-	messageReply, err := gc.messageSvc.Create(md.MockOutgoingContext(), &pb.MessageRequest{
-		Message: &pb.Message{
-			Uuid: uuid,
-			Text: text,
-		},
-	})
-	if err != nil {
-		return err
-	}
-	return c.Send(util.StringToByte(fmt.Sprintf("ID: %d", messageReply.Message.GetId())))
 }
 
 func (gc *GatewayController) GetChart(c *fiber.Ctx) error {

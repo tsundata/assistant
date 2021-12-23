@@ -2,6 +2,7 @@ package md
 
 import (
 	"context"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/enum"
 	"google.golang.org/grpc/metadata"
@@ -45,6 +46,10 @@ func TraceContext(ctx context.Context) context.Context {
 		outMD = md
 	}
 	return metadata.NewOutgoingContext(ctx, metadata.Join(inMD, outMD))
+}
+
+func BuildAuthContext(userId int64) context.Context {
+	return metadata.NewOutgoingContext(context.Background(), metadata.New(map[string]string{enum.AuthKey: fmt.Sprintf("%d", userId)}))
 }
 
 func MockIncomingContext() context.Context {

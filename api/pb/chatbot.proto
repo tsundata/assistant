@@ -30,11 +30,11 @@ service ChatbotSvc {
 }
 
 message ChatbotRequest {
-  string text = 1;
+  int64 message_id = 1;
 }
 
 message ChatbotReply {
-  repeated string text = 1;
+  bool state = 1;
 }
 
 message GroupBotRequest {
