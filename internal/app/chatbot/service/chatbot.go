@@ -131,3 +131,19 @@ func (s *Chatbot) UpdateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 	}
 	return &pb.StateReply{State: true}, nil
 }
+
+func (s *Chatbot) GetGroupBotSetting(ctx context.Context, request *pb.BotSettingRequest) (*pb.BotSettingReply, error) {
+	kv, err := s.repo.GetGroupBotSetting(ctx, request.GroupId, request.BotId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.BotSettingReply{Kvs: kv}, nil
+}
+
+func (s *Chatbot) GetGroupSetting(ctx context.Context, request *pb.GroupSettingRequest) (*pb.GroupSettingReply, error) {
+	kv, err := s.repo.GetGroupSetting(ctx, request.GroupId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GroupSettingReply{Kvs: kv}, nil
+}

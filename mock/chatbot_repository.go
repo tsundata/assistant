@@ -210,6 +210,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroup), ctx, id)
 }
 
+// GetGroupBotSetting mocks base method.
+func (m *MockChatbotRepository) GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupBotSetting", ctx, groupId, botId)
+	ret0, _ := ret[0].([]*pb.KV)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBotSetting indicates an expected call of GetGroupBotSetting.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSetting(ctx, groupId, botId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSetting), ctx, groupId, botId)
+}
+
 // GetGroupBySequence mocks base method.
 func (m *MockChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error) {
 	m.ctrl.T.Helper()
@@ -238,6 +253,21 @@ func (m *MockChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string)
 func (mr *MockChatbotRepositoryMockRecorder) GetGroupByUUID(ctx, uuid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupByUUID", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupByUUID), ctx, uuid)
+}
+
+// GetGroupSetting mocks base method.
+func (m *MockChatbotRepository) GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupSetting", ctx, groupId)
+	ret0, _ := ret[0].([]*pb.KV)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupSetting indicates an expected call of GetGroupSetting.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupSetting(ctx, groupId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSetting), ctx, groupId)
 }
 
 // List mocks base method.

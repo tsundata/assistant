@@ -176,6 +176,46 @@ func (mr *MockChatbotSvcClientMockRecorder) GetGroup(ctx, in interface{}, opts .
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroup), varargs...)
 }
 
+// GetGroupBotSetting mocks base method.
+func (m *MockChatbotSvcClient) GetGroupBotSetting(ctx context.Context, in *pb.BotSettingRequest, opts ...grpc.CallOption) (*pb.BotSettingReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetGroupBotSetting", varargs...)
+	ret0, _ := ret[0].(*pb.BotSettingReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBotSetting indicates an expected call of GetGroupBotSetting.
+func (mr *MockChatbotSvcClientMockRecorder) GetGroupBotSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSetting", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroupBotSetting), varargs...)
+}
+
+// GetGroupSetting mocks base method.
+func (m *MockChatbotSvcClient) GetGroupSetting(ctx context.Context, in *pb.GroupSettingRequest, opts ...grpc.CallOption) (*pb.GroupSettingReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetGroupSetting", varargs...)
+	ret0, _ := ret[0].(*pb.GroupSettingReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupSetting indicates an expected call of GetGroupSetting.
+func (mr *MockChatbotSvcClientMockRecorder) GetGroupSetting(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSetting", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroupSetting), varargs...)
+}
+
 // GetGroups mocks base method.
 func (m *MockChatbotSvcClient) GetGroups(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupsReply, error) {
 	m.ctrl.T.Helper()
@@ -402,6 +442,36 @@ func (m *MockChatbotSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequ
 func (mr *MockChatbotSvcServerMockRecorder) GetGroup(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroup), arg0, arg1)
+}
+
+// GetGroupBotSetting mocks base method.
+func (m *MockChatbotSvcServer) GetGroupBotSetting(arg0 context.Context, arg1 *pb.BotSettingRequest) (*pb.BotSettingReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupBotSetting", arg0, arg1)
+	ret0, _ := ret[0].(*pb.BotSettingReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBotSetting indicates an expected call of GetGroupBotSetting.
+func (mr *MockChatbotSvcServerMockRecorder) GetGroupBotSetting(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSetting", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroupBotSetting), arg0, arg1)
+}
+
+// GetGroupSetting mocks base method.
+func (m *MockChatbotSvcServer) GetGroupSetting(arg0 context.Context, arg1 *pb.GroupSettingRequest) (*pb.GroupSettingReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupSetting", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GroupSettingReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupSetting indicates an expected call of GetGroupSetting.
+func (mr *MockChatbotSvcServerMockRecorder) GetGroupSetting(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSetting", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroupSetting), arg0, arg1)
 }
 
 // GetGroups mocks base method.

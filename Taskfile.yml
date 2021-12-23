@@ -52,7 +52,6 @@ tasks:
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - protoc-go-inject-tag -input=./api/pb/org.pb.go
       - git add api/pb/*.pb.go
-      - go run github.com/tsundata/assistant/cmd/cli vendor
 
   release:
     desc: Push github release

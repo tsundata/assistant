@@ -8,7 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
+	"time"
 )
 
 type ChatbotRepository interface {
@@ -30,6 +30,8 @@ type ChatbotRepository interface {
 	UpdateGroup(ctx context.Context, group *pb.Group) error
 	UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error
 	UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error
+	GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error)
+	GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error)
 	ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error)
 	CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error)
 	DeleteGroupTag(ctx context.Context, id int64) error
@@ -202,19 +204,50 @@ func (r *MysqlChatbotRepository) UpdateGroup(ctx context.Context, group *pb.Grou
 	return r.db.WithContext(ctx).Model(&pb.Group{}).Where("id = ?", group.Id).Update("name", group.Name).Error
 }
 
+func (r *MysqlChatbotRepository) GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error) {
+	var find []*pb.GroupSetting
+	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Find(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	var result []*pb.KV
+	for _, item := range find {
+		result = append(result, &pb.KV{
+			Key:   item.Key,
+			Value: item.Value,
+		})
+	}
+	return result, nil
+}
+
+func (r *MysqlChatbotRepository) GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error) {
+	var find []*pb.GroupBotSetting
+	err := r.db.WithContext(ctx).Where("group_id = ? AND bot_id = ?", groupId, botId).Find(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	var result []*pb.KV
+	for _, item := range find {
+		result = append(result, &pb.KV{
+			Key:   item.Key,
+			Value: item.Value,
+		})
+	}
+	return result, nil
+}
+
 func (r *MysqlChatbotRepository) UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error {
 	for _, item := range kvs {
 		groupSetting := pb.GroupSetting{
-			GroupId: groupId,
-			Key:     item.Key,
-			Value:   item.Value,
+			GroupId:   groupId,
+			Key:       item.Key,
+			Value:     item.Value,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
 		}
-		err := r.db.WithContext(ctx).Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "group_id"}, {Name: "key"}},
-			DoUpdates: clause.AssignmentColumns([]string{"value"}),
-		}).Create(&groupSetting).Error
-		if err != nil {
-			return err
+		if r.db.WithContext(ctx).Model(&groupSetting).Where("group_id = ? AND `key` = ?", groupId, item.Key).
+			Updates(map[string]interface{}{"value": item.Value, "updated_at": time.Now().Unix()}).RowsAffected == 0 {
+			r.db.WithContext(ctx).Create(&groupSetting)
 		}
 	}
 	return nil
@@ -223,17 +256,16 @@ func (r *MysqlChatbotRepository) UpdateGroupSetting(ctx context.Context, groupId
 func (r *MysqlChatbotRepository) UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error {
 	for _, item := range kvs {
 		groupBotSetting := pb.GroupBotSetting{
-			GroupId: groupId,
-			BotId:   botId,
-			Key:     item.Key,
-			Value:   item.Value,
+			GroupId:   groupId,
+			BotId:     botId,
+			Key:       item.Key,
+			Value:     item.Value,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
 		}
-		err := r.db.WithContext(ctx).Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "group_id"}, {Name: "bot_id"}, {Name: "key"}},
-			DoUpdates: clause.AssignmentColumns([]string{"value"}),
-		}).Create(&groupBotSetting).Error
-		if err != nil {
-			return err
+		if r.db.WithContext(ctx).Model(&groupBotSetting).Where("group_id = ? AND bot_id = ? AND `key` = ?", groupId, botId, item.Key).
+			Updates(map[string]interface{}{"value": item.Value, "updated_at": time.Now().Unix()}).RowsAffected == 0 {
+			r.db.WithContext(ctx).Create(&groupBotSetting)
 		}
 	}
 	return nil

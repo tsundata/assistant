@@ -20,6 +20,8 @@ service ChatbotSvc {
   rpc DeleteGroupBot(GroupBotRequest) returns (StateReply) {}
   rpc UpdateGroupBotSetting(BotSettingRequest) returns (StateReply) {}
   rpc UpdateGroupSetting(GroupSettingRequest) returns (StateReply) {}
+  rpc GetGroupBotSetting(BotSettingRequest) returns (BotSettingReply) {}
+  rpc GetGroupSetting(GroupSettingRequest) returns (GroupSettingReply) {}
   rpc GetGroups(GroupRequest) returns (GroupsReply) {}
   rpc CreateGroup(GroupRequest) returns (StateReply) {}
   rpc GetGroup(GroupRequest) returns (GroupReply) {}
@@ -46,7 +48,18 @@ message BotSettingRequest {
   repeated KV kvs = 3;
 }
 
+message BotSettingReply {
+  int64 group_id = 1;
+  int64 bot_id = 2;
+  repeated KV kvs = 3;
+}
+
 message GroupSettingRequest {
+  int64 group_id = 1;
+  repeated KV kvs = 3;
+}
+
+message GroupSettingReply {
   int64 group_id = 1;
   repeated KV kvs = 3;
 }
@@ -94,6 +107,10 @@ message GroupBotSetting {
   string key = 3;
   // @inject_tag: db:"value"
   string value = 4;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 5;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 6;
 }
 
 message GroupSetting {
@@ -103,6 +120,10 @@ message GroupSetting {
   string key = 2;
   // @inject_tag: db:"value"
   string value = 3;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 5;
 }
 
 message GroupTag {
