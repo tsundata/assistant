@@ -166,18 +166,18 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomoc
 }
 
 // GetByIdentifier mocks base method.
-func (m *MockChatbotRepository) GetByIdentifier(ctx context.Context, uuid string) (pb.Bot, error) {
+func (m *MockChatbotRepository) GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByIdentifier", ctx, uuid)
+	ret := m.ctrl.Call(m, "GetByIdentifier", ctx, identifier)
 	ret0, _ := ret[0].(pb.Bot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByIdentifier indicates an expected call of GetByIdentifier.
-func (mr *MockChatbotRepositoryMockRecorder) GetByIdentifier(ctx, uuid interface{}) *gomock.Call {
+func (mr *MockChatbotRepositoryMockRecorder) GetByIdentifier(ctx, identifier interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdentifier", reflect.TypeOf((*MockChatbotRepository)(nil).GetByIdentifier), ctx, uuid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdentifier", reflect.TypeOf((*MockChatbotRepository)(nil).GetByIdentifier), ctx, identifier)
 }
 
 // GetByUUID mocks base method.
@@ -328,6 +328,20 @@ func (m *MockChatbotRepository) ListGroupTag(ctx context.Context, groupId int64)
 func (mr *MockChatbotRepositoryMockRecorder) ListGroupTag(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupTag), ctx, groupId)
+}
+
+// Update mocks base method.
+func (m *MockChatbotRepository) Update(ctx context.Context, bot *pb.Bot) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, bot)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockChatbotRepositoryMockRecorder) Update(ctx, bot interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockChatbotRepository)(nil).Update), ctx, bot)
 }
 
 // UpdateGroup mocks base method.

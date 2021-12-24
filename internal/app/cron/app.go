@@ -6,7 +6,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"time"
 )
 

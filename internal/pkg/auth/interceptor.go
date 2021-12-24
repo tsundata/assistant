@@ -15,6 +15,9 @@ var ignoreFullMethod = []string{
 	"/pb.IdSvc/GetGlobalId",
 	"/pb.UserSvc/Login",
 	"/pb.UserSvc/Authorization",
+	"/pb.ChatbotSvc/Register",
+	"/pb.MiddleSvc/RegisterSubscribe",
+	"/pb.MiddleSvc/GetSubscribeStatus",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

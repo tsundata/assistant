@@ -11,8 +11,6 @@ import (
 	"syscall"
 )
 
-
-
 type Application struct {
 	name       string
 	logger     log.Logger

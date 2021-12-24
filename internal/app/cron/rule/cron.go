@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"go.uber.org/zap"
 	"time"
 )

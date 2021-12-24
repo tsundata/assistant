@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 

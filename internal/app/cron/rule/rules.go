@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/agent"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 )
 
 var rules = []Rule{

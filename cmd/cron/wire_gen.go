@@ -16,7 +16,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"

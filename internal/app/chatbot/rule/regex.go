@@ -3,7 +3,7 @@ package rule
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"go.uber.org/zap"
 	"strings"
 	"unicode"

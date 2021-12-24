@@ -3,7 +3,7 @@ package agent
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"reflect"
 	"testing"
 )
@@ -27,4 +27,3 @@ func TestCloudconeWeeklyBilling(t *testing.T) {
 		})
 	}
 }
-

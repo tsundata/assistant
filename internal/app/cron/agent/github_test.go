@@ -2,11 +2,11 @@ package agent
 
 import (
 	"context"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"reflect"
 	"testing"
 
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
 func TestFetchGithubStarred(t *testing.T) {

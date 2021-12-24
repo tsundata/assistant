@@ -18,7 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	rulebot2 "github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -37,7 +37,7 @@ var providerSet = wire.NewSet(
 	etcd.ProviderSet,
 	service.ProviderSet,
 	rpcclient.ProviderSet,
-	rulebot.ProviderSet,
+	rulebot2.ProviderSet,
 	event.ProviderSet,
 	nats.ProviderSet,
 	newrelic.ProviderSet,

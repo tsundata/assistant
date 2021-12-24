@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot/rule"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"gorm.io/gorm"
 )
 
 type Chatbot struct {
@@ -49,10 +51,15 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.StateReply, error) {
 	bot, err := s.repo.GetByIdentifier(ctx, request.Bot.Identifier)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 	if bot.Id > 0 {
+		request.Bot.Id = bot.Id
+		err = s.repo.Update(ctx, request.Bot)
+		if err != nil {
+			return nil, err
+		}
 		return &pb.StateReply{State: true}, nil
 	}
 	_, err = s.repo.Create(ctx, request.Bot)

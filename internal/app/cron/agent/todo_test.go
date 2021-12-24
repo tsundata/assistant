@@ -6,13 +6,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"math/rand"
 	"testing"
 	"time"
-
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
 )
 
 func TestTodoRemind1(t *testing.T) {

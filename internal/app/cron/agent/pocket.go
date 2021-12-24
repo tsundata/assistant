@@ -5,7 +5,7 @@ import (
 	"crypto/sha1" // #nosec
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/pocket"
 )

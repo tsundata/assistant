@@ -97,7 +97,7 @@ func (h *Hub) Run() {
 			}
 		case m := <-h.incoming:
 			// create message
-			uuid:= util.UUID()
+			uuid := util.UUID()
 			_, err := h.messageSvc.Create(context.Background(), &pb.MessageRequest{
 				Message: &pb.Message{
 					Uuid: uuid,

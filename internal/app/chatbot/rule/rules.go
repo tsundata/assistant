@@ -7,7 +7,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"math/big"

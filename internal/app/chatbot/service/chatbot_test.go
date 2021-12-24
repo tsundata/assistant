@@ -2,16 +2,15 @@ package service
 
 import (
 	"context"
-	"reflect"
-	"testing"
-
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/mock"
+	"reflect"
+	"testing"
 )
 
 func TestChatbot_Handle(t *testing.T) {

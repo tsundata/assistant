@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/stage"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 )
 
 func Workflow(ctx context.Context, comp rulebot.IComponent, in result.Result) {

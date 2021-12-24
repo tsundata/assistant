@@ -3,7 +3,7 @@ package rule
 import (
 	"context"
 	"github.com/stretchr/testify/require"
-	"github.com/tsundata/assistant/internal/pkg/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"strconv"
 	"testing"
 )

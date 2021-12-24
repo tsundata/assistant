@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"time"
 )
@@ -17,6 +18,7 @@ type ChatbotRepository interface {
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
 	List(ctx context.Context, ) ([]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
+	Update(ctx context.Context, bot *pb.Bot) error
 	Delete(ctx context.Context, id int64) error
 	ListGroupBot(ctx context.Context, groupId int64) ([]*pb.Bot, error)
 	CreateGroupBot(ctx context.Context, groupId int64, bot *pb.Bot) error
@@ -85,11 +87,21 @@ func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 
 func (r *MysqlChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {
 	bot.Id = r.id.Generate(ctx)
+	bot.Uuid = util.UUID()
 	err := r.db.WithContext(ctx).Create(&bot).Error
 	if err != nil {
 		return 0, err
 	}
 	return bot.Id, nil
+}
+
+func (r *MysqlChatbotRepository) Update(ctx context.Context, bot *pb.Bot) error {
+	return r.db.WithContext(ctx).Model(&bot).Updates(map[string]interface{}{
+		"name":   bot.Name,
+		"detail": bot.Detail,
+		"avatar": bot.Avatar,
+		"extend": bot.Extend,
+	}).Error
 }
 
 func (r *MysqlChatbotRepository) Delete(ctx context.Context, id int64) error {

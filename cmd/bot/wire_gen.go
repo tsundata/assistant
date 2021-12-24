@@ -94,7 +94,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := bot.NewApp(appConfig, logLogger, server)
+	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	application, err := bot.NewApp(appConfig, logLogger, server, chatbotSvcClient)
 	if err != nil {
 		return nil, err
 	}
