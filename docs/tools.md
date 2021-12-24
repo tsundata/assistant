@@ -110,3 +110,12 @@ go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@latest
 ```shell
 go install github.com/google/wire/cmd/wire@latest
 ```
+
+### goreleaser
+
+```shell
+go install github.com/goreleaser/goreleaser@latest
+
+goreleaser check
+goreleaser build
+```
