@@ -3,15 +3,15 @@ package service
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/bot/org/repository"
+	repositoryOrg "github.com/tsundata/assistant/internal/app/bot/org/repository"
 )
 
 type Org struct {
 	middle pb.MiddleSvcClient
-	repo   repository.OrgRepository
+	repo   repositoryOrg.OrgRepository
 }
 
-func NewOrg(repo repository.OrgRepository, middle pb.MiddleSvcClient) *Org {
+func NewOrg(repo repositoryOrg.OrgRepository, middle pb.MiddleSvcClient) *Org {
 	return &Org{repo: repo, middle: middle}
 }
 

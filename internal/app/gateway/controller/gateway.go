@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/gateway/rpcclient"
+	"github.com/tsundata/assistant/internal/app/gateway/health"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -28,7 +28,7 @@ type GatewayController struct {
 	workflowSvc  pb.WorkflowSvcClient
 	userSvc      pb.UserSvcClient
 	chatbotSvc   pb.ChatbotSvcClient
-	healthClient *rpcclient.HealthClient
+	healthClient *health.HealthClient
 }
 
 func NewGatewayController(
@@ -42,7 +42,7 @@ func NewGatewayController(
 	workflowSvc pb.WorkflowSvcClient,
 	chatbotSvc pb.ChatbotSvcClient,
 	userSvc pb.UserSvcClient,
-	healthClient *rpcclient.HealthClient) *GatewayController {
+	healthClient *health.HealthClient) *GatewayController {
 	return &GatewayController{
 		opt:          opt,
 		rdb:          rdb,

@@ -8,7 +8,7 @@ import (
 )
 
 func TestTodoRepository_CreateTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -35,7 +35,7 @@ func TestTodoRepository_CreateTodo(t *testing.T) {
 }
 
 func TestTodoRepository_ListTodos(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -58,7 +58,7 @@ func TestTodoRepository_ListTodos(t *testing.T) {
 }
 
 func TestTodoRepository_ListRemindTodos(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -81,7 +81,7 @@ func TestTodoRepository_ListRemindTodos(t *testing.T) {
 }
 
 func TestTodoRepository_GetTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -108,7 +108,7 @@ func TestTodoRepository_GetTodo(t *testing.T) {
 }
 
 func TestTodoRepository_CompleteTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -133,7 +133,7 @@ func TestTodoRepository_CompleteTodo(t *testing.T) {
 }
 
 func TestTodoRepository_UpdateTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}
@@ -158,7 +158,7 @@ func TestTodoRepository_UpdateTodo(t *testing.T) {
 }
 
 func TestTodoRepository_DeleteTodo(t *testing.T) {
-	sto, err := CreateTodoRepository(enum.Todo)
+	sto, err := CreateTodoRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create todo Repository error, %+v", err)
 	}

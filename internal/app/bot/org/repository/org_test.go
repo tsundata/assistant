@@ -8,7 +8,7 @@ import (
 )
 
 func TestOrgRepository_CreateObjective(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -39,7 +39,7 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 }
 
 func TestOrgRepository_GetObjectiveByID(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -67,7 +67,7 @@ func TestOrgRepository_GetObjectiveByID(t *testing.T) {
 }
 
 func TestOrgRepository_ListObjectives(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -91,7 +91,7 @@ func TestOrgRepository_ListObjectives(t *testing.T) {
 }
 
 func TestOrgRepository_DeleteObjective(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -117,7 +117,7 @@ func TestOrgRepository_DeleteObjective(t *testing.T) {
 }
 
 func TestOrgRepository_CreateKeyResult(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -145,7 +145,7 @@ func TestOrgRepository_CreateKeyResult(t *testing.T) {
 }
 
 func TestOrgRepository_GetKeyResultByID(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -173,7 +173,7 @@ func TestOrgRepository_GetKeyResultByID(t *testing.T) {
 }
 
 func TestOrgRepository_ListKeyResults(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}
@@ -197,7 +197,7 @@ func TestOrgRepository_ListKeyResults(t *testing.T) {
 }
 
 func TestOrgRepository_DeleteKeyResult(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Org)
+	sto, err := CreateOrgRepository(enum.Bot)
 	if err != nil {
 		t.Fatalf("create org Repository err %+v", err)
 	}

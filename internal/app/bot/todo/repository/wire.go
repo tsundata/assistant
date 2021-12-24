@@ -4,7 +4,6 @@ package repository
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/bot/todo/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -12,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
@@ -25,9 +25,9 @@ var testProviderSet = wire.NewSet(
 	mysql.ProviderSet,
 	newrelic.ProviderSet,
 	global.ProviderSet,
-	rpcclient.ProviderSet,
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
+	rpcclient.ProviderSet,
 )
 
 func CreateTodoRepository(id string) (TodoRepository, error) {

@@ -6,7 +6,6 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/user"
 	"github.com/tsundata/assistant/internal/app/user/repository"
-	"github.com/tsundata/assistant/internal/app/user/rpcclient"
 	"github.com/tsundata/assistant/internal/app/user/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -20,6 +19,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )

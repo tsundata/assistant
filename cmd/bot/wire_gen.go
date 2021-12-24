@@ -8,9 +8,12 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/message"
-	"github.com/tsundata/assistant/internal/app/message/repository"
-	"github.com/tsundata/assistant/internal/app/message/service"
+	"github.com/tsundata/assistant/internal/app/bot"
+	service2 "github.com/tsundata/assistant/internal/app/bot/finance/service"
+	repository2 "github.com/tsundata/assistant/internal/app/bot/org/repository"
+	service3 "github.com/tsundata/assistant/internal/app/bot/org/service"
+	"github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	"github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -36,18 +39,18 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
+	rollbarRollbar := rollbar.New(appConfig)
+	logger := log.NewZapLogger(rollbarRollbar)
+	logLogger := log.NewAppLogger(logger)
 	conn, err := nats.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
 	bus := event.NewNatsBus(conn, newrelicApp)
-	logLogger := log.NewAppLogger(logger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -69,18 +72,20 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
-	locker := global.NewLocker(client)
 	mysqlConn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	messageRepository := repository.NewMysqlMessageRepository(globalID, locker, mysqlConn)
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	todoRepository := repository.NewMysqlTodoRepository(globalID, mysqlConn)
+	todo := service.NewTodo(bus, logLogger, todoRepository)
+	finance := service2.NewFinance()
+	orgRepository := repository2.NewMysqlOrgRepository(globalID, mysqlConn)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient)
-	initServer := service.CreateInitServerFn(serviceMessage)
+	org := service3.NewOrg(orgRepository, middleSvcClient)
+	initServer := bot.CreateInitServerFn(todo, finance, org)
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err
@@ -89,7 +94,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, logLogger, server)
+	application, err := bot.NewApp(appConfig, logLogger, server)
 	if err != nil {
 		return nil, err
 	}
@@ -98,4 +103,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, message.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, nats.ProviderSet, event.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, bot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, newrelic.ProviderSet, event.ProviderSet, repository.ProviderSet, repository2.ProviderSet, nats.ProviderSet, global.ProviderSet, mysql.ProviderSet, rpcclient.ProviderSet)

@@ -47,6 +47,21 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	}, nil
 }
 
+func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.StateReply, error) {
+	bot, err := s.repo.GetByIdentifier(ctx, request.Bot.Identifier)
+	if err != nil {
+		return nil, err
+	}
+	if bot.Id > 0 {
+		return &pb.StateReply{State: true}, nil
+	}
+	_, err = s.repo.Create(ctx, request.Bot)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
+}
+
 func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotReply, error) {
 	bot, err := s.repo.GetByUUID(ctx, payload.Bot.GetUuid())
 	if err != nil {

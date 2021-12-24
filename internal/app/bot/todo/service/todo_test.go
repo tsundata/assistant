@@ -16,7 +16,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(enum.Todo)
+	nats, err := event.CreateNats(enum.Bot)
 	if err != nil {
 		t.Fatal(err)
 	}

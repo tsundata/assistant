@@ -10,12 +10,10 @@ type SvcAddr struct {
 	Middle   string `json:"middle" yaml:"middle"`
 	Workflow string `json:"workflow" yaml:"workflow"`
 	User     string `json:"user" yaml:"user"`
-	Todo     string `json:"todo" yaml:"todo"`
-	Finance  string `json:"finance" yaml:"finance"`
 	Nlp      string `json:"nlp" yaml:"nlp"`
 	Storage  string `json:"storage" yaml:"storage"`
 	Task     string `json:"task" yaml:"task"`
-	Org      string `json:"org" yaml:"org"`
+	Bot      string `json:"bot" yaml:"bot"`
 }
 
 // Http http config

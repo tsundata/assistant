@@ -159,23 +159,14 @@ jobs:
           tags: |
             ghcr.io/${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
 
-      - name: Build and push todo
+      - name: Build and push bot
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          file: build/todo/Dockerfile
+          file: build/bot/Dockerfile
           tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/todo:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push finance
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/finance/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/finance:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/bot:${{ steps.meta.outputs.tag }}
 
       - name: Build and push nlp
         uses: docker/build-push-action@v2
@@ -185,12 +176,3 @@ jobs:
           file: build/nlp/Dockerfile
           tags: |
             ghcr.io/${{ secrets.IMAGE_USER }}/nlp:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push org
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/org/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/org:${{ steps.meta.outputs.tag }}
