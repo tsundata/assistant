@@ -9,11 +9,11 @@ import (
 
 type OrgRepository interface {
 	GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error)
-	ListObjectives(ctx context.Context, ) ([]*pb.Objective, error)
+	ListObjectives(ctx context.Context) ([]*pb.Objective, error)
 	CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error)
 	DeleteObjective(ctx context.Context, id int64) error
 	GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error)
-	ListKeyResults(ctx context.Context, ) ([]*pb.KeyResult, error)
+	ListKeyResults(ctx context.Context) ([]*pb.KeyResult, error)
 	CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error)
 	DeleteKeyResult(ctx context.Context, id int64) error
 }

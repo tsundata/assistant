@@ -16,7 +16,7 @@ type ChatbotRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Bot, error)
 	GetByUUID(ctx context.Context, uuid string) (pb.Bot, error)
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
-	List(ctx context.Context, ) ([]*pb.Bot, error)
+	List(ctx context.Context) ([]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
 	Update(ctx context.Context, bot *pb.Bot) error
 	Delete(ctx context.Context, id int64) error

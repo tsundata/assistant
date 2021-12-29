@@ -19,9 +19,9 @@ type MiddleRepository interface {
 	CreateApp(ctx context.Context, app *pb.App) (int64, error)
 	GetCredentialByName(ctx context.Context, name string) (pb.Credential, error)
 	GetCredentialByType(ctx context.Context, t string) (pb.Credential, error)
-	ListCredentials(ctx context.Context, ) ([]*pb.Credential, error)
+	ListCredentials(ctx context.Context) ([]*pb.Credential, error)
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
-	ListTags(ctx context.Context, ) ([]*pb.Tag, error)
+	ListTags(ctx context.Context) ([]*pb.Tag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
 }
 

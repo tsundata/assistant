@@ -161,10 +161,10 @@ func TestUser_GetRole(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.RoleRequest{Id: 1}}, &pb.RoleReply{
-			Role: &pb.Role{
-				Profession: "super",
+				Role: &pb.Role{
+					Profession: "super",
+				},
 			},
-		},
 			false},
 	}
 	for _, tt := range tests {
@@ -543,14 +543,14 @@ func TestUser_BindDevice(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.DeviceRequest{Device: &pb.Device{UserId: 1, Name: "test"}}}, &pb.StateReply{
-			State: true,
-		}, false},
+				State: true,
+			}, false},
 		{
 			"case2",
 			s,
 			args{context.Background(), &pb.DeviceRequest{Device: &pb.Device{UserId: 1, Name: "test"}}}, &pb.StateReply{
-			State: true,
-		}, false},
+				State: true,
+			}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
