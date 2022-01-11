@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // StorageSvcClient is the client API for StorageSvc service.
@@ -30,7 +29,7 @@ func NewStorageSvcClient(cc grpc.ClientConnInterface) StorageSvcClient {
 }
 
 func (c *storageSvcClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (StorageSvc_UploadFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &StorageSvc_ServiceDesc.Streams[0], "/pb.StorageSvc/UploadFile", opts...)
+	stream, err := c.cc.NewStream(ctx, &_StorageSvc_serviceDesc.Streams[0], "/pb.StorageSvc/UploadFile", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +84,8 @@ type UnsafeStorageSvcServer interface {
 	mustEmbedUnimplementedStorageSvcServer()
 }
 
-func RegisterStorageSvcServer(s grpc.ServiceRegistrar, srv StorageSvcServer) {
-	s.RegisterService(&StorageSvc_ServiceDesc, srv)
+func RegisterStorageSvcServer(s *grpc.Server, srv StorageSvcServer) {
+	s.RegisterService(&_StorageSvc_serviceDesc, srv)
 }
 
 func _StorageSvc_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -115,10 +114,7 @@ func (x *storageSvcUploadFileServer) Recv() (*FileRequest, error) {
 	return m, nil
 }
 
-// StorageSvc_ServiceDesc is the grpc.ServiceDesc for StorageSvc service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var StorageSvc_ServiceDesc = grpc.ServiceDesc{
+var _StorageSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.StorageSvc",
 	HandlerType: (*StorageSvcServer)(nil),
 	Methods:     []grpc.MethodDesc{},

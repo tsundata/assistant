@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // ChatbotSvcClient is the client API for ChatbotSvc service.
@@ -256,8 +255,8 @@ type UnsafeChatbotSvcServer interface {
 	mustEmbedUnimplementedChatbotSvcServer()
 }
 
-func RegisterChatbotSvcServer(s grpc.ServiceRegistrar, srv ChatbotSvcServer) {
-	s.RegisterService(&ChatbotSvc_ServiceDesc, srv)
+func RegisterChatbotSvcServer(s *grpc.Server, srv ChatbotSvcServer) {
+	s.RegisterService(&_ChatbotSvc_serviceDesc, srv)
 }
 
 func _ChatbotSvc_Handle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -530,10 +529,7 @@ func _ChatbotSvc_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-// ChatbotSvc_ServiceDesc is the grpc.ServiceDesc for ChatbotSvc service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ChatbotSvc_ServiceDesc = grpc.ServiceDesc{
+var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.ChatbotSvc",
 	HandlerType: (*ChatbotSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

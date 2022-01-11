@@ -99,6 +99,12 @@ gosec ./...
 ### buf
 
 ```shell
+# Pre
+brew install protobuf
+go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+go get -u github.com/gogo/protobuf/protoc-gen-gogo
+go get -u github.com/favadi/protoc-go-inject-tag
+
 # Install
 go install github.com/bufbuild/buf/cmd/buf@latest
 go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@latest 
