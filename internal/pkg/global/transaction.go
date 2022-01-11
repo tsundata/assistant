@@ -1,8 +1,8 @@
 package global
 
 import (
+	"github.com/dtm-labs/dtm/dtmgrpc"
 	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/yedf/dtm/dtmgrpc"
 )
 
 type Transaction struct {
