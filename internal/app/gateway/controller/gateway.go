@@ -337,3 +337,59 @@ func (gc *GatewayController) Health(c *fiber.Ctx) error {
 	})
 	return c.SendString(str.String())
 }
+
+func (gc *GatewayController) GetGroups(c *fiber.Ctx) error {
+	var in pb.Group
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetGroups(md.Outgoing(c), &pb.GroupRequest{Group: &in})
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetGroup(c *fiber.Ctx) error {
+	var in pb.Group
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetGroup(md.Outgoing(c), &pb.GroupRequest{Group: &in})
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetMessage(c *fiber.Ctx) error {
+	var in pb.Message
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.messageSvc.Get(md.Outgoing(c), &pb.MessageRequest{Message: &in})
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetUser(c *fiber.Ctx) error {
+	var in pb.User
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.userSvc.GetUser(md.Outgoing(c), &pb.UserRequest{User: &in})
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}

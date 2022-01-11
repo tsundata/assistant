@@ -96,11 +96,16 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		}
 		internal := router.Group("/")
 		internal.Use(auth)
-		internal.Get("page", gc.GetPage)
+
+		internal.Get("groups", gc.GetGroups)
+		internal.Get("group", gc.GetGroup)
+		internal.Get("messages", gc.GetMessages)
+		internal.Get("message", gc.GetMessage)
+		internal.Get("user", gc.GetUser)
+
 		internal.Get("chart", gc.GetChart)
 		internal.Get("apps", gc.GetApps)
 		internal.Post("app/oauth", gc.StoreAppOAuth)
-		internal.Get("messages", gc.GetMessages)
 		internal.Get("masking_credentials", gc.GetMaskingCredentials)
 		internal.Get("credential", gc.GetCredential)
 		internal.Post("credential", gc.CreateCredential)
