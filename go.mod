@@ -18,7 +18,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.23.0
+	github.com/gofiber/fiber/v2 v2.24.0
 	github.com/gofiber/websocket/v2 v2.0.14
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.2.0
