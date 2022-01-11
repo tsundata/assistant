@@ -17,8 +17,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MessageSvcClient interface {
-	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error)
-	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	List(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
+	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
@@ -36,8 +36,8 @@ func NewMessageSvcClient(cc grpc.ClientConnInterface) MessageSvcClient {
 	return &messageSvcClient{cc}
 }
 
-func (c *messageSvcClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error) {
-	out := new(MessagesReply)
+func (c *messageSvcClient) List(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error) {
+	out := new(GetMessagesReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/List", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +45,8 @@ func (c *messageSvcClient) List(ctx context.Context, in *MessageRequest, opts ..
 	return out, nil
 }
 
-func (c *messageSvcClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
-	out := new(MessageReply)
+func (c *messageSvcClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error) {
+	out := new(GetMessageReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -121,8 +121,8 @@ func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *Messag
 // All implementations should embed UnimplementedMessageSvcServer
 // for forward compatibility
 type MessageSvcServer interface {
-	List(context.Context, *MessageRequest) (*MessagesReply, error)
-	Get(context.Context, *MessageRequest) (*MessageReply, error)
+	List(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
+	Get(context.Context, *MessageRequest) (*GetMessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
 	Send(context.Context, *MessageRequest) (*StateReply, error)
@@ -136,10 +136,10 @@ type MessageSvcServer interface {
 type UnimplementedMessageSvcServer struct {
 }
 
-func (UnimplementedMessageSvcServer) List(context.Context, *MessageRequest) (*MessagesReply, error) {
+func (UnimplementedMessageSvcServer) List(context.Context, *GetMessagesRequest) (*GetMessagesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*MessageReply, error) {
+func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*GetMessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedMessageSvcServer) Create(context.Context, *MessageRequest) (*MessageReply, error) {
@@ -176,7 +176,7 @@ func RegisterMessageSvcServer(s *grpc.Server, srv MessageSvcServer) {
 }
 
 func _MessageSvc_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MessageRequest)
+	in := new(GetMessagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func _MessageSvc_List_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/pb.MessageSvc/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).List(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).List(ctx, req.(*GetMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

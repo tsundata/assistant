@@ -13,8 +13,8 @@ option (gogoproto.goproto_enum_prefix_all) = false;
 option go_package = "api/pb";
 
 service MessageSvc {
-  rpc List(MessageRequest) returns (MessagesReply) {}
-  rpc Get(MessageRequest) returns (MessageReply) {}
+  rpc List(GetMessagesRequest) returns (GetMessagesReply) {}
+  rpc Get(MessageRequest) returns (GetMessageReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}
   rpc Send(MessageRequest) returns (StateReply) {}
@@ -108,4 +108,32 @@ message Notification {
     PRIORITY_HIGH = 2;
   }
   Priority priority = 16;
+}
+
+message MessageItem {
+  int64 sequence = 1;
+  string uuid = 2;
+  string message = 3;
+  string send_time = 4;
+  string sender = 5;
+  string direction = 6;
+  string type = 7;
+  string payload = 8;
+}
+
+message GetMessageReply {
+  MessageItem message = 1;
+}
+
+message GetMessagesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string group_uuid = 3;
+}
+
+message GetMessagesReply {
+  int64 total = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  repeated MessageItem messages = 4;
 }

@@ -117,14 +117,14 @@ func (mr *MockMessageSvcClientMockRecorder) DeleteWorkflowMessage(ctx, in interf
 }
 
 // Get mocks base method.
-func (m *MockMessageSvcClient) Get(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
+func (m *MockMessageSvcClient) Get(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Get", varargs...)
-	ret0, _ := ret[0].(*pb.MessageReply)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -157,14 +157,14 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 }
 
 // List mocks base method.
-func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessagesReply, error) {
+func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.GetMessagesRequest, opts ...grpc.CallOption) (*pb.GetMessagesReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "List", varargs...)
-	ret0, _ := ret[0].(*pb.MessagesReply)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -300,10 +300,10 @@ func (mr *MockMessageSvcServerMockRecorder) DeleteWorkflowMessage(arg0, arg1 int
 }
 
 // Get mocks base method.
-func (m *MockMessageSvcServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *MockMessageSvcServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.GetMessageReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
-	ret0, _ := ret[0].(*pb.MessageReply)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -330,10 +330,10 @@ func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interfa
 }
 
 // List mocks base method.
-func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessagesReply, error) {
+func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", arg0, arg1)
-	ret0, _ := ret[0].(*pb.MessagesReply)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

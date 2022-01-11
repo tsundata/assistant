@@ -27,9 +27,9 @@ type ChatbotSvcClient interface {
 	UpdateGroupSetting(ctx context.Context, in *GroupSettingRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetGroupBotSetting(ctx context.Context, in *BotSettingRequest, opts ...grpc.CallOption) (*BotSettingReply, error)
 	GetGroupSetting(ctx context.Context, in *GroupSettingRequest, opts ...grpc.CallOption) (*GroupSettingReply, error)
-	GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupsReply, error)
+	GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupsReply, error)
 	CreateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
-	GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupReply, error)
+	GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupReply, error)
 	DeleteGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	UpdateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
@@ -132,8 +132,8 @@ func (c *chatbotSvcClient) GetGroupSetting(ctx context.Context, in *GroupSetting
 	return out, nil
 }
 
-func (c *chatbotSvcClient) GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupsReply, error) {
-	out := new(GroupsReply)
+func (c *chatbotSvcClient) GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupsReply, error) {
+	out := new(GetGroupsReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetGroups", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -150,8 +150,8 @@ func (c *chatbotSvcClient) CreateGroup(ctx context.Context, in *GroupRequest, op
 	return out, nil
 }
 
-func (c *chatbotSvcClient) GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GroupReply, error) {
-	out := new(GroupReply)
+func (c *chatbotSvcClient) GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupReply, error) {
+	out := new(GetGroupReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -191,9 +191,9 @@ type ChatbotSvcServer interface {
 	UpdateGroupSetting(context.Context, *GroupSettingRequest) (*StateReply, error)
 	GetGroupBotSetting(context.Context, *BotSettingRequest) (*BotSettingReply, error)
 	GetGroupSetting(context.Context, *GroupSettingRequest) (*GroupSettingReply, error)
-	GetGroups(context.Context, *GroupRequest) (*GroupsReply, error)
+	GetGroups(context.Context, *GroupRequest) (*GetGroupsReply, error)
 	CreateGroup(context.Context, *GroupRequest) (*StateReply, error)
-	GetGroup(context.Context, *GroupRequest) (*GroupReply, error)
+	GetGroup(context.Context, *GroupRequest) (*GetGroupReply, error)
 	DeleteGroup(context.Context, *GroupRequest) (*StateReply, error)
 	UpdateGroup(context.Context, *GroupRequest) (*StateReply, error)
 }
@@ -232,13 +232,13 @@ func (UnimplementedChatbotSvcServer) GetGroupBotSetting(context.Context, *BotSet
 func (UnimplementedChatbotSvcServer) GetGroupSetting(context.Context, *GroupSettingRequest) (*GroupSettingReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupSetting not implemented")
 }
-func (UnimplementedChatbotSvcServer) GetGroups(context.Context, *GroupRequest) (*GroupsReply, error) {
+func (UnimplementedChatbotSvcServer) GetGroups(context.Context, *GroupRequest) (*GetGroupsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroups not implemented")
 }
 func (UnimplementedChatbotSvcServer) CreateGroup(context.Context, *GroupRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
 }
-func (UnimplementedChatbotSvcServer) GetGroup(context.Context, *GroupRequest) (*GroupReply, error) {
+func (UnimplementedChatbotSvcServer) GetGroup(context.Context, *GroupRequest) (*GetGroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
 }
 func (UnimplementedChatbotSvcServer) DeleteGroup(context.Context, *GroupRequest) (*StateReply, error) {

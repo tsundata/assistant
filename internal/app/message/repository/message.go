@@ -15,7 +15,7 @@ type MessageRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Message, error)
 	GetByUUID(ctx context.Context, uuid string) (pb.Message, error)
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
-	List(ctx context.Context) ([]*pb.Message, error)
+	List(ctx context.Context) ([]*pb.Message, error) // todo page
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
 }

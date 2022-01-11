@@ -43,7 +43,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		return nil, err
 	}
 	s.bot.SetOptions(rule.Options...)
-	s.bot.Process(ctx, reply.Message.Text).MessageProviderOut()
+	s.bot.Process(ctx, reply.Message.GetMessage()).MessageProviderOut()
 	return &pb.ChatbotReply{
 		State: true,
 	}, nil
@@ -89,12 +89,25 @@ func (s *Chatbot) UpdateBotSetting(_ context.Context, _ *pb.BotSettingRequest) (
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupsReply, error) {
+func (s *Chatbot) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GetGroupsReply, error) {
 	groups, err := s.repo.ListGroup(ctx, payload.Group.GetUserId())
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GroupsReply{Groups: groups}, nil
+	var res []*pb.GroupItem
+	for _, group := range groups {
+		res = append(res, &pb.GroupItem{
+			Sequence:    group.Sequence,
+			Type:        group.Type,
+			Uuid:        group.Uuid,
+			Name:        group.Name,
+			Avatar:      group.Avatar,
+			UnreadCount: 0,   // todo
+			LastMessage: nil, // todo
+			BotAvatar:   nil, // todo
+		})
+	}
+	return &pb.GetGroupsReply{Groups: res}, nil
 }
 
 func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
@@ -105,12 +118,18 @@ func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GroupReply, error) {
+func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GetGroupReply, error) {
 	group, err := s.repo.GetGroupByUUID(ctx, payload.Group.GetUuid())
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GroupReply{Group: &group}, nil
+	return &pb.GetGroupReply{Group: &pb.GroupItem{
+		Sequence: group.Sequence,
+		Type:     group.Type,
+		Uuid:     group.Uuid,
+		Name:     group.Name,
+		Avatar:   group.Avatar,
+	}}, nil
 }
 
 func (s *Chatbot) CreateGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {

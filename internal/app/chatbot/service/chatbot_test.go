@@ -269,7 +269,7 @@ func TestMessage_GetGroup(t *testing.T) {
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetGroupByUUID(gomock.Any(), gomock.Any()).Return(pb.Group{
-			Id: 1,
+			Uuid: "test",
 		}, nil),
 	)
 
@@ -292,7 +292,7 @@ func TestMessage_GetGroup(t *testing.T) {
 			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Uuid: "1"}}},
 			&pb.GroupReply{
 				Group: &pb.Group{
-					Id: 1,
+					Uuid: "test",
 				},
 			},
 			false,
@@ -305,7 +305,7 @@ func TestMessage_GetGroup(t *testing.T) {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Group.Id != tt.want.Group.Id) {
+			if got != nil && (got.Group.Uuid != tt.want.Group.Uuid) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})
@@ -397,7 +397,7 @@ func TestChatbot_GetGroups(t *testing.T) {
 		name    string
 		s       *Chatbot
 		args    args
-		want    *pb.GroupsReply
+		want    *pb.GetGroupsReply
 		wantErr bool
 	}{
 		// TODO: Add test cases.

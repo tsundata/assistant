@@ -23,9 +23,9 @@ service ChatbotSvc {
   rpc UpdateGroupSetting(GroupSettingRequest) returns (StateReply) {}
   rpc GetGroupBotSetting(BotSettingRequest) returns (BotSettingReply) {}
   rpc GetGroupSetting(GroupSettingRequest) returns (GroupSettingReply) {}
-  rpc GetGroups(GroupRequest) returns (GroupsReply) {}
+  rpc GetGroups(GroupRequest) returns (GetGroupsReply) {}
   rpc CreateGroup(GroupRequest) returns (StateReply) {}
-  rpc GetGroup(GroupRequest) returns (GroupReply) {}
+  rpc GetGroup(GroupRequest) returns (GetGroupReply) {}
   rpc DeleteGroup(GroupRequest) returns (StateReply) {}
   rpc UpdateGroup(GroupRequest) returns (StateReply) {}
 }
@@ -187,6 +187,26 @@ message GroupReply {
   Group group = 1;
 }
 
-message GroupsReply {
-  repeated Group groups = 1;
+message GroupItem {
+  int64 sequence = 1;
+  int32 type = 2;
+  string uuid = 3;
+  string name = 4;
+  string avatar = 5;
+  int32 unread_count = 7;
+  LastMessage last_message = 8;
+  repeated string bot_avatar = 9;
+}
+
+message LastMessage {
+  string last_sender = 1;
+  string content = 2;
+}
+
+message GetGroupsReply {
+  repeated GroupItem groups = 1;
+}
+
+message GetGroupReply {
+  GroupItem group = 1;
 }

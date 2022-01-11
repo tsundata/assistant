@@ -18,9 +18,9 @@ func TestMessage_List(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List(gomock.Any()).Return([]*pb.Message{{
-			Id:   1,
-			Text: "test",
+		repo.EXPECT().List(gomock.Any()).Return([]*pb.MessageItem{{
+			Uuid:    "test",
+			Message: "test",
 		}}, nil),
 	)
 
@@ -28,7 +28,7 @@ func TestMessage_List(t *testing.T) {
 
 	type args struct {
 		in0 context.Context
-		in1 *pb.MessageRequest
+		in1 *pb.GetMessagesRequest
 	}
 	tests := []struct {
 		name    string
@@ -40,7 +40,7 @@ func TestMessage_List(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{}},
+			args{context.Background(), &pb.GetMessagesRequest{Page: 1, Limit: 10}},
 			1,
 			false,
 		},
@@ -108,7 +108,7 @@ func TestMessage_Get(t *testing.T) {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Message.Id != tt.want.Message.Id || got.Message.Uuid != tt.want.Message.Uuid || got.Message.Text != tt.want.Message.Text || got.Message.Type != tt.want.Message.Type) {
+			if got != nil && (got.Message.Uuid != tt.want.Message.Uuid || got.Message.Message != tt.want.Message.Text || got.Message.Type != tt.want.Message.Type) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})

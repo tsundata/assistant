@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
@@ -37,40 +38,39 @@ func NewMessage(
 	}
 }
 
-func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
+func (m *Message) List(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	fmt.Println(payload.Limit, payload.Page) // todo
 	messages, err := m.repo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var reply []*pb.Message
+	var reply []*pb.MessageItem
 	for _, item := range messages {
-		reply = append(reply, &pb.Message{
-			Uuid:      item.Uuid,
-			Text:      item.Text,
-			Type:      item.Type,
-			CreatedAt: item.CreatedAt,
+		reply = append(reply, &pb.MessageItem{
+			Uuid:    item.Uuid,
+			Message: item.Text,
+			Type:    item.Type, // todo
 		})
 	}
 
-	return &pb.MessagesReply{
+	return &pb.GetMessagesReply{
 		Messages: reply,
 	}, nil
 }
 
-func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
 	message, err := m.repo.GetByID(ctx, payload.Message.GetId())
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.MessageReply{
-		Message: &pb.Message{
-			Id:        message.Id,
-			Uuid:      message.Uuid,
-			Text:      message.Text,
-			Type:      message.Type,
-			CreatedAt: message.CreatedAt,
+	return &pb.GetMessageReply{
+		Message: &pb.MessageItem{
+			Uuid:     message.Uuid,
+			Message:  message.Text,
+			Type:     message.Type,
+			SendTime: "", // todo
 		},
 	}, nil
 }

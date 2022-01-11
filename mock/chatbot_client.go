@@ -157,14 +157,14 @@ func (mr *MockChatbotSvcClientMockRecorder) GetBots(ctx, in interface{}, opts ..
 }
 
 // GetGroup mocks base method.
-func (m *MockChatbotSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupReply, error) {
+func (m *MockChatbotSvcClient) GetGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GetGroupReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetGroup", varargs...)
-	ret0, _ := ret[0].(*pb.GroupReply)
+	ret0, _ := ret[0].(*pb.GetGroupReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -217,14 +217,14 @@ func (mr *MockChatbotSvcClientMockRecorder) GetGroupSetting(ctx, in interface{},
 }
 
 // GetGroups mocks base method.
-func (m *MockChatbotSvcClient) GetGroups(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GroupsReply, error) {
+func (m *MockChatbotSvcClient) GetGroups(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.GetGroupsReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetGroups", varargs...)
-	ret0, _ := ret[0].(*pb.GroupsReply)
+	ret0, _ := ret[0].(*pb.GetGroupsReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -450,10 +450,10 @@ func (mr *MockChatbotSvcServerMockRecorder) GetBots(arg0, arg1 interface{}) *gom
 }
 
 // GetGroup mocks base method.
-func (m *MockChatbotSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupReply, error) {
+func (m *MockChatbotSvcServer) GetGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GetGroupReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroup", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GroupReply)
+	ret0, _ := ret[0].(*pb.GetGroupReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -495,10 +495,10 @@ func (mr *MockChatbotSvcServerMockRecorder) GetGroupSetting(arg0, arg1 interface
 }
 
 // GetGroups mocks base method.
-func (m *MockChatbotSvcServer) GetGroups(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GroupsReply, error) {
+func (m *MockChatbotSvcServer) GetGroups(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.GetGroupsReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGroups", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GroupsReply)
+	ret0, _ := ret[0].(*pb.GetGroupsReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
