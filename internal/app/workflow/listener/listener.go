@@ -32,7 +32,7 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, message pb.MessageSv
 		switch reply.Message.GetType() {
 		case enum.MessageTypeAction:
 			workflow := service.NewWorkflow(bus, rdb, nil, message, middle, logger)
-			_, err := workflow.RunAction(ctx, &pb.WorkflowRequest{Text: reply.Message.GetText()})
+			_, err := workflow.RunAction(ctx, &pb.WorkflowRequest{Text: reply.Message.GetMessage()})
 			if err != nil {
 				logger.Error(err, zap.Any("event", event.WorkflowRunSubject))
 				return

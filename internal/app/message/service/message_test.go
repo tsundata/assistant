@@ -18,9 +18,9 @@ func TestMessage_List(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().List(gomock.Any()).Return([]*pb.MessageItem{{
-			Uuid:    "test",
-			Message: "test",
+		repo.EXPECT().List(gomock.Any()).Return([]*pb.Message{{
+			Uuid: "test",
+			Text: "test",
 		}}, nil),
 	)
 
@@ -149,14 +149,14 @@ func TestMessage_Create(t *testing.T) {
 			"case1",
 			s,
 			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo1", Uuid: "test"}}},
-			&pb.MessageReply{Message: &pb.Message{Id: 2, Uuid: "test"}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo1"}},
 			false,
 		},
 		{
 			"case2",
 			s,
 			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test"}}},
-			&pb.MessageReply{Message: &pb.Message{Id: 1, Uuid: "test"}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2"}},
 			false,
 		},
 	}

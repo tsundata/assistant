@@ -27,7 +27,7 @@ func Backup(ctx context.Context, comp rulebot.IComponent) []result.Result {
 	}
 
 	// messages
-	messagesReply, err := comp.Message().List(ctx, &pb.MessageRequest{})
+	messagesReply, err := comp.Message().List(ctx, &pb.GetMessagesRequest{}) // todo fixme
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}

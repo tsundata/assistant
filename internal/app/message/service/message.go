@@ -90,8 +90,9 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
 		return &pb.MessageReply{
 			Message: &pb.Message{
-				Id:   find.Id,
 				Uuid: message.Uuid,
+				Type: message.Type,
+				Text: message.Text,
 			},
 		}, nil
 	}

@@ -197,7 +197,7 @@ var rules = []Rule{
 		},
 	},
 	{
-		Define: `view [number]`,
+		Define: `view [number]`, // todo sequence
 		Help:   `View message`,
 		Parse: func(ctx context.Context, comp rulebot.IComponent, tokens []*Token) []string {
 			if comp.Message() == nil {
@@ -216,11 +216,11 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
-			if messageReply.Message.Id == 0 {
+			if messageReply.Message.Sequence == 0 {
 				return []string{"no message"}
 			}
 
-			return []string{messageReply.Message.GetText()}
+			return []string{messageReply.Message.GetMessage()}
 		},
 	},
 	{

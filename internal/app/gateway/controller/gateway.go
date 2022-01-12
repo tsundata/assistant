@@ -155,13 +155,13 @@ func (gc *GatewayController) GetApps(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) GetMessages(c *fiber.Ctx) error {
-	var in pb.Message
+	var in pb.GetMessagesRequest
 	err := c.QueryParser(&in)
 	if err != nil {
 		return err
 	}
 
-	reply, err := gc.messageSvc.List(md.Outgoing(c), &pb.MessageRequest{Message: &in})
+	reply, err := gc.messageSvc.List(md.Outgoing(c), &in)
 	if err != nil {
 		return err
 	}

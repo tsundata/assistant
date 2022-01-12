@@ -2,7 +2,7 @@ package automate
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"testing"
 )
 
@@ -10,49 +10,49 @@ type WearSocksAction struct {
 }
 
 func (w *WearSocksAction) Run(_ interface{}) {
-	fmt.Println("WearSocksAction")
+	log.Println("WearSocksAction")
 }
 
 type WearUnderpantsAction struct {
 }
 
 func (w *WearUnderpantsAction) Run(_ interface{}) {
-	fmt.Println("WearUnderpantsAction")
+	log.Println("WearUnderpantsAction")
 }
 
 type ShirtNodeAction struct {
 }
 
 func (w *ShirtNodeAction) Run(_ interface{}) {
-	fmt.Println("ShirtNodeAction")
+	log.Println("ShirtNodeAction")
 }
 
 type WatchNodeAction struct {
 }
 
 func (w *WatchNodeAction) Run(_ interface{}) {
-	fmt.Println("WatchNodeAction")
+	log.Println("WatchNodeAction")
 }
 
 type WearTrouserNodeAction struct {
 }
 
 func (w *WearTrouserNodeAction) Run(_ interface{}) {
-	fmt.Println("WearTrouserNodeAction")
+	log.Println("WearTrouserNodeAction")
 }
 
 type WearShoesNodeAction struct {
 }
 
 func (w *WearShoesNodeAction) Run(_ interface{}) {
-	fmt.Println("WearShoesNodeAction")
+	log.Println("WearShoesNodeAction")
 }
 
 type WearCoatNodeAction struct {
 }
 
 func (w *WearCoatNodeAction) Run(_ interface{}) {
-	fmt.Println("WearCoatNodeAction")
+	log.Println("WearCoatNodeAction")
 }
 
 func TestWorkflow(t *testing.T) {
@@ -80,5 +80,4 @@ func TestWorkflow(t *testing.T) {
 	var completedAction []string
 	wf.StartWithContext(context.Background(), completedAction)
 	wf.WaitDone()
-	fmt.Println("other run")
 }

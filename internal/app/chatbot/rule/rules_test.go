@@ -142,7 +142,7 @@ func TestViewRule(t *testing.T) {
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
-		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.MessageReply{Message: &pb.Message{Id: 1, Text: "test1"}}, nil),
+		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.MessageItem{Sequence: 1, Message: "test1"}}, nil),
 	)
 
 	command := "view 1"

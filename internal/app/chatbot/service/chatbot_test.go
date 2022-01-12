@@ -26,6 +26,10 @@ func TestChatbot_Handle(t *testing.T) {
 	todo := mock.NewMockTodoSvcClient(ctl)
 	message := mock.NewMockMessageSvcClient(ctl)
 
+	gomock.InOrder(
+		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.MessageItem{Uuid: "test"}}, nil),
+	)
+
 	s := NewChatbot(nil, nil, message, middle, todo, bot)
 
 	type args struct {
