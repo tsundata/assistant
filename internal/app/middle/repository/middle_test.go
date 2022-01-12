@@ -280,7 +280,7 @@ func TestMiddleRepository_CreateCredential(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create middle Repository error, %+v", err)
 	}
-	name := util.GeneratePassword(10, "lowercase")
+	name := util.RandString(10, "lowercase")
 	type args struct {
 		credential *pb.Credential
 	}

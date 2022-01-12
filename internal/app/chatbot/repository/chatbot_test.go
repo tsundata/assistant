@@ -19,8 +19,8 @@ func TestMain(m *testing.M) {
 	uuid2 = "c75345a7-1035-40bd-a11b-04af13b1a0fc"
 	uuid3 = "68ee68b3-91a2-4d2c-80b5-64962d2efdaf"
 	identifier1 = util.RandString(8, "lowercase") + "_bot"
-	identifier2 = util.RandString(8, "lowercase") + "b_bot"
-	identifier3 = util.RandString(8, "lowercase") + "c_bot"
+	identifier2 = util.RandString(8, "lowercase") + "_bot"
+	identifier3 = util.RandString(8, "lowercase") + "_bot"
 	code := m.Run()
 	os.Exit(code)
 }

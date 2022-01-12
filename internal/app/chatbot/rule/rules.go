@@ -112,7 +112,7 @@ var rules = []Rule{
 				return []string{"error call: " + err.Error()}
 			}
 
-			pwd := util.GeneratePassword(length, "lowercase|uppercase|numbers")
+			pwd := util.RandString(length, "lowercase|uppercase|numbers")
 
 			return []string{
 				pwd,
