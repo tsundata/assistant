@@ -150,6 +150,21 @@ func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupTag(ctx, id interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupTag), ctx, id)
 }
 
+// GetBotsByUser mocks base method.
+func (m *MockChatbotRepository) GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBotsByUser", ctx, userId)
+	ret0, _ := ret[0].([]*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBotsByUser indicates an expected call of GetBotsByUser.
+func (mr *MockChatbotRepositoryMockRecorder) GetBotsByUser(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByUser", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByUser), ctx, userId)
+}
+
 // GetByID mocks base method.
 func (m *MockChatbotRepository) GetByID(ctx context.Context, id int64) (pb.Bot, error) {
 	m.ctrl.T.Helper()
@@ -223,6 +238,21 @@ func (m *MockChatbotRepository) GetGroupBotSetting(ctx context.Context, groupId,
 func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSetting(ctx, groupId, botId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSetting), ctx, groupId, botId)
+}
+
+// GetGroupByName mocks base method.
+func (m *MockChatbotRepository) GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupByName", ctx, userId, name)
+	ret0, _ := ret[0].(pb.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupByName indicates an expected call of GetGroupByName.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupByName(ctx, userId, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupByName", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupByName), ctx, userId, name)
 }
 
 // GetGroupBySequence mocks base method.

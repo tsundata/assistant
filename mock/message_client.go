@@ -156,6 +156,26 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcClient)(nil).GetActionMessages), varargs...)
 }
 
+// LastByGroup mocks base method.
+func (m *MockMessageSvcClient) LastByGroup(ctx context.Context, in *pb.LastByGroupRequest, opts ...grpc.CallOption) (*pb.LastByGroupReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "LastByGroup", varargs...)
+	ret0, _ := ret[0].(*pb.LastByGroupReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LastByGroup indicates an expected call of LastByGroup.
+func (mr *MockMessageSvcClientMockRecorder) LastByGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastByGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).LastByGroup), varargs...)
+}
+
 // List mocks base method.
 func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
@@ -347,6 +367,21 @@ func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.
 func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcServer)(nil).GetActionMessages), arg0, arg1)
+}
+
+// LastByGroup mocks base method.
+func (m *MockMessageSvcServer) LastByGroup(arg0 context.Context, arg1 *pb.LastByGroupRequest) (*pb.LastByGroupReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LastByGroup", arg0, arg1)
+	ret0, _ := ret[0].(*pb.LastByGroupReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LastByGroup indicates an expected call of LastByGroup.
+func (mr *MockMessageSvcServerMockRecorder) LastByGroup(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastByGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).LastByGroup), arg0, arg1)
 }
 
 // List mocks base method.

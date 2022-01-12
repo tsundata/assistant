@@ -162,6 +162,8 @@ message Bot {
   int64 created_at = 10;
   // @inject_tag: db:"updated_at"
   int64 updated_at = 11;
+  // @inject_tag: db:"group_id" gorm:"->"
+  int64 group_id = 12;
 }
 
 message BotRequest {

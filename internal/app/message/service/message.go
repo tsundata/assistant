@@ -89,6 +89,28 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetM
 	}, nil
 }
 
+func (m *Message) LastByGroup(ctx context.Context, payload *pb.LastByGroupRequest) (*pb.LastByGroupReply, error) {
+	message, err := m.repo.GetLastByGroup(ctx, payload.GroupId)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return &pb.LastByGroupReply{
+			Message: &pb.MessageItem{},
+		}, nil
+	}
+
+	return &pb.LastByGroupReply{
+		Message: &pb.MessageItem{
+			Uuid:     message.Uuid,
+			Message:  message.Text,
+			Type:     message.Type,
+			SendTime: "", // todo
+		},
+	}, nil
+}
+
 func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var message pb.Message

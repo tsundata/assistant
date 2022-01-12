@@ -16,6 +16,7 @@ type MessageRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Message, error)
 	GetByUUID(ctx context.Context, uuid string) (pb.Message, error)
 	GetBySequence(ctx context.Context, userId, sequence int64) (pb.Message, error)
+	GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error)
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
 	List(ctx context.Context) ([]*pb.Message, error)
 	ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error)
@@ -54,6 +55,15 @@ func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb
 func (r *MysqlMessageRepository) GetBySequence(ctx context.Context, userId, sequence int64) (pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).First(&message).Error
+	if err != nil {
+		return pb.Message{}, err
+	}
+	return message, nil
+}
+
+func (r *MysqlMessageRepository) GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error) {
+	var message pb.Message
+	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC").First(&message).Error
 	if err != nil {
 		return pb.Message{}, err
 	}

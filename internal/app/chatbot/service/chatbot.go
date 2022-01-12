@@ -8,7 +8,10 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/rule"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Chatbot struct {
@@ -62,6 +65,7 @@ func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.Sta
 		}
 		return &pb.StateReply{State: true}, nil
 	}
+	request.Bot.Uuid = util.UUID()
 	_, err = s.repo.Create(ctx, request.Bot)
 	if err != nil {
 		return nil, err
@@ -89,22 +93,71 @@ func (s *Chatbot) UpdateBotSetting(_ context.Context, _ *pb.BotSettingRequest) (
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) GetGroups(ctx context.Context, payload *pb.GroupRequest) (*pb.GetGroupsReply, error) {
-	groups, err := s.repo.ListGroup(ctx, payload.Group.GetUserId())
+func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGroupsReply, error) {
+	id, _ := md.FromIncoming(ctx)
+
+	// default group
+	const defaultGroupName = "System"
+	_, err := s.repo.GetGroupByName(ctx, id, defaultGroupName)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		_, err = s.repo.CreateGroup(ctx, &pb.Group{
+			Uuid:      util.UUID(),
+			UserId:    id,
+			Name:      defaultGroupName,
+			Avatar:    "",
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// bot avatar
+	bots, err := s.repo.GetBotsByUser(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	botAvatar := make(map[int64][]string)
+	for _, bot := range bots {
+		if _, ok := botAvatar[bot.GroupId]; ok {
+			botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], bot.Avatar)
+		} else {
+			botAvatar[bot.GroupId] = []string{bot.Avatar}
+		}
+	}
+
+	groups, err := s.repo.ListGroup(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	var res []*pb.GroupItem
 	for _, group := range groups {
+		var avatars []string
+		if v, ok := botAvatar[group.Id]; ok {
+			avatars = v
+		}
+		// last message
+		last, err := s.message.LastByGroup(ctx, &pb.LastByGroupRequest{GroupId: group.Id})
+		if err != nil {
+			return nil, err
+		}
 		res = append(res, &pb.GroupItem{
 			Sequence:    group.Sequence,
 			Type:        group.Type,
 			Uuid:        group.Uuid,
 			Name:        group.Name,
 			Avatar:      group.Avatar,
-			UnreadCount: 0,   // todo
-			LastMessage: nil, // todo
-			BotAvatar:   nil, // todo
+			UnreadCount: 0, // todo
+			LastMessage: &pb.LastMessage{
+				LastSender: last.Message.Sender,
+				Content:    last.Message.Message,
+			},
+			BotAvatar: avatars,
 		})
 	}
 	return &pb.GetGroupsReply{Groups: res}, nil

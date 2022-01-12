@@ -109,6 +109,21 @@ func (mr *MockMessageRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), ctx, uuid)
 }
 
+// GetLastByGroup mocks base method.
+func (m *MockMessageRepository) GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLastByGroup", ctx, groupId)
+	ret0, _ := ret[0].(pb.Message)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLastByGroup indicates an expected call of GetLastByGroup.
+func (mr *MockMessageRepositoryMockRecorder) GetLastByGroup(ctx, groupId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastByGroup", reflect.TypeOf((*MockMessageRepository)(nil).GetLastByGroup), ctx, groupId)
+}
+
 // List mocks base method.
 func (m *MockMessageRepository) List(ctx context.Context) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()

@@ -23,15 +23,15 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Node struct {
 	// @inject_tag: db:"id" gorm:"primaryKey"
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id" gorm:"primaryKey"`
 	// @inject_tag: db:"ip"
-	Ip string `protobuf:"bytes,2,opt,name=ip,proto3" json:"ip,omitempty"`
+	Ip string `protobuf:"bytes,2,opt,name=ip,proto3" json:"ip,omitempty" db:"ip"`
 	// @inject_tag: db:"port"
-	Port int64 `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
+	Port int64 `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty" db:"port"`
 	// @inject_tag: db:"created_at"
-	CreatedAt int64 `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt int64 `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
-	UpdatedAt int64 `protobuf:"varint,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt int64 `protobuf:"varint,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" db:"updated_at"`
 }
 
 func (m *Node) Reset()         { *m = Node{} }

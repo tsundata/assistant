@@ -17,6 +17,7 @@ type ChatbotRepository interface {
 	GetByUUID(ctx context.Context, uuid string) (pb.Bot, error)
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
 	List(ctx context.Context) ([]*pb.Bot, error)
+	GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
 	Update(ctx context.Context, bot *pb.Bot) error
 	Delete(ctx context.Context, id int64) error
@@ -26,6 +27,7 @@ type ChatbotRepository interface {
 	GetGroup(ctx context.Context, id int64) (pb.Group, error)
 	GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error)
 	GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error)
+	GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error)
 	ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error)
 	CreateGroup(ctx context.Context, group *pb.Group) (int64, error)
 	DeleteGroup(ctx context.Context, id int64) error
@@ -79,6 +81,19 @@ func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier
 func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	var bots []*pb.Bot
 	err := r.db.WithContext(ctx).Order("id DESC").Find(&bots).Error
+	if err != nil {
+		return nil, err
+	}
+	return bots, nil
+}
+
+func (r *MysqlChatbotRepository) GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error) {
+	var bots []*pb.Bot
+	err := r.db.WithContext(ctx).
+		Select("bots.id, groups.id as group_id, bots.name, bots.identifier, bots.avatar").
+		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
+		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
+		Where("groups.user_id = ?", userId).Find(&bots).Error
 	if err != nil {
 		return nil, err
 	}
@@ -164,6 +179,15 @@ func (r *MysqlChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string
 func (r *MysqlChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error) {
 	var find pb.Group
 	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).First(&find).Error
+	if err != nil {
+		return pb.Group{}, err
+	}
+	return find, nil
+}
+
+func (r *MysqlChatbotRepository) GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error) {
+	var find pb.Group
+	err := r.db.WithContext(ctx).Where("user_id = ? AND name = ?", userId, name).First(&find).Error
 	if err != nil {
 		return pb.Group{}, err
 	}

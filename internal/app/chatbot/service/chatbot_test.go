@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/mock"
+	"gorm.io/gorm"
 	"reflect"
 	"testing"
 )
@@ -223,15 +224,23 @@ func TestMessage_GetGroups(t *testing.T) {
 	defer ctl.Finish()
 
 	repo := mock.NewMockChatbotRepository(ctl)
+	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
+		repo.EXPECT().GetGroupByName(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Group{}, gorm.ErrRecordNotFound),
+		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().GetBotsByUser(gomock.Any(), gomock.Any()).Return([]*pb.Bot{}, nil),
 		repo.EXPECT().ListGroup(gomock.Any(), gomock.Any()).Return([]*pb.Group{{
 			Id:     1,
 			UserId: 1,
 			Name:   "test",
 		}}, nil),
+		message.EXPECT().LastByGroup(gomock.Any(), gomock.Any()).Return(&pb.LastByGroupReply{Message: &pb.MessageItem{
+			Sender:  "test",
+			Message: "test",
+		}}, nil),
 	)
 
-	s := NewChatbot(nil, repo, nil, nil, nil, nil)
+	s := NewChatbot(nil, repo, message, nil, nil, nil)
 
 	type args struct {
 		in0 context.Context

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type MessageSvcClient interface {
 	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error)
 	ListByGroup(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
+	LastByGroup(ctx context.Context, in *LastByGroupRequest, opts ...grpc.CallOption) (*LastByGroupReply, error)
 	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -50,6 +51,15 @@ func (c *messageSvcClient) List(ctx context.Context, in *MessageRequest, opts ..
 func (c *messageSvcClient) ListByGroup(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error) {
 	out := new(GetMessagesReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/ListByGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) LastByGroup(ctx context.Context, in *LastByGroupRequest, opts ...grpc.CallOption) (*LastByGroupReply, error) {
+	out := new(LastByGroupReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/LastByGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,6 +144,7 @@ func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *Messag
 type MessageSvcServer interface {
 	List(context.Context, *MessageRequest) (*MessagesReply, error)
 	ListByGroup(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
+	LastByGroup(context.Context, *LastByGroupRequest) (*LastByGroupReply, error)
 	Get(context.Context, *MessageRequest) (*GetMessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
@@ -153,6 +164,9 @@ func (UnimplementedMessageSvcServer) List(context.Context, *MessageRequest) (*Me
 }
 func (UnimplementedMessageSvcServer) ListByGroup(context.Context, *GetMessagesRequest) (*GetMessagesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListByGroup not implemented")
+}
+func (UnimplementedMessageSvcServer) LastByGroup(context.Context, *LastByGroupRequest) (*LastByGroupReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LastByGroup not implemented")
 }
 func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*GetMessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
@@ -222,6 +236,24 @@ func _MessageSvc_ListByGroup_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MessageSvcServer).ListByGroup(ctx, req.(*GetMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_LastByGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LastByGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).LastByGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/LastByGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).LastByGroup(ctx, req.(*LastByGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -384,6 +416,10 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListByGroup",
 			Handler:    _MessageSvc_ListByGroup_Handler,
+		},
+		{
+			MethodName: "LastByGroup",
+			Handler:    _MessageSvc_LastByGroup_Handler,
 		},
 		{
 			MethodName: "Get",

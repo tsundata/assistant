@@ -51,6 +51,10 @@ tasks:
       - protoc-go-inject-tag -input=./api/pb/message.pb.go
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - protoc-go-inject-tag -input=./api/pb/org.pb.go
+      - protoc-go-inject-tag -input=./api/pb/finance.pb.go
+      - protoc-go-inject-tag -input=./api/pb/todo.pb.go
+      - protoc-go-inject-tag -input=./api/pb/chatbot.pb.go
+      - protoc-go-inject-tag -input=./api/pb/id.pb.go
       - git add api/pb/*.pb.go
 
   release:
