@@ -124,11 +124,7 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 
 	botAvatar := make(map[int64][]string)
 	for _, bot := range bots {
-		if _, ok := botAvatar[bot.GroupId]; ok {
-			botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], bot.Avatar)
-		} else {
-			botAvatar[bot.GroupId] = []string{bot.Avatar}
-		}
+		botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], bot.Avatar)
 	}
 
 	groups, err := s.repo.ListGroup(ctx, id)
