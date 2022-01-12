@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 	"github.com/golang/mock/gomock"
-	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/mock"
+	"gorm.io/gorm"
 	"reflect"
 	"testing"
 )
@@ -181,7 +181,7 @@ func TestMessage_Delete(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil),
-		repo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(errors.New("not record")),
+		repo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(gorm.ErrRecordNotFound),
 	)
 
 	s := NewMessage(nil, nil, nil, repo, nil, nil)

@@ -3,10 +3,11 @@ package classifier
 import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"strings"
 )
 
-var ErrEmpty = errors.New("empty check")
+
 
 type Rule struct {
 	Format string
@@ -35,7 +36,7 @@ func (r *Rule) Do(check string) (enum.RoleAttr, error) {
 			return toRoleAttr(attr)
 		}
 	}
-	return "", ErrEmpty
+	return "", app.ErrInvalidParameter
 }
 
 func toRoleAttr(shortAttr string) (enum.RoleAttr, error) {

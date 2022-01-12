@@ -7,6 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tidwall/gjson"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"regexp"
 	"strings"
 )
@@ -27,7 +28,7 @@ func (o *Query) Doc() string {
 
 func (o *Query) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) < 2 {
-		return false, errors.New("error params")
+		return false, app.ErrInvalidParameter
 	}
 	if t, ok := params[0].(string); ok {
 		expression, ok := params[1].(string)
@@ -96,7 +97,7 @@ func (o *Query) Run(_ context.Context, comp *inside.Component, params []interfac
 				return result, nil
 			}
 		default:
-			return false, errors.New("error type")
+			return false, app.ErrInvalidParameter
 		}
 	}
 	return false, nil

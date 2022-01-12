@@ -3,6 +3,7 @@ package classifier
 import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"testing"
 )
@@ -32,5 +33,5 @@ func TestClassifier(t *testing.T) {
 	require.Equal(t, enum.CultureAttr, a)
 
 	_, err = c.Do("demo8")
-	require.ErrorIs(t, ErrEmpty, err)
+	require.ErrorIs(t, app.ErrInvalidParameter, err)
 }

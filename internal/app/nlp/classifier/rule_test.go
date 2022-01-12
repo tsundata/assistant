@@ -3,6 +3,7 @@ package classifier
 import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"testing"
 )
 
@@ -80,5 +81,5 @@ func TestRule8(t *testing.T) {
 	r := NewRule()
 	r.Format = "test1|test2|test3 > int"
 	_, err := r.Do("test0")
-	require.ErrorIs(t, ErrEmpty, err)
+	require.ErrorIs(t, app.ErrInvalidParameter, err)
 }

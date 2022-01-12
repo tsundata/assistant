@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
 )
@@ -33,7 +33,7 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		auth := func(c *fiber.Ctx) error {
 			uuid := util.ExtractUUID(c.Path())
 			if uuid == "" {
-				return errors.New("error param")
+				return app.ErrInvalidParameter
 			}
 
 			reply, err := wc.gateway.Authorization(&pb.TextRequest{

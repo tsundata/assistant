@@ -2,9 +2,9 @@ package opcode
 
 import (
 	"context"
-	"errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 )
 
@@ -24,7 +24,7 @@ func (o *Echo) Doc() string {
 
 func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
-		return nil, errors.New("error params")
+		return nil, app.ErrInvalidParameter
 	}
 
 	if text, ok := params[0].(string); ok {

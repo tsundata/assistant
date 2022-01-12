@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"time"
 )
@@ -86,8 +86,10 @@ func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 }
 
 func (r *MysqlChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {
+	if bot.Uuid == "" {
+		return 0, app.ErrInvalidParameter
+	}
 	bot.Id = r.id.Generate(ctx)
-	bot.Uuid = util.UUID()
 	err := r.db.WithContext(ctx).Create(&bot).Error
 	if err != nil {
 		return 0, err
@@ -201,6 +203,9 @@ func (r *MysqlChatbotRepository) CreateGroup(ctx context.Context, group *pb.Grou
 
 	group.Id = r.id.Generate(ctx)
 	group.Sequence = sequence
+	if group.Uuid == "" {
+		return 0, app.ErrInvalidParameter
+	}
 	err = r.db.WithContext(ctx).Create(&group).Error
 	if err != nil {
 		return 0, err

@@ -2,8 +2,8 @@ package opcode
 
 import (
 	"context"
-	"errors"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 )
 
 type Debug struct{}
@@ -30,7 +30,7 @@ func (o *Debug) Run(_ context.Context, comp *inside.Component, params []interfac
 		comp.Debug = true
 		return true, nil
 	} else {
-		return false, errors.New("error params")
+		return false, app.ErrInvalidParameter
 	}
 
 	return false, nil

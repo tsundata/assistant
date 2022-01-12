@@ -3,9 +3,9 @@ package work
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
@@ -30,12 +30,12 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 
 	tp, ok := args["type"]
 	if !ok {
-		return false, errors.New("error arg type")
+		return false, app.ErrInvalidParameter
 	}
 
 	idStr, ok := args["id"]
 	if !ok {
-		return false, errors.New("error arg id")
+		return false, app.ErrInvalidParameter
 	}
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
@@ -56,6 +56,6 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		}
 		return true, nil
 	default:
-		return false, errors.New("error type")
+		return false, app.ErrInvalidParameter
 	}
 }

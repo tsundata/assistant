@@ -123,7 +123,7 @@ func (s *User) GetRoleImage(ctx context.Context, _ *pb.RoleRequest) (*pb.BytesRe
 		return nil, err
 	}
 	if find.Id <= 0 {
-		return nil, errors.New("not role")
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	font, err := truetype.Parse(goregular.TTF)

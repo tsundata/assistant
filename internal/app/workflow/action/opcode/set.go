@@ -2,8 +2,8 @@ package opcode
 
 import (
 	"context"
-	"errors"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 )
 
 type Set struct{}
@@ -22,7 +22,7 @@ func (o *Set) Doc() string {
 
 func (o *Set) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) < 1 {
-		return nil, errors.New("error params")
+		return nil, app.ErrInvalidParameter
 	}
 	if len(params) > 1 {
 		comp.SetValue(params)

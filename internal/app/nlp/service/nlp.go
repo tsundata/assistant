@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/nlp/classifier"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"strings"
@@ -65,12 +66,12 @@ func (s *NLP) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextReply,
 	}
 
 	if req.GetText() == "" {
-		return nil, errors.New("error text")
+		return nil, app.ErrInvalidParameter
 	}
 
 	res, err := c.Do(req.GetText())
 	if err != nil {
-		if errors.Is(err, classifier.ErrEmpty) {
+		if errors.Is(err, app.ErrInvalidParameter) {
 			return &pb.TextReply{Text: ""}, nil
 		}
 		return nil, err

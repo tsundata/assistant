@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/bwmarrin/snowflake"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/id/repository"
+	"gorm.io/gorm"
 )
 
 type Id struct {
@@ -22,7 +22,7 @@ func (s *Id) GetGlobalId(ctx context.Context, payload *pb.GetGlobalIdRequest) (*
 		return nil, err
 	}
 	if node.Id <= 0 {
-		return nil, errors.New("error node")
+		return nil, gorm.ErrRecordNotFound
 	}
 	sNode, err := snowflake.NewNode(node.Id)
 	if err != nil {

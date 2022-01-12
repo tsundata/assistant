@@ -2,9 +2,9 @@ package opcode
 
 import (
 	"context"
-	"errors"
 	"github.com/go-resty/resty/v2"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"time"
 )
@@ -25,7 +25,7 @@ func (o *Get) Doc() string {
 
 func (o *Get) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
-		return nil, errors.New("error params")
+		return nil, app.ErrInvalidParameter
 	}
 	if text, ok := params[0].(string); ok {
 		if util.IsUrl(text) {

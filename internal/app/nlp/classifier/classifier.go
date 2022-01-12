@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"strings"
 )
@@ -33,14 +34,14 @@ func (c *Classifier) SetRules(data string) error {
 func (c *Classifier) Do(check string) (enum.RoleAttr, error) {
 	for _, rule := range c.rules {
 		res, err := rule.Do(check)
-		if err != nil && !errors.Is(err, ErrEmpty) {
+		if err != nil && !errors.Is(err, app.ErrInvalidParameter) {
 			return "", err
 		}
 		if res != "" {
 			return res, nil
 		}
 	}
-	return "", ErrEmpty
+	return "", app.ErrInvalidParameter
 }
 
 func ReadRulesConfig(conf *config.AppConfig) (string, error) {

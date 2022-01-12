@@ -8,6 +8,7 @@ import (
 	"github.com/sourcegraph/checkup/check/tcp"
 	"github.com/sourcegraph/checkup/check/tls"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ func (o *Status) Doc() string {
 
 func (o *Status) Run(_ context.Context, _ *inside.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 2 {
-		return false, errors.New("error params")
+		return false, app.ErrInvalidParameter
 	}
 	if checker, ok := params[0].(string); ok {
 		text, ok := params[1].(string)
@@ -81,7 +82,7 @@ func (o *Status) Run(_ context.Context, _ *inside.Component, params []interface{
 			}
 			return result.Healthy, nil
 		default:
-			return false, errors.New("error type")
+			return false, app.ErrInvalidParameter
 		}
 	}
 	return false, nil

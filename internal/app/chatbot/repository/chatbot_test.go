@@ -15,9 +15,9 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	uuid1 = "f5ca59e9-25c0-4cf7-a370-b4ca3a173c5b"
-	uuid2 = "c75345a7-1035-40bd-a11b-04af13b1a0fc"
-	uuid3 = "68ee68b3-91a2-4d2c-80b5-64962d2efdaf"
+	uuid1 = util.UUID()
+	uuid2 = util.UUID()
+	uuid3 = util.UUID()
 	identifier1 = util.RandString(8, "lowercase") + "_bot"
 	identifier2 = util.RandString(8, "lowercase") + "_bot"
 	identifier3 = util.RandString(8, "lowercase") + "_bot"
@@ -98,9 +98,9 @@ func TestChatbotRepository_GetByUUID(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"uuid=1", sto, args{uuid: uuid1}, false},
-		{"uuid=2", sto, args{uuid: uuid2}, false},
-		{"uuid=3", sto, args{uuid: uuid3}, false},
+		{"uuid=" + uuid1, sto, args{uuid: uuid1}, false},
+		{"uuid=" + uuid1, sto, args{uuid: uuid2}, false},
+		{"uuid=" + uuid1, sto, args{uuid: uuid3}, false},
 		{"uuid=ff4103db-d554-4f22-b6c7-57a3f708d5eb", sto, args{uuid: "ff4103db-d554-4f22-b6c7-57a3f708d5eb"}, true},
 	}
 	for _, tt := range tests {
