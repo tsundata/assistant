@@ -33,7 +33,7 @@ func (i *ID) Generate(ctx context.Context) int64 {
 	if err != nil {
 		panic(err)
 	}
-	idReply, err := i.client.GetGlobalId(ctx, &pb.IdRequest{Ip: ip, Port: port})
+	idReply, err := i.client.GetGlobalId(ctx, &pb.GetGlobalIdRequest{Ip: ip, Port: port})
 	if err != nil {
 		panic(err)
 	}

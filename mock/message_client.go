@@ -157,14 +157,14 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 }
 
 // List mocks base method.
-func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.GetMessagesRequest, opts ...grpc.CallOption) (*pb.GetMessagesReply, error) {
+func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "List", varargs...)
-	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret0, _ := ret[0].(*pb.MessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -174,6 +174,26 @@ func (mr *MockMessageSvcClientMockRecorder) List(ctx, in interface{}, opts ...in
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageSvcClient)(nil).List), varargs...)
+}
+
+// ListByGroup mocks base method.
+func (m *MockMessageSvcClient) ListByGroup(ctx context.Context, in *pb.GetMessagesRequest, opts ...grpc.CallOption) (*pb.GetMessagesReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByGroup", varargs...)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByGroup indicates an expected call of ListByGroup.
+func (mr *MockMessageSvcClientMockRecorder) ListByGroup(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).ListByGroup), varargs...)
 }
 
 // Run mocks base method.
@@ -330,10 +350,10 @@ func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interfa
 }
 
 // List mocks base method.
-func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret0, _ := ret[0].(*pb.MessagesReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -342,6 +362,21 @@ func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.GetMessagesRe
 func (mr *MockMessageSvcServerMockRecorder) List(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageSvcServer)(nil).List), arg0, arg1)
+}
+
+// ListByGroup mocks base method.
+func (m *MockMessageSvcServer) ListByGroup(arg0 context.Context, arg1 *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByGroup", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByGroup indicates an expected call of ListByGroup.
+func (mr *MockMessageSvcServerMockRecorder) ListByGroup(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).ListByGroup), arg0, arg1)
 }
 
 // Run mocks base method.

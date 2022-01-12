@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // WorkflowSvcClient is the client API for WorkflowSvc service.
@@ -157,8 +158,8 @@ type UnsafeWorkflowSvcServer interface {
 	mustEmbedUnimplementedWorkflowSvcServer()
 }
 
-func RegisterWorkflowSvcServer(s *grpc.Server, srv WorkflowSvcServer) {
-	s.RegisterService(&_WorkflowSvc_serviceDesc, srv)
+func RegisterWorkflowSvcServer(s grpc.ServiceRegistrar, srv WorkflowSvcServer) {
+	s.RegisterService(&WorkflowSvc_ServiceDesc, srv)
 }
 
 func _WorkflowSvc_SyntaxCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -305,7 +306,10 @@ func _WorkflowSvc_ListWebhook_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-var _WorkflowSvc_serviceDesc = grpc.ServiceDesc{
+// WorkflowSvc_ServiceDesc is the grpc.ServiceDesc for WorkflowSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var WorkflowSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.WorkflowSvc",
 	HandlerType: (*WorkflowSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

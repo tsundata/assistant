@@ -195,3 +195,11 @@ func (s *Chatbot) GetGroupSetting(ctx context.Context, request *pb.GroupSettingR
 	}
 	return &pb.GroupSettingReply{Kvs: kv}, nil
 }
+
+func (s *Chatbot) GetGroupId(ctx context.Context, payload *pb.UuidRequest) (*pb.IdReply, error) {
+	group, err := s.repo.GetGroupByUUID(ctx, payload.Uuid)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.IdReply{Id: group.Id}, nil
+}

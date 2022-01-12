@@ -71,6 +71,7 @@ CREATE TABLE `group_settings`
 create table if not exists `messages`
 (
     `id`            BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `group_id`      BIGINT(19)          NOT NULL,
     `user_id`       BIGINT(19)          NOT NULL,
     `sequence`      INT(10)             NOT NULL,
     `uuid`          varchar(36)         NOT NULL DEFAULT '',
@@ -86,6 +87,7 @@ create table if not exists `messages`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uuid` (`uuid`),
     UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
+    INDEX `group_id` (`group_id`) USING BTREE,
     INDEX `sender` (`sender`) USING BTREE,
     INDEX `receiver` (`receiver`) USING BTREE
 ) ENGINE = InnoDB

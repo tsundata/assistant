@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // ChatbotSvcClient is the client API for ChatbotSvc service.
@@ -30,6 +31,7 @@ type ChatbotSvcClient interface {
 	GetGroups(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupsReply, error)
 	CreateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*GetGroupReply, error)
+	GetGroupId(ctx context.Context, in *UuidRequest, opts ...grpc.CallOption) (*IdReply, error)
 	DeleteGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	UpdateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
@@ -159,6 +161,15 @@ func (c *chatbotSvcClient) GetGroup(ctx context.Context, in *GroupRequest, opts 
 	return out, nil
 }
 
+func (c *chatbotSvcClient) GetGroupId(ctx context.Context, in *UuidRequest, opts ...grpc.CallOption) (*IdReply, error) {
+	out := new(IdReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetGroupId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatbotSvcClient) DeleteGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/DeleteGroup", in, out, opts...)
@@ -194,6 +205,7 @@ type ChatbotSvcServer interface {
 	GetGroups(context.Context, *GroupRequest) (*GetGroupsReply, error)
 	CreateGroup(context.Context, *GroupRequest) (*StateReply, error)
 	GetGroup(context.Context, *GroupRequest) (*GetGroupReply, error)
+	GetGroupId(context.Context, *UuidRequest) (*IdReply, error)
 	DeleteGroup(context.Context, *GroupRequest) (*StateReply, error)
 	UpdateGroup(context.Context, *GroupRequest) (*StateReply, error)
 }
@@ -241,6 +253,9 @@ func (UnimplementedChatbotSvcServer) CreateGroup(context.Context, *GroupRequest)
 func (UnimplementedChatbotSvcServer) GetGroup(context.Context, *GroupRequest) (*GetGroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
 }
+func (UnimplementedChatbotSvcServer) GetGroupId(context.Context, *UuidRequest) (*IdReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupId not implemented")
+}
 func (UnimplementedChatbotSvcServer) DeleteGroup(context.Context, *GroupRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
 }
@@ -255,8 +270,8 @@ type UnsafeChatbotSvcServer interface {
 	mustEmbedUnimplementedChatbotSvcServer()
 }
 
-func RegisterChatbotSvcServer(s *grpc.Server, srv ChatbotSvcServer) {
-	s.RegisterService(&_ChatbotSvc_serviceDesc, srv)
+func RegisterChatbotSvcServer(s grpc.ServiceRegistrar, srv ChatbotSvcServer) {
+	s.RegisterService(&ChatbotSvc_ServiceDesc, srv)
 }
 
 func _ChatbotSvc_Handle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -493,6 +508,24 @@ func _ChatbotSvc_GetGroup_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotSvc_GetGroupId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UuidRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).GetGroupId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/GetGroupId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).GetGroupId(ctx, req.(*UuidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatbotSvc_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GroupRequest)
 	if err := dec(in); err != nil {
@@ -529,7 +562,10 @@ func _ChatbotSvc_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
+// ChatbotSvc_ServiceDesc is the grpc.ServiceDesc for ChatbotSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ChatbotSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.ChatbotSvc",
 	HandlerType: (*ChatbotSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -584,6 +620,10 @@ var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetGroup",
 			Handler:    _ChatbotSvc_GetGroup_Handler,
+		},
+		{
+			MethodName: "GetGroupId",
+			Handler:    _ChatbotSvc_GetGroupId_Handler,
 		},
 		{
 			MethodName: "DeleteGroup",

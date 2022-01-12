@@ -79,7 +79,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient)
+	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient, chatbotSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {

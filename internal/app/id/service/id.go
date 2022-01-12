@@ -16,7 +16,7 @@ func NewId(repo repository.IdRepository) *Id {
 	return &Id{repo: repo}
 }
 
-func (s *Id) GetGlobalId(ctx context.Context, payload *pb.IdRequest) (*pb.IdReply, error) {
+func (s *Id) GetGlobalId(ctx context.Context, payload *pb.GetGlobalIdRequest) (*pb.GetGlobalIdReply, error) {
 	node, err := s.repo.GetOrCreateNode(ctx, &pb.Node{Ip: payload.Ip, Port: payload.Port})
 	if err != nil {
 		return nil, err
@@ -28,5 +28,5 @@ func (s *Id) GetGlobalId(ctx context.Context, payload *pb.IdRequest) (*pb.IdRepl
 	if err != nil {
 		return nil, err
 	}
-	return &pb.IdReply{Id: sNode.Generate().Int64()}, nil
+	return &pb.GetGlobalIdReply{Id: sNode.Generate().Int64()}, nil
 }

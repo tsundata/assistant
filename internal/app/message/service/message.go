@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
@@ -21,6 +20,7 @@ type Message struct {
 	logger   log.Logger
 	repo     repository.MessageRepository
 	workflow pb.WorkflowSvcClient
+	chatbot  pb.ChatbotSvcClient
 }
 
 func NewMessage(
@@ -28,19 +28,33 @@ func NewMessage(
 	logger log.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
-	workflow pb.WorkflowSvcClient) *Message {
+	workflow pb.WorkflowSvcClient,
+	chatbot pb.ChatbotSvcClient) *Message {
 	return &Message{
 		bus:      bus,
 		logger:   logger,
 		config:   config,
 		repo:     repo,
 		workflow: workflow,
+		chatbot:  chatbot,
 	}
 }
 
-func (m *Message) List(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
-	fmt.Println(payload.Limit, payload.Page) // todo
+func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
 	messages, err := m.repo.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.MessagesReply{Messages: messages}, nil
+}
+
+func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	group, err := m.chatbot.GetGroupId(ctx, &pb.UuidRequest{Uuid: payload.GroupUuid})
+	if err != nil {
+		return nil, err
+	}
+	messages, err := m.repo.ListByGroup(ctx, group.Id, int(payload.Page), int(payload.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +64,7 @@ func (m *Message) List(ctx context.Context, payload *pb.GetMessagesRequest) (*pb
 		reply = append(reply, &pb.MessageItem{
 			Uuid:    item.Uuid,
 			Message: item.Text,
-			Type:    item.Type, // todo
+			Type:    item.Type,
 		})
 	}
 

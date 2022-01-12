@@ -27,7 +27,7 @@ func TestGetGlobalId(t *testing.T) {
 
 	type args struct {
 		ctx context.Context
-		in1 *pb.IdRequest
+		in1 *pb.GetGlobalIdRequest
 	}
 	tests := []struct {
 		name    string
@@ -38,13 +38,13 @@ func TestGetGlobalId(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.IdRequest{Ip: "127.0.0.1", Port: 5000}},
+			args{context.Background(), &pb.GetGlobalIdRequest{Ip: "127.0.0.1", Port: 5000}},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.IdRequest{Ip: "127.0.0.1", Port: 5001}},
+			args{context.Background(), &pb.GetGlobalIdRequest{Ip: "127.0.0.1", Port: 5001}},
 			false,
 		},
 	}

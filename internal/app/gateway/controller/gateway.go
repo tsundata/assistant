@@ -161,7 +161,7 @@ func (gc *GatewayController) GetMessages(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := gc.messageSvc.List(md.Outgoing(c), &in)
+	reply, err := gc.messageSvc.ListByGroup(md.Outgoing(c), &in)
 	if err != nil {
 		return err
 	}

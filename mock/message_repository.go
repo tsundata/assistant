@@ -79,6 +79,21 @@ func (mr *MockMessageRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockMessageRepository)(nil).GetByID), ctx, id)
 }
 
+// GetBySequence mocks base method.
+func (m *MockMessageRepository) GetBySequence(ctx context.Context, userId, sequence int64) (pb.Message, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(pb.Message)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBySequence indicates an expected call of GetBySequence.
+func (mr *MockMessageRepositoryMockRecorder) GetBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySequence", reflect.TypeOf((*MockMessageRepository)(nil).GetBySequence), ctx, userId, sequence)
+}
+
 // GetByUUID mocks base method.
 func (m *MockMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb.Message, error) {
 	m.ctrl.T.Helper()
@@ -107,6 +122,21 @@ func (m *MockMessageRepository) List(ctx context.Context) ([]*pb.Message, error)
 func (mr *MockMessageRepositoryMockRecorder) List(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockMessageRepository)(nil).List), ctx)
+}
+
+// ListByGroup mocks base method.
+func (m *MockMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByGroup", ctx, groupId, page, limit)
+	ret0, _ := ret[0].([]*pb.Message)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByGroup indicates an expected call of ListByGroup.
+func (mr *MockMessageRepositoryMockRecorder) ListByGroup(ctx, groupId, page, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageRepository)(nil).ListByGroup), ctx, groupId, page, limit)
 }
 
 // ListByType mocks base method.

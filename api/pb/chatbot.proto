@@ -26,6 +26,7 @@ service ChatbotSvc {
   rpc GetGroups(GroupRequest) returns (GetGroupsReply) {}
   rpc CreateGroup(GroupRequest) returns (StateReply) {}
   rpc GetGroup(GroupRequest) returns (GetGroupReply) {}
+  rpc GetGroupId(UuidRequest) returns (IdReply) {}
   rpc DeleteGroup(GroupRequest) returns (StateReply) {}
   rpc UpdateGroup(GroupRequest) returns (StateReply) {}
 }

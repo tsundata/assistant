@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // OrgSvcClient is the client API for OrgSvc service.
@@ -157,8 +158,8 @@ type UnsafeOrgSvcServer interface {
 	mustEmbedUnimplementedOrgSvcServer()
 }
 
-func RegisterOrgSvcServer(s *grpc.Server, srv OrgSvcServer) {
-	s.RegisterService(&_OrgSvc_serviceDesc, srv)
+func RegisterOrgSvcServer(s grpc.ServiceRegistrar, srv OrgSvcServer) {
+	s.RegisterService(&OrgSvc_ServiceDesc, srv)
 }
 
 func _OrgSvc_CreateObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -305,7 +306,10 @@ func _OrgSvc_DeleteKeyResult_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-var _OrgSvc_serviceDesc = grpc.ServiceDesc{
+// OrgSvc_ServiceDesc is the grpc.ServiceDesc for OrgSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrgSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.OrgSvc",
 	HandlerType: (*OrgSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

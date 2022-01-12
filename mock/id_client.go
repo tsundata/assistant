@@ -37,14 +37,14 @@ func (m *MockIdSvcClient) EXPECT() *MockIdSvcClientMockRecorder {
 }
 
 // GetGlobalId mocks base method.
-func (m *MockIdSvcClient) GetGlobalId(ctx context.Context, in *pb.IdRequest, opts ...grpc.CallOption) (*pb.IdReply, error) {
+func (m *MockIdSvcClient) GetGlobalId(ctx context.Context, in *pb.GetGlobalIdRequest, opts ...grpc.CallOption) (*pb.GetGlobalIdReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetGlobalId", varargs...)
-	ret0, _ := ret[0].(*pb.IdReply)
+	ret0, _ := ret[0].(*pb.GetGlobalIdReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -80,10 +80,10 @@ func (m *MockIdSvcServer) EXPECT() *MockIdSvcServerMockRecorder {
 }
 
 // GetGlobalId mocks base method.
-func (m *MockIdSvcServer) GetGlobalId(arg0 context.Context, arg1 *pb.IdRequest) (*pb.IdReply, error) {
+func (m *MockIdSvcServer) GetGlobalId(arg0 context.Context, arg1 *pb.GetGlobalIdRequest) (*pb.GetGlobalIdReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGlobalId", arg0, arg1)
-	ret0, _ := ret[0].(*pb.IdReply)
+	ret0, _ := ret[0].(*pb.GetGlobalIdReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

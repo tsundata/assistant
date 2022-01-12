@@ -13,7 +13,8 @@ option (gogoproto.goproto_enum_prefix_all) = false;
 option go_package = "api/pb";
 
 service MessageSvc {
-  rpc List(GetMessagesRequest) returns (GetMessagesReply) {}
+  rpc List(MessageRequest) returns (MessagesReply) {}
+  rpc ListByGroup(GetMessagesRequest) returns (GetMessagesReply) {}
   rpc Get(MessageRequest) returns (GetMessageReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}
@@ -39,6 +40,8 @@ message MessagesReply {
 message Message {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
+  // @inject_tag: db:"group_id"
+  int64 group_id = 14;
   // @inject_tag: db:"user_id"
   int64 user_id = 2;
   // @inject_tag: db:"sequence"

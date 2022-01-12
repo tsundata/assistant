@@ -16,11 +16,11 @@ func TestIsIPv4(t *testing.T) {
 	require.False(t, IsIPv4("172.888.2.1"))
 }
 
-func TestGeneratePassword(t *testing.T) {
-	pwd := GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
+func TestRandString(t *testing.T) {
+	pwd := RandString(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
 	require.Len(t, pwd, 32)
 
-	pwd2 := GeneratePassword(32, "")
+	pwd2 := RandString(32, "")
 	require.Len(t, pwd2, 0)
 }
 
@@ -29,9 +29,9 @@ func TestUUID(t *testing.T) {
 	require.Len(t, uuid, 36)
 }
 
-func BenchmarkGeneratePassword(b *testing.B) {
+func BenchmarkRandString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GeneratePassword(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
+		RandString(32, "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar")
 	}
 }
 

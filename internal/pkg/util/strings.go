@@ -25,8 +25,8 @@ func IsIPv4(host string) bool {
 	return net.ParseIP(host) != nil
 }
 
-// GeneratePassword containChars : "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar"
-func GeneratePassword(length int, containChars string) string {
+// RandString containChars : "lowercase|uppercase|numbers|hyphen|underline|space|specials|brackets|no_similar"
+func RandString(length int, containChars string) string {
 	asciiLowercase := "abcdefghijklmnopqrstuvwxyz"
 	asciiUppercase := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	digits := "0123456789"

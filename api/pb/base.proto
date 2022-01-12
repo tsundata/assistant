@@ -19,3 +19,19 @@ message KV {
   string key = 1;
   string value = 2;
 }
+
+message UuidRequest {
+  string uuid = 1;
+}
+
+message UuidReply {
+  string uuid = 1;
+}
+
+message IdRequest {
+  int64 id = 1;
+}
+
+message IdReply {
+  int64 id = 1;
+}

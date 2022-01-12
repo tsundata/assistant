@@ -32,21 +32,21 @@ type Operation struct {
 type LockerOpt func(op *Operation)
 
 func WithTry(try bool) LockerOpt {
-	return LockerOpt(func(op *Operation) {
+	return func(op *Operation) {
 		op.Try = try
-	})
+	}
 }
 
 func WithAcquireTimeout(timeout time.Duration) LockerOpt {
-	return LockerOpt(func(op *Operation) {
+	return func(op *Operation) {
 		op.AcquireTimeout = timeout
-	})
+	}
 }
 
 func WithLockTTL(ttl time.Duration) LockerOpt {
-	return LockerOpt(func(op *Operation) {
+	return func(op *Operation) {
 		op.TTL = ttl
-	})
+	}
 }
 
 func (l *Locker) Acquire(key string, opts ...LockerOpt) (*Lock, error) {

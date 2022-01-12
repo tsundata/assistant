@@ -15,12 +15,12 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	uuid1 = util.UUID()
-	uuid2 = util.UUID()
-	uuid3 = util.UUID()
-	identifier1 = "a_bot"
-	identifier2 = "b_bot"
-	identifier3 = "c_bot"
+	uuid1 = "f5ca59e9-25c0-4cf7-a370-b4ca3a173c5b"
+	uuid2 = "c75345a7-1035-40bd-a11b-04af13b1a0fc"
+	uuid3 = "68ee68b3-91a2-4d2c-80b5-64962d2efdaf"
+	identifier1 = util.RandString(8, "lowercase") + "_bot"
+	identifier2 = util.RandString(8, "lowercase") + "b_bot"
+	identifier3 = util.RandString(8, "lowercase") + "c_bot"
 	code := m.Run()
 	os.Exit(code)
 }

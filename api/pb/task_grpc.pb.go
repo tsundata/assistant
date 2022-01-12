@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // TaskSvcClient is the client API for TaskSvc service.
@@ -59,8 +60,8 @@ type UnsafeTaskSvcServer interface {
 	mustEmbedUnimplementedTaskSvcServer()
 }
 
-func RegisterTaskSvcServer(s *grpc.Server, srv TaskSvcServer) {
-	s.RegisterService(&_TaskSvc_serviceDesc, srv)
+func RegisterTaskSvcServer(s grpc.ServiceRegistrar, srv TaskSvcServer) {
+	s.RegisterService(&TaskSvc_ServiceDesc, srv)
 }
 
 func _TaskSvc_Delay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -81,7 +82,10 @@ func _TaskSvc_Delay_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TaskSvc_serviceDesc = grpc.ServiceDesc{
+// TaskSvc_ServiceDesc is the grpc.ServiceDesc for TaskSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TaskSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.TaskSvc",
 	HandlerType: (*TaskSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

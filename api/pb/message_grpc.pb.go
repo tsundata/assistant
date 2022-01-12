@@ -11,13 +11,15 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // MessageSvcClient is the client API for MessageSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MessageSvcClient interface {
-	List(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
+	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error)
+	ListByGroup(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
 	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -36,9 +38,18 @@ func NewMessageSvcClient(cc grpc.ClientConnInterface) MessageSvcClient {
 	return &messageSvcClient{cc}
 }
 
-func (c *messageSvcClient) List(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error) {
-	out := new(GetMessagesReply)
+func (c *messageSvcClient) List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error) {
+	out := new(MessagesReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/List", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) ListByGroup(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error) {
+	out := new(GetMessagesReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/ListByGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +132,8 @@ func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *Messag
 // All implementations should embed UnimplementedMessageSvcServer
 // for forward compatibility
 type MessageSvcServer interface {
-	List(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
+	List(context.Context, *MessageRequest) (*MessagesReply, error)
+	ListByGroup(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
 	Get(context.Context, *MessageRequest) (*GetMessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
@@ -136,8 +148,11 @@ type MessageSvcServer interface {
 type UnimplementedMessageSvcServer struct {
 }
 
-func (UnimplementedMessageSvcServer) List(context.Context, *GetMessagesRequest) (*GetMessagesReply, error) {
+func (UnimplementedMessageSvcServer) List(context.Context, *MessageRequest) (*MessagesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedMessageSvcServer) ListByGroup(context.Context, *GetMessagesRequest) (*GetMessagesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListByGroup not implemented")
 }
 func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*GetMessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
@@ -171,12 +186,12 @@ type UnsafeMessageSvcServer interface {
 	mustEmbedUnimplementedMessageSvcServer()
 }
 
-func RegisterMessageSvcServer(s *grpc.Server, srv MessageSvcServer) {
-	s.RegisterService(&_MessageSvc_serviceDesc, srv)
+func RegisterMessageSvcServer(s grpc.ServiceRegistrar, srv MessageSvcServer) {
+	s.RegisterService(&MessageSvc_ServiceDesc, srv)
 }
 
 func _MessageSvc_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMessagesRequest)
+	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -188,7 +203,25 @@ func _MessageSvc_List_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/pb.MessageSvc/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).List(ctx, req.(*GetMessagesRequest))
+		return srv.(MessageSvcServer).List(ctx, req.(*MessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_ListByGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).ListByGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/ListByGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).ListByGroup(ctx, req.(*GetMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -337,13 +370,20 @@ func _MessageSvc_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-var _MessageSvc_serviceDesc = grpc.ServiceDesc{
+// MessageSvc_ServiceDesc is the grpc.ServiceDesc for MessageSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.MessageSvc",
 	HandlerType: (*MessageSvcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "List",
 			Handler:    _MessageSvc_List_Handler,
+		},
+		{
+			MethodName: "ListByGroup",
+			Handler:    _MessageSvc_ListByGroup_Handler,
 		},
 		{
 			MethodName: "Get",

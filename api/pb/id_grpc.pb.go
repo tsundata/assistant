@@ -11,13 +11,14 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // IdSvcClient is the client API for IdSvc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IdSvcClient interface {
-	GetGlobalId(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*IdReply, error)
+	GetGlobalId(ctx context.Context, in *GetGlobalIdRequest, opts ...grpc.CallOption) (*GetGlobalIdReply, error)
 }
 
 type idSvcClient struct {
@@ -28,8 +29,8 @@ func NewIdSvcClient(cc grpc.ClientConnInterface) IdSvcClient {
 	return &idSvcClient{cc}
 }
 
-func (c *idSvcClient) GetGlobalId(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*IdReply, error) {
-	out := new(IdReply)
+func (c *idSvcClient) GetGlobalId(ctx context.Context, in *GetGlobalIdRequest, opts ...grpc.CallOption) (*GetGlobalIdReply, error) {
+	out := new(GetGlobalIdReply)
 	err := c.cc.Invoke(ctx, "/pb.IdSvc/GetGlobalId", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -41,14 +42,14 @@ func (c *idSvcClient) GetGlobalId(ctx context.Context, in *IdRequest, opts ...gr
 // All implementations should embed UnimplementedIdSvcServer
 // for forward compatibility
 type IdSvcServer interface {
-	GetGlobalId(context.Context, *IdRequest) (*IdReply, error)
+	GetGlobalId(context.Context, *GetGlobalIdRequest) (*GetGlobalIdReply, error)
 }
 
 // UnimplementedIdSvcServer should be embedded to have forward compatible implementations.
 type UnimplementedIdSvcServer struct {
 }
 
-func (UnimplementedIdSvcServer) GetGlobalId(context.Context, *IdRequest) (*IdReply, error) {
+func (UnimplementedIdSvcServer) GetGlobalId(context.Context, *GetGlobalIdRequest) (*GetGlobalIdReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGlobalId not implemented")
 }
 
@@ -59,12 +60,12 @@ type UnsafeIdSvcServer interface {
 	mustEmbedUnimplementedIdSvcServer()
 }
 
-func RegisterIdSvcServer(s *grpc.Server, srv IdSvcServer) {
-	s.RegisterService(&_IdSvc_serviceDesc, srv)
+func RegisterIdSvcServer(s grpc.ServiceRegistrar, srv IdSvcServer) {
+	s.RegisterService(&IdSvc_ServiceDesc, srv)
 }
 
 func _IdSvc_GetGlobalId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdRequest)
+	in := new(GetGlobalIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -76,12 +77,15 @@ func _IdSvc_GetGlobalId_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/pb.IdSvc/GetGlobalId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdSvcServer).GetGlobalId(ctx, req.(*IdRequest))
+		return srv.(IdSvcServer).GetGlobalId(ctx, req.(*GetGlobalIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _IdSvc_serviceDesc = grpc.ServiceDesc{
+// IdSvc_ServiceDesc is the grpc.ServiceDesc for IdSvc service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var IdSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.IdSvc",
 	HandlerType: (*IdSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

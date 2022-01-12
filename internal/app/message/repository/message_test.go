@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"os"
 	"testing"
 )
@@ -14,9 +13,9 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	uuid1 = util.UUID()
-	uuid2 = util.UUID()
-	uuid3 = util.UUID()
+	uuid1 = "6dab6685-b85b-410c-9864-fd7fe8f3864e"
+	uuid2 = "8cfee85f-15d3-4227-b8cc-627d30dad449"
+	uuid3 = "67b69bfc-a73f-4393-890e-7a52b8bb1c10"
 	code := m.Run()
 	os.Exit(code)
 }
