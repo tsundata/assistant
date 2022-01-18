@@ -58,7 +58,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		})
 
 		// swagger
-		router.Get("/swagger/*", swagger.Handler)
+		router.Get("/swagger/*", swagger.New())
 
 		// ws
 		h := chat.NewHub(gc.bus, gc.logger, gc.chatbotSvc, gc.messageSvc)
