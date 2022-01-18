@@ -48,7 +48,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.8
-	github.com/tidwall/gjson v1.12.1
+	github.com/tidwall/gjson v1.13.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/fasthttp v1.32.0
 	github.com/yuin/goldmark v1.4.4
@@ -57,10 +57,9 @@ require (
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.43.0
-	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.2.3
-	gorm.io/gorm v1.22.4
+	gorm.io/gorm v1.22.5
 )
 
 require (
@@ -122,7 +121,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.3 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -199,4 +198,5 @@ require (
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	google.golang.org/genproto v0.0.0-20211221231510-d629cc9a93d5 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
 )
