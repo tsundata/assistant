@@ -8,6 +8,7 @@ import (
 	service3 "github.com/tsundata/assistant/internal/app/bot/finance/service"
 	"github.com/tsundata/assistant/internal/app/bot/org"
 	service2 "github.com/tsundata/assistant/internal/app/bot/org/service"
+	_ "github.com/tsundata/assistant/internal/app/bot/plugin"
 	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
