@@ -9,7 +9,7 @@ require (
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/arsmn/fiber-swagger/v2 v2.24.0
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/dtm-labs/dtm v1.10.1
+	github.com/dtm-labs/dtm v1.10.2
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-echarts/go-echarts/v2 v2.2.4
@@ -194,6 +194,7 @@ require (
 require (
 	cloud.google.com/go/kms v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
