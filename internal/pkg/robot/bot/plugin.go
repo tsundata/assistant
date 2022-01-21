@@ -24,13 +24,13 @@ func ListPlugins() map[string][]string {
 	return p
 }
 
-func SetupPlugins(c *Controller, pluginRules []string) error {
-	pluginRules = append(pluginRules, "end")
-	for _, name := range pluginRules {
-		if plugin, ok := plugins[name]; ok {
+func SetupPlugins(c *Controller, pluginRules []PluginRule) error {
+	pluginRules = append(pluginRules, PluginRule{Name: "end"})
+	for _, rule := range pluginRules {
+		if plugin, ok := plugins[rule.Name]; ok {
 			err := plugin.Action(c)
 			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("plugin/%s", name))
+				return errors.Wrap(err, fmt.Sprintf("plugin/%s", rule.Name))
 			}
 		}
 	}

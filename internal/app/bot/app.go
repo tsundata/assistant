@@ -14,7 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/robot"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
@@ -25,7 +25,7 @@ func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server, chatbot pb.C
 	}
 
 	// bots register
-	err = robot.Register(context.Background(), chatbot, todo.Metadata, org.Metadata, finance.Metadata)
+	err = bot.RegisterBot(context.Background(), chatbot, todo.Bot, org.Bot, finance.Bot)
 	if err != nil {
 		return nil, err
 	}

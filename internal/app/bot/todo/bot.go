@@ -12,7 +12,7 @@ var Metadata = bot.Metadata{
 	Avatar:     "",
 }
 
-var Setting = []bot.SettingItem{
+var Setting = []bot.SettingField{
 	{
 		Key:      "report",
 		Type:     bot.SettingItemTypeBool,
@@ -25,4 +25,26 @@ var Setting = []bot.SettingItem{
 		Required: true,
 		Value:    "",
 	},
+}
+
+var PluginRules = []bot.PluginRule{
+	{
+		Name: "any",
+	},
+	{
+		Name: "filter",
+	},
+	{
+		Name: "save",
+	},
+}
+
+var Bot *bot.Bot
+
+func init() {
+	var err error
+	Bot, err = bot.NewBot(Metadata, Setting, PluginRules)
+	if err != nil {
+		panic(err)
+	}
 }

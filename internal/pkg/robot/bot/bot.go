@@ -3,13 +3,15 @@ package bot
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 )
 
 type Bot struct {
 	Metadata
-	Setting []SettingItem
-	plugin  []Plugin
-	config  *Config
+	SettingRule []SettingField
+	PluginRule  []PluginRule
+	plugin      []Plugin
+	config      *Config
 }
 
 type Metadata struct {
@@ -28,19 +30,25 @@ const (
 	SettingItemTypeBool   SettingItemType = "bool"
 )
 
-type SettingItem struct {
+type SettingField struct {
 	Key      string          `json:"key"`
 	Type     SettingItemType `json:"type"`
 	Required bool            `json:"required"`
 	Value    interface{}     `json:"value"`
 }
 
-func NewBot(metadata Metadata, setting []SettingItem, rules []string) (*Bot, error) {
+type PluginRule struct {
+	Name  string
+	Param []interface{}
+}
+
+func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
-		Metadata: metadata,
-		Setting:  setting,
-		config:   cfg,
+		Metadata:    metadata,
+		SettingRule: settings,
+		PluginRule:  rules,
+		config:      cfg,
 	}
 	ctrl := &Controller{
 		Instance: b,
@@ -72,4 +80,20 @@ func (b *Bot) Run(ctx context.Context) error {
 
 func (b *Bot) Info() string {
 	return fmt.Sprintf("bot:%s, %s", b.Name, b.Detail)
+}
+
+func RegisterBot(ctx context.Context, chatbot pb.ChatbotSvcClient, bots ...*Bot) error {
+	for _, item := range bots {
+		_, err := chatbot.Register(ctx, &pb.BotRequest{Bot: &pb.Bot{
+			Name:       item.Name,
+			Identifier: item.Identifier,
+			Detail:     item.Detail,
+			Avatar:     item.Avatar,
+			Extend:     "",
+		}})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
