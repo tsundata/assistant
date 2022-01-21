@@ -2,26 +2,27 @@ package todo
 
 import (
 	"github.com/tsundata/assistant/api/enum"
-	"github.com/tsundata/assistant/internal/pkg/robot"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 )
 
-var Metadata = robot.Metadata{
+var Metadata = bot.Metadata{
 	Name:       "Todo",
 	Identifier: enum.TodoBot,
 	Detail:     "",
 	Avatar:     "",
-	Setting: []robot.SettingItem{
-		{
-			Key:      "report",
-			Type:     robot.SettingItemTypeBool,
-			Required: false,
-			Value:    false,
-		},
-		{
-			Key:      "time",
-			Type:     robot.SettingItemTypeString,
-			Required: true,
-			Value:    "",
-		},
+}
+
+var Setting = []bot.SettingItem{
+	{
+		Key:      "report",
+		Type:     bot.SettingItemTypeBool,
+		Required: false,
+		Value:    false,
+	},
+	{
+		Key:      "time",
+		Type:     bot.SettingItemTypeString,
+		Required: true,
+		Value:    "",
 	},
 }

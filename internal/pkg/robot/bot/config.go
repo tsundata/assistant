@@ -1,26 +1,27 @@
-package plugin
+package bot
+
 
 type Config struct {
 	// Plugin stack
 	Plugin []Plugin
 	// Compiled plugin stack
-	PluginChain Handler
+	PluginChain PluginHandler
 	// registry plugin
-	registry map[string]Handler
+	registry map[string]PluginHandler
 }
 
 func (c *Config) AddPlugin(m Plugin) {
 	c.Plugin = append(c.Plugin, m)
 }
 
-func (c *Config) RegisterHandler(h Handler) {
+func (c *Config) RegisterHandler(h PluginHandler) {
 	if c.registry == nil {
-		c.registry = make(map[string]Handler)
+		c.registry = make(map[string]PluginHandler)
 	}
 	c.registry[h.Name()] = h
 }
 
-func (c *Config) Handler(name string) Handler {
+func (c *Config) Handler(name string) PluginHandler {
 	if c.registry == nil {
 		return nil
 	}
@@ -30,11 +31,11 @@ func (c *Config) Handler(name string) Handler {
 	return nil
 }
 
-func (c *Config) Handlers() []Handler {
+func (c *Config) Handlers() []PluginHandler {
 	if c.registry == nil {
 		return nil
 	}
-	hs := make([]Handler, 0, len(c.registry))
+	hs := make([]PluginHandler, 0, len(c.registry))
 	for k := range c.registry {
 		hs = append(hs, c.registry[k])
 	}

@@ -3,14 +3,13 @@ package bot
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/robot/plugin"
 )
 
 type Bot struct {
-	*Metadata
+	Metadata
 	Setting []SettingItem
-	plugin  []plugin.Plugin
-	config  *plugin.Config
+	plugin  []Plugin
+	config  *Config
 }
 
 type Metadata struct {
@@ -36,34 +35,41 @@ type SettingItem struct {
 	Value    interface{}     `json:"value"`
 }
 
-func NewBot(rules []string) (*Bot, error) {
-	c := &plugin.Controller{
-		Config: &plugin.Config{},
+func NewBot(metadata Metadata, setting []SettingItem, rules []string) (*Bot, error) {
+	cfg := &Config{}
+	b := &Bot{
+		Metadata: metadata,
+		Setting:  setting,
+		config:   cfg,
 	}
-	b := Bot{
-		config: c.Config,
+	ctrl := &Controller{
+		Instance: b,
+		Config:   cfg,
 	}
 
 	// setup plugins
-	err := plugin.SetupPlugins(c, rules)
+	err := SetupPlugins(ctrl, rules)
 	if err != nil {
 		return nil, err
 	}
-	b.plugin = c.Config.Plugin
+	b.plugin = cfg.Plugin
 
 	// plugin chain
-	var stack plugin.Handler
+	var stack PluginHandler
 	for i := len(b.plugin) - 1; i >= 0; i-- {
 		stack = b.plugin[i](stack)
-		fmt.Println(b.plugin)
 		b.config.RegisterHandler(stack)
 	}
 	b.config.PluginChain = stack
 
-	return &b, nil
+	return b, nil
 }
 
 func (b *Bot) Run(ctx context.Context) error {
 	_, err := b.config.PluginChain.Run(ctx, nil)
 	return err
+}
+
+func (b *Bot) Info() string {
+	return fmt.Sprintf("bot:%s, %s", b.Name, b.Detail)
 }

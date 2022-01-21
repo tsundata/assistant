@@ -1,14 +1,16 @@
 package any
 
-import "github.com/tsundata/assistant/internal/pkg/robot/plugin"
+import (
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+)
 
 func init() {
-	plugin.Register("any", setup)
+	bot.RegisterPlugin("any", setup)
 }
 
-func setup(c *plugin.Controller) error {
+func setup(c *bot.Controller) error {
 	a := Any{}
-	plugin.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
+	bot.GetConfig(c).AddPlugin(func(next bot.PluginHandler) bot.PluginHandler {
 		a.Next = next
 		return a
 	})

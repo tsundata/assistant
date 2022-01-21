@@ -2,12 +2,12 @@ package end
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/pkg/robot/plugin"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"log"
 )
 
 type End struct {
-	Next plugin.Handler
+	Next bot.PluginHandler
 }
 
 func (a End) Run(_ context.Context, _ interface{}) (interface{}, error) {

@@ -1,4 +1,4 @@
-package plugin
+package bot
 
 import (
 	"context"
@@ -7,23 +7,13 @@ import (
 )
 
 var (
-	plugins = make(map[string]BotPlugin)
+	plugins = make(map[string]SetupPlugin)
 )
 
 type SetupFunc func(c *Controller) error
 
-type BotPlugin struct {
+type SetupPlugin struct {
 	Action SetupFunc
-}
-
-func RegisterPlugin(name string, plugin BotPlugin) {
-	if name == "" {
-		panic("plugin must have a name")
-	}
-	if _, ok := plugins[name]; ok {
-		panic("plugin named " + name + " already registered")
-	}
-	plugins[name] = plugin
 }
 
 func ListPlugins() map[string][]string {
@@ -47,18 +37,28 @@ func SetupPlugins(c *Controller, pluginRules []string) error {
 	return nil
 }
 
-func Register(name string, action SetupFunc) {
-	RegisterPlugin(name, BotPlugin{
+func RegisterPlugin(name string, action SetupFunc) {
+	registerPlugin(name, SetupPlugin{
 		action,
 	})
+}
+
+func registerPlugin(name string, plugin SetupPlugin) {
+	if name == "" {
+		panic("plugin must have a name")
+	}
+	if _, ok := plugins[name]; ok {
+		panic("plugin named " + name + " already registered")
+	}
+	plugins[name] = plugin
 }
 
 // -----
 
 type (
-	Plugin func(next Handler) Handler
+	Plugin func(next PluginHandler) PluginHandler
 
-	Handler interface {
+	PluginHandler interface {
 		Run(ctx context.Context, input interface{}) (interface{}, error)
 		Name() string
 	}
@@ -79,7 +79,7 @@ func Error(name string, err error) error {
 	return fmt.Errorf("%s/%s: %s", "plugin", name, err)
 }
 
-func NextOrFailure(name string, next Handler, ctx context.Context, input interface{}) (interface{}, error) {
+func NextOrFailure(name string, next PluginHandler, ctx context.Context, input interface{}) (interface{}, error) {
 	if next != nil {
 		return next.Run(ctx, input)
 	}
