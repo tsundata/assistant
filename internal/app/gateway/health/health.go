@@ -11,12 +11,12 @@ import (
 	"time"
 )
 
-type HealthClient struct {
+type Client struct {
 	Status sync.Map
 }
 
-func NewHealthClient(client *rpc.Client) *HealthClient {
-	hc := &HealthClient{}
+func NewHealthClient(client *rpc.Client) *Client {
+	hc := &Client{}
 	hc.watch(client, enum.Id)
 	hc.watch(client, enum.Chatbot)
 	hc.watch(client, enum.Message)
@@ -29,7 +29,7 @@ func NewHealthClient(client *rpc.Client) *HealthClient {
 	return hc
 }
 
-func (hc *HealthClient) watch(client *rpc.Client, service string) {
+func (hc *Client) watch(client *rpc.Client, service string) {
 	conn, err := client.Dial(service, rpc.WithTimeout(time.Second))
 	if err != nil {
 		fmt.Println(err)

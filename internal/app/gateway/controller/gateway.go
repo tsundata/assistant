@@ -28,7 +28,7 @@ type GatewayController struct {
 	workflowSvc  pb.WorkflowSvcClient
 	userSvc      pb.UserSvcClient
 	chatbotSvc   pb.ChatbotSvcClient
-	healthClient *health.HealthClient
+	healthClient *health.Client
 }
 
 func NewGatewayController(
@@ -42,7 +42,7 @@ func NewGatewayController(
 	workflowSvc pb.WorkflowSvcClient,
 	chatbotSvc pb.ChatbotSvcClient,
 	userSvc pb.UserSvcClient,
-	healthClient *health.HealthClient) *GatewayController {
+	healthClient *health.Client) *GatewayController {
 	return &GatewayController{
 		opt:          opt,
 		rdb:          rdb,
