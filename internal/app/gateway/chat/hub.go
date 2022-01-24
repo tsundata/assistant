@@ -3,23 +3,25 @@ package chat
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type message struct {
-	data []byte
-	room string
+	data   []byte
+	room   string
+	userId int64
 }
 
 type subscription struct {
-	conn *connection
-	room string
-	h    *Hub
+	conn   *connection
+	room   string
+	userId int64
+	h      *Hub
 }
 
 // Hub maintains the set of active connections and broadcasts messages to the
@@ -43,11 +45,10 @@ type Hub struct {
 	// system
 	bus        event.Bus
 	logger     log.Logger
-	chatbotSvc pb.ChatbotSvcClient
 	messageSvc pb.MessageSvcClient
 }
 
-func NewHub(bus event.Bus, logger log.Logger, chatbotSvc pb.ChatbotSvcClient, messageSvc pb.MessageSvcClient) *Hub {
+func NewHub(bus event.Bus, logger log.Logger, messageSvc pb.MessageSvcClient) *Hub {
 	return &Hub{
 		broadcast:  make(chan message, 1024),
 		incoming:   make(chan message, 1024),
@@ -56,7 +57,6 @@ func NewHub(bus event.Bus, logger log.Logger, chatbotSvc pb.ChatbotSvcClient, me
 		rooms:      make(map[string]map[*connection]bool),
 		bus:        bus,
 		logger:     logger,
-		chatbotSvc: chatbotSvc,
 		messageSvc: messageSvc,
 	}
 }
@@ -98,14 +98,19 @@ func (h *Hub) Run() {
 		case m := <-h.incoming:
 			// create message
 			uuid := util.UUID()
-			_, err := h.messageSvc.Create(context.Background(), &pb.MessageRequest{
+			_, err := h.messageSvc.Create(md.BuildAuthContext(m.userId), &pb.MessageRequest{
 				Message: &pb.Message{
-					Uuid: uuid,
-					Text: util.ByteToString(m.data),
+					Uuid:         uuid,
+					Text:         util.ByteToString(m.data),
+					ReceiverType: m.room, // FIXME
 				},
 			})
 			if err != nil {
 				h.logger.Error(err)
+				h.broadcast <- message{
+					data: util.StringToByte(err.Error()),
+					room: m.room,
+				}
 				continue
 			}
 		}
@@ -123,7 +128,7 @@ func (h *Hub) EventHandle() {
 
 		h.broadcast <- message{
 			data: util.StringToByte(m.Text),
-			room: fmt.Sprintf("group:%d", m.Receiver), // todo
+			room: m.ReceiverType, // FIXME
 		}
 	})
 	if err != nil {

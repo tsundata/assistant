@@ -153,6 +153,11 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	if err != nil {
 		return nil, err
 	}
+	message.ReceiverType = payload.Message.GetReceiverType()       // FIXME
+	err = m.bus.Publish(ctx, event.MessageChannelSubject, message) // FIXME
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.MessageReply{
 		Message: &message,

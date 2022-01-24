@@ -15,7 +15,6 @@ import (
 	_ "github.com/tsundata/assistant/docs"
 	"github.com/tsundata/assistant/internal/app/gateway/chat"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -49,6 +48,11 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 				NewRelicApp: gc.nr.Application(),
 			},
 		))
+
+		// swagger
+		router.Get("/swagger/*", swagger.New())
+
+		// WebSocket
 		router.Use("/ws", func(c *fiber.Ctx) error {
 			if websocket.IsWebSocketUpgrade(c) {
 				c.Locals("allowed", true)
@@ -56,18 +60,23 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			}
 			return fiber.ErrUpgradeRequired
 		})
-
-		// swagger
-		router.Get("/swagger/*", swagger.New())
-
-		// ws
-		h := chat.NewHub(gc.bus, gc.logger, gc.chatbotSvc, gc.messageSvc)
+		h := chat.NewHub(gc.bus, gc.logger, gc.messageSvc)
 		go h.Run()
 		go h.EventHandle()
-		router.Get("/ws/:uuid", websocket.New(func(conn *websocket.Conn) {
+		router.Get("/ws/group/:uuid", websocket.New(func(conn *websocket.Conn) {
+			token := conn.Query("token")
+			reply, err := gc.userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
+			if err != nil {
+				gc.logger.Error(err)
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				return
+			}
+			if !reply.GetState() {
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				return
+			}
 			room := conn.Params("uuid")
-			log.Println(conn.Query("token"))
-			chat.ServeWs(h, conn, room)
+			chat.ServeWs(h, conn, room, 1)
 		}))
 
 		// route

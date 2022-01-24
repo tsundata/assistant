@@ -47,13 +47,18 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-		m := message{msg, s.room}
+		m := message{msg, s.room, s.userId}
 		s.h.incoming <- m
 	}
 }
 
 // write writes a message with the given message type and payload.
 func (c *connection) write(mt int, payload []byte) error {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+	}()
 	_ = c.ws.SetWriteDeadline(time.Now().Add(writeWait))
 	return c.ws.WriteMessage(mt, payload)
 }
@@ -64,7 +69,7 @@ func (s *subscription) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		_ = c.ws.Close()
+		// _ = c.ws.Close() FIXME
 	}()
 	for {
 		select {
@@ -85,9 +90,9 @@ func (s *subscription) writePump() {
 }
 
 // ServeWs handles websocket requests from the peer.
-func ServeWs(h *Hub, conn *websocket.Conn, room string) {
+func ServeWs(h *Hub, conn *websocket.Conn, room string, userId int64) {
 	c := &connection{send: make(chan []byte, 256), ws: conn}
-	s := subscription{c, room, h}
+	s := subscription{c, room, userId, h}
 	h.register <- s
 	go s.writePump()
 	s.readPump()
