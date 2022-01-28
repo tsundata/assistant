@@ -50,11 +50,11 @@ require (
 	github.com/swaggo/swag v1.7.8
 	github.com/tidwall/gjson v1.13.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
-	github.com/valyala/fasthttp v1.32.0
+	github.com/valyala/fasthttp v1.33.0
 	github.com/yuin/goldmark v1.4.4
 	go.etcd.io/etcd/client/v3 v3.5.1
 	go.uber.org/zap v1.20.0
-	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
+	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.44.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -70,7 +70,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/RichardKnop/logging v0.0.0-20190827224416-1a693bdd4fae // indirect
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/appleboy/go-fcm v0.1.5 // indirect
 	github.com/asdine/storm/v3 v3.2.1 // indirect
@@ -126,7 +126,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/klauspost/compress v1.14.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -196,8 +196,8 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/net v0.0.0-20220111093109-d55c255bac03 // indirect
+	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 	google.golang.org/genproto v0.0.0-20211221231510-d629cc9a93d5 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
