@@ -59,7 +59,7 @@ require (
 	google.golang.org/grpc v1.44.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.2.3
-	gorm.io/gorm v1.22.5
+	gorm.io/gorm v1.23.1
 )
 
 require (
