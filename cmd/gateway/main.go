@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/tsundata/assistant/api/enum"
+	_ "go.uber.org/automaxprocs"
 )
 
 // CreateInitControllersFn
