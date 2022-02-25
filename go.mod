@@ -9,7 +9,7 @@ require (
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/arsmn/fiber-swagger/v2 v2.24.0
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/dtm-labs/dtm v1.12.1
+	github.com/dtm-labs/dtm v1.12.2
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-echarts/go-echarts/v2 v2.2.4
@@ -18,7 +18,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.26.0
+	github.com/gofiber/fiber/v2 v2.27.0
 	github.com/gofiber/websocket/v2 v2.0.16
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.3.0
@@ -29,7 +29,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
-	github.com/influxdata/influxdb-client-go/v2 v2.7.0
+	github.com/influxdata/influxdb-client-go/v2 v2.8.0
 	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/nats-io/nats.go v1.13.0
 	github.com/newrelic/go-agent/v3 v3.15.2
@@ -47,11 +47,11 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/swag v1.7.9
+	github.com/swaggo/swag v1.8.0
 	github.com/tidwall/gjson v1.14.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/fasthttp v1.33.0
-	github.com/yuin/goldmark v1.4.5
+	github.com/yuin/goldmark v1.4.7
 	go.etcd.io/etcd/client/v3 v3.5.2
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
