@@ -14,7 +14,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-ego/gse v0.69.15
-	github.com/go-gormigrate/gormigrate/v2 v2.0.0
+	github.com/go-gormigrate/gormigrate/v2 v2.0.1-0.20220221210252-d871842c6574
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -59,8 +59,8 @@ require (
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.2.3
-	gorm.io/gorm v1.22.5
+	gorm.io/driver/mysql v1.3.2
+	gorm.io/gorm v1.23.1
 )
 
 require (
@@ -193,6 +193,7 @@ require (
 require (
 	cloud.google.com/go/kms v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/golang-migrate/migrate/v4 v4.15.1 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect

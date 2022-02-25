@@ -2,15 +2,15 @@ package cli
 
 import (
 	"context"
-	_ "github.com/go-sql-driver/mysql"
+	"fmt"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/spf13/cobra"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
-	mysql2 "github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/migrate"
+	migratePkg "github.com/tsundata/assistant/internal/pkg/migrate"
 	"gopkg.in/yaml.v2"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 func init() {
@@ -39,11 +39,19 @@ var migrateCmd = &cobra.Command{
 			panic(err)
 		}
 
-		db, err := gorm.Open(mysql.Open(c.Mysql.Dsn))
+		d, err := iofs.New(migratePkg.Fs, "migrations")
 		if err != nil {
 			panic(err)
 		}
 
-		migrate.Run(&mysql2.Conn{DB: db})
+		m, err := migrate.NewWithSourceInstance("iofs", d, fmt.Sprintf("mysql://%s", c.Mysql.Dsn))
+		if err != nil {
+			panic(err)
+		}
+
+		err = m.Up()
+		if err != nil {
+			panic(err)
+		}
 	},
 }
