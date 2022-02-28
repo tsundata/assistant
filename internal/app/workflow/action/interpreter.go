@@ -137,7 +137,7 @@ func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
 			i.Comp.Logger.Error(err)
 			return ""
 		}
-		return reply.Message.GetMessage()
+		return reply.Message.GetText()
 	}
 	return ""
 }

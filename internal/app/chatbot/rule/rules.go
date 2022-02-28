@@ -220,7 +220,7 @@ var rules = []Rule{
 				return []string{"no message"}
 			}
 
-			return []string{messageReply.Message.GetMessage()}
+			return []string{messageReply.Message.GetText()}
 		},
 	},
 	{

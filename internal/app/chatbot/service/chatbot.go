@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot/rule"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
@@ -17,6 +19,7 @@ import (
 
 type Chatbot struct {
 	logger  log.Logger
+	bus     event.Bus
 	bot     *rulebot.RuleBot
 	repo    repository.ChatbotRepository
 	message pb.MessageSvcClient
@@ -26,6 +29,7 @@ type Chatbot struct {
 
 func NewChatbot(
 	logger log.Logger,
+	bus event.Bus,
 	repo repository.ChatbotRepository,
 	message pb.MessageSvcClient,
 	middle pb.MiddleSvcClient,
@@ -33,6 +37,7 @@ func NewChatbot(
 	bot *rulebot.RuleBot) *Chatbot {
 	return &Chatbot{
 		logger:  logger,
+		bus:     bus,
 		bot:     bot,
 		repo:    repo,
 		message: message,
@@ -47,7 +52,31 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		return nil, err
 	}
 	s.bot.SetOptions(rule.Options...)
-	s.bot.Process(ctx, reply.Message.GetMessage()).MessageProviderOut()
+	outMessages := s.bot.Process(ctx, reply.Message.GetText()).MessageProviderOut()
+
+	// send message
+	for _, item := range outMessages {
+		err = s.bus.Publish(ctx, event.MessageChannelSubject, &pb.Message{
+			Id:           0,
+			GroupId:      reply.Message.GetGroupId(),
+			UserId:       reply.Message.GetUserId(),
+			Sequence:     0,
+			Uuid:         "",
+			Sender:       0,
+			SenderType:   "",
+			Receiver:     0,
+			ReceiverType: "",
+			Type:         enum.MessageTypeText, // todo
+			Text:         item,
+			Status:       0,
+			CreatedAt:    0,
+			UpdatedAt:    0,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &pb.ChatbotReply{
 		State: true,
 	}, nil

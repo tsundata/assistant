@@ -80,12 +80,7 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetM
 	}
 
 	return &pb.GetMessageReply{
-		Message: &pb.MessageItem{
-			Uuid:     message.Uuid,
-			Message:  message.Text,
-			Type:     message.Type,
-			SendTime: "", // todo
-		},
+		Message: &message,
 	}, nil
 }
 
@@ -151,11 +146,6 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 
 	// bot handle
 	err = m.bus.Publish(ctx, event.MessageHandleSubject, message)
-	if err != nil {
-		return nil, err
-	}
-	message.ReceiverType = payload.Message.GetReceiverType() // FIXME
-	err = m.bus.Publish(ctx, event.MessageChannelSubject, message)
 	if err != nil {
 		return nil, err
 	}

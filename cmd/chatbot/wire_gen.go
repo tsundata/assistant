@@ -29,6 +29,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
+import (
+	_ "go.uber.org/automaxprocs"
+)
+
 // Injectors from wire.go:
 
 func CreateApp(id string) (*app.Application, error) {
@@ -118,7 +122,7 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
 	ruleBot := rulebot.New(iComponent)
-	serviceChatbot := service.NewChatbot(logLogger, chatbotRepository, messageSvcClient, middleSvcClient, todoSvcClient, ruleBot)
+	serviceChatbot := service.NewChatbot(logLogger, bus, chatbotRepository, messageSvcClient, middleSvcClient, todoSvcClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {

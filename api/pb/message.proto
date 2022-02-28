@@ -126,7 +126,7 @@ message MessageItem {
 }
 
 message GetMessageReply {
-  MessageItem message = 1;
+  Message message = 1;
 }
 
 message GetMessagesRequest {

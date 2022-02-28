@@ -24,6 +24,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 )
 
+import (
+	_ "go.uber.org/automaxprocs"
+)
+
 // Injectors from wire.go:
 
 func CreateApp(id2 string) (*app.Application, error) {

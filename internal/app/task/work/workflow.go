@@ -50,7 +50,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 
 	switch tp {
 	case enum.MessageTypeAction:
-		_, err = t.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetMessage()})
+		_, err = t.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetText()})
 		if err != nil {
 			return false, err
 		}
