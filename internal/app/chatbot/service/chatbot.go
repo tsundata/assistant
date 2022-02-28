@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/rule"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
@@ -168,11 +169,16 @@ func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 }
 
 func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GetGroupReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	group, err := s.repo.GetGroupByUUID(ctx, payload.Group.GetUuid())
 	if err != nil {
 		return nil, err
 	}
+	if group.UserId != id {
+		return nil, exception.ErrGrpcUnauthenticated
+	}
 	return &pb.GetGroupReply{Group: &pb.GroupItem{
+		Id:       group.Id,
 		Sequence: group.Sequence,
 		Type:     group.Type,
 		Uuid:     group.Uuid,

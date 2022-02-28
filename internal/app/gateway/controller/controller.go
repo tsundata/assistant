@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	_ "github.com/tsundata/assistant/docs"
 	"github.com/tsundata/assistant/internal/app/gateway/chat"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"net/http"
 	"strings"
@@ -64,19 +65,30 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		go h.Run()
 		go h.EventHandle()
 		router.Get("/ws/group/:uuid", websocket.New(func(conn *websocket.Conn) {
+			ctx := context.Background()
+			// auth
 			token := conn.Query("token")
-			reply, err := gc.userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
+			authReply, err := gc.userSvc.Authorization(ctx, &pb.AuthRequest{Token: token})
 			if err != nil {
 				gc.logger.Error(err)
 				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
 				return
 			}
-			if !reply.GetState() {
+			if !authReply.GetState() {
 				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
 				return
 			}
-			room := conn.Params("uuid")
-			chat.ServeWs(h, conn, room, 1)
+
+			// group id
+			uuid := conn.Params("uuid")
+			ctx = md.BuildAuthContext(authReply.Id)
+			groupReply, err := gc.chatbotSvc.GetGroup(ctx, &pb.GroupRequest{Group: &pb.Group{Uuid: uuid}})
+			if err != nil {
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Error group"))
+				return
+			}
+
+			chat.ServeWs(h, conn, groupReply.Group.Id, authReply.Id)
 		}))
 
 		// route

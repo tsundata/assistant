@@ -47,7 +47,7 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-		m := message{msg, s.room, s.userId}
+		m := message{msg, s.roomId, s.userId}
 		s.h.incoming <- m
 	}
 }
@@ -90,9 +90,9 @@ func (s *subscription) writePump() {
 }
 
 // ServeWs handles websocket requests from the peer.
-func ServeWs(h *Hub, conn *websocket.Conn, room string, userId int64) {
+func ServeWs(h *Hub, conn *websocket.Conn, roomId, userId int64) {
 	c := &connection{send: make(chan []byte, 256), ws: conn}
-	s := subscription{c, room, userId, h}
+	s := subscription{c, roomId, userId, h}
 	h.register <- s
 	go s.writePump()
 	s.readPump()

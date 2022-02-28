@@ -199,6 +199,7 @@ message GroupItem {
   int32 unread_count = 7;
   LastMessage last_message = 8;
   repeated string bot_avatar = 9;
+  int64 id = 10;
 }
 
 message LastMessage {

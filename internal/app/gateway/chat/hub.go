@@ -9,17 +9,18 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"go.uber.org/zap"
 )
 
 type message struct {
 	data   []byte
-	room   string
+	roomId int64
 	userId int64
 }
 
 type subscription struct {
 	conn   *connection
-	room   string
+	roomId int64
 	userId int64
 	h      *Hub
 }
@@ -28,7 +29,7 @@ type subscription struct {
 // connections.
 type Hub struct {
 	// Registered connections.
-	rooms map[string]map[*connection]bool
+	rooms map[int64]map[*connection]bool
 
 	// Incoming message
 	incoming chan message
@@ -54,7 +55,7 @@ func NewHub(bus event.Bus, logger log.Logger, messageSvc pb.MessageSvcClient) *H
 		incoming:   make(chan message, 1024),
 		register:   make(chan subscription),
 		unregister: make(chan subscription),
-		rooms:      make(map[string]map[*connection]bool),
+		rooms:      make(map[int64]map[*connection]bool),
 		bus:        bus,
 		logger:     logger,
 		messageSvc: messageSvc,
@@ -65,25 +66,27 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case s := <-h.register:
-			connections := h.rooms[s.room]
+			connections := h.rooms[s.roomId]
 			if connections == nil {
 				connections = make(map[*connection]bool)
-				h.rooms[s.room] = connections
+				h.rooms[s.roomId] = connections
 			}
-			h.rooms[s.room][s.conn] = true
+			h.rooms[s.roomId][s.conn] = true
+			h.logger.Info("hub register", zap.Any("room", s.roomId))
 		case s := <-h.unregister:
-			connections := h.rooms[s.room]
+			connections := h.rooms[s.roomId]
 			if connections != nil {
 				if _, ok := connections[s.conn]; ok {
 					delete(connections, s.conn)
 					close(s.conn.send)
 					if len(connections) == 0 {
-						delete(h.rooms, s.room)
+						delete(h.rooms, s.roomId)
 					}
 				}
 			}
+			h.logger.Info("hub unregister", zap.Any("room", s.roomId))
 		case m := <-h.broadcast:
-			connections := h.rooms[m.room]
+			connections := h.rooms[m.roomId]
 			for c := range connections {
 				select {
 				case c.send <- m.data:
@@ -91,28 +94,30 @@ func (h *Hub) Run() {
 					close(c.send)
 					delete(connections, c)
 					if len(connections) == 0 {
-						delete(h.rooms, m.room)
+						delete(h.rooms, m.roomId)
 					}
 				}
 			}
+			h.logger.Info("hub broadcast", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
 		case m := <-h.incoming:
 			// create message
 			uuid := util.UUID()
 			_, err := h.messageSvc.Create(md.BuildAuthContext(m.userId), &pb.MessageRequest{
 				Message: &pb.Message{
-					Uuid:         uuid,
-					Text:         util.ByteToString(m.data),
-					ReceiverType: m.room, // FIXME
+					Uuid:    uuid,
+					Text:    util.ByteToString(m.data),
+					GroupId: m.roomId,
 				},
 			})
 			if err != nil {
 				h.logger.Error(err)
 				h.broadcast <- message{
-					data: util.StringToByte(err.Error()),
-					room: m.room,
+					data:   util.StringToByte(err.Error()),
+					roomId: m.roomId,
 				}
 				continue
 			}
+			h.logger.Info("hub incoming", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
 		}
 	}
 }
@@ -127,8 +132,8 @@ func (h *Hub) EventHandle() {
 		}
 
 		h.broadcast <- message{
-			data: util.StringToByte(m.Text),
-			room: m.ReceiverType, // FIXME
+			data:   util.StringToByte(m.Text),
+			roomId: m.GroupId,
 		}
 	})
 	if err != nil {
