@@ -145,7 +145,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}
 
 	// bot handle
-	err = m.bus.Publish(ctx, event.MessageHandleSubject, message)
+	err = m.bus.Publish(ctx, enum.Message, event.MessageHandleSubject, message)
 	if err != nil {
 		return nil, err
 	}

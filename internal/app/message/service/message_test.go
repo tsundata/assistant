@@ -119,11 +119,11 @@ func TestMessage_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(enum.Message)
+	mq, err := event.CreateRabbitmq(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(nats, nil, nil)
+	bus := event.NewNatsBus(mq, nil, nil)
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(

@@ -19,6 +19,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/http"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -50,11 +51,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := nats.New(appConfig)
+	connection, err := rabbitmq.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -107,4 +108,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, etcd.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, health.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, controller.ProviderSet, gateway.ProviderSet, rollbar.ProviderSet, nats.ProviderSet, event.ProviderSet, etcd.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, health.ProviderSet, rabbitmq.ProviderSet)

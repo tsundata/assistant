@@ -86,6 +86,11 @@ type Nats struct {
 	Url string `json:"url" yaml:"url"`
 }
 
+// Rabbitmq config
+type Rabbitmq struct {
+	Url string `json:"url" yaml:"url"`
+}
+
 // === Vendor ===
 
 // Rollbar config

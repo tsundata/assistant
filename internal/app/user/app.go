@@ -15,7 +15,7 @@ import (
 
 func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server, repo repository.UserRepository, nlpClient pb.NLPSvcClient) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(context.Background(), bus, logger, repo, nlpClient)
+	err := listener.RegisterEventHandler(context.Background(), bus, repo, nlpClient)
 	if err != nil {
 		return nil, err
 	}

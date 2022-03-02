@@ -16,6 +16,8 @@ nats:
   url: nats://127.0.0.1:4222
 mysql:
   dsn: root:123456@tcp(127.0.0.1:3306)/test?parseTime=True&charset=utf8mb4&loc=Local
+rabbitmq:
+  url: amqp://root:123456@127.0.0.1:5672/
 
 rollbar:
   token:

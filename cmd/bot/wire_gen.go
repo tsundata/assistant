@@ -24,6 +24,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
@@ -46,7 +47,7 @@ func CreateApp(id string) (*app.Application, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	conn, err := nats.New(appConfig)
+	connection, err := rabbitmq.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +55,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -76,14 +77,14 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	globalID := global.NewID(appConfig, idSvcClient)
-	mysqlConn, err := mysql.New(appConfig)
+	conn, err := mysql.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := repository.NewMysqlTodoRepository(globalID, mysqlConn)
+	todoRepository := repository.NewMysqlTodoRepository(globalID, conn)
 	todo := service.NewTodo(bus, logLogger, todoRepository)
 	finance := service2.NewFinance()
-	orgRepository := repository2.NewMysqlOrgRepository(globalID, mysqlConn)
+	orgRepository := repository2.NewMysqlOrgRepository(globalID, conn)
 	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -107,4 +108,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, bot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, newrelic.ProviderSet, event.ProviderSet, repository.ProviderSet, repository2.ProviderSet, nats.ProviderSet, global.ProviderSet, mysql.ProviderSet, rpcclient.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, bot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, newrelic.ProviderSet, event.ProviderSet, repository.ProviderSet, repository2.ProviderSet, nats.ProviderSet, global.ProviderSet, mysql.ProviderSet, rpcclient.ProviderSet, rabbitmq.ProviderSet)

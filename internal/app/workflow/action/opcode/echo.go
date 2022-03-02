@@ -2,6 +2,7 @@ package opcode
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -31,7 +32,7 @@ func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interfa
 		if comp.Bus == nil {
 			return false, nil
 		}
-		err := comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: text})
+		err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: text})
 		if err != nil {
 			return false, err
 		}

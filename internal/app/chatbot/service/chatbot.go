@@ -50,7 +50,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 	// send message
 	for _, item := range outMessages {
-		err = s.bus.Publish(ctx, event.MessageChannelSubject, &pb.Message{
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, &pb.Message{
 			Id:           0,
 			GroupId:      reply.Message.GetGroupId(),
 			UserId:       reply.Message.GetUserId(),

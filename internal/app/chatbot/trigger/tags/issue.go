@@ -3,6 +3,7 @@ package tags
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -48,7 +49,7 @@ func (t *Issue) Handle(ctx context.Context, comp *ctx.Component, text string) {
 	}
 
 	// send message
-	err = comp.Bus.Publish(ctx, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
+	err = comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
 	if err != nil {
 		comp.Logger.Error(err)
 		return

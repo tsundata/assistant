@@ -3,6 +3,7 @@ package opcode
 import (
 	"context"
 	"errors"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -33,7 +34,7 @@ func (o *Task) Run(ctx context.Context, comp *inside.Component, params []interfa
 	}
 
 	if id, ok := params[0].(int64); ok {
-		err := comp.Bus.Publish(ctx, event.WorkflowRunSubject, pb.Message{Id: id})
+		err := comp.Bus.Publish(ctx, enum.Workflow, event.WorkflowRunSubject, pb.Message{Id: id})
 		if err != nil {
 			return false, err
 		}

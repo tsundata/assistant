@@ -19,7 +19,7 @@ func TestChatbot_Handle(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(enum.Chatbot)
+	nats, err := event.CreateRabbitmq(enum.Chatbot)
 	if err != nil {
 		t.Fatal(err)
 	}

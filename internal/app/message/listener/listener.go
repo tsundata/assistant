@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/notify"
-	"github.com/nats-io/nats.go"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -16,33 +16,33 @@ import (
 )
 
 func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger) error {
-	err := bus.Subscribe(context.Background(), event.EchoSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
+		return nil
 	})
 	if err != nil {
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), event.MessageSendSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(context.Background(), enum.Message, event.MessageSendSubject, func(msg *event.Msg) error {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
-			logger.Error(err, zap.Any("event", event.MessageSendSubject))
-			return
+			return err
 		}
 
 		// todo send message
+		return nil
 	})
 	if err != nil {
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), event.MessagePushSubject, func(msg *nats.Msg) {
+	err = bus.Subscribe(context.Background(), enum.Message, event.MessagePushSubject, func(msg *event.Msg) error {
 		var in pb.Notification
 		err := json.Unmarshal(msg.Data, &in)
 		if err != nil {
-			logger.Error(err, zap.Any("event", event.MessagePushSubject))
-			return
+			return err
 		}
 
 		badge := int(in.Badge)
@@ -91,6 +91,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 				logger.Error(err, zap.Any("event", event.MessagePushSubject))
 			}
 		}()
+		return nil
 	})
 	if err != nil {
 		return err

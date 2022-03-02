@@ -115,7 +115,7 @@ func (s *Workflow) WebhookTrigger(ctx context.Context, payload *pb.TriggerReques
 	}
 
 	// publish event
-	err = s.bus.Publish(ctx, event.WorkflowRunSubject, pb.Message{
+	err = s.bus.Publish(ctx, enum.Workflow, event.WorkflowRunSubject, pb.Message{
 		Id: trigger.MessageId,
 	})
 	if err != nil {
@@ -159,7 +159,7 @@ func (s *Workflow) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
 			// publish event
-			err = s.bus.Publish(ctx, event.WorkflowRunSubject, pb.Message{Id: trigger.MessageId})
+			err = s.bus.Publish(ctx, enum.Workflow, event.WorkflowRunSubject, pb.Message{Id: trigger.MessageId})
 			if err != nil {
 				return nil, err
 			}

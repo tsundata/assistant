@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: root
+          RABBITMQ_DEFAULT_PASS: 123456
+        ports:
+          - 5672:5672
+          - 15672:15672
       nats:
         image: nats:latest
         ports:

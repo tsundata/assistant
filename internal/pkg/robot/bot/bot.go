@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 )
@@ -85,7 +86,7 @@ func (b *Bot) Info() string {
 
 func RegisterBot(ctx context.Context, bus event.Bus, bots ...*Bot) error {
 	for _, item := range bots {
-		err := bus.Publish(ctx, event.BotRegisterSubject, pb.Bot{
+		err := bus.Publish(ctx, enum.Chatbot, event.BotRegisterSubject, pb.Bot{
 			Name:       item.Name,
 			Identifier: item.Identifier,
 			Detail:     item.Detail,

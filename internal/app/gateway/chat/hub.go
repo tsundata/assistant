@@ -3,7 +3,7 @@ package chat
 import (
 	"context"
 	"encoding/json"
-	"github.com/nats-io/nats.go"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -123,18 +123,18 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) EventHandle() {
-	err := h.bus.Subscribe(context.Background(), event.MessageChannelSubject, func(msg *nats.Msg) {
+	err := h.bus.Subscribe(context.Background(), enum.Message, event.MessageChannelSubject, func(msg *event.Msg) error {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
-			h.logger.Error(err)
-			return
+			return err
 		}
 
 		h.broadcast <- message{
 			data:   util.StringToByte(m.Text),
 			roomId: m.GroupId,
 		}
+		return nil
 	})
 	if err != nil {
 		h.logger.Error(err)

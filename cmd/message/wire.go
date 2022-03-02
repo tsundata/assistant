@@ -17,6 +17,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
@@ -42,6 +43,7 @@ var providerSet = wire.NewSet(
 	newrelic.ProviderSet,
 	mysql.ProviderSet,
 	global.ProviderSet,
+	rabbitmq.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

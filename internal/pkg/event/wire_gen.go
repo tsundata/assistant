@@ -8,28 +8,29 @@ package event
 
 import (
 	"github.com/google/wire"
-	"github.com/nats-io/nats.go"
+	"github.com/rabbitmq/amqp091-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
-	nats2 "github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 )
 
 // Injectors from wire.go:
 
-func CreateNats(id string) (*nats.Conn, error) {
+func CreateRabbitmq(id string) (*amqp091.Connection, error) {
 	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	conn, err := nats2.New(appConfig)
+	connection, err := rabbitmq.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
-	return conn, nil
+	return connection, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, nats2.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, nats.ProviderSet, rabbitmq.ProviderSet)

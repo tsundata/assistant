@@ -18,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/queue"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -38,7 +39,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	conn, err := nats.New(appConfig)
+	connection, err := rabbitmq.New(appConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	logLogger := log.NewAppLogger(logger)
-	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
 	server, err := queue.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -97,4 +98,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, task.ProviderSet, queue.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, event.ProviderSet, nats.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, rabbitmq.ProviderSet)

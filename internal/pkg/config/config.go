@@ -29,11 +29,12 @@ type AppConfig struct {
 	Storage Storage `json:"storage" yaml:"storage"`
 	Jwt     Jwt     `json:"jwt" yaml:"jwt"`
 
-	Mysql  Mysql  `json:"mysql" yaml:"mysql"`
-	Redis  Redis  `json:"redis" yaml:"redis"`
-	Influx Influx `json:"influx" yaml:"influx"`
-	Jaeger Jaeger `json:"jaeger" yaml:"jaeger"`
-	Nats   Nats   `json:"nats" yaml:"nats"`
+	Mysql    Mysql    `json:"mysql" yaml:"mysql"`
+	Redis    Redis    `json:"redis" yaml:"redis"`
+	Influx   Influx   `json:"influx" yaml:"influx"`
+	Jaeger   Jaeger   `json:"jaeger" yaml:"jaeger"`
+	Nats     Nats     `json:"nats" yaml:"nats"`
+	Rabbitmq Rabbitmq `json:"rabbitmq" yaml:"rabbitmq"`
 
 	Rollbar  Rollbar  `json:"rollbar" yaml:"rollbar"`
 	Newrelic Newrelic `json:"newrelic" yaml:"newrelic"`

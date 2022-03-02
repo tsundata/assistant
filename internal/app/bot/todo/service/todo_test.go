@@ -16,11 +16,11 @@ func TestTodo_CreateTodo(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateNats(enum.Bot)
+	mq, err := event.CreateRabbitmq(enum.Bot)
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(nats, nil, nil)
+	bus := event.NewNatsBus(mq, nil, nil)
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(

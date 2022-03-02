@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"github.com/nats-io/nats.go"
 	"github.com/tsundata/assistant/api/enum"
 	"log"
 	"testing"
@@ -10,18 +9,19 @@ import (
 )
 
 func TestBus(t *testing.T) {
-	n, err := CreateNats(enum.Cron)
+	mq, err := CreateRabbitmq(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
 	}
-	b := NewNatsBus(n, nil, nil)
+	b := NewNatsBus(mq, nil, nil)
 
-	err = b.Publish(context.Background(), "test", time.Now().String())
+	err = b.Publish(context.Background(), "test", "test", time.Now().String())
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = b.Subscribe(context.Background(), "test", func(msg *nats.Msg) {
+	err = b.Subscribe(context.Background(), "test", "test", func(msg *Msg) error {
 		log.Println(msg)
+		return nil
 	})
 	if err != nil {
 		t.Fatal(err)

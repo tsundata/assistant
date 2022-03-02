@@ -5,11 +5,12 @@ package event
 
 import (
 	"github.com/google/wire"
-	"github.com/nats-io/nats.go"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	natsMiddle "github.com/tsundata/assistant/internal/pkg/middleware/nats"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 )
 
 var testProviderSet = wire.NewSet(
@@ -18,8 +19,9 @@ var testProviderSet = wire.NewSet(
 	etcd.ProviderSet,
 	ProviderSet,
 	natsMiddle.ProviderSet,
+	rabbitmq.ProviderSet,
 )
 
-func CreateNats(id string) (*nats.Conn, error) {
+func CreateRabbitmq(id string) (*amqp.Connection, error) {
 	panic(wire.Build(testProviderSet))
 }
