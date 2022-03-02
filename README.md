@@ -23,17 +23,12 @@ Assistant Bot is a workflow engine for chatbot
 
 ## Applications used
 
-- Github
-- Pocket
-- Pushover
-- Dropbox
-- Slack
-- Rollbar
-- Newrelic
-- Cloudflare
-- Email
-- CloudCone
-- DoctorXiong
+- etcd
+- influx
+- jaeger
+- mysql
+- rabbitmq
+- redis
 
 ## Requirements
 
@@ -41,14 +36,14 @@ This project requires Go 1.16 or newer
 
 ## Installation
 
-1. Install MySQL, Redis, influx, jaeger, nats, etcd
+1. Install MySQL, Redis, influx, jaeger, rabbitmq, etcd
 
 2. Import Configuration to etcd
 
 3. Database migrate
 
 4. Set Environment
-   
+
    See [docs/env.md](/docs/env.md)
 
 5. Build binary
