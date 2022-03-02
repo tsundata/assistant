@@ -51,8 +51,8 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
+	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -84,15 +84,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +97,10 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -122,13 +122,13 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	iComponent := rulebot.NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
 	ruleBot := rulebot.New(iComponent)
-	serviceChatbot := service.NewChatbot(logLogger, bus, chatbotRepository, messageSvcClient, middleSvcClient, todoSvcClient, ruleBot)
+	serviceChatbot := service.NewChatbot(logLogger, bus, chatbotRepository, messageSvcClient, ruleBot)
 	initServer := service.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, messageSvcClient, middleSvcClient, todoSvcClient, userSvcClient, chatbotRepository, ruleBot)
+	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, messageSvcClient, chatbotRepository, ruleBot)
 	if err != nil {
 		return nil, err
 	}

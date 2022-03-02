@@ -54,7 +54,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn, newrelicApp)
+	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -98,11 +98,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	application, err := bot.NewApp(appConfig, logLogger, server, chatbotSvcClient)
+	application, err := bot.NewApp(appConfig, logLogger, server, bus)
 	if err != nil {
 		return nil, err
 	}

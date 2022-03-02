@@ -23,8 +23,6 @@ type Chatbot struct {
 	bot     *rulebot.RuleBot
 	repo    repository.ChatbotRepository
 	message pb.MessageSvcClient
-	middle  pb.MiddleSvcClient
-	todo    pb.TodoSvcClient
 }
 
 func NewChatbot(
@@ -32,8 +30,6 @@ func NewChatbot(
 	bus event.Bus,
 	repo repository.ChatbotRepository,
 	message pb.MessageSvcClient,
-	middle pb.MiddleSvcClient,
-	todo pb.TodoSvcClient,
 	bot *rulebot.RuleBot) *Chatbot {
 	return &Chatbot{
 		logger:  logger,
@@ -41,8 +37,6 @@ func NewChatbot(
 		bot:     bot,
 		repo:    repo,
 		message: message,
-		middle:  middle,
-		todo:    todo,
 	}
 }
 

@@ -7,8 +7,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot/service"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
@@ -17,28 +15,10 @@ import (
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
-	middle pb.MiddleSvcClient, todo pb.TodoSvcClient, user pb.UserSvcClient, repo repository.ChatbotRepository) error {
-	err := bus.Subscribe(context.Background(), event.MessageTriggerSubject, func(msg *nats.Msg) {
-		var m pb.Message
-		err := json.Unmarshal(msg.Data, &m)
-		if err != nil {
-			logger.Error(err, zap.Any("event", event.MessageTriggerSubject))
-			return
-		}
+	repo repository.ChatbotRepository) error {
+	ctx := context.Background()
 
-		comp := ctx.NewComponent()
-		comp.Logger = logger
-		comp.Middle = middle
-		comp.Todo = todo
-		comp.User = user
-		comp.Bus = bus
-		trigger.Run(context.Background(), comp, m.Text)
-	})
-	if err != nil {
-		return err
-	}
-
-	err = bus.Subscribe(context.Background(), event.MessageHandleSubject, func(msg *nats.Msg) {
+	err := bus.Subscribe(ctx, event.MessageHandleSubject, func(msg *nats.Msg) {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
@@ -46,7 +26,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return
 		}
 
-		chatbot := service.NewChatbot(logger, bus, repo, message, middle, todo, bot)
+		chatbot := service.NewChatbot(logger, bus, repo, message, bot)
 		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id})
 		if err != nil {
 			logger.Error(err, zap.Any("event", event.MessageHandleSubject))
@@ -56,6 +36,22 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 	if err != nil {
 		return err
 	}
+
+	err = bus.Subscribe(ctx, event.BotRegisterSubject, func(msg *nats.Msg) {
+		var b pb.Bot
+		err := json.Unmarshal(msg.Data, &b)
+		if err != nil {
+			logger.Error(err, zap.Any("event", event.BotRegisterSubject))
+			return
+		}
+
+		chatbot := service.NewChatbot(logger, bus, repo, message, bot)
+		_, err = chatbot.Register(ctx, &pb.BotRequest{Bot: &b})
+		if err != nil {
+			logger.Error(err, zap.Any("event", event.BotRegisterSubject))
+			return
+		}
+	})
 
 	return nil
 }

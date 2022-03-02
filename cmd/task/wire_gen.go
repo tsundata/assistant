@@ -48,8 +48,8 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(conn, newrelicApp)
 	logLogger := log.NewAppLogger(logger)
+	bus := event.NewNatsBus(conn, newrelicApp, logLogger)
 	server, err := queue.New(appConfig)
 	if err != nil {
 		return nil, err

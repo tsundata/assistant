@@ -14,11 +14,10 @@ import (
 )
 
 func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server,
-	message pb.MessageSvcClient, middle pb.MiddleSvcClient, todo pb.TodoSvcClient, user pb.UserSvcClient,
-	repo repository.ChatbotRepository, bot *rulebot.RuleBot,
+	message pb.MessageSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot,
 ) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, logger, bot, message, middle, todo, user, repo)
+	err := listener.RegisterEventHandler(bus, logger, bot, message, repo)
 	if err != nil {
 		return nil, err
 	}

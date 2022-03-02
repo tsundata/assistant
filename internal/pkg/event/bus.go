@@ -6,7 +6,9 @@ import (
 	"github.com/google/wire"
 	"github.com/nats-io/nats.go"
 	"github.com/newrelic/go-agent/v3/integrations/nrnats"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
+	"go.uber.org/zap"
 	"reflect"
 )
 
@@ -18,12 +20,13 @@ type Bus interface {
 }
 
 type NatsBus struct {
-	nc *nats.Conn
-	nr *newrelic.App
+	nc     *nats.Conn
+	nr     *newrelic.App
+	logger log.Logger
 }
 
-func NewNatsBus(nc *nats.Conn, nr *newrelic.App) Bus {
-	return &NatsBus{nc: nc, nr: nr}
+func NewNatsBus(nc *nats.Conn, nr *newrelic.App, logger log.Logger) Bus {
+	return &NatsBus{nc: nc, nr: nr, logger: logger}
 }
 
 func (b *NatsBus) Subscribe(_ context.Context, subject Subject, fn nats.MsgHandler) error {
@@ -34,6 +37,7 @@ func (b *NatsBus) Subscribe(_ context.Context, subject Subject, fn nats.MsgHandl
 		fn = nrnats.SubWrapper(b.nr.Application(), fn)
 	}
 
+	b.logger.Info("bus subscribe", zap.Any("subject", subject))
 	_, err := b.nc.QueueSubscribe(string(subject), DefaultEventQueue, fn)
 	if err != nil {
 		return err
@@ -51,6 +55,7 @@ func (b *NatsBus) Publish(_ context.Context, subject Subject, message interface{
 	if err != nil {
 		return err
 	}
+	b.logger.Info("bus publish", zap.Any("subject", subject), zap.Any("message", message))
 	return ec.Publish(string(subject), message)
 }
 
