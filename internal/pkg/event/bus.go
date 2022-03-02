@@ -37,7 +37,9 @@ func (b *NatsBus) Subscribe(_ context.Context, subject Subject, fn nats.MsgHandl
 		fn = nrnats.SubWrapper(b.nr.Application(), fn)
 	}
 
-	b.logger.Info("bus subscribe", zap.Any("subject", subject))
+	if b.logger != nil {
+		b.logger.Info("bus subscribe", zap.Any("subject", subject))
+	}
 	_, err := b.nc.QueueSubscribe(string(subject), DefaultEventQueue, fn)
 	if err != nil {
 		return err
@@ -55,7 +57,9 @@ func (b *NatsBus) Publish(_ context.Context, subject Subject, message interface{
 	if err != nil {
 		return err
 	}
-	b.logger.Info("bus publish", zap.Any("subject", subject), zap.Any("message", message))
+	if b.logger != nil {
+		b.logger.Info("bus publish", zap.Any("subject", subject), zap.Any("message", message))
+	}
 	return ec.Publish(string(subject), message)
 }
 

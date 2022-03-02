@@ -52,6 +52,9 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return
 		}
 	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

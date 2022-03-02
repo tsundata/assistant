@@ -14,7 +14,7 @@ func TestBus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b := NewNatsBus(n, nil)
+	b := NewNatsBus(n, nil, nil)
 
 	err = b.Publish(context.Background(), "test", time.Now().String())
 	if err != nil {

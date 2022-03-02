@@ -23,7 +23,7 @@ func TestChatbot_Handle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(nats, nil)
+	bus := event.NewNatsBus(nats, nil, nil)
 
 	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
 	if err != nil {
