@@ -48,12 +48,8 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
 	logLogger := log.NewAppLogger(logger)
-	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -82,6 +78,10 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	chatbotRepository := repository.NewMysqlChatbotRepository(globalID, locker, conn)
 	messageSvcClient, err := rpcclient.NewMessageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}

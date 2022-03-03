@@ -55,7 +55,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err

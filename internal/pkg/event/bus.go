@@ -7,7 +7,6 @@ import (
 	"github.com/google/wire"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"go.uber.org/zap"
 	"reflect"
 )
@@ -26,20 +25,16 @@ type Bus interface {
 
 type NatsBus struct {
 	conn   *amqp.Connection
-	nr     *newrelic.App
 	logger log.Logger
 }
 
-func NewNatsBus(conn *amqp.Connection, nr *newrelic.App, logger log.Logger) Bus {
-	return &NatsBus{conn: conn, nr: nr, logger: logger}
+func NewNatsBus(conn *amqp.Connection, logger log.Logger) Bus {
+	return &NatsBus{conn: conn, logger: logger}
 }
 
 func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, fn MsgHandler) error {
 	if !(reflect.TypeOf(fn).Kind() == reflect.Func) {
 		return fmt.Errorf("%s is not of type reflect.Func", reflect.TypeOf(fn).Kind())
-	}
-	if b.nr != nil {
-		//fn = nrnats.SubWrapper(b.nr.Application(), fn)
 	}
 
 	if b.logger != nil {
@@ -96,11 +91,6 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 }
 
 func (b *NatsBus) Publish(_ context.Context, service string, subject Subject, message interface{}) error {
-	if b.nr != nil {
-		//txn := b.nr.StartTransaction(fmt.Sprintf("event/%s", subject))
-		//defer nrnats.StartPublishSegment(txn, b.nc, string(subject)).End()
-	}
-
 	if b.logger != nil {
 		b.logger.Info("bus publish", zap.Any("subject", subject), zap.Any("message", message))
 	}

@@ -20,7 +20,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(mq, nil, nil)
+	bus := event.NewNatsBus(mq, nil)
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(

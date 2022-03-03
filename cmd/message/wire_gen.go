@@ -47,12 +47,8 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
 	logLogger := log.NewAppLogger(logger)
-	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -90,6 +86,10 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient, chatbotSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err

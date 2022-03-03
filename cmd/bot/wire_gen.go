@@ -51,11 +51,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -91,6 +87,10 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	org := service3.NewOrg(orgRepository, middleSvcClient)
 	initServer := bot.CreateInitServerFn(todo, finance, org)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
 	redisClient, err := redis.New(appConfig, newrelicApp)
 	if err != nil {
 		return nil, err

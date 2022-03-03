@@ -45,12 +45,8 @@ func CreateApp(id string) (*app.Application, error) {
 	}
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
 	logLogger := log.NewAppLogger(logger)
-	bus := event.NewNatsBus(connection, newrelicApp, logLogger)
+	bus := event.NewNatsBus(connection, logLogger)
 	server, err := queue.New(appConfig)
 	if err != nil {
 		return nil, err
@@ -62,6 +58,10 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	tracer, err := jaeger.New(configuration)
+	if err != nil {
+		return nil, err
+	}
+	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
 	}
