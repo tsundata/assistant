@@ -1,4 +1,4 @@
-package save
+package filter
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func TestSave(t *testing.T) {
-	p := Save{
+func TestFilter(t *testing.T) {
+	p := Filter{
 		Next: end.End{},
 	}
 	input := "test"

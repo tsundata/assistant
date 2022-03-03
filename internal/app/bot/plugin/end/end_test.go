@@ -1,16 +1,13 @@
-package save
+package end
 
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"github.com/tsundata/assistant/internal/app/bot/plugin/end"
 	"testing"
 )
 
-func TestSave(t *testing.T) {
-	p := Save{
-		Next: end.End{},
-	}
+func TestEnd(t *testing.T) {
+	p := End{}
 	input := "test"
 	out, err := p.Run(context.Background(), input)
 	if err != nil {
