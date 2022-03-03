@@ -34,12 +34,12 @@ require (
 	github.com/nats-io/nats.go v1.13.0
 	github.com/newrelic/go-agent/v3 v3.15.2
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
-	github.com/newrelic/go-agent/v3/integrations/nrnats v1.1.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
+	github.com/rabbitmq/amqp091-go v1.3.0
 	github.com/rollbar/rollbar-go v1.4.2
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
@@ -58,6 +58,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.44.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.2
@@ -104,7 +105,6 @@ require (
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-redis/redis/v7 v7.4.0 // indirect
-	github.com/go-redsync/redsync/v4 v4.0.4 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang-queue/queue v0.0.7 // indirect
 	github.com/golang/glog v0.0.0-20210429001901-424d2337a529 // indirect
@@ -145,7 +145,6 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rabbitmq/amqp091-go v1.3.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/savsgio/gotils v0.0.0-20211223103454-d0aaa54c5899 // indirect
@@ -198,7 +197,6 @@ require (
 	google.golang.org/api v0.63.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220112215332-a9c7c0acf9f2 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e // indirect
