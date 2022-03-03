@@ -16,7 +16,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	rulebot2 "github.com/tsundata/assistant/internal/pkg/robot/rulebot"
@@ -40,7 +39,6 @@ var providerSet = wire.NewSet(
 	rpcclient.ProviderSet,
 	rulebot2.ProviderSet,
 	event.ProviderSet,
-	nats.ProviderSet,
 	newrelic.ProviderSet,
 	mysql.ProviderSet,
 	repository.ProviderSet,

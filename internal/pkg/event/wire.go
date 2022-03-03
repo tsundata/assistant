@@ -9,7 +9,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
-	natsMiddle "github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 )
 
@@ -18,7 +17,6 @@ var testProviderSet = wire.NewSet(
 	config.ProviderSet,
 	etcd.ProviderSet,
 	ProviderSet,
-	natsMiddle.ProviderSet,
 	rabbitmq.ProviderSet,
 )
 

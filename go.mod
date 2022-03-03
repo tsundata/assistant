@@ -31,7 +31,6 @@ require (
 	github.com/influxdata/cron v0.0.0-20201006132531-4bb0a200dcbe
 	github.com/influxdata/influxdb-client-go/v2 v2.8.0
 	github.com/mozillazg/go-pinyin v0.19.0
-	github.com/nats-io/nats.go v1.13.0
 	github.com/newrelic/go-agent/v3 v3.15.2
 	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.1
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v8 v1.0.0
@@ -141,8 +140,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/msalihkarakasli/go-hms-push v0.0.0-20210731212030-00e7b986815b // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
-	github.com/nats-io/nkeys v0.3.0 // indirect
-	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect

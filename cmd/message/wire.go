@@ -16,7 +16,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/middleware/nats"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
@@ -35,7 +34,6 @@ var providerSet = wire.NewSet(
 	message.ProviderSet,
 	rollbar.ProviderSet,
 	repository.ProviderSet,
-	nats.ProviderSet,
 	event.ProviderSet,
 	etcd.ProviderSet,
 	service.ProviderSet,
