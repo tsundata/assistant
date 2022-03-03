@@ -72,7 +72,7 @@ func (h *Hub) Run() {
 				h.rooms[s.roomId] = connections
 			}
 			h.rooms[s.roomId][s.conn] = true
-			h.logger.Info("hub register", zap.Any("room", s.roomId))
+			h.logger.Info("[chat] hub register", zap.Any("room", s.roomId))
 		case s := <-h.unregister:
 			connections := h.rooms[s.roomId]
 			if connections != nil {
@@ -84,7 +84,7 @@ func (h *Hub) Run() {
 					}
 				}
 			}
-			h.logger.Info("hub unregister", zap.Any("room", s.roomId))
+			h.logger.Info("[chat] hub unregister", zap.Any("room", s.roomId))
 		case m := <-h.broadcast:
 			connections := h.rooms[m.roomId]
 			for c := range connections {
@@ -98,12 +98,13 @@ func (h *Hub) Run() {
 					}
 				}
 			}
-			h.logger.Info("hub broadcast", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
+			h.logger.Info("[chat] hub broadcast", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
 		case m := <-h.incoming:
 			// create message
 			uuid := util.UUID()
 			_, err := h.messageSvc.Create(md.BuildAuthContext(m.userId), &pb.MessageRequest{
 				Message: &pb.Message{
+					UserId:  m.userId,
 					Uuid:    uuid,
 					Text:    util.ByteToString(m.data),
 					GroupId: m.roomId,
@@ -117,7 +118,7 @@ func (h *Hub) Run() {
 				}
 				continue
 			}
-			h.logger.Info("hub incoming", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
+			h.logger.Info("[chat] hub incoming", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
 		}
 	}
 }

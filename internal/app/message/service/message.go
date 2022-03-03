@@ -109,6 +109,7 @@ func (m *Message) LastByGroup(ctx context.Context, payload *pb.LastByGroupReques
 func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	// check uuid
 	var message pb.Message
+	message.UserId = payload.Message.GetUserId()
 	message.GroupId = payload.Message.GetGroupId()
 	message.Uuid = payload.Message.GetUuid()
 	message.Type = enum.MessageTypeText

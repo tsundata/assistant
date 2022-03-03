@@ -38,7 +38,7 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 	}
 
 	if b.logger != nil {
-		b.logger.Info("bus subscribe", zap.Any("subject", subject))
+		b.logger.Info("[event] bus subscribe", zap.Any("subject", subject))
 	}
 
 	// amqp declare
@@ -70,7 +70,7 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 			_ = ch.Close()
 		}()
 		for d := range msgs {
-			fmt.Printf("received a message: %s\n", d.Body)
+			fmt.Println("[event] received a message:", subject, string(d.Body))
 			err = fn(&Msg{
 				Subject: subject,
 				Data:    d.Body,
@@ -84,7 +84,7 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 				fmt.Println(err)
 			}
 		}
-		fmt.Println("received end...", subject)
+		fmt.Println("[event] received end", subject)
 	}()
 
 	return nil
@@ -92,7 +92,7 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 
 func (b *NatsBus) Publish(_ context.Context, service string, subject Subject, message interface{}) error {
 	if b.logger != nil {
-		b.logger.Info("bus publish", zap.Any("subject", subject), zap.Any("message", message))
+		b.logger.Info("[event] bus publish", zap.Any("subject", subject), zap.Any("message", message))
 	}
 
 	// data marshal
