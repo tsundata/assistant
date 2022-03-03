@@ -77,6 +77,11 @@ func (b *NatsBus) Subscribe(_ context.Context, service string, subject Subject, 
 			})
 			if err != nil {
 				fmt.Println(err)
+				err = d.Reject(false)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println("[event] publish dlx", service, subject, string(d.Body))
 				continue
 			}
 			err = d.Ack(false)
@@ -142,8 +147,35 @@ func declare(conn *amqp.Connection, service string, subject Subject) (*amqp.Chan
 		return nil, err
 	}
 
+	err = ch.ExchangeDeclare(
+		fmt.Sprintf("%s_dlx", subject),
+		"fanout",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	q, err := ch.QueueDeclare(
 		string(subject),
+		true,
+		false,
+		false,
+		false,
+		amqp.Table{
+			"x-dead-letter-exchange": fmt.Sprintf("%s_dlx", subject),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	qDlx, err := ch.QueueDeclare(
+		fmt.Sprintf("%s_dlx", subject),
 		true,
 		false,
 		false,
@@ -158,6 +190,17 @@ func declare(conn *amqp.Connection, service string, subject Subject) (*amqp.Chan
 		q.Name,
 		q.Name,
 		service,
+		false,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = ch.QueueBind(
+		qDlx.Name,
+		"",
+		fmt.Sprintf("%s_dlx", subject),
 		false,
 		nil,
 	)
