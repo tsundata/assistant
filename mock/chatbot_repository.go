@@ -150,6 +150,21 @@ func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupTag(ctx, id interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupTag), ctx, id)
 }
 
+// GetBotsByText mocks base method.
+func (m *MockChatbotRepository) GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBotsByText", ctx, text)
+	ret0, _ := ret[0].(map[string]*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBotsByText indicates an expected call of GetBotsByText.
+func (mr *MockChatbotRepositoryMockRecorder) GetBotsByText(ctx, text interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByText", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByText), ctx, text)
+}
+
 // GetBotsByUser mocks base method.
 func (m *MockChatbotRepository) GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error) {
 	m.ctrl.T.Helper()

@@ -71,9 +71,9 @@ func (r *Robot) Process(ctx context.Context, in string) (out []string, err error
 		}
 	}
 
-	switch output.(type) {
+	switch v := output.(type) {
 	case string:
-		return []string{output.(string)}, nil
+		return []string{v}, nil
 	}
 
 	return []string{}, nil
