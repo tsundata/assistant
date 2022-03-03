@@ -528,8 +528,8 @@ github.com/go-chi/chi v4.0.0+incompatible/go.mod h1:eB3wogJHnLi3x/kFX2A+IbTBlXxm
 github.com/go-chi/chi/v5 v5.0.0/go.mod h1:BBug9lr0cqtdAhsu6R4AAdvufI0/XBzAQSsUqJpoZOs=
 github.com/go-echarts/go-echarts/v2 v2.2.4 h1:SKJpdyNIyD65XjbUZjzg6SwccTNXEgmh+PlaO23g2H0=
 github.com/go-echarts/go-echarts/v2 v2.2.4/go.mod h1:6TOomEztzGDVDkOSCFBq3ed7xOYfbOqhaBzD0YV771A=
-github.com/go-ego/gse v0.69.15 h1:QprXRGKim8fI2B38ItT4YwuY9/37gwUAw37TnA3exa0=
-github.com/go-ego/gse v0.69.15/go.mod h1:M9Xv8cEW7Of27BbE4p0iI3arqQHCYcm5N16/2b3pPPk=
+github.com/go-ego/gse v0.70.0 h1:K9M+clnPc1sjnSGvLgSHAo39oWr0v3deXB/31K0n18w=
+github.com/go-ego/gse v0.70.0/go.mod h1:M9Xv8cEW7Of27BbE4p0iI3arqQHCYcm5N16/2b3pPPk=
 github.com/go-fonts/dejavu v0.1.0/go.mod h1:4Wt4I4OU2Nq9asgDCteaAaWZOV24E+0/Pwo0gppep4g=
 github.com/go-fonts/latin-modern v0.2.0/go.mod h1:rQVLdDMK+mK1xscDwsqM5J8U2jrRa3T0ecnM9pNujks=
 github.com/go-fonts/liberation v0.1.1/go.mod h1:K6qoJYypsmfVjWg8KOVDQhLc8UDgIK2HYqyqAO9z7GY=
