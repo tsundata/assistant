@@ -18,6 +18,7 @@ type ChatbotRepository interface {
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
 	List(ctx context.Context) ([]*pb.Bot, error)
 	GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error)
+	GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
 	Update(ctx context.Context, bot *pb.Bot) error
 	Delete(ctx context.Context, id int64) error
@@ -98,6 +99,29 @@ func (r *MysqlChatbotRepository) GetBotsByUser(ctx context.Context, userId int64
 		return nil, err
 	}
 	return bots, nil
+}
+
+func (r *MysqlChatbotRepository) GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error) {
+	var bots []*pb.Bot
+	err := r.db.WithContext(ctx).
+		Where("(name IN ?) OR (identifier IN ?)", text, text).Find(&bots).Error
+	if err != nil {
+		return nil, err
+	}
+
+	botsMap := make(map[string]*pb.Bot)
+	for i, item := range bots {
+		botsMap[item.Name] = bots[i]
+		botsMap[item.Identifier] = bots[i]
+	}
+	result := make(map[string]*pb.Bot)
+	for _, s := range text {
+		if v, ok := botsMap[s]; ok {
+			result[s] = v
+		}
+	}
+
+	return result, nil
 }
 
 func (r *MysqlChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {

@@ -6,9 +6,9 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
-	"github.com/tsundata/assistant/internal/app/chatbot/rule"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/robot"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
@@ -45,8 +45,11 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	if err != nil {
 		return nil, err
 	}
-	s.bot.SetOptions(rule.Options...)
-	outMessages := s.bot.Process(ctx, reply.Message.GetText()).MessageProviderOut()
+
+	outMessages, err := robot.NewRobot(s.repo).Process(ctx, reply.Message.GetText())
+	if err != nil {
+		return nil, err
+	}
 
 	// send message
 	for _, item := range outMessages {

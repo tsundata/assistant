@@ -79,10 +79,12 @@ func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule) (*Bo
 	return b, nil
 }
 
-func (b *Bot) Run(ctx context.Context) error {
+func (b *Bot) Run(ctx context.Context, input interface{}) (interface{}, error) {
 	b.ctrl.Ctx = ctx
-	_, err := b.config.PluginChain.Run(b.ctrl, nil)
-	return err
+	if b.config.PluginChain != nil {
+		return b.config.PluginChain.Run(b.ctrl, input)
+	}
+	return input, nil
 }
 
 func (b *Bot) Info() string {

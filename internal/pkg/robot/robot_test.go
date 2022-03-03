@@ -9,7 +9,7 @@ import (
 )
 
 func TestRobot(t *testing.T) {
-	err := todo.Bot.Run(context.Background())
+	_, err := todo.Bot.Run(context.Background(), "")
 	if err != nil {
 		t.Fatal(err)
 	}

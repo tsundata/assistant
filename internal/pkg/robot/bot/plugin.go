@@ -43,6 +43,7 @@ func registerPlugin(name string, plugin SetupPlugin) {
 		panic("plugin named " + name + " already registered")
 	}
 	plugins[name] = plugin
+	fmt.Println("[robot] register plugin", name)
 }
 
 // -----
