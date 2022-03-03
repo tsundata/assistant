@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"context"
 	"fmt"
 	"github.com/pkg/errors"
 )
@@ -16,18 +15,11 @@ type SetupPlugin struct {
 	Action SetupFunc
 }
 
-func ListPlugins() map[string][]string {
-	p := make(map[string][]string)
-	for s := range plugins {
-		p["bot"] = append(p["bot"], s)
-	}
-	return p
-}
-
 func SetupPlugins(c *Controller, pluginRules []PluginRule) error {
 	pluginRules = append(pluginRules, PluginRule{Name: "end"})
 	for _, rule := range pluginRules {
 		if plugin, ok := plugins[rule.Name]; ok {
+			c.PluginParam[rule.Name] = rule.Param
 			err := plugin.Action(c)
 			if err != nil {
 				return errors.Wrap(err, fmt.Sprintf("plugin/%s", rule.Name))
@@ -59,29 +51,23 @@ type (
 	Plugin func(next PluginHandler) PluginHandler
 
 	PluginHandler interface {
-		Run(ctx context.Context, input interface{}) (interface{}, error)
+		Run(ctrl *Controller, input interface{}) (interface{}, error)
 		Name() string
 	}
-
-	HandlerFunc func(ctx context.Context, input interface{}) (interface{}, error)
 )
-
-func (f HandlerFunc) Run(ctx context.Context, input interface{}) (interface{}, error) {
-	return f(ctx, input)
-}
-
-func (f HandlerFunc) Name() string {
-	return "handlerfunc"
-}
 
 // Error returns err with 'plugin/name: ' prefixed to it.
 func Error(name string, err error) error {
 	return fmt.Errorf("%s/%s: %s", "plugin", name, err)
 }
 
-func NextOrFailure(name string, next PluginHandler, ctx context.Context, input interface{}) (interface{}, error) {
+func NextOrFailure(name string, next PluginHandler, ctrl *Controller, input interface{}) (interface{}, error) {
 	if next != nil {
-		return next.Run(ctx, input)
+		return next.Run(ctrl, input)
 	}
 	return nil, Error(name, errors.New("no next plugin found"))
+}
+
+func Param(ctrl *Controller, p PluginHandler) interface{} {
+	return ctrl.PluginParam[p.Name()]
 }

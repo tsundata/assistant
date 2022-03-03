@@ -32,7 +32,8 @@ var PluginRules = []bot.PluginRule{
 		Name: "any",
 	},
 	{
-		Name: "filter",
+		Name:  "filter",
+		Param: []interface{}{1},
 	},
 	{
 		Name: "save",

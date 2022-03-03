@@ -13,7 +13,9 @@ type Bot struct {
 	SettingRule []SettingField
 	PluginRule  []PluginRule
 	plugin      []Plugin
-	config      *Config
+
+	config *Config
+	ctrl   *Controller
 }
 
 type Metadata struct {
@@ -53,9 +55,11 @@ func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule) (*Bo
 		config:      cfg,
 	}
 	ctrl := &Controller{
-		Instance: b,
-		Config:   cfg,
+		Instance:    b,
+		Config:      cfg,
+		PluginParam: make(map[string][]interface{}),
 	}
+	b.ctrl = ctrl
 
 	// setup plugins
 	err := SetupPlugins(ctrl, rules)
@@ -76,7 +80,8 @@ func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule) (*Bo
 }
 
 func (b *Bot) Run(ctx context.Context) error {
-	_, err := b.config.PluginChain.Run(ctx, nil)
+	b.ctrl.Ctx = ctx
+	_, err := b.config.PluginChain.Run(b.ctrl, nil)
 	return err
 }
 

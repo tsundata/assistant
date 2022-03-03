@@ -1,6 +1,14 @@
 package bot
 
+import "context"
+
 type Controller struct {
-	Instance *Bot
-	Config   *Config
+	Ctx         context.Context
+	Instance    *Bot
+	Config      *Config
+	PluginParam map[string][]interface{}
+}
+
+func MockController() *Controller {
+	return &Controller{}
 }
