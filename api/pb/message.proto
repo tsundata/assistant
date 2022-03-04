@@ -18,6 +18,7 @@ service MessageSvc {
   rpc LastByGroup(LastByGroupRequest) returns (LastByGroupReply) {}
   rpc Get(MessageRequest) returns (GetMessageReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
+  rpc Save(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}
   rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}

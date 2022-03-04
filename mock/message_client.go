@@ -236,6 +236,26 @@ func (mr *MockMessageSvcClientMockRecorder) Run(ctx, in interface{}, opts ...int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageSvcClient)(nil).Run), varargs...)
 }
 
+// Save mocks base method.
+func (m *MockMessageSvcClient) Save(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Save", varargs...)
+	ret0, _ := ret[0].(*pb.MessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Save indicates an expected call of Save.
+func (mr *MockMessageSvcClientMockRecorder) Save(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockMessageSvcClient)(nil).Save), varargs...)
+}
+
 // Send mocks base method.
 func (m *MockMessageSvcClient) Send(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -427,6 +447,21 @@ func (m *MockMessageSvcServer) Run(arg0 context.Context, arg1 *pb.MessageRequest
 func (mr *MockMessageSvcServerMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockMessageSvcServer)(nil).Run), arg0, arg1)
+}
+
+// Save mocks base method.
+func (m *MockMessageSvcServer) Save(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", arg0, arg1)
+	ret0, _ := ret[0].(*pb.MessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Save indicates an expected call of Save.
+func (mr *MockMessageSvcServerMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockMessageSvcServer)(nil).Save), arg0, arg1)
 }
 
 // Send mocks base method.

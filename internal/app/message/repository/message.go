@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 )
 
@@ -122,7 +122,7 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 	sequence += 1
 
 	if message.Uuid == "" {
-		return 0, app.ErrInvalidParameter
+		message.Uuid = util.UUID()
 	}
 	message.Id = r.id.Generate(ctx)
 	message.Sequence = sequence

@@ -156,6 +156,14 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}, nil
 }
 
+func (m *Message) Save(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+	_, err := m.repo.Create(ctx, payload.Message)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.MessageReply{Message: payload.Message}, nil
+}
+
 func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.TextReply, error) {
 	err := m.repo.Delete(ctx, payload.Message.GetId())
 	if err != nil {

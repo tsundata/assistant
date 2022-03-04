@@ -109,7 +109,7 @@ func (r *Robot) Process(ctx context.Context, tokens []*bot.Token, bots map[strin
 
 	var input interface{} = tokens[0].Value
 	var output interface{}
-	for _, item := range bots { // fixme
+	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)
 		if b, ok := botMap[item.Identifier]; ok {
 			out, err := b.Run(ctx, input)

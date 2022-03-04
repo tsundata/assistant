@@ -14,3 +14,8 @@ const (
 	MessageTypeRich     = "rich"
 	MessageTypeAction   = "action"
 )
+
+const (
+	MessageUserType  = "user"
+	MessageGroupType = "group"
+)

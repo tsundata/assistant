@@ -23,6 +23,7 @@ type MessageSvcClient interface {
 	LastByGroup(ctx context.Context, in *LastByGroupRequest, opts ...grpc.CallOption) (*LastByGroupReply, error)
 	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	Save(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
 	Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -78,6 +79,15 @@ func (c *messageSvcClient) Get(ctx context.Context, in *MessageRequest, opts ...
 func (c *messageSvcClient) Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
 	out := new(MessageReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Create", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) Save(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
+	out := new(MessageReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Save", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,6 +157,7 @@ type MessageSvcServer interface {
 	LastByGroup(context.Context, *LastByGroupRequest) (*LastByGroupReply, error)
 	Get(context.Context, *MessageRequest) (*GetMessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
+	Save(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
 	Send(context.Context, *MessageRequest) (*StateReply, error)
 	Run(context.Context, *MessageRequest) (*TextReply, error)
@@ -173,6 +184,9 @@ func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*Get
 }
 func (UnimplementedMessageSvcServer) Create(context.Context, *MessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedMessageSvcServer) Save(context.Context, *MessageRequest) (*MessageReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
 }
 func (UnimplementedMessageSvcServer) Delete(context.Context, *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -290,6 +304,24 @@ func _MessageSvc_Create_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MessageSvcServer).Create(ctx, req.(*MessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/Save",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).Save(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -428,6 +460,10 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _MessageSvc_Create_Handler,
+		},
+		{
+			MethodName: "Save",
+			Handler:    _MessageSvc_Save_Handler,
 		},
 		{
 			MethodName: "Delete",

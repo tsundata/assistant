@@ -49,13 +49,17 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	r := robot.NewRobot()
 
 	// group bots
-	bots, err := s.repo.ListGroupBot(ctx, reply.Message.GetGroupId())
+	groupBots, err := s.repo.ListGroupBot(ctx, reply.Message.GetGroupId())
 	if err != nil {
 		return nil, err
 	}
+	groupBotsMap := make(map[string]struct{})
+	for _, bot := range groupBots {
+		groupBotsMap[bot.Identifier] = struct{}{}
+	}
 
 	// help
-	outMessages, err := r.Help(bots, reply.Message.GetText())
+	outMessages, err := r.Help(groupBots, reply.Message.GetText())
 	if err != nil {
 		return nil, err
 	}
@@ -67,40 +71,55 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			return nil, err
 		}
 
+		// filter bots
+		inBots, err := s.repo.GetBotsByText(ctx, objects)
+		if err != nil {
+			return nil, err
+		}
+		for k, item := range inBots {
+			if _, ok := groupBotsMap[item.Identifier]; !ok {
+				delete(inBots, k)
+			}
+		}
+
 		if len(commands) > 0 {
-			// todo run commands
+			for _, item := range inBots {
+				for _, command := range commands {
+					outMessages, err = r.ParseCommand(ctx, nil, item.Identifier, command) // todo comp
+					if err != nil {
+						return nil, err
+					}
+				}
+			}
 		}
 
-		// match bots
-		bots, err := s.repo.GetBotsByText(ctx, objects)
-		if err != nil {
-			return nil, err
-		}
-
-		// todo check group bots
-
-		// run
-		outMessages, err = r.Process(ctx, tokens, bots)
-		if err != nil {
-			return nil, err
+		if len(outMessages) == 0 {
+			// run
+			outMessages, err = r.Process(ctx, tokens, inBots)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
 	// send message
-	for _, item := range outMessages {
-		// todo save out messages
-		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, &pb.Message{
+	for _, text := range outMessages {
+		outMessage := &pb.Message{
 			GroupId:      reply.Message.GetGroupId(),
 			UserId:       reply.Message.GetUserId(),
-			Uuid:         "",
-			Sender:       0,
-			SenderType:   "",
-			Receiver:     0,
-			ReceiverType: "",
-			Type:         enum.MessageTypeText, // todo
-			Text:         item,
+			Sender:       reply.Message.GetGroupId(),
+			SenderType:   enum.MessageGroupType,
+			Receiver:     reply.Message.GetUserId(),
+			ReceiverType: enum.MessageUserType,
+			Type:         enum.MessageTypeText,
+			Text:         text,
 			Status:       0,
-		})
+		}
+		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+		if err != nil {
+			return nil, err
+		}
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
 		if err != nil {
 			return nil, err
 		}
