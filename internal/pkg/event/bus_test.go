@@ -13,7 +13,7 @@ func TestBus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b := NewNatsBus(mq, nil)
+	b := NewRabbitmqBus(mq, nil)
 
 	err = b.Publish(context.Background(), "test", "test", time.Now().String())
 	if err != nil {

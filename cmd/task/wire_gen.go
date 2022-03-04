@@ -45,7 +45,7 @@ func CreateApp(id string) (*app.Application, error) {
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
-	bus := event.NewNatsBus(connection, logLogger)
+	bus := event.NewRabbitmqBus(connection, logLogger)
 	server, err := queue.New(appConfig)
 	if err != nil {
 		return nil, err

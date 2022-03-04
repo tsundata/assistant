@@ -37,6 +37,9 @@ func (r *Robot) Process(ctx context.Context, in string) (out []string, err error
 	if err != nil {
 		return nil, err
 	}
+	if len(tokens) == 0 {
+		return []string{}, nil
+	}
 
 	var objects []string
 	var tags []string

@@ -19,11 +19,11 @@ func TestChatbot_Handle(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nats, err := event.CreateRabbitmq(enum.Chatbot)
+	mq, err := event.CreateRabbitmq(enum.Chatbot)
 	if err != nil {
 		t.Fatal(err)
 	}
-	bus := event.NewNatsBus(nats, nil)
+	bus := event.NewRabbitmqBus(mq, nil)
 
 	bot, err := rulebot.CreateRuleBot(enum.Chatbot)
 	if err != nil {
@@ -31,12 +31,14 @@ func TestChatbot_Handle(t *testing.T) {
 	}
 
 	message := mock.NewMockMessageSvcClient(ctl)
+	repo := mock.NewMockChatbotRepository(ctl)
 
 	gomock.InOrder(
-		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test"}}, nil),
+		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test", Text: "text @user #tag1"}}, nil),
+		repo.EXPECT().GetBotsByText(gomock.Any(), gomock.Any()).Return(map[string]*pb.Bot{}, nil),
 	)
 
-	s := NewChatbot(nil, bus, nil, message, bot)
+	s := NewChatbot(nil, bus, repo, message, bot)
 
 	type args struct {
 		in0     context.Context
