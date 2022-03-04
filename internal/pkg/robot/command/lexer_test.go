@@ -1,4 +1,4 @@
-package rule
+package command
 
 import (
 	"github.com/stretchr/testify/require"

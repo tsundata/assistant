@@ -1,7 +1,8 @@
-package rule
+package command
 
 import (
 	"context"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"strconv"
@@ -55,22 +56,32 @@ func TestRegexRule(t *testing.T) {
 		},
 	}
 
-	var options = []rulebot.Option{
-		rulebot.RegisterRuleset(New(testRules)),
+	b := New(testRules)
+
+	out, err := b.ParseCommand(context.Background(), nil, "test")
+	if err != nil {
+		t.Fatal(err)
 	}
+	require.Contains(t, out, "test")
 
-	b := rulebot.New(nil)
-	b.SetOptions(options...)
+	out2, err := b.ParseCommand(context.Background(), nil, "add 1 2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Contains(t, out2, "3")
 
-	res := b.Process(context.Background(), "test")
-	require.Contains(t, res.MessageProviderOut(), "test")
+	out3, err := b.ParseCommand(context.Background(), nil, "help")
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Len(t, out3, 0)
 
-	res2 := b.Process(context.Background(), "add 1 2")
-	require.Contains(t, res2.MessageProviderOut(), "3")
+	help := b.Help("help")
+	assert.True(t, len(help) > 0)
 
-	res3 := b.Process(context.Background(), "help")
-	require.Len(t, res3.MessageProviderOut(), 1)
-
-	res4 := b.Process(context.Background(), `todo "a b c"`)
-	require.Contains(t, res4.MessageProviderOut(), "a b c")
+	out4, err := b.ParseCommand(context.Background(), nil, `todo "a b c"`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Contains(t, out4, "a b c")
 }

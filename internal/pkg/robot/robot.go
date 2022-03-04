@@ -3,6 +3,7 @@ package robot
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/bot/finance"
@@ -11,7 +12,8 @@ import (
 	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
-	"github.com/tsundata/assistant/internal/pkg/robot/lexer"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"strings"
 )
 
@@ -43,6 +45,13 @@ func NewRobot() *Robot {
 	return &Robot{}
 }
 
+func (r *Robot) bot(identifier string) *bot.Bot {
+	if b, ok := botMap[identifier]; ok {
+		return b
+	}
+	return nil
+}
+
 func (r *Robot) Help(in string) ([]string, error) {
 	if strings.ToLower(in) == "help" {
 		// todo
@@ -51,8 +60,8 @@ func (r *Robot) Help(in string) ([]string, error) {
 	return []string{}, nil
 }
 
-func (r *Robot) ParseText(in string) ([]*lexer.Token, []string, []string, error) {
-	tokens, err := lexer.ParseText(in)
+func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, error) {
+	tokens, err := bot.ParseText(in)
 	if err != nil {
 		return nil, []string{}, []string{}, nil
 	}
@@ -63,10 +72,10 @@ func (r *Robot) ParseText(in string) ([]*lexer.Token, []string, []string, error)
 	var objects []string
 	var tags []string
 	for _, item := range tokens {
-		if item.Type == lexer.ObjectToken {
+		if item.Type == bot.ObjectToken {
 			objects = append(objects, item.Value)
 		}
-		if item.Type == lexer.TagToken {
+		if item.Type == bot.TagToken {
 			tags = append(tags, item.Value)
 		}
 	}
@@ -74,7 +83,15 @@ func (r *Robot) ParseText(in string) ([]*lexer.Token, []string, []string, error)
 	return tokens, objects, tags, nil
 }
 
-func (r *Robot) Process(ctx context.Context, tokens []*lexer.Token, bots map[string]*pb.Bot) (out []string, err error) {
+func (r *Robot) ParseCommand(ctx context.Context, comp rulebot.IComponent, identifier, in string) (out []string, err error) {
+	if r.bot(identifier) == nil {
+		return nil, errors.New("error identifier")
+	}
+	c := command.New(r.bot(identifier).CommandRule)
+	return c.ParseCommand(ctx, comp, in)
+}
+
+func (r *Robot) Process(ctx context.Context, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
 	// todo tags
 
 	var input interface{} = tokens[0].Value

@@ -3,12 +3,14 @@ package bot
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
 )
 
 type Bot struct {
 	Metadata
 	SettingRule []SettingField
 	PluginRule  []PluginRule
+	CommandRule []command.Rule
 	plugin      []Plugin
 
 	config *Config
@@ -43,12 +45,13 @@ type PluginRule struct {
 	Param []interface{}
 }
 
-func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule) (*Bot, error) {
+func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule, commands []command.Rule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
 		Metadata:    metadata,
 		SettingRule: settings,
 		PluginRule:  rules,
+		CommandRule: commands,
 		config:      cfg,
 	}
 	ctrl := &Controller{
@@ -87,4 +90,3 @@ func (b *Bot) Run(ctx context.Context, input interface{}) (interface{}, error) {
 func (b *Bot) Info() string {
 	return fmt.Sprintf("bot:%s, %s", b.Name, b.Detail)
 }
-

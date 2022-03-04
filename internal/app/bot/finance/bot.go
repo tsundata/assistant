@@ -5,19 +5,18 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 )
 
-var Metadata = bot.Metadata{
+var metadata = bot.Metadata{
 	Name:       "Finance",
 	Identifier: enum.FinanceBot,
 	Detail:     "",
 	Avatar:     "",
 }
 
-
 var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(Metadata, nil, nil)
+	Bot, err = bot.NewBot(metadata, nil, nil, nil)
 	if err != nil {
 		panic(err)
 	}

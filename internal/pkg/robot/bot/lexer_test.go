@@ -1,4 +1,4 @@
-package lexer
+package bot
 
 import (
 	"github.com/stretchr/testify/require"
@@ -39,7 +39,7 @@ func TestLexer(t *testing.T) {
 	require.Equal(t, EOFToken, token.Type)
 }
 
-func TestParseCommand(t *testing.T) {
+func TestParseText(t *testing.T) {
 	c, err := ParseText("subs list")
 	if err != nil {
 		t.Fatal(err)

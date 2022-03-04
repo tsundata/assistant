@@ -1,10 +1,11 @@
-package rule
+package todo
 
 import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"github.com/tsundata/assistant/mock"
@@ -13,13 +14,13 @@ import (
 	"time"
 )
 
-func parseRule(t *testing.T, comp rulebot.IComponent, in string) []string {
-	for _, rule := range rules {
-		tokens, err := ParseCommand(in)
+func parseCommand(t *testing.T, comp rulebot.IComponent, in string) []string {
+	for _, rule := range Bot.CommandRule {
+		tokens, err := command.ParseCommand(in)
 		if err != nil {
 			t.Fatal(err)
 		}
-		check, err := SyntaxCheck(rule.Define, tokens)
+		check, err := command.SyntaxCheck(rule.Define, tokens)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -35,15 +36,15 @@ func parseRule(t *testing.T, comp rulebot.IComponent, in string) []string {
 	return []string{}
 }
 
-func TestVersionRule(t *testing.T) {
-	command := "version"
+func TestVersionCommand(t *testing.T) {
+	cmd := "version"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{version.Info()}, res)
 }
 
-func TestQrRule(t *testing.T) {
+func TestQrCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -52,26 +53,26 @@ func TestQrRule(t *testing.T) {
 		middle.EXPECT().GetQrUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://qr.test/abc"}, nil),
 	)
 
-	command := "qr abc"
+	cmd := "qr abc"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
 }
 
-func TestUtRule(t *testing.T) {
-	command := "ut 1"
+func TestUtCommand(t *testing.T) {
+	cmd := "ut 1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
 
-func TestRandRule(t *testing.T) {
-	command := "rand 1 100"
+func TestRandCommand(t *testing.T) {
+	cmd := "rand 1 100"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 
 	i, err := strconv.ParseInt(res[0], 10, 64)
 	if err != nil {
@@ -80,15 +81,15 @@ func TestRandRule(t *testing.T) {
 	require.True(t, i > 0)
 }
 
-func TestPwdRule(t *testing.T) {
-	command := "pwd 32"
+func TestPwdCommand(t *testing.T) {
+	cmd := "pwd 32"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, 32, len(res[0]))
 }
 
-func TestSubsListRule(t *testing.T) {
+func TestSubsListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -97,14 +98,14 @@ func TestSubsListRule(t *testing.T) {
 		middle.EXPECT().ListSubscribe(gomock.Any(), gomock.Any()).Return(&pb.SubscribeReply{Subscribe: []*pb.Subscribe{{Name: "test1", State: true}}}, nil),
 	)
 
-	command := "subs list"
+	cmd := "subs list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
 }
 
-func TestSubsOpenRule(t *testing.T) {
+func TestSubsOpenCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -113,14 +114,14 @@ func TestSubsOpenRule(t *testing.T) {
 		middle.EXPECT().OpenSubscribe(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "subs open test1"
+	cmd := "subs open test1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestSubsCloseRule(t *testing.T) {
+func TestSubsCloseCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -129,14 +130,14 @@ func TestSubsCloseRule(t *testing.T) {
 		middle.EXPECT().CloseSubscribe(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "subs close test1"
+	cmd := "subs close test1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestViewRule(t *testing.T) {
+func TestViewCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -145,14 +146,14 @@ func TestViewRule(t *testing.T) {
 		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Sequence: 1, Text: "test1"}}, nil),
 	)
 
-	command := "view 1"
+	cmd := "view 1"
 	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
 }
 
-func TestRunRule(t *testing.T) {
+func TestRunCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -161,14 +162,14 @@ func TestRunRule(t *testing.T) {
 		message.EXPECT().Run(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "test1"}, nil),
 	)
 
-	command := "run 1"
+	cmd := "run 1"
 	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
 }
 
-func TestDocRule(t *testing.T) {
+func TestDocCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -177,14 +178,14 @@ func TestDocRule(t *testing.T) {
 		workflow.EXPECT().ActionDoc(gomock.Any(), gomock.Any()).Return(&pb.WorkflowReply{Text: "doc ..."}, nil),
 	)
 
-	command := "doc"
+	cmd := "doc"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Len(t, res, 1)
 }
 
-func TestStatsRule(t *testing.T) {
+func TestStatsCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -193,10 +194,10 @@ func TestStatsRule(t *testing.T) {
 		middle.EXPECT().GetStats(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "stats ..."}, nil),
 	)
 
-	command := "stats"
+	cmd := "stats"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"stats ..."}, res)
 }
 
@@ -218,14 +219,14 @@ func TestTodoList(t *testing.T) {
 		}}, nil),
 	)
 
-	command := "todo list"
+	cmd := "todo list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
 }
 
-func TestTodoRule(t *testing.T) {
+func TestTodoCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -235,14 +236,14 @@ func TestTodoRule(t *testing.T) {
 		todo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "todo test1"
+	cmd := "todo test1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"success"}, res)
 }
 
-func TestPinyinRule(t *testing.T) {
+func TestPinyinCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -251,22 +252,22 @@ func TestPinyinRule(t *testing.T) {
 		nlp.EXPECT().Pinyin(gomock.Any(), gomock.Any()).Return(&pb.WordsReply{Text: []string{"a1", "a2"}}, nil),
 	)
 
-	command := "pinyin 测试"
+	cmd := "pinyin 测试"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nlp)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"a1, a2"}, res)
 }
 
-func TestRemindRule(t *testing.T) {
-	command := "remind test 19:50"
+func TestRemindCommand(t *testing.T) {
+	cmd := "remind test 19:50"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{}, res)
 }
 
-func TestDeleteRule(t *testing.T) {
+func TestDeleteCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -275,14 +276,14 @@ func TestDeleteRule(t *testing.T) {
 		message.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: ""}, nil),
 	)
 
-	command := "del 1"
+	cmd := "del 1"
 	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Deleted 1"}, res)
 }
 
-func TestCronListRule(t *testing.T) {
+func TestCronListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -291,14 +292,14 @@ func TestCronListRule(t *testing.T) {
 		middle.EXPECT().ListCron(gomock.Any(), gomock.Any()).Return(&pb.CronReply{Cron: []*pb.Cron{{Name: "test", State: true}}}, nil),
 	)
 
-	command := "cron list"
+	cmd := "cron list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
 }
 
-func TestCronStartRule(t *testing.T) {
+func TestCronStartCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -307,14 +308,14 @@ func TestCronStartRule(t *testing.T) {
 		middle.EXPECT().StartCron(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "cron start test1"
+	cmd := "cron start test1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestCronStopRule(t *testing.T) {
+func TestCronStopCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -323,14 +324,14 @@ func TestCronStopRule(t *testing.T) {
 		middle.EXPECT().StopCron(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "cron stop test1"
+	cmd := "cron stop test1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestObjList(t *testing.T) {
+func TestObjListCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -346,14 +347,14 @@ func TestObjList(t *testing.T) {
 		}}, nil),
 	)
 
-	command := "obj list"
+	cmd := "obj list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | NAME  \n-----+-------\n   1 | obj   \n"}, res)
 }
 
-func TestObjCreate(t *testing.T) {
+func TestObjCreateCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -363,14 +364,14 @@ func TestObjCreate(t *testing.T) {
 		org.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "obj obj obj-1"
+	cmd := "obj obj obj-1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestObjDelete(t *testing.T) {
+func TestObjDeleteCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -380,14 +381,14 @@ func TestObjDelete(t *testing.T) {
 		org.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "obj del 1"
+	cmd := "obj del 1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestKrList(t *testing.T) {
+func TestKrListCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -404,14 +405,14 @@ func TestKrList(t *testing.T) {
 		}}, nil),
 	)
 
-	command := "kr list"
+	cmd := "kr list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}, res)
 }
 
-func TestKrCreate(t *testing.T) {
+func TestKrCreateCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -421,14 +422,14 @@ func TestKrCreate(t *testing.T) {
 		org.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "kr 1 kr kr-1"
+	cmd := "kr 1 kr kr-1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestKrDelete(t *testing.T) {
+func TestKrDeleteCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -438,14 +439,14 @@ func TestKrDelete(t *testing.T) {
 		org.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	command := "kr delete 1"
+	cmd := "kr delete 1"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
 
-func TestGetFund(t *testing.T) {
+func TestGetFundCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -458,14 +459,14 @@ func TestGetFund(t *testing.T) {
 		middle.EXPECT().GetChartUrl(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "http://127.0.0.1:7000/chart/test"}, nil),
 	)
 
-	command := "fund 000001"
+	cmd := "fund 000001"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
 }
 
-func TestGetStock(t *testing.T) {
+func TestGetStockCommand(t *testing.T) {
 	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -475,14 +476,14 @@ func TestGetStock(t *testing.T) {
 		finance.EXPECT().GetStock(gomock.Any(), gomock.Any()).Return(&pb.StockReply{Name: "test"}, nil),
 	)
 
-	command := "stock sx000001"
+	cmd := "stock sx000001"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
 }
 
-func TestWebhookList(t *testing.T) {
+func TestWebhookListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -491,9 +492,9 @@ func TestWebhookList(t *testing.T) {
 		workflow.EXPECT().ListWebhook(gomock.Any(), gomock.Any()).Return(&pb.WebhooksReply{Flag: []string{"test1", "test2"}}, nil),
 	)
 
-	command := "webhook list"
+	cmd := "webhook list"
 	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
 		nil, nil, nil)
-	res := parseRule(t, comp, command)
+	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)
 }

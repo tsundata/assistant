@@ -1,4 +1,4 @@
-package rule
+package bot
 
 import (
 	"fmt"
@@ -14,9 +14,10 @@ type Token struct {
 }
 
 const (
-	CharacterToken = "character"
-	ParameterToken = "parameter"
-	EOFToken       = "eof"
+	StringToken = "string"
+	ObjectToken = "object"
+	TagToken    = "tag"
+	EOFToken    = "eof"
 )
 
 type Lexer struct {
@@ -64,7 +65,7 @@ func (l *Lexer) SkipWhitespace() {
 	}
 }
 
-func (l *Lexer) Character() (*Token, error) {
+func (l *Lexer) String() (*Token, error) {
 	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
@@ -74,19 +75,19 @@ func (l *Lexer) Character() (*Token, error) {
 	}
 
 	s := string(result)
-	token.Type = CharacterToken
+	token.Type = StringToken
 	token.Value = s
 
 	return token, nil
 }
 
-func (l *Lexer) String() (*Token, error) {
+func (l *Lexer) Object() (*Token, error) {
 	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
 
 	l.Advance()
 
 	var result []rune
-	for l.CurrentChar != '"' {
+	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -94,7 +95,27 @@ func (l *Lexer) String() (*Token, error) {
 	l.Advance()
 
 	s := string(result)
-	token.Type = CharacterToken
+	token.Type = ObjectToken
+	token.Value = s
+
+	return token, nil
+}
+
+func (l *Lexer) Tag() (*Token, error) {
+	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+
+	l.Advance()
+
+	var result []rune
+	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	l.Advance()
+
+	s := string(result)
+	token.Type = TagToken
 	token.Value = s
 
 	return token, nil
@@ -106,12 +127,16 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.SkipWhitespace()
 			continue
 		}
-		if l.CurrentChar == '"' {
-			return l.String()
+		if l.CurrentChar == '@' {
+			return l.Object()
+		}
+		if l.CurrentChar == '#' {
+			return l.Tag()
 		}
 		if !unicode.IsSpace(l.CurrentChar) {
-			return l.Character()
+			return l.String()
 		}
+
 		return nil, l.error()
 	}
 
@@ -124,7 +149,7 @@ type Command struct {
 	Args []string
 }
 
-func ParseCommand(in string) ([]*Token, error) {
+func ParseText(in string) ([]*Token, error) {
 	if in == "" {
 		return []*Token{}, nil
 	}

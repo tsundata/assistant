@@ -1,4 +1,4 @@
-package lexer
+package command
 
 import (
 	"fmt"
@@ -14,10 +14,9 @@ type Token struct {
 }
 
 const (
-	StringToken = "string"
-	ObjectToken = "object"
-	TagToken    = "tag"
-	EOFToken    = "eof"
+	CharacterToken = "character"
+	ParameterToken = "parameter"
+	EOFToken       = "eof"
 )
 
 type Lexer struct {
@@ -65,29 +64,29 @@ func (l *Lexer) SkipWhitespace() {
 	}
 }
 
+func (l *Lexer) Character() (*Token, error) {
+	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+
+	var result []rune
+	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	s := string(result)
+	token.Type = CharacterToken
+	token.Value = s
+
+	return token, nil
+}
+
 func (l *Lexer) String() (*Token, error) {
 	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
 
-	var result []rune
-	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
-		result = append(result, l.CurrentChar)
-		l.Advance()
-	}
-
-	s := string(result)
-	token.Type = StringToken
-	token.Value = s
-
-	return token, nil
-}
-
-func (l *Lexer) Object() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
-
 	l.Advance()
 
 	var result []rune
-	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
+	for l.CurrentChar != '"' {
 		result = append(result, l.CurrentChar)
 		l.Advance()
 	}
@@ -95,27 +94,7 @@ func (l *Lexer) Object() (*Token, error) {
 	l.Advance()
 
 	s := string(result)
-	token.Type = ObjectToken
-	token.Value = s
-
-	return token, nil
-}
-
-func (l *Lexer) Tag() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
-
-	l.Advance()
-
-	var result []rune
-	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
-		result = append(result, l.CurrentChar)
-		l.Advance()
-	}
-
-	l.Advance()
-
-	s := string(result)
-	token.Type = TagToken
+	token.Type = CharacterToken
 	token.Value = s
 
 	return token, nil
@@ -127,16 +106,12 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			l.SkipWhitespace()
 			continue
 		}
-		if l.CurrentChar == '@' {
-			return l.Object()
-		}
-		if l.CurrentChar == '#' {
-			return l.Tag()
-		}
-		if !unicode.IsSpace(l.CurrentChar) {
+		if l.CurrentChar == '"' {
 			return l.String()
 		}
-
+		if !unicode.IsSpace(l.CurrentChar) {
+			return l.Character()
+		}
 		return nil, l.error()
 	}
 
@@ -149,7 +124,7 @@ type Command struct {
 	Args []string
 }
 
-func ParseText(in string) ([]*Token, error) {
+func ParseCommand(in string) ([]*Token, error) {
 	if in == "" {
 		return []*Token{}, nil
 	}
