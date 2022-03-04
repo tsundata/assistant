@@ -16,7 +16,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mq, err := event.CreateRabbitmq(enum.Bot)
+	mq, err := event.CreateRabbitmq(enum.Chatbot)
 	if err != nil {
 		t.Fatal(err)
 	}

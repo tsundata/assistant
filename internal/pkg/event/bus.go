@@ -122,7 +122,7 @@ func (b *RabbitmqBus) Publish(_ context.Context, service string, subject Subject
 		false,
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
-			ContentType:  "text/plain",
+			ContentType:  "application/json",
 			Body:         data,
 		},
 	)

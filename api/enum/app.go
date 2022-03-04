@@ -14,8 +14,4 @@ const (
 	User     = "user"
 	Web      = "web"
 	Workflow = "workflow"
-	Bot      = "bot"
-	Org      = "org"
-	Finance  = "finance"
-	Todo     = "todo"
 )

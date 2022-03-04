@@ -28,7 +28,6 @@
 - middle:6002
 - workflow:6003
 - user:6004
-- bot:6005
 - finance:6007
 - nlp:6008
 - storage:6009

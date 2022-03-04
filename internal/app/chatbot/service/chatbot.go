@@ -46,18 +46,42 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		return nil, err
 	}
 
-	outMessages, err := robot.NewRobot(s.repo).Process(ctx, reply.Message.GetText())
+	r := robot.NewRobot()
+
+	// help
+	outMessages, err := r.Help(reply.Message.GetText())
 	if err != nil {
 		return nil, err
 	}
 
+	if len(outMessages) > 0 {
+		// lexer
+		tokens, objects, _, err := r.ParseText(reply.Message.GetText())
+		if err != nil {
+			return nil, err
+		}
+
+		// match bots
+		bots, err := s.repo.GetBotsByText(ctx, objects)
+		if err != nil {
+			return nil, err
+		}
+
+		// todo check group bots
+
+		// run
+		outMessages, err = r.Process(ctx, tokens, bots)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	// send message
 	for _, item := range outMessages {
+		// todo save out messages
 		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, &pb.Message{
-			Id:           0,
 			GroupId:      reply.Message.GetGroupId(),
 			UserId:       reply.Message.GetUserId(),
-			Sequence:     0,
 			Uuid:         "",
 			Sender:       0,
 			SenderType:   "",
@@ -66,8 +90,6 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			Type:         enum.MessageTypeText, // todo
 			Text:         item,
 			Status:       0,
-			CreatedAt:    0,
-			UpdatedAt:    0,
 		})
 		if err != nil {
 			return nil, err

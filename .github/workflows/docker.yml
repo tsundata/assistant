@@ -159,15 +159,6 @@ jobs:
           tags: |
             ghcr.io/${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
 
-      - name: Build and push bot
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/bot/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/bot:${{ steps.meta.outputs.tag }}
-
       - name: Build and push nlp
         uses: docker/build-push-action@v2
         with:

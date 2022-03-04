@@ -17,9 +17,6 @@ func TestSvcAddr(t *testing.T) {
 	r = SvcAddr(&c, enum.Chatbot)
 	require.Equal(t, "", r)
 
-	r = SvcAddr(&c, enum.Bot)
-	require.Equal(t, "bot:6005", r)
-
 	r = SvcAddr(&c, "NotFound")
 	require.Equal(t, "NotFound-error-svc-addr", r)
 }

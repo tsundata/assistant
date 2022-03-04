@@ -81,33 +81,5 @@ func NewWorkflowClient(client *rpc.Client) (pb.WorkflowSvcClient, error) {
 	return c, nil
 }
 
-func NewFinanceClient(client *rpc.Client) (pb.FinanceSvcClient, error) {
-	conn, err := client.Dial(enum.Bot, rpc.WithTimeout(time.Second))
-	if err != nil {
-		return nil, errors.Wrap(err, "user client dial error")
-	}
-	c := pb.NewFinanceSvcClient(conn)
-	return c, nil
-}
-
-func NewOrgClient(client *rpc.Client) (pb.OrgSvcClient, error) {
-	conn, err := client.Dial(enum.Bot, rpc.WithTimeout(time.Second))
-	if err != nil {
-		return nil, errors.Wrap(err, "user client dial error")
-	}
-	c := pb.NewOrgSvcClient(conn)
-	return c, nil
-}
-
-func NewTodoClient(client *rpc.Client) (pb.TodoSvcClient, error) {
-	conn, err := client.Dial(enum.Bot, rpc.WithTimeout(time.Second))
-	if err != nil {
-		return nil, errors.Wrap(err, "todo client dial error")
-	}
-	c := pb.NewTodoSvcClient(conn)
-	return c, nil
-}
-
 var ProviderSet = wire.NewSet(NewIdClient, NewMiddleClient, NewMessageClient,
-	NewChatbotClient, NewUserClient, NewNLPClient, NewStorageClient, NewWorkflowClient,
-	NewFinanceClient, NewOrgClient, NewTodoClient)
+	NewChatbotClient, NewUserClient, NewNLPClient, NewStorageClient, NewWorkflowClient)

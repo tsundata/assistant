@@ -3,15 +3,33 @@ package robot
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/bot/finance"
 	"github.com/tsundata/assistant/internal/app/bot/org"
 	_ "github.com/tsundata/assistant/internal/app/bot/plugin"
 	"github.com/tsundata/assistant/internal/app/bot/todo"
-	"github.com/tsundata/assistant/internal/app/chatbot/repository"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/lexer"
 	"strings"
 )
+
+func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
+	for _, item := range bots {
+		err := bus.Publish(ctx, enum.Chatbot, event.BotRegisterSubject, pb.Bot{
+			Name:       item.Name,
+			Identifier: item.Identifier,
+			Detail:     item.Detail,
+			Avatar:     item.Avatar,
+			Extend:     "",
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 var botMap = map[string]*bot.Bot{
 	todo.Bot.Metadata.Identifier:    todo.Bot,
@@ -19,26 +37,27 @@ var botMap = map[string]*bot.Bot{
 	finance.Bot.Metadata.Identifier: finance.Bot,
 }
 
-type Robot struct {
-	repo repository.ChatbotRepository
+type Robot struct{}
+
+func NewRobot() *Robot {
+	return &Robot{}
 }
 
-func NewRobot(repo repository.ChatbotRepository) *Robot {
-	return &Robot{repo: repo}
-}
-
-func (r *Robot) Process(ctx context.Context, in string) (out []string, err error) {
+func (r *Robot) Help(in string) ([]string, error) {
 	if strings.ToLower(in) == "help" {
 		// todo
 		return []string{"help...."}, nil
 	}
+	return []string{}, nil
+}
 
+func (r *Robot) ParseText(in string) ([]*lexer.Token, []string, []string, error) {
 	tokens, err := lexer.ParseText(in)
 	if err != nil {
-		return nil, err
+		return nil, []string{}, []string{}, nil
 	}
 	if len(tokens) == 0 {
-		return []string{}, nil
+		return nil, []string{}, []string{}, nil
 	}
 
 	var objects []string
@@ -52,13 +71,10 @@ func (r *Robot) Process(ctx context.Context, in string) (out []string, err error
 		}
 	}
 
-	fmt.Println("[robot] process", in, objects, tags)
+	return tokens, objects, tags, nil
+}
 
-	bots, err := r.repo.GetBotsByText(ctx, objects)
-	if err != nil {
-		return nil, err
-	}
-
+func (r *Robot) Process(ctx context.Context, tokens []*lexer.Token, bots map[string]*pb.Bot) (out []string, err error) {
 	// todo tags
 
 	var input interface{} = tokens[0].Value
@@ -74,6 +90,7 @@ func (r *Robot) Process(ctx context.Context, in string) (out []string, err error
 		}
 	}
 
+	// fixme
 	switch v := output.(type) {
 	case string:
 		return []string{v}, nil
