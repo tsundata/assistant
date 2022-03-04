@@ -59,7 +59,12 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 			grpcMiddleware.ChainUnaryServer(
 				grpcRecovery.UnaryServerInterceptor(recoveryOpts...),
 				rollbar.UnaryServerInterceptor(),
-				grpcZap.UnaryServerInterceptor(z),
+				grpcZap.UnaryServerInterceptor(z, grpcZap.WithDecider(func(fullMethodName string, err error) bool {
+					if fullMethodName == "/grpc.health.v1.Health/Check" {
+						return false
+					}
+					return true
+				})),
 				otgrpc.OpenTracingServerInterceptor(tracer),
 				redisMiddle.StatsUnaryServerInterceptor(rdb),
 				nrgrpc.UnaryServerInterceptor(nc.Application()),
