@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/bot/finance"
 	"github.com/tsundata/assistant/internal/app/bot/org"
 	_ "github.com/tsundata/assistant/internal/app/bot/plugin"
+	"github.com/tsundata/assistant/internal/app/bot/system"
 	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
@@ -33,6 +34,7 @@ func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
 }
 
 var botMap = map[string]*bot.Bot{
+	system.Bot.Metadata.Identifier:  system.Bot,
 	todo.Bot.Metadata.Identifier:    todo.Bot,
 	org.Bot.Metadata.Identifier:     org.Bot,
 	finance.Bot.Metadata.Identifier: finance.Bot,

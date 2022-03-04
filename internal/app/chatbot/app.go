@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/bot/finance"
 	"github.com/tsundata/assistant/internal/app/bot/org"
+	"github.com/tsundata/assistant/internal/app/bot/system"
 	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/app/chatbot/listener"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -29,7 +30,7 @@ func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Serve
 	}
 
 	// bots register
-	err = robot.RegisterBot(context.Background(), bus, todo.Bot, org.Bot, finance.Bot)
+	err = robot.RegisterBot(context.Background(), bus, system.Bot, todo.Bot, org.Bot, finance.Bot)
 	if err != nil {
 		return nil, err
 	}
