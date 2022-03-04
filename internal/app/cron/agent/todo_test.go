@@ -340,7 +340,7 @@ func TestTodoRemind5(t *testing.T) {
 	}
 }
 
-func clear(t *testing.T, id int64) {
+func clear(t *testing.T, id int64) {//nolint
 	rdb, err := vendors.CreateRedisClient(enum.Cron)
 	if err != nil {
 		t.Fatal(err)
