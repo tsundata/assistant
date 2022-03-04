@@ -48,17 +48,27 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 	r := robot.NewRobot()
 
+	// group bots
+	bots, err := s.repo.ListGroupBot(ctx, reply.Message.GetGroupId())
+	if err != nil {
+		return nil, err
+	}
+
 	// help
-	outMessages, err := r.Help(reply.Message.GetText())
+	outMessages, err := r.Help(bots, reply.Message.GetText())
 	if err != nil {
 		return nil, err
 	}
 
 	if len(outMessages) == 0 {
 		// lexer
-		tokens, objects, _, err := r.ParseText(reply.Message.GetText())
+		tokens, objects, _, commands, err := r.ParseText(reply.Message.GetText())
 		if err != nil {
 			return nil, err
+		}
+
+		if len(commands) > 0 {
+			// todo run commands
 		}
 
 		// match bots

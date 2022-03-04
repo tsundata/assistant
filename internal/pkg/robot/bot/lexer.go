@@ -14,10 +14,11 @@ type Token struct {
 }
 
 const (
-	StringToken = "string"
-	ObjectToken = "object"
-	TagToken    = "tag"
-	EOFToken    = "eof"
+	CommandToken = "command"
+	StringToken  = "string"
+	ObjectToken  = "object"
+	TagToken     = "tag"
+	EOFToken     = "eof"
 )
 
 type Lexer struct {
@@ -63,6 +64,26 @@ func (l *Lexer) SkipWhitespace() {
 	for l.CurrentChar > 0 && unicode.IsSpace(l.CurrentChar) {
 		l.Advance()
 	}
+}
+
+func (l *Lexer) Command() (*Token, error) {
+	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+
+	l.Advance()
+
+	var result []rune
+	for l.CurrentChar > 0 && l.CurrentChar != '/' {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	l.Advance()
+
+	s := string(result)
+	token.Type = CommandToken
+	token.Value = s
+
+	return token, nil
 }
 
 func (l *Lexer) String() (*Token, error) {
@@ -126,6 +147,9 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		if unicode.IsSpace(l.CurrentChar) {
 			l.SkipWhitespace()
 			continue
+		}
+		if l.CurrentChar == '/' {
+			return l.Command()
 		}
 		if l.CurrentChar == '@' {
 			return l.Object()

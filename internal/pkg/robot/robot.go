@@ -52,25 +52,35 @@ func (r *Robot) bot(identifier string) *bot.Bot {
 	return nil
 }
 
-func (r *Robot) Help(in string) ([]string, error) {
-	if strings.ToLower(in) == "help" {
-		// todo
-		return []string{"help...."}, nil
+func (r *Robot) Help(bots []*pb.Bot, in string) ([]string, error) {
+	if strings.ToLower(in) == "help" && len(bots) > 0 {
+		out := strings.Builder{}
+		// command help
+		for _, item := range bots {
+			if r.bot(item.Identifier) == nil {
+				continue
+			}
+			out.WriteString("--- ")
+			out.WriteString(item.Identifier)
+			out.WriteString("  ---\n")
+			c := command.New(r.bot(item.Identifier).CommandRule)
+			out.WriteString(c.Help(in))
+		}
+
+		return []string{out.String()}, nil
 	}
 	return []string{}, nil
 }
 
-func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, error) {
+func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string, error) {
 	tokens, err := bot.ParseText(in)
-	if err != nil {
-		return nil, []string{}, []string{}, nil
-	}
-	if len(tokens) == 0 {
-		return nil, []string{}, []string{}, nil
+	if err != nil || len(tokens) == 0 {
+		return nil, []string{}, []string{}, []string{}, nil
 	}
 
 	var objects []string
 	var tags []string
+	var commands []string
 	for _, item := range tokens {
 		if item.Type == bot.ObjectToken {
 			objects = append(objects, item.Value)
@@ -78,9 +88,12 @@ func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, error) {
 		if item.Type == bot.TagToken {
 			tags = append(tags, item.Value)
 		}
+		if item.Type == bot.CommandToken {
+			commands = append(commands, item.Value)
+		}
 	}
 
-	return tokens, objects, tags, nil
+	return tokens, objects, tags, commands, nil
 }
 
 func (r *Robot) ParseCommand(ctx context.Context, comp rulebot.IComponent, identifier, in string) (out []string, err error) {
