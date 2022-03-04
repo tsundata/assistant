@@ -14,15 +14,16 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
 func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server,
-	message pb.MessageSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot,
+	message pb.MessageSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot, comp command.Component,
 ) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, logger, bot, message, repo)
+	err := listener.RegisterEventHandler(bus, logger, bot, message, repo, comp)
 	if err != nil {
 		return nil, err
 	}

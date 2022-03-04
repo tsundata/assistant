@@ -3,7 +3,6 @@ package command
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"go.uber.org/zap"
 	"strings"
 	"unicode"
@@ -12,7 +11,7 @@ import (
 type Rule struct {
 	Define string
 	Help   string
-	Parse  func(context.Context, rulebot.IComponent, []*Token) []string
+	Parse  func(context.Context, Component, []*Token) []string
 }
 
 type Ruleset struct {
@@ -30,7 +29,7 @@ func (r Ruleset) Help(in string) string {
 	return ""
 }
 
-func (r Ruleset) ParseCommand(ctx context.Context, comp rulebot.IComponent, in string) ([]string, error) {
+func (r Ruleset) ParseCommand(ctx context.Context, comp Component, in string) ([]string, error) {
 	for _, rule := range r.rules {
 		tokens, err := ParseCommand(in)
 		if err != nil {

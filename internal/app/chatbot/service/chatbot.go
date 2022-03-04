@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
@@ -23,6 +24,7 @@ type Chatbot struct {
 	bot     *rulebot.RuleBot
 	repo    repository.ChatbotRepository
 	message pb.MessageSvcClient
+	comp    command.Component
 }
 
 func NewChatbot(
@@ -30,13 +32,15 @@ func NewChatbot(
 	bus event.Bus,
 	repo repository.ChatbotRepository,
 	message pb.MessageSvcClient,
-	bot *rulebot.RuleBot) *Chatbot {
+	bot *rulebot.RuleBot,
+	comp command.Component) *Chatbot {
 	return &Chatbot{
 		logger:  logger,
 		bus:     bus,
 		bot:     bot,
 		repo:    repo,
 		message: message,
+		comp:    comp,
 	}
 }
 
@@ -84,8 +88,8 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 		if len(commands) > 0 {
 			for _, item := range inBots {
-				for _, command := range commands {
-					outMessages, err = r.ParseCommand(ctx, nil, item.Identifier, command) // todo comp
+				for _, commandText := range commands {
+					outMessages, err = r.ParseCommand(ctx, s.comp, item.Identifier, commandText)
 					if err != nil {
 						return nil, err
 					}

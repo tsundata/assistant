@@ -9,12 +9,13 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/service"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
-	repo repository.ChatbotRepository) error {
+	repo repository.ChatbotRepository, comp command.Component) error {
 	ctx := context.Background()
 
 	err := bus.Subscribe(ctx, enum.Chatbot, event.MessageHandleSubject, func(msg *event.Msg) error {
@@ -24,7 +25,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return err
 		}
 
-		chatbot := service.NewChatbot(logger, bus, repo, message, bot)
+		chatbot := service.NewChatbot(logger, bus, repo, message, bot, comp)
 		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id})
 		if err != nil {
 			return err
@@ -42,7 +43,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return err
 		}
 
-		chatbot := service.NewChatbot(logger, bus, repo, message, bot)
+		chatbot := service.NewChatbot(logger, bus, repo, message, bot, comp)
 		_, err = chatbot.Register(ctx, &pb.BotRequest{Bot: &b})
 		if err != nil {
 			return err

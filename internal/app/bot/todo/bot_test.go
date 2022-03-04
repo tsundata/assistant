@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func parseCommand(t *testing.T, comp rulebot.IComponent, in string) []string {
+func parseCommand(t *testing.T, comp command.Component, in string) []string {
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
