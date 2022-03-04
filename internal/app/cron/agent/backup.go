@@ -14,7 +14,7 @@ import (
 )
 
 func Backup(ctx context.Context, comp rulebot.IComponent) []result.Result {
-	if comp.Middle() == nil || comp.Message() == nil || comp.Todo() == nil {
+	if comp.Middle() == nil || comp.Message() == nil{
 		return []result.Result{result.EmptyResult()}
 	}
 	app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})
@@ -45,16 +45,16 @@ func Backup(ctx context.Context, comp rulebot.IComponent) []result.Result {
 	}
 
 	// todos
-	todosReply, err := comp.Todo().GetTodos(ctx, &pb.TodoRequest{})
-	if err != nil {
-		return []result.Result{result.ErrorResult(err)}
-	}
+	//todosReply, err := comp.Todo().GetTodos(ctx, &pb.TodoRequest{})
+	//if err != nil {
+	//	return []result.Result{result.ErrorResult(err)}
+	//}
 
 	data := map[string]interface{}{
 		"message":     messagesReply.Messages,
 		"apps":        appsReply.Apps,
 		"credentials": credentialsReply.Credentials,
-		"todos":       todosReply.Todos,
+		//"todos":       todosReply.Todos,
 	}
 	d, err := json.Marshal(data)
 	if err != nil {

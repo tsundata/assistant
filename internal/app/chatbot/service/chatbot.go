@@ -54,7 +54,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		return nil, err
 	}
 
-	if len(outMessages) > 0 {
+	if len(outMessages) == 0 {
 		// lexer
 		tokens, objects, _, err := r.ParseText(reply.Message.GetText())
 		if err != nil {

@@ -70,10 +70,6 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoSvcClient, err := rpcclient.NewTodoClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -82,15 +78,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	orgSvcClient, err := rpcclient.NewOrgClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	financeSvcClient, err := rpcclient.NewFinanceClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	iComponent := NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, todoSvcClient, userSvcClient, nlpSvcClient, orgSvcClient, financeSvcClient)
+	iComponent := NewComponent(appConfig, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, userSvcClient, nlpSvcClient)
 	ruleBot := New(iComponent)
 	return ruleBot, nil
 }

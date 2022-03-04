@@ -22,11 +22,8 @@ type Component struct {
 	MiddleClient      pb.MiddleSvcClient
 	WorkflowSvcClient pb.WorkflowSvcClient
 	StorageClient     pb.StorageSvcClient
-	TodoClient        pb.TodoSvcClient
 	UserClient        pb.UserSvcClient
 	NLPClient         pb.NLPSvcClient
-	OrgClient         pb.OrgSvcClient
-	FinanceClient     pb.FinanceSvcClient
 }
 
 func (c Component) Message() pb.MessageSvcClient {
@@ -45,24 +42,12 @@ func (c Component) Storage() pb.StorageSvcClient {
 	return c.StorageClient
 }
 
-func (c Component) Todo() pb.TodoSvcClient {
-	return c.TodoClient
-}
-
 func (c Component) User() pb.UserSvcClient {
 	return c.UserClient
 }
 
 func (c Component) NLP() pb.NLPSvcClient {
 	return c.NLPClient
-}
-
-func (c Component) Org() pb.OrgSvcClient {
-	return c.OrgClient
-}
-
-func (c Component) Finance() pb.FinanceSvcClient {
-	return c.FinanceClient
 }
 
 func (c Component) GetConfig() *config.AppConfig {
@@ -85,11 +70,8 @@ type IComponent interface {
 	Middle() pb.MiddleSvcClient
 	Workflow() pb.WorkflowSvcClient
 	Storage() pb.StorageSvcClient
-	Todo() pb.TodoSvcClient
 	User() pb.UserSvcClient
 	NLP() pb.NLPSvcClient
-	Org() pb.OrgSvcClient
-	Finance() pb.FinanceSvcClient
 }
 
 func NewComponent(
@@ -101,11 +83,8 @@ func NewComponent(
 	middleClient pb.MiddleSvcClient,
 	workflowClient pb.WorkflowSvcClient,
 	storageClient pb.StorageSvcClient,
-	todoClient pb.TodoSvcClient,
 	userClient pb.UserSvcClient,
 	nlpClient pb.NLPSvcClient,
-	orgClient pb.OrgSvcClient,
-	financeClient pb.FinanceSvcClient,
 ) IComponent {
 	return Component{
 		Conf:              conf,
@@ -115,11 +94,8 @@ func NewComponent(
 		MiddleClient:      middleClient,
 		WorkflowSvcClient: workflowClient,
 		StorageClient:     storageClient,
-		TodoClient:        todoClient,
 		UserClient:        userClient,
 		NLPClient:         nlpClient,
-		OrgClient:         orgClient,
-		FinanceClient:     financeClient,
 	}
 }
 
