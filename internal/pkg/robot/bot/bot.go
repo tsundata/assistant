@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type Bot struct {
@@ -79,7 +80,8 @@ func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRul
 	return b, nil
 }
 
-func (b *Bot) Run(ctx context.Context, input interface{}) (interface{}, error) {
+func (b *Bot) Run(ctx context.Context, comp component.Component, input interface{}) (interface{}, error) {
+	b.ctrl.Comp = comp
 	if b.config.PluginChain != nil {
 		return b.config.PluginChain.Run(ctx, b.ctrl, input)
 	}

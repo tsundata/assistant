@@ -112,7 +112,7 @@ func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, id
 	return c.ProcessCommand(ctx, comp, commandText)
 }
 
-func (r *Robot) ProcessWorkflow(ctx context.Context, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
+func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
 	// todo tags
 
 	var input interface{} = tokens[0].Value // fixme first input
@@ -120,7 +120,7 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, tokens []*bot.Token, bots m
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)
 		if b, ok := botMap[item.Identifier]; ok {
-			out, err := b.Run(ctx, input)
+			out, err := b.Run(ctx, comp, input)
 			if err != nil {
 				return nil, err
 			}

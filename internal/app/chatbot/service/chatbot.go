@@ -125,7 +125,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 		if len(outMessages) == 0 {
 			// run
-			outMessages, err = r.ProcessWorkflow(ctx, tokens, inBots)
+			outMessages, err = r.ProcessWorkflow(ctx, s.comp, tokens, inBots)
 			if err != nil {
 				return nil, err
 			}
