@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"github.com/pkg/errors"
 )
@@ -52,7 +53,7 @@ type (
 	Plugin func(next PluginHandler) PluginHandler
 
 	PluginHandler interface {
-		Run(ctrl *Controller, input interface{}) (interface{}, error)
+		Run(ctx context.Context, ctrl *Controller, input interface{}) (interface{}, error)
 		Name() string
 	}
 )
@@ -62,9 +63,9 @@ func Error(name string, err error) error {
 	return fmt.Errorf("%s/%s: %s", "plugin", name, err)
 }
 
-func NextOrFailure(name string, next PluginHandler, ctrl *Controller, input interface{}) (interface{}, error) {
+func NextOrFailure(ctx context.Context, name string, next PluginHandler, ctrl *Controller, input interface{}) (interface{}, error) {
 	if next != nil {
-		return next.Run(ctrl, input)
+		return next.Run(ctx, ctrl, input)
 	}
 	return nil, Error(name, errors.New("no next plugin found"))
 }

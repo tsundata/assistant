@@ -80,9 +80,8 @@ func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRul
 }
 
 func (b *Bot) Run(ctx context.Context, input interface{}) (interface{}, error) {
-	b.ctrl.Ctx = ctx
 	if b.config.PluginChain != nil {
-		return b.config.PluginChain.Run(b.ctrl, input)
+		return b.config.PluginChain.Run(ctx, b.ctrl, input)
 	}
 	return input, nil
 }
