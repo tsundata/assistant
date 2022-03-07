@@ -536,6 +536,26 @@ func (mr *MockMiddleSvcClientMockRecorder) RegisterSubscribe(ctx, in interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).RegisterSubscribe), varargs...)
 }
 
+// SaveModelTag mocks base method.
+func (m *MockMiddleSvcClient) SaveModelTag(ctx context.Context, in *pb.ModelTagRequest, opts ...grpc.CallOption) (*pb.ModelTagReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SaveModelTag", varargs...)
+	ret0, _ := ret[0].(*pb.ModelTagReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SaveModelTag indicates an expected call of SaveModelTag.
+func (mr *MockMiddleSvcClientMockRecorder) SaveModelTag(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcClient)(nil).SaveModelTag), varargs...)
+}
+
 // SetChartData mocks base method.
 func (m *MockMiddleSvcClient) SetChartData(ctx context.Context, in *pb.ChartDataRequest, opts ...grpc.CallOption) (*pb.ChartDataReply, error) {
 	m.ctrl.T.Helper()
@@ -1012,6 +1032,21 @@ func (m *MockMiddleSvcServer) RegisterSubscribe(arg0 context.Context, arg1 *pb.S
 func (mr *MockMiddleSvcServerMockRecorder) RegisterSubscribe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).RegisterSubscribe), arg0, arg1)
+}
+
+// SaveModelTag mocks base method.
+func (m *MockMiddleSvcServer) SaveModelTag(arg0 context.Context, arg1 *pb.ModelTagRequest) (*pb.ModelTagReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveModelTag", arg0, arg1)
+	ret0, _ := ret[0].(*pb.ModelTagReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SaveModelTag indicates an expected call of SaveModelTag.
+func (mr *MockMiddleSvcServerMockRecorder) SaveModelTag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcServer)(nil).SaveModelTag), arg0, arg1)
 }
 
 // SetChartData mocks base method.

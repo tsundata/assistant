@@ -39,6 +39,7 @@ service MiddleSvc {
   rpc GetCronStatus(CronRequest) returns (StateReply) {}
   rpc GetOrCreateTag(TagRequest) returns (TagReply) {}
   rpc GetTags(TagRequest) returns (TagsReply) {}
+  rpc SaveModelTag(ModelTagRequest) returns (ModelTagReply) {}
   rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc SetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc GetChartUrl(TextRequest) returns (TextReply) {}
@@ -200,6 +201,23 @@ message Tag {
   int64 updated_at = 4;
 }
 
+message ModelTag {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64  id = 1;
+  // @inject_tag: db:"service"
+  string service = 2;
+  // @inject_tag: db:"model"
+  string model = 3;
+  // @inject_tag: db:"tag_id"
+  int64 model_id = 4;
+  // @inject_tag: db:"tag_id"
+  int64 tag_id = 5;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 7;
+}
+
 message TagRequest {
   Tag tag = 1;
 }
@@ -210,6 +228,15 @@ message TagReply {
 
 message TagsReply {
   repeated Tag tags = 1;
+}
+
+message ModelTagRequest {
+  ModelTag model = 1;
+  string tag = 2;
+}
+
+message ModelTagReply {
+  ModelTag model = 1;
 }
 
 message ChartData {

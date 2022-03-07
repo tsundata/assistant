@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/api/pb"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -213,6 +214,56 @@ func TestFirstToUpper(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, FirstToUpper(tt.data))
+		})
+	}
+}
+
+func TestStructName(t *testing.T) {
+	tests := []struct {
+		name   string
+		data   interface{}
+		expect string
+	}{
+		{
+			"case1",
+			pb.Message{},
+			"Message",
+		},
+		{
+			"case2",
+			&pb.Message{},
+			"Message",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expect, StructName(tt.data))
+		})
+	}
+}
+
+func TestModelName(t *testing.T) {
+	tests := []struct {
+		name   string
+		data   interface{}
+		expect string
+	}{
+		{
+			"case1",
+			pb.Message{},
+			"message",
+		},
+		{
+			"case2",
+			&pb.Message{},
+			"message",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expect, ModelName(tt.data))
 		})
 	}
 }

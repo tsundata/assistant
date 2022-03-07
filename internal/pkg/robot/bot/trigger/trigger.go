@@ -2,12 +2,13 @@ package trigger
 
 import (
 	"context"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"sync"
 )
 
 type Trigger interface {
-	Cond(text string) bool
+	Cond(message *pb.Message) bool
 	Handle(ctx context.Context, comp component.Component)
 }
 
@@ -15,12 +16,11 @@ func triggers() []Trigger {
 	return []Trigger{
 		NewUrl(),
 		NewEmail(),
-		NewTag(),
-		NewUser(),
+		//NewTag(), todo
 	}
 }
 
-func Run(ctx context.Context, comp component.Component, message string) {
+func Process(ctx context.Context, comp component.Component, message *pb.Message) error {
 	triggers := triggers()
 	wg := sync.WaitGroup{}
 	for _, item := range triggers {
@@ -33,6 +33,7 @@ func Run(ctx context.Context, comp component.Component, message string) {
 		}(item)
 	}
 	wg.Wait()
+	return nil
 }
 
 func clear(arr []string) []string {

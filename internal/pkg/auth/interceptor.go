@@ -10,6 +10,7 @@ import (
 )
 
 var ignoreFullMethod = []string{
+	// basic
 	"/grpc.health.v1.Health/Check",
 	"/grpc.health.v1.Health/Watch",
 	"/pb.IdSvc/GetGlobalId",
@@ -18,6 +19,8 @@ var ignoreFullMethod = []string{
 	"/pb.ChatbotSvc/Register",
 	"/pb.MiddleSvc/RegisterSubscribe",
 	"/pb.MiddleSvc/GetSubscribeStatus",
+	// business
+	"/pb.MiddleSvc/GetPage",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

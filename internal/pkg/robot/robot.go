@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strings"
@@ -75,8 +76,8 @@ func (r *Robot) Help(bots []*pb.Bot, in string) ([]string, error) {
 }
 
 //ParseText  tokens, objects, tags, commands
-func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string, error) {
-	tokens, err := bot.ParseText(in)
+func (r *Robot) ParseText(in *pb.Message) ([]*bot.Token, []string, []string, []string, error) {
+	tokens, err := bot.ParseText(in.GetText())
 	if err != nil || len(tokens) == 0 {
 		return nil, []string{}, []string{}, []string{}, nil
 	}
@@ -99,12 +100,16 @@ func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string
 	return tokens, objects, tags, commands, nil
 }
 
-func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, identifier, in string) (out []string, err error) {
+func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in *pb.Message) error {
+	return trigger.Process(ctx, comp, in)
+}
+
+func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, identifier, commandText string) (out []string, err error) {
 	if r.bot(identifier) == nil {
 		return nil, errors.New("error identifier")
 	}
 	c := command.New(r.bot(identifier).CommandRule)
-	return c.ProcessCommand(ctx, comp, in)
+	return c.ProcessCommand(ctx, comp, commandText)
 }
 
 func (r *Robot) ProcessWorkflow(ctx context.Context, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {

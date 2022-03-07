@@ -600,6 +600,21 @@ func (s *Middle) GetTags(ctx context.Context, _ *pb.TagRequest) (*pb.TagsReply, 
 	}, nil
 }
 
+func (s *Middle) SaveModelTag(ctx context.Context, request *pb.ModelTagRequest) (*pb.ModelTagReply, error) {
+	tag, err := s.repo.GetOrCreateTag(ctx, &pb.Tag{
+		Name: request.Tag,
+	})
+	if err != nil {
+		return nil, err
+	}
+	request.Model.TagId = tag.Id
+	_, err = s.repo.GetOrCreateModelTag(ctx, request.Model)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ModelTagReply{Model: request.Model}, nil
+}
+
 func (s *Middle) GetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.ChartDataReply, error) {
 	resp, err := s.rdb.Get(ctx, fmt.Sprintf("middle:chart:%s", payload.ChartData.GetUuid())).Result()
 	if err != nil {

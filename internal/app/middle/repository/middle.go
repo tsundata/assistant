@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
+	"time"
 )
 
 type MiddleRepository interface {
@@ -23,6 +24,7 @@ type MiddleRepository interface {
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
 	ListTags(ctx context.Context) ([]*pb.Tag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
+	GetOrCreateModelTag(ctx context.Context, tag *pb.ModelTag) (pb.ModelTag, error)
 }
 
 type MysqlMiddleRepository struct {
@@ -147,9 +149,31 @@ func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag)
 
 	if find.Id <= 0 {
 		tag.Id = r.id.Generate(ctx)
+		tag.CreatedAt = time.Now().Unix()
+		tag.UpdatedAt = time.Now().Unix()
 		err = r.db.WithContext(ctx).Create(&tag).Error
 		if err != nil {
 			return pb.Tag{}, err
+		}
+	}
+
+	return find, nil
+}
+
+func (r *MysqlMiddleRepository) GetOrCreateModelTag(ctx context.Context, model *pb.ModelTag) (pb.ModelTag, error) {
+	var find pb.ModelTag
+	err := r.db.WithContext(ctx).Where("service = ? AND model = ? AND model_id = ? AND tag_id = ?", model.Service, model.Model, model.ModelId, model.TagId).First(&find).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return pb.ModelTag{}, err
+	}
+
+	if find.Id <= 0 {
+		model.Id = r.id.Generate(ctx)
+		model.CreatedAt = time.Now().Unix()
+		model.UpdatedAt = time.Now().Unix()
+		err = r.db.WithContext(ctx).Create(&model).Error
+		if err != nil {
+			return pb.ModelTag{}, err
 		}
 	}
 

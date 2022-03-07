@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 )
@@ -145,4 +146,16 @@ func FirstToUpper(str string) string {
 		strA[0] -= 32
 	}
 	return string(strA)
+}
+
+func StructName(s interface{}) string {
+	if t := reflect.TypeOf(s); t.Kind() == reflect.Ptr {
+		return t.Elem().Name()
+	} else {
+		return t.Name()
+	}
+}
+
+func ModelName(s interface{}) string {
+	return strings.ToLower(StructName(s))
 }

@@ -24,6 +24,7 @@ type Chatbot struct {
 	bot     *rulebot.RuleBot
 	repo    repository.ChatbotRepository
 	message pb.MessageSvcClient
+	middle  pb.MiddleSvcClient
 	comp    component.Component
 }
 
@@ -32,6 +33,7 @@ func NewChatbot(
 	bus event.Bus,
 	repo repository.ChatbotRepository,
 	message pb.MessageSvcClient,
+	middle pb.MiddleSvcClient,
 	bot *rulebot.RuleBot,
 	comp component.Component) *Chatbot {
 	return &Chatbot{
@@ -40,6 +42,7 @@ func NewChatbot(
 		bot:     bot,
 		repo:    repo,
 		message: message,
+		middle:  middle,
 		comp:    comp,
 	}
 }
@@ -69,8 +72,14 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	}
 
 	if len(outMessages) == 0 {
+		// trigger
+		err = r.ProcessTrigger(ctx, s.comp, reply.Message)
+		if err != nil {
+			return nil, err
+		}
+
 		// lexer
-		tokens, objects, _, commands, err := r.ParseText(reply.Message.GetText())
+		tokens, objects, tags, commands, err := r.ParseText(reply.Message)
 		if err != nil {
 			return nil, err
 		}
@@ -98,7 +107,18 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 
 		// tags
-		
+		if len(tags) > 0 {
+			for _, tag := range tags {
+				_, err = s.middle.SaveModelTag(ctx, &pb.ModelTagRequest{
+					Model: &pb.ModelTag{
+						Service: enum.Message,
+						Model:   util.ModelName(pb.Message{}),
+						ModelId: reply.Message.GetId(),
+					},
+					Tag: tag,
+				})
+			}
+		}
 
 		if len(outMessages) == 0 {
 			// run

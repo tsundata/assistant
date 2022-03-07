@@ -21,10 +21,10 @@ import (
 )
 
 func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server,
-	message pb.MessageSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot, comp component.Component,
+	message pb.MessageSvcClient, middle pb.MiddleSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot, comp component.Component,
 ) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, logger, bot, message, repo, comp)
+	err := listener.RegisterEventHandler(bus, logger, bot, message, middle, repo, comp)
 	if err != nil {
 		return nil, err
 	}

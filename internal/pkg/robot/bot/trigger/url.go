@@ -16,23 +16,25 @@ import (
 )
 
 type Url struct {
-	text string
-	url  []string
+	text    string
+	url     []string
+	message *pb.Message
 }
 
 func NewUrl() *Url {
 	return &Url{}
 }
 
-func (t *Url) Cond(text string) bool {
+func (t *Url) Cond(message *pb.Message) bool {
+	t.message = message
 	re := regexp.MustCompile(`(?m)` + util.UrlRegex)
-	ts := re.FindAllString(text, -1)
+	ts := re.FindAllString(message.GetText(), -1)
 
 	if len(ts) == 0 {
 		return false
 	}
 
-	t.text = text
+	t.text = message.GetText()
 	for _, item := range ts {
 		t.text = strings.ReplaceAll(t.text, item, "")
 		t.url = append(t.url, item)
@@ -70,7 +72,10 @@ func (t *Url) Handle(ctx context.Context, comp component.Component) {
 		}
 
 		// send message
-		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
+			GroupId: t.message.GetGroupId(),
+			Text:    fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText()),
+		})
 		if err != nil {
 			return
 		}

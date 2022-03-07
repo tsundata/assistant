@@ -13,7 +13,6 @@ func Tags() map[string]Tagger {
 	return map[string]Tagger{
 		"issue":   NewIssue(),
 		"project": NewProject(),
-		"todo":    NewTodo(),
 	}
 }
 

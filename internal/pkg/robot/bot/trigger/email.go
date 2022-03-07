@@ -23,15 +23,15 @@ func NewEmail() *Email {
 	return &Email{}
 }
 
-func (t *Email) Cond(text string) bool {
+func (t *Email) Cond(message *pb.Message) bool {
 	re := regexp.MustCompile(`(?m)` + util.EmailRegex)
-	ts := re.FindAllString(text, -1)
+	ts := re.FindAllString(message.GetText(), -1)
 
 	if len(ts) == 0 {
 		return false
 	}
 
-	t.text = text
+	t.text = message.GetText()
 	for _, item := range ts {
 		t.text = strings.ReplaceAll(t.text, item, "")
 		t.text = strings.ReplaceAll(t.text, "<mailto:|>", "") // special

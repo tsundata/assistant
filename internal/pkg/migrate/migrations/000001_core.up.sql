@@ -253,3 +253,21 @@ create table if not exists `tags`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+
+create table if not exists `model_tags`
+(
+    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `service`    VARCHAR(50)         NOT NULL DEFAULT '',
+    `model`      VARCHAR(50)         NOT NULL DEFAULT '',
+    `model_id`   BIGINT(19)          NOT NULL,
+    `tag_id`     BIGINT(19)          NOT NULL,
+    `created_at` INT(10)             NOT NULL DEFAULT '0',
+    `updated_at` INT(10)             NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `service` (`service`) USING BTREE,
+    INDEX `model` (`model`) USING BTREE,
+    INDEX `model_id` (`model_id`) USING BTREE,
+    INDEX `tag_id` (`tag_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
