@@ -9,13 +9,13 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/service"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
 func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
-	repo repository.ChatbotRepository, comp command.Component) error {
+	repo repository.ChatbotRepository, comp component.Component) error {
 	ctx := context.Background()
 
 	err := bus.Subscribe(ctx, enum.Chatbot, event.MessageHandleSubject, func(msg *event.Msg) error {

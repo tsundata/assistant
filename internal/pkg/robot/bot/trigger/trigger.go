@@ -2,13 +2,13 @@ package trigger
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"sync"
 )
 
 type Trigger interface {
 	Cond(text string) bool
-	Handle(ctx context.Context, comp *ctx.Component)
+	Handle(ctx context.Context, comp component.Component)
 }
 
 func triggers() []Trigger {
@@ -20,7 +20,7 @@ func triggers() []Trigger {
 	}
 }
 
-func Run(ctx context.Context, comp *ctx.Component, message string) {
+func Run(ctx context.Context, comp component.Component, message string) {
 	triggers := triggers()
 	wg := sync.WaitGroup{}
 	for _, item := range triggers {

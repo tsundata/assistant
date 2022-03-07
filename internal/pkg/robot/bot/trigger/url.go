@@ -8,8 +8,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"regexp"
 	"strings"
@@ -43,7 +43,7 @@ func (t *Url) Cond(text string) bool {
 	return true
 }
 
-func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
+func (t *Url) Handle(ctx context.Context, comp component.Component) {
 	for _, url := range t.url {
 		// fetch html
 		r := resty.New()
@@ -58,7 +58,7 @@ func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 		title := doc.Find("title").Text()
 
 		// store
-		reply, err := comp.Middle.CreatePage(ctx, &pb.PageRequest{
+		reply, err := comp.Middle().CreatePage(ctx, &pb.PageRequest{
 			Page: &pb.Page{
 				Title:   title,
 				Content: util.ByteToString(resp.Body()),
@@ -70,7 +70,7 @@ func (t *Url) Handle(ctx context.Context, comp *ctx.Component) {
 		}
 
 		// send message
-		err = comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
+		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText())})
 		if err != nil {
 			return
 		}

@@ -3,13 +3,14 @@ package finance
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 var commandRules = []command.Rule{
 	{
 		Define: `fund [string]`,
 		Help:   `Get fund`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			//if comp.Finance() == nil {
 			//	return []string{"empty client"}
 			//}
@@ -59,7 +60,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `stock [string]`,
 		Help:   `Get stock`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			//if comp.Finance() == nil {
 			//	return []string{"empty client"}
 			//}

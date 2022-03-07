@@ -2,7 +2,7 @@ package tags
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type Todo struct{}
@@ -11,7 +11,7 @@ func NewTodo() *Todo {
 	return &Todo{}
 }
 
-func (t *Todo) Handle(ctx context.Context, comp *ctx.Component, text string) {
+func (t *Todo) Handle(ctx context.Context, comp component.Component, text string) {
 	//// create
 	//reply, err := comp.Todo.CreateTodo(ctx, &pb.TodoRequest{
 	//	Todo: &pb.Todo{Content: text},

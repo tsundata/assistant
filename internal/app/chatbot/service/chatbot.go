@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot"
-	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
@@ -24,7 +24,7 @@ type Chatbot struct {
 	bot     *rulebot.RuleBot
 	repo    repository.ChatbotRepository
 	message pb.MessageSvcClient
-	comp    command.Component
+	comp    component.Component
 }
 
 func NewChatbot(
@@ -33,7 +33,7 @@ func NewChatbot(
 	repo repository.ChatbotRepository,
 	message pb.MessageSvcClient,
 	bot *rulebot.RuleBot,
-	comp command.Component) *Chatbot {
+	comp component.Component) *Chatbot {
 	return &Chatbot{
 		logger:  logger,
 		bus:     bus,

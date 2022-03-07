@@ -2,11 +2,11 @@ package tags
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type Tagger interface {
-	Handle(ctx context.Context, comp *ctx.Component, text string)
+	Handle(ctx context.Context, comp component.Component, text string)
 }
 
 func Tags() map[string]Tagger {

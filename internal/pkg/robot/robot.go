@@ -14,6 +14,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strings"
 )
 
@@ -98,7 +99,7 @@ func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string
 	return tokens, objects, tags, commands, nil
 }
 
-func (r *Robot) ProcessCommand(ctx context.Context, comp command.Component, identifier, in string) (out []string, err error) {
+func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, identifier, in string) (out []string, err error) {
 	if r.bot(identifier) == nil {
 		return nil, errors.New("error identifier")
 	}

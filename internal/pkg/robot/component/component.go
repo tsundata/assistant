@@ -1,15 +1,17 @@
-package command
+package component
 
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
 type Comp struct {
 	Conf   *config.AppConfig
+	Bus    event.Bus
 	RDB    *redis.Client
 	Logger log.Logger
 
@@ -57,8 +59,13 @@ func (c Comp) GetLogger() log.Logger {
 	return c.Logger
 }
 
+func (c Comp) GetBus() event.Bus {
+	return c.Bus
+}
+
 type Component interface {
 	GetConfig() *config.AppConfig
+	GetBus() event.Bus
 	GetRedis() *redis.Client
 	GetLogger() log.Logger
 	Message() pb.MessageSvcClient
@@ -71,6 +78,7 @@ type Component interface {
 
 func NewComponent(
 	conf *config.AppConfig,
+	bus event.Bus,
 	rdb *redis.Client,
 	logger log.Logger,
 
@@ -83,6 +91,7 @@ func NewComponent(
 ) Component {
 	return Comp{
 		Conf:              conf,
+		Bus:               bus,
 		RDB:               rdb,
 		Logger:            logger,
 		MessageClient:     messageClient,

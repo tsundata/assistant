@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/tags"
+	tags2 "github.com/tsundata/assistant/internal/pkg/robot/bot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"math/big"
@@ -20,14 +21,14 @@ var commandRules = []command.Rule{
 	{
 		Define: "version",
 		Help:   `Version info`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			return []string{version.Info()}
 		},
 	},
 	{
 		Define: `qr [string]`,
 		Help:   `Generate QR code`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -47,7 +48,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `ut [number]`,
 		Help:   `Unix Timestamp`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			t := time.Unix(tokens[1].Value.(int64), 0)
 
 			return []string{
@@ -58,7 +59,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `rand [number] [number]`,
 		Help:   `Unix Timestamp`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			min := tokens[1].Value.(int64)
 			max := tokens[1].Value.(int64)
 
@@ -76,7 +77,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `pwd [number]`,
 		Help:   `Generate Password`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			length := tokens[1].Value.(int64)
 
 			pwd := util.RandString(int(length), "lowercase|uppercase|numbers")
@@ -89,7 +90,7 @@ var commandRules = []command.Rule{
 	{
 		Define: "subs list",
 		Help:   `List subscribe`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -118,7 +119,7 @@ var commandRules = []command.Rule{
 	{
 		Define: "subs open [string]",
 		Help:   `Open subscribe`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -139,7 +140,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `subs close [string]`,
 		Help:   `Close subscribe`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -160,7 +161,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `view [number]`, // todo sequence
 		Help:   `View message`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Message() == nil {
 				return []string{"empty client"}
 			}
@@ -181,7 +182,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `run [number]`,
 		Help:   `Run message`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Message() == nil {
 				return []string{"empty client"}
 			}
@@ -199,7 +200,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `doc`,
 		Help:   `Show action docs`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Workflow() == nil {
 				return []string{"empty client"}
 			}
@@ -211,7 +212,7 @@ var commandRules = []command.Rule{
 			res.WriteString("Action:\n")
 			res.WriteString(reply.GetText())
 			res.WriteString("\n\nTag:\n")
-			for k := range tags.Tags() {
+			for k := range tags2.Tags() {
 				res.WriteString("#")
 				res.WriteString(k)
 				res.WriteString("\n")
@@ -222,7 +223,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `test`,
 		Help:   `Test`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			_, err := comp.Message().Send(ctx, &pb.MessageRequest{Message: &pb.Message{Text: "test"}})
 			if err != nil {
 				return []string{err.Error()}
@@ -249,7 +250,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `stats`,
 		Help:   `Stats Info`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -263,7 +264,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `pinyin [string]`,
 		Help:   "chinese pinyin conversion",
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.NLP() == nil {
 				return []string{"empty client"}
 			}
@@ -280,7 +281,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `del [number]`,
 		Help:   `Delete message`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			id := tokens[1].Value.(int64)
 
 			_, err := comp.Message().Delete(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
@@ -294,7 +295,7 @@ var commandRules = []command.Rule{
 	{
 		Define: "cron list",
 		Help:   `List cron`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -323,7 +324,7 @@ var commandRules = []command.Rule{
 	{
 		Define: "cron start [string]",
 		Help:   `Start cron`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -344,7 +345,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `cron stop [string]`,
 		Help:   `Stop cron`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
@@ -365,7 +366,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `webhook list`,
 		Help:   `List webhook`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Workflow() == nil {
 				return []string{"empty client"}
 			}

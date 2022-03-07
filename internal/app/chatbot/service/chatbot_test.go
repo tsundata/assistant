@@ -8,7 +8,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/mock"
 	"gorm.io/gorm"
@@ -31,7 +31,7 @@ func TestChatbot_Handle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := command.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)

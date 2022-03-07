@@ -6,12 +6,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/mock"
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp command.Component, in string) []string {
+func parseCommand(t *testing.T, comp component.Component, in string) []string {
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -52,7 +52,7 @@ func TestTodoList(t *testing.T) {
 	)
 
 	cmd := "todo list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+	comp := component.NewComponent(nil,nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
@@ -69,16 +69,16 @@ func TestTodoCommand(t *testing.T) {
 	)
 
 	cmd := "todo test1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"success"}, res)
 }
 
 func TestRemindCommand(t *testing.T) {
 	cmd := "remind test 19:50"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{}, res)
 }

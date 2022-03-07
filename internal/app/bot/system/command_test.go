@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"github.com/tsundata/assistant/mock"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func parseCommand(t *testing.T, comp command.Component, in string) []string {
+func parseCommand(t *testing.T, comp component.Component, in string) []string {
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -38,8 +38,8 @@ func parseCommand(t *testing.T, comp command.Component, in string) []string {
 
 func TestVersionCommand(t *testing.T) {
 	cmd := "version"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{version.Info()}, res)
 }
@@ -54,7 +54,7 @@ func TestQrCommand(t *testing.T) {
 	)
 
 	cmd := "qr abc"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
@@ -62,15 +62,15 @@ func TestQrCommand(t *testing.T) {
 
 func TestUtCommand(t *testing.T) {
 	cmd := "ut 1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
 
 func TestRandCommand(t *testing.T) {
 	cmd := "rand 1 100"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 
@@ -83,8 +83,8 @@ func TestRandCommand(t *testing.T) {
 
 func TestPwdCommand(t *testing.T) {
 	cmd := "pwd 32"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, 32, len(res[0]))
 }
@@ -99,7 +99,7 @@ func TestSubsListCommand(t *testing.T) {
 	)
 
 	cmd := "subs list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
@@ -115,7 +115,7 @@ func TestSubsOpenCommand(t *testing.T) {
 	)
 
 	cmd := "subs open test1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
@@ -131,7 +131,7 @@ func TestSubsCloseCommand(t *testing.T) {
 	)
 
 	cmd := "subs close test1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
@@ -147,7 +147,7 @@ func TestViewCommand(t *testing.T) {
 	)
 
 	cmd := "view 1"
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
@@ -163,7 +163,7 @@ func TestRunCommand(t *testing.T) {
 	)
 
 	cmd := "run 1"
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
@@ -179,7 +179,7 @@ func TestDocCommand(t *testing.T) {
 	)
 
 	cmd := "doc"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, workflow,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Len(t, res, 1)
@@ -195,7 +195,7 @@ func TestStatsCommand(t *testing.T) {
 	)
 
 	cmd := "stats"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"stats ..."}, res)
@@ -211,7 +211,7 @@ func TestPinyinCommand(t *testing.T) {
 	)
 
 	cmd := "pinyin 测试"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil,
 		nil, nil, nlp)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"a1, a2"}, res)
@@ -227,7 +227,7 @@ func TestDeleteCommand(t *testing.T) {
 	)
 
 	cmd := "del 1"
-	comp := rulebot.NewComponent(nil, nil, nil, message, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Deleted 1"}, res)
@@ -243,7 +243,7 @@ func TestCronListCommand(t *testing.T) {
 	)
 
 	cmd := "cron list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
@@ -259,7 +259,7 @@ func TestCronStartCommand(t *testing.T) {
 	)
 
 	cmd := "cron start test1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
@@ -275,7 +275,7 @@ func TestCronStopCommand(t *testing.T) {
 	)
 
 	cmd := "cron stop test1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
@@ -291,7 +291,7 @@ func TestWebhookListCommand(t *testing.T) {
 	)
 
 	cmd := "webhook list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, workflow,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, workflow,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)

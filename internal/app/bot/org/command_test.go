@@ -6,12 +6,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/mock"
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp command.Component, in string) []string {//nolint
+func parseCommand(t *testing.T, comp component.Component, in string) []string { //nolint
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -50,8 +50,8 @@ func TestObjListCommand(t *testing.T) {
 	)
 
 	cmd := "obj list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | NAME  \n-----+-------\n   1 | obj   \n"}, res)
 }
@@ -67,7 +67,7 @@ func TestObjCreateCommand(t *testing.T) {
 	)
 
 	cmd := "obj obj obj-1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
@@ -84,8 +84,8 @@ func TestObjDeleteCommand(t *testing.T) {
 	)
 
 	cmd := "obj del 1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -108,8 +108,8 @@ func TestKrListCommand(t *testing.T) {
 	)
 
 	cmd := "kr list"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}, res)
 }
@@ -125,8 +125,8 @@ func TestKrCreateCommand(t *testing.T) {
 	)
 
 	cmd := "kr 1 kr kr-1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -142,8 +142,8 @@ func TestKrDeleteCommand(t *testing.T) {
 	)
 
 	cmd := "kr delete 1"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }

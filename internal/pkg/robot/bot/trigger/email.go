@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/chatbot/trigger/ctx"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
 	"regexp"
@@ -43,8 +43,8 @@ func (t *Email) Cond(text string) bool {
 	return true
 }
 
-func (t *Email) Handle(ctx context.Context, comp *ctx.Component) {
-	reply, err := comp.Middle.GetCredential(ctx, &pb.CredentialRequest{Type: email.ID})
+func (t *Email) Handle(ctx context.Context, comp component.Component) {
+	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Type: email.ID})
 	if err != nil {
 		return
 	}
@@ -88,10 +88,10 @@ func (t *Email) Handle(ctx context.Context, comp *ctx.Component) {
 Sended by Assistant
 `, t.text))
 		if err != nil {
-			comp.Logger.Error(err)
+			comp.GetLogger().Error(err)
 			return
 		}
-		err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
+		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
 		if err != nil {
 			return
 		}

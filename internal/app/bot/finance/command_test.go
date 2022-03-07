@@ -6,12 +6,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/mock"
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp command.Component, in string) []string {//nolint
+func parseCommand(t *testing.T, comp component.Component, in string) []string { //nolint
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -47,7 +47,7 @@ func TestGetFundCommand(t *testing.T) {
 	)
 
 	cmd := "fund 000001"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, middle, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
 		nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
@@ -64,8 +64,8 @@ func TestGetStockCommand(t *testing.T) {
 	)
 
 	cmd := "stock sx000001"
-	comp := rulebot.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
 }

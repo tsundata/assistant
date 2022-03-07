@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strconv"
 	"testing"
 )
@@ -13,14 +14,14 @@ func TestRegexRule(t *testing.T) {
 		{
 			Define: `test`,
 			Help:   `Test info`,
-			Parse: func(ctx context.Context, comp Component, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
 				return []string{"test"}
 			},
 		},
 		{
 			Define: `todo [string]`,
 			Help:   `todo something`,
-			Parse: func(ctx context.Context, comp Component, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
 				return []string{
 					tokens[1].Value.(string),
 				}
@@ -29,7 +30,7 @@ func TestRegexRule(t *testing.T) {
 		{
 			Define: `add [number] [number]`,
 			Help:   `Addition`,
-			Parse: func(ctx context.Context, comp Component, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
 				tt1 := tokens[1].Value.(int64)
 				tt2 := tokens[2].Value.(int64)
 

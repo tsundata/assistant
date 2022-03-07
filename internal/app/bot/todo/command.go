@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 var commandRules = []command.Rule{
 	{
 		Define: `todo list`,
 		Help:   `List todo`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			//if comp.Todo() == nil {
 			//	return []string{"empty client"}
 			//}
@@ -41,7 +42,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `todo [string]`,
 		Help:   "Todo something",
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			//if comp.Todo() == nil {
 			//	return []string{"empty client"}
 			//}
@@ -60,7 +61,7 @@ var commandRules = []command.Rule{
 	{
 		Define: `remind [string] [string]`,
 		Help:   `Remind something`,
-		Parse: func(ctx context.Context, comp command.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			arg1 := tokens[1].Value
 			arg2 := tokens[2].Value
 			fmt.Println(arg1, arg2) // todo remind message
