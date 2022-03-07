@@ -5,7 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/mock"
 	"reflect"
 	"testing"
@@ -22,12 +22,12 @@ func TestWorkflowCron(t *testing.T) {
 			Return(&pb.WorkflowReply{Text: ""}, nil),
 	)
 
-	comp := rulebot.NewComponent(nil, nil, nil,
+	comp := component.NewComponent(nil, nil,nil, nil,
 		nil, nil, workflow, nil,
 		nil, nil)
 
 	type args struct {
-		comp rulebot.IComponent
+		comp component.Component
 	}
 	tests := []struct {
 		name string

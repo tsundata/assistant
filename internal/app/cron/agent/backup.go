@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"time"
 )
 
-func Backup(ctx context.Context, comp rulebot.IComponent) []result.Result {
+func Backup(ctx context.Context, comp component.Component) []result.Result {
 	if comp.Middle() == nil || comp.Message() == nil{
 		return []result.Result{result.EmptyResult()}
 	}

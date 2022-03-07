@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
-func WorkflowCron(ctx context.Context, comp rulebot.IComponent) []result.Result {
+func WorkflowCron(ctx context.Context, comp component.Component) []result.Result {
 	if comp.Workflow() == nil {
 		return []result.Result{result.EmptyResult()}
 	}

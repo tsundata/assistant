@@ -3,14 +3,14 @@ package agent
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"reflect"
 	"testing"
 )
 
 func TestCloudconeWeeklyBilling(t *testing.T) {
 	type args struct {
-		comp rulebot.IComponent
+		comp component.Component
 	}
 	tests := []struct {
 		name string

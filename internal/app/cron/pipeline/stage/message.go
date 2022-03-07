@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
-func Message(ctx context.Context, comp rulebot.IComponent, in result.Result) result.Result {
+func Message(ctx context.Context, comp component.Component, in result.Result) result.Result {
 	if in.Kind == result.Message {
 		if comp.Message() == nil {
 			return result.EmptyResult()

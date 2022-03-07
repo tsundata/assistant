@@ -7,13 +7,13 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/mock"
 	"testing"
 )
 
 func TestWorkflowDone(t *testing.T) {
-	comp := rulebot.NewComponent(nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
 		nil, nil)
 
@@ -26,7 +26,7 @@ func TestWorkflowError(t *testing.T) {
 	z := log.NewZapLogger(nil)
 	l := log.NewAppLogger(z)
 
-	comp := rulebot.NewComponent(nil, nil, l,
+	comp := component.NewComponent(nil, nil, nil, l,
 		nil, nil, nil, nil,
 		nil, nil)
 
@@ -46,7 +46,7 @@ func TestWorkflowMessage(t *testing.T) {
 			Return(&pb.StateReply{State: true}, nil),
 	)
 
-	comp := rulebot.NewComponent(nil, nil, nil, message,
+	comp := component.NewComponent(nil, nil, nil, nil, message,
 		nil, nil, nil,
 		nil, nil)
 
@@ -56,7 +56,7 @@ func TestWorkflowMessage(t *testing.T) {
 }
 
 func TestWorkflowUrl(t *testing.T) {
-	comp := rulebot.NewComponent(nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
 		nil, nil)
 
@@ -79,7 +79,7 @@ func TestWorkflowRepos(t *testing.T) {
 			Return(&pb.AppReply{Token: ""}, nil),
 	)
 
-	comp := rulebot.NewComponent(nil, nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil, nil,
 		middle, nil, nil,
 		nil, nil)
 
@@ -93,9 +93,9 @@ func TestWorkflowRepos(t *testing.T) {
 	Workflow(context.Background(), comp, in)
 }
 func TestWorkflowDefault(t *testing.T) {
-	comp := rulebot.NewComponent(nil, nil, nil, nil,
+	comp := component.NewComponent(nil, nil, nil, nil,
 		nil, nil, nil, nil,
-		nil)
+		nil, nil)
 
 	in := result.Result{
 		Kind: result.Undefined,

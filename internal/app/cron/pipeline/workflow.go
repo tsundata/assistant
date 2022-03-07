@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/stage"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
-func Workflow(ctx context.Context, comp rulebot.IComponent, in result.Result) {
+func Workflow(ctx context.Context, comp component.Component, in result.Result) {
 	for {
 		switch in.Kind {
 		case result.Done:

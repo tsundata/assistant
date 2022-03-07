@@ -3,112 +3,23 @@ package rulebot
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/config"
-	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"strings"
 	"sync"
 )
 
-type Component struct {
-	Conf   *config.AppConfig
-	RDB    *redis.Client
-	Logger log.Logger
-
-	MessageClient     pb.MessageSvcClient
-	MiddleClient      pb.MiddleSvcClient
-	WorkflowSvcClient pb.WorkflowSvcClient
-	StorageClient     pb.StorageSvcClient
-	UserClient        pb.UserSvcClient
-	NLPClient         pb.NLPSvcClient
-}
-
-func (c Component) Message() pb.MessageSvcClient {
-	return c.MessageClient
-}
-
-func (c Component) Middle() pb.MiddleSvcClient {
-	return c.MiddleClient
-}
-
-func (c Component) Workflow() pb.WorkflowSvcClient {
-	return c.WorkflowSvcClient
-}
-
-func (c Component) Storage() pb.StorageSvcClient {
-	return c.StorageClient
-}
-
-func (c Component) User() pb.UserSvcClient {
-	return c.UserClient
-}
-
-func (c Component) NLP() pb.NLPSvcClient {
-	return c.NLPClient
-}
-
-func (c Component) GetConfig() *config.AppConfig {
-	return c.Conf
-}
-
-func (c Component) GetRedis() *redis.Client {
-	return c.RDB
-}
-
-func (c Component) GetLogger() log.Logger {
-	return c.Logger
-}
-
-type IComponent interface {
-	GetConfig() *config.AppConfig
-	GetRedis() *redis.Client
-	GetLogger() log.Logger
-	Message() pb.MessageSvcClient
-	Middle() pb.MiddleSvcClient
-	Workflow() pb.WorkflowSvcClient
-	Storage() pb.StorageSvcClient
-	User() pb.UserSvcClient
-	NLP() pb.NLPSvcClient
-}
-
-func NewComponent(
-	conf *config.AppConfig,
-	rdb *redis.Client,
-	logger log.Logger,
-
-	messageClient pb.MessageSvcClient,
-	middleClient pb.MiddleSvcClient,
-	workflowClient pb.WorkflowSvcClient,
-	storageClient pb.StorageSvcClient,
-	userClient pb.UserSvcClient,
-	nlpClient pb.NLPSvcClient,
-) IComponent {
-	return Component{
-		Conf:              conf,
-		RDB:               rdb,
-		Logger:            logger,
-		MessageClient:     messageClient,
-		MiddleClient:      middleClient,
-		WorkflowSvcClient: workflowClient,
-		StorageClient:     storageClient,
-		UserClient:        userClient,
-		NLPClient:         nlpClient,
-	}
-}
-
 type RuleBot struct {
 	onceOptions sync.Once
-	Comp        IComponent
+	Comp        component.Component
 	name        string
 	providerIn  string
 	providerOut []string
 	rules       []RuleParser
 }
 
-func New(comp IComponent) *RuleBot {
+func New(comp component.Component) *RuleBot {
 	name := ""
 	if comp != nil {
 		name = comp.GetConfig().Name
@@ -184,4 +95,4 @@ func RegisterRuleset(rule RuleParser) Option {
 	}
 }
 
-var ProviderSet = wire.NewSet(NewComponent, New)
+var ProviderSet = wire.NewSet(New)

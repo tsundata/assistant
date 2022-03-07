@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func CloudconeWeeklyBilling(ctx context.Context, comp rulebot.IComponent) []result.Result {
+func CloudconeWeeklyBilling(ctx context.Context, comp component.Component) []result.Result {
 	if comp.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}

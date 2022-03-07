@@ -3,12 +3,12 @@ package agent
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 const HourLayout = "2006-01-02 15:04"
 
-func TodoRemind(ctx context.Context, comp rulebot.IComponent) []result.Result {
+func TodoRemind(ctx context.Context, comp component.Component) []result.Result {
 	//if comp.Todo() == nil {
 	//	return []result.Result{result.EmptyResult()}
 	//}

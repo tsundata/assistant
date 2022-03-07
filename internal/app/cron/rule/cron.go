@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"go.uber.org/zap"
 	"time"
@@ -17,7 +18,7 @@ import (
 type Rule struct {
 	Name   string
 	When   string
-	Action func(context.Context, rulebot.IComponent) []result.Result
+	Action func(context.Context, component.Component) []result.Result
 }
 
 type cronRuleset struct {
@@ -136,7 +137,7 @@ func (r *cronRuleset) resultWorker(ctx context.Context, b *rulebot.RuleBot) {
 	}
 }
 
-func (r *cronRuleset) filter(comp rulebot.IComponent, res result.Result) result.Result {
+func (r *cronRuleset) filter(comp component.Component, res result.Result) result.Result {
 	compB := context.Background()
 	filterKey := fmt.Sprintf("cron:%d:filter", res.Kind)
 
@@ -156,7 +157,7 @@ func (r *cronRuleset) filter(comp rulebot.IComponent, res result.Result) result.
 	return res
 }
 
-func (r *cronRuleset) pipeline(ctx context.Context, comp rulebot.IComponent, res result.Result) {
+func (r *cronRuleset) pipeline(ctx context.Context, comp component.Component, res result.Result) {
 	if res.ID == "" {
 		return
 	}

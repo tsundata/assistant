@@ -6,10 +6,13 @@ package rulebot
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -27,6 +30,9 @@ var testProviderSet = wire.NewSet(
 	rpc.ProviderSet,
 	jaeger.ProviderSet,
 	newrelic.ProviderSet,
+	component.ProviderSet,
+	event.ProviderSet,
+	rabbitmq.ProviderSet,
 )
 
 func CreateRuleBot(id string) (*RuleBot, error) {

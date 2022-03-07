@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func Repos(ctx context.Context, comp rulebot.IComponent, in result.Result) result.Result {
+func Repos(ctx context.Context, comp component.Component, in result.Result) result.Result {
 	if in.Kind == result.Repos {
 		if data, ok := in.Content.(map[string]string); ok {
 			if comp.Middle() == nil {

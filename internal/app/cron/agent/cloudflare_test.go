@@ -2,7 +2,7 @@ package agent
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"reflect"
 	"testing"
 
@@ -11,7 +11,7 @@ import (
 
 func TestDomainAnalyticsReport(t *testing.T) {
 	type args struct {
-		comp rulebot.IComponent
+		comp component.Component
 	}
 	tests := []struct {
 		name string

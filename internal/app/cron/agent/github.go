@@ -5,12 +5,12 @@ import (
 	"crypto/sha1" // #nosec
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
-	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/github"
 )
 
-func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.Result {
+func FetchGithubStarred(ctx context.Context, comp component.Component) []result.Result {
 	if comp.Middle() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
@@ -57,7 +57,7 @@ func FetchGithubStarred(ctx context.Context, comp rulebot.IComponent) []result.R
 	return r
 }
 
-func FetchGithubStargazers(_ context.Context, _ rulebot.IComponent) []result.Result {
+func FetchGithubStargazers(_ context.Context, _ component.Component) []result.Result {
 	// todo
 	return []result.Result{}
 }
