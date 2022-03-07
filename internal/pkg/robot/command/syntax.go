@@ -137,6 +137,7 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 		if t.Type == CharacterToken {
 			if t.Value != actual[i].Value {
 				res = false
+				continue
 			}
 		}
 		if t.Type == ParameterToken {
@@ -150,15 +151,17 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 				re := regexp.MustCompile(`\d+`)
 				if !re.MatchString(n) {
 					res = false
+					continue
 				} else {
-					actual[i].Value, err = strconv.ParseInt(n, 10, 64)
-					if err != nil {
-						return false, err
+					num, err := strconv.ParseInt(n, 10, 64)
+					if err == nil {
+						actual[i].Value = num
 					}
 				}
 			case "bool":
 				if !(actual[i].Value == "true" || actual[i].Value == "false") {
 					res = false
+					continue
 				} else {
 					if actual[i].Value == "true" {
 						actual[i].Value = true
