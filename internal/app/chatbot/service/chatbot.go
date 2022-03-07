@@ -117,6 +117,9 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 					},
 					Tag: tag,
 				})
+				if err != nil {
+					s.logger.Error(err)
+				}
 			}
 		}
 

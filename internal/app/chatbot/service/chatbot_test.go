@@ -34,6 +34,7 @@ func TestChatbot_Handle(t *testing.T) {
 	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	message := mock.NewMockMessageSvcClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)
 
 	gomock.InOrder(
@@ -50,10 +51,11 @@ func TestChatbot_Handle(t *testing.T) {
 				Identifier: "system_bot",
 			},
 		}, nil),
+		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{}, nil),
 		message.EXPECT().Save(gomock.Any(), gomock.Any()).Return(&pb.MessageReply{}, nil),
 	)
 
-	s := NewChatbot(nil, bus, repo, message, bot, comp)
+	s := NewChatbot(nil, bus, repo, message, middle, bot, comp)
 
 	type args struct {
 		in0     context.Context
@@ -111,7 +113,7 @@ func TestChatbot_GetBot(t *testing.T) {
 		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(item, nil),
 	)
 
-	s := NewChatbot(nil, nil, repo, nil, bot, nil)
+	s := NewChatbot(nil, nil, repo, nil, nil, bot, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -166,7 +168,7 @@ func TestChatbot_GetBots(t *testing.T) {
 		repo.EXPECT().List(gomock.Any()).Return(items, nil),
 	)
 
-	s := NewChatbot(nil, nil, repo, nil, bot, nil)
+	s := NewChatbot(nil, nil, repo, nil, nil, bot, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -206,7 +208,7 @@ func TestChatbot_UpdateBotSetting(t *testing.T) {
 
 	repo := mock.NewMockChatbotRepository(ctl)
 
-	s := NewChatbot(nil, nil, repo, nil, bot, nil)
+	s := NewChatbot(nil, nil, repo, nil, nil, bot, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -256,7 +258,7 @@ func TestMessage_GetGroups(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewChatbot(nil, nil, repo, message, nil, nil)
+	s := NewChatbot(nil, nil, repo, message, nil, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -302,7 +304,7 @@ func TestMessage_GetGroup(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewChatbot(nil, nil, repo, nil, nil, nil)
+	s := NewChatbot(nil, nil, repo, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -351,7 +353,7 @@ func TestMessage_CreateGroup(t *testing.T) {
 		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(2), nil),
 	)
 
-	s := NewChatbot(nil, nil, repo, nil, nil, nil)
+	s := NewChatbot(nil, nil, repo, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -408,7 +410,7 @@ func TestNewChatbot(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewChatbot(tt.args.logger, nil, tt.args.repo, nil, tt.args.bot, nil); !reflect.DeepEqual(got, tt.want) {
+			if got := NewChatbot(tt.args.logger, nil, tt.args.repo, nil, nil, tt.args.bot, nil); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewChatbot() = %v, want %v", got, tt.want)
 			}
 		})
