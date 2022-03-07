@@ -37,8 +37,20 @@ func TestChatbot_Handle(t *testing.T) {
 	repo := mock.NewMockChatbotRepository(ctl)
 
 	gomock.InOrder(
-		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test", Text: "text @user #tag1"}}, nil),
-		repo.EXPECT().GetBotsByText(gomock.Any(), gomock.Any()).Return(map[string]*pb.Bot{}, nil),
+		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test", Text: "text @System /version/ #tag1"}}, nil),
+		repo.EXPECT().ListGroupBot(gomock.Any(), gomock.Any()).Return([]*pb.Bot{
+			{
+				Name:       "System",
+				Identifier: "system_bot",
+			},
+		}, nil),
+		repo.EXPECT().GetBotsByText(gomock.Any(), gomock.Any()).Return(map[string]*pb.Bot{
+			"System": {
+				Name:       "System",
+				Identifier: "system_bot",
+			},
+		}, nil),
+		message.EXPECT().Save(gomock.Any(), gomock.Any()).Return(&pb.MessageReply{}, nil),
 	)
 
 	s := NewChatbot(nil, bus, repo, message, bot, comp)
