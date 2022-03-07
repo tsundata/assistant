@@ -45,13 +45,13 @@ type PluginRule struct {
 	Param []interface{}
 }
 
-func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule, commands []command.Rule) (*Bot, error) {
+func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRule, commandsRule []command.Rule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
 		Metadata:    metadata,
 		SettingRule: settings,
-		PluginRule:  rules,
-		CommandRule: commands,
+		PluginRule:  workflowRule,
+		CommandRule: commandsRule,
 		config:      cfg,
 	}
 	ctrl := &Controller{
@@ -62,7 +62,7 @@ func NewBot(metadata Metadata, settings []SettingField, rules []PluginRule, comm
 	b.ctrl = ctrl
 
 	// setup plugins
-	err := SetupPlugins(ctrl, rules)
+	err := SetupPlugins(ctrl, workflowRule)
 	if err != nil {
 		return nil, err
 	}

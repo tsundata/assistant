@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"regexp"
+	"strconv"
 	"unicode"
 )
 
@@ -141,13 +142,30 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 		if t.Type == ParameterToken {
 			switch t.Value {
 			case "number":
+				n := ""
+				if v, ok := actual[i].Value.(string); ok {
+					n = v
+				}
+
 				re := regexp.MustCompile(`\d+`)
-				if !re.MatchString(actual[i].Value) {
+				if !re.MatchString(n) {
 					res = false
+				} else {
+					actual[i].Value, err = strconv.ParseInt(n, 10, 64)
+					if err != nil {
+						return false, err
+					}
 				}
 			case "bool":
 				if !(actual[i].Value == "true" || actual[i].Value == "false") {
 					res = false
+				} else {
+					if actual[i].Value == "true" {
+						actual[i].Value = true
+					}
+					if actual[i].Value == "false" {
+						actual[i].Value = false
+					}
 				}
 			case "string":
 			case "any":

@@ -29,7 +29,7 @@ func (r Ruleset) Help(in string) string {
 	return ""
 }
 
-func (r Ruleset) ParseCommand(ctx context.Context, comp Component, in string) ([]string, error) {
+func (r Ruleset) ProcessCommand(ctx context.Context, comp Component, in string) ([]string, error) {
 	for _, rule := range r.rules {
 		tokens, err := ParseCommand(in)
 		if err != nil {

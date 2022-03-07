@@ -73,6 +73,7 @@ func (r *Robot) Help(bots []*pb.Bot, in string) ([]string, error) {
 	return []string{}, nil
 }
 
+//ParseText  tokens, objects, tags, commands
 func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string, error) {
 	tokens, err := bot.ParseText(in)
 	if err != nil || len(tokens) == 0 {
@@ -97,18 +98,18 @@ func (r *Robot) ParseText(in string) ([]*bot.Token, []string, []string, []string
 	return tokens, objects, tags, commands, nil
 }
 
-func (r *Robot) ParseCommand(ctx context.Context, comp command.Component, identifier, in string) (out []string, err error) {
+func (r *Robot) ProcessCommand(ctx context.Context, comp command.Component, identifier, in string) (out []string, err error) {
 	if r.bot(identifier) == nil {
 		return nil, errors.New("error identifier")
 	}
 	c := command.New(r.bot(identifier).CommandRule)
-	return c.ParseCommand(ctx, comp, in)
+	return c.ProcessCommand(ctx, comp, in)
 }
 
-func (r *Robot) Process(ctx context.Context, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
+func (r *Robot) ProcessWorkflow(ctx context.Context, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
 	// todo tags
 
-	var input interface{} = tokens[0].Value
+	var input interface{} = tokens[0].Value // fixme first input
 	var output interface{}
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)

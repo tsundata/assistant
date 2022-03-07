@@ -89,7 +89,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		if len(commands) > 0 {
 			for _, item := range inBots {
 				for _, commandText := range commands {
-					outMessages, err = r.ParseCommand(ctx, s.comp, item.Identifier, commandText)
+					outMessages, err = r.ProcessCommand(ctx, s.comp, item.Identifier, commandText)
 					if err != nil {
 						return nil, err
 					}
@@ -97,9 +97,12 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			}
 		}
 
+		// tags
+		
+
 		if len(outMessages) == 0 {
 			// run
-			outMessages, err = r.Process(ctx, tokens, inBots)
+			outMessages, err = r.ProcessWorkflow(ctx, tokens, inBots)
 			if err != nil {
 				return nil, err
 			}

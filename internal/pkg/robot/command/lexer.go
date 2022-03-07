@@ -8,7 +8,7 @@ import (
 
 type Token struct {
 	Type   string
-	Value  string
+	Value  interface{}
 	LineNo int
 	Column int
 }
