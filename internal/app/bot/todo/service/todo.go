@@ -77,6 +77,7 @@ func (s *Todo) GetTodos(ctx context.Context, _ *pb.TodoRequest) (*pb.TodosReply,
 	var res []*pb.Todo
 	for _, item := range items {
 		res = append(res, &pb.Todo{
+			Id:       item.Id,
 			Content:  item.Content,
 			Priority: item.Priority,
 			Remark:   item.Remark,

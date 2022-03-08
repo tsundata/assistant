@@ -109,7 +109,7 @@ func TestSubsOpenCommand(t *testing.T) {
 	)
 
 	cmd := "subs open test1"
-	comp := component.MockComponent()
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
