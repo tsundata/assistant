@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strconv"
 	"testing"
@@ -43,30 +44,36 @@ func TestRegexRule(t *testing.T) {
 
 	b := New(testRules)
 
-	out, err := b.ProcessCommand(context.Background(), nil, "test")
-	if err != nil {
-		t.Fatal(err)
+	bot := &pb.Bot{
+		Id:         1,
+		Name:       "System",
+		Identifier: "system_bot",
 	}
-	require.Contains(t, out, "test")
 
-	out2, err := b.ProcessCommand(context.Background(), nil, "add 1 2")
+	out, err := b.ProcessCommand(context.Background(), nil, bot, "test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out2, "3")
+	require.Contains(t, out[1], "test")
 
-	out3, err := b.ProcessCommand(context.Background(), nil, "help")
+	out2, err := b.ProcessCommand(context.Background(), nil, bot, "add 1 2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Len(t, out3, 0)
+	require.Contains(t, out2[1], "3")
+
+	out3, err := b.ProcessCommand(context.Background(), nil, bot, "help")
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Len(t, out3[1], 0)
 
 	help := b.Help("help")
 	assert.True(t, len(help) > 0)
 
-	out4, err := b.ProcessCommand(context.Background(), nil, `todo "a b c"`)
+	out4, err := b.ProcessCommand(context.Background(), nil, bot, `todo "a b c"`)
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out4, "a b c")
+	require.Contains(t, out4[1], "a b c")
 }

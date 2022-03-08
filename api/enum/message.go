@@ -18,4 +18,5 @@ const (
 const (
 	MessageUserType  = "user"
 	MessageGroupType = "group"
+	MessageBotType   = "bot"
 )

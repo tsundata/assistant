@@ -55,24 +55,24 @@ func (r *Robot) bot(identifier string) *bot.Bot {
 	return nil
 }
 
-func (r *Robot) Help(bots []*pb.Bot, in string) ([]string, error) {
+func (r *Robot) Help(bots []*pb.Bot, in string) (map[int64][]string, error) {
+	out := make(map[int64][]string)
 	if strings.ToLower(in) == "help" && len(bots) > 0 {
-		out := strings.Builder{}
 		// command help
 		for _, item := range bots {
+			temp := strings.Builder{}
 			if r.bot(item.Identifier) == nil {
 				continue
 			}
-			out.WriteString("--- ")
-			out.WriteString(item.Identifier)
-			out.WriteString("  ---\n")
+			temp.WriteString("--- ")
+			temp.WriteString(item.Identifier)
+			temp.WriteString("  ---\n")
 			c := command.New(r.bot(item.Identifier).CommandRule)
-			out.WriteString(c.Help(in))
+			temp.WriteString(c.Help(in))
+			out[item.Id] = []string{temp.String()}
 		}
-
-		return []string{out.String()}, nil
 	}
-	return []string{}, nil
+	return out, nil
 }
 
 //ParseText  tokens, objects, tags, commands
@@ -104,17 +104,16 @@ func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in
 	return trigger.Process(ctx, comp, in)
 }
 
-func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, identifier, commandText string) (out []string, err error) {
-	if r.bot(identifier) == nil {
+func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, commandText string) (map[int64][]string, error) {
+	if r.bot(bot.Identifier) == nil {
 		return nil, errors.New("error identifier")
 	}
-	c := command.New(r.bot(identifier).CommandRule)
-	return c.ProcessCommand(ctx, comp, commandText)
+	c := command.New(r.bot(bot.Identifier).CommandRule)
+	return c.ProcessCommand(ctx, comp, bot, commandText)
 }
 
-func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (out []string, err error) {
-	// todo tags
-
+func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]string, error) {
+	out := make(map[int64][]string)
 	var input interface{} = tokens[0].Value // fixme first input
 	var output interface{}
 	for _, item := range bots {
@@ -126,13 +125,12 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 			}
 			input = out
 		}
+
+		switch v := output.(type) {
+		case string:
+			out[item.Id] = append(out[item.Id], v)
+		}
 	}
 
-	// fixme
-	switch v := output.(type) {
-	case string:
-		return []string{v}, nil
-	}
-
-	return []string{}, nil
+	return out, nil
 }

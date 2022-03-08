@@ -61,9 +61,9 @@ var commandRules = []command.Rule{
 		Help:   `Unix Timestamp`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			min := tokens[1].Value.(int64)
-			max := tokens[1].Value.(int64)
+			max := tokens[2].Value.(int64)
 
-			nBing, err := rand.Int(rand.Reader, big.NewInt(max+1-max))
+			nBing, err := rand.Int(rand.Reader, big.NewInt(max+1-min))
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

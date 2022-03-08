@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"go.uber.org/zap"
 	"strings"
@@ -30,7 +31,8 @@ func (r Ruleset) Help(in string) string {
 	return ""
 }
 
-func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, in string) ([]string, error) {
+func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, in string) (map[int64][]string, error) {
+	out := make(map[int64][]string)
 	for _, rule := range r.rules {
 		tokens, err := ParseCommand(in)
 		if err != nil {
@@ -49,11 +51,11 @@ func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, i
 		}
 
 		if ret := rule.Parse(ctx, comp, tokens); len(ret) > 0 {
-			return ret, nil
+			out[bot.Id] = ret
 		}
 	}
 
-	return []string{}, nil
+	return out, nil
 }
 
 func New(rules []Rule) *Ruleset {

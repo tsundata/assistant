@@ -156,7 +156,7 @@ func TestMessage_Create(t *testing.T) {
 			"case2",
 			s,
 			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test"}}},
-			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2"}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2", SenderType: enum.MessageUserType, ReceiverType: enum.MessageGroupType}},
 			false,
 		},
 	}

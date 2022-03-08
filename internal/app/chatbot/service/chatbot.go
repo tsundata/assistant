@@ -112,7 +112,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		if len(commands) > 0 {
 			for _, item := range inBots {
 				for _, commandText := range commands {
-					outMessages, err = r.ProcessCommand(ctx, s.comp, item.Identifier, commandText)
+					outMessages, err = r.ProcessCommand(ctx, s.comp, item, commandText)
 					if err != nil {
 						return nil, err
 					}
@@ -147,25 +147,27 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	}
 
 	// send message
-	for _, text := range outMessages {
-		outMessage := &pb.Message{
-			GroupId:      reply.Message.GetGroupId(),
-			UserId:       reply.Message.GetUserId(),
-			Sender:       reply.Message.GetGroupId(),
-			SenderType:   enum.MessageGroupType,
-			Receiver:     reply.Message.GetUserId(),
-			ReceiverType: enum.MessageUserType,
-			Type:         enum.MessageTypeText,
-			Text:         text,
-			Status:       0,
-		}
-		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
-		if err != nil {
-			return nil, err
-		}
-		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
-		if err != nil {
-			return nil, err
+	for botId, messages := range outMessages {
+		for _, text := range messages {
+			outMessage := &pb.Message{
+				GroupId:      reply.Message.GetGroupId(),
+				UserId:       reply.Message.GetUserId(),
+				Sender:       botId,
+				SenderType:   enum.MessageBotType,
+				Receiver:     reply.Message.GetUserId(),
+				ReceiverType: enum.MessageUserType,
+				Type:         enum.MessageTypeText,
+				Text:         text,
+				Status:       0,
+			}
+			_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+			if err != nil {
+				return nil, err
+			}
+			err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 

@@ -112,6 +112,10 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	message.UserId = payload.Message.GetUserId()
 	message.GroupId = payload.Message.GetGroupId()
 	message.Uuid = payload.Message.GetUuid()
+	message.Sender = payload.Message.GetUserId()
+	message.SenderType = enum.MessageUserType
+	message.Receiver = payload.Message.GetGroupId()
+	message.ReceiverType = enum.MessageGroupType
 	message.Type = enum.MessageTypeText
 	message.Text = strings.TrimSpace(payload.Message.GetText())
 
