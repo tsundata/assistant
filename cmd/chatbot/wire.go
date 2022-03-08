@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot/service"
@@ -19,7 +20,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
-	rulebot2 "github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
@@ -38,7 +39,7 @@ var providerSet = wire.NewSet(
 	etcd.ProviderSet,
 	service.ProviderSet,
 	rpcclient.ProviderSet,
-	rulebot2.ProviderSet,
+	rulebot.ProviderSet,
 	event.ProviderSet,
 	newrelic.ProviderSet,
 	mysql.ProviderSet,
@@ -46,6 +47,7 @@ var providerSet = wire.NewSet(
 	global.ProviderSet,
 	rabbitmq.ProviderSet,
 	component.ProviderSet,
+	todoRepository.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

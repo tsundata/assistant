@@ -109,6 +109,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/workflow_grpc.pb.go -destination=./mock/workflow_client.go
       - mockgen -package=mock -source=./api/pb/chatbot_grpc.pb.go -destination=./mock/chatbot_client.go
       - mockgen -package=mock -source=./api/pb/org_grpc.pb.go -destination=./mock/org_client.go
+      - mockgen -package=mock -source=./api/pb/storage_grpc.pb.go -destination=./mock/storage_client.go
       - mockgen -package=mock -source=./api/pb/finance_grpc.pb.go -destination=./mock/finance_client.go
       - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
       - mockgen -package=mock -source=./internal/app/bot/todo/repository/todo.go -destination=./mock/todo_repository.go

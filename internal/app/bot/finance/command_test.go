@@ -47,8 +47,7 @@ func TestGetFundCommand(t *testing.T) {
 	)
 
 	cmd := "fund 000001"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
 }
@@ -64,8 +63,7 @@ func TestGetStockCommand(t *testing.T) {
 	)
 
 	cmd := "stock sx000001"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
 }

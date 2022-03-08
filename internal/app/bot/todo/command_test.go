@@ -34,7 +34,6 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string {
 }
 
 func TestTodoList(t *testing.T) {
-	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -52,14 +51,12 @@ func TestTodoList(t *testing.T) {
 	)
 
 	cmd := "todo list"
-	comp := component.NewComponent(nil,nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
 }
 
 func TestTodoCommand(t *testing.T) {
-	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
@@ -69,16 +66,14 @@ func TestTodoCommand(t *testing.T) {
 	)
 
 	cmd := "todo test1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"success"}, res)
 }
 
 func TestRemindCommand(t *testing.T) {
 	cmd := "remind test 19:50"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{}, res)
 }

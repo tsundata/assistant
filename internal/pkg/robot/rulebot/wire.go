@@ -5,11 +5,14 @@ package rulebot
 
 import (
 	"github.com/google/wire"
+	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
@@ -33,6 +36,9 @@ var testProviderSet = wire.NewSet(
 	component.ProviderSet,
 	event.ProviderSet,
 	rabbitmq.ProviderSet,
+	todoRepository.ProviderSet,
+	global.ProviderSet,
+	mysql.ProviderSet,
 )
 
 func CreateRuleBot(id string) (*RuleBot, error) {

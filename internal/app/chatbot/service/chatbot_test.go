@@ -31,7 +31,7 @@ func TestChatbot_Handle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := component.MockComponent()
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	middle := mock.NewMockMiddleSvcClient(ctl)

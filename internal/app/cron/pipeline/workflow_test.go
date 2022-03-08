@@ -13,9 +13,7 @@ import (
 )
 
 func TestWorkflowDone(t *testing.T) {
-	comp := component.NewComponent(nil, nil, nil, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent()
 
 	in := result.DoneResult()
 
@@ -26,9 +24,7 @@ func TestWorkflowError(t *testing.T) {
 	z := log.NewZapLogger(nil)
 	l := log.NewAppLogger(z)
 
-	comp := component.NewComponent(nil, nil, nil, l,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(l)
 
 	in := result.ErrorResult(errors.New("test"))
 
@@ -46,9 +42,7 @@ func TestWorkflowMessage(t *testing.T) {
 			Return(&pb.StateReply{State: true}, nil),
 	)
 
-	comp := component.NewComponent(nil, nil, nil, nil, message,
-		nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(message)
 
 	in := result.MessageResult("test")
 
@@ -56,9 +50,7 @@ func TestWorkflowMessage(t *testing.T) {
 }
 
 func TestWorkflowUrl(t *testing.T) {
-	comp := component.NewComponent(nil, nil, nil, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent()
 
 	in := result.Result{
 		Kind:    result.Url,
@@ -79,9 +71,7 @@ func TestWorkflowRepos(t *testing.T) {
 			Return(&pb.AppReply{Token: ""}, nil),
 	)
 
-	comp := component.NewComponent(nil, nil, nil, nil, nil,
-		middle, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(middle)
 
 	in := result.Result{
 		Kind: result.Repos,
@@ -93,10 +83,7 @@ func TestWorkflowRepos(t *testing.T) {
 	Workflow(context.Background(), comp, in)
 }
 func TestWorkflowDefault(t *testing.T) {
-	comp := component.NewComponent(nil, nil, nil, nil,
-		nil, nil, nil, nil,
-		nil, nil)
-
+	comp := component.MockComponent()
 	in := result.Result{
 		Kind: result.Undefined,
 	}

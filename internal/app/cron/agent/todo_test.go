@@ -47,9 +47,7 @@ func TestTodoRemind1(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := component.NewComponent(nil, nil, rdb, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(rdb)
 
 	type args struct {
 		comp component.Component
@@ -107,9 +105,7 @@ func TestTodoRemind2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := component.NewComponent(nil, nil, rdb, nil, nil,
-		nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(rdb)
 
 	type args struct {
 		comp component.Component
@@ -167,9 +163,7 @@ func TestTodoRemind3(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := component.NewComponent(nil, nil, rdb, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(rdb)
 
 	type args struct {
 		comp component.Component
@@ -227,9 +221,7 @@ func TestTodoRemind4(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp := component.NewComponent(nil, nil, rdb, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp := component.MockComponent(rdb)
 
 	type args struct {
 		comp component.Component
@@ -304,13 +296,8 @@ func TestTodoRemind5(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	comp1 := component.NewComponent(nil, nil, rdb, nil,
-		nil, nil, nil, nil,
-		nil, nil)
-
-	comp2 := component.NewComponent(nil, nil, rdb, nil,
-		nil, nil, nil, nil,
-		nil, nil)
+	comp1 := component.MockComponent(rdb)
+	comp2 := component.MockComponent(rdb)
 
 	type args struct {
 		comp component.Component

@@ -22,9 +22,7 @@ func TestWorkflowCron(t *testing.T) {
 			Return(&pb.WorkflowReply{Text: ""}, nil),
 	)
 
-	comp := component.NewComponent(nil, nil,nil, nil,
-		nil, nil, workflow, nil,
-		nil, nil)
+	comp := component.MockComponent(workflow)
 
 	type args struct {
 		comp component.Component

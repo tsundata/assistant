@@ -38,8 +38,7 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string {
 
 func TestVersionCommand(t *testing.T) {
 	cmd := "version"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{version.Info()}, res)
 }
@@ -54,24 +53,21 @@ func TestQrCommand(t *testing.T) {
 	)
 
 	cmd := "qr abc"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"https://qr.test/abc"}, res)
 }
 
 func TestUtCommand(t *testing.T) {
 	cmd := "ut 1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
 }
 
 func TestRandCommand(t *testing.T) {
 	cmd := "rand 1 100"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil,
-		nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 
 	i, err := strconv.ParseInt(res[0], 10, 64)
@@ -83,8 +79,7 @@ func TestRandCommand(t *testing.T) {
 
 func TestPwdCommand(t *testing.T) {
 	cmd := "pwd 32"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil,
-		nil, nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, 32, len(res[0]))
 }
@@ -99,8 +94,7 @@ func TestSubsListCommand(t *testing.T) {
 	)
 
 	cmd := "subs list"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
 }
@@ -115,8 +109,7 @@ func TestSubsOpenCommand(t *testing.T) {
 	)
 
 	cmd := "subs open test1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -131,8 +124,7 @@ func TestSubsCloseCommand(t *testing.T) {
 	)
 
 	cmd := "subs close test1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -147,8 +139,7 @@ func TestViewCommand(t *testing.T) {
 	)
 
 	cmd := "view 1"
-	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
 }
@@ -163,8 +154,7 @@ func TestRunCommand(t *testing.T) {
 	)
 
 	cmd := "run 1"
-	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"test1"}, res)
 }
@@ -179,8 +169,7 @@ func TestDocCommand(t *testing.T) {
 	)
 
 	cmd := "doc"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, workflow,
-		nil, nil, nil)
+	comp := component.MockComponent(workflow)
 	res := parseCommand(t, comp, cmd)
 	require.Len(t, res, 1)
 }
@@ -195,8 +184,7 @@ func TestStatsCommand(t *testing.T) {
 	)
 
 	cmd := "stats"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"stats ..."}, res)
 }
@@ -211,8 +199,7 @@ func TestPinyinCommand(t *testing.T) {
 	)
 
 	cmd := "pinyin 测试"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, nil,
-		nil, nil, nlp)
+	comp := component.MockComponent(nlp)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"a1, a2"}, res)
 }
@@ -227,8 +214,7 @@ func TestDeleteCommand(t *testing.T) {
 	)
 
 	cmd := "del 1"
-	comp := component.NewComponent(nil, nil, nil, nil, message, nil, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Deleted 1"}, res)
 }
@@ -243,8 +229,7 @@ func TestCronListCommand(t *testing.T) {
 	)
 
 	cmd := "cron list"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
 }
@@ -259,8 +244,7 @@ func TestCronStartCommand(t *testing.T) {
 	)
 
 	cmd := "cron start test1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -275,8 +259,7 @@ func TestCronStopCommand(t *testing.T) {
 	)
 
 	cmd := "cron stop test1"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, middle, nil,
-		nil, nil, nil)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -291,8 +274,7 @@ func TestWebhookListCommand(t *testing.T) {
 	)
 
 	cmd := "webhook list"
-	comp := component.NewComponent(nil, nil, nil, nil, nil, nil, workflow,
-		nil, nil, nil)
+	comp := component.MockComponent(workflow)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)
 }
