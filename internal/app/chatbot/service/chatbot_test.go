@@ -45,6 +45,8 @@ func TestChatbot_Handle(t *testing.T) {
 				Identifier: "system_bot",
 			},
 		}, nil),
+		repo.EXPECT().GetGroupSetting(gomock.Any(), gomock.Any()).Return(nil, nil),
+		repo.EXPECT().GetGroupBotSettingByGroup(gomock.Any(), gomock.Any()).Return(nil, nil),
 		repo.EXPECT().GetBotsByText(gomock.Any(), gomock.Any()).Return(map[string]*pb.Bot{
 			"System": {
 				Name:       "System",

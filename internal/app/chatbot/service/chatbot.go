@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -72,6 +73,19 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	}
 
 	if len(outMessages) == 0 {
+		// bot settings
+		groupSetting, err := s.repo.GetGroupSetting(ctx, reply.Message.GetGroupId())
+		if err != nil {
+			return nil, err
+		}
+		groupBotSetting, err := s.repo.GetGroupBotSettingByGroup(ctx, reply.Message.GetGroupId())
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println(groupSetting)    // todo
+		fmt.Println(groupBotSetting) // todo
+
 		// trigger
 		err = r.ProcessTrigger(ctx, s.comp, reply.Message)
 		if err != nil {

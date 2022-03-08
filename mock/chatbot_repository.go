@@ -255,6 +255,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSetting(ctx, groupId, bo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSetting), ctx, groupId, botId)
 }
 
+// GetGroupBotSettingByGroup mocks base method.
+func (m *MockChatbotRepository) GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupBotSettingByGroup", ctx, groupId)
+	ret0, _ := ret[0].(map[int64][]*pb.KV)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBotSettingByGroup indicates an expected call of GetGroupBotSettingByGroup.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSettingByGroup(ctx, groupId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSettingByGroup", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSettingByGroup), ctx, groupId)
+}
+
 // GetGroupByName mocks base method.
 func (m *MockChatbotRepository) GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error) {
 	m.ctrl.T.Helper()

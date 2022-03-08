@@ -37,6 +37,7 @@ type ChatbotRepository interface {
 	UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error
 	GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error)
 	GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error)
+	GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error)
 	ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error)
 	CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error)
 	DeleteGroupTag(ctx context.Context, id int64) error
@@ -297,6 +298,31 @@ func (r *MysqlChatbotRepository) GetGroupBotSetting(ctx context.Context, groupId
 			Key:   item.Key,
 			Value: item.Value,
 		})
+	}
+	return result, nil
+}
+
+func (r *MysqlChatbotRepository) GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error) {
+	var find []*pb.GroupBotSetting
+	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Find(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	result := make(map[int64][]*pb.KV)
+	for _, item := range find {
+		if _, ok := result[item.BotId]; ok {
+			result[item.BotId] = append(result[item.BotId], &pb.KV{
+				Key:   item.Key,
+				Value: item.Value,
+			})
+		} else {
+			result[item.BotId] = []*pb.KV{
+				{
+					Key:   item.Key,
+					Value: item.Value,
+				},
+			}
+		}
 	}
 	return result, nil
 }
