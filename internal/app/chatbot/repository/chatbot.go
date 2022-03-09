@@ -238,7 +238,7 @@ func (r *MysqlChatbotRepository) CreateGroup(ctx context.Context, group *pb.Grou
 	}()
 
 	var max pb.Group
-	err = r.db.Where("user_id = ?", group.UserId).Order("sequence DESC").First(&max).Error
+	err = r.db.Where("user_id = ?", group.UserId).Order("sequence DESC").Take(&max).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, err
 	}

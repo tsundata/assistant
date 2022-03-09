@@ -63,7 +63,7 @@ func (r *MysqlMessageRepository) GetBySequence(ctx context.Context, userId, sequ
 
 func (r *MysqlMessageRepository) GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error) {
 	var message pb.Message
-	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC").First(&message).Error
+	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC, id DESC").Take(&message).Error
 	if err != nil {
 		return pb.Message{}, err
 	}
@@ -109,7 +109,7 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 	}()
 
 	var max pb.Message
-	err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").First(&max).Error
+	err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").Take(&max).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, err
 	}
