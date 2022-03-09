@@ -73,8 +73,9 @@ func (t *Url) Handle(ctx context.Context, comp component.Component) {
 
 		// send message
 		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
-			GroupId: t.message.GetGroupId(),
-			Text:    fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText()),
+			GroupId:   t.message.GetGroupId(),
+			Text:      fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText()),
+			Direction: enum.MessageIncomingDirection,
 		})
 		if err != nil {
 			return

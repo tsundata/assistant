@@ -49,7 +49,7 @@ func NewChatbot(
 }
 
 func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
-	reply, err := s.message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId}})
+	reply, err := s.message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId, Uuid: payload.MessageUuid}})
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,15 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 
 		if len(commands) > 0 {
-			for _, item := range inBots {
+			var commandsBots []*pb.Bot
+			if len(objects) == 0 {
+				commandsBots = groupBots
+			} else {
+				for k := range inBots {
+					commandsBots = append(commandsBots, inBots[k])
+				}
+			}
+			for _, item := range commandsBots {
 				for _, commandText := range commands {
 					outMessages, err = r.ProcessCommand(ctx, s.comp, item, commandText)
 					if err != nil {
@@ -159,6 +167,8 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				Type:         enum.MessageTypeText,
 				Text:         text,
 				Status:       0,
+				Direction:    enum.MessageIncomingDirection,
+				SendTime:     util.Format(time.Now().Unix()),
 			}
 			_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 			if err != nil {
@@ -274,8 +284,8 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 			Avatar:      group.Avatar,
 			UnreadCount: 0, // todo
 			LastMessage: &pb.LastMessage{
-				LastSender: last.Message.Sender,
-				Content:    last.Message.Message,
+				LastSender: last.Message.GetSenderName(),
+				Content:    last.Message.GetText(),
 			},
 			BotAvatar: avatars,
 		})

@@ -270,3 +270,7 @@ func TestIsAnnually(t *testing.T) {
 func TestNow(t *testing.T) {
 	require.Regexp(t, `2\d{3}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}`, Now())
 }
+
+func TestFormat(t *testing.T) {
+	require.Equal(t, "2022-03-09 11:15:48", Format(1646795748))
+}

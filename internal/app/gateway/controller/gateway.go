@@ -393,3 +393,87 @@ func (gc *GatewayController) GetUser(c *fiber.Ctx) error {
 	}
 	return c.JSON(reply)
 }
+
+func (gc *GatewayController) GetGroupSetting(c *fiber.Ctx) error {
+	var in pb.GroupSettingRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetGroupSetting(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) UpdateGroupSetting(c *fiber.Ctx) error {
+	var in pb.GroupSettingRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.UpdateGroupSetting(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetGroupBots(c *fiber.Ctx) error {
+	var in pb.BotsRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetBots(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetGroupBot(c *fiber.Ctx) error {
+	var in pb.BotRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetBot(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetGroupBotSetting(c *fiber.Ctx) error {
+	var in pb.BotSettingRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.GetGroupBotSetting(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
+func (gc *GatewayController) UpdateGroupBotSetting(c *fiber.Ctx) error {
+	var in pb.BotSettingRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.UpdateGroupBotSetting(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}

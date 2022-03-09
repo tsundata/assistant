@@ -108,7 +108,7 @@ func TestMessage_Get(t *testing.T) {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Message.Uuid != tt.want.Message.Uuid || got.Message.Text != tt.want.Message.Text || got.Message.Type != tt.want.Message.Type) {
+			if got != nil && (got.Message.Uuid != tt.want.Message.Uuid || got.Message.GetText() != tt.want.Message.GetText() || got.Message.Type != tt.want.Message.Type) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})

@@ -254,9 +254,9 @@ func TestMessage_GetGroups(t *testing.T) {
 			UserId: 1,
 			Name:   "test",
 		}}, nil),
-		message.EXPECT().LastByGroup(gomock.Any(), gomock.Any()).Return(&pb.LastByGroupReply{Message: &pb.MessageItem{
-			Sender:  "test",
-			Message: "test",
+		message.EXPECT().LastByGroup(gomock.Any(), gomock.Any()).Return(&pb.LastByGroupReply{Message: &pb.Message{
+			SenderName: "test",
+			Text:       "test",
 		}}, nil),
 	)
 

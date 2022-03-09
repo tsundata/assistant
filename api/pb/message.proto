@@ -68,6 +68,15 @@ message Message {
   int64 created_at = 12;
   // @inject_tag: db:"updated_at"
   int64 updated_at = 13;
+
+  // @inject_tag: db:"send_time" gorm:"->"
+  string send_time = 16;
+  // @inject_tag: db:"sender_name" gorm:"->"
+  string sender_name = 17;
+  // @inject_tag: db:"direction" gorm:"->"
+  string direction = 18;
+  // @inject_tag: db:"payload" gorm:"->"
+  string payload = 19;
 }
 
 message Action {
@@ -115,17 +124,6 @@ message Notification {
   Priority priority = 16;
 }
 
-message MessageItem {
-  int64 sequence = 1;
-  string uuid = 2;
-  string message = 3;
-  string send_time = 4;
-  string sender = 5;
-  string direction = 6;
-  string type = 7;
-  string payload = 8;
-}
-
 message GetMessageReply {
   Message message = 1;
 }
@@ -133,6 +131,7 @@ message GetMessageReply {
 message GetMessagesRequest {
   int32 page = 1;
   int32 limit = 2;
+  // @inject_tag: query:"group_uuid"
   string group_uuid = 3;
 }
 
@@ -140,7 +139,7 @@ message GetMessagesReply {
   int64 total = 1;
   int32 page = 2;
   int32 page_size = 3;
-  repeated MessageItem messages = 4;
+  repeated Message messages = 4;
 }
 
 message LastByGroupRequest {
@@ -149,5 +148,5 @@ message LastByGroupRequest {
 }
 
 message LastByGroupReply {
-  MessageItem message = 1;
+  Message message = 1;
 }

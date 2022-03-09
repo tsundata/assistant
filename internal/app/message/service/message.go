@@ -62,16 +62,23 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 		return nil, err
 	}
 
-	var reply []*pb.MessageItem
+	var reply []*pb.Message
 	for _, item := range messages {
 		if item.UserId != id {
 			return nil, exception.ErrGrpcUnauthenticated
 		}
-		reply = append(reply, &pb.MessageItem{
-			Uuid:    item.Uuid,
-			Message: item.Text,
-			Type:    item.Type,
-		})
+
+		// covert
+		direction := ""
+		if item.SenderType == enum.MessageBotType || item.SenderType == enum.MessageGroupType {
+			direction = enum.MessageIncomingDirection
+		} else {
+			direction = enum.MessageOutgoingDirection
+		}
+		item.Direction = direction
+		item.SendTime = util.Format(item.CreatedAt)
+
+		reply = append(reply, item)
 	}
 
 	return &pb.GetMessagesReply{
@@ -89,6 +96,16 @@ func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetM
 		return nil, exception.ErrGrpcUnauthenticated
 	}
 
+	// covert
+	direction := ""
+	if message.SenderType == enum.MessageBotType || message.SenderType == enum.MessageGroupType {
+		direction = enum.MessageIncomingDirection
+	} else {
+		direction = enum.MessageOutgoingDirection
+	}
+	message.Direction = direction
+	message.SendTime = util.Format(message.CreatedAt)
+
 	return &pb.GetMessageReply{
 		Message: &message,
 	}, nil
@@ -102,17 +119,12 @@ func (m *Message) LastByGroup(ctx context.Context, payload *pb.LastByGroupReques
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.LastByGroupReply{
-			Message: &pb.MessageItem{},
+			Message: &pb.Message{},
 		}, nil
 	}
 
 	return &pb.LastByGroupReply{
-		Message: &pb.MessageItem{
-			Uuid:     message.Uuid,
-			Message:  message.Text,
-			Type:     message.Type,
-			SendTime: "", // todo
-		},
+		Message: &message,
 	}, nil
 }
 

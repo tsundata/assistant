@@ -26,7 +26,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 		}
 
 		chatbot := service.NewChatbot(logger, bus, repo, message, middle, bot, comp)
-		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id})
+		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id, MessageUuid: m.Uuid})
 		if err != nil {
 			return err
 		}

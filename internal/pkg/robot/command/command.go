@@ -24,7 +24,7 @@ func (r Ruleset) Help(in string) string {
 	if strings.ToLower(in) == "help" {
 		var helpMsg string
 		for _, rule := range r.rules {
-			helpMsg = fmt.Sprintln(helpMsg, rule.Define, " : ", rule.Help)
+			helpMsg = fmt.Sprintf("%s%s%s%s\n", helpMsg, rule.Define, " :: ", rule.Help)
 		}
 		return strings.TrimLeftFunc(helpMsg, unicode.IsSpace)
 	}

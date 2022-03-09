@@ -221,7 +221,7 @@ func (r *MysqlChatbotRepository) GetGroupByName(ctx context.Context, userId int6
 
 func (r *MysqlChatbotRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {
 	var list []*pb.Group
-	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("id DESC").Find(&list).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("updated_at DESC").Find(&list).Error
 	if err != nil {
 		return nil, err
 	}

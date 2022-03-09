@@ -20,3 +20,8 @@ const (
 	MessageGroupType = "group"
 	MessageBotType   = "bot"
 )
+
+const (
+	MessageIncomingDirection = "incoming"
+	MessageOutgoingDirection = "outgoing"
+)

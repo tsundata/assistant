@@ -33,6 +33,7 @@ service ChatbotSvc {
 
 message ChatbotRequest {
   int64 message_id = 1;
+  string message_uuid = 2;
 }
 
 message ChatbotReply {
@@ -58,11 +59,13 @@ message BotSettingReply {
 
 message GroupSettingRequest {
   int64 group_id = 1;
+  string group_uuid = 2;
   repeated KV kvs = 3;
 }
 
 message GroupSettingReply {
   int64 group_id = 1;
+  string group_uuid = 2;
   repeated KV kvs = 3;
 }
 

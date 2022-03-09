@@ -13,7 +13,7 @@ import (
 )
 
 type message struct {
-	data   []byte
+	data   pb.Message
 	roomId int64
 	userId int64
 }
@@ -87,9 +87,14 @@ func (h *Hub) Run() {
 			h.logger.Info("[chat] hub unregister", zap.Any("room", s.roomId))
 		case m := <-h.broadcast:
 			connections := h.rooms[m.roomId]
+			data, err := json.Marshal(m.data)
+			if err != nil {
+				h.logger.Error(err)
+				continue
+			}
 			for c := range connections {
 				select {
-				case c.send <- m.data:
+				case c.send <- data:
 				default:
 					close(c.send)
 					delete(connections, c)
@@ -98,7 +103,7 @@ func (h *Hub) Run() {
 					}
 				}
 			}
-			h.logger.Info("[chat] hub broadcast", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
+			h.logger.Info("[chat] hub broadcast", zap.Any("room", m.roomId), zap.Any("data", m.data))
 		case m := <-h.incoming:
 			// create message
 			uuid := util.UUID()
@@ -106,19 +111,19 @@ func (h *Hub) Run() {
 				Message: &pb.Message{
 					UserId:  m.userId,
 					Uuid:    uuid,
-					Text:    util.ByteToString(m.data),
+					Text:    m.data.Text,
 					GroupId: m.roomId,
 				},
 			})
 			if err != nil {
 				h.logger.Error(err)
 				h.broadcast <- message{
-					data:   util.StringToByte(err.Error()),
+					data:   pb.Message{Text: err.Error(), Direction: enum.MessageIncomingDirection},
 					roomId: m.roomId,
 				}
 				continue
 			}
-			h.logger.Info("[chat] hub incoming", zap.Any("room", m.roomId), zap.Any("data", string(m.data)))
+			h.logger.Info("[chat] hub incoming", zap.Any("room", m.roomId), zap.Any("data", m.data))
 		}
 	}
 }
@@ -132,7 +137,7 @@ func (h *Hub) EventHandle() {
 		}
 
 		h.broadcast <- message{
-			data:   util.StringToByte(m.Text),
+			data:   m,
 			roomId: m.GroupId,
 		}
 		return nil

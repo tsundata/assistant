@@ -2,6 +2,8 @@ package chat
 
 import (
 	"github.com/gofiber/websocket/v2"
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"log"
 	"time"
 )
@@ -47,7 +49,7 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-		m := message{msg, s.roomId, s.userId}
+		m := message{pb.Message{Text: util.ByteToString(msg)}, s.roomId, s.userId}
 		s.h.incoming <- m
 	}
 }
