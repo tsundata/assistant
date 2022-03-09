@@ -72,7 +72,7 @@ func (r *MysqlMessageRepository) GetLastByGroup(ctx context.Context, groupId int
 
 func (r *MysqlMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error) {
 	var messages []*pb.Message
-	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC").
+	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC, id DESC").
 		Limit(limit).Offset((page - 1) * limit).
 		Find(&messages).Error
 	if err != nil {

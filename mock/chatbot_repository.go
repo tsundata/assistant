@@ -150,6 +150,21 @@ func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupTag(ctx, id interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupTag), ctx, id)
 }
 
+// GetBotsByGroupUuid mocks base method.
+func (m *MockChatbotRepository) GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBotsByGroupUuid", ctx, uuid)
+	ret0, _ := ret[0].([]*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBotsByGroupUuid indicates an expected call of GetBotsByGroupUuid.
+func (mr *MockChatbotRepositoryMockRecorder) GetBotsByGroupUuid(ctx, uuid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByGroupUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByGroupUuid), ctx, uuid)
+}
+
 // GetBotsByText mocks base method.
 func (m *MockChatbotRepository) GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error) {
 	m.ctrl.T.Helper()
@@ -238,6 +253,21 @@ func (m *MockChatbotRepository) GetGroup(ctx context.Context, id int64) (pb.Grou
 func (mr *MockChatbotRepositoryMockRecorder) GetGroup(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroup), ctx, id)
+}
+
+// GetGroupBot mocks base method.
+func (m *MockChatbotRepository) GetGroupBot(ctx context.Context, groupUuid, botUuid string) (pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupBot", ctx, groupUuid, botUuid)
+	ret0, _ := ret[0].(pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupBot indicates an expected call of GetGroupBot.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupBot(ctx, groupUuid, botUuid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBot), ctx, groupUuid, botUuid)
 }
 
 // GetGroupBotSetting mocks base method.

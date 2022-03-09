@@ -208,15 +208,15 @@ func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.Sta
 }
 
 func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotReply, error) {
-	bot, err := s.repo.GetByUUID(ctx, payload.Bot.GetUuid())
+	bot, err := s.repo.GetGroupBot(ctx, payload.GroupUuid, payload.BotUuid)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.BotReply{Bot: &bot}, nil
 }
 
-func (s *Chatbot) GetBots(ctx context.Context, _ *pb.BotsRequest) (*pb.BotsReply, error) {
-	bots, err := s.repo.List(ctx)
+func (s *Chatbot) GetBots(ctx context.Context, payload *pb.BotsRequest) (*pb.BotsReply, error) {
+	bots, err := s.repo.GetBotsByGroupUuid(ctx, payload.GroupUuid)
 	if err != nil {
 		return nil, err
 	}
@@ -248,6 +248,7 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		if err != nil {
 			return nil, err
 		}
+		// todo group --- system bot
 	}
 
 	// bot avatar

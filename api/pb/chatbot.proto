@@ -171,6 +171,10 @@ message Bot {
 
 message BotRequest {
   Bot bot = 1;
+  // @inject_tag: query:"group_uuid"
+  string group_uuid = 2;
+  // @inject_tag: query:"bot_uuid"
+  string bot_uuid = 3;
 }
 
 message BotReply {
@@ -179,6 +183,8 @@ message BotReply {
 
 message BotsRequest {
   int64 group_id = 1;
+  // @inject_tag: query:"group_uuid"
+  string group_uuid = 2;
 }
 
 message BotsReply {

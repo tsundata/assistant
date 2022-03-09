@@ -16,7 +16,9 @@ type ChatbotRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Bot, error)
 	GetByUUID(ctx context.Context, uuid string) (pb.Bot, error)
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
+	GetGroupBot(ctx context.Context, groupUuid, botUuid string) (pb.Bot, error)
 	List(ctx context.Context) ([]*pb.Bot, error)
+	GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error)
 	GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error)
 	GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
@@ -80,9 +82,37 @@ func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier
 	return bot, nil
 }
 
+func (r *MysqlChatbotRepository) GetGroupBot(ctx context.Context, groupUuid, botUuid string) (pb.Bot, error) {
+	var bot pb.Bot
+	err := r.db.WithContext(ctx).
+		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
+		Where("bots.uuid = ? AND groups.uuid = ?", botUuid, groupUuid).
+		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
+		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
+		First(&bot).Error
+	if err != nil {
+		return pb.Bot{}, err
+	}
+	return bot, nil
+}
+
 func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	var bots []*pb.Bot
 	err := r.db.WithContext(ctx).Order("id DESC").Find(&bots).Error
+	if err != nil {
+		return nil, err
+	}
+	return bots, nil
+}
+
+func (r *MysqlChatbotRepository) GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error) {
+	var bots []*pb.Bot
+	err := r.db.WithContext(ctx).
+		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
+		Where("groups.uuid = ?", uuid).
+		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
+		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
+		Order("group_bots.id ASC").Find(&bots).Error
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +133,10 @@ func (r *MysqlChatbotRepository) GetBotsByUser(ctx context.Context, userId int64
 }
 
 func (r *MysqlChatbotRepository) GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error) {
+	result := make(map[string]*pb.Bot)
+	if len(text) == 0 {
+		return result, nil
+	}
 	var bots []*pb.Bot
 	err := r.db.WithContext(ctx).
 		Where("(name IN ?) OR (identifier IN ?)", text, text).Find(&bots).Error
@@ -115,7 +149,6 @@ func (r *MysqlChatbotRepository) GetBotsByText(ctx context.Context, text []strin
 		botsMap[item.Name] = bots[i]
 		botsMap[item.Identifier] = bots[i]
 	}
-	result := make(map[string]*pb.Bot)
 	for _, s := range text {
 		if v, ok := botsMap[s]; ok {
 			result[s] = v
