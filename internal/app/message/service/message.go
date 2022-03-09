@@ -9,6 +9,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"strings"
@@ -50,6 +52,7 @@ func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesR
 }
 
 func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	group, err := m.chatbot.GetGroupId(ctx, &pb.UuidRequest{Uuid: payload.GroupUuid})
 	if err != nil {
 		return nil, err
@@ -61,6 +64,9 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 
 	var reply []*pb.MessageItem
 	for _, item := range messages {
+		if item.UserId != id {
+			return nil, exception.ErrGrpcUnauthenticated
+		}
 		reply = append(reply, &pb.MessageItem{
 			Uuid:    item.Uuid,
 			Message: item.Text,
@@ -74,9 +80,13 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 }
 
 func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	message, err := m.repo.GetByID(ctx, payload.Message.GetId())
+	id, _ := md.FromIncoming(ctx)
+	message, err := m.repo.GetByUUID(ctx, payload.Message.GetUuid())
 	if err != nil {
 		return nil, err
+	}
+	if message.UserId != id {
+		return nil, exception.ErrGrpcUnauthenticated
 	}
 
 	return &pb.GetMessageReply{
