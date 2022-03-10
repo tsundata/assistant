@@ -176,6 +176,26 @@ func (mr *MockMessageSvcClientMockRecorder) LastByGroup(ctx, in interface{}, opt
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastByGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).LastByGroup), varargs...)
 }
 
+// LastInbox mocks base method.
+func (m *MockMessageSvcClient) LastInbox(ctx context.Context, in *pb.InboxRequest, opts ...grpc.CallOption) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "LastInbox", varargs...)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LastInbox indicates an expected call of LastInbox.
+func (mr *MockMessageSvcClientMockRecorder) LastInbox(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastInbox", reflect.TypeOf((*MockMessageSvcClient)(nil).LastInbox), varargs...)
+}
+
 // List mocks base method.
 func (m *MockMessageSvcClient) List(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
@@ -214,6 +234,66 @@ func (mr *MockMessageSvcClientMockRecorder) ListByGroup(ctx, in interface{}, opt
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageSvcClient)(nil).ListByGroup), varargs...)
+}
+
+// ListInbox mocks base method.
+func (m *MockMessageSvcClient) ListInbox(ctx context.Context, in *pb.InboxRequest, opts ...grpc.CallOption) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListInbox", varargs...)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListInbox indicates an expected call of ListInbox.
+func (mr *MockMessageSvcClientMockRecorder) ListInbox(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListInbox", reflect.TypeOf((*MockMessageSvcClient)(nil).ListInbox), varargs...)
+}
+
+// MarkReadInbox mocks base method.
+func (m *MockMessageSvcClient) MarkReadInbox(ctx context.Context, in *pb.InboxRequest, opts ...grpc.CallOption) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MarkReadInbox", varargs...)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MarkReadInbox indicates an expected call of MarkReadInbox.
+func (mr *MockMessageSvcClientMockRecorder) MarkReadInbox(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkReadInbox", reflect.TypeOf((*MockMessageSvcClient)(nil).MarkReadInbox), varargs...)
+}
+
+// MarkSendInbox mocks base method.
+func (m *MockMessageSvcClient) MarkSendInbox(ctx context.Context, in *pb.InboxRequest, opts ...grpc.CallOption) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MarkSendInbox", varargs...)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MarkSendInbox indicates an expected call of MarkSendInbox.
+func (mr *MockMessageSvcClientMockRecorder) MarkSendInbox(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkSendInbox", reflect.TypeOf((*MockMessageSvcClient)(nil).MarkSendInbox), varargs...)
 }
 
 // Run mocks base method.
@@ -404,6 +484,21 @@ func (mr *MockMessageSvcServerMockRecorder) LastByGroup(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastByGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).LastByGroup), arg0, arg1)
 }
 
+// LastInbox mocks base method.
+func (m *MockMessageSvcServer) LastInbox(arg0 context.Context, arg1 *pb.InboxRequest) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LastInbox", arg0, arg1)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LastInbox indicates an expected call of LastInbox.
+func (mr *MockMessageSvcServerMockRecorder) LastInbox(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastInbox", reflect.TypeOf((*MockMessageSvcServer)(nil).LastInbox), arg0, arg1)
+}
+
 // List mocks base method.
 func (m *MockMessageSvcServer) List(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessagesReply, error) {
 	m.ctrl.T.Helper()
@@ -432,6 +527,51 @@ func (m *MockMessageSvcServer) ListByGroup(arg0 context.Context, arg1 *pb.GetMes
 func (mr *MockMessageSvcServerMockRecorder) ListByGroup(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageSvcServer)(nil).ListByGroup), arg0, arg1)
+}
+
+// ListInbox mocks base method.
+func (m *MockMessageSvcServer) ListInbox(arg0 context.Context, arg1 *pb.InboxRequest) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListInbox", arg0, arg1)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListInbox indicates an expected call of ListInbox.
+func (mr *MockMessageSvcServerMockRecorder) ListInbox(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListInbox", reflect.TypeOf((*MockMessageSvcServer)(nil).ListInbox), arg0, arg1)
+}
+
+// MarkReadInbox mocks base method.
+func (m *MockMessageSvcServer) MarkReadInbox(arg0 context.Context, arg1 *pb.InboxRequest) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MarkReadInbox", arg0, arg1)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MarkReadInbox indicates an expected call of MarkReadInbox.
+func (mr *MockMessageSvcServerMockRecorder) MarkReadInbox(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkReadInbox", reflect.TypeOf((*MockMessageSvcServer)(nil).MarkReadInbox), arg0, arg1)
+}
+
+// MarkSendInbox mocks base method.
+func (m *MockMessageSvcServer) MarkSendInbox(arg0 context.Context, arg1 *pb.InboxRequest) (*pb.InboxReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MarkSendInbox", arg0, arg1)
+	ret0, _ := ret[0].(*pb.InboxReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MarkSendInbox indicates an expected call of MarkSendInbox.
+func (mr *MockMessageSvcServerMockRecorder) MarkSendInbox(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkSendInbox", reflect.TypeOf((*MockMessageSvcServer)(nil).MarkSendInbox), arg0, arg1)
 }
 
 // Run mocks base method.

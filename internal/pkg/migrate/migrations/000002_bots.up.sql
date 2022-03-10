@@ -53,7 +53,7 @@ create table if not exists `todos`
 create table if not exists `objectives`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`    BIGINT(20) UNSIGNED NOT NULL,
+    `user_id`    BIGINT(19) UNSIGNED NOT NULL,
     `name`       varchar(50)         NOT NULL DEFAULT '',
     `tag_id`     INT(10)             NOT NULL,
     `created_at` INT(10)             NOT NULL DEFAULT '0',
@@ -67,7 +67,7 @@ create table if not exists `objectives`
 create table if not exists `key_results`
 (
     `id`           BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`      BIGINT(20) UNSIGNED NOT NULL,
+    `user_id`      BIGINT(19) UNSIGNED NOT NULL,
     `objective_id` INT(10)             NOT NULL,
     `name`         varchar(50)         NOT NULL DEFAULT '',
     `tag_id`       INT(10)             NOT NULL,
@@ -80,3 +80,23 @@ create table if not exists `key_results`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE `inboxes`
+(
+    `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`     BIGINT(19)          NOT NULL,
+    `sequence`    INT(10)             NOT NULL,
+    `uuid`        VARCHAR(36)         NOT NULL DEFAULT '',
+    `sender`      BIGINT(19)          NOT NULL,
+    `sender_type` VARCHAR(20)         NOT NULL,
+    `title`       VARCHAR(100)        NOT NULL DEFAULT '',
+    `content`     VARCHAR(2048)       NOT NULL DEFAULT '',
+    `payload`     VARCHAR(2048)       NOT NULL DEFAULT '',
+    `status`      TINYINT(3)          NOT NULL,
+    `created_at`  INT(10)             NOT NULL DEFAULT '0',
+    `updated_at`  INT(10)             NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uuid` (`uuid`) USING BTREE,
+    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
+    INDEX `sender` (`sender`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

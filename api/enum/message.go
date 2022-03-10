@@ -25,3 +25,9 @@ const (
 	MessageIncomingDirection = "incoming"
 	MessageOutgoingDirection = "outgoing"
 )
+
+const (
+	InboxCreate = iota + 1
+	InboxSend
+	InboxRead
+)

@@ -50,6 +50,21 @@ func (mr *MockMessageRepositoryMockRecorder) Create(ctx, message interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageRepository)(nil).Create), ctx, message)
 }
 
+// CreateInbox mocks base method.
+func (m *MockMessageRepository) CreateInbox(ctx context.Context, inbox pb.Inbox) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateInbox", ctx, inbox)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateInbox indicates an expected call of CreateInbox.
+func (mr *MockMessageRepositoryMockRecorder) CreateInbox(ctx, inbox interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateInbox", reflect.TypeOf((*MockMessageRepository)(nil).CreateInbox), ctx, inbox)
+}
+
 // Delete mocks base method.
 func (m *MockMessageRepository) Delete(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -109,6 +124,21 @@ func (mr *MockMessageRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), ctx, uuid)
 }
 
+// GetInbox mocks base method.
+func (m *MockMessageRepository) GetInbox(ctx context.Context, id int64) (pb.Inbox, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetInbox", ctx, id)
+	ret0, _ := ret[0].(pb.Inbox)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetInbox indicates an expected call of GetInbox.
+func (mr *MockMessageRepositoryMockRecorder) GetInbox(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInbox", reflect.TypeOf((*MockMessageRepository)(nil).GetInbox), ctx, id)
+}
+
 // GetLastByGroup mocks base method.
 func (m *MockMessageRepository) GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error) {
 	m.ctrl.T.Helper()
@@ -122,6 +152,21 @@ func (m *MockMessageRepository) GetLastByGroup(ctx context.Context, groupId int6
 func (mr *MockMessageRepositoryMockRecorder) GetLastByGroup(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastByGroup", reflect.TypeOf((*MockMessageRepository)(nil).GetLastByGroup), ctx, groupId)
+}
+
+// LastInbox mocks base method.
+func (m *MockMessageRepository) LastInbox(ctx context.Context, userId int64) (pb.Inbox, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LastInbox", ctx, userId)
+	ret0, _ := ret[0].(pb.Inbox)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LastInbox indicates an expected call of LastInbox.
+func (mr *MockMessageRepositoryMockRecorder) LastInbox(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastInbox", reflect.TypeOf((*MockMessageRepository)(nil).LastInbox), ctx, userId)
 }
 
 // List mocks base method.
@@ -167,4 +212,33 @@ func (m *MockMessageRepository) ListByType(ctx context.Context, t string) ([]*pb
 func (mr *MockMessageRepositoryMockRecorder) ListByType(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByType", reflect.TypeOf((*MockMessageRepository)(nil).ListByType), ctx, t)
+}
+
+// ListInbox mocks base method.
+func (m *MockMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListInbox", ctx, userId, page, limit)
+	ret0, _ := ret[0].([]*pb.Inbox)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListInbox indicates an expected call of ListInbox.
+func (mr *MockMessageRepositoryMockRecorder) ListInbox(ctx, userId, page, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListInbox", reflect.TypeOf((*MockMessageRepository)(nil).ListInbox), ctx, userId, page, limit)
+}
+
+// UpdateInboxStatus mocks base method.
+func (m *MockMessageRepository) UpdateInboxStatus(ctx context.Context, id int64, status int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateInboxStatus", ctx, id, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateInboxStatus indicates an expected call of UpdateInboxStatus.
+func (mr *MockMessageRepositoryMockRecorder) UpdateInboxStatus(ctx, id, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateInboxStatus", reflect.TypeOf((*MockMessageRepository)(nil).UpdateInboxStatus), ctx, id, status)
 }

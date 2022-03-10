@@ -142,7 +142,7 @@ CREATE TABLE `devices`
 create table if not exists `apps`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`    BIGINT(20) UNSIGNED NOT NULL,
+    `user_id`    BIGINT(19) UNSIGNED NOT NULL,
     `name`       varchar(16)         NOT NULL DEFAULT '',
     `type`       varchar(12)         NOT NULL DEFAULT '',
     `token`      varchar(256)        NOT NULL DEFAULT '',
@@ -257,7 +257,7 @@ create table if not exists `tags`
 
 create table if not exists `model_tags`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `service`    VARCHAR(50)         NOT NULL DEFAULT '',
     `model`      VARCHAR(50)         NOT NULL DEFAULT '',
     `model_id`   BIGINT(19)          NOT NULL,

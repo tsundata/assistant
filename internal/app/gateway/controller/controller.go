@@ -90,6 +90,23 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 			chat.ServeWs(h, conn, groupReply.Group.Id, authReply.Id)
 		}))
+		router.Get("/ws/notify", websocket.New(func(conn *websocket.Conn) {
+			ctx := context.Background()
+			// auth
+			token := conn.Query("token")
+			authReply, err := gc.userSvc.Authorization(ctx, &pb.AuthRequest{Token: token})
+			if err != nil {
+				gc.logger.Error(err)
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				return
+			}
+			if !authReply.GetState() {
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				return
+			}
+
+			gc.Notify(conn, authReply.Id)
+		}))
 
 		// route
 		router.Get("/", gc.Index)

@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
+	"time"
 )
 
 type MessageRepository interface {
@@ -22,6 +23,11 @@ type MessageRepository interface {
 	ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error)
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
+	GetInbox(ctx context.Context, id int64) (pb.Inbox, error)
+	ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error)
+	LastInbox(ctx context.Context, userId int64) (pb.Inbox, error)
+	CreateInbox(ctx context.Context, inbox pb.Inbox) (int64, error)
+	UpdateInboxStatus(ctx context.Context, id int64, status int) error
 }
 
 type MysqlMessageRepository struct {
@@ -135,4 +141,76 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 
 func (r *MysqlMessageRepository) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Message{}).Error
+}
+
+func (r *MysqlMessageRepository) GetInbox(ctx context.Context, id int64) (pb.Inbox, error) {
+	var inbox pb.Inbox
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&inbox).Error
+	if err != nil {
+		return pb.Inbox{}, err
+	}
+	return inbox, nil
+}
+
+func (r *MysqlMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error) {
+	var inbox []*pb.Inbox
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("created_at DESC, id DESC").
+		Limit(limit).Offset((page - 1) * limit).
+		Find(&inbox).Error
+	if err != nil {
+		return nil, err
+	}
+	return inbox, nil
+}
+
+func (r *MysqlMessageRepository) LastInbox(ctx context.Context, userId int64) (pb.Inbox, error) {
+	var inbox pb.Inbox
+	err := r.db.WithContext(ctx).
+		Where("user_id = ? AND status = ?", userId, enum.InboxCreate).
+		Order("id ASC").Take(&inbox).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return pb.Inbox{}, err
+	}
+	return inbox, nil
+}
+
+func (r *MysqlMessageRepository) CreateInbox(ctx context.Context, inbox pb.Inbox) (int64, error) {
+	l, err := r.locker.Acquire(fmt.Sprintf("message:index:create:%d", inbox.UserId))
+	if err != nil {
+		return 0, err
+	}
+	defer func() {
+		_ = l.Release()
+	}()
+
+	var max pb.Inbox
+	err = r.db.Where("user_id = ?", inbox.UserId).Order("sequence DESC").Take(&max).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, err
+	}
+
+	// sequence
+	sequence := int64(0)
+	if max.Sequence > 0 {
+		sequence = max.Sequence
+	}
+	sequence += 1
+
+	if inbox.Uuid == "" {
+		inbox.Uuid = util.UUID()
+	}
+	inbox.Id = r.id.Generate(ctx)
+	inbox.Sequence = sequence
+	err = r.db.WithContext(ctx).Create(&inbox).Error
+	if err != nil {
+		return 0, err
+	}
+	return inbox.Id, nil
+}
+
+func (r *MysqlMessageRepository) UpdateInboxStatus(ctx context.Context, id int64, status int) error {
+	return r.db.WithContext(ctx).Model(&pb.Inbox{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"status":     status,
+		"updated_at": time.Now().Unix(),
+	}).Error
 }

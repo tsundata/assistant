@@ -309,3 +309,37 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 
 	return &pb.StateReply{State: true}, nil
 }
+
+func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	list, err := m.repo.ListInbox(ctx, id, int(payload.Page), int(payload.Limit))
+	if err != nil {
+		return nil, err
+	}
+	return &pb.InboxReply{Inbox: list}, nil
+}
+
+func (m *Message) LastInbox(ctx context.Context, _ *pb.InboxRequest) (*pb.InboxReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	inbox, err := m.repo.LastInbox(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.InboxReply{Inbox: []*pb.Inbox{&inbox}}, nil
+}
+
+func (m *Message) MarkSendInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {
+	err := m.repo.UpdateInboxStatus(ctx, payload.InboxId, enum.InboxSend)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.InboxReply{}, nil
+}
+
+func (m *Message) MarkReadInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {
+	err := m.repo.UpdateInboxStatus(ctx, payload.InboxId, enum.InboxRead)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.InboxReply{}, nil
+}

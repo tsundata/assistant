@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway/health"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -12,8 +14,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/version"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"strings"
+	"time"
 )
 
 type GatewayController struct {
@@ -476,4 +480,60 @@ func (gc *GatewayController) UpdateGroupBotSetting(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(reply)
+}
+
+func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
+	gc.logger.Info("[Notify] listening...", zap.Any("user", userId))
+
+	go func() {
+		for {
+			_, data, err := conn.ReadMessage()
+			if err != nil {
+				gc.logger.Warn(err.Error())
+				break
+			}
+			var inbox pb.Inbox
+			err = json.Unmarshal(data, &inbox)
+			if err != nil {
+				gc.logger.Error(err)
+				continue
+			}
+			_, err = gc.messageSvc.MarkReadInbox(md.BuildAuthContext(userId), &pb.InboxRequest{InboxId: inbox.Id})
+			if err != nil {
+				gc.logger.Error(err)
+				continue
+			}
+		}
+		gc.logger.Info("[Notify] stop read", zap.Any("user", userId))
+	}()
+
+	t := time.NewTicker(5 * time.Second)
+	for range t.C {
+		inbox, err := gc.messageSvc.LastInbox(md.BuildAuthContext(userId), &pb.InboxRequest{})
+		if err != nil {
+			gc.logger.Error(err)
+			continue
+		}
+
+		if len(inbox.Inbox) > 0 && inbox.Inbox[0].Id > 0 {
+			data, err := json.Marshal(inbox.Inbox[0])
+			if err != nil {
+				gc.logger.Error(err)
+				continue
+			}
+			err = conn.WriteMessage(websocket.TextMessage, data)
+			if err != nil {
+				gc.logger.Warn("[Notify] stop ticker", zap.Any("user", userId))
+				t.Stop()
+				continue
+			}
+			_, err = gc.messageSvc.MarkSendInbox(md.BuildAuthContext(userId), &pb.InboxRequest{InboxId: inbox.Inbox[0].Id})
+			if err != nil {
+				gc.logger.Error(err)
+				continue
+			}
+			gc.logger.Info("[Notify] send message", zap.Any("user", userId), zap.Any("inbox", inbox.Inbox[0]))
+		}
+	}
+	gc.logger.Info("[Notify] end", zap.Any("user", userId))
 }

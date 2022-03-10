@@ -30,6 +30,10 @@ type MessageSvcClient interface {
 	GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error)
 	CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
 	DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
+	ListInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
+	LastInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
+	MarkSendInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
+	MarkReadInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
 }
 
 type messageSvcClient struct {
@@ -148,6 +152,42 @@ func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *Messag
 	return out, nil
 }
 
+func (c *messageSvcClient) ListInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error) {
+	out := new(InboxReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/ListInbox", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) LastInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error) {
+	out := new(InboxReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/LastInbox", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) MarkSendInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error) {
+	out := new(InboxReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/MarkSendInbox", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) MarkReadInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error) {
+	out := new(InboxReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/MarkReadInbox", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageSvcServer is the server API for MessageSvc service.
 // All implementations should embed UnimplementedMessageSvcServer
 // for forward compatibility
@@ -164,6 +204,10 @@ type MessageSvcServer interface {
 	GetActionMessages(context.Context, *TextRequest) (*ActionReply, error)
 	CreateActionMessage(context.Context, *TextRequest) (*StateReply, error)
 	DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error)
+	ListInbox(context.Context, *InboxRequest) (*InboxReply, error)
+	LastInbox(context.Context, *InboxRequest) (*InboxReply, error)
+	MarkSendInbox(context.Context, *InboxRequest) (*InboxReply, error)
+	MarkReadInbox(context.Context, *InboxRequest) (*InboxReply, error)
 }
 
 // UnimplementedMessageSvcServer should be embedded to have forward compatible implementations.
@@ -205,6 +249,18 @@ func (UnimplementedMessageSvcServer) CreateActionMessage(context.Context, *TextR
 }
 func (UnimplementedMessageSvcServer) DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteWorkflowMessage not implemented")
+}
+func (UnimplementedMessageSvcServer) ListInbox(context.Context, *InboxRequest) (*InboxReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInbox not implemented")
+}
+func (UnimplementedMessageSvcServer) LastInbox(context.Context, *InboxRequest) (*InboxReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LastInbox not implemented")
+}
+func (UnimplementedMessageSvcServer) MarkSendInbox(context.Context, *InboxRequest) (*InboxReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkSendInbox not implemented")
+}
+func (UnimplementedMessageSvcServer) MarkReadInbox(context.Context, *InboxRequest) (*InboxReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkReadInbox not implemented")
 }
 
 // UnsafeMessageSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -434,6 +490,78 @@ func _MessageSvc_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessageSvc_ListInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).ListInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/ListInbox",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).ListInbox(ctx, req.(*InboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_LastInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).LastInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/LastInbox",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).LastInbox(ctx, req.(*InboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_MarkSendInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).MarkSendInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/MarkSendInbox",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).MarkSendInbox(ctx, req.(*InboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_MarkReadInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).MarkReadInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/MarkReadInbox",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).MarkReadInbox(ctx, req.(*InboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MessageSvc_ServiceDesc is the grpc.ServiceDesc for MessageSvc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -488,6 +616,22 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteWorkflowMessage",
 			Handler:    _MessageSvc_DeleteWorkflowMessage_Handler,
+		},
+		{
+			MethodName: "ListInbox",
+			Handler:    _MessageSvc_ListInbox_Handler,
+		},
+		{
+			MethodName: "LastInbox",
+			Handler:    _MessageSvc_LastInbox_Handler,
+		},
+		{
+			MethodName: "MarkSendInbox",
+			Handler:    _MessageSvc_MarkSendInbox_Handler,
+		},
+		{
+			MethodName: "MarkReadInbox",
+			Handler:    _MessageSvc_MarkReadInbox_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

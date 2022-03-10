@@ -25,6 +25,10 @@ service MessageSvc {
   rpc GetActionMessages(TextRequest) returns (ActionReply) {}
   rpc CreateActionMessage(TextRequest) returns (StateReply) {}
   rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
+  rpc ListInbox(InboxRequest) returns (InboxReply) {}
+  rpc LastInbox(InboxRequest) returns (InboxReply) {}
+  rpc MarkSendInbox(InboxRequest) returns (InboxReply) {}
+  rpc MarkReadInbox(InboxRequest) returns (InboxReply) {}
 }
 
 message MessageRequest {
@@ -149,4 +153,47 @@ message LastByGroupRequest {
 
 message LastByGroupReply {
   Message message = 1;
+}
+
+message Inbox {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 3;
+  // @inject_tag: db:"uuid"
+  string uuid = 4;
+  // @inject_tag: db:"sender"
+  int64 sender = 5;
+  // @inject_tag: db:"sender_type"
+  string sender_type = 6;
+  // @inject_tag: db:"type"
+  string type = 7;
+  // @inject_tag: db:"text"
+  string title = 8;
+  // @inject_tag: db:"content"
+  string content = 9;
+  // @inject_tag: db:"payload"
+  string payload = 10;
+  // @inject_tag: db:"status"
+  int32 status = 11;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 12;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 13;
+}
+
+message InboxRequest {
+  int64 inbox_id = 1;
+  string inbox_uuid = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message InboxReply {
+  int64 total = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  repeated Inbox inbox = 4;
 }
