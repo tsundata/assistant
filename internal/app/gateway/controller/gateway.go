@@ -482,6 +482,20 @@ func (gc *GatewayController) UpdateGroupBotSetting(c *fiber.Ctx) error {
 	return c.JSON(reply)
 }
 
+func (gc *GatewayController) GetInboxes(c *fiber.Ctx) error {
+	var in pb.InboxRequest
+	err := c.QueryParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.messageSvc.ListInbox(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
 func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
 	gc.logger.Info("[Notify] listening...", zap.Any("user", userId))
 
