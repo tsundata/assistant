@@ -520,10 +520,10 @@ func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
 		}
 	}()
 
-	t := time.NewTicker(5 * time.Second)
+	t := time.NewTicker(10 * time.Second)
 	for {
 		<-t.C
-		err := conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+		err := conn.WriteMessage(websocket.PongMessage, []byte("pong"))
 		if err != nil {
 			t.Stop()
 			gc.logger.Warn(err.Error())
