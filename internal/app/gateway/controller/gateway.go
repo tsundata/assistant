@@ -518,11 +518,18 @@ func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
 				continue
 			}
 		}
-		gc.logger.Info("[Notify] stop read", zap.Any("user", userId))
 	}()
 
 	t := time.NewTicker(5 * time.Second)
-	for range t.C {
+	for {
+		<-t.C
+		err := conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+		if err != nil {
+			t.Stop()
+			gc.logger.Warn(err.Error())
+			break
+		}
+
 		inbox, err := gc.messageSvc.LastInbox(md.BuildAuthContext(userId), &pb.InboxRequest{})
 		if err != nil {
 			gc.logger.Error(err)
@@ -537,17 +544,17 @@ func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
 			}
 			err = conn.WriteMessage(websocket.TextMessage, data)
 			if err != nil {
-				gc.logger.Warn("[Notify] stop ticker", zap.Any("user", userId))
 				t.Stop()
-				continue
+				gc.logger.Warn(err.Error())
+				break
 			}
 			_, err = gc.messageSvc.MarkSendInbox(md.BuildAuthContext(userId), &pb.InboxRequest{InboxId: inbox.Inbox[0].Id})
 			if err != nil {
 				gc.logger.Error(err)
 				continue
 			}
-			gc.logger.Info("[Notify] send message", zap.Any("user", userId), zap.Any("inbox", inbox.Inbox[0]))
 		}
 	}
+
 	gc.logger.Info("[Notify] end", zap.Any("user", userId))
 }
