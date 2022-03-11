@@ -50,14 +50,13 @@ require (
 	github.com/tidwall/gjson v1.14.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/fasthttp v1.34.0
-	github.com/yuin/goldmark v1.4.8
+	github.com/yuin/goldmark v1.4.9
 	go.etcd.io/etcd/client/v3 v3.5.2
 	go.uber.org/automaxprocs v1.4.1-0.20210525221652-0180b04c18a7
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.45.0
-	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.2
@@ -194,6 +193,7 @@ require (
 	google.golang.org/api v0.63.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220112215332-a9c7c0acf9f2 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e // indirect
