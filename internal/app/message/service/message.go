@@ -225,6 +225,9 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 		Payload:    payload.Message.GetPayload(),
 	})
 	// setting
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.StateReply{
 		State: true,
