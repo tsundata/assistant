@@ -263,8 +263,9 @@ func (m *BotSettingReply) GetKvs() []*KV {
 }
 
 type GroupSettingRequest struct {
-	GroupId   int64  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	GroupUuid string `protobuf:"bytes,2,opt,name=group_uuid,json=groupUuid,proto3" json:"group_uuid,omitempty"`
+	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// @inject_tag: query:"group_uuid"
+	GroupUuid string `protobuf:"bytes,2,opt,name=group_uuid,json=groupUuid,proto3" json:"group_uuid,omitempty" query:"group_uuid"`
 	Kvs       []*KV  `protobuf:"bytes,3,rep,name=kvs,proto3" json:"kvs,omitempty"`
 }
 

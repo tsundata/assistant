@@ -38,6 +38,7 @@ type ChatbotRepository interface {
 	UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error
 	UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error
 	GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error)
+	GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error)
 	GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error)
 	GetGroupBotSettingByUuid(ctx context.Context, groupUuid, botUuid string) ([]*pb.KV, error)
 	GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error)
@@ -307,6 +308,24 @@ func (r *MysqlChatbotRepository) UpdateGroup(ctx context.Context, group *pb.Grou
 func (r *MysqlChatbotRepository) GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error) {
 	var find []*pb.GroupSetting
 	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Find(&find).Error
+	if err != nil {
+		return nil, err
+	}
+	var result []*pb.KV
+	for _, item := range find {
+		result = append(result, &pb.KV{
+			Key:   item.Key,
+			Value: item.Value,
+		})
+	}
+	return result, nil
+}
+
+func (r *MysqlChatbotRepository) GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error) {
+	var find []*pb.GroupSetting
+	err := r.db.WithContext(ctx).Where("groups.uuid = ?", groupUuid).
+		Joins("LEFT JOIN `groups` ON groups.id = group_settings.group_id").
+		Find(&find).Error
 	if err != nil {
 		return nil, err
 	}

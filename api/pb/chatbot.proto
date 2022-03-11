@@ -63,6 +63,7 @@ message BotSettingReply {
 
 message GroupSettingRequest {
   int64 group_id = 1;
+  // @inject_tag: query:"group_uuid"
   string group_uuid = 2;
   repeated KV kvs = 3;
 }

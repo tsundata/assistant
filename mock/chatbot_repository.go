@@ -375,6 +375,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupSetting(ctx, groupId interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSetting), ctx, groupId)
 }
 
+// GetGroupSettingByUuid mocks base method.
+func (m *MockChatbotRepository) GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupSettingByUuid", ctx, groupUuid)
+	ret0, _ := ret[0].([]*pb.KV)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupSettingByUuid indicates an expected call of GetGroupSettingByUuid.
+func (mr *MockChatbotRepositoryMockRecorder) GetGroupSettingByUuid(ctx, groupUuid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSettingByUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSettingByUuid), ctx, groupUuid)
+}
+
 // List mocks base method.
 func (m *MockChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	m.ctrl.T.Helper()

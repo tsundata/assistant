@@ -354,7 +354,11 @@ func (s *Chatbot) UpdateGroupBotSetting(ctx context.Context, payload *pb.BotSett
 }
 
 func (s *Chatbot) UpdateGroupSetting(ctx context.Context, payload *pb.GroupSettingRequest) (*pb.StateReply, error) {
-	err := s.repo.UpdateGroupSetting(ctx, payload.GroupId, payload.Kvs)
+	group, err := s.repo.GetGroupByUUID(ctx, payload.GroupUuid)
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.UpdateGroupSetting(ctx, group.Id, payload.Kvs)
 	if err != nil {
 		return nil, err
 	}
@@ -386,7 +390,7 @@ func (s *Chatbot) GetGroupBotSetting(ctx context.Context, request *pb.BotSetting
 }
 
 func (s *Chatbot) GetGroupSetting(ctx context.Context, request *pb.GroupSettingRequest) (*pb.GroupSettingReply, error) {
-	kv, err := s.repo.GetGroupSetting(ctx, request.GroupId)
+	kv, err := s.repo.GetGroupSettingByUuid(ctx, request.GroupUuid)
 	if err != nil {
 		return nil, err
 	}
