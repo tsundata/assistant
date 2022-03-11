@@ -54,5 +54,9 @@ func Now() string {
 }
 
 func Format(sec int64) string {
-	return time.Unix(sec, 0).Format("2006-01-02 15:04:05")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic(err)
+	}
+	return time.Unix(sec, 0).In(loc).Format("2006-01-02 15:04:05")
 }

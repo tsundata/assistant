@@ -65,7 +65,7 @@ func TestMessage_Get(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(pb.Message{
+		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(pb.Message{
 			Id:   1,
 			Text: "test",
 			Uuid: "test",

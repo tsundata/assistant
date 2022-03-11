@@ -112,7 +112,7 @@ func TestChatbot_GetBot(t *testing.T) {
 		UpdatedAt: 0,
 	}
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(item, nil),
+		repo.EXPECT().GetGroupBot(gomock.Any(), gomock.Any(), gomock.Any()).Return(item, nil),
 	)
 
 	s := NewChatbot(nil, nil, repo, nil, nil, bot, nil)
@@ -167,7 +167,7 @@ func TestChatbot_GetBots(t *testing.T) {
 		},
 	}
 	gomock.InOrder(
-		repo.EXPECT().List(gomock.Any()).Return(items, nil),
+		repo.EXPECT().GetBotsByGroupUuid(gomock.Any(), gomock.Any()).Return(items, nil),
 	)
 
 	s := NewChatbot(nil, nil, repo, nil, nil, bot, nil)
