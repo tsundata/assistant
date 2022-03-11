@@ -211,6 +211,8 @@ func (r *MysqlMessageRepository) CreateInbox(ctx context.Context, inbox pb.Inbox
 	}
 	inbox.Id = r.id.Generate(ctx)
 	inbox.Sequence = sequence
+	inbox.CreatedAt = time.Now().Unix()
+	inbox.UpdatedAt = time.Now().Unix()
 	err = r.db.WithContext(ctx).Create(&inbox).Error
 	if err != nil {
 		return 0, err

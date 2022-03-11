@@ -202,12 +202,29 @@ func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.T
 	return &pb.TextReply{Text: ""}, nil
 }
 
-func (m *Message) Send(_ context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
+func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
 	if payload.Message.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
 
 	// todo send message
+
+	// push ws hub
+	err := m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
+	if err != nil {
+		return nil, err
+	}
+	// push inbox
+	_, err = m.repo.CreateInbox(ctx, pb.Inbox{
+		UserId:     payload.Message.GetUserId(),
+		Sender:     payload.Message.GetSender(),
+		SenderType: payload.Message.GetSenderType(),
+		Type:       payload.Message.GetType(),
+		Title:      payload.Message.GetText(),
+		Content:    payload.Message.GetText(),
+		Payload:    payload.Message.GetPayload(),
+	})
+	// setting
 
 	return &pb.StateReply{
 		State: true,
