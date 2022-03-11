@@ -30,14 +30,14 @@ import (
 )
 
 type WebController struct {
-	opt     *config.AppConfig
+	config  *config.AppConfig
 	rdb     *redis.Client
 	logger  log.Logger
 	gateway *sdk.GatewayClient
 }
 
-func NewWebController(opt *config.AppConfig, rdb *redis.Client, logger log.Logger, gateway *sdk.GatewayClient) *WebController {
-	return &WebController{opt: opt, rdb: rdb, logger: logger, gateway: gateway}
+func NewWebController(config *config.AppConfig, rdb *redis.Client, logger log.Logger, gateway *sdk.GatewayClient) *WebController {
+	return &WebController{config: config, rdb: rdb, logger: logger, gateway: gateway}
 }
 
 func (wc *WebController) Index(c *fiber.Ctx) error {
@@ -515,19 +515,19 @@ func (wc *WebController) ActionCreate(c *fiber.Ctx) error {
 func (wc *WebController) ActionRun(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.config.Web.Url, "error id"), http.StatusFound)
 	}
 
 	reply, err := wc.gateway.RunMessage(&pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.config.Web.Url, err), http.StatusFound)
 	}
 
 	if reply.GetText() != "" {
 		_, _ = wc.gateway.SendMessage(&pb.MessageRequest{Message: &pb.Message{Text: reply.GetText()}})
 	}
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.config.Web.Url, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) ActionStore(c *fiber.Ctx) error {
@@ -547,15 +547,15 @@ func (wc *WebController) ActionStore(c *fiber.Ctx) error {
 func (wc *WebController) WorkflowDelete(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "error id"), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.config.Web.Url, "error id"), http.StatusFound)
 	}
 
 	_, err = wc.gateway.DeleteWorkflowMessage(&pb.Message{Id: id})
 	if err != nil {
-		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.opt.Web.Url, err), http.StatusFound)
+		return c.Redirect(fmt.Sprintf("%s/echo?text=failed: %s", wc.config.Web.Url, err), http.StatusFound)
 	}
 
-	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.opt.Web.Url, "ok"), http.StatusFound)
+	return c.Redirect(fmt.Sprintf("%s/echo?text=%s", wc.config.Web.Url, "ok"), http.StatusFound)
 }
 
 func (wc *WebController) Role(c *fiber.Ctx) error {
@@ -567,23 +567,6 @@ func (wc *WebController) Role(c *fiber.Ctx) error {
 
 	c.Set("Content-Type", "image/png")
 	return c.Send(reply.GetData())
-}
-
-func (wc *WebController) App(c *fiber.Ctx) error {
-	category := c.Params("category")
-	provider := vendors.NewOAuthProvider(wc.rdb, category, wc.opt.Web.Url)
-	return provider.Redirect(c, wc.gateway)
-}
-
-func (wc *WebController) OAuth(c *fiber.Ctx) error {
-	category := c.Params("category")
-	provider := vendors.NewOAuthProvider(wc.rdb, category, wc.opt.Web.Url)
-	err := provider.StoreAccessToken(c, wc.gateway)
-	if err != nil {
-		wc.logger.Error(err)
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
-	}
-	return c.SendString("ok")
 }
 
 func (wc *WebController) Webhook(c *fiber.Ctx) error {

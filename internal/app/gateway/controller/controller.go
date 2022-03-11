@@ -114,6 +114,8 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Post("/webhook/trigger", gc.WebhookTrigger)
 		router.Get("/health", gc.Health)
 		router.Get("/page", gc.GetPage)
+		router.Get("/app/:category", gc.App)
+		router.Get("/oauth/:category", gc.OAuth)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -151,7 +153,6 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		internal.Get("chart", gc.GetChart)
 		internal.Get("apps", gc.GetApps)
-		internal.Post("app/oauth", gc.StoreAppOAuth)
 		internal.Get("masking_credentials", gc.GetMaskingCredentials)
 		internal.Get("credential", gc.GetCredential)
 		internal.Post("credential", gc.CreateCredential)

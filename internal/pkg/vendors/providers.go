@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
-	"github.com/tsundata/assistant/internal/pkg/sdk"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"github.com/tsundata/assistant/internal/pkg/vendors/doctorxiong"
@@ -30,7 +30,7 @@ var ProviderCredentialOptions = map[string]interface{}{
 		pocket.ClientIdKey: "Consumer Key",
 	},
 	pushover.ID: map[string]string{
-		pushover.TokenKey: "API Token",
+		pushover.TokenKey: "App Token",
 		pushover.UserKey:  "User Key",
 	},
 	dropbox.ID: map[string]string{
@@ -60,8 +60,8 @@ var ProviderCredentialOptions = map[string]interface{}{
 type OAuthProvider interface {
 	AuthorizeURL() string
 	GetAccessToken(code string) (interface{}, error)
-	Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error
-	StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error
+	Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error
+	StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error
 }
 
 func NewOAuthProvider(rdb *redis.Client, category, url string) OAuthProvider {

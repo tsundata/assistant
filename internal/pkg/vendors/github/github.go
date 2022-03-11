@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/sdk"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
 	"time"
@@ -341,8 +342,8 @@ func (v *Github) GetAccessToken(code string) (interface{}, error) {
 	}
 }
 
-func (v *Github) Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
-	reply, err := gateway.GetCredential(ID)
+func (v *Github) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
+	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
 	if err != nil {
 		return err
 	}
@@ -358,9 +359,9 @@ func (v *Github) Redirect(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
 	return c.Redirect(appRedirectURI, http.StatusFound)
 }
 
-func (v *Github) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) error {
+func (v *Github) StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
 	code := c.FormValue("code")
-	reply, err := gateway.GetCredential(ID)
+	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
 	if err != nil {
 		return err
 	}
@@ -386,7 +387,7 @@ func (v *Github) StoreAccessToken(c *fiber.Ctx, gateway *sdk.GatewayClient) erro
 	if err != nil {
 		return err
 	}
-	appReply, err := gateway.StoreAppOAuth(&pb.AppRequest{
+	appReply, err := middle.StoreAppOAuth(md.BuildAuthContext(enum.SuperUserID), &pb.AppRequest{
 		App: &pb.App{
 			Name:  ID,
 			Type:  ID,

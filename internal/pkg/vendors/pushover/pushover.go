@@ -1,7 +1,104 @@
 package pushover
 
+import (
+	"errors"
+	"fmt"
+	"github.com/go-resty/resty/v2"
+	"net/http"
+	"strconv"
+	"time"
+)
+
 const (
 	ID       = "pushover"
 	TokenKey = "token"
 	UserKey  = "user"
 )
+
+type Message struct {
+	Title    string `json:"title"`
+	Message  string `json:"message"`
+	Device   string `json:"device"`
+	Url      string `json:"url"`
+	UrlTitle string `json:"url_title"`
+	Sound    string `json:"sound"`
+}
+
+type Response struct {
+	Status  int         `json:"status"`
+	Request string      `json:"request"`
+	Errors  interface{} `json:"errors"`
+}
+
+type Limitation struct {
+	Limit     int64
+	Remaining int64
+	Reset     int64
+}
+
+type Pushover struct {
+	c     *resty.Client
+	token string
+	user  string
+}
+
+func NewPushover(user, token string) *Pushover {
+	v := &Pushover{}
+	v.user = user
+	v.token = token
+	v.c = resty.New()
+	v.c.SetBaseURL("https://api.pushover.net/1")
+	v.c.SetTimeout(time.Minute)
+	return v
+}
+
+func (p *Pushover) PushMessage(message Message) (*Response, error) {
+	resp, err := p.c.R().
+		SetResult(&Response{}).
+		SetBody(map[string]interface {
+		}{
+			"token":   p.token,
+			"user":    p.user,
+			"title":   message.Title,
+			"message": message.Message,
+		}).
+		Post("/messages.json")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		result := resp.Result().(*Response)
+		return result, nil
+	} else {
+		return nil, fmt.Errorf("pushover error %d", resp.StatusCode())
+	}
+}
+
+func (p *Pushover) Limitations() (*Limitation, error) {
+	resp, err := p.c.R().
+		SetResult(&Response{}).
+		SetQueryParam("token", p.token).
+		Get("/apps/limits.json")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		result := resp.Result().(*Response)
+		if result.Status == 1 {
+			limit, _ := strconv.ParseInt(resp.Header().Get("X-Limit-App-Limit"), 10, 64)
+			remaining, _ := strconv.ParseInt(resp.Header().Get("X-Limit-App-Remaining"), 10, 64)
+			reset, _ := strconv.ParseInt(resp.Header().Get("X-Limit-App-Reset"), 10, 64)
+			return &Limitation{
+				Limit:     limit,
+				Remaining: remaining,
+				Reset:     reset,
+			}, nil
+		}
+
+		return nil, errors.New("error status")
+	} else {
+		return nil, fmt.Errorf("pushover error %d", resp.StatusCode())
+	}
+}

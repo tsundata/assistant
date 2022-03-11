@@ -21,8 +21,6 @@ func CreateInitControllersFn(wc *WebController) func(router fiber.Router) {
 		router.Get("/echo", wc.Echo)
 		router.Get("/Robots.txt", wc.Robots)
 		router.Get("/page/:uuid", wc.Page)
-		router.Get("/app/:category", wc.App)
-		router.Get("/oauth/:category", wc.OAuth)
 		router.Get("/qr/:text", wc.Qr)
 		router.Get("/chart/:uuid", wc.Chart)
 		// webhook

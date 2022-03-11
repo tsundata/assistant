@@ -273,22 +273,6 @@ func (c *GatewayClient) GetChartData(uuid string) (result *pb.ChartDataReply, er
 	return
 }
 
-func (c *GatewayClient) StoreAppOAuth(in *pb.AppRequest) (result *pb.StateReply, err error) {
-	resp, err := c.r.R().
-		SetBody(in).
-		Post("app/oauth")
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		return nil, errors.New(resp.String())
-	}
-
-	err = json.Unmarshal(resp.Body(), &result)
-	return
-}
-
 func (c *GatewayClient) Authorization(in *pb.TextRequest) (result *pb.StateReply, err error) {
 	resp, err := c.r.R().
 		SetBody(in).

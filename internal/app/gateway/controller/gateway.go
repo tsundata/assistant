@@ -12,16 +12,18 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
+	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health/grpc_health_v1"
+	"net/http"
 	"strings"
 	"time"
 )
 
 type GatewayController struct {
-	opt    *config.AppConfig
+	config *config.AppConfig
 	rdb    *redis.Client
 	logger log.Logger
 	nr     *newrelic.App
@@ -36,7 +38,7 @@ type GatewayController struct {
 }
 
 func NewGatewayController(
-	opt *config.AppConfig,
+	config *config.AppConfig,
 	rdb *redis.Client,
 	logger log.Logger,
 	nr *newrelic.App,
@@ -48,7 +50,7 @@ func NewGatewayController(
 	userSvc pb.UserSvcClient,
 	healthClient *health.Client) *GatewayController {
 	return &GatewayController{
-		opt:          opt,
+		config:       config,
 		rdb:          rdb,
 		logger:       logger,
 		nr:           nr,
@@ -116,20 +118,6 @@ func (gc *GatewayController) Authorization(c *fiber.Ctx) error {
 	}
 
 	reply, err := gc.userSvc.Login(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) StoreAppOAuth(c *fiber.Ctx) error {
-	var in pb.AppRequest
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.middleSvc.StoreAppOAuth(md.Outgoing(c), &in)
 	if err != nil {
 		return err
 	}
@@ -557,4 +545,21 @@ func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {
 	}
 
 	gc.logger.Info("[Notify] end", zap.Any("user", userId))
+}
+
+func (gc *GatewayController) App(c *fiber.Ctx) error {
+	category := c.Params("category")
+	provider := vendors.NewOAuthProvider(gc.rdb, category, gc.config.Gateway.Url)
+	return provider.Redirect(c, gc.middleSvc)
+}
+
+func (gc *GatewayController) OAuth(c *fiber.Ctx) error {
+	category := c.Params("category")
+	provider := vendors.NewOAuthProvider(gc.rdb, category, gc.config.Gateway.Url)
+	err := provider.StoreAccessToken(c, gc.middleSvc)
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+	return c.SendString("ok")
 }
