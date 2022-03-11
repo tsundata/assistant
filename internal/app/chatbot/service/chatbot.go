@@ -338,7 +338,15 @@ func (s *Chatbot) DeleteGroupBot(ctx context.Context, payload *pb.GroupBotReques
 }
 
 func (s *Chatbot) UpdateGroupBotSetting(ctx context.Context, payload *pb.BotSettingRequest) (*pb.StateReply, error) {
-	err := s.repo.UpdateGroupBotSetting(ctx, payload.GroupId, payload.BotId, payload.Kvs)
+	group, err := s.repo.GetGroupByUUID(ctx, payload.GroupUuid)
+	if err != nil {
+		return nil, err
+	}
+	bot, err := s.repo.GetByUUID(ctx, payload.BotUuid)
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.UpdateGroupBotSetting(ctx, group.Id, bot.Id, payload.Kvs)
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +378,7 @@ func (s *Chatbot) UpdateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 }
 
 func (s *Chatbot) GetGroupBotSetting(ctx context.Context, request *pb.BotSettingRequest) (*pb.BotSettingReply, error) {
-	kv, err := s.repo.GetGroupBotSetting(ctx, request.GroupId, request.BotId)
+	kv, err := s.repo.GetGroupBotSettingByUuid(ctx, request.GroupUuid, request.BotUuid)
 	if err != nil {
 		return nil, err
 	}

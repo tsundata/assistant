@@ -47,8 +47,12 @@ message GroupBotRequest {
 
 message BotSettingRequest {
   int64 group_id = 1;
-  int64 bot_id = 2;
-  repeated KV kvs = 3;
+  // @inject_tag: query:"group_uuid"
+  string group_uuid = 2;
+  int64 bot_id = 3;
+  // @inject_tag: query:"bot_uuid"
+  string bot_uuid = 4;
+  repeated KV kvs = 5;
 }
 
 message BotSettingReply {
