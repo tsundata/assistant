@@ -39,6 +39,7 @@ func TestChatbot_Handle(t *testing.T) {
 
 	gomock.InOrder(
 		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test", Text: "text @System /version/ #tag1"}}, nil),
+		repo.EXPECT().TouchGroupUpdatedAt(gomock.Any(), gomock.Any()).Return(nil),
 		repo.EXPECT().ListGroupBot(gomock.Any(), gomock.Any()).Return([]*pb.Bot{
 			{
 				Name:       "System",

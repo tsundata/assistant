@@ -450,6 +450,20 @@ func (mr *MockChatbotRepositoryMockRecorder) ListGroupTag(ctx, groupId interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupTag), ctx, groupId)
 }
 
+// TouchGroupUpdatedAt mocks base method.
+func (m *MockChatbotRepository) TouchGroupUpdatedAt(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TouchGroupUpdatedAt", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// TouchGroupUpdatedAt indicates an expected call of TouchGroupUpdatedAt.
+func (mr *MockChatbotRepositoryMockRecorder) TouchGroupUpdatedAt(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TouchGroupUpdatedAt", reflect.TypeOf((*MockChatbotRepository)(nil).TouchGroupUpdatedAt), ctx, id)
+}
+
 // Update mocks base method.
 func (m *MockChatbotRepository) Update(ctx context.Context, bot *pb.Bot) error {
 	m.ctrl.T.Helper()

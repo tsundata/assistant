@@ -20,11 +20,11 @@ type MessageRepository interface {
 	GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error)
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
 	List(ctx context.Context) ([]*pb.Message, error)
-	ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error)
+	ListByGroup(ctx context.Context, groupId int64, page, limit int) (int64, []*pb.Message, error)
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
 	GetInbox(ctx context.Context, id int64) (pb.Inbox, error)
-	ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error)
+	ListInbox(ctx context.Context, userId int64, page, limit int) (int64, []*pb.Inbox, error)
 	LastInbox(ctx context.Context, userId int64) (pb.Inbox, error)
 	CreateInbox(ctx context.Context, inbox pb.Inbox) (int64, error)
 	UpdateInboxStatus(ctx context.Context, id int64, status int) error
@@ -76,15 +76,20 @@ func (r *MysqlMessageRepository) GetLastByGroup(ctx context.Context, groupId int
 	return message, nil
 }
 
-func (r *MysqlMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error) {
+func (r *MysqlMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) (int64, []*pb.Message, error) {
 	var messages []*pb.Message
-	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC, id DESC").
+	var total int64
+	err := r.db.WithContext(ctx).Model(&pb.Message{}).Where("group_id = ?", groupId).Count(&total).Error
+	if err != nil {
+		return 0, nil, err
+	}
+	err = r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("created_at DESC, id DESC").
 		Limit(limit).Offset((page - 1) * limit).
 		Find(&messages).Error
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
-	return messages, nil
+	return total, messages, nil
 }
 
 func (r *MysqlMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {
@@ -152,15 +157,20 @@ func (r *MysqlMessageRepository) GetInbox(ctx context.Context, id int64) (pb.Inb
 	return inbox, nil
 }
 
-func (r *MysqlMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error) {
+func (r *MysqlMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) (int64, []*pb.Inbox, error) {
 	var inbox []*pb.Inbox
-	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("created_at DESC, id DESC").
+	var total int64
+	err := r.db.WithContext(ctx).Model(&pb.Inbox{}).Where("user_id = ?", userId).Count(&total).Error
+	if err != nil {
+		return 0, nil, err
+	}
+	err = r.db.WithContext(ctx).Where("user_id = ?", userId).Order("created_at DESC, id DESC").
 		Limit(limit).Offset((page - 1) * limit).
 		Find(&inbox).Error
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
-	return inbox, nil
+	return total, inbox, nil
 }
 
 func (r *MysqlMessageRepository) LastInbox(ctx context.Context, userId int64) (pb.Inbox, error) {

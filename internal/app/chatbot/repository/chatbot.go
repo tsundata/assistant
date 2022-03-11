@@ -31,6 +31,7 @@ type ChatbotRepository interface {
 	GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error)
 	GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error)
 	GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error)
+	TouchGroupUpdatedAt(ctx context.Context, id int64) error
 	ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error)
 	CreateGroup(ctx context.Context, group *pb.Group) (int64, error)
 	DeleteGroup(ctx context.Context, id int64) error
@@ -252,6 +253,11 @@ func (r *MysqlChatbotRepository) GetGroupByName(ctx context.Context, userId int6
 		return pb.Group{}, err
 	}
 	return find, nil
+}
+
+func (r *MysqlChatbotRepository) TouchGroupUpdatedAt(ctx context.Context, id int64) error {
+	return r.db.WithContext(ctx).Model(&pb.Group{}).Where("id = ?", id).
+		Updates(map[string]interface{}{"updated_at": time.Now().Unix()}).Error
 }
 
 func (r *MysqlChatbotRepository) ListGroup(ctx context.Context, userId int64) ([]*pb.Group, error) {

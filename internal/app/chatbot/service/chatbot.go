@@ -56,6 +56,12 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 	r := robot.NewRobot()
 
+	// touch updated
+	err = s.repo.TouchGroupUpdatedAt(ctx, reply.Message.GroupId)
+	if err != nil {
+		return nil, err
+	}
+
 	// group bots
 	groupBots, err := s.repo.ListGroupBot(ctx, reply.Message.GetGroupId())
 	if err != nil {

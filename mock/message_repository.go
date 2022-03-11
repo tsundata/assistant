@@ -185,12 +185,13 @@ func (mr *MockMessageRepositoryMockRecorder) List(ctx interface{}) *gomock.Call 
 }
 
 // ListByGroup mocks base method.
-func (m *MockMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) ([]*pb.Message, error) {
+func (m *MockMessageRepository) ListByGroup(ctx context.Context, groupId int64, page, limit int) (int64, []*pb.Message, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListByGroup", ctx, groupId, page, limit)
-	ret0, _ := ret[0].([]*pb.Message)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].([]*pb.Message)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ListByGroup indicates an expected call of ListByGroup.
@@ -215,12 +216,13 @@ func (mr *MockMessageRepositoryMockRecorder) ListByType(ctx, t interface{}) *gom
 }
 
 // ListInbox mocks base method.
-func (m *MockMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) ([]*pb.Inbox, error) {
+func (m *MockMessageRepository) ListInbox(ctx context.Context, userId int64, page, limit int) (int64, []*pb.Inbox, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListInbox", ctx, userId, page, limit)
-	ret0, _ := ret[0].([]*pb.Inbox)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].([]*pb.Inbox)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ListInbox indicates an expected call of ListInbox.

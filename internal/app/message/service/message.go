@@ -57,7 +57,7 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 	if err != nil {
 		return nil, err
 	}
-	messages, err := m.repo.ListByGroup(ctx, group.Id, int(payload.Page), int(payload.Limit))
+	total, messages, err := m.repo.ListByGroup(ctx, group.Id, int(payload.Page), int(payload.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +82,9 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 	}
 
 	return &pb.GetMessagesReply{
+		Total:    total,
+		Page:     payload.Page,
+		PageSize: payload.Limit,
 		Messages: reply,
 	}, nil
 }
@@ -312,11 +315,16 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 
 func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	list, err := m.repo.ListInbox(ctx, id, int(payload.Page), int(payload.Limit))
+	total, list, err := m.repo.ListInbox(ctx, id, int(payload.Page), int(payload.Limit))
 	if err != nil {
 		return nil, err
 	}
-	return &pb.InboxReply{Inbox: list}, nil
+	return &pb.InboxReply{
+		Total:    total,
+		Page:     payload.Page,
+		PageSize: payload.Limit,
+		Inbox:    list,
+	}, nil
 }
 
 func (m *Message) LastInbox(ctx context.Context, _ *pb.InboxRequest) (*pb.InboxReply, error) {
