@@ -36,6 +36,26 @@ func (m *MockMiddleSvcClient) EXPECT() *MockMiddleSvcClientMockRecorder {
 	return m.recorder
 }
 
+// Classifier mocks base method.
+func (m *MockMiddleSvcClient) Classifier(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Classifier", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Classifier indicates an expected call of Classifier.
+func (mr *MockMiddleSvcClientMockRecorder) Classifier(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockMiddleSvcClient)(nil).Classifier), varargs...)
+}
+
 // CloseSubscribe mocks base method.
 func (m *MockMiddleSvcClient) CloseSubscribe(ctx context.Context, in *pb.SubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -496,6 +516,26 @@ func (mr *MockMiddleSvcClientMockRecorder) OpenSubscribe(ctx, in interface{}, op
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).OpenSubscribe), varargs...)
 }
 
+// Pinyin mocks base method.
+func (m *MockMiddleSvcClient) Pinyin(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Pinyin", varargs...)
+	ret0, _ := ret[0].(*pb.WordsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Pinyin indicates an expected call of Pinyin.
+func (mr *MockMiddleSvcClientMockRecorder) Pinyin(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockMiddleSvcClient)(nil).Pinyin), varargs...)
+}
+
 // RegisterCron mocks base method.
 func (m *MockMiddleSvcClient) RegisterCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -554,6 +594,26 @@ func (mr *MockMiddleSvcClientMockRecorder) SaveModelTag(ctx, in interface{}, opt
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcClient)(nil).SaveModelTag), varargs...)
+}
+
+// Segmentation mocks base method.
+func (m *MockMiddleSvcClient) Segmentation(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Segmentation", varargs...)
+	ret0, _ := ret[0].(*pb.WordsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Segmentation indicates an expected call of Segmentation.
+func (mr *MockMiddleSvcClientMockRecorder) Segmentation(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockMiddleSvcClient)(nil).Segmentation), varargs...)
 }
 
 // SetChartData mocks base method.
@@ -657,6 +717,21 @@ func NewMockMiddleSvcServer(ctrl *gomock.Controller) *MockMiddleSvcServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockMiddleSvcServer) EXPECT() *MockMiddleSvcServerMockRecorder {
 	return m.recorder
+}
+
+// Classifier mocks base method.
+func (m *MockMiddleSvcServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Classifier", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Classifier indicates an expected call of Classifier.
+func (mr *MockMiddleSvcServerMockRecorder) Classifier(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Classifier", reflect.TypeOf((*MockMiddleSvcServer)(nil).Classifier), arg0, arg1)
 }
 
 // CloseSubscribe mocks base method.
@@ -1004,6 +1079,21 @@ func (mr *MockMiddleSvcServerMockRecorder) OpenSubscribe(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OpenSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).OpenSubscribe), arg0, arg1)
 }
 
+// Pinyin mocks base method.
+func (m *MockMiddleSvcServer) Pinyin(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Pinyin", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WordsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Pinyin indicates an expected call of Pinyin.
+func (mr *MockMiddleSvcServerMockRecorder) Pinyin(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pinyin", reflect.TypeOf((*MockMiddleSvcServer)(nil).Pinyin), arg0, arg1)
+}
+
 // RegisterCron mocks base method.
 func (m *MockMiddleSvcServer) RegisterCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -1047,6 +1137,21 @@ func (m *MockMiddleSvcServer) SaveModelTag(arg0 context.Context, arg1 *pb.ModelT
 func (mr *MockMiddleSvcServerMockRecorder) SaveModelTag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcServer)(nil).SaveModelTag), arg0, arg1)
+}
+
+// Segmentation mocks base method.
+func (m *MockMiddleSvcServer) Segmentation(arg0 context.Context, arg1 *pb.TextRequest) (*pb.WordsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Segmentation", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WordsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Segmentation indicates an expected call of Segmentation.
+func (mr *MockMiddleSvcServerMockRecorder) Segmentation(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Segmentation", reflect.TypeOf((*MockMiddleSvcServer)(nil).Segmentation), arg0, arg1)
 }
 
 // SetChartData mocks base method.

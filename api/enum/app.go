@@ -7,7 +7,6 @@ const (
 	Gateway  = "gateway"
 	Cron     = "cron"
 	Middle   = "middle"
-	NLP      = "nlp"
 	Spider   = "spider"
 	Storage  = "storage"
 	Task     = "task"

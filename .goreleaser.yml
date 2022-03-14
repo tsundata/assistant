@@ -138,19 +138,6 @@ builds:
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
-  - main: ./cmd/nlp
-    id: "nlp"
-    binary: "nlp"
-    goos:
-      - linux
-    goarch:
-      - amd64
-    ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
-        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
-        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
-        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
-
 archives:
   - format: binary
     name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"

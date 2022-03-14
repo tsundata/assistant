@@ -9,7 +9,7 @@ import (
 )
 
 func TestClassifier(t *testing.T) {
-	conf, err := config.CreateAppConfig(enum.NLP)
+	conf, err := config.CreateAppConfig(enum.Middle)
 	if err != nil {
 		t.Fatal(err)
 	}

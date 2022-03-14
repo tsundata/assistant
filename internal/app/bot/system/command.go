@@ -232,7 +232,7 @@ var commandRules = []command.Rule{
 			if err != nil {
 				return []string{err.Error()}
 			}
-			_, err = comp.NLP().Pinyin(ctx, &pb.TextRequest{Text: "测试"})
+			_, err = comp.Middle().Pinyin(ctx, &pb.TextRequest{Text: "测试"})
 			if err != nil {
 				return []string{err.Error()}
 			}
@@ -265,10 +265,10 @@ var commandRules = []command.Rule{
 		Define: `pinyin [string]`,
 		Help:   "chinese pinyin conversion",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
-			if comp.NLP() == nil {
+			if comp.Middle() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := comp.NLP().Pinyin(ctx, &pb.TextRequest{Text: tokens[1].Value.(string)})
+			reply, err := comp.Middle().Pinyin(ctx, &pb.TextRequest{Text: tokens[1].Value.(string)})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

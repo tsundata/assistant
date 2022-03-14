@@ -54,15 +54,6 @@ func NewUserClient(client *rpc.Client) (pb.UserSvcClient, error) {
 	return c, nil
 }
 
-func NewNLPClient(client *rpc.Client) (pb.NLPSvcClient, error) {
-	conn, err := client.Dial(enum.NLP, rpc.WithTimeout(time.Second))
-	if err != nil {
-		return nil, errors.Wrap(err, "nlp client dial error")
-	}
-	c := pb.NewNLPSvcClient(conn)
-	return c, nil
-}
-
 func NewStorageClient(client *rpc.Client) (pb.StorageSvcClient, error) {
 	conn, err := client.Dial(enum.Storage, rpc.WithTimeout(time.Second))
 	if err != nil {
@@ -72,5 +63,4 @@ func NewStorageClient(client *rpc.Client) (pb.StorageSvcClient, error) {
 	return c, nil
 }
 
-var ProviderSet = wire.NewSet(NewIdClient, NewMiddleClient, NewMessageClient,
-	NewChatbotClient, NewUserClient, NewNLPClient, NewStorageClient)
+var ProviderSet = wire.NewSet(NewIdClient, NewMiddleClient, NewMessageClient, NewChatbotClient, NewUserClient, NewStorageClient)

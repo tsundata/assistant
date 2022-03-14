@@ -193,13 +193,13 @@ func TestPinyinCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	nlp := mock.NewMockNLPSvcClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		nlp.EXPECT().Pinyin(gomock.Any(), gomock.Any()).Return(&pb.WordsReply{Text: []string{"a1", "a2"}}, nil),
+		middle.EXPECT().Pinyin(gomock.Any(), gomock.Any()).Return(&pb.WordsReply{Text: []string{"a1", "a2"}}, nil),
 	)
 
 	cmd := "pinyin 测试"
-	comp := component.MockComponent(nlp)
+	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"a1, a2"}, res)
 }

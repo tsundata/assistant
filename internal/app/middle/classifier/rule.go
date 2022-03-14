@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-
-
 type Rule struct {
 	Format string
 }

@@ -23,7 +23,6 @@ type Comp struct {
 	MiddleClient  pb.MiddleSvcClient
 	StorageClient pb.StorageSvcClient
 	UserClient    pb.UserSvcClient
-	NLPClient     pb.NLPSvcClient
 
 	repoTodo repositoryTodo.TodoRepository
 }
@@ -46,10 +45,6 @@ func (c Comp) Storage() pb.StorageSvcClient {
 
 func (c Comp) User() pb.UserSvcClient {
 	return c.UserClient
-}
-
-func (c Comp) NLP() pb.NLPSvcClient {
-	return c.NLPClient
 }
 
 func (c Comp) Todo() pb.TodoSvcServer {
@@ -82,7 +77,6 @@ type Component interface {
 	Middle() pb.MiddleSvcClient
 	Storage() pb.StorageSvcClient
 	User() pb.UserSvcClient
-	NLP() pb.NLPSvcClient
 	Todo() pb.TodoSvcServer
 }
 
@@ -96,7 +90,6 @@ func NewComponent(
 	middleClient pb.MiddleSvcClient,
 	storageClient pb.StorageSvcClient,
 	userClient pb.UserSvcClient,
-	nlpClient pb.NLPSvcClient,
 
 	repoTodo repositoryTodo.TodoRepository,
 ) Component {
@@ -109,7 +102,6 @@ func NewComponent(
 		MiddleClient:  middleClient,
 		StorageClient: storageClient,
 		UserClient:    userClient,
-		NLPClient:     nlpClient,
 		repoTodo:      repoTodo,
 	}
 }
@@ -126,7 +118,6 @@ func MockComponent(deps ...interface{}) Component {
 		chatbotClient pb.ChatbotSvcClient
 		storageClient pb.StorageSvcClient
 		userClient    pb.UserSvcClient
-		nlpClient     pb.NLPSvcClient
 
 		repoTodo repositoryTodo.TodoRepository
 	)
@@ -152,8 +143,6 @@ func MockComponent(deps ...interface{}) Component {
 			storageClient = v
 		case *mock.MockUserSvcClient:
 			userClient = v
-		case *mock.MockNLPSvcClient:
-			nlpClient = v
 
 		case repositoryTodo.TodoRepository:
 			repoTodo = v
@@ -170,7 +159,6 @@ func MockComponent(deps ...interface{}) Component {
 		ChatbotClient: chatbotClient,
 		StorageClient: storageClient,
 		UserClient:    userClient,
-		NLPClient:     nlpClient,
 		repoTodo:      repoTodo,
 	}
 }

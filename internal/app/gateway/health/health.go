@@ -21,7 +21,6 @@ func NewHealthClient(client *rpc.Client) *Client {
 	hc.watch(client, enum.Chatbot)
 	hc.watch(client, enum.Message)
 	hc.watch(client, enum.Middle)
-	hc.watch(client, enum.NLP)
 	hc.watch(client, enum.Storage)
 	hc.watch(client, enum.User)
 	return hc

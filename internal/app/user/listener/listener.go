@@ -9,7 +9,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 )
 
-func RegisterEventHandler(ctx context.Context, bus event.Bus, repo repository.UserRepository, nlpClient pb.NLPSvcClient) error {
+func RegisterEventHandler(ctx context.Context, bus event.Bus, repo repository.UserRepository, middle pb.MiddleSvcClient) error {
 	err := bus.Subscribe(ctx, enum.User, event.RoleChangeExpSubject, func(msg *event.Msg) error {
 		var role pb.Role
 		err := json.Unmarshal(msg.Data, &role)
@@ -34,7 +34,7 @@ func RegisterEventHandler(ctx context.Context, bus event.Bus, repo repository.Us
 			return err
 		}
 
-		res, err := nlpClient.Classifier(ctx, &pb.TextRequest{Text: data.Content})
+		res, err := middle.Classifier(ctx, &pb.TextRequest{Text: data.Content})
 		if err != nil {
 			return err
 		}

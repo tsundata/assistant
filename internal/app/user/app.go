@@ -13,9 +13,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server, repo repository.UserRepository, nlpClient pb.NLPSvcClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server, repo repository.UserRepository, middle pb.MiddleSvcClient) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(context.Background(), bus, repo, nlpClient)
+	err := listener.RegisterEventHandler(context.Background(), bus, repo, middle)
 	if err != nil {
 		return nil, err
 	}

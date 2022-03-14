@@ -43,6 +43,9 @@ service MiddleSvc {
   rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc SetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc GetChartUrl(TextRequest) returns (TextReply) {}
+  rpc Pinyin(TextRequest) returns (WordsReply) {}
+  rpc Segmentation(TextRequest) returns (WordsReply) {}
+  rpc Classifier(TextRequest) returns (TextReply) {}
 }
 
 message PageRequest {
@@ -260,4 +263,8 @@ message ChartDataRequest {
 
 message ChartDataReply {
   ChartData chart_data = 1;
+}
+
+message WordsReply {
+  repeated string text = 1;
 }

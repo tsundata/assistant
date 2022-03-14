@@ -88,11 +88,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	nlpSvcClient, err := rpcclient.NewNLPClient(rpcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	application, err := user.NewApp(appConfig, bus, logLogger, server, userRepository, nlpSvcClient)
+	application, err := user.NewApp(appConfig, bus, logLogger, server, userRepository, middleSvcClient)
 	if err != nil {
 		return nil, err
 	}

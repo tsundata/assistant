@@ -5,9 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-ego/gse"
 	"github.com/go-redis/redis/v8"
+	"github.com/mozillazg/go-pinyin"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/middle/classifier"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
+	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -657,4 +661,56 @@ func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 		return nil, err
 	}
 	return &pb.ChartDataReply{ChartData: &pb.ChartData{Uuid: uuid}}, nil
+}
+
+func (s *Middle) Pinyin(_ context.Context, req *pb.TextRequest) (*pb.WordsReply, error) {
+	if req.GetText() == "" {
+		return &pb.WordsReply{Text: []string{}}, nil
+	}
+	a := pinyin.NewArgs()
+	py := pinyin.Pinyin(req.GetText(), a)
+	var result []string
+	for _, i := range py {
+		result = append(result, strings.Join(i, " "))
+	}
+	return &pb.WordsReply{Text: result}, nil
+}
+
+func (s *Middle) Segmentation(_ context.Context, req *pb.TextRequest) (*pb.WordsReply, error) {
+	if req.GetText() == "" {
+		return &pb.WordsReply{Text: []string{}}, nil
+	}
+	// gse preload dict
+	seg, err := gse.New("zh", "alpha")
+	if err != nil {
+		return nil, err
+	}
+	result := seg.Cut(req.GetText(), true)
+	return &pb.WordsReply{Text: result}, nil
+}
+
+func (s *Middle) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextReply, error) {
+	rules, err := classifier.ReadRulesConfig(s.conf)
+	if err != nil {
+		return nil, err
+	}
+
+	c := classifier.NewClassifier()
+	err = c.SetRules(rules)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.GetText() == "" {
+		return nil, app.ErrInvalidParameter
+	}
+
+	res, err := c.Do(req.GetText())
+	if err != nil {
+		if errors.Is(err, app.ErrInvalidParameter) {
+			return &pb.TextReply{Text: ""}, nil
+		}
+		return nil, err
+	}
+	return &pb.TextReply{Text: string(res)}, nil
 }
