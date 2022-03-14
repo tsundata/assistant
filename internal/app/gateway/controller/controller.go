@@ -30,7 +30,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		}()
 
 		// Middleware
-		router.Use(recoverMiddleware.New())
+		router.Use(recoverMiddleware.New(recoverMiddleware.Config{EnableStackTrace: true}))
 		router.Use(requestid.New(requestid.Config{
 			ContextKey: enum.RequestIdKey,
 		}))

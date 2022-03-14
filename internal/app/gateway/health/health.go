@@ -39,7 +39,6 @@ func (hc *Client) watch(client *rpc.Client, service string) {
 		for {
 			reply, err := c.Check(context.Background(), &grpc_health_v1.HealthCheckRequest{Service: service})
 			if err != nil || reply.Status != grpc_health_v1.HealthCheckResponse_SERVING {
-				fmt.Println(fmt.Sprintf("%s down", service), err)
 				hc.Status.Store(service, grpc_health_v1.HealthCheckResponse_NOT_SERVING)
 			} else {
 				hc.Status.Store(service, grpc_health_v1.HealthCheckResponse_SERVING)

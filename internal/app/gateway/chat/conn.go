@@ -58,7 +58,7 @@ func (s subscription) readPump() {
 func (c *connection) write(mt int, payload []byte) error {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(err)
+			log.Println("[gateway] ws conn write", mt, payload, err)
 		}
 	}()
 	_ = c.ws.SetWriteDeadline(time.Now().Add(writeWait))
