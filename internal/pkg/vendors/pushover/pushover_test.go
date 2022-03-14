@@ -2,20 +2,20 @@ package pushover
 
 import (
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/push"
 	"testing"
 )
 
-func TestPushMessage(t *testing.T) {
+func TestSendMessage(t *testing.T) {
 	t.SkipNow()
 	p := NewPushover("", "")
-	resp, err := p.PushMessage(Message{
+	err := p.Send(push.Message{
 		Title:   "test",
-		Message: "content",
+		Content: "content",
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(resp)
 }
 
 func TestLimitations(t *testing.T) {

@@ -5,6 +5,8 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
+	push2 "github.com/tsundata/assistant/internal/pkg/push"
+	"github.com/tsundata/assistant/internal/pkg/vendors/bark"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
 	"github.com/tsundata/assistant/internal/pkg/vendors/doctorxiong"
@@ -22,6 +24,7 @@ var OAuthProviderApps = []string{
 }
 
 var ProviderCredentialOptions = map[string]interface{}{
+	// OAuth
 	github.ID: map[string]string{
 		github.ClientIdKey:     "Client ID",
 		github.ClientSecretKey: "Client secrets",
@@ -29,20 +32,30 @@ var ProviderCredentialOptions = map[string]interface{}{
 	pocket.ID: map[string]string{
 		pocket.ClientIdKey: "Consumer Key",
 	},
-	pushover.ID: map[string]string{
-		pushover.TokenKey: "App Token",
-		pushover.UserKey:  "User Key",
-	},
 	dropbox.ID: map[string]string{
 		dropbox.ClientIdKey:     "App key",
 		dropbox.ClientSecretKey: "App secret",
 	},
+
+	// Push
+	pushover.ID: map[string]string{
+		pushover.TokenKey: "App Token",
+		pushover.UserKey:  "User Key",
+	},
+	bark.ID: map[string]string{
+		bark.ServerUrl: "Server URL",
+		bark.TokenKey:  "Token",
+	},
+
+	// Service
 	email.ID: map[string]string{
 		email.Host:     "SMTP Host",
 		email.Port:     "SMTP Port",
 		email.Username: "Username Mail",
 		email.Password: "Password",
 	},
+
+	// API
 	cloudflare.ID: map[string]string{
 		cloudflare.Token:     "Api Token",
 		cloudflare.ZoneID:    "Zone ID",
@@ -82,4 +95,8 @@ func NewOAuthProvider(rdb *redis.Client, category, url string) OAuthProvider {
 	}
 
 	return provider
+}
+
+type PushProvider interface {
+	Send(message push2.Message) error
 }

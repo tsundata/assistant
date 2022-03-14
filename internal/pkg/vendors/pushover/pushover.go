@@ -1,9 +1,11 @@
 package pushover
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/tsundata/assistant/internal/pkg/push"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,15 +16,6 @@ const (
 	TokenKey = "token"
 	UserKey  = "user"
 )
-
-type Message struct {
-	Title    string `json:"title"`
-	Message  string `json:"message"`
-	Device   string `json:"device"`
-	Url      string `json:"url"`
-	UrlTitle string `json:"url_title"`
-	Sound    string `json:"sound"`
-}
 
 type Response struct {
 	Status  int         `json:"status"`
@@ -52,7 +45,7 @@ func NewPushover(user, token string) *Pushover {
 	return v
 }
 
-func (p *Pushover) PushMessage(message Message) (*Response, error) {
+func (p *Pushover) Send(message push.Message) error {
 	resp, err := p.c.R().
 		SetResult(&Response{}).
 		SetBody(map[string]interface {
@@ -60,18 +53,22 @@ func (p *Pushover) PushMessage(message Message) (*Response, error) {
 			"token":   p.token,
 			"user":    p.user,
 			"title":   message.Title,
-			"message": message.Message,
+			"message": message.Content,
 		}).
 		Post("/messages.json")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if resp.StatusCode() == http.StatusOK {
 		result := resp.Result().(*Response)
-		return result, nil
+		if result.Status == 1 {
+			return nil
+		}
+		r, _ := json.Marshal(result.Errors)
+		return errors.New(string(r))
 	} else {
-		return nil, fmt.Errorf("pushover error %d", resp.StatusCode())
+		return fmt.Errorf("pushover error %d", resp.StatusCode())
 	}
 }
 
