@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"reflect"
 )

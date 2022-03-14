@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
-	"github.com/tsundata/assistant/internal/app/workflow/action/opcode"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	inside2 "github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	opcode2 "github.com/tsundata/assistant/internal/pkg/robot/action/opcode"
 	"strings"
 )
 
@@ -17,11 +17,11 @@ type Interpreter struct {
 	tree   Ast
 	stdout []interface{}
 	ctx    context.Context
-	Comp   *inside.Component
+	Comp   *inside2.Component
 }
 
 func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
-	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
+	return &Interpreter{ctx: ctx, tree: tree, Comp: inside2.NewComponent()}
 }
 
 func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageSvcClient, middle pb.MiddleSvcClient, logger log.Logger) {
@@ -85,17 +85,17 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	debugLog(fmt.Sprintf("params: %+v", params))
 	input := i.Comp.Value
 	debugLog(fmt.Sprintf("context: %+v", input))
-	op := opcode.NewOpcode(name)
+	op := opcode2.NewOpcode(name)
 	if op == nil {
 		return 0
 	}
 
 	// Async opcode
-	if op.Type() == opcode.TypeAsync {
+	if op.Type() == opcode2.TypeAsync {
 		return 0
 	}
 	// Cond opcode
-	if op.Type() != opcode.TypeCond && !i.Comp.Continue {
+	if op.Type() != opcode2.TypeCond && !i.Comp.Continue {
 		debugLog(fmt.Sprintf("skip: %s", name))
 		return 0
 	}

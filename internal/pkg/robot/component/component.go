@@ -18,12 +18,12 @@ type Comp struct {
 	RDB    *redis.Client
 	Logger log.Logger
 
-	MessageClient     pb.MessageSvcClient
-	MiddleClient      pb.MiddleSvcClient
-	WorkflowSvcClient pb.WorkflowSvcClient
-	StorageClient     pb.StorageSvcClient
-	UserClient        pb.UserSvcClient
-	NLPClient         pb.NLPSvcClient
+	MessageClient pb.MessageSvcClient
+	ChatbotClient pb.ChatbotSvcClient
+	MiddleClient  pb.MiddleSvcClient
+	StorageClient pb.StorageSvcClient
+	UserClient    pb.UserSvcClient
+	NLPClient     pb.NLPSvcClient
 
 	repoTodo repositoryTodo.TodoRepository
 }
@@ -36,8 +36,8 @@ func (c Comp) Middle() pb.MiddleSvcClient {
 	return c.MiddleClient
 }
 
-func (c Comp) Workflow() pb.WorkflowSvcClient {
-	return c.WorkflowSvcClient
+func (c Comp) Chatbot() pb.ChatbotSvcClient {
+	return c.ChatbotClient
 }
 
 func (c Comp) Storage() pb.StorageSvcClient {
@@ -78,8 +78,8 @@ type Component interface {
 	GetRedis() *redis.Client
 	GetLogger() log.Logger
 	Message() pb.MessageSvcClient
+	Chatbot() pb.ChatbotSvcClient
 	Middle() pb.MiddleSvcClient
-	Workflow() pb.WorkflowSvcClient
 	Storage() pb.StorageSvcClient
 	User() pb.UserSvcClient
 	NLP() pb.NLPSvcClient
@@ -94,7 +94,6 @@ func NewComponent(
 
 	messageClient pb.MessageSvcClient,
 	middleClient pb.MiddleSvcClient,
-	workflowClient pb.WorkflowSvcClient,
 	storageClient pb.StorageSvcClient,
 	userClient pb.UserSvcClient,
 	nlpClient pb.NLPSvcClient,
@@ -102,17 +101,16 @@ func NewComponent(
 	repoTodo repositoryTodo.TodoRepository,
 ) Component {
 	return Comp{
-		Conf:              conf,
-		Bus:               bus,
-		RDB:               rdb,
-		Logger:            logger,
-		MessageClient:     messageClient,
-		MiddleClient:      middleClient,
-		WorkflowSvcClient: workflowClient,
-		StorageClient:     storageClient,
-		UserClient:        userClient,
-		NLPClient:         nlpClient,
-		repoTodo:          repoTodo,
+		Conf:          conf,
+		Bus:           bus,
+		RDB:           rdb,
+		Logger:        logger,
+		MessageClient: messageClient,
+		MiddleClient:  middleClient,
+		StorageClient: storageClient,
+		UserClient:    userClient,
+		NLPClient:     nlpClient,
+		repoTodo:      repoTodo,
 	}
 }
 
@@ -123,12 +121,12 @@ func MockComponent(deps ...interface{}) Component {
 		rdb    *redis.Client
 		logger log.Logger
 
-		messageClient  pb.MessageSvcClient
-		middleClient   pb.MiddleSvcClient
-		workflowClient pb.WorkflowSvcClient
-		storageClient  pb.StorageSvcClient
-		userClient     pb.UserSvcClient
-		nlpClient      pb.NLPSvcClient
+		messageClient pb.MessageSvcClient
+		middleClient  pb.MiddleSvcClient
+		chatbotClient pb.ChatbotSvcClient
+		storageClient pb.StorageSvcClient
+		userClient    pb.UserSvcClient
+		nlpClient     pb.NLPSvcClient
 
 		repoTodo repositoryTodo.TodoRepository
 	)
@@ -148,8 +146,8 @@ func MockComponent(deps ...interface{}) Component {
 			messageClient = v
 		case *mock.MockMiddleSvcClient:
 			middleClient = v
-		case *mock.MockWorkflowSvcClient:
-			workflowClient = v
+		case *mock.MockChatbotSvcClient:
+			chatbotClient = v
 		case *mock.MockStorageSvcClient:
 			storageClient = v
 		case *mock.MockUserSvcClient:
@@ -163,17 +161,17 @@ func MockComponent(deps ...interface{}) Component {
 	}
 
 	return Comp{
-		Conf:              conf,
-		Bus:               bus,
-		RDB:               rdb,
-		Logger:            logger,
-		MessageClient:     messageClient,
-		MiddleClient:      middleClient,
-		WorkflowSvcClient: workflowClient,
-		StorageClient:     storageClient,
-		UserClient:        userClient,
-		NLPClient:         nlpClient,
-		repoTodo:          repoTodo,
+		Conf:          conf,
+		Bus:           bus,
+		RDB:           rdb,
+		Logger:        logger,
+		MessageClient: messageClient,
+		MiddleClient:  middleClient,
+		ChatbotClient: chatbotClient,
+		StorageClient: storageClient,
+		UserClient:    userClient,
+		NLPClient:     nlpClient,
+		repoTodo:      repoTodo,
 	}
 }
 

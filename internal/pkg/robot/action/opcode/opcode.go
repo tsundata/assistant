@@ -2,7 +2,7 @@ package opcode
 
 import (
 	"context"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"sort"
 	"strings"
 )

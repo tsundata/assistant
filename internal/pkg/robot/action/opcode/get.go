@@ -3,8 +3,8 @@ package opcode
 import (
 	"context"
 	"github.com/go-resty/resty/v2"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"time"
 )

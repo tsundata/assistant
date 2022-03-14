@@ -36,6 +36,26 @@ func (m *MockChatbotSvcClient) EXPECT() *MockChatbotSvcClientMockRecorder {
 	return m.recorder
 }
 
+// ActionDoc mocks base method.
+func (m *MockChatbotSvcClient) ActionDoc(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ActionDoc", varargs...)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ActionDoc indicates an expected call of ActionDoc.
+func (mr *MockChatbotSvcClientMockRecorder) ActionDoc(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockChatbotSvcClient)(nil).ActionDoc), varargs...)
+}
+
 // CreateGroup mocks base method.
 func (m *MockChatbotSvcClient) CreateGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -76,6 +96,46 @@ func (mr *MockChatbotSvcClientMockRecorder) CreateGroupBot(ctx, in interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupBot", reflect.TypeOf((*MockChatbotSvcClient)(nil).CreateGroupBot), varargs...)
 }
 
+// CreateTrigger mocks base method.
+func (m *MockChatbotSvcClient) CreateTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateTrigger", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTrigger indicates an expected call of CreateTrigger.
+func (mr *MockChatbotSvcClientMockRecorder) CreateTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).CreateTrigger), varargs...)
+}
+
+// CronTrigger mocks base method.
+func (m *MockChatbotSvcClient) CronTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CronTrigger", varargs...)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CronTrigger indicates an expected call of CronTrigger.
+func (mr *MockChatbotSvcClientMockRecorder) CronTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).CronTrigger), varargs...)
+}
+
 // DeleteGroup mocks base method.
 func (m *MockChatbotSvcClient) DeleteGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -114,6 +174,26 @@ func (mr *MockChatbotSvcClientMockRecorder) DeleteGroupBot(ctx, in interface{}, 
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupBot", reflect.TypeOf((*MockChatbotSvcClient)(nil).DeleteGroupBot), varargs...)
+}
+
+// DeleteTrigger mocks base method.
+func (m *MockChatbotSvcClient) DeleteTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteTrigger", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteTrigger indicates an expected call of DeleteTrigger.
+func (mr *MockChatbotSvcClientMockRecorder) DeleteTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).DeleteTrigger), varargs...)
 }
 
 // GetBot mocks base method.
@@ -276,6 +356,26 @@ func (mr *MockChatbotSvcClientMockRecorder) Handle(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcClient)(nil).Handle), varargs...)
 }
 
+// ListWebhook mocks base method.
+func (m *MockChatbotSvcClient) ListWebhook(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WebhooksReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListWebhook", varargs...)
+	ret0, _ := ret[0].(*pb.WebhooksReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListWebhook indicates an expected call of ListWebhook.
+func (mr *MockChatbotSvcClientMockRecorder) ListWebhook(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWebhook", reflect.TypeOf((*MockChatbotSvcClient)(nil).ListWebhook), varargs...)
+}
+
 // Register mocks base method.
 func (m *MockChatbotSvcClient) Register(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -294,6 +394,46 @@ func (mr *MockChatbotSvcClientMockRecorder) Register(ctx, in interface{}, opts .
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockChatbotSvcClient)(nil).Register), varargs...)
+}
+
+// RunAction mocks base method.
+func (m *MockChatbotSvcClient) RunAction(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RunAction", varargs...)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RunAction indicates an expected call of RunAction.
+func (mr *MockChatbotSvcClientMockRecorder) RunAction(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockChatbotSvcClient)(nil).RunAction), varargs...)
+}
+
+// SyntaxCheck mocks base method.
+func (m *MockChatbotSvcClient) SyntaxCheck(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SyntaxCheck", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SyntaxCheck indicates an expected call of SyntaxCheck.
+func (mr *MockChatbotSvcClientMockRecorder) SyntaxCheck(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockChatbotSvcClient)(nil).SyntaxCheck), varargs...)
 }
 
 // UpdateGroup mocks base method.
@@ -356,6 +496,26 @@ func (mr *MockChatbotSvcClientMockRecorder) UpdateGroupSetting(ctx, in interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupSetting", reflect.TypeOf((*MockChatbotSvcClient)(nil).UpdateGroupSetting), varargs...)
 }
 
+// WebhookTrigger mocks base method.
+func (m *MockChatbotSvcClient) WebhookTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "WebhookTrigger", varargs...)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WebhookTrigger indicates an expected call of WebhookTrigger.
+func (mr *MockChatbotSvcClientMockRecorder) WebhookTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).WebhookTrigger), varargs...)
+}
+
 // MockChatbotSvcServer is a mock of ChatbotSvcServer interface.
 type MockChatbotSvcServer struct {
 	ctrl     *gomock.Controller
@@ -377,6 +537,21 @@ func NewMockChatbotSvcServer(ctrl *gomock.Controller) *MockChatbotSvcServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockChatbotSvcServer) EXPECT() *MockChatbotSvcServerMockRecorder {
 	return m.recorder
+}
+
+// ActionDoc mocks base method.
+func (m *MockChatbotSvcServer) ActionDoc(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ActionDoc", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ActionDoc indicates an expected call of ActionDoc.
+func (mr *MockChatbotSvcServerMockRecorder) ActionDoc(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActionDoc", reflect.TypeOf((*MockChatbotSvcServer)(nil).ActionDoc), arg0, arg1)
 }
 
 // CreateGroup mocks base method.
@@ -409,6 +584,36 @@ func (mr *MockChatbotSvcServerMockRecorder) CreateGroupBot(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupBot", reflect.TypeOf((*MockChatbotSvcServer)(nil).CreateGroupBot), arg0, arg1)
 }
 
+// CreateTrigger mocks base method.
+func (m *MockChatbotSvcServer) CreateTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTrigger", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTrigger indicates an expected call of CreateTrigger.
+func (mr *MockChatbotSvcServerMockRecorder) CreateTrigger(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).CreateTrigger), arg0, arg1)
+}
+
+// CronTrigger mocks base method.
+func (m *MockChatbotSvcServer) CronTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CronTrigger", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CronTrigger indicates an expected call of CronTrigger.
+func (mr *MockChatbotSvcServerMockRecorder) CronTrigger(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).CronTrigger), arg0, arg1)
+}
+
 // DeleteGroup mocks base method.
 func (m *MockChatbotSvcServer) DeleteGroup(arg0 context.Context, arg1 *pb.GroupRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -437,6 +642,21 @@ func (m *MockChatbotSvcServer) DeleteGroupBot(arg0 context.Context, arg1 *pb.Gro
 func (mr *MockChatbotSvcServerMockRecorder) DeleteGroupBot(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupBot", reflect.TypeOf((*MockChatbotSvcServer)(nil).DeleteGroupBot), arg0, arg1)
+}
+
+// DeleteTrigger mocks base method.
+func (m *MockChatbotSvcServer) DeleteTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTrigger", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteTrigger indicates an expected call of DeleteTrigger.
+func (mr *MockChatbotSvcServerMockRecorder) DeleteTrigger(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).DeleteTrigger), arg0, arg1)
 }
 
 // GetBot mocks base method.
@@ -559,6 +779,21 @@ func (mr *MockChatbotSvcServerMockRecorder) Handle(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockChatbotSvcServer)(nil).Handle), arg0, arg1)
 }
 
+// ListWebhook mocks base method.
+func (m *MockChatbotSvcServer) ListWebhook(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WebhooksReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListWebhook", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WebhooksReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListWebhook indicates an expected call of ListWebhook.
+func (mr *MockChatbotSvcServerMockRecorder) ListWebhook(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWebhook", reflect.TypeOf((*MockChatbotSvcServer)(nil).ListWebhook), arg0, arg1)
+}
+
 // Register mocks base method.
 func (m *MockChatbotSvcServer) Register(arg0 context.Context, arg1 *pb.BotRequest) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -572,6 +807,36 @@ func (m *MockChatbotSvcServer) Register(arg0 context.Context, arg1 *pb.BotReques
 func (mr *MockChatbotSvcServerMockRecorder) Register(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockChatbotSvcServer)(nil).Register), arg0, arg1)
+}
+
+// RunAction mocks base method.
+func (m *MockChatbotSvcServer) RunAction(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RunAction", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RunAction indicates an expected call of RunAction.
+func (mr *MockChatbotSvcServerMockRecorder) RunAction(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockChatbotSvcServer)(nil).RunAction), arg0, arg1)
+}
+
+// SyntaxCheck mocks base method.
+func (m *MockChatbotSvcServer) SyntaxCheck(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SyntaxCheck", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SyntaxCheck indicates an expected call of SyntaxCheck.
+func (mr *MockChatbotSvcServerMockRecorder) SyntaxCheck(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyntaxCheck", reflect.TypeOf((*MockChatbotSvcServer)(nil).SyntaxCheck), arg0, arg1)
 }
 
 // UpdateGroup mocks base method.
@@ -617,6 +882,21 @@ func (m *MockChatbotSvcServer) UpdateGroupSetting(arg0 context.Context, arg1 *pb
 func (mr *MockChatbotSvcServerMockRecorder) UpdateGroupSetting(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupSetting", reflect.TypeOf((*MockChatbotSvcServer)(nil).UpdateGroupSetting), arg0, arg1)
+}
+
+// WebhookTrigger mocks base method.
+func (m *MockChatbotSvcServer) WebhookTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WebhookTrigger", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WebhookTrigger indicates an expected call of WebhookTrigger.
+func (mr *MockChatbotSvcServerMockRecorder) WebhookTrigger(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebhookTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).WebhookTrigger), arg0, arg1)
 }
 
 // MockUnsafeChatbotSvcServer is a mock of UnsafeChatbotSvcServer interface.

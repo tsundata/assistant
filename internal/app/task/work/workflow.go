@@ -14,11 +14,11 @@ import (
 type WorkflowTask struct {
 	bus      event.Bus
 	message  pb.MessageSvcClient
-	workflow pb.WorkflowSvcClient
+	chatbot pb.ChatbotSvcClient
 }
 
-func NewWorkflowTask(bus event.Bus, message pb.MessageSvcClient, workflow pb.WorkflowSvcClient) *WorkflowTask {
-	return &WorkflowTask{bus: bus, message: message, workflow: workflow}
+func NewWorkflowTask(bus event.Bus, message pb.MessageSvcClient, chatbot pb.ChatbotSvcClient) *WorkflowTask {
+	return &WorkflowTask{bus: bus, message: message, chatbot: chatbot}
 }
 
 func (t *WorkflowTask) Run(data string) (bool, error) {
@@ -50,7 +50,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 
 	switch tp {
 	case enum.MessageTypeAction:
-		_, err = t.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetText()})
+		_, err = t.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetText()})
 		if err != nil {
 			return false, err
 		}

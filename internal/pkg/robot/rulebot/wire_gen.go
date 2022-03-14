@@ -73,10 +73,6 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -99,7 +95,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	todoRepository := repository.NewMysqlTodoRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, userSvcClient, nlpSvcClient, todoRepository)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, middleSvcClient, storageSvcClient, userSvcClient, nlpSvcClient, todoRepository)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
 }

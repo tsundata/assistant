@@ -8,10 +8,10 @@ import (
 )
 
 func WorkflowCron(ctx context.Context, comp component.Component) []result.Result {
-	if comp.Workflow() == nil {
+	if comp.Chatbot() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
-	_, err := comp.Workflow().CronTrigger(ctx, &pb.TriggerRequest{})
+	_, err := comp.Chatbot().CronTrigger(ctx, &pb.TriggerRequest{})
 	if err != nil {
 		comp.GetLogger().Error(err)
 		return []result.Result{result.ErrorResult(err)}

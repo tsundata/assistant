@@ -51,6 +51,14 @@ func CreateApp(id string) (*app.Application, error) {
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
 	bus := event.NewRabbitmqBus(connection, logLogger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -86,18 +94,6 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -111,15 +107,15 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	todoRepository := repository2.NewMysqlTodoRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, middleSvcClient, workflowSvcClient, storageSvcClient, userSvcClient, nlpSvcClient, todoRepository)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, middleSvcClient, storageSvcClient, userSvcClient, nlpSvcClient, todoRepository)
 	ruleBot := rulebot.New(componentComponent)
-	serviceChatbot := service.NewChatbot(logLogger, bus, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
+	serviceChatbot := service.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
 	initServer := service.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := chatbot.NewApp(appConfig, bus, logLogger, server, messageSvcClient, middleSvcClient, chatbotRepository, ruleBot, componentComponent)
+	application, err := chatbot.NewApp(appConfig, bus, redisClient, logLogger, server, messageSvcClient, middleSvcClient, chatbotRepository, ruleBot, componentComponent)
 	if err != nil {
 		return nil, err
 	}

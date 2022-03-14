@@ -46,6 +46,10 @@ type ChatbotRepository interface {
 	ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error)
 	CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error)
 	DeleteGroupTag(ctx context.Context, id int64) error
+	GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error)
+	ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error)
+	CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error)
+	DeleteTriggerByMessageID(ctx context.Context, messageID int64) error
 }
 
 type MysqlChatbotRepository struct {
@@ -461,4 +465,38 @@ func (r *MysqlChatbotRepository) CreateGroupTag(ctx context.Context, tag *pb.Gro
 
 func (r *MysqlChatbotRepository) DeleteGroupTag(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.GroupTag{}).Error
+}
+
+func (r *MysqlChatbotRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error) {
+	var trigger pb.Trigger
+	err := r.db.WithContext(ctx).
+		Where("type = ?", t).
+		Where("flag = ?", flag).
+		First(&trigger).Error
+	if err != nil {
+		return pb.Trigger{}, err
+	}
+	return trigger, nil
+}
+
+func (r *MysqlChatbotRepository) ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error) {
+	var triggers []*pb.Trigger
+	err := r.db.WithContext(ctx).Where("type = ?", t).Find(&triggers).Error
+	if err != nil {
+		return nil, err
+	}
+	return triggers, nil
+}
+
+func (r *MysqlChatbotRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
+	trigger.Id = r.id.Generate(ctx)
+	err := r.db.WithContext(ctx).Create(&trigger).Error
+	if err != nil {
+		return 0, err
+	}
+	return trigger.Id, nil
+}
+
+func (r *MysqlChatbotRepository) DeleteTriggerByMessageID(ctx context.Context, messageID int64) error {
+	return r.db.WithContext(ctx).Where("message_id = ?", messageID).Delete(&pb.Trigger{}).Error
 }

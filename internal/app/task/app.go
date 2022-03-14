@@ -20,7 +20,7 @@ func NewApp(
 	rs *rpc.Server,
 	q *machinery.Server,
 	message pb.MessageSvcClient,
-	workflow pb.WorkflowSvcClient) (*app.Application, error) {
+	chatbot pb.ChatbotSvcClient) (*app.Application, error) {
 
 	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {
@@ -29,7 +29,7 @@ func NewApp(
 
 	// worker
 	go func() {
-		workflowTask := work.NewWorkflowTask(bus, message, workflow)
+		workflowTask := work.NewWorkflowTask(bus, message, chatbot)
 		err = q.RegisterTasks(map[string]interface{}{
 			enum.WorkflowRunTask: workflowTask.Run,
 		})

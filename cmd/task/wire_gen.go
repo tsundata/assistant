@@ -84,11 +84,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
+	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	application, err := task.NewApp(appConfig, bus, logLogger, rpcServer, server, messageSvcClient, workflowSvcClient)
+	application, err := task.NewApp(appConfig, bus, logLogger, rpcServer, server, messageSvcClient, chatbotSvcClient)
 	if err != nil {
 		return nil, err
 	}

@@ -35,7 +35,6 @@ type GatewayController struct {
 
 	messageSvc   pb.MessageSvcClient
 	middleSvc    pb.MiddleSvcClient
-	workflowSvc  pb.WorkflowSvcClient
 	userSvc      pb.UserSvcClient
 	chatbotSvc   pb.ChatbotSvcClient
 	healthClient *health.Client
@@ -49,7 +48,6 @@ func NewGatewayController(
 	bus event.Bus,
 	messageSvc pb.MessageSvcClient,
 	middleSvc pb.MiddleSvcClient,
-	workflowSvc pb.WorkflowSvcClient,
 	chatbotSvc pb.ChatbotSvcClient,
 	userSvc pb.UserSvcClient,
 	healthClient *health.Client) *GatewayController {
@@ -61,7 +59,6 @@ func NewGatewayController(
 		bus:          bus,
 		messageSvc:   messageSvc,
 		middleSvc:    middleSvc,
-		workflowSvc:  workflowSvc,
 		userSvc:      userSvc,
 		chatbotSvc:   chatbotSvc,
 		healthClient: healthClient,
@@ -86,7 +83,7 @@ func (gc *GatewayController) WebhookTrigger(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := gc.workflowSvc.WebhookTrigger(md.Outgoing(c), &in)
+	reply, err := gc.chatbotSvc.WebhookTrigger(md.Outgoing(c), &in)
 	if err != nil {
 		return err
 	}
@@ -494,7 +491,7 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 		secret = c.Query("secret", "")
 	}
 
-	_, err := gc.workflowSvc.WebhookTrigger(md.BuildAuthContext(enum.SuperUserID), &pb.TriggerRequest{
+	_, err := gc.chatbotSvc.WebhookTrigger(md.BuildAuthContext(enum.SuperUserID), &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
 			Type:   "webhook",
 			Flag:   flag,

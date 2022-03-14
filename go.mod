@@ -12,7 +12,6 @@ require (
 	github.com/dtm-labs/dtm v1.12.2
 	github.com/fogleman/gg v1.3.0
 	github.com/gavv/httpexpect/v2 v2.3.1
-	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-ego/gse v0.70.0
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
@@ -50,7 +49,6 @@ require (
 	github.com/tidwall/gjson v1.14.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/fasthttp v1.34.0
-	github.com/yuin/goldmark v1.4.9
 	go.etcd.io/etcd/client/v3 v3.5.2
 	go.uber.org/automaxprocs v1.4.1-0.20210525221652-0180b04c18a7
 	go.uber.org/zap v1.21.0
@@ -99,6 +97,7 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fatih/structs v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/go-echarts/go-echarts/v2 v2.2.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
@@ -178,6 +177,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
+	github.com/yuin/goldmark v1.4.9 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.2 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.2 // indirect

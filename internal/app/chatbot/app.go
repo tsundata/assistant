@@ -2,6 +2,7 @@ package chatbot
 
 import (
 	"context"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/bot/finance"
@@ -20,11 +21,11 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server,
+func NewApp(c *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Logger, rs *rpc.Server,
 	message pb.MessageSvcClient, middle pb.MiddleSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot, comp component.Component,
 ) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, logger, bot, message, middle, repo, comp)
+	err := listener.RegisterEventHandler(bus, rdb, logger, bot, message, middle, repo, comp)
 	if err != nil {
 		return nil, err
 	}

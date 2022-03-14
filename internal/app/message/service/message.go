@@ -21,7 +21,6 @@ type Message struct {
 	config   *config.AppConfig
 	logger   log.Logger
 	repo     repository.MessageRepository
-	workflow pb.WorkflowSvcClient
 	chatbot  pb.ChatbotSvcClient
 }
 
@@ -30,14 +29,12 @@ func NewMessage(
 	logger log.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
-	workflow pb.WorkflowSvcClient,
 	chatbot pb.ChatbotSvcClient) *Message {
 	return &Message{
 		bus:      bus,
 		logger:   logger,
 		config:   config,
 		repo:     repo,
-		workflow: workflow,
 		chatbot:  chatbot,
 	}
 }
@@ -243,7 +240,7 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 	switch message.Type {
 	case enum.MessageTypeAction:
-		wfReply, err := m.workflow.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
+		wfReply, err := m.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
 		if err != nil {
 			return nil, err
 		}
@@ -283,7 +280,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// check syntax
-	_, err := m.workflow.SyntaxCheck(ctx, &pb.WorkflowRequest{
+	_, err := m.chatbot.SyntaxCheck(ctx, &pb.WorkflowRequest{
 		Text: payload.GetText(),
 		Type: enum.MessageTypeAction,
 	})
@@ -303,7 +300,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	}
 
 	// check/create trigger
-	_, err = m.workflow.CreateTrigger(ctx, &pb.TriggerRequest{
+	_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
 			Kind:      enum.MessageTypeAction,
 			MessageId: id,
@@ -325,7 +322,7 @@ func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.Message
 		return nil, err
 	}
 
-	_, err = m.workflow.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.Message.GetId()}})
+	_, err = m.chatbot.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.Message.GetId()}})
 	if err != nil {
 		return nil, err
 	}

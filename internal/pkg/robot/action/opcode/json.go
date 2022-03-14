@@ -3,7 +3,7 @@ package opcode
 import (
 	"context"
 	"github.com/tidwall/gjson"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 )
 
 type Json struct{}

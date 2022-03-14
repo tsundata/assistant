@@ -7,8 +7,8 @@ import (
 	"github.com/sourcegraph/checkup/check/http"
 	"github.com/sourcegraph/checkup/check/tcp"
 	"github.com/sourcegraph/checkup/check/tls"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"strings"
 )
 

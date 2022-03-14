@@ -75,15 +75,11 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	messageRepository := repository.NewMysqlMessageRepository(globalID, locker, conn)
-	workflowSvcClient, err := rpcclient.NewWorkflowClient(rpcClient)
-	if err != nil {
-		return nil, err
-	}
 	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, workflowSvcClient, chatbotSvcClient)
+	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, chatbotSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {

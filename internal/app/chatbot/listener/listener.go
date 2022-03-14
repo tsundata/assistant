@@ -3,6 +3,7 @@ package listener
 import (
 	"context"
 	"encoding/json"
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -14,7 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
-func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
+func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
 	middle pb.MiddleSvcClient, repo repository.ChatbotRepository, comp component.Component) error {
 	ctx := context.Background()
 
@@ -25,7 +26,7 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return err
 		}
 
-		chatbot := service.NewChatbot(logger, bus, repo, message, middle, bot, comp)
+		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
 		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id, MessageUuid: m.Uuid})
 		if err != nil {
 			return err
@@ -43,10 +44,37 @@ func RegisterEventHandler(bus event.Bus, logger log.Logger, bot *rulebot.RuleBot
 			return err
 		}
 
-		chatbot := service.NewChatbot(logger, bus, repo, message, middle, bot, comp)
+		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
 		_, err = chatbot.Register(ctx, &pb.BotRequest{Bot: &b})
 		if err != nil {
 			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	err = bus.Subscribe(ctx, enum.Chatbot, event.WorkflowRunSubject, func(msg *event.Msg) error {
+		var m pb.Message
+		err := json.Unmarshal(msg.Data, &m)
+		if err != nil {
+			return err
+		}
+
+		ctx := context.Background()
+		reply, err := message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: m.Id}})
+		if err != nil {
+			return err
+		}
+
+		switch reply.Message.GetType() {
+		case enum.MessageTypeAction:
+			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
+			_, err := chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: reply.Message.GetText()})
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})

@@ -132,15 +132,6 @@ jobs:
           tags: |
             ghcr.io/${{ secrets.IMAGE_USER }}/task:${{ steps.meta.outputs.tag }}
 
-      - name: Build and push workflow
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/workflow/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/workflow:${{ steps.meta.outputs.tag }}
-
       - name: Build and push user
         uses: docker/build-push-action@v2
         with:

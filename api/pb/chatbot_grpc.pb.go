@@ -34,6 +34,14 @@ type ChatbotSvcClient interface {
 	GetGroupId(ctx context.Context, in *UuidRequest, opts ...grpc.CallOption) (*IdReply, error)
 	DeleteGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	UpdateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
+	SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error)
+	RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
+	DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
+	ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error)
 }
 
 type chatbotSvcClient struct {
@@ -188,6 +196,78 @@ func (c *chatbotSvcClient) UpdateGroup(ctx context.Context, in *GroupRequest, op
 	return out, nil
 }
 
+func (c *chatbotSvcClient) SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/SyntaxCheck", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/RunAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/WebhookTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/CronTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/CreateTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/DeleteTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ActionDoc", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error) {
+	out := new(WebhooksReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ListWebhook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatbotSvcServer is the server API for ChatbotSvc service.
 // All implementations should embed UnimplementedChatbotSvcServer
 // for forward compatibility
@@ -208,6 +288,14 @@ type ChatbotSvcServer interface {
 	GetGroupId(context.Context, *UuidRequest) (*IdReply, error)
 	DeleteGroup(context.Context, *GroupRequest) (*StateReply, error)
 	UpdateGroup(context.Context, *GroupRequest) (*StateReply, error)
+	SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error)
+	RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
+	CronTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
+	CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error)
+	DeleteTrigger(context.Context, *TriggerRequest) (*StateReply, error)
+	ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error)
 }
 
 // UnimplementedChatbotSvcServer should be embedded to have forward compatible implementations.
@@ -261,6 +349,30 @@ func (UnimplementedChatbotSvcServer) DeleteGroup(context.Context, *GroupRequest)
 }
 func (UnimplementedChatbotSvcServer) UpdateGroup(context.Context, *GroupRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
+}
+func (UnimplementedChatbotSvcServer) SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyntaxCheck not implemented")
+}
+func (UnimplementedChatbotSvcServer) RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunAction not implemented")
+}
+func (UnimplementedChatbotSvcServer) WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WebhookTrigger not implemented")
+}
+func (UnimplementedChatbotSvcServer) CronTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CronTrigger not implemented")
+}
+func (UnimplementedChatbotSvcServer) CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTrigger not implemented")
+}
+func (UnimplementedChatbotSvcServer) DeleteTrigger(context.Context, *TriggerRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTrigger not implemented")
+}
+func (UnimplementedChatbotSvcServer) ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActionDoc not implemented")
+}
+func (UnimplementedChatbotSvcServer) ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWebhook not implemented")
 }
 
 // UnsafeChatbotSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -562,6 +674,150 @@ func _ChatbotSvc_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotSvc_SyntaxCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).SyntaxCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/SyntaxCheck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).SyntaxCheck(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_RunAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).RunAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/RunAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).RunAction(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_WebhookTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).WebhookTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/WebhookTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).WebhookTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_CronTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).CronTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/CronTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).CronTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_CreateTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).CreateTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/CreateTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).CreateTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_DeleteTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).DeleteTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/DeleteTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).DeleteTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_ActionDoc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).ActionDoc(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/ActionDoc",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).ActionDoc(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_ListWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).ListWebhook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/ListWebhook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).ListWebhook(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ChatbotSvc_ServiceDesc is the grpc.ServiceDesc for ChatbotSvc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -632,6 +888,38 @@ var ChatbotSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateGroup",
 			Handler:    _ChatbotSvc_UpdateGroup_Handler,
+		},
+		{
+			MethodName: "SyntaxCheck",
+			Handler:    _ChatbotSvc_SyntaxCheck_Handler,
+		},
+		{
+			MethodName: "RunAction",
+			Handler:    _ChatbotSvc_RunAction_Handler,
+		},
+		{
+			MethodName: "WebhookTrigger",
+			Handler:    _ChatbotSvc_WebhookTrigger_Handler,
+		},
+		{
+			MethodName: "CronTrigger",
+			Handler:    _ChatbotSvc_CronTrigger_Handler,
+		},
+		{
+			MethodName: "CreateTrigger",
+			Handler:    _ChatbotSvc_CreateTrigger_Handler,
+		},
+		{
+			MethodName: "DeleteTrigger",
+			Handler:    _ChatbotSvc_DeleteTrigger_Handler,
+		},
+		{
+			MethodName: "ActionDoc",
+			Handler:    _ChatbotSvc_ActionDoc_Handler,
+		},
+		{
+			MethodName: "ListWebhook",
+			Handler:    _ChatbotSvc_ListWebhook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

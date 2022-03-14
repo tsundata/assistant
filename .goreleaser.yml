@@ -99,19 +99,6 @@ builds:
         -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
         -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
 
-  - main: ./cmd/workflow
-    id: "workflow"
-    binary: "workflow"
-    goos:
-      - linux
-    goarch:
-      - amd64
-    ldflags:
-      - -s -w -X github.com/tsundata/assistant/internal/pkg/version.Version={{ .Version }}
-        -X github.com/tsundata/assistant/internal/pkg/version.GitCommit={{ .ShortCommit }}
-        -X github.com/tsundata/assistant/internal/pkg/version.BuildTime={{ .Timestamp }}
-        -X github.com/tsundata/assistant/internal/pkg/version.GoVersion={{ replace .Env.GOVERSION " " "_" }}
-
   - main: ./cmd/task
     id: "task"
     binary: "task"

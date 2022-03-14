@@ -94,6 +94,21 @@ func (mr *MockChatbotRepositoryMockRecorder) CreateGroupTag(ctx, tag interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).CreateGroupTag), ctx, tag)
 }
 
+// CreateTrigger mocks base method.
+func (m *MockChatbotRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTrigger", ctx, trigger)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTrigger indicates an expected call of CreateTrigger.
+func (mr *MockChatbotRepositoryMockRecorder) CreateTrigger(ctx, trigger interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTrigger", reflect.TypeOf((*MockChatbotRepository)(nil).CreateTrigger), ctx, trigger)
+}
+
 // Delete mocks base method.
 func (m *MockChatbotRepository) Delete(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -148,6 +163,20 @@ func (m *MockChatbotRepository) DeleteGroupTag(ctx context.Context, id int64) er
 func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupTag(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupTag), ctx, id)
+}
+
+// DeleteTriggerByMessageID mocks base method.
+func (m *MockChatbotRepository) DeleteTriggerByMessageID(ctx context.Context, messageID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTriggerByMessageID", ctx, messageID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTriggerByMessageID indicates an expected call of DeleteTriggerByMessageID.
+func (mr *MockChatbotRepositoryMockRecorder) DeleteTriggerByMessageID(ctx, messageID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTriggerByMessageID", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteTriggerByMessageID), ctx, messageID)
 }
 
 // GetBotsByGroupUuid mocks base method.
@@ -390,6 +419,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupSettingByUuid(ctx, groupUui
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSettingByUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSettingByUuid), ctx, groupUuid)
 }
 
+// GetTriggerByFlag mocks base method.
+func (m *MockChatbotRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTriggerByFlag", ctx, t, flag)
+	ret0, _ := ret[0].(pb.Trigger)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTriggerByFlag indicates an expected call of GetTriggerByFlag.
+func (mr *MockChatbotRepositoryMockRecorder) GetTriggerByFlag(ctx, t, flag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTriggerByFlag", reflect.TypeOf((*MockChatbotRepository)(nil).GetTriggerByFlag), ctx, t, flag)
+}
+
 // List mocks base method.
 func (m *MockChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	m.ctrl.T.Helper()
@@ -448,6 +492,21 @@ func (m *MockChatbotRepository) ListGroupTag(ctx context.Context, groupId int64)
 func (mr *MockChatbotRepositoryMockRecorder) ListGroupTag(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupTag), ctx, groupId)
+}
+
+// ListTriggersByType mocks base method.
+func (m *MockChatbotRepository) ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTriggersByType", ctx, t)
+	ret0, _ := ret[0].([]*pb.Trigger)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTriggersByType indicates an expected call of ListTriggersByType.
+func (mr *MockChatbotRepositoryMockRecorder) ListTriggersByType(ctx, t interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTriggersByType", reflect.TypeOf((*MockChatbotRepository)(nil).ListTriggersByType), ctx, t)
 }
 
 // TouchGroupUpdatedAt mocks base method.

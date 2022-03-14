@@ -163,13 +163,13 @@ func TestDocCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowSvcClient(ctl)
+	chatbot := mock.NewMockChatbotSvcClient(ctl)
 	gomock.InOrder(
-		workflow.EXPECT().ActionDoc(gomock.Any(), gomock.Any()).Return(&pb.WorkflowReply{Text: "doc ..."}, nil),
+		chatbot.EXPECT().ActionDoc(gomock.Any(), gomock.Any()).Return(&pb.WorkflowReply{Text: "doc ..."}, nil),
 	)
 
 	cmd := "doc"
-	comp := component.MockComponent(workflow)
+	comp := component.MockComponent(chatbot)
 	res := parseCommand(t, comp, cmd)
 	require.Len(t, res, 1)
 }
@@ -268,13 +268,13 @@ func TestWebhookListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	workflow := mock.NewMockWorkflowSvcClient(ctl)
+	chatbot := mock.NewMockChatbotSvcClient(ctl)
 	gomock.InOrder(
-		workflow.EXPECT().ListWebhook(gomock.Any(), gomock.Any()).Return(&pb.WebhooksReply{Flag: []string{"test1", "test2"}}, nil),
+		chatbot.EXPECT().ListWebhook(gomock.Any(), gomock.Any()).Return(&pb.WebhooksReply{Flag: []string{"test1", "test2"}}, nil),
 	)
 
 	cmd := "webhook list"
-	comp := component.MockComponent(workflow)
+	comp := component.MockComponent(chatbot)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)
 }

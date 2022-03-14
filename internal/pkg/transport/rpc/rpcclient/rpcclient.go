@@ -72,14 +72,5 @@ func NewStorageClient(client *rpc.Client) (pb.StorageSvcClient, error) {
 	return c, nil
 }
 
-func NewWorkflowClient(client *rpc.Client) (pb.WorkflowSvcClient, error) {
-	conn, err := client.Dial(enum.Workflow, rpc.WithTimeout(time.Second))
-	if err != nil {
-		return nil, errors.Wrap(err, "workflow client dial error")
-	}
-	c := pb.NewWorkflowSvcClient(conn)
-	return c, nil
-}
-
 var ProviderSet = wire.NewSet(NewIdClient, NewMiddleClient, NewMessageClient,
-	NewChatbotClient, NewUserClient, NewNLPClient, NewStorageClient, NewWorkflowClient)
+	NewChatbotClient, NewUserClient, NewNLPClient, NewStorageClient)

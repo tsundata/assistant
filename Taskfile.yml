@@ -46,7 +46,6 @@ tasks:
       - buf generate
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
       - protoc-go-inject-tag -input=./api/pb/todo.pb.go
-      - protoc-go-inject-tag -input=./api/pb/workflow.pb.go
       - protoc-go-inject-tag -input=./api/pb/user.pb.go
       - protoc-go-inject-tag -input=./api/pb/message.pb.go
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
@@ -106,7 +105,6 @@ tasks:
       - mockgen -package=mock -source=./api/pb/nlp_grpc.pb.go -destination=./mock/nlp_client.go
       - mockgen -package=mock -source=./api/pb/todo_grpc.pb.go -destination=./mock/todo_client.go
       - mockgen -package=mock -source=./api/pb/user_grpc.pb.go -destination=./mock/user_client.go
-      - mockgen -package=mock -source=./api/pb/workflow_grpc.pb.go -destination=./mock/workflow_client.go
       - mockgen -package=mock -source=./api/pb/chatbot_grpc.pb.go -destination=./mock/chatbot_client.go
       - mockgen -package=mock -source=./api/pb/org_grpc.pb.go -destination=./mock/org_client.go
       - mockgen -package=mock -source=./api/pb/storage_grpc.pb.go -destination=./mock/storage_client.go
@@ -116,7 +114,6 @@ tasks:
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
       - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go
-      - mockgen -package=mock -source=./internal/app/workflow/repository/workflow.go -destination=./mock/workflow_repository.go
       - mockgen -package=mock -source=./internal/app/bot/org/repository/org.go -destination=./mock/org_repository.go
       - mockgen -package=mock -source=./internal/app/chatbot/repository/chatbot.go -destination=./mock/chatbot_repository.go
 

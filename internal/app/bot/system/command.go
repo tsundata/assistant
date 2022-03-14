@@ -201,10 +201,10 @@ var commandRules = []command.Rule{
 		Define: `doc`,
 		Help:   `Show action docs`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
-			if comp.Workflow() == nil {
+			if comp.Chatbot() == nil {
 				return []string{"empty client"}
 			}
-			reply, err := comp.Workflow().ActionDoc(ctx, &pb.WorkflowRequest{})
+			reply, err := comp.Chatbot().ActionDoc(ctx, &pb.WorkflowRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}
@@ -240,7 +240,7 @@ var commandRules = []command.Rule{
 			if err != nil {
 				return []string{err.Error()}
 			}
-			_, err = comp.Workflow().SyntaxCheck(ctx, &pb.WorkflowRequest{Text: "echo 1"})
+			_, err = comp.Chatbot().SyntaxCheck(ctx, &pb.WorkflowRequest{Text: "echo 1"})
 			if err != nil {
 				return []string{err.Error()}
 			}
@@ -367,11 +367,11 @@ var commandRules = []command.Rule{
 		Define: `webhook list`,
 		Help:   `List webhook`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
-			if comp.Workflow() == nil {
+			if comp.Chatbot() == nil {
 				return []string{"empty client"}
 			}
 
-			reply, err := comp.Workflow().ListWebhook(ctx, &pb.WorkflowRequest{})
+			reply, err := comp.Chatbot().ListWebhook(ctx, &pb.WorkflowRequest{})
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

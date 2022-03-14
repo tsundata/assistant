@@ -24,7 +24,6 @@ func NewHealthClient(client *rpc.Client) *Client {
 	hc.watch(client, enum.NLP)
 	hc.watch(client, enum.Storage)
 	hc.watch(client, enum.User)
-	hc.watch(client, enum.Workflow)
 	return hc
 }
 

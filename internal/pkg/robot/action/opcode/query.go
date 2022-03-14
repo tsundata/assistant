@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tidwall/gjson"
-	"github.com/tsundata/assistant/internal/app/workflow/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/app"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"regexp"
 	"strings"
 )
