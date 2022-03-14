@@ -327,13 +327,13 @@ func TestMiddle_GetCredential(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetCredentialByName(gomock.Any(), gomock.Any()).Return(pb.Credential{
+		repo.EXPECT().GetCredentialByName(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Credential{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
 			Content: `{"name": "github", "type":"github", "key": "test"}`,
 		}, nil),
-		repo.EXPECT().GetCredentialByType(gomock.Any(), gomock.Any()).Return(pb.Credential{
+		repo.EXPECT().GetCredentialByType(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Credential{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
@@ -397,7 +397,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials(gomock.Any()).Return([]*pb.Credential{{
+		repo.EXPECT().ListCredentials(gomock.Any(), gomock.Any()).Return([]*pb.Credential{{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",
@@ -446,7 +446,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListCredentials(gomock.Any()).Return([]*pb.Credential{{
+		repo.EXPECT().ListCredentials(gomock.Any(), gomock.Any()).Return([]*pb.Credential{{
 			Id:      1,
 			Name:    "github",
 			Type:    "github",

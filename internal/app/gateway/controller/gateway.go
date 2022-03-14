@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway/health"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -482,6 +483,19 @@ func (gc *GatewayController) GetInboxes(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(reply)
+}
+
+func (gc *GatewayController) GetUserSetting(c *fiber.Ctx) error {
+	options := vendors.UserCredentialOptions
+	return c.JSON(options)
+}
+
+func (gc *GatewayController) GetSystemSetting(c *fiber.Ctx) error {
+	if c.Locals(enum.AuthKey).(int64) != enum.SuperUserID {
+		return c.SendStatus(http.StatusForbidden)
+	}
+	options := vendors.SystemCredentialOptions
+	return c.JSON(options)
 }
 
 func (gc *GatewayController) Notify(conn *websocket.Conn, userId int64) {

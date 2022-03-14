@@ -292,7 +292,7 @@ func (wc *WebController) Credentials(c *fiber.Ctx) error {
 
 func (wc *WebController) CredentialsCreate(c *fiber.Ctx) error {
 	uuid := c.Params("uuid")
-	options := vendors.ProviderCredentialOptions
+	options := vendors.SystemCredentialOptions
 
 	selectOption := make(map[string]string)
 	selectOption[""] = "-"

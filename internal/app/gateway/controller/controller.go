@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"errors"
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -91,21 +92,15 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			chat.ServeWs(h, conn, groupReply.Group.Id, authReply.Id)
 		}))
 		router.Get("/ws/notify", websocket.New(func(conn *websocket.Conn) {
-			ctx := context.Background()
 			// auth
 			token := conn.Query("token")
-			authReply, err := gc.userSvc.Authorization(ctx, &pb.AuthRequest{Token: token})
+			userId, err := getUser(gc.userSvc, token)
 			if err != nil {
-				gc.logger.Error(err)
-				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
-				return
-			}
-			if !authReply.GetState() {
 				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
 				return
 			}
 
-			gc.Notify(conn, authReply.Id)
+			gc.Notify(conn, userId)
 		}))
 
 		// route
@@ -119,20 +114,14 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
+			// auth
 			token := c.Get("Authorization")
-			if token == "" {
-				return c.SendStatus(http.StatusForbidden)
-			}
-			token = strings.ReplaceAll(token, "Bearer ", "")
-			reply, err := gc.userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
+			userId, err := getUser(gc.userSvc, token)
 			if err != nil {
 				gc.logger.Error(err)
 				return c.SendStatus(http.StatusForbidden)
 			}
-			if !reply.GetState() {
-				return c.SendStatus(http.StatusForbidden)
-			}
-			c.Locals(enum.AuthKey, reply.Id)
+			c.Locals(enum.AuthKey, userId)
 			return c.Next()
 		}
 		internal := router.Group("/")
@@ -150,6 +139,8 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Get("group/bot/setting", gc.GetGroupBotSetting)
 		internal.Post("group/bot/setting", gc.UpdateGroupBotSetting)
 		internal.Get("inboxes", gc.GetInboxes)
+		internal.Get("user/setting", gc.GetUserSetting)
+		internal.Get("system/setting", gc.GetSystemSetting)
 
 		internal.Get("chart", gc.GetChart)
 		internal.Get("apps", gc.GetApps)
@@ -172,6 +163,19 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 	}
 
 	return requestHandler
+}
+
+func getUser(userSvc pb.UserSvcClient, token string) (int64, error) {
+	token = strings.ReplaceAll(token, "Bearer ", "")
+	reply, err := userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
+	if err != nil {
+		return 0, errors.New("forbidden")
+	}
+	if !reply.GetState() {
+		return 0, errors.New("forbidden")
+	}
+
+	return reply.Id, nil
 }
 
 var ProviderSet = wire.NewSet(CreateInitControllersFn, NewGatewayController)

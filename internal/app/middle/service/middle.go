@@ -192,12 +192,13 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb
 }
 
 func (s *Middle) GetCredential(ctx context.Context, payload *pb.CredentialRequest) (*pb.CredentialReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	var err error
 	var find pb.Credential
 	if payload.GetName() != "" {
-		find, err = s.repo.GetCredentialByName(ctx, payload.GetName())
+		find, err = s.repo.GetCredentialByName(ctx, id, payload.GetName())
 	} else if payload.GetType() != "" {
-		find, err = s.repo.GetCredentialByType(ctx, payload.GetType())
+		find, err = s.repo.GetCredentialByType(ctx, id, payload.GetType())
 	}
 	if err != nil {
 		return nil, err
@@ -228,7 +229,8 @@ func (s *Middle) GetCredential(ctx context.Context, payload *pb.CredentialReques
 }
 
 func (s *Middle) GetCredentials(ctx context.Context, _ *pb.TextRequest) (*pb.CredentialsReply, error) {
-	items, err := s.repo.ListCredentials(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := s.repo.ListCredentials(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +251,8 @@ func (s *Middle) GetCredentials(ctx context.Context, _ *pb.TextRequest) (*pb.Cre
 }
 
 func (s *Middle) GetMaskingCredentials(ctx context.Context, _ *pb.TextRequest) (*pb.MaskingReply, error) {
-	items, err := s.repo.ListCredentials(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := s.repo.ListCredentials(ctx, id)
 	if err != nil {
 		return nil, err
 	}

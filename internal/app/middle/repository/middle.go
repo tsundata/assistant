@@ -18,9 +18,9 @@ type MiddleRepository interface {
 	GetAppByType(ctx context.Context, t string) (pb.App, error)
 	UpdateAppByID(ctx context.Context, id int64, token, extra string) error
 	CreateApp(ctx context.Context, app *pb.App) (int64, error)
-	GetCredentialByName(ctx context.Context, name string) (pb.Credential, error)
-	GetCredentialByType(ctx context.Context, t string) (pb.Credential, error)
-	ListCredentials(ctx context.Context) ([]*pb.Credential, error)
+	GetCredentialByName(ctx context.Context, userId int64, name string) (pb.Credential, error)
+	GetCredentialByType(ctx context.Context, userId int64, t string) (pb.Credential, error)
+	ListCredentials(ctx context.Context, userId int64) ([]*pb.Credential, error)
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
 	ListTags(ctx context.Context) ([]*pb.Tag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
@@ -95,27 +95,27 @@ func (r *MysqlMiddleRepository) CreateApp(ctx context.Context, app *pb.App) (int
 	return app.Id, nil
 }
 
-func (r *MysqlMiddleRepository) GetCredentialByName(ctx context.Context, name string) (pb.Credential, error) {
+func (r *MysqlMiddleRepository) GetCredentialByName(ctx context.Context, userId int64, name string) (pb.Credential, error) {
 	var find pb.Credential
-	err := r.db.WithContext(ctx).Where("name = ?", name).First(&find).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND name = ?", userId, name).First(&find).Error
 	if err != nil {
 		return pb.Credential{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) GetCredentialByType(ctx context.Context, t string) (pb.Credential, error) {
+func (r *MysqlMiddleRepository) GetCredentialByType(ctx context.Context, userId int64, t string) (pb.Credential, error) {
 	var find pb.Credential
-	err := r.db.WithContext(ctx).Where("type = ?", t).First(&find).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND type = ?", userId, t).First(&find).Error
 	if err != nil {
 		return pb.Credential{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) ListCredentials(ctx context.Context) ([]*pb.Credential, error) {
+func (r *MysqlMiddleRepository) ListCredentials(ctx context.Context, userId int64) ([]*pb.Credential, error) {
 	var items []*pb.Credential
-	err := r.db.WithContext(ctx).Order("id DESC").Find(&items).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("id DESC").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}

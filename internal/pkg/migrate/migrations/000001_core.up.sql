@@ -158,13 +158,14 @@ create table if not exists `apps`
 create table if not exists `credentials`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`    BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
     `name`       varchar(16)         NOT NULL DEFAULT '',
     `type`       varchar(12)         NOT NULL DEFAULT '',
     `content`    varchar(2048)       NOT NULL DEFAULT '',
     `created_at` INT(10)             NOT NULL DEFAULT '0',
     `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `name` (`name`)
+    UNIQUE INDEX `user_id_name` (`user_id`, `name`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

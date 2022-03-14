@@ -111,33 +111,33 @@ func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(ctx, t interfa
 }
 
 // GetCredentialByName mocks base method.
-func (m *MockMiddleRepository) GetCredentialByName(ctx context.Context, name string) (pb.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByName(ctx context.Context, userId int64, name string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCredentialByName", ctx, name)
+	ret := m.ctrl.Call(m, "GetCredentialByName", ctx, userId, name)
 	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCredentialByName indicates an expected call of GetCredentialByName.
-func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByName(ctx, name interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByName(ctx, userId, name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByName", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByName), ctx, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByName", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByName), ctx, userId, name)
 }
 
 // GetCredentialByType mocks base method.
-func (m *MockMiddleRepository) GetCredentialByType(ctx context.Context, t string) (pb.Credential, error) {
+func (m *MockMiddleRepository) GetCredentialByType(ctx context.Context, userId int64, t string) (pb.Credential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCredentialByType", ctx, t)
+	ret := m.ctrl.Call(m, "GetCredentialByType", ctx, userId, t)
 	ret0, _ := ret[0].(pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCredentialByType indicates an expected call of GetCredentialByType.
-func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(ctx, t interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) GetCredentialByType(ctx, userId, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByType), ctx, t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCredentialByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetCredentialByType), ctx, userId, t)
 }
 
 // GetOrCreateModelTag mocks base method.
@@ -201,18 +201,18 @@ func (mr *MockMiddleRepositoryMockRecorder) ListApps(ctx, userId interface{}) *g
 }
 
 // ListCredentials mocks base method.
-func (m *MockMiddleRepository) ListCredentials(ctx context.Context) ([]*pb.Credential, error) {
+func (m *MockMiddleRepository) ListCredentials(ctx context.Context, userId int64) ([]*pb.Credential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListCredentials", ctx)
+	ret := m.ctrl.Call(m, "ListCredentials", ctx, userId)
 	ret0, _ := ret[0].([]*pb.Credential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListCredentials indicates an expected call of ListCredentials.
-func (mr *MockMiddleRepositoryMockRecorder) ListCredentials(ctx interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) ListCredentials(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCredentials", reflect.TypeOf((*MockMiddleRepository)(nil).ListCredentials), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCredentials", reflect.TypeOf((*MockMiddleRepository)(nil).ListCredentials), ctx, userId)
 }
 
 // ListTags mocks base method.

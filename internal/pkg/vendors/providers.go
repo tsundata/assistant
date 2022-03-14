@@ -23,7 +23,7 @@ var OAuthProviderApps = []string{
 	dropbox.ID,
 }
 
-var ProviderCredentialOptions = map[string]interface{}{
+var SystemCredentialOptions = map[string]interface{}{
 	// OAuth
 	github.ID: map[string]string{
 		github.ClientIdKey:     "Client ID",
@@ -35,16 +35,6 @@ var ProviderCredentialOptions = map[string]interface{}{
 	dropbox.ID: map[string]string{
 		dropbox.ClientIdKey:     "App key",
 		dropbox.ClientSecretKey: "App secret",
-	},
-
-	// Push
-	pushover.ID: map[string]string{
-		pushover.TokenKey: "App Token",
-		pushover.UserKey:  "User Key",
-	},
-	bark.ID: map[string]string{
-		bark.ServerUrl: "Server URL",
-		bark.TokenKey:  "Token",
 	},
 
 	// Service
@@ -67,6 +57,18 @@ var ProviderCredentialOptions = map[string]interface{}{
 	},
 	doctorxiong.ID: map[string]string{
 		doctorxiong.Token: "Api Token",
+	},
+}
+
+var UserCredentialOptions = map[string]interface{}{
+	// Push
+	pushover.ID: map[string]string{
+		pushover.TokenKey: "App Token",
+		pushover.UserKey:  "User Key",
+	},
+	bark.ID: map[string]string{
+		bark.ServerUrl: "Server URL",
+		bark.TokenKey:  "Token",
 	},
 }
 
