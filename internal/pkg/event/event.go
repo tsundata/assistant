@@ -13,4 +13,5 @@ const (
 	MessageTriggerSubject Subject = "message_trigger"
 	MessageHandleSubject  Subject = "message_handle"
 	BotRegisterSubject    Subject = "bot_register"
+	CronRegisterSubject   Subject = "cron_register"
 )

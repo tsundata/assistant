@@ -8,8 +8,8 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	inside2 "github.com/tsundata/assistant/internal/pkg/robot/action/inside"
-	opcode2 "github.com/tsundata/assistant/internal/pkg/robot/action/opcode"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/action/opcode"
 	"strings"
 )
 
@@ -17,18 +17,22 @@ type Interpreter struct {
 	tree   Ast
 	stdout []interface{}
 	ctx    context.Context
-	Comp   *inside2.Component
+	Comp   *inside.Component
 }
 
 func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
-	return &Interpreter{ctx: ctx, tree: tree, Comp: inside2.NewComponent()}
+	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
+}
+
+func (i *Interpreter) SetMessage(message pb.Message) {
+	i.Comp.SetMessage(message)
 }
 
 func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageSvcClient, middle pb.MiddleSvcClient, logger log.Logger) {
 	i.Comp.Bus = bus
 	i.Comp.RDB = rdb
 	i.Comp.Logger = logger
-	i.Comp.Message = message
+	i.Comp.MessageClient = message
 	i.Comp.Middle = middle
 }
 
@@ -85,17 +89,17 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	debugLog(fmt.Sprintf("params: %+v", params))
 	input := i.Comp.Value
 	debugLog(fmt.Sprintf("context: %+v", input))
-	op := opcode2.NewOpcode(name)
+	op := opcode.NewOpcode(name)
 	if op == nil {
 		return 0
 	}
 
 	// Async opcode
-	if op.Type() == opcode2.TypeAsync {
+	if op.Type() == opcode.TypeAsync {
 		return 0
 	}
 	// Cond opcode
-	if op.Type() != opcode2.TypeCond && !i.Comp.Continue {
+	if op.Type() != opcode.TypeCond && !i.Comp.Continue {
 		debugLog(fmt.Sprintf("skip: %s", name))
 		return 0
 	}
@@ -131,8 +135,13 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 }
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
-	if i.Comp.Message != nil {
-		reply, err := i.Comp.Message.Get(context.Background(), &pb.MessageRequest{Message: &pb.Message{Id: node.Value.(int64)}})
+	if i.Comp.MessageClient != nil {
+		reply, err := i.Comp.MessageClient.GetBySequence(context.Background(), &pb.MessageRequest{
+			Message: &pb.Message{
+				UserId:   i.Comp.Message.UserId,
+				Sequence: node.Value.(int64),
+			},
+		})
 		if err != nil {
 			i.Comp.Logger.Error(err)
 			return ""

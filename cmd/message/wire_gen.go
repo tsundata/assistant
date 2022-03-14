@@ -93,7 +93,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, logLogger, server)
+	application, err := message.NewApp(appConfig, bus, logLogger, server, messageRepository, chatbotSvcClient)
 	if err != nil {
 		return nil, err
 	}

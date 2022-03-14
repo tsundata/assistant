@@ -34,7 +34,13 @@ func (o *Task) Run(ctx context.Context, comp *inside.Component, params []interfa
 	}
 
 	if id, ok := params[0].(int64); ok {
-		err := comp.Bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, pb.Message{Id: id})
+		// get message
+		message, err := comp.MessageClient.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
+		if err != nil {
+			return nil, err
+		}
+
+		err = comp.Bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message.Message)
 		if err != nil {
 			return false, err
 		}

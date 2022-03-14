@@ -57,7 +57,7 @@ func NewChatbot(
 }
 
 func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
-	reply, err := s.message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId, Uuid: payload.MessageUuid}})
+	reply, err := s.message.GetByUuid(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId, Uuid: payload.MessageUuid}})
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +84,13 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	outMessages, err := r.Help(groupBots, reply.Message.GetText())
 	if err != nil {
 		return nil, err
+	}
+	if len(outMessages) > 0 {
+		docReply, err := s.ActionDoc(ctx, &pb.WorkflowRequest{})
+		if err != nil {
+			return nil, err
+		}
+		outMessages[0] = []string{docReply.Text}
 	}
 
 	if len(outMessages) == 0 {
@@ -447,10 +454,10 @@ func (s *Chatbot) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*
 }
 
 func (s *Chatbot) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
-	if payload.GetText() == "" {
+	if payload.Message.GetText() == "" {
 		return nil, errors.New("empty action")
 	}
-	p, err := action.NewParser(action.NewLexer([]rune(payload.GetText())))
+	p, err := action.NewParser(action.NewLexer([]rune(payload.Message.GetText())))
 	if err != nil {
 		return nil, err
 	}
@@ -466,6 +473,7 @@ func (s *Chatbot) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (*
 	}
 
 	i := action.NewInterpreter(ctx, tree)
+	i.SetMessage(*payload.Message)
 	i.SetComponent(s.bus, s.rdb, s.message, s.middle, s.logger)
 	_, err = i.Interpret()
 	if err != nil {
@@ -497,10 +505,14 @@ func (s *Chatbot) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest
 		return nil, errors.New("error trigger")
 	}
 
+	// get message
+	message, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: trigger.MessageId}})
+	if err != nil {
+		return nil, err
+	}
+
 	// publish event
-	err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, pb.Message{
-		Id: trigger.MessageId,
-	})
+	err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message.Message)
 	if err != nil {
 		return nil, err
 	}
@@ -541,8 +553,14 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 			// time
 			s.rdb.Set(ctx, key, now.Format("2006-01-02 15:04:05"), 0)
 
+			// get message
+			message, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: trigger.MessageId}})
+			if err != nil {
+				return nil, err
+			}
+
 			// publish event
-			err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, pb.Message{Id: trigger.MessageId})
+			err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message.Message)
 			if err != nil {
 				return nil, err
 			}
@@ -632,7 +650,7 @@ func (s *Chatbot) DeleteTrigger(ctx context.Context, payload *pb.TriggerRequest)
 func (s *Chatbot) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	var docs string
 	if payload.GetText() == "" {
-		docs = strings.Join(opcode.Docs(), "\n")
+		docs = fmt.Sprintf("--- Action Script ---\n%s", strings.Join(opcode.Docs(), "\n"))
 	} else {
 		docs = opcode.Doc(payload.GetText())
 	}

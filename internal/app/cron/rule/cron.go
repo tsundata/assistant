@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline"
 	"github.com/tsundata/assistant/internal/app/cron/pipeline/result"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"go.uber.org/zap"
 	"time"
 )
@@ -57,19 +60,20 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 	b.Comp.GetLogger().Info("cron starting...")
 
 	// process cron
+	ctx := md.BuildAuthContext(enum.SuperUserID) // fixme
 	for rule := range r.cronRules {
 		b.Comp.GetLogger().Info("cron " + r.cronRules[rule].Name + ": start...")
-		go r.ruleWorker(context.Background(), b, r.cronRules[rule])
+		go r.ruleWorker(ctx, b, r.cronRules[rule])
 	}
 
 	// result pipeline
-	go r.resultWorker(context.Background(), b)
-	go r.resultWorker(context.Background(), b)
+	go r.resultWorker(ctx, b)
+	go r.resultWorker(ctx, b)
 }
 
 func (r *cronRuleset) ruleWorker(ctx context.Context, b *rulebot.RuleBot, rule Rule) {
 	// register cron
-	_, err := b.Comp.Middle().RegisterCron(ctx, &pb.CronRequest{Text: rule.Name})
+	err := b.Comp.GetBus().Publish(ctx, enum.Middle, event.CronRegisterSubject, &pb.CronRequest{Text: rule.Name})
 	if err != nil {
 		b.Comp.GetLogger().Error(err, zap.String("cron", rule.Name))
 		return
@@ -88,7 +92,7 @@ func (r *cronRuleset) ruleWorker(ctx context.Context, b *rulebot.RuleBot, rule R
 	for {
 		if nextTime.Format("2006-01-02 15:04") == time.Now().Format("2006-01-02 15:04") {
 			// check status
-			state, err := b.Comp.Middle().GetCronStatus(context.Background(), &pb.CronRequest{
+			state, err := b.Comp.Middle().GetCronStatus(ctx, &pb.CronRequest{
 				Text: rule.Name,
 			})
 			if err != nil {

@@ -21,6 +21,8 @@ var ignoreFullMethod = []string{
 	"/pb.MiddleSvc/GetSubscribeStatus",
 	// business
 	"/pb.MiddleSvc/GetPage",
+	"/pb.MiddleSvc/RegisterCron",
+	"/pb.ChatbotSvc/CronTrigger",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

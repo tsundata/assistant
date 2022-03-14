@@ -21,7 +21,7 @@ create table if not exists `triggers`
     `flag`       varchar(128)        NOT NULL DEFAULT '',
     `secret`     varchar(128)        NOT NULL DEFAULT '',
     `when`       varchar(128)        NOT NULL DEFAULT '',
-    `message_id` INT(10)             NOT NULL,
+    `message_id` BIGINT(19)          NOT NULL DEFAULT '0',
     `created_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -90,6 +90,7 @@ CREATE TABLE `inboxes`
     `sender_type` VARCHAR(20)         NOT NULL,
     `title`       VARCHAR(100)        NOT NULL DEFAULT '',
     `content`     VARCHAR(2048)       NOT NULL DEFAULT '',
+    `type`        VARCHAR(50)         NOT NULL DEFAULT '',
     `payload`     VARCHAR(2048)       NOT NULL DEFAULT '',
     `status`      TINYINT(3)          NOT NULL,
     `created_at`  INT(10)             NOT NULL DEFAULT '0',

@@ -116,26 +116,6 @@ func (mr *MockMessageSvcClientMockRecorder) DeleteWorkflowMessage(ctx, in interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).DeleteWorkflowMessage), varargs...)
 }
 
-// Get mocks base method.
-func (m *MockMessageSvcClient) Get(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Get", varargs...)
-	ret0, _ := ret[0].(*pb.GetMessageReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockMessageSvcClientMockRecorder) Get(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageSvcClient)(nil).Get), varargs...)
-}
-
 // GetActionMessages mocks base method.
 func (m *MockMessageSvcClient) GetActionMessages(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.ActionReply, error) {
 	m.ctrl.T.Helper()
@@ -154,6 +134,66 @@ func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcClient)(nil).GetActionMessages), varargs...)
+}
+
+// GetById mocks base method.
+func (m *MockMessageSvcClient) GetById(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetById", varargs...)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById.
+func (mr *MockMessageSvcClientMockRecorder) GetById(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockMessageSvcClient)(nil).GetById), varargs...)
+}
+
+// GetBySequence mocks base method.
+func (m *MockMessageSvcClient) GetBySequence(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetBySequence", varargs...)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBySequence indicates an expected call of GetBySequence.
+func (mr *MockMessageSvcClientMockRecorder) GetBySequence(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySequence", reflect.TypeOf((*MockMessageSvcClient)(nil).GetBySequence), varargs...)
+}
+
+// GetByUuid mocks base method.
+func (m *MockMessageSvcClient) GetByUuid(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetByUuid", varargs...)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByUuid indicates an expected call of GetByUuid.
+func (mr *MockMessageSvcClientMockRecorder) GetByUuid(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUuid", reflect.TypeOf((*MockMessageSvcClient)(nil).GetByUuid), varargs...)
 }
 
 // LastByGroup mocks base method.
@@ -439,21 +479,6 @@ func (mr *MockMessageSvcServerMockRecorder) DeleteWorkflowMessage(arg0, arg1 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).DeleteWorkflowMessage), arg0, arg1)
 }
 
-// Get mocks base method.
-func (m *MockMessageSvcServer) Get(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0, arg1)
-	ret0, _ := ret[0].(*pb.GetMessageReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockMessageSvcServerMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockMessageSvcServer)(nil).Get), arg0, arg1)
-}
-
 // GetActionMessages mocks base method.
 func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.TextRequest) (*pb.ActionReply, error) {
 	m.ctrl.T.Helper()
@@ -467,6 +492,51 @@ func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.
 func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcServer)(nil).GetActionMessages), arg0, arg1)
+}
+
+// GetById mocks base method.
+func (m *MockMessageSvcServer) GetById(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById.
+func (mr *MockMessageSvcServerMockRecorder) GetById(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockMessageSvcServer)(nil).GetById), arg0, arg1)
+}
+
+// GetBySequence mocks base method.
+func (m *MockMessageSvcServer) GetBySequence(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBySequence", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBySequence indicates an expected call of GetBySequence.
+func (mr *MockMessageSvcServerMockRecorder) GetBySequence(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySequence", reflect.TypeOf((*MockMessageSvcServer)(nil).GetBySequence), arg0, arg1)
+}
+
+// GetByUuid mocks base method.
+func (m *MockMessageSvcServer) GetByUuid(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.GetMessageReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByUuid", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetMessageReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByUuid indicates an expected call of GetByUuid.
+func (mr *MockMessageSvcServerMockRecorder) GetByUuid(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUuid", reflect.TypeOf((*MockMessageSvcServer)(nil).GetByUuid), arg0, arg1)
 }
 
 // LastByGroup mocks base method.

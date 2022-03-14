@@ -94,6 +94,10 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	chatbotSvcClient, err := rpcclient.NewChatbotClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
 	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -103,7 +107,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	todoRepository := repository2.NewMysqlTodoRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository)
 	ruleBot := rulebot.New(componentComponent)
 	serviceChatbot := service.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
 	initServer := service.CreateInitServerFn(serviceChatbot)

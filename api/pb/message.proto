@@ -16,7 +16,9 @@ service MessageSvc {
   rpc List(MessageRequest) returns (MessagesReply) {}
   rpc ListByGroup(GetMessagesRequest) returns (GetMessagesReply) {}
   rpc LastByGroup(LastByGroupRequest) returns (LastByGroupReply) {}
-  rpc Get(MessageRequest) returns (GetMessageReply) {}
+  rpc GetByUuid(MessageRequest) returns (GetMessageReply) {}
+  rpc GetById(MessageRequest) returns (GetMessageReply) {}
+  rpc GetBySequence(MessageRequest) returns (GetMessageReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
   rpc Save(MessageRequest) returns (MessageReply) {}
   rpc Delete(MessageRequest) returns (TextReply) {}

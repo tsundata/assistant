@@ -21,7 +21,9 @@ type MessageSvcClient interface {
 	List(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessagesReply, error)
 	ListByGroup(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
 	LastByGroup(ctx context.Context, in *LastByGroupRequest, opts ...grpc.CallOption) (*LastByGroupReply, error)
-	Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
+	GetByUuid(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
+	GetById(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
+	GetBySequence(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error)
 	Create(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Save(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -71,9 +73,27 @@ func (c *messageSvcClient) LastByGroup(ctx context.Context, in *LastByGroupReque
 	return out, nil
 }
 
-func (c *messageSvcClient) Get(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error) {
+func (c *messageSvcClient) GetByUuid(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error) {
 	out := new(GetMessageReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetByUuid", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) GetById(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error) {
+	out := new(GetMessageReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSvcClient) GetBySequence(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*GetMessageReply, error) {
+	out := new(GetMessageReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetBySequence", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +215,9 @@ type MessageSvcServer interface {
 	List(context.Context, *MessageRequest) (*MessagesReply, error)
 	ListByGroup(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
 	LastByGroup(context.Context, *LastByGroupRequest) (*LastByGroupReply, error)
-	Get(context.Context, *MessageRequest) (*GetMessageReply, error)
+	GetByUuid(context.Context, *MessageRequest) (*GetMessageReply, error)
+	GetById(context.Context, *MessageRequest) (*GetMessageReply, error)
+	GetBySequence(context.Context, *MessageRequest) (*GetMessageReply, error)
 	Create(context.Context, *MessageRequest) (*MessageReply, error)
 	Save(context.Context, *MessageRequest) (*MessageReply, error)
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
@@ -223,8 +245,14 @@ func (UnimplementedMessageSvcServer) ListByGroup(context.Context, *GetMessagesRe
 func (UnimplementedMessageSvcServer) LastByGroup(context.Context, *LastByGroupRequest) (*LastByGroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LastByGroup not implemented")
 }
-func (UnimplementedMessageSvcServer) Get(context.Context, *MessageRequest) (*GetMessageReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedMessageSvcServer) GetByUuid(context.Context, *MessageRequest) (*GetMessageReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByUuid not implemented")
+}
+func (UnimplementedMessageSvcServer) GetById(context.Context, *MessageRequest) (*GetMessageReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetById not implemented")
+}
+func (UnimplementedMessageSvcServer) GetBySequence(context.Context, *MessageRequest) (*GetMessageReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBySequence not implemented")
 }
 func (UnimplementedMessageSvcServer) Create(context.Context, *MessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
@@ -328,20 +356,56 @@ func _MessageSvc_LastByGroup_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageSvc_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageSvc_GetByUuid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageSvcServer).Get(ctx, in)
+		return srv.(MessageSvcServer).GetByUuid(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.MessageSvc/Get",
+		FullMethod: "/pb.MessageSvc/GetByUuid",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).Get(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).GetByUuid(ctx, req.(*MessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_GetById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).GetById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/GetById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).GetById(ctx, req.(*MessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSvc_GetBySequence_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).GetBySequence(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/GetBySequence",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).GetBySequence(ctx, req.(*MessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -582,8 +646,16 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MessageSvc_LastByGroup_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _MessageSvc_Get_Handler,
+			MethodName: "GetByUuid",
+			Handler:    _MessageSvc_GetByUuid_Handler,
+		},
+		{
+			MethodName: "GetById",
+			Handler:    _MessageSvc_GetById_Handler,
+		},
+		{
+			MethodName: "GetBySequence",
+			Handler:    _MessageSvc_GetBySequence_Handler,
 		},
 		{
 			MethodName: "Create",

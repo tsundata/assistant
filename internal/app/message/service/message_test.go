@@ -103,7 +103,7 @@ func TestMessage_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.Get(tt.args.in0, tt.args.payload)
+			got, err := tt.m.GetByUuid(tt.args.in0, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return

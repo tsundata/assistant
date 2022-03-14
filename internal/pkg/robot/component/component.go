@@ -87,6 +87,7 @@ func NewComponent(
 	logger log.Logger,
 
 	messageClient pb.MessageSvcClient,
+	chatbotClient pb.ChatbotSvcClient,
 	middleClient pb.MiddleSvcClient,
 	storageClient pb.StorageSvcClient,
 	userClient pb.UserSvcClient,
@@ -99,6 +100,7 @@ func NewComponent(
 		RDB:           rdb,
 		Logger:        logger,
 		MessageClient: messageClient,
+		ChatbotClient: chatbotClient,
 		MiddleClient:  middleClient,
 		StorageClient: storageClient,
 		UserClient:    userClient,

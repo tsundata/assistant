@@ -13,12 +13,14 @@ import (
 	"github.com/tsundata/assistant/internal/app/middle/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
@@ -85,7 +87,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := middle.NewApp(appConfig, logLogger, server)
+	connection, err := rabbitmq.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	bus := event.NewRabbitmqBus(connection, logLogger)
+	application, err := middle.NewApp(appConfig, logLogger, server, bus, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -94,4 +101,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, middle.ProviderSet, rollbar.ProviderSet, repository.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, global.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet)

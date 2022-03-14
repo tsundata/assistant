@@ -2,6 +2,7 @@ syntax = "proto3";
 package pb;
 
 import "base.proto";
+import "message.proto";
 import "gogoproto/gogo.proto";
 
 option (gogoproto.goproto_unkeyed_all) = false;
@@ -240,6 +241,7 @@ message GetGroupReply {
 message WorkflowRequest {
   string text = 1;
   string type = 2;
+  Message message = 3;
 }
 
 message WorkflowReply {

@@ -159,7 +159,7 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
-		Define: `view [number]`, // todo sequence
+		Define: `view [number]`,
 		Help:   `View message`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
 			if comp.Message() == nil {
@@ -167,7 +167,7 @@ var commandRules = []command.Rule{
 			}
 
 			id := tokens[1].Value.(int64)
-			messageReply, err := comp.Message().Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
+			messageReply, err := comp.Message().GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{UserId: 0, Sequence: id}}) // fixme
 			if err != nil {
 				return []string{"error call: " + err.Error()}
 			}

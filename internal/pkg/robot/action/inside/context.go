@@ -15,12 +15,13 @@ type Component struct {
 	Continue   bool
 	Value      interface{}
 	Credential map[string]string
+	Message    pb.Message
 
-	RDB     *redis.Client
-	Bus     event.Bus
-	Logger  log.Logger
-	Middle  pb.MiddleSvcClient
-	Message pb.MessageSvcClient
+	RDB           *redis.Client
+	Bus           event.Bus
+	Logger        log.Logger
+	Middle        pb.MiddleSvcClient
+	MessageClient pb.MessageSvcClient
 }
 
 func NewComponent() *Component {
@@ -43,4 +44,10 @@ func (c *Component) SetCredential(v map[string]string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.Credential = v
+}
+
+func (c *Component) SetMessage(message pb.Message) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.Message = message
 }

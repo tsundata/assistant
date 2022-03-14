@@ -247,7 +247,7 @@ func (gc *GatewayController) GetMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := gc.messageSvc.Get(md.Outgoing(c), &pb.MessageRequest{Message: &in})
+	reply, err := gc.messageSvc.GetByUuid(md.Outgoing(c), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}

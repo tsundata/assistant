@@ -17,11 +17,11 @@ import (
 )
 
 type Message struct {
-	bus      event.Bus
-	config   *config.AppConfig
-	logger   log.Logger
-	repo     repository.MessageRepository
-	chatbot  pb.ChatbotSvcClient
+	bus     event.Bus
+	config  *config.AppConfig
+	logger  log.Logger
+	repo    repository.MessageRepository
+	chatbot pb.ChatbotSvcClient
 }
 
 func NewMessage(
@@ -31,12 +31,85 @@ func NewMessage(
 	repo repository.MessageRepository,
 	chatbot pb.ChatbotSvcClient) *Message {
 	return &Message{
-		bus:      bus,
-		logger:   logger,
-		config:   config,
-		repo:     repo,
-		chatbot:  chatbot,
+		bus:     bus,
+		logger:  logger,
+		config:  config,
+		repo:    repo,
+		chatbot: chatbot,
 	}
+}
+
+func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+	// check uuid
+	var message pb.Message
+	message.UserId = payload.Message.GetUserId()
+	message.GroupId = payload.Message.GetGroupId()
+	message.Uuid = payload.Message.GetUuid()
+	message.Sender = payload.Message.GetUserId()
+	message.SenderType = enum.MessageUserType
+	message.Receiver = payload.Message.GetGroupId()
+	message.ReceiverType = enum.MessageGroupType
+	message.Type = enum.MessageTypeText
+	message.Text = strings.TrimSpace(payload.Message.GetText())
+
+	// check
+	find, err := m.repo.GetByUUID(ctx, message.Uuid)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
+		return &pb.MessageReply{
+			Message: &pb.Message{
+				Uuid: message.Uuid,
+				Type: message.Type,
+				Text: message.Text,
+			},
+		}, nil
+	}
+
+	// parse type
+	message.Text = strings.TrimSpace(message.Text)
+	if util.IsUrl(message.Text) {
+		message.Type = enum.MessageTypeLink
+	}
+	if message.IsMessageOfAction() {
+		message.Type = enum.MessageTypeAction
+	}
+
+	// store
+	_, err = m.repo.Create(ctx, &message)
+	if err != nil {
+		return nil, err
+	}
+
+	if message.Type == enum.MessageTypeAction {
+		_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
+			Trigger: &pb.Trigger{
+				Kind:      enum.MessageTypeAction,
+				MessageId: message.Id,
+			},
+			Info: &pb.TriggerInfo{
+				MessageText: message.Text,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		err = m.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// bot handle
+		err = m.bus.Publish(ctx, enum.Message, event.MessageHandleSubject, message)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.MessageReply{
+		Message: &message,
+	}, nil
 }
 
 func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesReply, error) {
@@ -86,14 +159,52 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 	}, nil
 }
 
-func (m *Message) Get(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	id, _ := md.FromIncoming(ctx)
+func (m *Message) GetByUuid(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
 	message, err := m.repo.GetByUUID(ctx, payload.Message.GetUuid())
 	if err != nil {
 		return nil, err
 	}
-	if message.UserId != id {
-		return nil, exception.ErrGrpcUnauthenticated
+
+	// covert
+	direction := ""
+	if message.SenderType == enum.MessageBotType || message.SenderType == enum.MessageGroupType {
+		direction = enum.MessageIncomingDirection
+	} else {
+		direction = enum.MessageOutgoingDirection
+	}
+	message.Direction = direction
+	message.SendTime = util.Format(message.CreatedAt)
+
+	return &pb.GetMessageReply{
+		Message: &message,
+	}, nil
+}
+
+func (m *Message) GetById(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
+	message, err := m.repo.GetByID(ctx, payload.Message.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	// covert
+	direction := ""
+	if message.SenderType == enum.MessageBotType || message.SenderType == enum.MessageGroupType {
+		direction = enum.MessageIncomingDirection
+	} else {
+		direction = enum.MessageOutgoingDirection
+	}
+	message.Direction = direction
+	message.SendTime = util.Format(message.CreatedAt)
+
+	return &pb.GetMessageReply{
+		Message: &message,
+	}, nil
+}
+
+func (m *Message) GetBySequence(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
+	message, err := m.repo.GetBySequence(ctx, payload.Message.GetUserId(), payload.Message.GetId())
+	if err != nil {
+		return nil, err
 	}
 
 	// covert
@@ -128,60 +239,6 @@ func (m *Message) LastByGroup(ctx context.Context, payload *pb.LastByGroupReques
 	}, nil
 }
 
-func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	// check uuid
-	var message pb.Message
-	message.UserId = payload.Message.GetUserId()
-	message.GroupId = payload.Message.GetGroupId()
-	message.Uuid = payload.Message.GetUuid()
-	message.Sender = payload.Message.GetUserId()
-	message.SenderType = enum.MessageUserType
-	message.Receiver = payload.Message.GetGroupId()
-	message.ReceiverType = enum.MessageGroupType
-	message.Type = enum.MessageTypeText
-	message.Text = strings.TrimSpace(payload.Message.GetText())
-
-	// check
-	find, err := m.repo.GetByUUID(ctx, message.Uuid)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
-	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
-		return &pb.MessageReply{
-			Message: &pb.Message{
-				Uuid: message.Uuid,
-				Type: message.Type,
-				Text: message.Text,
-			},
-		}, nil
-	}
-
-	// parse type
-	message.Text = strings.TrimSpace(message.Text)
-	if util.IsUrl(message.Text) {
-		message.Type = enum.MessageTypeLink
-	}
-	if message.IsMessageOfAction() {
-		message.Type = enum.MessageTypeAction
-	}
-
-	// store
-	_, err = m.repo.Create(ctx, &message)
-	if err != nil {
-		return nil, err
-	}
-
-	// bot handle
-	err = m.bus.Publish(ctx, enum.Message, event.MessageHandleSubject, message)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.MessageReply{
-		Message: &message,
-	}, nil
-}
-
 func (m *Message) Save(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
 	_, err := m.repo.Create(ctx, payload.Message)
 	if err != nil {
@@ -206,13 +263,8 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 
 	// todo send message
 
-	// push ws hub
-	err := m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
-	if err != nil {
-		return nil, err
-	}
 	// push inbox
-	_, err = m.repo.CreateInbox(ctx, pb.Inbox{
+	_, err := m.repo.CreateInbox(ctx, pb.Inbox{
 		UserId:     payload.Message.GetUserId(),
 		Sender:     payload.Message.GetSender(),
 		SenderType: payload.Message.GetSenderType(),
@@ -221,7 +273,14 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 		Content:    payload.Message.GetText(),
 		Payload:    payload.Message.GetPayload(),
 	})
+	if err != nil {
+		return nil, err
+	}
+
 	// setting
+
+	// push ws hub
+	err = m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
 	if err != nil {
 		return nil, err
 	}

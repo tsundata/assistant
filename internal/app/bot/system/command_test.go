@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
@@ -135,7 +136,7 @@ func TestViewCommand(t *testing.T) {
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
-		message.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Sequence: 1, Text: "test1"}}, nil),
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{UserId: enum.SuperUserID, Sequence: 1, Text: "test1"}}, nil),
 	)
 
 	cmd := "view 1"

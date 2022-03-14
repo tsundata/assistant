@@ -8,6 +8,8 @@ import (
 	"github.com/appleboy/gorush/notify"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/message/repository"
+	"github.com/tsundata/assistant/internal/app/message/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -15,7 +17,7 @@ import (
 	"strings"
 )
 
-func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger) error {
+func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, repo repository.MessageRepository, chatbot pb.ChatbotSvcClient) error {
 	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
 		return nil
@@ -31,7 +33,11 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			return err
 		}
 
-		// todo send message
+		message := service.NewMessage(bus, logger, config, repo, chatbot)
+		_, err = message.Send(context.Background(), &pb.MessageRequest{Message: &m})
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {

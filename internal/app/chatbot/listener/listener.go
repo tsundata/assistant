@@ -62,16 +62,10 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 			return err
 		}
 
-		ctx := context.Background()
-		reply, err := message.Get(ctx, &pb.MessageRequest{Message: &pb.Message{Id: m.Id}})
-		if err != nil {
-			return err
-		}
-
-		switch reply.Message.GetType() {
+		switch m.GetType() {
 		case enum.MessageTypeAction:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-			_, err := chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: reply.Message.GetText()})
+			_, err := chatbot.RunAction(ctx, &pb.WorkflowRequest{Message: &m})
 			if err != nil {
 				return err
 			}
