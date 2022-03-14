@@ -105,12 +105,16 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 
 		// route
 		router.Get("/", gc.Index)
+		router.Get("/Robots.txt", gc.Robots)
 		router.Post("/auth", gc.Authorization)
 		router.Post("/webhook/trigger", gc.WebhookTrigger)
 		router.Get("/health", gc.Health)
 		router.Get("/page", gc.GetPage)
 		router.Get("/app/:category", gc.App)
 		router.Get("/oauth/:category", gc.OAuth)
+		router.Get("/qr/:text", gc.QR)
+		router.Get("/webhook/:flag", gc.Webhook)
+		router.Post("/webhook/:flag", gc.Webhook)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -141,20 +145,8 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Get("inboxes", gc.GetInboxes)
 		internal.Get("user/setting", gc.GetUserSetting)
 		internal.Get("system/setting", gc.GetSystemSetting)
-
-		internal.Get("chart", gc.GetChart)
+		internal.Post("setting", gc.UpdateSetting)
 		internal.Get("apps", gc.GetApps)
-		internal.Get("masking_credentials", gc.GetMaskingCredentials)
-		internal.Get("credential", gc.GetCredential)
-		internal.Post("credential", gc.CreateCredential)
-		internal.Get("settings", gc.GetSettings)
-		internal.Post("setting", gc.CreateSetting)
-		internal.Get("action/messages", gc.GetActionMessages)
-		internal.Post("action/message", gc.CreateActionMessage)
-		internal.Delete("workflow/message", gc.DeleteWorkflowMessage)
-		internal.Post("message/run", gc.RunMessage)
-		internal.Post("message/send", gc.SendMessage)
-		internal.Get("role/image", gc.GetRoleImage)
 
 		// 404
 		router.Use(func(c *fiber.Ctx) error {

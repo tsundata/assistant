@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	"github.com/skip2/go-qrcode"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/gateway/health"
@@ -13,12 +14,14 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -69,18 +72,11 @@ func (gc *GatewayController) Index(c *fiber.Ctx) error {
 	return c.SendString(fmt.Sprintf("Gateway %s", version.Version))
 }
 
-func (gc *GatewayController) GetChart(c *fiber.Ctx) error {
-	var in pb.ChartData
-	err := c.QueryParser(&in)
-	if err != nil {
-		return err
-	}
+func (gc *GatewayController) Robots(c *fiber.Ctx) error {
+	txt := `User-agent: *
+Disallow: /`
 
-	reply, err := gc.middleSvc.GetChartData(md.Outgoing(c), &pb.ChartDataRequest{ChartData: &in})
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
+	return c.SendString(txt)
 }
 
 func (gc *GatewayController) WebhookTrigger(c *fiber.Ctx) error {
@@ -189,7 +185,7 @@ func (gc *GatewayController) GetCredential(c *fiber.Ctx) error {
 	return c.JSON(reply)
 }
 
-func (gc *GatewayController) CreateCredential(c *fiber.Ctx) error {
+func (gc *GatewayController) UpdateSetting(c *fiber.Ctx) error {
 	var in pb.KVsRequest
 	err := c.BodyParser(&in)
 	if err != nil {
@@ -197,118 +193,6 @@ func (gc *GatewayController) CreateCredential(c *fiber.Ctx) error {
 	}
 
 	reply, err := gc.middleSvc.CreateCredential(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) GetSettings(c *fiber.Ctx) error {
-	var in pb.TextRequest
-	err := c.QueryParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.middleSvc.GetSettings(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) CreateSetting(c *fiber.Ctx) error {
-	var in pb.KVRequest
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.middleSvc.CreateSetting(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) GetActionMessages(c *fiber.Ctx) error {
-	var in pb.TextRequest
-	err := c.QueryParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.messageSvc.GetActionMessages(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) CreateActionMessage(c *fiber.Ctx) error {
-	var in pb.TextRequest
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.messageSvc.CreateActionMessage(md.Outgoing(c), &in)
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) DeleteWorkflowMessage(c *fiber.Ctx) error {
-	var in pb.Message
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.messageSvc.DeleteWorkflowMessage(md.Outgoing(c), &pb.MessageRequest{Message: &in})
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) RunMessage(c *fiber.Ctx) error {
-	var in pb.Message
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.messageSvc.Run(md.Outgoing(c), &pb.MessageRequest{Message: &in})
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) SendMessage(c *fiber.Ctx) error {
-	var in pb.Message
-	err := c.BodyParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.messageSvc.Send(md.Outgoing(c), &pb.MessageRequest{Message: &in})
-	if err != nil {
-		return err
-	}
-	return c.JSON(reply)
-}
-
-func (gc *GatewayController) GetRoleImage(c *fiber.Ctx) error {
-	var in pb.RoleRequest
-	err := c.QueryParser(&in)
-	if err != nil {
-		return err
-	}
-
-	reply, err := gc.userSvc.GetRoleImage(md.Outgoing(c), &in)
 	if err != nil {
 		return err
 	}
@@ -575,5 +459,56 @@ func (gc *GatewayController) OAuth(c *fiber.Ctx) error {
 		gc.logger.Error(err)
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
+	return c.SendString("ok")
+}
+
+func (gc *GatewayController) QR(c *fiber.Ctx) error {
+	text := c.Params("text", "")
+	if text == "" {
+		return c.SendStatus(http.StatusNotFound)
+	}
+
+	txt, err := url.QueryUnescape(text)
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusNotFound).SendString("error text")
+	}
+
+	png, err := qrcode.Encode(txt, qrcode.Medium, 512)
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusNotFound).SendString("error qr")
+	}
+
+	c.Response().Header.Set("Content-Type", "image/png")
+	return c.Send(png)
+}
+
+func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
+	flag := c.Params("flag", "")
+
+	// Headers(Authorization: Base ?) -> query(secret)
+	secret := c.Get("Authorization", "")
+	secret = strings.ReplaceAll(secret, "Base ", "")
+	if secret == "" {
+		secret = c.Query("secret", "")
+	}
+
+	_, err := gc.workflowSvc.WebhookTrigger(md.BuildAuthContext(enum.SuperUserID), &pb.TriggerRequest{
+		Trigger: &pb.Trigger{
+			Type:   "webhook",
+			Flag:   flag,
+			Secret: secret,
+		},
+		Info: &pb.TriggerInfo{
+			Header: c.Request().Header.String(),
+			Body:   util.ByteToString(c.Request().Body()),
+		},
+	})
+	if err != nil {
+		gc.logger.Error(err)
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
 	return c.SendString("ok")
 }

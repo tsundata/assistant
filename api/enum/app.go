@@ -12,6 +12,5 @@ const (
 	Storage  = "storage"
 	Task     = "task"
 	User     = "user"
-	Web      = "web"
 	Workflow = "workflow"
 )
