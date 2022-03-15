@@ -136,7 +136,7 @@ func TestViewCommand(t *testing.T) {
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
-		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{UserId: enum.SuperUserID, Sequence: 1, Text: "test1"}}, nil),
+		message.EXPECT().GetBySequence(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{UserId: enum.SuperUserID, Sequence: 1, Text: "test1"}}, nil),
 	)
 
 	cmd := "view 1"

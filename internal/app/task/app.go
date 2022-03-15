@@ -13,14 +13,8 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(
-	c *config.AppConfig,
-	bus event.Bus,
-	logger log.Logger,
-	rs *rpc.Server,
-	q *machinery.Server,
-	message pb.MessageSvcClient,
-	chatbot pb.ChatbotSvcClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server, q *machinery.Server,
+	message pb.MessageSvcClient, chatbot pb.ChatbotSvcClient) (*app.Application, error) {
 
 	a, err := app.New(c, logger, app.RPCServerOption(rs))
 	if err != nil {

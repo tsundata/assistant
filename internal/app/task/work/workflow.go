@@ -1,19 +1,19 @@
 package work
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
 
 type WorkflowTask struct {
-	bus      event.Bus
-	message  pb.MessageSvcClient
+	bus     event.Bus
+	message pb.MessageSvcClient
 	chatbot pb.ChatbotSvcClient
 }
 
@@ -42,7 +42,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	ctx := context.Background()
+	ctx := md.BuildAuthContext(enum.SuperUserID)
 	message, err := t.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return false, err
@@ -50,7 +50,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 
 	switch tp {
 	case enum.MessageTypeAction:
-		_, err = t.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.Message.GetText()})
+		_, err = t.chatbot.RunAction(ctx, &pb.WorkflowRequest{Message: message.Message})
 		if err != nil {
 			return false, err
 		}

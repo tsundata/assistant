@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
@@ -17,6 +19,7 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestChatbot_Handle(t *testing.T) {
@@ -742,8 +745,7 @@ func TestChatbot_RunAction(t *testing.T) {
 		{
 			"run action",
 			s,
-			args{context.Background(), &pb.WorkflowRequest{
-				Text: `echo "ok"`}},
+			args{context.Background(), &pb.WorkflowRequest{Message: &pb.Message{Id: 1, Text: `echo "ok"`}}},
 			&pb.WorkflowReply{Text: ""},
 			false,
 		},
@@ -772,12 +774,14 @@ func TestChatbot_WebhookTrigger(t *testing.T) {
 	}
 	bus := event.NewRabbitmqBus(mq, nil)
 
+	message := mock.NewMockMessageSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{MessageId: 1, Secret: "test"}, nil),
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Id: 1, Text: ""}}, nil),
 	)
 
-	s := NewChatbot(nil, bus, nil, repo, nil, nil, nil, nil)
+	s := NewChatbot(nil, bus, nil, repo, message, nil, nil, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -828,17 +832,18 @@ func TestChatbot_CronTrigger(t *testing.T) {
 	bus := event.NewRabbitmqBus(mq, nil)
 
 	messageID := rand.Int63()
+
+	rdb.Set(context.Background(), fmt.Sprintf("workflow:cron:%d:time", messageID), time.Now().Add(-2*time.Minute).Format("2006-01-02 15:04:05"), redis.KeepTTL)
+
+	message := mock.NewMockMessageSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().
-			ListTriggersByType(gomock.Any(), "cron").
-			Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
-		repo.EXPECT().
-			ListTriggersByType(gomock.Any(), "cron").
-			Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Id: messageID, Text: ""}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
 	)
 
-	s := NewChatbot(nil, bus, rdb, repo, nil, nil, nil, nil)
+	s := NewChatbot(nil, bus, rdb, repo, message, nil, nil, nil)
 
 	type args struct {
 		ctx context.Context
