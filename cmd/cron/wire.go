@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	orgRepository "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/cron"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -42,6 +43,7 @@ var providerSet = wire.NewSet(
 	event.ProviderSet,
 	rabbitmq.ProviderSet,
 	todoRepository.ProviderSet,
+	orgRepository.ProviderSet,
 	global.ProviderSet,
 	mysql.ProviderSet,
 )

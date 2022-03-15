@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	orgRepository "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -48,6 +49,7 @@ var providerSet = wire.NewSet(
 	rabbitmq.ProviderSet,
 	component.ProviderSet,
 	todoRepository.ProviderSet,
+	orgRepository.ProviderSet,
 )
 
 func CreateApp(id string) (*app.Application, error) {

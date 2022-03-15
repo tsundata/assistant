@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	serviceFinance "github.com/tsundata/assistant/internal/app/bot/finance/service"
 	repositoryOrg "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	serviceOrg "github.com/tsundata/assistant/internal/app/bot/org/service"
 	repositoryTodo "github.com/tsundata/assistant/internal/app/bot/todo/repository"
@@ -28,6 +29,8 @@ type Comp struct {
 
 	repoTodo repositoryTodo.TodoRepository
 	repoOrg  repositoryOrg.OrgRepository
+
+	finance pb.FinanceSvcServer
 }
 
 func (c Comp) Message() pb.MessageSvcClient {
@@ -58,6 +61,14 @@ func (c Comp) Org() pb.OrgSvcServer {
 	return serviceOrg.NewOrg(c.repoOrg, c.MiddleClient)
 }
 
+func (c Comp) Finance() pb.FinanceSvcServer {
+	if c.finance != nil {
+		return c.finance
+	} else {
+		return serviceFinance.NewFinance()
+	}
+}
+
 func (c Comp) GetConfig() *config.AppConfig {
 	return c.Conf
 }
@@ -86,6 +97,7 @@ type Component interface {
 	User() pb.UserSvcClient
 	Todo() pb.TodoSvcServer
 	Org() pb.OrgSvcServer
+	Finance() pb.FinanceSvcServer
 }
 
 func NewComponent(
@@ -101,6 +113,7 @@ func NewComponent(
 	userClient pb.UserSvcClient,
 
 	repoTodo repositoryTodo.TodoRepository,
+	repoOrg repositoryOrg.OrgRepository,
 ) Component {
 	return Comp{
 		Conf:          conf,
@@ -113,6 +126,7 @@ func NewComponent(
 		StorageClient: storageClient,
 		UserClient:    userClient,
 		repoTodo:      repoTodo,
+		repoOrg:       repoOrg,
 	}
 }
 
@@ -131,6 +145,8 @@ func MockComponent(deps ...interface{}) Component {
 
 		repoTodo repositoryTodo.TodoRepository
 		repoOrg  repositoryOrg.OrgRepository
+
+		finance pb.FinanceSvcServer
 	)
 
 	for _, dep := range deps {
@@ -159,6 +175,9 @@ func MockComponent(deps ...interface{}) Component {
 			repoTodo = v
 		case repositoryOrg.OrgRepository:
 			repoOrg = v
+
+		case *mock.MockFinanceSvcServer:
+			finance = v
 		}
 	}
 
@@ -174,6 +193,7 @@ func MockComponent(deps ...interface{}) Component {
 		UserClient:    userClient,
 		repoTodo:      repoTodo,
 		repoOrg:       repoOrg,
+		finance:       finance,
 	}
 }
 

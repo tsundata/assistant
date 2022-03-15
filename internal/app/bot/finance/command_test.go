@@ -34,11 +34,10 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string { 
 }
 
 func TestGetFundCommand(t *testing.T) {
-	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	finance := mock.NewMockFinanceSvcClient(ctl)
+	finance := mock.NewMockFinanceSvcServer(ctl)
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		finance.EXPECT().GetFund(gomock.Any(), gomock.Any()).Return(&pb.FundReply{Name: "test"}, nil),
@@ -47,23 +46,22 @@ func TestGetFundCommand(t *testing.T) {
 	)
 
 	cmd := "fund 000001"
-	comp := component.MockComponent(middle)
+	comp := component.MockComponent(finance,middle)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
 }
 
 func TestGetStockCommand(t *testing.T) {
-	t.SkipNow()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	finance := mock.NewMockFinanceSvcClient(ctl)
+	finance := mock.NewMockFinanceSvcServer(ctl)
 	gomock.InOrder(
 		finance.EXPECT().GetStock(gomock.Any(), gomock.Any()).Return(&pb.StockReply{Name: "test"}, nil),
 	)
 
 	cmd := "stock sx000001"
-	comp := component.MockComponent()
+	comp := component.MockComponent(finance)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
 }

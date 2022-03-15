@@ -5,6 +5,7 @@ package rulebot
 
 import (
 	"github.com/google/wire"
+	orgRepository "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -37,6 +38,7 @@ var testProviderSet = wire.NewSet(
 	event.ProviderSet,
 	rabbitmq.ProviderSet,
 	todoRepository.ProviderSet,
+	orgRepository.ProviderSet,
 	global.ProviderSet,
 	mysql.ProviderSet,
 )

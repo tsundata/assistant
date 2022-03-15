@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	repository3 "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	repository2 "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -107,7 +108,8 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	todoRepository := repository2.NewMysqlTodoRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository)
+	orgRepository := repository3.NewMysqlOrgRepository(globalID, conn)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository, orgRepository)
 	ruleBot := rulebot.New(componentComponent)
 	serviceChatbot := service.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
 	initServer := service.CreateInitServerFn(serviceChatbot)
@@ -124,4 +126,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, repository2.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, repository2.ProviderSet, repository3.ProviderSet)

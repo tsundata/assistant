@@ -8,6 +8,7 @@ package rulebot
 
 import (
 	"github.com/google/wire"
+	repository2 "github.com/tsundata/assistant/internal/app/bot/org/repository"
 	"github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -95,11 +96,12 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	todoRepository := repository.NewMysqlTodoRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository)
+	orgRepository := repository2.NewMysqlOrgRepository(globalID, conn)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository, orgRepository)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, repository.ProviderSet, global.ProviderSet, mysql.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, repository.ProviderSet, repository2.ProviderSet, global.ProviderSet, mysql.ProviderSet)
