@@ -4,6 +4,8 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	repositoryOrg "github.com/tsundata/assistant/internal/app/bot/org/repository"
+	serviceOrg "github.com/tsundata/assistant/internal/app/bot/org/service"
 	repositoryTodo "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -25,6 +27,7 @@ type Comp struct {
 	UserClient    pb.UserSvcClient
 
 	repoTodo repositoryTodo.TodoRepository
+	repoOrg  repositoryOrg.OrgRepository
 }
 
 func (c Comp) Message() pb.MessageSvcClient {
@@ -49,6 +52,10 @@ func (c Comp) User() pb.UserSvcClient {
 
 func (c Comp) Todo() pb.TodoSvcServer {
 	return service.NewTodo(c.Bus, c.Logger, c.repoTodo)
+}
+
+func (c Comp) Org() pb.OrgSvcServer {
+	return serviceOrg.NewOrg(c.repoOrg, c.MiddleClient)
 }
 
 func (c Comp) GetConfig() *config.AppConfig {
@@ -78,6 +85,7 @@ type Component interface {
 	Storage() pb.StorageSvcClient
 	User() pb.UserSvcClient
 	Todo() pb.TodoSvcServer
+	Org() pb.OrgSvcServer
 }
 
 func NewComponent(
@@ -122,6 +130,7 @@ func MockComponent(deps ...interface{}) Component {
 		userClient    pb.UserSvcClient
 
 		repoTodo repositoryTodo.TodoRepository
+		repoOrg  repositoryOrg.OrgRepository
 	)
 
 	for _, dep := range deps {
@@ -148,6 +157,8 @@ func MockComponent(deps ...interface{}) Component {
 
 		case repositoryTodo.TodoRepository:
 			repoTodo = v
+		case repositoryOrg.OrgRepository:
+			repoOrg = v
 		}
 	}
 
@@ -162,6 +173,7 @@ func MockComponent(deps ...interface{}) Component {
 		StorageClient: storageClient,
 		UserClient:    userClient,
 		repoTodo:      repoTodo,
+		repoOrg:       repoOrg,
 	}
 }
 

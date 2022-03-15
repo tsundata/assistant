@@ -114,7 +114,7 @@ func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bo
 
 func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]string, error) {
 	out := make(map[int64][]string)
-	var input interface{} = tokens[0].Value // fixme first input
+	var input interface{} = tokens[0].Value
 	var output interface{}
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)

@@ -140,6 +140,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Post("group/setting", gc.UpdateGroupSetting)
 		internal.Get("group/bots", gc.GetGroupBots)
 		internal.Get("group/bot", gc.GetGroupBot)
+		internal.Post("group/bot", gc.AddGroupBot)
 		internal.Get("group/bot/setting", gc.GetGroupBotSetting)
 		internal.Post("group/bot/setting", gc.UpdateGroupBotSetting)
 		internal.Get("inboxes", gc.GetInboxes)

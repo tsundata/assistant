@@ -324,6 +324,20 @@ func (gc *GatewayController) GetGroupBot(c *fiber.Ctx) error {
 	return c.JSON(reply)
 }
 
+func (gc *GatewayController) AddGroupBot(c *fiber.Ctx) error {
+	var in pb.GroupBotRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.chatbotSvc.CreateGroupBot(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}
+
 func (gc *GatewayController) GetGroupBotSetting(c *fiber.Ctx) error {
 	var in pb.BotSettingRequest
 	err := c.QueryParser(&in)
