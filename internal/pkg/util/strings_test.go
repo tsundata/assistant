@@ -267,3 +267,41 @@ func TestModelName(t *testing.T) {
 		})
 	}
 }
+
+func TestSubString(t *testing.T) {
+	tests := []struct {
+		name   string
+		s      string
+		start  int
+		end    int
+		expect string
+	}{
+		{
+			"case1",
+			"世界 Hello",
+			0,
+			2,
+			"世界",
+		},
+		{
+			"case2",
+			"世界 Hello",
+			1,
+			3,
+			"界 ",
+		},
+		{
+			"case2",
+			"世界 Hello",
+			1,
+			10,
+			"界 Hello",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expect, SubString(tt.s, tt.start, tt.end))
+		})
+	}
+}

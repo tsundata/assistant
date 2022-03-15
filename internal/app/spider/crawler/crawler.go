@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
@@ -54,14 +55,14 @@ func (s *Crawler) SetService(
 }
 
 func (s *Crawler) LoadRule() error {
-	data, err := s.c.GetConfig(context.Background(), fmt.Sprintf("%s/rules", enum.Spider))
+	ctx := context.Background()
+	data, err := s.c.GetConfig(ctx, fmt.Sprintf("%s/rules", enum.Spider))
 	if err != nil {
 		return err
 	}
 
 	ruleYMLs := strings.Split(data, "---")
 
-	ctx := context.Background()
 	for _, ruleYML := range ruleYMLs {
 		var r rule.Rule
 		err = yaml.Unmarshal(util.StringToByte(ruleYML), &r)
@@ -240,11 +241,13 @@ func (s *Crawler) send(channel, name string, out []string) {
 	if len(out) == 0 {
 		return
 	}
+	ctx := md.BuildAuthContext(enum.SuperUserID)
 
 	// check send
 	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n")))) // #nosec
-	isSet, err := s.rdb.SetNX(context.Background(), key, time.Now().Unix(), 24*time.Hour).Result()
+	isSet, err := s.rdb.SetNX(ctx, key, time.Now().Unix(), 24*time.Hour).Result()
 	if err != nil || !isSet {
+		s.logger.Error(err)
 		return
 	}
 
@@ -259,7 +262,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 			return
 		}
 
-		reply, err := s.middle.CreatePage(context.Background(), &pb.PageRequest{
+		reply, err := s.middle.CreatePage(ctx, &pb.PageRequest{
 			Page: &pb.Page{
 				Type:    "json",
 				Title:   fmt.Sprintf("Channel %s (%s)", name, time.Now().Format("2006-01-02 15:04:05")),
@@ -267,6 +270,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 			},
 		})
 		if err != nil {
+			s.logger.Error(err)
 			return
 		}
 
@@ -274,10 +278,14 @@ func (s *Crawler) send(channel, name string, out []string) {
 	}
 
 	// send
-	_, err = s.message.Send(context.Background(), &pb.MessageRequest{
+	// todo channel
+	_, err = s.message.Send(ctx, &pb.MessageRequest{
 		Message: &pb.Message{
-			// Channel: channel, fixme
-			Text: text,
+			UserId:     enum.SuperUserID,
+			Sender:     0,
+			SenderType: enum.MessageBotType,
+			Type:       enum.MessageTypeText,
+			Text:       text,
 		},
 	})
 	if err != nil {

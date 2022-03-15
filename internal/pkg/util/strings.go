@@ -159,3 +159,15 @@ func StructName(s interface{}) string {
 func ModelName(s interface{}) string {
 	return strings.ToLower(StructName(s))
 }
+
+func SubString(s string, start, end int) string {
+	if start > end {
+		return ""
+	}
+	r := []rune(s)
+	l := len(r)
+	if end >= l {
+		end = l
+	}
+	return string(r[start:end])
+}

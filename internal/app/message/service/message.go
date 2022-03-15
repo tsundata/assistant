@@ -269,8 +269,8 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 		Sender:     payload.Message.GetSender(),
 		SenderType: payload.Message.GetSenderType(),
 		Type:       payload.Message.GetType(),
-		Title:      payload.Message.GetText(),
-		Content:    payload.Message.GetText(),
+		Title:      util.SubString(payload.Message.GetText(), 0, 100),
+		Content:    util.SubString(payload.Message.GetText(), 0, 2000),
 		Payload:    payload.Message.GetPayload(),
 	})
 	if err != nil {
