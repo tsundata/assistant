@@ -98,6 +98,7 @@ CREATE TABLE `inboxes`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `uuid` (`uuid`) USING BTREE,
     UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
-    INDEX `sender` (`sender`) USING BTREE
+    INDEX `sender` (`sender`) USING BTREE,
+    INDEX `status` (`status`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
