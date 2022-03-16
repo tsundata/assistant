@@ -33,7 +33,7 @@ func TestOrg_CreateObjective(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -81,7 +81,7 @@ func TestOrg_GetObjective(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.ObjectiveReply
 		wantErr bool
@@ -136,7 +136,7 @@ func TestOrg_GetObjectives(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.ObjectivesReply
 		wantErr bool
@@ -182,7 +182,7 @@ func TestOrg_DeleteObjective(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -226,7 +226,7 @@ func TestOrg_CreateKeyResult(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -276,7 +276,7 @@ func TestOrg_GetKeyResult(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.KeyResultReply
 		wantErr bool
@@ -333,7 +333,7 @@ func TestOrg_GetKeyResults(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.KeyResultsReply
 		wantErr bool
@@ -380,7 +380,7 @@ func TestOrg_DeleteKeyResult(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		o       *Org
+		o       pb.OrgSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool

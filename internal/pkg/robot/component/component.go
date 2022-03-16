@@ -4,11 +4,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	serviceFinance "github.com/tsundata/assistant/internal/app/bot/finance/service"
-	repositoryOrg "github.com/tsundata/assistant/internal/app/bot/org/repository"
-	serviceOrg "github.com/tsundata/assistant/internal/app/bot/org/service"
-	repositoryTodo "github.com/tsundata/assistant/internal/app/bot/todo/repository"
-	"github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -27,10 +22,9 @@ type Comp struct {
 	StorageClient pb.StorageSvcClient
 	UserClient    pb.UserSvcClient
 
-	repoTodo repositoryTodo.TodoRepository
-	repoOrg  repositoryOrg.OrgRepository
-
-	finance pb.FinanceSvcServer
+	serverFinance pb.FinanceSvcServer
+	serverTodo    pb.TodoSvcServer
+	serverOrg     pb.OrgSvcServer
 }
 
 func (c Comp) Message() pb.MessageSvcClient {
@@ -54,19 +48,15 @@ func (c Comp) User() pb.UserSvcClient {
 }
 
 func (c Comp) Todo() pb.TodoSvcServer {
-	return service.NewTodo(c.Bus, c.Logger, c.repoTodo)
+	return c.serverTodo
 }
 
 func (c Comp) Org() pb.OrgSvcServer {
-	return serviceOrg.NewOrg(c.repoOrg, c.MiddleClient)
+	return c.serverOrg
 }
 
 func (c Comp) Finance() pb.FinanceSvcServer {
-	if c.finance != nil {
-		return c.finance
-	} else {
-		return serviceFinance.NewFinance()
-	}
+	return c.serverFinance
 }
 
 func (c Comp) GetConfig() *config.AppConfig {
@@ -112,8 +102,9 @@ func NewComponent(
 	storageClient pb.StorageSvcClient,
 	userClient pb.UserSvcClient,
 
-	repoTodo repositoryTodo.TodoRepository,
-	repoOrg repositoryOrg.OrgRepository,
+	serverFinance pb.FinanceSvcServer,
+	serverTodo pb.TodoSvcServer,
+	serverOrg pb.OrgSvcServer,
 ) Component {
 	return Comp{
 		Conf:          conf,
@@ -125,8 +116,9 @@ func NewComponent(
 		MiddleClient:  middleClient,
 		StorageClient: storageClient,
 		UserClient:    userClient,
-		repoTodo:      repoTodo,
-		repoOrg:       repoOrg,
+		serverFinance: serverFinance,
+		serverTodo:    serverTodo,
+		serverOrg:     serverOrg,
 	}
 }
 
@@ -143,10 +135,9 @@ func MockComponent(deps ...interface{}) Component {
 		storageClient pb.StorageSvcClient
 		userClient    pb.UserSvcClient
 
-		repoTodo repositoryTodo.TodoRepository
-		repoOrg  repositoryOrg.OrgRepository
-
 		finance pb.FinanceSvcServer
+		todo    pb.TodoSvcServer
+		org     pb.OrgSvcServer
 	)
 
 	for _, dep := range deps {
@@ -171,13 +162,12 @@ func MockComponent(deps ...interface{}) Component {
 		case *mock.MockUserSvcClient:
 			userClient = v
 
-		case repositoryTodo.TodoRepository:
-			repoTodo = v
-		case repositoryOrg.OrgRepository:
-			repoOrg = v
-
 		case *mock.MockFinanceSvcServer:
 			finance = v
+		case *mock.MockTodoSvcServer:
+			todo = v
+		case *mock.MockOrgSvcServer:
+			org = v
 		}
 	}
 
@@ -191,9 +181,9 @@ func MockComponent(deps ...interface{}) Component {
 		ChatbotClient: chatbotClient,
 		StorageClient: storageClient,
 		UserClient:    userClient,
-		repoTodo:      repoTodo,
-		repoOrg:       repoOrg,
-		finance:       finance,
+		serverFinance: finance,
+		serverTodo:    todo,
+		serverOrg:     org,
 	}
 }
 

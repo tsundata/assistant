@@ -4,19 +4,19 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	repositoryTodo "github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 )
 
 type Todo struct {
-	repo   repositoryTodo.TodoRepository
+	repo   repository.TodoRepository
 	bus    event.Bus
 	logger log.Logger
 }
 
-func NewTodo(bus event.Bus, logger log.Logger, repo repositoryTodo.TodoRepository) *Todo {
+func NewTodo(bus event.Bus, logger log.Logger, repo repository.TodoRepository) pb.TodoSvcServer {
 	return &Todo{bus: bus, repo: repo, logger: logger}
 }
 

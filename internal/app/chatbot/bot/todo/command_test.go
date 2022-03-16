@@ -37,9 +37,9 @@ func TestTodoList(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := mock.NewMockTodoRepository(ctl)
+	todo := mock.NewMockTodoSvcServer(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTodos(gomock.Any()).Return([]*pb.Todo{
+		todo.EXPECT().GetTodos(gomock.Any(), gomock.Any()).Return(&pb.TodosReply{Todos: []*pb.Todo{
 			{
 				Id:        1,
 				Priority:  1,
@@ -47,11 +47,11 @@ func TestTodoList(t *testing.T) {
 				Complete:  true,
 				UpdatedAt: 946659600,
 			},
-		}, nil),
+		}}, nil),
 	)
 
 	cmd := "todo list"
-	comp := component.MockComponent(repo)
+	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
 }
@@ -60,13 +60,13 @@ func TestTodoCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := mock.NewMockTodoRepository(ctl)
+	todo := mock.NewMockTodoSvcServer(ctl)
 	gomock.InOrder(
-		repo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		todo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
 	cmd := "todo test1"
-	comp := component.MockComponent(repo)
+	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"success"}, res)
 }

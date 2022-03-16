@@ -37,15 +37,15 @@ func TestObjListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		org.EXPECT().ListObjectives(gomock.Any()).Return([]*pb.Objective{
+		org.EXPECT().GetObjectives(gomock.Any(), gomock.Any()).Return(&pb.ObjectivesReply{Objective: []*pb.Objective{
 			{
 				Id:    1,
 				Name:  "obj",
 				TagId: 1,
 			},
-		}, nil),
+		}}, nil),
 	)
 
 	cmd := "obj list"
@@ -58,15 +58,13 @@ func TestObjCreateCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleSvcClient(ctl)
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		middle.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(&pb.TagReply{Tag: &pb.Tag{Id: 1}}, nil),
-		org.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		org.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
 	cmd := "obj obj obj-1"
-	comp := component.MockComponent(org, middle)
+	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -75,9 +73,9 @@ func TestObjDeleteCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		org.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(nil),
+		org.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
 	cmd := "obj del 1"
@@ -90,16 +88,16 @@ func TestKrListCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		org.EXPECT().ListKeyResults(gomock.Any()).Return([]*pb.KeyResult{
+		org.EXPECT().GetKeyResults(gomock.Any(), gomock.Any()).Return(&pb.KeyResultsReply{Result: []*pb.KeyResult{
 			{
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "kr",
 				TagId:       1,
 			},
-		}, nil),
+		}}, nil),
 	)
 
 	cmd := "kr list"
@@ -112,15 +110,13 @@ func TestKrCreateCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	middle := mock.NewMockMiddleSvcClient(ctl)
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		middle.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(&pb.TagReply{Tag: &pb.Tag{Id: 1}}, nil),
-		org.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		org.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
 	cmd := "kr 1 kr kr-1"
-	comp := component.MockComponent(org, middle)
+	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []string{"ok"}, res)
 }
@@ -129,9 +125,9 @@ func TestKrDeleteCommand(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	org := mock.NewMockOrgRepository(ctl)
+	org := mock.NewMockOrgSvcServer(ctl)
 	gomock.InOrder(
-		org.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(nil),
+		org.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
 	cmd := "kr delete 1"

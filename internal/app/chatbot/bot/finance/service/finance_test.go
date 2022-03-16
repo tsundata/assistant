@@ -129,7 +129,7 @@ func TestFinance_GetFund(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		f       *Finance
+		f       pb.FinanceSvcServer
 		args    args
 		wantErr bool
 	}{
@@ -156,7 +156,7 @@ func TestFinance_GetStock(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		f       *Finance
+		f       pb.FinanceSvcServer
 		args    args
 		wantErr bool
 	}{

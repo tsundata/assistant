@@ -5,8 +5,11 @@ package rulebot
 
 import (
 	"github.com/google/wire"
-	orgRepository "github.com/tsundata/assistant/internal/app/bot/org/repository"
-	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
+	orgRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
+	orgService "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
+	todoService "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/global"
@@ -37,10 +40,13 @@ var testProviderSet = wire.NewSet(
 	component.ProviderSet,
 	event.ProviderSet,
 	rabbitmq.ProviderSet,
-	todoRepository.ProviderSet,
-	orgRepository.ProviderSet,
 	global.ProviderSet,
 	mysql.ProviderSet,
+	orgService.ProviderSet,
+	todoRepository.ProviderSet,
+	todoService.ProviderSet,
+	orgRepository.ProviderSet,
+	financeService.ProviderSet,
 )
 
 func CreateRuleBot(id string) (*RuleBot, error) {

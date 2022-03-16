@@ -12,7 +12,7 @@ import (
 
 type Finance struct{}
 
-func NewFinance() *Finance {
+func NewFinance() pb.FinanceSvcServer {
 	return &Finance{}
 }
 

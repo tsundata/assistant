@@ -4,8 +4,11 @@ package main
 
 import (
 	"github.com/google/wire"
-	orgRepository "github.com/tsundata/assistant/internal/app/bot/org/repository"
-	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
+	orgRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
+	orgService "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
+	todoService "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/app/cron"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -42,8 +45,11 @@ var providerSet = wire.NewSet(
 	component.ProviderSet,
 	event.ProviderSet,
 	rabbitmq.ProviderSet,
+	orgService.ProviderSet,
 	todoRepository.ProviderSet,
+	todoService.ProviderSet,
 	orgRepository.ProviderSet,
+	financeService.ProviderSet,
 	global.ProviderSet,
 	mysql.ProviderSet,
 )

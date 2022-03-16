@@ -5,10 +5,10 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/bot/finance"
-	"github.com/tsundata/assistant/internal/app/bot/org"
-	"github.com/tsundata/assistant/internal/app/bot/system"
-	"github.com/tsundata/assistant/internal/app/bot/todo"
+	finance2 "github.com/tsundata/assistant/internal/app/chatbot/bot/finance"
+	org2 "github.com/tsundata/assistant/internal/app/chatbot/bot/org"
+	system2 "github.com/tsundata/assistant/internal/app/chatbot/bot/system"
+	todo2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo"
 	"github.com/tsundata/assistant/internal/app/chatbot/listener"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
@@ -31,7 +31,7 @@ func NewApp(c *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Lo
 	}
 
 	// bots register
-	err = robot.RegisterBot(context.Background(), bus, system.Bot, todo.Bot, org.Bot, finance.Bot)
+	err = robot.RegisterBot(context.Background(), bus, system2.Bot, todo2.Bot, org2.Bot, finance2.Bot)
 	if err != nil {
 		return nil, err
 	}

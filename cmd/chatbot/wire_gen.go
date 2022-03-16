@@ -8,11 +8,14 @@ package main
 
 import (
 	"github.com/google/wire"
-	repository3 "github.com/tsundata/assistant/internal/app/bot/org/repository"
-	repository2 "github.com/tsundata/assistant/internal/app/bot/todo/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
+	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
+	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
+	service2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
-	"github.com/tsundata/assistant/internal/app/chatbot/service"
+	service4 "github.com/tsundata/assistant/internal/app/chatbot/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -107,12 +110,15 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	financeSvcServer := service.NewFinance()
 	todoRepository := repository2.NewMysqlTodoRepository(globalID, conn)
+	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	orgRepository := repository3.NewMysqlOrgRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository, orgRepository)
+	orgSvcServer := service3.NewOrg(orgRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, orgSvcServer)
 	ruleBot := rulebot.New(componentComponent)
-	serviceChatbot := service.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
-	initServer := service.CreateInitServerFn(serviceChatbot)
+	serviceChatbot := service4.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
+	initServer := service4.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
@@ -126,4 +132,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, repository2.ProviderSet, repository3.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service4.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, service3.ProviderSet, repository2.ProviderSet, service2.ProviderSet, repository3.ProviderSet, service.ProviderSet)

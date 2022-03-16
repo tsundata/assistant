@@ -3,8 +3,8 @@ package robot
 import (
 	"context"
 	"fmt"
-	_ "github.com/tsundata/assistant/internal/app/bot/plugin"
-	"github.com/tsundata/assistant/internal/app/bot/todo"
+	_ "github.com/tsundata/assistant/internal/app/chatbot/bot/plugin"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo"
 	"testing"
 )
 

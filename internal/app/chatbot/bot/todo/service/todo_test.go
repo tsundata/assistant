@@ -35,7 +35,7 @@ func TestTodo_CreateTodo(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -73,7 +73,7 @@ func TestTodo_GetTodo(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.TodoReply
 		wantErr bool
@@ -115,7 +115,7 @@ func TestTodo_GetTodos(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.TodosReply
 		wantErr bool
@@ -161,7 +161,7 @@ func TestTodo_DeleteTodo(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -205,7 +205,7 @@ func TestTodo_UpdateTodo(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -249,7 +249,7 @@ func TestTodo_CompleteTodo(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    *pb.StateReply
 		wantErr bool
@@ -293,7 +293,7 @@ func TestTodo_GetRemindTodos(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       *Todo
+		s       pb.TodoSvcServer
 		args    args
 		want    int
 		wantErr bool

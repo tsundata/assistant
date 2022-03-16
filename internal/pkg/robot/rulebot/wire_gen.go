@@ -8,8 +8,11 @@ package rulebot
 
 import (
 	"github.com/google/wire"
-	repository2 "github.com/tsundata/assistant/internal/app/bot/org/repository"
-	"github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
+	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
+	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
+	service2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/global"
@@ -86,6 +89,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
+	financeSvcServer := service.NewFinance()
 	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -96,12 +100,14 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	todoRepository := repository.NewMysqlTodoRepository(globalID, conn)
+	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	orgRepository := repository2.NewMysqlOrgRepository(globalID, conn)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, todoRepository, orgRepository)
+	orgSvcServer := service3.NewOrg(orgRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, orgSvcServer)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, repository.ProviderSet, repository2.ProviderSet, global.ProviderSet, mysql.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, global.ProviderSet, mysql.ProviderSet, service3.ProviderSet, repository.ProviderSet, service2.ProviderSet, repository2.ProviderSet, service.ProviderSet)
