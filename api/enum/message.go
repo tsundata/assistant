@@ -1,18 +1,20 @@
 package enum
 
+type MessageType string
+
 const (
-	MessageTypeText     = "text"
-	MessageTypeAt       = "at"
-	MessageTypeAudio    = "audio"
-	MessageTypeImage    = "image"
-	MessageTypeFile     = "file"
-	MessageTypeLocation = "location"
-	MessageTypeVideo    = "video"
-	MessageTypeLink     = "link"
-	MessageTypeContact  = "contact"
-	MessageTypeGroup    = "group"
-	MessageTypeRich     = "rich"
-	MessageTypeAction   = "action"
+	MessageTypeText     MessageType = "text"
+	MessageTypeAt       MessageType = "at"
+	MessageTypeAudio    MessageType = "audio"
+	MessageTypeImage    MessageType = "image"
+	MessageTypeFile     MessageType = "file"
+	MessageTypeLocation MessageType = "location"
+	MessageTypeVideo    MessageType = "video"
+	MessageTypeLink     MessageType = "link"
+	MessageTypeContact  MessageType = "contact"
+	MessageTypeGroup    MessageType = "group"
+	MessageTypeRich     MessageType = "rich"
+	MessageTypeAction   MessageType = "action"
 )
 
 const (

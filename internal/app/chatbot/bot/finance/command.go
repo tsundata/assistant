@@ -13,18 +13,15 @@ var commandRules = []command.Rule{
 	{
 		Define: `fund [string]`,
 		Help:   `Get fund`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
-			if comp.Finance() == nil {
-				return []string{"empty client"}
-			}
-			if comp.Middle() == nil {
-				return []string{"empty client"}
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Finance() == nil || comp.Middle() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			reply, err := comp.Finance().GetFund(ctx, &pb.TextRequest{
 				Text: tokens[1].Value.(string),
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetName() != "" {
 				var xAxis []string
@@ -46,31 +43,31 @@ var commandRules = []command.Rule{
 					},
 				})
 				if err != nil {
-					return []string{"chart failed"}
+					return []pb.MsgPayload{pb.TextMsg{Text: "chart failed"}}
 				}
 				urlReply, err := comp.Middle().GetChartUrl(ctx, &pb.TextRequest{Text: chartReply.ChartData.GetUuid()})
 				if err != nil {
-					return []string{"url failed"}
+					return []pb.MsgPayload{pb.TextMsg{Text: "url failed"}}
 				}
 
-				return []string{urlReply.Text}
+				return []pb.MsgPayload{pb.TextMsg{Text: urlReply.Text}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 	{
 		Define: `stock [string]`,
 		Help:   `Get stock`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Finance() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			reply, err := comp.Finance().GetStock(ctx, &pb.TextRequest{
 				Text: tokens[1].Value.(string),
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetName() != "" {
 				var res strings.Builder
@@ -89,10 +86,10 @@ var commandRules = []command.Rule{
 				res.WriteString("Close: ")
 				res.WriteString(reply.Close)
 				res.WriteString("\n")
-				return []string{res.String()}
+				return []pb.MsgPayload{pb.TextMsg{Text: res.String()}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 }

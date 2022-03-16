@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func parseCommand(t *testing.T, comp component.Component, in string) []string {
+func parseCommand(t *testing.T, comp component.Component, in string) []pb.MsgPayload {
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -34,14 +34,14 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string {
 		}
 	}
 
-	return []string{}
+	return []pb.MsgPayload{}
 }
 
 func TestVersionCommand(t *testing.T) {
 	cmd := "version"
 	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{version.Info()}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: version.Info()}}, res)
 }
 
 func TestQrCommand(t *testing.T) {
@@ -56,14 +56,14 @@ func TestQrCommand(t *testing.T) {
 	cmd := "qr abc"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"https://qr.test/abc"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "https://qr.test/abc"}}, res)
 }
 
 func TestUtCommand(t *testing.T) {
 	cmd := "ut 1"
 	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{time.Unix(1, 0).String()}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: time.Unix(1, 0).String()}}, res)
 }
 
 func TestRandCommand(t *testing.T) {
@@ -71,7 +71,7 @@ func TestRandCommand(t *testing.T) {
 	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
 
-	i, err := strconv.ParseInt(res[0], 10, 64)
+	i, err := strconv.ParseInt(res[0].(pb.TextMsg).Text, 10, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func TestPwdCommand(t *testing.T) {
 	cmd := "pwd 32"
 	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, 32, len(res[0]))
+	require.Equal(t, 32, len(res[0].(pb.TextMsg).Text))
 }
 
 func TestSubsListCommand(t *testing.T) {
@@ -97,7 +97,7 @@ func TestSubsListCommand(t *testing.T) {
 	cmd := "subs list"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}}, res)
 }
 
 func TestSubsOpenCommand(t *testing.T) {
@@ -112,7 +112,7 @@ func TestSubsOpenCommand(t *testing.T) {
 	cmd := "subs open test1"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestSubsCloseCommand(t *testing.T) {
@@ -127,7 +127,7 @@ func TestSubsCloseCommand(t *testing.T) {
 	cmd := "subs close test1"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestViewCommand(t *testing.T) {
@@ -142,7 +142,7 @@ func TestViewCommand(t *testing.T) {
 	cmd := "view 1"
 	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"test1"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "test1"}}, res)
 }
 
 func TestRunCommand(t *testing.T) {
@@ -157,7 +157,7 @@ func TestRunCommand(t *testing.T) {
 	cmd := "run 1"
 	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"test1"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "test1"}}, res)
 }
 
 func TestDocCommand(t *testing.T) {
@@ -187,7 +187,7 @@ func TestStatsCommand(t *testing.T) {
 	cmd := "stats"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"stats ..."}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "stats ..."}}, res)
 }
 
 func TestPinyinCommand(t *testing.T) {
@@ -202,7 +202,7 @@ func TestPinyinCommand(t *testing.T) {
 	cmd := "pinyin 测试"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"a1, a2"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "a1, a2"}}, res)
 }
 
 func TestDeleteCommand(t *testing.T) {
@@ -217,7 +217,7 @@ func TestDeleteCommand(t *testing.T) {
 	cmd := "del 1"
 	comp := component.MockComponent(message)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"Deleted 1"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "Deleted 1"}}, res)
 }
 
 func TestCronListCommand(t *testing.T) {
@@ -232,7 +232,7 @@ func TestCronListCommand(t *testing.T) {
 	cmd := "cron list"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"  NAME | ISCRON  \n-------+---------\n  test | true    \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME | ISCRON  \n-------+---------\n  test | true    \n"}}, res)
 }
 
 func TestCronStartCommand(t *testing.T) {
@@ -247,7 +247,7 @@ func TestCronStartCommand(t *testing.T) {
 	cmd := "cron start test1"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestCronStopCommand(t *testing.T) {
@@ -262,7 +262,7 @@ func TestCronStopCommand(t *testing.T) {
 	cmd := "cron stop test1"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestWebhookListCommand(t *testing.T) {
@@ -277,5 +277,5 @@ func TestWebhookListCommand(t *testing.T) {
 	cmd := "webhook list"
 	comp := component.MockComponent(chatbot)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"/webhook/test1\n/webhook/test2\n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "/webhook/test1\n/webhook/test2\n"}}, res)
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -90,7 +91,9 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		if err != nil {
 			return nil, err
 		}
-		outMessages[0] = []string{docReply.Text}
+		outMessages[0] = []pb.MsgPayload{
+			pb.TextMsg{Text: docReply.Text},
+		}
 	}
 
 	if len(outMessages) == 0 {
@@ -177,7 +180,17 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 	// send message
 	for botId, messages := range outMessages {
-		for _, text := range messages {
+		for _, item := range messages {
+			text := ""
+			if item.Type() == enum.MessageTypeText {
+				if v, ok := item.(pb.TextMsg); ok {
+					text = v.Text
+				}
+			}
+			j, err := json.Marshal(item)
+			if err != nil {
+				return nil, err
+			}
 			outMessage := &pb.Message{
 				GroupId:      reply.Message.GetGroupId(),
 				UserId:       reply.Message.GetUserId(),
@@ -185,8 +198,9 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				SenderType:   enum.MessageBotType,
 				Receiver:     reply.Message.GetUserId(),
 				ReceiverType: enum.MessageUserType,
-				Type:         enum.MessageTypeText,
+				Type:         string(item.Type()),
 				Text:         text,
+				Payload:      string(j),
 				Status:       0,
 				Direction:    enum.MessageIncomingDirection,
 				SendTime:     util.Format(time.Now().Unix()),
@@ -427,7 +441,7 @@ func (s *Chatbot) GetGroupId(ctx context.Context, payload *pb.UuidRequest) (*pb.
 }
 
 func (s *Chatbot) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
-	switch payload.Type {
+	switch enum.MessageType(payload.Type) {
 	case enum.MessageTypeAction:
 		if payload.GetText() == "" {
 			return nil, errors.New("empty action")
@@ -576,7 +590,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 	trigger.Kind = payload.Trigger.GetKind()
 	trigger.MessageId = payload.Trigger.GetMessageId()
 
-	switch payload.Trigger.GetKind() {
+	switch enum.MessageType(payload.Trigger.GetKind()) {
 	case enum.MessageTypeAction:
 		if payload.Info.GetMessageText() == "" {
 			return nil, errors.New("empty action")

@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp component.Component, in string) []string { //nolint
+func parseCommand(t *testing.T, comp component.Component, in string) []pb.MsgPayload { //nolint
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -30,7 +30,7 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string { 
 		}
 	}
 
-	return []string{}
+	return []pb.MsgPayload{}
 }
 
 func TestObjListCommand(t *testing.T) {
@@ -51,7 +51,7 @@ func TestObjListCommand(t *testing.T) {
 	cmd := "obj list"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"  ID | NAME  \n-----+-------\n   1 | obj   \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | NAME  \n-----+-------\n   1 | obj   \n"}}, res)
 }
 
 func TestObjCreateCommand(t *testing.T) {
@@ -66,7 +66,7 @@ func TestObjCreateCommand(t *testing.T) {
 	cmd := "obj obj obj-1"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestObjDeleteCommand(t *testing.T) {
@@ -81,7 +81,7 @@ func TestObjDeleteCommand(t *testing.T) {
 	cmd := "obj del 1"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestKrListCommand(t *testing.T) {
@@ -103,7 +103,7 @@ func TestKrListCommand(t *testing.T) {
 	cmd := "kr list"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}}, res)
 }
 
 func TestKrCreateCommand(t *testing.T) {
@@ -118,7 +118,7 @@ func TestKrCreateCommand(t *testing.T) {
 	cmd := "kr 1 kr kr-1"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }
 
 func TestKrDeleteCommand(t *testing.T) {
@@ -133,5 +133,5 @@ func TestKrDeleteCommand(t *testing.T) {
 	cmd := "kr delete 1"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"ok"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
 }

@@ -55,8 +55,8 @@ func (r *Robot) bot(identifier string) *bot.Bot {
 	return nil
 }
 
-func (r *Robot) Help(bots []*pb.Bot, in string) (map[int64][]string, error) {
-	out := make(map[int64][]string)
+func (r *Robot) Help(bots []*pb.Bot, in string) (map[int64][]pb.MsgPayload, error) {
+	out := make(map[int64][]pb.MsgPayload)
 	if strings.ToLower(in) == "help" && len(bots) > 0 {
 		// command help
 		for _, item := range bots {
@@ -69,7 +69,9 @@ func (r *Robot) Help(bots []*pb.Bot, in string) (map[int64][]string, error) {
 			temp.WriteString("  ---\n")
 			c := command.New(r.bot(item.Identifier).CommandRule)
 			temp.WriteString(c.Help(in))
-			out[item.Id] = []string{temp.String()}
+			out[item.Id] = []pb.MsgPayload{
+				pb.TextMsg{Text: temp.String()},
+			}
 		}
 	}
 	return out, nil
@@ -104,7 +106,7 @@ func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in
 	return trigger.Process(ctx, comp, in)
 }
 
-func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, commandText string) (map[int64][]string, error) {
+func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, commandText string) (map[int64][]pb.MsgPayload, error) {
 	if r.bot(bot.Identifier) == nil {
 		return nil, errors.New("error identifier")
 	}
@@ -112,8 +114,8 @@ func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bo
 	return c.ProcessCommand(ctx, comp, bot, commandText)
 }
 
-func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]string, error) {
-	out := make(map[int64][]string)
+func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
+	out := make(map[int64][]pb.MsgPayload)
 	var input interface{} = tokens[0].Value
 	var output interface{}
 	for _, item := range bots {
@@ -128,6 +130,8 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 
 		switch v := output.(type) {
 		case string:
+			out[item.Id] = append(out[item.Id], pb.TextMsg{Text: v})
+		case pb.MsgPayload:
 			out[item.Id] = append(out[item.Id], v)
 		}
 	}

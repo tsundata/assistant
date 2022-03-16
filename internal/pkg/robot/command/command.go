@@ -13,7 +13,7 @@ import (
 type Rule struct {
 	Define string
 	Help   string
-	Parse  func(context.Context, component.Component, []*Token) []string
+	Parse  func(context.Context, component.Component, []*Token) []pb.MsgPayload
 }
 
 type Ruleset struct {
@@ -31,8 +31,8 @@ func (r Ruleset) Help(in string) string {
 	return ""
 }
 
-func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, in string) (map[int64][]string, error) {
-	out := make(map[int64][]string)
+func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, in string) (map[int64][]pb.MsgPayload, error) {
+	out := make(map[int64][]pb.MsgPayload)
 	for _, rule := range r.rules {
 		tokens, err := ParseCommand(in)
 		if err != nil {

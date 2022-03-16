@@ -696,7 +696,7 @@ func TestChatbot_SyntaxCheck(t *testing.T) {
 			"ok syntax",
 			s,
 			args{context.Background(), &pb.WorkflowRequest{
-				Type: enum.MessageTypeAction,
+				Type: string(enum.MessageTypeAction),
 				Text: `get 1
 echo 1
 message "11"
@@ -708,7 +708,7 @@ message "11"
 			"error syntax",
 			s,
 			args{context.Background(), &pb.WorkflowRequest{
-				Type: enum.MessageTypeAction,
+				Type: string(enum.MessageTypeAction),
 				Text: `get a a;`}},
 			&pb.StateReply{State: false},
 			true,
@@ -914,7 +914,7 @@ func TestChatbot_CreateTrigger(t *testing.T) {
 			s,
 			args{context.Background(), &pb.TriggerRequest{
 				Trigger: &pb.Trigger{
-					Kind:      enum.MessageTypeAction,
+					Kind: string(enum.MessageTypeAction),
 					Type:      "webhook",
 					MessageId: 1,
 				},

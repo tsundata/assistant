@@ -284,7 +284,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 			UserId:     enum.SuperUserID,
 			Sender:     0,
 			SenderType: enum.MessageBotType,
-			Type:       enum.MessageTypeText,
+			Type:       string(enum.MessageTypeText),
 			Text:       text,
 		},
 	})

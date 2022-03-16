@@ -15,29 +15,25 @@ func TestRegexRule(t *testing.T) {
 		{
 			Define: `test`,
 			Help:   `Test info`,
-			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
-				return []string{"test"}
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []pb.MsgPayload {
+				return []pb.MsgPayload{pb.TextMsg{Text: "test"}}
 			},
 		},
 		{
 			Define: `todo [string]`,
 			Help:   `todo something`,
-			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
-				return []string{
-					tokens[1].Value.(string),
-				}
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []pb.MsgPayload {
+				return []pb.MsgPayload{pb.TextMsg{Text: tokens[1].Value.(string)}}
 			},
 		},
 		{
 			Define: `add [number] [number]`,
 			Help:   `Addition`,
-			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []string {
+			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []pb.MsgPayload {
 				tt1 := tokens[1].Value.(int64)
 				tt2 := tokens[2].Value.(int64)
 
-				return []string{
-					strconv.Itoa(int(tt1 + tt2)),
-				}
+				return []pb.MsgPayload{pb.TextMsg{Text: strconv.Itoa(int(tt1 + tt2))}}
 			},
 		},
 	}
@@ -54,13 +50,13 @@ func TestRegexRule(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out[1], "test")
+	require.Contains(t, out[1], pb.TextMsg{Text: "test"})
 
 	out2, err := b.ProcessCommand(context.Background(), nil, bot, "add 1 2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out2[1], "3")
+	require.Contains(t, out2[1], pb.TextMsg{Text: "3"})
 
 	out3, err := b.ProcessCommand(context.Background(), nil, bot, "help")
 	if err != nil {
@@ -75,5 +71,5 @@ func TestRegexRule(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out4[1], "a b c")
+	require.Contains(t, out4[1], pb.TextMsg{Text: "a b c"})
 }

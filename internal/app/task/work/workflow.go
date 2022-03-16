@@ -48,7 +48,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	switch tp {
+	switch enum.MessageType(tp) {
 	case enum.MessageTypeAction:
 		_, err = t.chatbot.RunAction(ctx, &pb.WorkflowRequest{Message: message.Message})
 		if err != nil {

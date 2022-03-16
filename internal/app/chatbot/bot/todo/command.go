@@ -16,14 +16,14 @@ var commandRules = []command.Rule{
 	{
 		Define: `todo list`,
 		Help:   `List todo`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Todo() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
 			reply, err := comp.Todo().GetTodos(ctx, &pb.TodoRequest{})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
 			tableString := &strings.Builder{}
@@ -37,40 +37,40 @@ var commandRules = []command.Rule{
 				table.Render()
 			}
 			if tableString.String() == "" {
-				return []string{"Empty"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []string{tableString.String()}
+			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
 		},
 	},
 	{
 		Define: `todo [string]`,
 		Help:   "Todo something",
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Todo() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			reply, err := comp.Todo().CreateTodo(ctx, &pb.TodoRequest{
 				Todo: &pb.Todo{Content: tokens[1].Value.(string)},
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if !reply.GetState() {
-				return []string{"failed"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 			}
-			return []string{"success"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "success"}}
 		},
 	},
 	{
 		Define: `remind [string] [string]`,
 		Help:   `Remind something`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			arg1 := tokens[1].Value
 			arg2 := tokens[2].Value
 			fmt.Println(arg1, arg2) // todo remind message
 
-			return []string{}
+			return []pb.MsgPayload{}
 		},
 	},
 }

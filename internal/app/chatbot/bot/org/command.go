@@ -15,14 +15,14 @@ var commandRules = []command.Rule{
 	{
 		Define: `obj list`,
 		Help:   `List objectives`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
 			reply, err := comp.Org().GetObjectives(ctx, &pb.ObjectiveRequest{})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
 			tableString := &strings.Builder{}
@@ -36,18 +36,18 @@ var commandRules = []command.Rule{
 				table.Render()
 			}
 			if tableString.String() == "" {
-				return []string{"Empty"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []string{tableString.String()}
+			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
 		},
 	},
 	{
 		Define: `obj del [number]`,
 		Help:   `Delete objective`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			id := tokens[2].Value.(int64)
 
@@ -55,21 +55,21 @@ var commandRules = []command.Rule{
 				Objective: &pb.Objective{Id: id},
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetState() {
-				return []string{"ok"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 	{
 		Define: `obj [string] [string]`,
 		Help:   `Create Objective`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			reply, err := comp.Org().CreateObjective(ctx, &pb.ObjectiveRequest{
 				Objective: &pb.Objective{
@@ -78,26 +78,26 @@ var commandRules = []command.Rule{
 				},
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetState() {
-				return []string{"ok"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 	{
 		Define: `kr list`,
 		Help:   `List KeyResult`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
 			reply, err := comp.Org().GetKeyResults(ctx, &pb.KeyResultRequest{})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
 			tableString := &strings.Builder{}
@@ -111,18 +111,18 @@ var commandRules = []command.Rule{
 				table.Render()
 			}
 			if tableString.String() == "" {
-				return []string{"Empty"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []string{tableString.String()}
+			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
 		},
 	},
 	{
 		Define: `kr [number] [string] [string]`,
 		Help:   `Create KeyResult`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			id := tokens[1].Value.(int64)
 
@@ -134,21 +134,21 @@ var commandRules = []command.Rule{
 				},
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetState() {
-				return []string{"ok"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 	{
 		Define: `kr delete [number]`,
 		Help:   `Delete KeyResult`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []string {
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Org() == nil {
-				return []string{"empty client"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			id := tokens[2].Value.(int64)
 
@@ -156,13 +156,13 @@ var commandRules = []command.Rule{
 				KeyResult: &pb.KeyResult{Id: id},
 			})
 			if err != nil {
-				return []string{"error call: " + err.Error()}
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 			if reply.GetState() {
-				return []string{"ok"}
+				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
 			}
 
-			return []string{"failed"}
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 		},
 	},
 }

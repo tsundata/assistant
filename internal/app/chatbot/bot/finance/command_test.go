@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp component.Component, in string) []string { //nolint
+func parseCommand(t *testing.T, comp component.Component, in string) []pb.MsgPayload { //nolint
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -30,7 +30,7 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string { 
 		}
 	}
 
-	return []string{}
+	return []pb.MsgPayload{}
 }
 
 func TestGetFundCommand(t *testing.T) {
@@ -46,9 +46,9 @@ func TestGetFundCommand(t *testing.T) {
 	)
 
 	cmd := "fund 000001"
-	comp := component.MockComponent(finance,middle)
+	comp := component.MockComponent(finance, middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"http://127.0.0.1:7000/chart/test"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "http://127.0.0.1:7000/chart/test"}}, res)
 }
 
 func TestGetStockCommand(t *testing.T) {
@@ -63,5 +63,5 @@ func TestGetStockCommand(t *testing.T) {
 	cmd := "stock sx000001"
 	comp := component.MockComponent(finance)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"Code: \nName: test\nType: \nOpen: \nClose: \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "Code: \nName: test\nType: \nOpen: \nClose: \n"}}, res)
 }

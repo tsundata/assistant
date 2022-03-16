@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func parseCommand(t *testing.T, comp component.Component, in string) []string {
+func parseCommand(t *testing.T, comp component.Component, in string) []pb.MsgPayload {
 	for _, rule := range Bot.CommandRule {
 		tokens, err := command.ParseCommand(in)
 		if err != nil {
@@ -30,7 +30,7 @@ func parseCommand(t *testing.T, comp component.Component, in string) []string {
 		}
 	}
 
-	return []string{}
+	return []pb.MsgPayload{}
 }
 
 func TestTodoList(t *testing.T) {
@@ -53,7 +53,7 @@ func TestTodoList(t *testing.T) {
 	cmd := "todo list"
 	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}}, res)
 }
 
 func TestTodoCommand(t *testing.T) {
@@ -68,12 +68,12 @@ func TestTodoCommand(t *testing.T) {
 	cmd := "todo test1"
 	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{"success"}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "success"}}, res)
 }
 
 func TestRemindCommand(t *testing.T) {
 	cmd := "remind test 19:50"
 	comp := component.MockComponent()
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []string{}, res)
+	require.Equal(t, []pb.MsgPayload{}, res)
 }

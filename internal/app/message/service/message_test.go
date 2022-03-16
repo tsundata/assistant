@@ -234,7 +234,7 @@ func TestMessage_Run(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).
-			Return(pb.Message{Id: 1, Text: "test", Type: enum.MessageTypeAction}, nil),
+			Return(pb.Message{Id: 1, Text: "test", Type: string(enum.MessageTypeAction)}, nil),
 		chatbot.EXPECT().RunAction(gomock.Any(), gomock.Any()).
 			Return(&pb.WorkflowReply{Text: "ok"}, nil),
 
