@@ -68,6 +68,8 @@ message Message {
   string type = 9;
   // @inject_tag: db:"text"
   string text = 10;
+  // @inject_tag: db:"payload"
+  string payload = 19;
   // @inject_tag: db:"status"
   int32 status = 11;
   // @inject_tag: db:"created_at"
@@ -81,8 +83,6 @@ message Message {
   string sender_name = 17;
   // @inject_tag: db:"direction" gorm:"->"
   string direction = 18;
-  // @inject_tag: db:"payload" gorm:"->"
-  string payload = 19;
 }
 
 message Action {

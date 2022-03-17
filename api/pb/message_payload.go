@@ -18,8 +18,8 @@ func (t TextMsg) Type() enum.MessageType {
 
 type ImageMsg struct {
 	Src    string `json:"src"`
-	Width  string `json:"width"`
-	Height string `json:"height"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
 	Alt    string `json:"alt"`
 }
 
@@ -43,4 +43,24 @@ type LinkMsg struct {
 
 func (a LinkMsg) Type() enum.MessageType {
 	return enum.MessageTypeLink
+}
+
+func MockMsgPayload() []MsgPayload {
+	return []MsgPayload{
+		TextMsg{Text: "test"},
+		ImageMsg{
+			Src:    "https://chatscope.io/storybook/react/static/media/zoe.e31a4ff8.svg",
+			Width:  100,
+			Height: 100,
+			Alt:    "Avatar",
+		},
+		ActionMsg{
+			Script: "#!action\necho 1",
+		},
+		LinkMsg{
+			Title: "test",
+			Cover: "https://chatscope.io/storybook/react/static/media/zoe.e31a4ff8.svg",
+			Url:   "https://test.dev",
+		},
+	}
 }

@@ -51,6 +51,11 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	message.ReceiverType = enum.MessageGroupType
 	message.Type = string(enum.MessageTypeText)
 	message.Text = strings.TrimSpace(payload.Message.GetText())
+	if payload.Message.GetPayload() != "" {
+		message.Payload = payload.Message.GetPayload()
+	} else {
+		message.Payload = "{}"
+	}
 
 	// check
 	find, err := m.repo.GetByUUID(ctx, message.Uuid)
