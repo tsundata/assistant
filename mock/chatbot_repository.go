@@ -194,6 +194,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetBotsByGroupUuid(ctx, uuid interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByGroupUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByGroupUuid), ctx, uuid)
 }
 
+// GetBotsByIds mocks base method.
+func (m *MockChatbotRepository) GetBotsByIds(ctx context.Context, id []int64) ([]*pb.Bot, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBotsByIds", ctx, id)
+	ret0, _ := ret[0].([]*pb.Bot)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBotsByIds indicates an expected call of GetBotsByIds.
+func (mr *MockChatbotRepositoryMockRecorder) GetBotsByIds(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByIds", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByIds), ctx, id)
+}
+
 // GetBotsByText mocks base method.
 func (m *MockChatbotRepository) GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error) {
 	m.ctrl.T.Helper()
