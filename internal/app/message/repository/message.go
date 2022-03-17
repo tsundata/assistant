@@ -103,7 +103,7 @@ func (r *MysqlMessageRepository) ListByType(ctx context.Context, t string) ([]*p
 
 func (r *MysqlMessageRepository) List(ctx context.Context) ([]*pb.Message, error) {
 	var messages []*pb.Message
-	err := r.db.WithContext(ctx).Where("type <> ?", enum.MessageTypeAction).Order("id DESC").Find(&messages).Error
+	err := r.db.WithContext(ctx).Where("type <> ?", enum.MessageTypeScript).Order("id DESC").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}

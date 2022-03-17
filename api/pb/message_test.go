@@ -8,14 +8,14 @@ import (
 func TestMessage_IsMessageOfAction(t *testing.T) {
 	m := Message{Text: `#!action
 test`}
-	require.True(t, m.IsMessageOfAction())
+	require.True(t, m.IsMessageOfActionScript())
 
 	m2 := Message{Text: ""}
-	require.False(t, m2.IsMessageOfAction())
+	require.False(t, m2.IsMessageOfActionScript())
 }
 
 func TestMessage_RemoveActionFlag(t *testing.T) {
 	m := Message{Text: `#!action
 test`}
-	require.Equal(t, "test", m.RemoveActionFlag())
+	require.Equal(t, "test", m.RemoveActionScriptFlag())
 }

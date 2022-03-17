@@ -63,7 +63,7 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		}
 
 		switch enum.MessageType(m.GetType()) {
-		case enum.MessageTypeAction:
+		case enum.MessageTypeScript:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
 			_, err := chatbot.RunAction(ctx, &pb.WorkflowRequest{Message: &m})
 			if err != nil {

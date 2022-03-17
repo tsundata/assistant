@@ -65,9 +65,10 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
 		return &pb.MessageReply{
 			Message: &pb.Message{
-				Uuid: message.Uuid,
-				Type: message.Type,
-				Text: message.Text,
+				Uuid:    message.Uuid,
+				Type:    message.Type,
+				Text:    message.Text,
+				Payload: message.Payload,
 			},
 		}, nil
 	}
@@ -77,8 +78,8 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	if util.IsUrl(message.Text) {
 		message.Type = string(enum.MessageTypeLink)
 	}
-	if message.IsMessageOfAction() {
-		message.Type = string(enum.MessageTypeAction)
+	if message.IsMessageOfActionScript() {
+		message.Type = string(enum.MessageTypeScript)
 	}
 
 	// store
@@ -87,10 +88,10 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		return nil, err
 	}
 
-	if enum.MessageType(message.Type) == enum.MessageTypeAction {
+	if enum.MessageType(message.Type) == enum.MessageTypeScript {
 		_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
 			Trigger: &pb.Trigger{
-				Kind:      string(enum.MessageTypeAction),
+				Kind:      string(enum.MessageTypeScript),
 				MessageId: message.Id,
 			},
 			Info: &pb.TriggerInfo{
@@ -303,8 +304,8 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	}
 
 	switch enum.MessageType(message.Type) {
-	case enum.MessageTypeAction:
-		wfReply, err := m.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionFlag()})
+	case enum.MessageTypeScript:
+		wfReply, err := m.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionScriptFlag()})
 		if err != nil {
 			return nil, err
 		}
@@ -320,7 +321,7 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 func (m *Message) GetActionMessages(ctx context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
 	var items []*pb.Message
-	items, err := m.repo.ListByType(ctx, string(enum.MessageTypeAction))
+	items, err := m.repo.ListByType(ctx, string(enum.MessageTypeScript))
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +347,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	// check syntax
 	_, err := m.chatbot.SyntaxCheck(ctx, &pb.WorkflowRequest{
 		Text: payload.GetText(),
-		Type: string(enum.MessageTypeAction),
+		Type: string(enum.MessageTypeScript),
 	})
 	if err != nil {
 		return nil, err
@@ -356,7 +357,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	uuid := util.UUID()
 	id, err := m.repo.Create(ctx, &pb.Message{
 		Uuid: uuid,
-		Type: string(enum.MessageTypeAction),
+		Type: string(enum.MessageTypeScript),
 		Text: payload.GetText(),
 	})
 	if err != nil {
@@ -366,7 +367,7 @@ func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextReque
 	// check/create trigger
 	_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
-			Kind:      string(enum.MessageTypeAction),
+			Kind:      string(enum.MessageTypeScript),
 			MessageId: id,
 		},
 		Info: &pb.TriggerInfo{

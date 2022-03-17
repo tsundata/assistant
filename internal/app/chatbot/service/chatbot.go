@@ -442,7 +442,7 @@ func (s *Chatbot) GetGroupId(ctx context.Context, payload *pb.UuidRequest) (*pb.
 
 func (s *Chatbot) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*pb.StateReply, error) {
 	switch enum.MessageType(payload.Type) {
-	case enum.MessageTypeAction:
+	case enum.MessageTypeScript:
 		if payload.GetText() == "" {
 			return nil, errors.New("empty action")
 		}
@@ -591,7 +591,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 	trigger.MessageId = payload.Trigger.GetMessageId()
 
 	switch enum.MessageType(payload.Trigger.GetKind()) {
-	case enum.MessageTypeAction:
+	case enum.MessageTypeScript:
 		if payload.Info.GetMessageText() == "" {
 			return nil, errors.New("empty action")
 		}

@@ -27,8 +27,18 @@ func (i ImageMsg) Type() enum.MessageType {
 	return enum.MessageTypeImage
 }
 
+type ScriptMsg struct {
+	Kind string `json:"kind"`
+	Code string `json:"code"`
+}
+
+func (a ScriptMsg) Type() enum.MessageType {
+	return enum.MessageTypeScript
+}
+
 type ActionMsg struct {
-	Script string `json:"script"`
+	Id     int64         `json:"id"`
+	Option []interface{} `json:"option"`
 }
 
 func (a ActionMsg) Type() enum.MessageType {
@@ -54,13 +64,20 @@ func MockMsgPayload() []MsgPayload {
 			Height: 100,
 			Alt:    "Avatar",
 		},
-		ActionMsg{
-			Script: "#!action\necho 1",
+		ScriptMsg{
+			Kind: enum.ActionScript,
+			Code: "#!action\necho 1",
 		},
 		LinkMsg{
 			Title: "test",
 			Cover: "https://chatscope.io/storybook/react/static/media/zoe.e31a4ff8.svg",
 			Url:   "https://test.dev",
+		},
+		ActionMsg{
+			Id: 1,
+			Option: []interface{}{
+				"true", "false",
+			},
 		},
 	}
 }

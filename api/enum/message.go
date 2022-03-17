@@ -15,6 +15,11 @@ const (
 	MessageTypeGroup    MessageType = "group"
 	MessageTypeRich     MessageType = "rich"
 	MessageTypeAction   MessageType = "action"
+	MessageTypeScript   MessageType = "script"
+)
+
+const (
+	ActionScript = "action"
 )
 
 const (

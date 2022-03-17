@@ -148,15 +148,15 @@ func TestMessage_Create(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo1", Uuid: "test"}}},
-			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo1"}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo1", Uuid: "test", Payload: "{}"}}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo1", Payload: "{}"}},
 			false,
 		},
 		{
 			"case2",
 			s,
-			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test"}}},
-			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2", SenderType: enum.MessageUserType, ReceiverType: enum.MessageGroupType}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test", Payload: "{}"}}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2", Payload: "{}", SenderType: enum.MessageUserType, ReceiverType: enum.MessageGroupType}},
 			false,
 		},
 	}
@@ -234,7 +234,7 @@ func TestMessage_Run(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).
-			Return(pb.Message{Id: 1, Text: "test", Type: string(enum.MessageTypeAction)}, nil),
+			Return(pb.Message{Id: 1, Text: "test", Type: string(enum.MessageTypeScript)}, nil),
 		chatbot.EXPECT().RunAction(gomock.Any(), gomock.Any()).
 			Return(&pb.WorkflowReply{Text: "ok"}, nil),
 

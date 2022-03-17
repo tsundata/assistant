@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (m *Message) IsMessageOfAction() bool {
+func (m *Message) IsMessageOfActionScript() bool {
 	lines := strings.Split(m.Text, "\n")
 	if len(lines) >= 1 {
 		re := regexp.MustCompile(`^#!action\s*$`)
@@ -14,7 +14,7 @@ func (m *Message) IsMessageOfAction() bool {
 	return false
 }
 
-func (m *Message) RemoveActionFlag() string {
+func (m *Message) RemoveActionScriptFlag() string {
 	re := regexp.MustCompile(`^#!action\s*`)
 	return re.ReplaceAllString(m.Text, "")
 }
