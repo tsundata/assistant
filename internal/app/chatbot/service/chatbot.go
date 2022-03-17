@@ -178,8 +178,6 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 	}
 
-	outMessages[2] = pb.MockMsgPayload() //fixme
-
 	// send message
 	for botId, messages := range outMessages {
 		for _, item := range messages {

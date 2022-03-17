@@ -175,6 +175,7 @@ func TestChatbot_GetBots(t *testing.T) {
 	}
 	gomock.InOrder(
 		repo.EXPECT().GetBotsByGroupUuid(gomock.Any(), gomock.Any()).Return(items, nil),
+		repo.EXPECT().GetBotsByIds(gomock.Any(), gomock.Any()).Return(items, nil),
 	)
 
 	s := NewChatbot(nil, nil, nil, repo, nil, nil, bot, nil)
@@ -190,7 +191,8 @@ func TestChatbot_GetBots(t *testing.T) {
 		want    *pb.BotsReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.BotsRequest{}}, &pb.BotsReply{Bots: items}, false},
+		{"case1", s, args{context.Background(), &pb.BotsRequest{GroupUuid: "test"}}, &pb.BotsReply{Bots: items}, false},
+		{"case1", s, args{context.Background(), &pb.BotsRequest{BotId: []int64{1}}}, &pb.BotsReply{Bots: items}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -914,7 +916,7 @@ func TestChatbot_CreateTrigger(t *testing.T) {
 			s,
 			args{context.Background(), &pb.TriggerRequest{
 				Trigger: &pb.Trigger{
-					Kind: string(enum.MessageTypeScript),
+					Kind:      string(enum.MessageTypeScript),
 					Type:      "webhook",
 					MessageId: 1,
 				},
