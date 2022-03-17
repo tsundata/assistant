@@ -49,33 +49,33 @@ message Message {
   // @inject_tag: db:"id" gorm:"primaryKey"
   int64 id = 1;
   // @inject_tag: db:"group_id"
-  int64 group_id = 14;
+  int64 group_id = 2;
   // @inject_tag: db:"user_id"
-  int64 user_id = 2;
+  int64 user_id = 3;
   // @inject_tag: db:"sequence"
-  int64 sequence = 3;
+  int64 sequence = 4;
   // @inject_tag: db:"uuid"
-  string uuid = 4;
+  string uuid = 5;
   // @inject_tag: db:"sender"
-  int64 sender = 5;
+  int64 sender = 6;
   // @inject_tag: db:"sender_type"
-  string sender_type = 6;
+  string sender_type = 7;
   // @inject_tag: db:"receiver"
-  int64 receiver = 7;
+  int64 receiver = 8;
   // @inject_tag: db:"receiver_type"
-  string receiver_type = 8;
+  string receiver_type = 9;
   // @inject_tag: db:"type"
-  string type = 9;
+  string type = 10;
   // @inject_tag: db:"text"
-  string text = 10;
+  string text = 11;
   // @inject_tag: db:"payload"
-  string payload = 19;
+  string payload = 12;
   // @inject_tag: db:"status"
-  int32 status = 11;
+  int32 status = 13;
   // @inject_tag: db:"created_at"
-  int64 created_at = 12;
+  int64 created_at = 14;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 13;
+  int64 updated_at = 15;
 
   // @inject_tag: db:"send_time" gorm:"->"
   string send_time = 16;
@@ -83,6 +83,8 @@ message Message {
   string sender_name = 17;
   // @inject_tag: db:"direction" gorm:"->"
   string direction = 18;
+  // @inject_tag: db:"direction" gorm:"-"
+  Avatar avatar = 19;
 }
 
 message Action {

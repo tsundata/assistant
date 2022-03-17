@@ -4,16 +4,12 @@ type MessageType string
 
 const (
 	MessageTypeText     MessageType = "text"
-	MessageTypeAt       MessageType = "at"
 	MessageTypeAudio    MessageType = "audio"
 	MessageTypeImage    MessageType = "image"
 	MessageTypeFile     MessageType = "file"
 	MessageTypeLocation MessageType = "location"
 	MessageTypeVideo    MessageType = "video"
 	MessageTypeLink     MessageType = "link"
-	MessageTypeContact  MessageType = "contact"
-	MessageTypeGroup    MessageType = "group"
-	MessageTypeRich     MessageType = "rich"
 	MessageTypeAction   MessageType = "action"
 	MessageTypeScript   MessageType = "script"
 )

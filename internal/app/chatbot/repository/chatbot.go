@@ -18,6 +18,7 @@ type ChatbotRepository interface {
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
 	GetGroupBot(ctx context.Context, groupUuid, botUuid string) (pb.Bot, error)
 	List(ctx context.Context) ([]*pb.Bot, error)
+	GetBotsByIds(ctx context.Context, id []int64) ([]*pb.Bot, error)
 	GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error)
 	GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error)
 	GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error)
@@ -106,6 +107,18 @@ func (r *MysqlChatbotRepository) GetGroupBot(ctx context.Context, groupUuid, bot
 func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	var bots []*pb.Bot
 	err := r.db.WithContext(ctx).Order("id DESC").Find(&bots).Error
+	if err != nil {
+		return nil, err
+	}
+	return bots, nil
+}
+
+func (r *MysqlChatbotRepository) GetBotsByIds(ctx context.Context, id []int64) ([]*pb.Bot, error) {
+	var bots []*pb.Bot
+	err := r.db.WithContext(ctx).
+		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
+		Where("bots.id IN ?", id).
+		Order("bots.id ASC").Find(&bots).Error
 	if err != nil {
 		return nil, err
 	}

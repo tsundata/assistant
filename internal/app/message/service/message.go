@@ -138,11 +138,40 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 		return nil, err
 	}
 
+	// avatar
+	var botId []int64
+	for _, item := range messages {
+		if item.SenderType == enum.MessageBotType && item.Sender > 0 {
+			botId = append(botId, item.Sender)
+		}
+	}
+	bots, err := m.chatbot.GetBots(ctx, &pb.BotsRequest{BotId: botId})
+	if err != nil {
+		return nil, err
+	}
+	botMap := make(map[int64]*pb.Bot)
+	for i, item := range bots.Bots {
+		botMap[item.Id] = bots.Bots[i]
+	}
+
 	var reply []*pb.Message
 	for _, item := range messages {
 		if item.UserId != id {
 			return nil, exception.ErrGrpcUnauthenticated
 		}
+
+		// avatar
+		var avatar *pb.Avatar
+		if item.SenderType == enum.MessageBotType {
+			if v, ok := botMap[item.Sender]; ok {
+				avatar = &pb.Avatar{
+					Name:       v.Name,
+					Src:        v.Avatar,
+					Identifier: v.Identifier,
+				}
+			}
+		}
+		item.Avatar = avatar
 
 		// covert
 		direction := ""

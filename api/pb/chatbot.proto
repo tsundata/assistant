@@ -199,6 +199,7 @@ message BotsRequest {
   int64 group_id = 1;
   // @inject_tag: query:"group_uuid"
   string group_uuid = 2;
+  repeated int64 bot_id = 3;
 }
 
 message BotsReply {
@@ -221,7 +222,7 @@ message GroupItem {
   string avatar = 5;
   int32 unread_count = 7;
   LastMessage last_message = 8;
-  repeated string bot_avatar = 9;
+  repeated Avatar bot_avatar = 9;
   int64 id = 10;
 }
 

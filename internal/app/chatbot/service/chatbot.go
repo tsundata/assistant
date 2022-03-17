@@ -178,6 +178,8 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 	}
 
+	outMessages[2] = pb.MockMsgPayload() //fixme
+
 	// send message
 	for botId, messages := range outMessages {
 		for _, item := range messages {
@@ -251,7 +253,14 @@ func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotRe
 }
 
 func (s *Chatbot) GetBots(ctx context.Context, payload *pb.BotsRequest) (*pb.BotsReply, error) {
-	bots, err := s.repo.GetBotsByGroupUuid(ctx, payload.GroupUuid)
+	var err error
+	var bots []*pb.Bot
+	if payload.GroupUuid != "" {
+		bots, err = s.repo.GetBotsByGroupUuid(ctx, payload.GroupUuid)
+	}
+	if len(payload.BotId) > 0 {
+		bots, err = s.repo.GetBotsByIds(ctx, payload.BotId)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -292,9 +301,13 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		return nil, err
 	}
 
-	botAvatar := make(map[int64][]string)
+	botAvatar := make(map[int64][]*pb.Avatar)
 	for _, bot := range bots {
-		botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], bot.Avatar)
+		botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], &pb.Avatar{
+			Name:       bot.Name,
+			Src:        bot.Avatar,
+			Identifier: bot.Identifier,
+		})
 	}
 
 	groups, err := s.repo.ListGroup(ctx, id)
@@ -303,15 +316,18 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 	}
 	var res []*pb.GroupItem
 	for _, group := range groups {
-		var avatars []string
+		// avatar
+		var avatars []*pb.Avatar
 		if v, ok := botAvatar[group.Id]; ok {
 			avatars = v
 		}
+
 		// last message
 		last, err := s.message.LastByGroup(ctx, &pb.LastByGroupRequest{GroupId: group.Id})
 		if err != nil {
 			return nil, err
 		}
+
 		res = append(res, &pb.GroupItem{
 			Sequence:    group.Sequence,
 			Type:        group.Type,
