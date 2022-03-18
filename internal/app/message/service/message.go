@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
@@ -79,7 +80,15 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		message.Type = string(enum.MessageTypeLink)
 	}
 	if message.IsMessageOfActionScript() {
+		p, err := json.Marshal(pb.ScriptMsg{
+			Kind: enum.ActionScript,
+			Code: message.Text,
+		})
+		if err != nil {
+			return nil, err
+		}
 		message.Type = string(enum.MessageTypeScript)
+		message.Payload = util.ByteToString(p)
 	}
 
 	// store
