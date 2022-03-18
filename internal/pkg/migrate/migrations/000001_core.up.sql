@@ -273,3 +273,30 @@ create table if not exists `model_tags`
     INDEX `tag_id` (`tag_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `subscribes`
+(
+    `id`         BIGINT(19)  NOT NULL AUTO_INCREMENT,
+    `name`       VARCHAR(20) NOT NULL,
+    `status`     TINYINT(1)  NOT NULL DEFAULT '1',
+    `created_at` INT(10)     NOT NULL,
+    `updated_at` INT(10)     NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+
+CREATE TABLE `user_subscribes`
+(
+    `id`           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`      BIGINT(20) UNSIGNED NOT NULL,
+    `subscribe_id` BIGINT(20) UNSIGNED NOT NULL,
+    `status`       TINYINT(3) UNSIGNED NOT NULL DEFAULT '1',
+    `created_at`   INT(10)             NOT NULL,
+    `updated_at`   INT(10)             NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `user_id` (`user_id`) USING BTREE,
+    INDEX `subscribe_id` (`subscribe_id`) USING BTREE,
+    INDEX `status` (`status`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

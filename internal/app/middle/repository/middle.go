@@ -25,6 +25,9 @@ type MiddleRepository interface {
 	ListTags(ctx context.Context) ([]*pb.Tag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
 	GetOrCreateModelTag(ctx context.Context, tag *pb.ModelTag) (pb.ModelTag, error)
+	ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error)
+	CreateSubscribe(ctx context.Context, subscribe pb.Subscribe) error
+	UpdateSubscribeStatus(ctx context.Context, name string, status int64) error
 }
 
 type MysqlMiddleRepository struct {
@@ -82,8 +85,11 @@ func (r *MysqlMiddleRepository) GetAppByType(ctx context.Context, t string) (pb.
 }
 
 func (r *MysqlMiddleRepository) UpdateAppByID(ctx context.Context, id int64, token, extra string) error {
-	return r.db.WithContext(ctx).Model(&pb.App{}).Where("id = ?", id).Update("token", token).
-		Update("extra", extra).Error
+	return r.db.WithContext(ctx).Model(&pb.App{}).Where("id = ?", id).
+		UpdateColumns(map[string]interface{}{
+			"token": token,
+			"extra": extra,
+		}).Error
 }
 
 func (r *MysqlMiddleRepository) CreateApp(ctx context.Context, app *pb.App) (int64, error) {
@@ -178,4 +184,39 @@ func (r *MysqlMiddleRepository) GetOrCreateModelTag(ctx context.Context, model *
 	}
 
 	return find, nil
+}
+
+func (r *MysqlMiddleRepository) ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error) {
+	var items []*pb.Subscribe
+	err := r.db.WithContext(ctx).Order("id DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) CreateSubscribe(ctx context.Context, subscribe pb.Subscribe) error {
+	var find pb.Subscribe
+	err := r.db.WithContext(ctx).Where("name = ?", subscribe.Name).Take(&find).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	if find.Id <= 0 {
+		subscribe.Id = r.id.Generate(ctx)
+		subscribe.CreatedAt = time.Now().Unix()
+		subscribe.UpdatedAt = time.Now().Unix()
+		err = r.db.WithContext(ctx).Create(&subscribe).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *MysqlMiddleRepository) UpdateSubscribeStatus(ctx context.Context, name string, status int64) error {
+	return r.db.WithContext(ctx).Model(&pb.Subscribe{}).Where("name = ?", name).
+		UpdateColumns(map[string]interface{}{
+			"status":     status,
+			"updated_at": time.Now().Unix(),
+		}).Error
 }

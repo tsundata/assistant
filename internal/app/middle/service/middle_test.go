@@ -700,24 +700,24 @@ func TestMiddle_GetStats(t *testing.T) {
 }
 
 func TestSubscribe_List(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.Del(context.Background(), RuleKey).Result()
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.HMSet(context.Background(), RuleKey, "test1", "true").Result()
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.HMSet(context.Background(), RuleKey, "test2", "true").Result()
-	if err != nil {
-		t.Fatal(err)
-	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListSubscribe(gomock.Any()).Return([]*pb.Subscribe{{
+			Id:        1,
+			Name:      "test1",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}, {
+			Id:        2,
+			Name:      "test2",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}}, nil),
+	)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		ctx context.Context
@@ -753,12 +753,14 @@ func TestSubscribe_List(t *testing.T) {
 }
 
 func TestSubscribe_Register(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().CreateSubscribe(gomock.Any(), gomock.Any()).Return(nil),
+	)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -794,12 +796,14 @@ func TestSubscribe_Register(t *testing.T) {
 }
 
 func TestSubscribe_Open(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().UpdateSubscribeStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
+	)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -835,12 +839,14 @@ func TestSubscribe_Open(t *testing.T) {
 }
 
 func TestSubscribe_Close(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().UpdateSubscribeStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
+	)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -876,24 +882,35 @@ func TestSubscribe_Close(t *testing.T) {
 }
 
 func TestSubscribe_Status(t *testing.T) {
-	rdb, err := vendors.CreateRedisClient(enum.Middle)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.Del(context.Background(), RuleKey).Result()
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.HMSet(context.Background(), RuleKey, "test1", "true").Result()
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = rdb.HMSet(context.Background(), RuleKey, "test2", "false").Result()
-	if err != nil {
-		t.Fatal(err)
-	}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	repo := mock.NewMockMiddleRepository(ctl)
+	gomock.InOrder(
+		repo.EXPECT().ListSubscribe(gomock.Any()).Return([]*pb.Subscribe{{
+			Id:        1,
+			Name:      "test1",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}, {
+			Id:        2,
+			Name:      "test2",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}}, nil),
+		repo.EXPECT().ListSubscribe(gomock.Any()).Return([]*pb.Subscribe{{
+			Id:        1,
+			Name:      "test1",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}, {
+			Id:        2,
+			Name:      "test2",
+			Status:    enum.SubscribeEnableStatus,
+			CreatedAt: time.Now().Unix(),
+		}}, nil),
+	)
+	s := NewMiddle(nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -916,7 +933,7 @@ func TestSubscribe_Status(t *testing.T) {
 		{
 			"case2",
 			s,
-			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test2"}},
+			args{md.MockIncomingContext(), &pb.SubscribeRequest{Text: "test3"}},
 			&pb.StateReply{State: false},
 			false,
 		},

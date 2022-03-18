@@ -8,6 +8,7 @@ import (
 	"github.com/go-ego/gse"
 	"github.com/go-redis/redis/v8"
 	"github.com/mozillazg/go-pinyin"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/middle/classifier"
 	"github.com/tsundata/assistant/internal/app/middle/repository"
@@ -23,7 +24,6 @@ import (
 	"time"
 )
 
-const RuleKey = "subscribe:rule"
 const CronKey = "cron:rule"
 
 type Middle struct {
@@ -102,16 +102,16 @@ func (s *Middle) GetApps(ctx context.Context, _ *pb.TextRequest) (*pb.AppsReply,
 
 	haveApps := make(map[string]bool)
 	var res []*pb.App
-	for _, app := range apps {
-		haveApps[app.Type] = true
+	for _, item := range apps {
+		haveApps[item.Type] = true
 		res = append(res, &pb.App{
 			//Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type), todo
 			//IsAuthorized: app.Token != "",todo
-			Type:      app.Type,
-			Name:      app.Name,
-			Token:     app.Token,
-			Extra:     app.Extra,
-			CreatedAt: app.CreatedAt,
+			Type:      item.Type,
+			Name:      item.Name,
+			Token:     item.Token,
+			Extra:     item.Extra,
+			CreatedAt: item.CreatedAt,
 		})
 	}
 
@@ -168,13 +168,13 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb
 		}, nil
 	}
 
-	app, err := s.repo.GetAppByType(ctx, payload.App.GetType())
+	item, err := s.repo.GetAppByType(ctx, payload.App.GetType())
 	if err != nil {
 		return nil, err
 	}
 
-	if app.Id > 0 {
-		err = s.repo.UpdateAppByID(ctx, app.Id, payload.App.GetToken(), payload.App.GetExtra())
+	if item.Id > 0 {
+		err = s.repo.UpdateAppByID(ctx, item.Id, payload.App.GetToken(), payload.App.GetExtra())
 		if err != nil {
 			return nil, err
 		}
@@ -424,47 +424,30 @@ func (s *Middle) GetStats(ctx context.Context, _ *pb.TextRequest) (*pb.TextReply
 }
 
 func (s *Middle) ListSubscribe(ctx context.Context, _ *pb.SubscribeRequest) (*pb.SubscribeReply, error) {
-	res, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	subscribes, err := s.repo.ListSubscribe(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var result []*pb.Subscribe
-	for source, isSubscribe := range res {
-		result = append(result, &pb.Subscribe{
-			Name:  source,
-			State: util.StringToBool(isSubscribe),
-		})
-	}
-
 	return &pb.SubscribeReply{
-		Subscribe: result,
+		Subscribe: subscribes,
 	}, nil
 }
 
 func (s *Middle) RegisterSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HMGet(ctx, RuleKey, payload.GetText()).Result()
+	err := s.repo.CreateSubscribe(ctx, pb.Subscribe{
+		Name:   payload.Text,
+		Status: enum.SubscribeEnableStatus,
+	})
 	if err != nil {
 		return nil, err
-	}
-
-	exist := true
-	if len(resp) == 0 || (len(resp) == 1 && resp[0] == nil) {
-		exist = false
-	}
-
-	if !exist {
-		_, err = s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Middle) OpenSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "true").Result()
+	err := s.repo.UpdateSubscribeStatus(ctx, payload.Text, enum.SubscribeEnableStatus)
 	if err != nil {
 		return nil, err
 	}
@@ -473,7 +456,7 @@ func (s *Middle) OpenSubscribe(ctx context.Context, payload *pb.SubscribeRequest
 }
 
 func (s *Middle) CloseSubscribe(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(ctx, RuleKey, payload.GetText(), "false").Result()
+	err := s.repo.UpdateSubscribeStatus(ctx, payload.Text, enum.SubscribeDisableStatus)
 	if err != nil {
 		return nil, err
 	}
@@ -482,14 +465,14 @@ func (s *Middle) CloseSubscribe(ctx context.Context, payload *pb.SubscribeReques
 }
 
 func (s *Middle) GetSubscribeStatus(ctx context.Context, payload *pb.SubscribeRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HGetAll(ctx, RuleKey).Result()
+	subscribes, err := s.repo.ListSubscribe(ctx)
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range resp {
-		if k == payload.GetText() {
+	for _, item := range subscribes {
+		if item.Name == payload.GetText() {
 			return &pb.StateReply{
-				State: v == "true",
+				State: item.Status == enum.SubscribeEnableStatus,
 			}, nil
 		}
 	}

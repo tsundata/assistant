@@ -169,8 +169,16 @@ message KVsRequest {
 }
 
 message Subscribe {
-  string name = 1;
-  bool state = 2;
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64  id = 1;
+  // @inject_tag: db:"name"
+  string name = 2;
+  // @inject_tag: db:"status"
+  int64 status = 3;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 4;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 5;
 }
 
 message SubscribeRequest {
@@ -179,6 +187,21 @@ message SubscribeRequest {
 
 message SubscribeReply {
   repeated Subscribe subscribe = 1;
+}
+
+message UserSubscribe {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64  id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"subscribe_id"
+  int64 subscribe_id = 3;
+  // @inject_tag: db:"status"
+  int64 status = 4;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 5;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 6;
 }
 
 message Cron {

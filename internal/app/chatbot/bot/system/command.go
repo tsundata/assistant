@@ -97,7 +97,7 @@ var commandRules = []command.Rule{
 				table.SetBorder(false)
 				table.SetHeader([]string{"Name", "Subscribe"})
 				for _, v := range reply.Subscribe {
-					table.Append([]string{v.Name, util.BoolToString(v.State)})
+					table.Append([]string{v.Name, strconv.Itoa(int(v.Status))})
 				}
 				table.Render()
 			}

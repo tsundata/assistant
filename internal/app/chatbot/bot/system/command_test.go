@@ -91,13 +91,13 @@ func TestSubsListCommand(t *testing.T) {
 
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().ListSubscribe(gomock.Any(), gomock.Any()).Return(&pb.SubscribeReply{Subscribe: []*pb.Subscribe{{Name: "test1", State: true}}}, nil),
+		middle.EXPECT().ListSubscribe(gomock.Any(), gomock.Any()).Return(&pb.SubscribeReply{Subscribe: []*pb.Subscribe{{Name: "test1", Status: enum.SubscribeEnableStatus}}}, nil),
 	)
 
 	cmd := "subs list"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME  | SUBSCRIBE  \n--------+------------\n  test1 | true       \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME  | SUBSCRIBE  \n--------+------------\n  test1 |         1  \n"}}, res)
 }
 
 func TestSubsOpenCommand(t *testing.T) {
