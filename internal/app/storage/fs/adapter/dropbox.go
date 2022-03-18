@@ -6,6 +6,14 @@ import (
 
 type Dropbox struct{}
 
+func (d *Dropbox) AbsolutePath(path string) string {
+	panic("implement me")
+}
+
+func (d *Dropbox) FullPath(path string) string {
+	panic("implement me")
+}
+
 func (d *Dropbox) Exists(path string) (bool, error) {
 	panic("implement me")
 }

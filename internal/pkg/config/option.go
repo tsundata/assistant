@@ -42,6 +42,7 @@ type Gateway struct {
 // Storage config
 type Storage struct {
 	Adapter string `json:"adapter" yaml:"adapter"`
+	Dir     string `json:"dir" yaml:"dir"`
 }
 
 // Jwt config

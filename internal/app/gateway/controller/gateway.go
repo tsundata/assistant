@@ -37,6 +37,7 @@ type GatewayController struct {
 	middleSvc    pb.MiddleSvcClient
 	userSvc      pb.UserSvcClient
 	chatbotSvc   pb.ChatbotSvcClient
+	storageSvc   pb.StorageSvcClient
 	healthClient *health.Client
 }
 
@@ -50,6 +51,7 @@ func NewGatewayController(
 	middleSvc pb.MiddleSvcClient,
 	chatbotSvc pb.ChatbotSvcClient,
 	userSvc pb.UserSvcClient,
+	storageSvc pb.StorageSvcClient,
 	healthClient *health.Client) *GatewayController {
 	return &GatewayController{
 		config:       config,
@@ -61,6 +63,7 @@ func NewGatewayController(
 		middleSvc:    middleSvc,
 		userSvc:      userSvc,
 		chatbotSvc:   chatbotSvc,
+		storageSvc:   storageSvc,
 		healthClient: healthClient,
 	}
 }
@@ -522,4 +525,13 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 	}
 
 	return c.SendString("ok")
+}
+
+func (gc *GatewayController) GetFile(c *fiber.Ctx) error {
+	path := c.Params("path")
+	reply, err := gc.storageSvc.AbsolutePath(md.Outgoing(c), &pb.TextRequest{Text: path})
+	if err != nil {
+		return err
+	}
+	return c.SendFile(reply.Text, false)
 }

@@ -148,6 +148,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Get("system/setting", gc.GetSystemSetting)
 		internal.Post("setting", gc.UpdateSetting)
 		internal.Get("apps", gc.GetApps)
+		internal.Get("file/:path", gc.GetFile)
 
 		// 404
 		router.Use(func(c *fiber.Ctx) error {

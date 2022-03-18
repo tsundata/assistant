@@ -37,6 +37,26 @@ func (m *MockStorageSvcClient) EXPECT() *MockStorageSvcClientMockRecorder {
 	return m.recorder
 }
 
+// AbsolutePath mocks base method.
+func (m *MockStorageSvcClient) AbsolutePath(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AbsolutePath", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AbsolutePath indicates an expected call of AbsolutePath.
+func (mr *MockStorageSvcClientMockRecorder) AbsolutePath(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AbsolutePath", reflect.TypeOf((*MockStorageSvcClient)(nil).AbsolutePath), varargs...)
+}
+
 // UploadFile mocks base method.
 func (m *MockStorageSvcClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (pb.StorageSvc_UploadFileClient, error) {
 	m.ctrl.T.Helper()
@@ -215,6 +235,21 @@ func NewMockStorageSvcServer(ctrl *gomock.Controller) *MockStorageSvcServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockStorageSvcServer) EXPECT() *MockStorageSvcServerMockRecorder {
 	return m.recorder
+}
+
+// AbsolutePath mocks base method.
+func (m *MockStorageSvcServer) AbsolutePath(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AbsolutePath", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AbsolutePath indicates an expected call of AbsolutePath.
+func (mr *MockStorageSvcServerMockRecorder) AbsolutePath(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AbsolutePath", reflect.TypeOf((*MockStorageSvcServer)(nil).AbsolutePath), arg0, arg1)
 }
 
 // UploadFile mocks base method.

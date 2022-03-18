@@ -26,3 +26,4 @@ deployments/docker-compose/tmp
 deployments/docker-compose/.env
 *.sarif
 github.com/
+static/

@@ -1,12 +1,13 @@
 syntax = "proto3";
 package pb;
 
-//import "base.proto";
+import "base.proto";
 
 option go_package = "api/pb";
 
 service StorageSvc {
   rpc UploadFile(stream FileRequest) returns (FileReply) {}
+  rpc AbsolutePath(TextRequest) returns (TextReply) {}
 }
 
 message FileRequest {

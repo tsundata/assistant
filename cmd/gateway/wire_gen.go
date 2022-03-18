@@ -87,8 +87,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
 	healthClient := health.NewHealthClient(rpcClient)
-	gatewayController := controller.NewGatewayController(appConfig, redisClient, logLogger, newrelicApp, bus, messageSvcClient, middleSvcClient, chatbotSvcClient, userSvcClient, healthClient)
+	gatewayController := controller.NewGatewayController(appConfig, redisClient, logLogger, newrelicApp, bus, messageSvcClient, middleSvcClient, chatbotSvcClient, userSvcClient, storageSvcClient, healthClient)
 	v := controller.CreateInitControllersFn(gatewayController)
 	server, err := http.New(appConfig, v, logLogger)
 	if err != nil {

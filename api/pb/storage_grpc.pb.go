@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageSvcClient interface {
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (StorageSvc_UploadFileClient, error)
+	AbsolutePath(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 }
 
 type storageSvcClient struct {
@@ -63,11 +64,21 @@ func (x *storageSvcUploadFileClient) CloseAndRecv() (*FileReply, error) {
 	return m, nil
 }
 
+func (c *storageSvcClient) AbsolutePath(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
+	err := c.cc.Invoke(ctx, "/pb.StorageSvc/AbsolutePath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageSvcServer is the server API for StorageSvc service.
 // All implementations should embed UnimplementedStorageSvcServer
 // for forward compatibility
 type StorageSvcServer interface {
 	UploadFile(StorageSvc_UploadFileServer) error
+	AbsolutePath(context.Context, *TextRequest) (*TextReply, error)
 }
 
 // UnimplementedStorageSvcServer should be embedded to have forward compatible implementations.
@@ -76,6 +87,9 @@ type UnimplementedStorageSvcServer struct {
 
 func (UnimplementedStorageSvcServer) UploadFile(StorageSvc_UploadFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedStorageSvcServer) AbsolutePath(context.Context, *TextRequest) (*TextReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AbsolutePath not implemented")
 }
 
 // UnsafeStorageSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -115,13 +129,36 @@ func (x *storageSvcUploadFileServer) Recv() (*FileRequest, error) {
 	return m, nil
 }
 
+func _StorageSvc_AbsolutePath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageSvcServer).AbsolutePath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.StorageSvc/AbsolutePath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageSvcServer).AbsolutePath(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageSvc_ServiceDesc is the grpc.ServiceDesc for StorageSvc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var StorageSvc_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.StorageSvc",
 	HandlerType: (*StorageSvcServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AbsolutePath",
+			Handler:    _StorageSvc_AbsolutePath_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "UploadFile",

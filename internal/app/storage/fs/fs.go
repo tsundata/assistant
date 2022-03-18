@@ -3,6 +3,7 @@ package fs
 import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/internal/app/storage/fs/adapter"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/vendors/dropbox"
 	"os"
 )
@@ -48,12 +49,21 @@ type Filesystem interface {
 	DeleteDir(dir string) error
 	// CleanDir Empty the specified directory of all files and folders
 	CleanDir(dir string) error
+	// FullPath Get full path
+	FullPath(path string) string
+	// AbsolutePath Get absolute path
+	AbsolutePath(path string) string
 }
 
-func FS(ap string) (Filesystem, error) {
-	switch ap {
+func FS(config *config.AppConfig) (Filesystem, error) {
+	switch config.Storage.Adapter {
 	case dropbox.ID:
 		return &adapter.Dropbox{}, nil
+	case "local":
+		return &adapter.Local{
+			Dir:    config.Storage.Dir,
+			Domain: config.Gateway.Url,
+		}, nil
 	default:
 		return nil, errors.New("not filesystem adapter")
 	}

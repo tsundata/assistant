@@ -6,6 +6,14 @@ import (
 
 type GoogleDrive struct{}
 
+func (g *GoogleDrive) AbsolutePath(path string) string {
+	panic("implement me")
+}
+
+func (g *GoogleDrive) FullPath(path string) string {
+	panic("implement me")
+}
+
 func (g *GoogleDrive) Exists(path string) (bool, error) {
 	panic("implement me")
 }

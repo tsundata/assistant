@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -56,15 +57,23 @@ func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
 	// store
 	uuid := util.UUID()
 
-	f, err := fs.FS(s.conf.Storage.Adapter)
+	f, err := fs.FS(s.conf)
 	if err != nil {
 		return err
 	}
-	path := fmt.Sprintf("upload/%s.%s", uuid, fileType)
+	path := fmt.Sprintf("%s.%s", uuid, fileType)
 	err = f.Put(path, fileData.Bytes(), false)
 	if err != nil {
 		return err
 	}
 
-	return stream.SendAndClose(&pb.FileReply{Path: path})
+	return stream.SendAndClose(&pb.FileReply{Path: f.FullPath(path)})
+}
+
+func (s *Storage) AbsolutePath(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	f, err := fs.FS(s.conf)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TextReply{Text: f.AbsolutePath(payload.Text)}, nil
 }
