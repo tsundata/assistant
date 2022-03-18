@@ -72,11 +72,11 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			authReply, err := gc.userSvc.Authorization(ctx, &pb.AuthRequest{Token: token})
 			if err != nil {
 				gc.logger.Error(err)
-				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
 				return
 			}
 			if !authReply.GetState() {
-				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
 				return
 			}
 
@@ -96,7 +96,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			token := conn.Query("token")
 			userId, err := getUser(gc.userSvc, token)
 			if err != nil {
-				_ = conn.WriteMessage(websocket.TextMessage, []byte("Forbidden"))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
 				return
 			}
 
@@ -123,7 +123,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			userId, err := getUser(gc.userSvc, token)
 			if err != nil {
 				gc.logger.Error(err)
-				return c.SendStatus(http.StatusForbidden)
+				return c.SendStatus(http.StatusUnauthorized)
 			}
 			c.Locals(enum.AuthKey, userId)
 			return c.Next()
@@ -162,10 +162,10 @@ func getUser(userSvc pb.UserSvcClient, token string) (int64, error) {
 	token = strings.ReplaceAll(token, "Bearer ", "")
 	reply, err := userSvc.Authorization(context.Background(), &pb.AuthRequest{Token: token})
 	if err != nil {
-		return 0, errors.New("forbidden")
+		return 0, errors.New("unauthorized")
 	}
 	if !reply.GetState() {
-		return 0, errors.New("forbidden")
+		return 0, errors.New("unauthorized")
 	}
 
 	return reply.Id, nil

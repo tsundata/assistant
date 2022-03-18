@@ -62,6 +62,7 @@ func (s *User) GetAuthToken(_ context.Context, payload *pb.AuthRequest) (*pb.Aut
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  payload.Id,
 		"nbf": time.Now().Unix(),
+		"exp": time.Now().Add(8 * time.Hour).Unix(),
 	})
 
 	tokenString, err := token.SignedString(util.StringToByte(s.conf.Jwt.Secret))
