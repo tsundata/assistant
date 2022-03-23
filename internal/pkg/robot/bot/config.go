@@ -1,6 +1,5 @@
 package bot
 
-
 type Config struct {
 	// Plugin stack
 	Plugin []Plugin

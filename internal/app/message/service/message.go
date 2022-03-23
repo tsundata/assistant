@@ -41,6 +41,7 @@ func NewMessage(
 }
 
 func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+	// todo type
 	// check uuid
 	var message pb.Message
 	message.UserId = payload.Message.GetUserId()

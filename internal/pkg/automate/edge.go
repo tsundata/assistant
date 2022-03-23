@@ -2,7 +2,7 @@ package automate
 
 type Edge struct {
 	FromNode *Node
-	ToNode *Node
+	ToNode   *Node
 }
 
 func AddEdge(from *Node, to *Node) *Edge {

@@ -115,6 +115,9 @@ func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bo
 }
 
 func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
+	if len(tokens) == 0 {
+		return map[int64][]pb.MsgPayload{}, nil
+	}
 	out := make(map[int64][]pb.MsgPayload)
 	var input interface{} = tokens[0].Value
 	var output interface{}
