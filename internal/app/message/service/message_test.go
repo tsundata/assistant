@@ -24,7 +24,7 @@ func TestMessage_List(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, nil)
+	s := NewMessage(nil, nil, nil, repo, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -73,7 +73,7 @@ func TestMessage_Get(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, nil)
+	s := NewMessage(nil, nil, nil, repo, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -132,7 +132,7 @@ func TestMessage_Create(t *testing.T) {
 		repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMessage(bus, nil, nil, repo, nil)
+	s := NewMessage(bus, nil, nil, repo, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -184,7 +184,7 @@ func TestMessage_Delete(t *testing.T) {
 		repo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(gorm.ErrRecordNotFound),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, nil)
+	s := NewMessage(nil, nil, nil, repo, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -242,7 +242,7 @@ func TestMessage_Run(t *testing.T) {
 			Return(pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, chatbot)
+	s := NewMessage(nil, nil, nil, repo, chatbot, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -293,7 +293,7 @@ func TestMessage_GetActionMessages(t *testing.T) {
 		repo.EXPECT().ListByType(gomock.Any(), gomock.Any()).Return([]*pb.Message{{Id: 1, Text: "test"}}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, nil)
+	s := NewMessage(nil, nil, nil, repo, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -340,7 +340,7 @@ func TestMessage_CreateActionMessage(t *testing.T) {
 		chatbot.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, chatbot)
+	s := NewMessage(nil, nil, nil, repo, chatbot, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -393,7 +393,7 @@ func TestMessage_DeleteWorkflowMessage(t *testing.T) {
 		chatbot.EXPECT().DeleteTrigger(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, repo, chatbot)
+	s := NewMessage(nil, nil, nil, repo, chatbot, nil)
 
 	type args struct {
 		ctx     context.Context

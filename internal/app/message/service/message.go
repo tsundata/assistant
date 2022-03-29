@@ -138,6 +138,9 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		err = uc.Send(&pb.FileRequest{
 			Data: &pb.FileRequest_Info{Info: &pb.FileInfo{FileType: "png"}},
 		})
+		if err != nil {
+			return nil, err
+		}
 		for {
 			n, err := data.Read(buf)
 			if err == io.EOF {
