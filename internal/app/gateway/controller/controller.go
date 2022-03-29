@@ -115,6 +115,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Get("/qr/:text", gc.QR)
 		router.Get("/webhook/:flag", gc.Webhook)
 		router.Post("/webhook/:flag", gc.Webhook)
+		router.Get("file/:path", gc.GetFile)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
@@ -148,7 +149,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Get("system/setting", gc.GetSystemSetting)
 		internal.Post("setting", gc.UpdateSetting)
 		internal.Get("apps", gc.GetApps)
-		internal.Get("file/:path", gc.GetFile)
+		internal.Post("file/upload", gc.UploadFile)
 
 		// 404
 		router.Use(func(c *fiber.Ctx) error {

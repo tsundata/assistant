@@ -77,14 +77,16 @@ message Message {
   // @inject_tag: db:"updated_at"
   int64 updated_at = 15;
 
-  // @inject_tag: db:"send_time" gorm:"->"
+  // @inject_tag: gorm:"->"
   string send_time = 16;
-  // @inject_tag: db:"sender_name" gorm:"->"
+  // @inject_tag: gorm:"->"
   string sender_name = 17;
-  // @inject_tag: db:"direction" gorm:"->"
+  // @inject_tag: gorm:"->"
   string direction = 18;
-  // @inject_tag: db:"direction" gorm:"-"
+  // @inject_tag:gorm:"-"
   Avatar avatar = 19;
+  // @inject_tag: gorm:"-"
+  bytes data = 20;
 }
 
 message Action {

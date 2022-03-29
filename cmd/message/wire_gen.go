@@ -79,7 +79,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, chatbotSvcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, chatbotSvcClient, storageSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
@@ -93,7 +97,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, logLogger, server, messageRepository, chatbotSvcClient)
+	application, err := message.NewApp(appConfig, bus, logLogger, server, messageRepository, chatbotSvcClient, storageSvcClient)
 	if err != nil {
 		return nil, err
 	}
