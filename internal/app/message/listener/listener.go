@@ -17,7 +17,8 @@ import (
 	"strings"
 )
 
-func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, repo repository.MessageRepository, chatbot pb.ChatbotSvcClient) error {
+func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, repo repository.MessageRepository,
+	chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) error {
 	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
 		return nil
@@ -33,7 +34,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			return err
 		}
 
-		message := service.NewMessage(bus, logger, config, repo, chatbot)
+		message := service.NewMessage(bus, logger, config, repo, chatbot, storage)
 		_, err = message.Send(context.Background(), &pb.MessageRequest{Message: &m})
 		if err != nil {
 			return err

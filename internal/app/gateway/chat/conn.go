@@ -1,9 +1,9 @@
 package chat
 
 import (
+	"encoding/json"
 	"github.com/gofiber/websocket/v2"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"log"
 	"time"
 )
@@ -19,7 +19,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 512
+	maxMessageSize = 1024
 )
 
 // connection is an middleman between the websocket connection and the hub.
@@ -49,7 +49,13 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-		m := message{pb.Message{Text: util.ByteToString(msg)}, s.roomId, s.userId}
+		var data wsData
+		err = json.Unmarshal(msg, &data)
+		if err != nil {
+			log.Printf("error: %v", err)
+			continue
+		}
+		m := message{pb.Message{Text: data.Data, Type: data.Type}, s.roomId, s.userId}
 		s.h.incoming <- m
 	}
 }
@@ -98,4 +104,9 @@ func ServeWs(h *Hub, conn *websocket.Conn, roomId, userId int64) {
 	h.register <- s
 	go s.writePump()
 	s.readPump()
+}
+
+type wsData struct {
+	Type string `json:"type"`
+	Data string `json:"data"`
 }

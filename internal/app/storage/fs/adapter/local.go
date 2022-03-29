@@ -14,7 +14,7 @@ func (l *Local) AbsolutePath(path string) string {
 }
 
 func (l *Local) FullPath(path string) string {
-	return l.Domain + path
+	return l.Domain + "/file/" + path
 }
 
 func (l *Local) Exists(path string) (bool, error) {

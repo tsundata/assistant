@@ -14,7 +14,7 @@ import (
 )
 
 func Backup(ctx context.Context, comp component.Component) []result.Result {
-	if comp.Middle() == nil || comp.Message() == nil{
+	if comp.Middle() == nil || comp.Message() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
 	app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: dropbox.ID})

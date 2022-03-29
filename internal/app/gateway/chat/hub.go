@@ -112,6 +112,7 @@ func (h *Hub) Run() {
 					UserId:  m.userId,
 					Uuid:    uuid,
 					Text:    m.data.Text,
+					Type:    m.data.Type,
 					GroupId: m.roomId,
 				},
 			})

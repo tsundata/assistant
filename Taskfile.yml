@@ -125,3 +125,8 @@ tasks:
     desc: Database migration
     cmds:
       - go run github.com/tsundata/assistant/cmd/cli migrate
+
+  fmt:
+    desc: fmt
+    cmds:
+      - gofmt -w internal/

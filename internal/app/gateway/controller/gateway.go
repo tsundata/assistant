@@ -20,6 +20,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health/grpc_health_v1"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -529,9 +530,51 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 
 func (gc *GatewayController) GetFile(c *fiber.Ctx) error {
 	path := c.Params("path")
-	reply, err := gc.storageSvc.AbsolutePath(md.Outgoing(c), &pb.TextRequest{Text: path})
+	reply, err := gc.storageSvc.AbsolutePath(md.BuildAuthContext(enum.SuperUserID), &pb.TextRequest{Text: path})
 	if err != nil {
 		return err
 	}
 	return c.SendFile(reply.Text, false)
+}
+
+func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
+	token := c.Get("Authorization")
+	userId, err := getUser(gc.userSvc, token)
+	if err != nil {
+		return err
+	}
+
+	// file
+	fh, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+	f, err := fh.Open()
+	if err != nil {
+		return err
+	}
+	data, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	// group id
+	ctx := md.BuildAuthContext(userId)
+	groupReply, err := gc.chatbotSvc.GetGroup(ctx, &pb.GroupRequest{Group: &pb.Group{Uuid: c.FormValue("group_uuid")}})
+	if err != nil {
+		return err
+	}
+	// save
+	reply, err := gc.messageSvc.Create(md.Outgoing(c), &pb.MessageRequest{Message: &pb.Message{
+		UserId:  userId,
+		Uuid:    util.UUID(),
+		Type:    c.FormValue("type"),
+		Data:    data,
+		GroupId: groupReply.Group.Id,
+	}})
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(reply)
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"github.com/pkg/errors"
@@ -14,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
+	"io"
 	"strings"
 )
 
@@ -23,6 +25,7 @@ type Message struct {
 	logger  log.Logger
 	repo    repository.MessageRepository
 	chatbot pb.ChatbotSvcClient
+	storage pb.StorageSvcClient
 }
 
 func NewMessage(
@@ -30,13 +33,15 @@ func NewMessage(
 	logger log.Logger,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
-	chatbot pb.ChatbotSvcClient) *Message {
+	chatbot pb.ChatbotSvcClient,
+	storage pb.StorageSvcClient) *Message {
 	return &Message{
 		bus:     bus,
 		logger:  logger,
 		config:  config,
 		repo:    repo,
 		chatbot: chatbot,
+		storage: storage,
 	}
 }
 
@@ -50,12 +55,19 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	message.SenderType = enum.MessageUserType
 	message.Receiver = payload.Message.GetGroupId()
 	message.ReceiverType = enum.MessageGroupType
-	message.Type = string(enum.MessageTypeText)
-	message.Text = strings.TrimSpace(payload.Message.GetText())
 	if payload.Message.GetPayload() != "" {
 		message.Payload = payload.Message.GetPayload()
 	} else {
 		message.Payload = "{}"
+	}
+
+	// before
+	switch enum.MessageType(payload.Message.Type) {
+	case enum.MessageTypeImage:
+		message.Type = string(enum.MessageTypeImage)
+	default:
+		message.Type = string(enum.MessageTypeText)
+		message.Text = strings.TrimSpace(payload.Message.GetText())
 	}
 
 	// check
@@ -97,7 +109,9 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		return nil, err
 	}
 
-	if enum.MessageType(message.Type) == enum.MessageTypeScript {
+	// after
+	switch enum.MessageType(message.Type) {
+	case enum.MessageTypeScript:
 		_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
 			Trigger: &pb.Trigger{
 				Kind:      string(enum.MessageTypeScript),
@@ -114,7 +128,46 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		if err != nil {
 			return nil, err
 		}
-	} else {
+	case enum.MessageTypeImage:
+		data := bytes.NewReader(payload.Message.Data)
+		buf := make([]byte, 1024)
+		uc, err := m.storage.UploadFile(ctx)
+		if err != nil {
+			return nil, err
+		}
+		err = uc.Send(&pb.FileRequest{
+			Data: &pb.FileRequest_Info{Info: &pb.FileInfo{FileType: "png"}},
+		})
+		for {
+			n, err := data.Read(buf)
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+			err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Chuck{Chuck: buf[:n]}})
+			if err != nil {
+				return nil, err
+			}
+		}
+		fileReply, err := uc.CloseAndRecv()
+		if err != nil {
+			return nil, err
+		}
+		imageMsg := pb.ImageMsg{
+			Src: fileReply.Path,
+		}
+		p, err := json.Marshal(imageMsg)
+		if err != nil {
+			return nil, err
+		}
+		message.Payload = util.ByteToString(p)
+		err = m.repo.Save(ctx, &message)
+		if err != nil {
+			return nil, err
+		}
+	default:
 		// bot handle
 		err = m.bus.Publish(ctx, enum.Message, event.MessageHandleSubject, message)
 		if err != nil {

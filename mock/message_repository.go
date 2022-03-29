@@ -231,6 +231,20 @@ func (mr *MockMessageRepositoryMockRecorder) ListInbox(ctx, userId, page, limit 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListInbox", reflect.TypeOf((*MockMessageRepository)(nil).ListInbox), ctx, userId, page, limit)
 }
 
+// Save mocks base method.
+func (m *MockMessageRepository) Save(ctx context.Context, message *pb.Message) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", ctx, message)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Save indicates an expected call of Save.
+func (mr *MockMessageRepositoryMockRecorder) Save(ctx, message interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockMessageRepository)(nil).Save), ctx, message)
+}
+
 // UpdateInboxStatus mocks base method.
 func (m *MockMessageRepository) UpdateInboxStatus(ctx context.Context, id int64, status int) error {
 	m.ctrl.T.Helper()
