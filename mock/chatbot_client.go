@@ -396,24 +396,24 @@ func (mr *MockChatbotSvcClientMockRecorder) Register(ctx, in interface{}, opts .
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockChatbotSvcClient)(nil).Register), varargs...)
 }
 
-// RunAction mocks base method.
-func (m *MockChatbotSvcClient) RunAction(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+// RunActionScript mocks base method.
+func (m *MockChatbotSvcClient) RunActionScript(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "RunAction", varargs...)
+	ret := m.ctrl.Call(m, "RunActionScript", varargs...)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// RunAction indicates an expected call of RunAction.
-func (mr *MockChatbotSvcClientMockRecorder) RunAction(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+// RunActionScript indicates an expected call of RunActionScript.
+func (mr *MockChatbotSvcClientMockRecorder) RunActionScript(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockChatbotSvcClient)(nil).RunAction), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunActionScript", reflect.TypeOf((*MockChatbotSvcClient)(nil).RunActionScript), varargs...)
 }
 
 // SyntaxCheck mocks base method.
@@ -809,19 +809,19 @@ func (mr *MockChatbotSvcServerMockRecorder) Register(arg0, arg1 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockChatbotSvcServer)(nil).Register), arg0, arg1)
 }
 
-// RunAction mocks base method.
-func (m *MockChatbotSvcServer) RunAction(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+// RunActionScript mocks base method.
+func (m *MockChatbotSvcServer) RunActionScript(arg0 context.Context, arg1 *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RunAction", arg0, arg1)
+	ret := m.ctrl.Call(m, "RunActionScript", arg0, arg1)
 	ret0, _ := ret[0].(*pb.WorkflowReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// RunAction indicates an expected call of RunAction.
-func (mr *MockChatbotSvcServerMockRecorder) RunAction(arg0, arg1 interface{}) *gomock.Call {
+// RunActionScript indicates an expected call of RunActionScript.
+func (mr *MockChatbotSvcServerMockRecorder) RunActionScript(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAction", reflect.TypeOf((*MockChatbotSvcServer)(nil).RunAction), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunActionScript", reflect.TypeOf((*MockChatbotSvcServer)(nil).RunActionScript), arg0, arg1)
 }
 
 // SyntaxCheck mocks base method.

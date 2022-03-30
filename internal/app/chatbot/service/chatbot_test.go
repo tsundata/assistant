@@ -754,7 +754,7 @@ func TestChatbot_RunAction(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.RunAction(tt.args.in0, tt.args.payload)
+			got, err := tt.s.RunActionScript(tt.args.in0, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Workflow.RunAction() error = %v, wantErr %v", err, tt.wantErr)
 				return

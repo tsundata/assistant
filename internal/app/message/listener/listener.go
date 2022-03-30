@@ -21,6 +21,9 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 	chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) error {
 	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
+		if msg.Callback != nil {
+			return bus.Publish(context.Background(), msg.Callback.Service, msg.Callback.Subject, pb.Message{Text: "echo"})
+		}
 		return nil
 	})
 	if err != nil {

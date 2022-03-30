@@ -24,9 +24,7 @@ service MessageSvc {
   rpc Delete(MessageRequest) returns (TextReply) {}
   rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}
-  rpc GetActionMessages(TextRequest) returns (ActionReply) {}
-  rpc CreateActionMessage(TextRequest) returns (StateReply) {}
-  rpc DeleteWorkflowMessage(MessageRequest) returns (StateReply) {}
+  rpc Action(ActionRequest) returns (ActionReply) {}
   rpc ListInbox(InboxRequest) returns (InboxReply) {}
   rpc LastInbox(InboxRequest) returns (InboxReply) {}
   rpc MarkSendInbox(InboxRequest) returns (InboxReply) {}
@@ -70,32 +68,25 @@ message Message {
   string text = 11;
   // @inject_tag: db:"payload"
   string payload = 12;
+  // @inject_tag: db:"action"
+  string action = 13;
   // @inject_tag: db:"status"
-  int32 status = 13;
+  int32 status = 14;
   // @inject_tag: db:"created_at"
-  int64 created_at = 14;
+  int64 created_at = 15;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 15;
+  int64 updated_at = 16;
 
   // @inject_tag: gorm:"->"
-  string send_time = 16;
+  string send_time = 17;
   // @inject_tag: gorm:"->"
-  string sender_name = 17;
+  string sender_name = 18;
   // @inject_tag: gorm:"->"
-  string direction = 18;
+  string direction = 19;
   // @inject_tag:gorm:"-"
-  Avatar avatar = 19;
+  Avatar avatar = 20;
   // @inject_tag: gorm:"-"
-  bytes data = 20;
-}
-
-message Action {
-  int64 id = 1;
-  string text = 2;
-}
-
-message ActionReply {
-  repeated Action items = 1;
+  bytes data = 21;
 }
 
 message Alert {
@@ -202,4 +193,12 @@ message InboxReply {
   int32 page = 2;
   int32 page_size = 3;
   repeated Inbox inbox = 4;
+}
+
+message ActionRequest {
+
+}
+
+message ActionReply {
+
 }

@@ -31,7 +31,7 @@ service ChatbotSvc {
   rpc DeleteGroup(GroupRequest) returns (StateReply) {}
   rpc UpdateGroup(GroupRequest) returns (StateReply) {}
   rpc SyntaxCheck(WorkflowRequest) returns (StateReply) {}
-  rpc RunAction(WorkflowRequest) returns (WorkflowReply) {}
+  rpc RunActionScript(WorkflowRequest) returns (WorkflowReply) {}
   rpc WebhookTrigger(TriggerRequest) returns (WorkflowReply) {}
   rpc CronTrigger(TriggerRequest) returns (WorkflowReply) {}
   rpc CreateTrigger(TriggerRequest) returns (StateReply) {}

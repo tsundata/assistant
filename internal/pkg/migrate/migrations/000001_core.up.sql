@@ -82,6 +82,7 @@ create table if not exists `messages`
     `type`          varchar(12)         NOT NULL DEFAULT '',
     `text`          varchar(2048)       NOT NULL DEFAULT '',
     `payload`       varchar(5120)       NOT NULL DEFAULT '',
+    `action`        varchar(5120)       NOT NULL DEFAULT '',
     `status`        TINYINT(2)          NOT NULL,
     `created_at`    INT(10)             NOT NULL DEFAULT '0',
     `updated_at`    INT(10)             NOT NULL DEFAULT '0',

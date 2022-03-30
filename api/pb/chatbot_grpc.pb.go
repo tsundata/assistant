@@ -35,7 +35,7 @@ type ChatbotSvcClient interface {
 	DeleteGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	UpdateGroup(ctx context.Context, in *GroupRequest, opts ...grpc.CallOption) (*StateReply, error)
 	SyntaxCheck(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*StateReply, error)
-	RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	RunActionScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
@@ -205,9 +205,9 @@ func (c *chatbotSvcClient) SyntaxCheck(ctx context.Context, in *WorkflowRequest,
 	return out, nil
 }
 
-func (c *chatbotSvcClient) RunAction(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+func (c *chatbotSvcClient) RunActionScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
 	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/RunAction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/RunActionScript", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +289,7 @@ type ChatbotSvcServer interface {
 	DeleteGroup(context.Context, *GroupRequest) (*StateReply, error)
 	UpdateGroup(context.Context, *GroupRequest) (*StateReply, error)
 	SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error)
-	RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	RunActionScript(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 	WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
 	CronTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
 	CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error)
@@ -353,8 +353,8 @@ func (UnimplementedChatbotSvcServer) UpdateGroup(context.Context, *GroupRequest)
 func (UnimplementedChatbotSvcServer) SyntaxCheck(context.Context, *WorkflowRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyntaxCheck not implemented")
 }
-func (UnimplementedChatbotSvcServer) RunAction(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RunAction not implemented")
+func (UnimplementedChatbotSvcServer) RunActionScript(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunActionScript not implemented")
 }
 func (UnimplementedChatbotSvcServer) WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebhookTrigger not implemented")
@@ -692,20 +692,20 @@ func _ChatbotSvc_SyntaxCheck_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatbotSvc_RunAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ChatbotSvc_RunActionScript_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkflowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotSvcServer).RunAction(ctx, in)
+		return srv.(ChatbotSvcServer).RunActionScript(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.ChatbotSvc/RunAction",
+		FullMethod: "/pb.ChatbotSvc/RunActionScript",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotSvcServer).RunAction(ctx, req.(*WorkflowRequest))
+		return srv.(ChatbotSvcServer).RunActionScript(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -894,8 +894,8 @@ var ChatbotSvc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatbotSvc_SyntaxCheck_Handler,
 		},
 		{
-			MethodName: "RunAction",
-			Handler:    _ChatbotSvc_RunAction_Handler,
+			MethodName: "RunActionScript",
+			Handler:    _ChatbotSvc_RunActionScript_Handler,
 		},
 		{
 			MethodName: "WebhookTrigger",

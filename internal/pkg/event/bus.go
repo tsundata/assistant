@@ -12,8 +12,14 @@ import (
 )
 
 type Msg struct {
+	Subject  Subject
+	Data     []byte
+	Callback *Callback
+}
+
+type Callback struct {
+	Service string
 	Subject Subject
-	Data    []byte
 }
 
 type MsgHandler func(msg *Msg) error

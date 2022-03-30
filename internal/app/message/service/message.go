@@ -172,7 +172,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		}
 	default:
 		// bot handle
-		err = m.bus.Publish(ctx, enum.Message, event.MessageHandleSubject, message)
+		err = m.bus.Publish(ctx, enum.Message, event.BotHandleSubject, message)
 		if err != nil {
 			return nil, err
 		}
@@ -399,7 +399,7 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 	switch enum.MessageType(message.Type) {
 	case enum.MessageTypeScript:
-		wfReply, err := m.chatbot.RunAction(ctx, &pb.WorkflowRequest{Text: message.RemoveActionScriptFlag()})
+		wfReply, err := m.chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Text: message.RemoveActionScriptFlag()})
 		if err != nil {
 			return nil, err
 		}
@@ -413,80 +413,8 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 	}, nil
 }
 
-func (m *Message) GetActionMessages(ctx context.Context, _ *pb.TextRequest) (*pb.ActionReply, error) {
-	var items []*pb.Message
-	items, err := m.repo.ListByType(ctx, string(enum.MessageTypeScript))
-	if err != nil {
-		return nil, err
-	}
-
-	var kvs []*pb.Action
-	for _, item := range items {
-		kvs = append(kvs, &pb.Action{
-			Id:   item.Id,
-			Text: item.Text,
-		})
-	}
-
-	return &pb.ActionReply{
-		Items: kvs,
-	}, nil
-}
-
-func (m *Message) CreateActionMessage(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
-	if payload.GetText() == "" {
-		return &pb.StateReply{State: false}, nil
-	}
-
-	// check syntax
-	_, err := m.chatbot.SyntaxCheck(ctx, &pb.WorkflowRequest{
-		Text: payload.GetText(),
-		Type: string(enum.MessageTypeScript),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// store message
-	uuid := util.UUID()
-	id, err := m.repo.Create(ctx, &pb.Message{
-		Uuid: uuid,
-		Type: string(enum.MessageTypeScript),
-		Text: payload.GetText(),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// check/create trigger
-	_, err = m.chatbot.CreateTrigger(ctx, &pb.TriggerRequest{
-		Trigger: &pb.Trigger{
-			Kind:      string(enum.MessageTypeScript),
-			MessageId: id,
-		},
-		Info: &pb.TriggerInfo{
-			MessageText: payload.GetText(),
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.StateReply{State: true}, nil
-}
-
-func (m *Message) DeleteWorkflowMessage(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
-	err := m.repo.Delete(ctx, payload.Message.GetId())
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = m.chatbot.DeleteTrigger(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{MessageId: payload.Message.GetId()}})
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.StateReply{State: true}, nil
+func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.ActionReply, error) {
+	panic("implement me")
 }
 
 func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {

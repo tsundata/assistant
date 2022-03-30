@@ -19,7 +19,7 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 	middle pb.MiddleSvcClient, repo repository.ChatbotRepository, comp component.Component) error {
 	ctx := context.Background()
 
-	err := bus.Subscribe(ctx, enum.Chatbot, event.MessageHandleSubject, func(msg *event.Msg) error {
+	err := bus.Subscribe(ctx, enum.Chatbot, event.BotHandleSubject, func(msg *event.Msg) error {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
@@ -65,11 +65,18 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		switch enum.MessageType(m.GetType()) {
 		case enum.MessageTypeScript:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-			_, err := chatbot.RunAction(ctx, &pb.WorkflowRequest{Message: &m})
+			_, err := chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
 			if err != nil {
 				return err
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	err = bus.Subscribe(ctx, enum.Chatbot, event.BotActionSubject, func(msg *event.Msg) error {
 		return nil
 	})
 	if err != nil {

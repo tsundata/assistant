@@ -36,6 +36,26 @@ func (m *MockMessageSvcClient) EXPECT() *MockMessageSvcClientMockRecorder {
 	return m.recorder
 }
 
+// Action mocks base method.
+func (m *MockMessageSvcClient) Action(ctx context.Context, in *pb.ActionRequest, opts ...grpc.CallOption) (*pb.ActionReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Action", varargs...)
+	ret0, _ := ret[0].(*pb.ActionReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Action indicates an expected call of Action.
+func (mr *MockMessageSvcClientMockRecorder) Action(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Action", reflect.TypeOf((*MockMessageSvcClient)(nil).Action), varargs...)
+}
+
 // Create mocks base method.
 func (m *MockMessageSvcClient) Create(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
@@ -56,26 +76,6 @@ func (mr *MockMessageSvcClientMockRecorder) Create(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageSvcClient)(nil).Create), varargs...)
 }
 
-// CreateActionMessage mocks base method.
-func (m *MockMessageSvcClient) CreateActionMessage(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "CreateActionMessage", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateActionMessage indicates an expected call of CreateActionMessage.
-func (mr *MockMessageSvcClientMockRecorder) CreateActionMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).CreateActionMessage), varargs...)
-}
-
 // Delete mocks base method.
 func (m *MockMessageSvcClient) Delete(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -94,46 +94,6 @@ func (mr *MockMessageSvcClientMockRecorder) Delete(ctx, in interface{}, opts ...
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcClient)(nil).Delete), varargs...)
-}
-
-// DeleteWorkflowMessage mocks base method.
-func (m *MockMessageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "DeleteWorkflowMessage", varargs...)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DeleteWorkflowMessage indicates an expected call of DeleteWorkflowMessage.
-func (mr *MockMessageSvcClientMockRecorder) DeleteWorkflowMessage(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcClient)(nil).DeleteWorkflowMessage), varargs...)
-}
-
-// GetActionMessages mocks base method.
-func (m *MockMessageSvcClient) GetActionMessages(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.ActionReply, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetActionMessages", varargs...)
-	ret0, _ := ret[0].(*pb.ActionReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetActionMessages indicates an expected call of GetActionMessages.
-func (mr *MockMessageSvcClientMockRecorder) GetActionMessages(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcClient)(nil).GetActionMessages), varargs...)
 }
 
 // GetById mocks base method.
@@ -419,6 +379,21 @@ func (m *MockMessageSvcServer) EXPECT() *MockMessageSvcServerMockRecorder {
 	return m.recorder
 }
 
+// Action mocks base method.
+func (m *MockMessageSvcServer) Action(arg0 context.Context, arg1 *pb.ActionRequest) (*pb.ActionReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Action", arg0, arg1)
+	ret0, _ := ret[0].(*pb.ActionReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Action indicates an expected call of Action.
+func (mr *MockMessageSvcServerMockRecorder) Action(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Action", reflect.TypeOf((*MockMessageSvcServer)(nil).Action), arg0, arg1)
+}
+
 // Create mocks base method.
 func (m *MockMessageSvcServer) Create(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.MessageReply, error) {
 	m.ctrl.T.Helper()
@@ -434,21 +409,6 @@ func (mr *MockMessageSvcServerMockRecorder) Create(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMessageSvcServer)(nil).Create), arg0, arg1)
 }
 
-// CreateActionMessage mocks base method.
-func (m *MockMessageSvcServer) CreateActionMessage(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateActionMessage", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateActionMessage indicates an expected call of CreateActionMessage.
-func (mr *MockMessageSvcServerMockRecorder) CreateActionMessage(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateActionMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).CreateActionMessage), arg0, arg1)
-}
-
 // Delete mocks base method.
 func (m *MockMessageSvcServer) Delete(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -462,36 +422,6 @@ func (m *MockMessageSvcServer) Delete(arg0 context.Context, arg1 *pb.MessageRequ
 func (mr *MockMessageSvcServerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcServer)(nil).Delete), arg0, arg1)
-}
-
-// DeleteWorkflowMessage mocks base method.
-func (m *MockMessageSvcServer) DeleteWorkflowMessage(arg0 context.Context, arg1 *pb.MessageRequest) (*pb.StateReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteWorkflowMessage", arg0, arg1)
-	ret0, _ := ret[0].(*pb.StateReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DeleteWorkflowMessage indicates an expected call of DeleteWorkflowMessage.
-func (mr *MockMessageSvcServerMockRecorder) DeleteWorkflowMessage(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkflowMessage", reflect.TypeOf((*MockMessageSvcServer)(nil).DeleteWorkflowMessage), arg0, arg1)
-}
-
-// GetActionMessages mocks base method.
-func (m *MockMessageSvcServer) GetActionMessages(arg0 context.Context, arg1 *pb.TextRequest) (*pb.ActionReply, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetActionMessages", arg0, arg1)
-	ret0, _ := ret[0].(*pb.ActionReply)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetActionMessages indicates an expected call of GetActionMessages.
-func (mr *MockMessageSvcServerMockRecorder) GetActionMessages(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionMessages", reflect.TypeOf((*MockMessageSvcServer)(nil).GetActionMessages), arg0, arg1)
 }
 
 // GetById mocks base method.

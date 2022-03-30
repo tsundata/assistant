@@ -481,7 +481,7 @@ func (s *Chatbot) SyntaxCheck(_ context.Context, payload *pb.WorkflowRequest) (*
 	}
 }
 
-func (s *Chatbot) RunAction(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
+func (s *Chatbot) RunActionScript(ctx context.Context, payload *pb.WorkflowRequest) (*pb.WorkflowReply, error) {
 	if payload.Message.GetText() == "" {
 		return nil, errors.New("empty action")
 	}

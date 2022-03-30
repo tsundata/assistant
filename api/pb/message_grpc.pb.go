@@ -29,9 +29,7 @@ type MessageSvcClient interface {
 	Delete(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
 	Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
-	GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error)
-	CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
-	DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
+	Action(ctx context.Context, in *ActionRequest, opts ...grpc.CallOption) (*ActionReply, error)
 	ListInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
 	LastInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
 	MarkSendInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
@@ -145,27 +143,9 @@ func (c *messageSvcClient) Run(ctx context.Context, in *MessageRequest, opts ...
 	return out, nil
 }
 
-func (c *messageSvcClient) GetActionMessages(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*ActionReply, error) {
+func (c *messageSvcClient) Action(ctx context.Context, in *ActionRequest, opts ...grpc.CallOption) (*ActionReply, error) {
 	out := new(ActionReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/GetActionMessages", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *messageSvcClient) CreateActionMessage(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/CreateActionMessage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *messageSvcClient) DeleteWorkflowMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error) {
-	out := new(StateReply)
-	err := c.cc.Invoke(ctx, "/pb.MessageSvc/DeleteWorkflowMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Action", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -223,9 +203,7 @@ type MessageSvcServer interface {
 	Delete(context.Context, *MessageRequest) (*TextReply, error)
 	Send(context.Context, *MessageRequest) (*StateReply, error)
 	Run(context.Context, *MessageRequest) (*TextReply, error)
-	GetActionMessages(context.Context, *TextRequest) (*ActionReply, error)
-	CreateActionMessage(context.Context, *TextRequest) (*StateReply, error)
-	DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error)
+	Action(context.Context, *ActionRequest) (*ActionReply, error)
 	ListInbox(context.Context, *InboxRequest) (*InboxReply, error)
 	LastInbox(context.Context, *InboxRequest) (*InboxReply, error)
 	MarkSendInbox(context.Context, *InboxRequest) (*InboxReply, error)
@@ -269,14 +247,8 @@ func (UnimplementedMessageSvcServer) Send(context.Context, *MessageRequest) (*St
 func (UnimplementedMessageSvcServer) Run(context.Context, *MessageRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
 }
-func (UnimplementedMessageSvcServer) GetActionMessages(context.Context, *TextRequest) (*ActionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetActionMessages not implemented")
-}
-func (UnimplementedMessageSvcServer) CreateActionMessage(context.Context, *TextRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateActionMessage not implemented")
-}
-func (UnimplementedMessageSvcServer) DeleteWorkflowMessage(context.Context, *MessageRequest) (*StateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteWorkflowMessage not implemented")
+func (UnimplementedMessageSvcServer) Action(context.Context, *ActionRequest) (*ActionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Action not implemented")
 }
 func (UnimplementedMessageSvcServer) ListInbox(context.Context, *InboxRequest) (*InboxReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListInbox not implemented")
@@ -500,56 +472,20 @@ func _MessageSvc_Run_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageSvc_GetActionMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
+func _MessageSvc_Action_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageSvcServer).GetActionMessages(ctx, in)
+		return srv.(MessageSvcServer).Action(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.MessageSvc/GetActionMessages",
+		FullMethod: "/pb.MessageSvc/Action",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).GetActionMessages(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MessageSvc_CreateActionMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageSvcServer).CreateActionMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MessageSvc/CreateActionMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).CreateActionMessage(ctx, req.(*TextRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MessageSvc_DeleteWorkflowMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MessageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageSvcServer).DeleteWorkflowMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MessageSvc/DeleteWorkflowMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageSvcServer).DeleteWorkflowMessage(ctx, req.(*MessageRequest))
+		return srv.(MessageSvcServer).Action(ctx, req.(*ActionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -678,16 +614,8 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MessageSvc_Run_Handler,
 		},
 		{
-			MethodName: "GetActionMessages",
-			Handler:    _MessageSvc_GetActionMessages_Handler,
-		},
-		{
-			MethodName: "CreateActionMessage",
-			Handler:    _MessageSvc_CreateActionMessage_Handler,
-		},
-		{
-			MethodName: "DeleteWorkflowMessage",
-			Handler:    _MessageSvc_DeleteWorkflowMessage_Handler,
+			MethodName: "Action",
+			Handler:    _MessageSvc_Action_Handler,
 		},
 		{
 			MethodName: "ListInbox",
