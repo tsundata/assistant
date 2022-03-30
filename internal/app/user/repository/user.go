@@ -10,6 +10,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
+	"time"
 )
 
 type UserRepository interface {
@@ -84,7 +85,9 @@ func (r *MysqlUserRepository) ChangeRoleAttr(ctx context.Context, userID int64, 
 		oldVal = item.Intellect
 	}
 
-	err = r.db.WithContext(ctx).Exec(fmt.Sprintf("UPDATE `roles` SET `%s` = ? WHERE `user_id` = ?", attr), oldVal+val, userID).Error
+	err = r.db.WithContext(ctx).
+		Exec(fmt.Sprintf("UPDATE `roles` SET `%s` = ?, `updated_at` = ? WHERE `user_id` = ?", attr), oldVal+val, time.Now().Unix(), userID).
+		Error
 	if err != nil {
 		return err
 	}
@@ -93,11 +96,16 @@ func (r *MysqlUserRepository) ChangeRoleAttr(ctx context.Context, userID int64, 
 }
 
 func (r *MysqlUserRepository) roleRecord(ctx context.Context, userId int64, exp int64, attr string, val int64) {
+	now := time.Now().Unix()
 	var err error
 	if attr != "" {
-		err = r.db.WithContext(ctx).Exec(fmt.Sprintf("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`, `%s`) VALUES (?, '', ?, ?, ?)", attr), r.id.Generate(ctx), userId, exp, val).Error
+		err = r.db.WithContext(ctx).
+			Exec(fmt.Sprintf("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`, `%s`, `created_at`, `updated_at`) VALUES (?, '', ?, ?, ?, ?, ?)", attr), r.id.Generate(ctx), userId, exp, val, now, now).
+			Error
 	} else {
-		err = r.db.WithContext(ctx).Exec("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`) VALUES (?, '', ?, ?)", r.id.Generate(ctx), userId, exp).Error
+		err = r.db.WithContext(ctx).
+			Exec("INSERT INTO `role_records` (`id`, `profession`, `user_id`, `exp`, `created_at`, `updated_at`) VALUES (?, '', ?, ?, ?, ?)", r.id.Generate(ctx), userId, exp, now, now).
+			Error
 	}
 	if err != nil {
 		r.logger.Error(err)
