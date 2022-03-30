@@ -1,4 +1,98 @@
 
+<a name="v0.2.1"></a>
+## [v0.2.1](https://github.com/tsundata/assistant/compare/v0.2...v0.2.1) (2021-12-24)
+
+### Bug Fixes
+
+* go mod version
+* sql uuid field length
+* wire gen
+* create message service
+* create message rpc
+
+### Code Refactoring
+
+* bot
+* chatbot handle
+* repository return
+* group rpc
+* proto
+* sql
+* bot dir
+* resty SetBaseURL
+* todo service get user id
+* model with user_id
+* protoc grpc require_unimplemented_servers=false
+* create group
+*  message repository
+* group service
+* user, chatbot service
+* rollbar error
+* remove agent
+
+### Features
+
+* health check
+* trace request id
+* grpc auth interceptor
+* group tag repository
+* chatbot group setting repository
+* message sequence
+* global transaction
+* update go 1.17
+* grpc metadata auth id
+* buf
+* global lock
+* id service
+* global id
+* swagger github action
+* swagger docs
+* user login rpc
+
+### Pull Requests
+
+* Merge pull request [#155](https://github.com/tsundata/assistant/issues/155) from tsundata/dependabot/go_modules/google.golang.org/grpc-1.43.0
+* Merge pull request [#154](https://github.com/tsundata/assistant/issues/154) from tsundata/dependabot/go_modules/github.com/spf13/viper-1.10.1
+* Merge pull request [#156](https://github.com/tsundata/assistant/issues/156) from tsundata/dependabot/go_modules/github.com/spf13/cobra-1.3.0
+* Merge pull request [#153](https://github.com/tsundata/assistant/issues/153) from tsundata/dependabot/go_modules/github.com/spf13/viper-1.10.0
+* Merge pull request [#152](https://github.com/tsundata/assistant/issues/152) from tsundata/dependabot/go_modules/github.com/mozillazg/go-pinyin-0.19.0
+* Merge pull request [#151](https://github.com/tsundata/assistant/issues/151) from tsundata/dependabot/go_modules/github.com/uber/jaeger-client-go-2.30.0incompatible
+* Merge pull request [#149](https://github.com/tsundata/assistant/issues/149) from tsundata/dependabot/go_modules/github.com/gofiber/websocket/v2-2.0.14
+* Merge pull request [#150](https://github.com/tsundata/assistant/issues/150) from tsundata/dependabot/go_modules/github.com/newrelic/go-agent/v3-3.15.2
+* Merge pull request [#148](https://github.com/tsundata/assistant/issues/148) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.23.0
+* Merge pull request [#147](https://github.com/tsundata/assistant/issues/147) from tsundata/dependabot/go_modules/github.com/golang-jwt/jwt/v4-4.2.0
+* Merge pull request [#146](https://github.com/tsundata/assistant/issues/146) from tsundata/dependabot/go_modules/github.com/tidwall/gjson-1.12.1
+* Merge pull request [#144](https://github.com/tsundata/assistant/issues/144) from tsundata/dependabot/go_modules/gorm.io/driver/mysql-1.2.1
+* Merge pull request [#143](https://github.com/tsundata/assistant/issues/143) from tsundata/dependabot/go_modules/github.com/swaggo/swag-1.7.6
+* Merge pull request [#140](https://github.com/tsundata/assistant/issues/140) from tsundata/dependabot/go_modules/github.com/swaggo/swag-1.7.5
+* Merge pull request [#142](https://github.com/tsundata/assistant/issues/142) from tsundata/dependabot/go_modules/github.com/influxdata/influxdb-client-go/v2-2.6.0
+* Merge pull request [#141](https://github.com/tsundata/assistant/issues/141) from tsundata/dependabot/go_modules/github.com/tidwall/gjson-1.12.0
+* Merge pull request [#139](https://github.com/tsundata/assistant/issues/139) from tsundata/dependabot/go_modules/gorm.io/gorm-1.22.3
+* Merge pull request [#138](https://github.com/tsundata/assistant/issues/138) from tsundata/dependabot/go_modules/github.com/gofiber/websocket/v2-2.0.13
+* Merge pull request [#137](https://github.com/tsundata/assistant/issues/137) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.22.0
+* Merge pull request [#136](https://github.com/tsundata/assistant/issues/136) from tsundata/dependabot/go_modules/gorm.io/driver/mysql-1.2.0
+* Merge pull request [#135](https://github.com/tsundata/assistant/issues/135) from tsundata/dependabot/go_modules/github.com/yuin/goldmark-1.4.4
+* Merge pull request [#134](https://github.com/tsundata/assistant/issues/134) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.13.0
+* Merge pull request [#133](https://github.com/tsundata/assistant/issues/133) from tsundata/dependabot/go_modules/github.com/yuin/goldmark-1.4.3
+* Merge pull request [#132](https://github.com/tsundata/assistant/issues/132) from tsundata/dependabot/go_modules/gorm.io/gorm-1.22.2
+* Merge pull request [#131](https://github.com/tsundata/assistant/issues/131) from tsundata/dependabot/go_modules/github.com/newrelic/go-agent/v3-3.15.1
+* Merge pull request [#130](https://github.com/tsundata/assistant/issues/130) from tsundata/dependabot/go_modules/github.com/nats-io/nats.go-1.13.0
+* Merge pull request [#129](https://github.com/tsundata/assistant/issues/129) from tsundata/dependabot/go_modules/github.com/golang-jwt/jwt/v4-4.1.0
+* Merge pull request [#128](https://github.com/tsundata/assistant/issues/128) from tsundata/dependabot/go_modules/github.com/swaggo/swag-1.7.4
+* Merge pull request [#127](https://github.com/tsundata/assistant/issues/127) from tsundata/dependabot/go_modules/github.com/go-redis/redis/v8-8.11.4
+* Merge pull request [#126](https://github.com/tsundata/assistant/issues/126) from tsundata/dependabot/go_modules/gorm.io/driver/mysql-1.1.3
+* Merge pull request [#125](https://github.com/tsundata/assistant/issues/125) from tsundata/dependabot/go_modules/github.com/PuerkitoBio/goquery-1.8.0
+* Merge pull request [#123](https://github.com/tsundata/assistant/issues/123) from tsundata/dependabot/go_modules/github.com/gofiber/websocket/v2-2.0.12
+* Merge pull request [#122](https://github.com/tsundata/assistant/issues/122) from tsundata/dependabot/go_modules/github.com/go-ego/gse-0.69.15
+* Merge pull request [#120](https://github.com/tsundata/assistant/issues/120) from tsundata/dependabot/go_modules/google.golang.org/grpc-1.42.0
+* Merge pull request [#124](https://github.com/tsundata/assistant/issues/124) from tsundata/dependabot/go_modules/github.com/gofiber/fiber/v2-2.21.0
+* Merge pull request [#118](https://github.com/tsundata/assistant/issues/118) from tsundata/dependabot/go_modules/github.com/go-resty/resty/v2-2.7.0
+* Merge pull request [#115](https://github.com/tsundata/assistant/issues/115) from tsundata/dependabot/go_modules/github.com/rollbar/rollbar-go-1.4.2
+* Merge pull request [#117](https://github.com/tsundata/assistant/issues/117) from tsundata/dependabot/go_modules/github.com/arsmn/fiber-swagger/v2-2.20.0
+* Merge pull request [#116](https://github.com/tsundata/assistant/issues/116) from tsundata/dependabot/go_modules/go.etcd.io/etcd/client/v3-3.5.1
+* Merge pull request [#119](https://github.com/tsundata/assistant/issues/119) from tsundata/dependabot/go_modules/github.com/tidwall/gjson-1.11.0
+
+
 <a name="v0.2"></a>
 ## [v0.2](https://github.com/tsundata/assistant/compare/v0.1.1...v0.2) (2021-09-26)
 
