@@ -2,7 +2,6 @@ package todo
 
 import (
 	"context"
-	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
@@ -44,7 +43,7 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
-		Define: `todo [string]`,
+		Define: `todo create [string]`,
 		Help:   "Todo something",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Todo() == nil {
@@ -63,14 +62,14 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
-		Define: `remind [string] [string]`,
-		Help:   `Remind something`,
+		Define: `todo action`,
+		Help:   "test todo action",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			arg1 := tokens[1].Value
-			arg2 := tokens[2].Value
-			fmt.Println(arg1, arg2) // todo remind message
-
-			return []pb.MsgPayload{}
+			return []pb.MsgPayload{pb.ActionMsg{
+				ID:     "demo",
+				Title:  "demo?",
+				Option: []string{"true", "false"},
+			}}
 		},
 	},
 }

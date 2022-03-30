@@ -65,7 +65,7 @@ func TestTodoCommand(t *testing.T) {
 		todo.EXPECT().CreateTodo(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	cmd := "todo test1"
+	cmd := "todo create test1"
 	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "success"}}, res)

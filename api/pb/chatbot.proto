@@ -16,6 +16,7 @@ option go_package = "api/pb";
 service ChatbotSvc {
   rpc Handle(ChatbotRequest) returns (ChatbotReply) {}
   rpc Register(BotRequest) returns (StateReply) {}
+  rpc Action(BotRequest) returns (StateReply) {}
   rpc GetBot(BotRequest) returns (BotReply) {}
   rpc GetBots(BotsRequest) returns (BotsReply) {}
   rpc CreateGroupBot(GroupBotRequest) returns (StateReply) {}
@@ -189,6 +190,10 @@ message BotRequest {
   string group_uuid = 2;
   // @inject_tag: query:"bot_uuid"
   string bot_uuid = 3;
+  int64 group_id = 4;
+  int64 bot_id = 5;
+  string action_id = 6;
+  string value = 7;
 }
 
 message BotReply {

@@ -68,12 +68,23 @@ func (a ScriptMsg) Type() enum.MessageType {
 }
 
 type ActionMsg struct {
-	Id     int64         `json:"id"`
-	Option []interface{} `json:"option"`
+	ID     string   `json:"id"`
+	Title  string   `json:"title"`
+	Option []string `json:"option"`
+	Value  string   `json:"value"`
 }
 
 func (a ActionMsg) Type() enum.MessageType {
 	return enum.MessageTypeAction
+}
+
+type FormMsg struct {
+	ID    string        `json:"id"`
+	Field []interface{} `json:"field"`
+}
+
+func (a FormMsg) Type() enum.MessageType {
+	return enum.MessageTypeForm
 }
 
 type LinkMsg struct {
@@ -115,10 +126,16 @@ func MockMsgPayload() []MsgPayload {
 			Url:   "https://test.dev",
 		},
 		ActionMsg{
-			Id: 1,
-			Option: []interface{}{
-				"true", "false",
+			ID:    "demo",
+			Title: "demo?",
+			Option: []string{
+				"true",
+				"false",
 			},
+		},
+		FormMsg{
+			ID:    "demo",
+			Field: nil,
 		},
 		LocationMsg{
 			Longitude: 112.5,

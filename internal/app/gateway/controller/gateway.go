@@ -578,3 +578,17 @@ func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
 
 	return c.JSON(reply)
 }
+
+func (gc *GatewayController) MessageAction(c *fiber.Ctx) error {
+	var in pb.ActionRequest
+	err := c.BodyParser(&in)
+	if err != nil {
+		return err
+	}
+
+	reply, err := gc.messageSvc.Action(md.Outgoing(c), &in)
+	if err != nil {
+		return err
+	}
+	return c.JSON(reply)
+}

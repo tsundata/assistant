@@ -10,8 +10,9 @@ const (
 	MessageTypeLocation MessageType = "location"
 	MessageTypeVideo    MessageType = "video"
 	MessageTypeLink     MessageType = "link"
-	MessageTypeAction   MessageType = "action"
 	MessageTypeScript   MessageType = "script"
+	MessageTypeAction   MessageType = "action"
+	MessageTypeForm     MessageType = "form"
 )
 
 const (

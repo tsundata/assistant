@@ -414,7 +414,42 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 }
 
 func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.ActionReply, error) {
-	panic("implement me")
+	id, _ := md.FromIncoming(ctx)
+	groupReply, err := m.chatbot.GetGroupId(ctx, &pb.UuidRequest{Uuid: payload.GroupUuid})
+	if err != nil {
+		return nil, err
+	}
+	botReply, err := m.chatbot.GetBot(ctx, &pb.BotRequest{GroupUuid: payload.GroupUuid, BotUuid: payload.BotUuid})
+	if err != nil {
+		return nil, err
+	}
+
+	var p pb.ActionMsg
+	p = pb.ActionMsg{
+		ID:    payload.ActionId,
+		Value: payload.Value,
+	}
+	data, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+
+	// todo store value
+
+	// event
+	err = m.bus.Publish(ctx, enum.Chatbot, event.BotActionSubject, pb.Message{
+		UserId:     id,
+		GroupId:    groupReply.Id,
+		Sender:     botReply.Bot.Id,
+		SenderType: enum.MessageBotType,
+		Type:       string(enum.MessageTypeAction),
+		Payload:    util.ByteToString(data),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ActionReply{}, nil
 }
 
 func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {

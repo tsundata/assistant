@@ -1,8 +1,11 @@
 package todo
 
 import (
+	"context"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 var metadata = bot.Metadata{
@@ -40,11 +43,30 @@ var workflowRules = []bot.PluginRule{
 	},
 }
 
+var actionRules = []bot.ActionRule{
+	{
+		ID: "demo",
+		Title: "demo?",
+		OptionFunc: map[string]bot.OptionFunc{
+			"true": func(ctx context.Context, component component.Component) []pb.MsgPayload {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: "true"},
+				}
+			},
+			"false": func(ctx context.Context, component component.Component) []pb.MsgPayload {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: "false"},
+				}
+			},
+		},
+	},
+}
+
 var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules)
 	if err != nil {
 		panic(err)
 	}

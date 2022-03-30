@@ -36,6 +36,26 @@ func (m *MockChatbotSvcClient) EXPECT() *MockChatbotSvcClientMockRecorder {
 	return m.recorder
 }
 
+// Action mocks base method.
+func (m *MockChatbotSvcClient) Action(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Action", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Action indicates an expected call of Action.
+func (mr *MockChatbotSvcClientMockRecorder) Action(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Action", reflect.TypeOf((*MockChatbotSvcClient)(nil).Action), varargs...)
+}
+
 // ActionDoc mocks base method.
 func (m *MockChatbotSvcClient) ActionDoc(ctx context.Context, in *pb.WorkflowRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
 	m.ctrl.T.Helper()
@@ -537,6 +557,21 @@ func NewMockChatbotSvcServer(ctrl *gomock.Controller) *MockChatbotSvcServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockChatbotSvcServer) EXPECT() *MockChatbotSvcServerMockRecorder {
 	return m.recorder
+}
+
+// Action mocks base method.
+func (m *MockChatbotSvcServer) Action(arg0 context.Context, arg1 *pb.BotRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Action", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Action indicates an expected call of Action.
+func (mr *MockChatbotSvcServerMockRecorder) Action(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Action", reflect.TypeOf((*MockChatbotSvcServer)(nil).Action), arg0, arg1)
 }
 
 // ActionDoc mocks base method.

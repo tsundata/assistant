@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
@@ -12,6 +13,7 @@ type Bot struct {
 	SettingRule []SettingField
 	PluginRule  []PluginRule
 	CommandRule []command.Rule
+	ActionRule  []ActionRule
 	plugin      []Plugin
 
 	config *Config
@@ -46,13 +48,22 @@ type PluginRule struct {
 	Param []interface{}
 }
 
-func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRule, commandsRule []command.Rule) (*Bot, error) {
+type ActionRule struct {
+	ID         string
+	Title      string
+	OptionFunc map[string]OptionFunc
+}
+
+type OptionFunc func(context.Context, component.Component) []pb.MsgPayload
+
+func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRule, commandsRule []command.Rule, actionRule []ActionRule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
 		Metadata:    metadata,
 		SettingRule: settings,
 		PluginRule:  workflowRule,
 		CommandRule: commandsRule,
+		ActionRule:  actionRule,
 		config:      cfg,
 	}
 	ctrl := &Controller{

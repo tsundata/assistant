@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ChatbotSvcClient interface {
 	Handle(ctx context.Context, in *ChatbotRequest, opts ...grpc.CallOption) (*ChatbotReply, error)
 	Register(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*StateReply, error)
+	Action(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetBot(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*BotReply, error)
 	GetBots(ctx context.Context, in *BotsRequest, opts ...grpc.CallOption) (*BotsReply, error)
 	CreateGroupBot(ctx context.Context, in *GroupBotRequest, opts ...grpc.CallOption) (*StateReply, error)
@@ -64,6 +65,15 @@ func (c *chatbotSvcClient) Handle(ctx context.Context, in *ChatbotRequest, opts 
 func (c *chatbotSvcClient) Register(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) Action(ctx context.Context, in *BotRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/Action", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -274,6 +284,7 @@ func (c *chatbotSvcClient) ListWebhook(ctx context.Context, in *WorkflowRequest,
 type ChatbotSvcServer interface {
 	Handle(context.Context, *ChatbotRequest) (*ChatbotReply, error)
 	Register(context.Context, *BotRequest) (*StateReply, error)
+	Action(context.Context, *BotRequest) (*StateReply, error)
 	GetBot(context.Context, *BotRequest) (*BotReply, error)
 	GetBots(context.Context, *BotsRequest) (*BotsReply, error)
 	CreateGroupBot(context.Context, *GroupBotRequest) (*StateReply, error)
@@ -307,6 +318,9 @@ func (UnimplementedChatbotSvcServer) Handle(context.Context, *ChatbotRequest) (*
 }
 func (UnimplementedChatbotSvcServer) Register(context.Context, *BotRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedChatbotSvcServer) Action(context.Context, *BotRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Action not implemented")
 }
 func (UnimplementedChatbotSvcServer) GetBot(context.Context, *BotRequest) (*BotReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBot not implemented")
@@ -418,6 +432,24 @@ func _ChatbotSvc_Register_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatbotSvcServer).Register(ctx, req.(*BotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_Action_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).Action(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/Action",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).Action(ctx, req.(*BotRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -832,6 +864,10 @@ var ChatbotSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _ChatbotSvc_Register_Handler,
+		},
+		{
+			MethodName: "Action",
+			Handler:    _ChatbotSvc_Action_Handler,
 		},
 		{
 			MethodName: "GetBot",

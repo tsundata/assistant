@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
+	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
@@ -28,10 +29,7 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 
 		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
 		_, err = chatbot.Handle(md.BuildAuthContext(m.UserId), &pb.ChatbotRequest{MessageId: m.Id, MessageUuid: m.Uuid})
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 	if err != nil {
 		return err
@@ -65,10 +63,8 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		switch enum.MessageType(m.GetType()) {
 		case enum.MessageTypeScript:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-			_, err := chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
-			if err != nil {
-				return err
-			}
+			_, err = chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
+			return err
 		}
 		return nil
 	})
@@ -77,7 +73,26 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 	}
 
 	err = bus.Subscribe(ctx, enum.Chatbot, event.BotActionSubject, func(msg *event.Msg) error {
-		return nil
+		var m pb.Message
+		err := json.Unmarshal(msg.Data, &m)
+		if err != nil {
+			return err
+		}
+
+		var p pb.ActionMsg
+		err = json.Unmarshal(util.StringToByte(m.Payload), &p)
+		if err != nil {
+			return err
+		}
+
+		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
+		_, err = chatbot.Action(ctx, &pb.BotRequest{
+			GroupId:  m.GroupId,
+			BotId:    m.Sender,
+			ActionId: p.ID,
+			Value:    p.Value,
+		})
+		return err
 	})
 	if err != nil {
 		return err

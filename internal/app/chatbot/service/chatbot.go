@@ -144,9 +144,12 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			}
 			for _, item := range commandsBots {
 				for _, commandText := range commands {
-					outMessages, err = r.ProcessCommand(ctx, s.comp, item, commandText)
+					commandMessages, err := r.ProcessCommand(ctx, s.comp, item, commandText)
 					if err != nil {
 						return nil, err
+					}
+					for i, payloads := range commandMessages {
+						outMessages[i] = payloads
 					}
 				}
 			}
@@ -219,6 +222,54 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 	return &pb.ChatbotReply{
 		State: true,
 	}, nil
+}
+
+func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	bot, err := s.repo.GetByID(ctx, payload.BotId)
+	if err != nil {
+		return nil, err
+	}
+	r := robot.NewRobot()
+	msg, err := r.ProcessAction(ctx, s.comp, &bot, payload.ActionId, payload.Value)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range msg {
+		text := ""
+		if item.Type() == enum.MessageTypeText {
+			if v, ok := item.(pb.TextMsg); ok {
+				text = v.Text
+			}
+		}
+		j, err := json.Marshal(item)
+		if err != nil {
+			return nil, err
+		}
+		outMessage := &pb.Message{
+			GroupId:      payload.GroupId,
+			UserId:       id,
+			Sender:       payload.BotId,
+			SenderType:   enum.MessageBotType,
+			Receiver:     id,
+			ReceiverType: enum.MessageUserType,
+			Type:         string(item.Type()),
+			Text:         text,
+			Payload:      string(j),
+			Status:       0,
+			Direction:    enum.MessageIncomingDirection,
+			SendTime:     util.Format(time.Now().Unix()),
+		}
+		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+		if err != nil {
+			return nil, err
+		}
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &pb.StateReply{State: true}, nil
 }
 
 func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.StateReply, error) {

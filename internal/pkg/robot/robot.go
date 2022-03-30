@@ -141,3 +141,7 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 
 	return out, nil
 }
+
+func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, bot *pb.Bot, id, value string) ([]pb.MsgPayload, error) {
+	return []pb.MsgPayload{pb.TextMsg{Text: "action demo"}}, nil
+}

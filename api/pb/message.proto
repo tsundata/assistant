@@ -68,8 +68,6 @@ message Message {
   string text = 11;
   // @inject_tag: db:"payload"
   string payload = 12;
-  // @inject_tag: db:"action"
-  string action = 13;
   // @inject_tag: db:"status"
   int32 status = 14;
   // @inject_tag: db:"created_at"
@@ -196,7 +194,12 @@ message InboxReply {
 }
 
 message ActionRequest {
-
+  int64 group_id = 1;
+  string group_uuid = 2;
+  int64 bot_id = 3;
+  string bot_uuid = 4;
+  string action_id = 5;
+  string value = 6;
 }
 
 message ActionReply {
