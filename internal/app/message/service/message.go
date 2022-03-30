@@ -194,11 +194,7 @@ func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesR
 
 func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	group, err := m.chatbot.GetGroupId(ctx, &pb.UuidRequest{Uuid: payload.GroupUuid})
-	if err != nil {
-		return nil, err
-	}
-	total, messages, err := m.repo.ListByGroup(ctx, group.Id, int(payload.Page), int(payload.Limit))
+	total, messages, err := m.repo.ListByGroup(ctx, payload.GroupId, int(payload.Page), int(payload.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -415,17 +411,8 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 
 func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.ActionReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	groupReply, err := m.chatbot.GetGroupId(ctx, &pb.UuidRequest{Uuid: payload.GroupUuid})
-	if err != nil {
-		return nil, err
-	}
-	botReply, err := m.chatbot.GetBot(ctx, &pb.BotRequest{GroupUuid: payload.GroupUuid, BotUuid: payload.BotUuid})
-	if err != nil {
-		return nil, err
-	}
 
-	var p pb.ActionMsg
-	p = pb.ActionMsg{
+	p := pb.ActionMsg{
 		ID:    payload.ActionId,
 		Value: payload.Value,
 	}
@@ -439,8 +426,8 @@ func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.Ac
 	// event
 	err = m.bus.Publish(ctx, enum.Chatbot, event.BotActionSubject, pb.Message{
 		UserId:     id,
-		GroupId:    groupReply.Id,
-		Sender:     botReply.Bot.Id,
+		GroupId:    payload.GroupId,
+		Sender:     payload.BotId,
 		SenderType: enum.MessageBotType,
 		Type:       string(enum.MessageTypeAction),
 		Payload:    util.ByteToString(data),

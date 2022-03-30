@@ -85,7 +85,7 @@ message GroupSettingReply {
 }
 
 message Group {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
   // @inject_tag: db:"sequence"
   int64 sequence = 2;
@@ -106,7 +106,7 @@ message Group {
 }
 
 message GroupBot {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
   // @inject_tag: db:"group_id"
   int64 group_id = 2;
@@ -119,7 +119,7 @@ message GroupBot {
 }
 
 message GroupBotSetting {
-  // @inject_tag: db:"group_id"
+  // @inject_tag: db:"group_id" json:"group_id,string"
   int64 group_id = 1;
   // @inject_tag: db:"bot_id"
   int64 bot_id = 2;
@@ -134,7 +134,7 @@ message GroupBotSetting {
 }
 
 message GroupSetting {
-  // @inject_tag: db:"group_id"
+  // @inject_tag: db:"group_id" json:"group_id,string"
   int64 group_id = 1;
   // @inject_tag: db:"key"
   string key = 2;
@@ -147,7 +147,7 @@ message GroupSetting {
 }
 
 message GroupTag {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
   // @inject_tag: db:"group_id"
   int64 group_id = 2;
@@ -160,7 +160,7 @@ message GroupTag {
 }
 
 message Bot {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
   // @inject_tag: db:"uuid"
   string uuid = 2;
@@ -228,6 +228,7 @@ message GroupItem {
   int32 unread_count = 7;
   LastMessage last_message = 8;
   repeated Avatar bot_avatar = 9;
+  // @inject_tag: json:"id,string"
   int64 id = 10;
 }
 

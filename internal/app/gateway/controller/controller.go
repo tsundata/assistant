@@ -15,9 +15,9 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	_ "github.com/tsundata/assistant/docs"
 	"github.com/tsundata/assistant/internal/app/gateway/chat"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -65,7 +65,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		h := chat.NewHub(gc.bus, gc.logger, gc.messageSvc)
 		go h.Run()
 		go h.EventHandle()
-		router.Get("/ws/group/:uuid", websocket.New(func(conn *websocket.Conn) {
+		router.Get("/ws/group/:id", websocket.New(func(conn *websocket.Conn) {
 			ctx := context.Background()
 			// auth
 			token := conn.Query("token")
@@ -81,15 +81,13 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 			}
 
 			// group id
-			uuid := conn.Params("uuid")
-			ctx = md.BuildAuthContext(authReply.Id)
-			groupReply, err := gc.chatbotSvc.GetGroup(ctx, &pb.GroupRequest{Group: &pb.Group{Uuid: uuid}})
+			idStr := conn.Params("id")
+			groupId, err := strconv.ParseInt(idStr, 10, 64)
 			if err != nil {
-				_ = conn.WriteMessage(websocket.TextMessage, []byte("Error group"))
 				return
 			}
 
-			chat.ServeWs(h, conn, groupReply.Group.Id, authReply.Id)
+			chat.ServeWs(h, conn, groupId, authReply.Id)
 		}))
 		router.Get("/ws/notify", websocket.New(func(conn *websocket.Conn) {
 			// auth

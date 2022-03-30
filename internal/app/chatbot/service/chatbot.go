@@ -58,7 +58,7 @@ func NewChatbot(
 }
 
 func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
-	reply, err := s.message.GetByUuid(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId, Uuid: payload.MessageUuid}})
+	reply, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId}})
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +294,7 @@ func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.Sta
 }
 
 func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotReply, error) {
-	bot, err := s.repo.GetGroupBot(ctx, payload.GroupUuid, payload.BotUuid)
+	bot, err := s.repo.GetGroupBot(ctx, payload.GroupId, payload.BotId)
 	if err != nil {
 		return nil, err
 	}
@@ -378,9 +378,9 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		}
 
 		res = append(res, &pb.GroupItem{
+			Id:          group.Id,
 			Sequence:    group.Sequence,
 			Type:        group.Type,
-			Uuid:        group.Uuid,
 			Name:        group.Name,
 			Avatar:      group.Avatar,
 			UnreadCount: 0, // todo
@@ -404,7 +404,7 @@ func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 
 func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.GetGroupReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	group, err := s.repo.GetGroupByUUID(ctx, payload.Group.GetUuid())
+	group, err := s.repo.GetGroup(ctx, payload.Group.GetId())
 	if err != nil {
 		return nil, err
 	}

@@ -366,8 +366,8 @@ func (m *GroupSettingReply) GetKvs() []*KV {
 }
 
 type Group struct {
-	// @inject_tag: db:"id" gorm:"primaryKey"
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id" gorm:"primaryKey"`
+	// @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,string" db:"id" gorm:"primaryKey"`
 	// @inject_tag: db:"sequence"
 	Sequence int64 `protobuf:"varint,2,opt,name=sequence,proto3" json:"sequence,omitempty" db:"sequence"`
 	// @inject_tag: db:"type"
@@ -474,8 +474,8 @@ func (m *Group) GetUpdatedAt() int64 {
 }
 
 type GroupBot struct {
-	// @inject_tag: db:"id" gorm:"primaryKey"
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id" gorm:"primaryKey"`
+	// @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,string" db:"id" gorm:"primaryKey"`
 	// @inject_tag: db:"group_id"
 	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" db:"group_id"`
 	// @inject_tag: db:"bot_id"
@@ -546,8 +546,8 @@ func (m *GroupBot) GetUpdatedAt() int64 {
 }
 
 type GroupBotSetting struct {
-	// @inject_tag: db:"group_id"
-	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" db:"group_id"`
+	// @inject_tag: db:"group_id" json:"group_id,string"
+	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,string" db:"group_id"`
 	// @inject_tag: db:"bot_id"
 	BotId int64 `protobuf:"varint,2,opt,name=bot_id,json=botId,proto3" json:"bot_id,omitempty" db:"bot_id"`
 	// @inject_tag: db:"key"
@@ -627,8 +627,8 @@ func (m *GroupBotSetting) GetUpdatedAt() int64 {
 }
 
 type GroupSetting struct {
-	// @inject_tag: db:"group_id"
-	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" db:"group_id"`
+	// @inject_tag: db:"group_id" json:"group_id,string"
+	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,string" db:"group_id"`
 	// @inject_tag: db:"key"
 	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty" db:"key"`
 	// @inject_tag: db:"value"
@@ -699,8 +699,8 @@ func (m *GroupSetting) GetUpdatedAt() int64 {
 }
 
 type GroupTag struct {
-	// @inject_tag: db:"id" gorm:"primaryKey"
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id" gorm:"primaryKey"`
+	// @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,string" db:"id" gorm:"primaryKey"`
 	// @inject_tag: db:"group_id"
 	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" db:"group_id"`
 	// @inject_tag: db:"tag"
@@ -771,8 +771,8 @@ func (m *GroupTag) GetUpdatedAt() int64 {
 }
 
 type Bot struct {
-	// @inject_tag: db:"id" gorm:"primaryKey"
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id" gorm:"primaryKey"`
+	// @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,string" db:"id" gorm:"primaryKey"`
 	// @inject_tag: db:"uuid"
 	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty" db:"uuid"`
 	// @inject_tag: db:"name"
@@ -1182,7 +1182,8 @@ type GroupItem struct {
 	UnreadCount int32        `protobuf:"varint,7,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
 	LastMessage *LastMessage `protobuf:"bytes,8,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`
 	BotAvatar   []*Avatar    `protobuf:"bytes,9,rep,name=bot_avatar,json=botAvatar,proto3" json:"bot_avatar,omitempty"`
-	Id          int64        `protobuf:"varint,10,opt,name=id,proto3" json:"id,omitempty"`
+	// @inject_tag: json:"id,string"
+	Id int64 `protobuf:"varint,10,opt,name=id,proto3" json:"id,string"`
 }
 
 func (m *GroupItem) Reset()         { *m = GroupItem{} }

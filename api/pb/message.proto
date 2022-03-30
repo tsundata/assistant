@@ -44,9 +44,9 @@ message MessagesReply {
 }
 
 message Message {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
-  // @inject_tag: db:"group_id"
+  // @inject_tag: db:"group_id" json:"group_id,string"
   int64 group_id = 2;
   // @inject_tag: db:"user_id"
   int64 user_id = 3;
@@ -54,11 +54,11 @@ message Message {
   int64 sequence = 4;
   // @inject_tag: db:"uuid"
   string uuid = 5;
-  // @inject_tag: db:"sender"
+  // @inject_tag: db:"sender" json:"sender,string"
   int64 sender = 6;
   // @inject_tag: db:"sender_type"
   string sender_type = 7;
-  // @inject_tag: db:"receiver"
+  // @inject_tag: db:"receiver" json:"receiver,string"
   int64 receiver = 8;
   // @inject_tag: db:"receiver_type"
   string receiver_type = 9;
@@ -130,8 +130,8 @@ message GetMessageReply {
 message GetMessagesRequest {
   int32 page = 1;
   int32 limit = 2;
-  // @inject_tag: query:"group_uuid"
-  string group_uuid = 3;
+  // @inject_tag: query:"group_id"
+  int64 group_id = 3;
 }
 
 message GetMessagesReply {
@@ -143,7 +143,6 @@ message GetMessagesReply {
 
 message LastByGroupRequest {
   int64 group_id = 1;
-  string group_uuid = 2;
 }
 
 message LastByGroupReply {
@@ -151,9 +150,9 @@ message LastByGroupReply {
 }
 
 message Inbox {
-  // @inject_tag: db:"id" gorm:"primaryKey"
+  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
-  // @inject_tag: db:"user_id"
+  // @inject_tag: db:"user_id" json:"user_id,string"
   int64 user_id = 2;
   // @inject_tag: db:"sequence"
   int64 sequence = 3;
@@ -181,9 +180,8 @@ message Inbox {
 
 message InboxRequest {
   int64 inbox_id = 1;
-  string inbox_uuid = 2;
-  int32 page = 3;
-  int32 limit = 4;
+  int32 page = 2;
+  int32 limit = 3;
 }
 
 message InboxReply {
@@ -195,11 +193,9 @@ message InboxReply {
 
 message ActionRequest {
   int64 group_id = 1;
-  string group_uuid = 2;
-  int64 bot_id = 3;
-  string bot_uuid = 4;
-  string action_id = 5;
-  string value = 6;
+  int64 bot_id = 2;
+  string action_id = 3;
+  string value = 4;
 }
 
 message ActionReply {
