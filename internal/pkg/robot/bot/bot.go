@@ -10,10 +10,11 @@ import (
 
 type Bot struct {
 	Metadata
-	SettingRule []SettingField
+	SettingRule []FieldItem
 	PluginRule  []PluginRule
 	CommandRule []command.Rule
 	ActionRule  []ActionRule
+	FormRule    []FormRule
 	plugin      []Plugin
 
 	config *Config
@@ -27,20 +28,20 @@ type Metadata struct {
 	Avatar     string
 }
 
-type SettingItemType string
+type FieldItemType string
 
 const (
-	SettingItemTypeString SettingItemType = "string"
-	SettingItemTypeInt    SettingItemType = "int"
-	SettingItemTypeFloat  SettingItemType = "float"
-	SettingItemTypeBool   SettingItemType = "bool"
+	FieldItemTypeString FieldItemType = "string"
+	FieldItemTypeInt    FieldItemType = "int"
+	FieldItemTypeFloat  FieldItemType = "float"
+	FieldItemTypeBool   FieldItemType = "bool"
 )
 
-type SettingField struct {
-	Key      string          `json:"key"`
-	Type     SettingItemType `json:"type"`
-	Required bool            `json:"required"`
-	Value    interface{}     `json:"value"`
+type FieldItem struct {
+	Key      string        `json:"key"`
+	Type     FieldItemType `json:"type"`
+	Required bool          `json:"required"`
+	Value    interface{}   `json:"value"`
 }
 
 type PluginRule struct {
@@ -51,12 +52,20 @@ type PluginRule struct {
 type ActionRule struct {
 	ID         string
 	Title      string
-	OptionFunc map[string]OptionFunc
+	OptionFunc map[string]ActionFunc
 }
 
-type OptionFunc func(context.Context, component.Component) []pb.MsgPayload
+type FormRule struct {
+	ID         string
+	Title      string
+	Field      []FieldItem
+	SubmitFunc FormFunc
+}
 
-func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRule, commandsRule []command.Rule, actionRule []ActionRule) (*Bot, error) {
+type ActionFunc func(context.Context, component.Component) []pb.MsgPayload
+type FormFunc func(context.Context, component.Component, []FieldItem) []pb.MsgPayload
+
+func NewBot(metadata Metadata, settings []FieldItem, workflowRule []PluginRule, commandsRule []command.Rule, actionRule []ActionRule, formRule []FormRule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
 		Metadata:    metadata,
@@ -64,6 +73,7 @@ func NewBot(metadata Metadata, settings []SettingField, workflowRule []PluginRul
 		PluginRule:  workflowRule,
 		CommandRule: commandsRule,
 		ActionRule:  actionRule,
+		FormRule:    formRule,
 		config:      cfg,
 	}
 	ctrl := &Controller{

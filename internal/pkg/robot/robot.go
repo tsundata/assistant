@@ -19,22 +19,6 @@ import (
 	"strings"
 )
 
-func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
-	for _, item := range bots {
-		err := bus.Publish(ctx, enum.Chatbot, event.BotRegisterSubject, pb.Bot{
-			Name:       item.Name,
-			Identifier: item.Identifier,
-			Detail:     item.Detail,
-			Avatar:     item.Avatar,
-			Extend:     "",
-		})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 var botMap = map[string]*bot.Bot{
 	system.Bot.Metadata.Identifier:  system.Bot,
 	todo.Bot.Metadata.Identifier:    todo.Bot,
@@ -158,4 +142,36 @@ func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, bot
 	}
 
 	return []pb.MsgPayload{}, nil
+}
+
+func (r *Robot) ProcessForm(ctx context.Context, comp component.Component, bot *pb.Bot, id string, form []bot.FieldItem) ([]pb.MsgPayload, error) {
+	b, ok := botMap[bot.Identifier]
+	if !ok {
+		return []pb.MsgPayload{}, nil
+	}
+
+	for _, rule := range b.FormRule {
+		if rule.ID == id {
+			result := rule.SubmitFunc(ctx, comp, form)
+			return result, nil
+		}
+	}
+
+	return []pb.MsgPayload{}, nil
+}
+
+func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
+	for _, item := range bots {
+		err := bus.Publish(ctx, enum.Chatbot, event.BotRegisterSubject, pb.Bot{
+			Name:       item.Name,
+			Identifier: item.Identifier,
+			Detail:     item.Detail,
+			Avatar:     item.Avatar,
+			Extend:     "",
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

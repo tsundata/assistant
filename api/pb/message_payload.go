@@ -79,12 +79,20 @@ func (a ActionMsg) Type() enum.MessageType {
 }
 
 type FormMsg struct {
-	ID    string        `json:"id"`
-	Field []interface{} `json:"field"`
+	ID    string      `json:"id"`
+	Title string      `json:"title"`
+	Field []FormField `json:"field"`
 }
 
 func (a FormMsg) Type() enum.MessageType {
 	return enum.MessageTypeForm
+}
+
+type FormField struct {
+	Key      string      `json:"key"`
+	Type     string      `json:"type"`
+	Required bool        `json:"required"`
+	Value    interface{} `json:"value"`
 }
 
 type LinkMsg struct {
@@ -135,7 +143,15 @@ func MockMsgPayload() []MsgPayload {
 		},
 		FormMsg{
 			ID:    "demo",
-			Field: nil,
+			Title: "demo?",
+			Field: []FormField{
+				{
+					Key:      "title",
+					Type:     "string",
+					Required: true,
+					Value:    nil,
+				},
+			},
 		},
 		LocationMsg{
 			Longitude: 112.5,

@@ -30,6 +30,7 @@ type MessageSvcClient interface {
 	Send(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*StateReply, error)
 	Run(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*TextReply, error)
 	Action(ctx context.Context, in *ActionRequest, opts ...grpc.CallOption) (*ActionReply, error)
+	Form(ctx context.Context, in *FormRequest, opts ...grpc.CallOption) (*FormReply, error)
 	ListInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
 	LastInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
 	MarkSendInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error)
@@ -152,6 +153,15 @@ func (c *messageSvcClient) Action(ctx context.Context, in *ActionRequest, opts .
 	return out, nil
 }
 
+func (c *messageSvcClient) Form(ctx context.Context, in *FormRequest, opts ...grpc.CallOption) (*FormReply, error) {
+	out := new(FormReply)
+	err := c.cc.Invoke(ctx, "/pb.MessageSvc/Form", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *messageSvcClient) ListInbox(ctx context.Context, in *InboxRequest, opts ...grpc.CallOption) (*InboxReply, error) {
 	out := new(InboxReply)
 	err := c.cc.Invoke(ctx, "/pb.MessageSvc/ListInbox", in, out, opts...)
@@ -204,6 +214,7 @@ type MessageSvcServer interface {
 	Send(context.Context, *MessageRequest) (*StateReply, error)
 	Run(context.Context, *MessageRequest) (*TextReply, error)
 	Action(context.Context, *ActionRequest) (*ActionReply, error)
+	Form(context.Context, *FormRequest) (*FormReply, error)
 	ListInbox(context.Context, *InboxRequest) (*InboxReply, error)
 	LastInbox(context.Context, *InboxRequest) (*InboxReply, error)
 	MarkSendInbox(context.Context, *InboxRequest) (*InboxReply, error)
@@ -249,6 +260,9 @@ func (UnimplementedMessageSvcServer) Run(context.Context, *MessageRequest) (*Tex
 }
 func (UnimplementedMessageSvcServer) Action(context.Context, *ActionRequest) (*ActionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Action not implemented")
+}
+func (UnimplementedMessageSvcServer) Form(context.Context, *FormRequest) (*FormReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Form not implemented")
 }
 func (UnimplementedMessageSvcServer) ListInbox(context.Context, *InboxRequest) (*InboxReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListInbox not implemented")
@@ -490,6 +504,24 @@ func _MessageSvc_Action_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessageSvc_Form_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FormRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSvcServer).Form(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MessageSvc/Form",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSvcServer).Form(ctx, req.(*FormRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MessageSvc_ListInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InboxRequest)
 	if err := dec(in); err != nil {
@@ -616,6 +648,10 @@ var MessageSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Action",
 			Handler:    _MessageSvc_Action_Handler,
+		},
+		{
+			MethodName: "Form",
+			Handler:    _MessageSvc_Form_Handler,
 		},
 		{
 			MethodName: "ListInbox",

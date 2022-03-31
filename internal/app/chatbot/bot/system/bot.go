@@ -12,7 +12,7 @@ var metadata = bot.Metadata{
 	Avatar:     "",
 }
 
-var setting []bot.SettingField
+var setting []bot.FieldItem
 
 var workflowRules []bot.PluginRule
 
@@ -20,7 +20,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, nil)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, nil, nil)
 	if err != nil {
 		panic(err)
 	}

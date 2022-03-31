@@ -11,6 +11,7 @@ const (
 	MessageChannelSubject Subject = "message_channel"
 	WorkflowRunSubject    Subject = "workflow_run"
 	BotActionSubject      Subject = "bot_action"
+	BotFormSubject        Subject = "bot_form"
 	BotHandleSubject      Subject = "bot_handle"
 	BotRegisterSubject    Subject = "bot_register"
 	CronRegisterSubject   Subject = "cron_register"

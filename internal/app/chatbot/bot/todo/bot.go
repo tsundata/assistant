@@ -15,16 +15,16 @@ var metadata = bot.Metadata{
 	Avatar:     "",
 }
 
-var setting = []bot.SettingField{
+var setting = []bot.FieldItem{
 	{
 		Key:      "report",
-		Type:     bot.SettingItemTypeBool,
+		Type:     bot.FieldItemTypeBool,
 		Required: false,
 		Value:    false,
 	},
 	{
 		Key:      "time",
-		Type:     bot.SettingItemTypeString,
+		Type:     bot.FieldItemTypeString,
 		Required: true,
 		Value:    "",
 	},
@@ -45,9 +45,9 @@ var workflowRules = []bot.PluginRule{
 
 var actionRules = []bot.ActionRule{
 	{
-		ID: "demo",
-		Title: "demo?",
-		OptionFunc: map[string]bot.OptionFunc{
+		ID:    "demo",
+		Title: "demo action?",
+		OptionFunc: map[string]bot.ActionFunc{
 			"true": func(ctx context.Context, component component.Component) []pb.MsgPayload {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: "true"},
@@ -62,11 +62,30 @@ var actionRules = []bot.ActionRule{
 	},
 }
 
+var formRules = []bot.FormRule{
+	{
+		ID:    "demo",
+		Title: "demo form?",
+		Field: []bot.FieldItem{
+			{
+				Key:      "title",
+				Type:     bot.FieldItemTypeString,
+				Required: true,
+			},
+		},
+		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+			return []pb.MsgPayload{
+				pb.TextMsg{Text: "submit!"},
+			}
+		},
+	},
+}
+
 var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules, formRules)
 	if err != nil {
 		panic(err)
 	}

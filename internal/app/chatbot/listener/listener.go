@@ -99,5 +99,40 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		return err
 	}
 
+	err = bus.Subscribe(ctx, enum.Chatbot, event.BotFormSubject, func(msg *event.Msg) error {
+		var m pb.Message
+		err := json.Unmarshal(msg.Data, &m)
+		if err != nil {
+			return err
+		}
+
+		var p pb.FormMsg
+		err = json.Unmarshal(util.StringToByte(m.Payload), &p)
+		if err != nil {
+			return err
+		}
+
+		var form []*pb.KV
+		for _, item := range p.Field {
+			form = append(form, &pb.KV{
+				Key:   item.Key,
+				Value: item.Value.(string),
+			})
+		}
+
+		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
+		_, err = chatbot.Form(md.BuildAuthContext(m.UserId), &pb.BotRequest{
+			UserId:   m.UserId,
+			GroupId:  m.GroupId,
+			BotId:    m.Sender,
+			FormId: p.ID,
+			Form:     form,
+		})
+		return err
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

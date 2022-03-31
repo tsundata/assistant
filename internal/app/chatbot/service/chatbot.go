@@ -15,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot"
 	"github.com/tsundata/assistant/internal/pkg/robot/action"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/opcode"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
@@ -77,8 +78,8 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		return nil, err
 	}
 	groupBotsMap := make(map[string]struct{})
-	for _, bot := range groupBots {
-		groupBotsMap[bot.Identifier] = struct{}{}
+	for _, item := range groupBots {
+		groupBotsMap[item.Identifier] = struct{}{}
 	}
 
 	// help
@@ -198,6 +199,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				GroupId:      reply.Message.GetGroupId(),
 				UserId:       reply.Message.GetUserId(),
 				Sender:       botId,
+				SenderId:     botId,
 				SenderType:   enum.MessageBotType,
 				Receiver:     reply.Message.GetUserId(),
 				ReceiverType: enum.MessageUserType,
@@ -225,14 +227,14 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 }
 
 func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
-	bot, err := s.repo.GetByID(ctx, payload.BotId)
+	b, err := s.repo.GetByID(ctx, payload.BotId)
 	if err != nil {
 		return nil, err
 	}
 
 	// process
 	r := robot.NewRobot()
-	msg, err := r.ProcessAction(ctx, s.comp, &bot, payload.ActionId, payload.Value)
+	msg, err := r.ProcessAction(ctx, s.comp, &b, payload.ActionId, payload.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -253,6 +255,67 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 			GroupId:      payload.GroupId,
 			UserId:       payload.UserId,
 			Sender:       payload.BotId,
+			SenderId:     payload.BotId,
+			SenderType:   enum.MessageBotType,
+			Receiver:     payload.UserId,
+			ReceiverType: enum.MessageUserType,
+			Type:         string(item.Type()),
+			Text:         text,
+			Payload:      string(j),
+			Status:       0,
+			Direction:    enum.MessageIncomingDirection,
+			SendTime:     util.Format(time.Now().Unix()),
+		}
+		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+		if err != nil {
+			return nil, err
+		}
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
+	b, err := s.repo.GetByID(ctx, payload.BotId)
+	if err != nil {
+		return nil, err
+	}
+
+	// process
+	var field []bot.FieldItem
+	for _, item := range payload.Form {
+		field = append(field, bot.FieldItem{
+			Key:   item.Key,
+			Value: item.Value,
+		})
+	}
+	r := robot.NewRobot()
+	msg, err := r.ProcessForm(ctx, s.comp, &b, payload.FormId, field)
+	if err != nil {
+		return nil, err
+	}
+
+	// send msg
+	for _, item := range msg {
+		text := ""
+		if item.Type() == enum.MessageTypeText {
+			if v, ok := item.(pb.TextMsg); ok {
+				text = v.Text
+			}
+		}
+		j, err := json.Marshal(item)
+		if err != nil {
+			return nil, err
+		}
+		outMessage := &pb.Message{
+			GroupId:      payload.GroupId,
+			UserId:       payload.UserId,
+			Sender:       payload.BotId,
+			SenderId:     payload.BotId,
 			SenderType:   enum.MessageBotType,
 			Receiver:     payload.UserId,
 			ReceiverType: enum.MessageUserType,
@@ -277,12 +340,12 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 }
 
 func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.StateReply, error) {
-	bot, err := s.repo.GetByIdentifier(ctx, request.Bot.Identifier)
+	b, err := s.repo.GetByIdentifier(ctx, request.Bot.Identifier)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if bot.Id > 0 {
-		request.Bot.Id = bot.Id
+	if b.Id > 0 {
+		request.Bot.Id = b.Id
 		err = s.repo.Update(ctx, request.Bot)
 		if err != nil {
 			return nil, err
@@ -298,11 +361,11 @@ func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.Sta
 }
 
 func (s *Chatbot) GetBot(ctx context.Context, payload *pb.BotRequest) (*pb.BotReply, error) {
-	bot, err := s.repo.GetGroupBot(ctx, payload.GroupId, payload.BotId)
+	b, err := s.repo.GetGroupBot(ctx, payload.GroupId, payload.BotId)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.BotReply{Bot: &bot}, nil
+	return &pb.BotReply{Bot: &b}, nil
 }
 
 func (s *Chatbot) GetBots(ctx context.Context, payload *pb.BotsRequest) (*pb.BotsReply, error) {
@@ -355,11 +418,11 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 	}
 
 	botAvatar := make(map[int64][]*pb.Avatar)
-	for _, bot := range bots {
-		botAvatar[bot.GroupId] = append(botAvatar[bot.GroupId], &pb.Avatar{
-			Name:       bot.Name,
-			Src:        bot.Avatar,
-			Identifier: bot.Identifier,
+	for _, item := range bots {
+		botAvatar[item.GroupId] = append(botAvatar[item.GroupId], &pb.Avatar{
+			Name:       item.Name,
+			Src:        item.Avatar,
+			Identifier: item.Identifier,
 		})
 	}
 
@@ -446,11 +509,11 @@ func (s *Chatbot) UpdateGroupBotSetting(ctx context.Context, payload *pb.BotSett
 	if err != nil {
 		return nil, err
 	}
-	bot, err := s.repo.GetByUUID(ctx, payload.BotUuid)
+	b, err := s.repo.GetByUUID(ctx, payload.BotUuid)
 	if err != nil {
 		return nil, err
 	}
-	err = s.repo.UpdateGroupBotSetting(ctx, group.Id, bot.Id, payload.Kvs)
+	err = s.repo.UpdateGroupBotSetting(ctx, group.Id, b.Id, payload.Kvs)
 	if err != nil {
 		return nil, err
 	}

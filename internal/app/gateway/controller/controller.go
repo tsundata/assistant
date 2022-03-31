@@ -149,6 +149,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		internal.Get("apps", gc.GetApps)
 		internal.Post("file/upload", gc.UploadFile)
 		internal.Post("message/action", gc.MessageAction)
+		internal.Post("message/form", gc.MessageForm)
 
 		// 404
 		router.Use(func(c *fiber.Ctx) error {

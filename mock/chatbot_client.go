@@ -216,6 +216,26 @@ func (mr *MockChatbotSvcClientMockRecorder) DeleteTrigger(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).DeleteTrigger), varargs...)
 }
 
+// Form mocks base method.
+func (m *MockChatbotSvcClient) Form(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Form", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Form indicates an expected call of Form.
+func (mr *MockChatbotSvcClientMockRecorder) Form(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Form", reflect.TypeOf((*MockChatbotSvcClient)(nil).Form), varargs...)
+}
+
 // GetBot mocks base method.
 func (m *MockChatbotSvcClient) GetBot(ctx context.Context, in *pb.BotRequest, opts ...grpc.CallOption) (*pb.BotReply, error) {
 	m.ctrl.T.Helper()
@@ -692,6 +712,21 @@ func (m *MockChatbotSvcServer) DeleteTrigger(arg0 context.Context, arg1 *pb.Trig
 func (mr *MockChatbotSvcServerMockRecorder) DeleteTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).DeleteTrigger), arg0, arg1)
+}
+
+// Form mocks base method.
+func (m *MockChatbotSvcServer) Form(arg0 context.Context, arg1 *pb.BotRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Form", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Form indicates an expected call of Form.
+func (mr *MockChatbotSvcServerMockRecorder) Form(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Form", reflect.TypeOf((*MockChatbotSvcServer)(nil).Form), arg0, arg1)
 }
 
 // GetBot mocks base method.

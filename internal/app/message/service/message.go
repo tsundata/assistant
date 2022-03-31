@@ -368,6 +368,7 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 		Title:      util.SubString(payload.Message.GetText(), 0, 100),
 		Content:    util.SubString(payload.Message.GetText(), 0, 2000),
 		Payload:    payload.Message.GetPayload(),
+		Status:     enum.InboxCreate,
 	})
 	if err != nil {
 		return nil, err
@@ -376,6 +377,7 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 	// setting
 
 	// push ws hub
+	payload.Message.SenderId = payload.Message.Sender
 	err = m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
 	if err != nil {
 		return nil, err
@@ -437,6 +439,43 @@ func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.Ac
 	}
 
 	return &pb.ActionReply{}, nil
+}
+
+func (m *Message) Form(ctx context.Context, payload *pb.FormRequest) (*pb.FormReply, error) {
+	id, _ := md.FromIncoming(ctx)
+
+	var field []pb.FormField
+	for _, item := range payload.Form {
+		field = append(field, pb.FormField{
+			Key:   item.Key,
+			Value: item.Value,
+		})
+	}
+	p := pb.FormMsg{
+		ID:    payload.FormId,
+		Field: field,
+	}
+	data, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+
+	// todo store value
+
+	// event
+	err = m.bus.Publish(ctx, enum.Chatbot, event.BotFormSubject, pb.Message{
+		UserId:     id,
+		GroupId:    payload.GroupId,
+		Sender:     payload.BotId,
+		SenderType: enum.MessageBotType,
+		Type:       string(enum.MessageTypeForm),
+		Payload:    util.ByteToString(data),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.FormReply{}, nil
 }
 
 func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {

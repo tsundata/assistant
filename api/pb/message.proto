@@ -25,6 +25,7 @@ service MessageSvc {
   rpc Send(MessageRequest) returns (StateReply) {}
   rpc Run(MessageRequest) returns (TextReply) {}
   rpc Action(ActionRequest) returns (ActionReply) {}
+  rpc Form(FormRequest) returns (FormReply) {}
   rpc ListInbox(InboxRequest) returns (InboxReply) {}
   rpc LastInbox(InboxRequest) returns (InboxReply) {}
   rpc MarkSendInbox(InboxRequest) returns (InboxReply) {}
@@ -202,6 +203,15 @@ message ActionRequest {
   string value = 4;
 }
 
-message ActionReply {
+message ActionReply {}
 
+message FormRequest {
+  // @inject_tag: json:"group_id,string"
+  int64 group_id = 1;
+  // @inject_tag: json:"bot_id,string"
+  int64 bot_id = 2;
+  string form_id = 3;
+  repeated KV form = 4;
 }
+
+message FormReply {}

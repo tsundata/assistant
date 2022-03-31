@@ -96,6 +96,26 @@ func (mr *MockMessageSvcClientMockRecorder) Delete(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcClient)(nil).Delete), varargs...)
 }
 
+// Form mocks base method.
+func (m *MockMessageSvcClient) Form(ctx context.Context, in *pb.FormRequest, opts ...grpc.CallOption) (*pb.FormReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Form", varargs...)
+	ret0, _ := ret[0].(*pb.FormReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Form indicates an expected call of Form.
+func (mr *MockMessageSvcClientMockRecorder) Form(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Form", reflect.TypeOf((*MockMessageSvcClient)(nil).Form), varargs...)
+}
+
 // GetById mocks base method.
 func (m *MockMessageSvcClient) GetById(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
 	m.ctrl.T.Helper()
@@ -422,6 +442,21 @@ func (m *MockMessageSvcServer) Delete(arg0 context.Context, arg1 *pb.MessageRequ
 func (mr *MockMessageSvcServerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockMessageSvcServer)(nil).Delete), arg0, arg1)
+}
+
+// Form mocks base method.
+func (m *MockMessageSvcServer) Form(arg0 context.Context, arg1 *pb.FormRequest) (*pb.FormReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Form", arg0, arg1)
+	ret0, _ := ret[0].(*pb.FormReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Form indicates an expected call of Form.
+func (mr *MockMessageSvcServerMockRecorder) Form(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Form", reflect.TypeOf((*MockMessageSvcServer)(nil).Form), arg0, arg1)
 }
 
 // GetById mocks base method.

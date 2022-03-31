@@ -72,4 +72,21 @@ var commandRules = []command.Rule{
 			}}
 		},
 	},
+	{
+		Define: `todo form`,
+		Help:   "test todo form",
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			return []pb.MsgPayload{pb.FormMsg{
+				ID:    "demo",
+				Title: "demo?",
+				Field: []pb.FormField{
+					{
+						Key:      "title",
+						Type:     "string",
+						Required: true,
+					},
+				},
+			}}
+		},
+	},
 }
