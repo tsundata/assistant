@@ -86,7 +86,8 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		}
 
 		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-		_, err = chatbot.Action(ctx, &pb.BotRequest{
+		_, err = chatbot.Action(md.BuildAuthContext(m.UserId), &pb.BotRequest{
+			UserId:   m.UserId,
 			GroupId:  m.GroupId,
 			BotId:    m.Sender,
 			ActionId: p.ID,

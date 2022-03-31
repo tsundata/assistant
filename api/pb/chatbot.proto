@@ -194,6 +194,7 @@ message BotRequest {
   int64 bot_id = 5;
   string action_id = 6;
   string value = 7;
+  int64 user_id = 8;
 }
 
 message BotReply {

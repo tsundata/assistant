@@ -225,16 +225,19 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 }
 
 func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
-	id, _ := md.FromIncoming(ctx)
 	bot, err := s.repo.GetByID(ctx, payload.BotId)
 	if err != nil {
 		return nil, err
 	}
+
+	// process
 	r := robot.NewRobot()
 	msg, err := r.ProcessAction(ctx, s.comp, &bot, payload.ActionId, payload.Value)
 	if err != nil {
 		return nil, err
 	}
+
+	// send msg
 	for _, item := range msg {
 		text := ""
 		if item.Type() == enum.MessageTypeText {
@@ -248,10 +251,10 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 		}
 		outMessage := &pb.Message{
 			GroupId:      payload.GroupId,
-			UserId:       id,
+			UserId:       payload.UserId,
 			Sender:       payload.BotId,
 			SenderType:   enum.MessageBotType,
-			Receiver:     id,
+			Receiver:     payload.UserId,
 			ReceiverType: enum.MessageUserType,
 			Type:         string(item.Type()),
 			Text:         text,
@@ -269,6 +272,7 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 			return nil, err
 		}
 	}
+
 	return &pb.StateReply{State: true}, nil
 }
 

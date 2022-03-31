@@ -143,5 +143,19 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 }
 
 func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, bot *pb.Bot, id, value string) ([]pb.MsgPayload, error) {
-	return []pb.MsgPayload{pb.TextMsg{Text: "action demo"}}, nil
+	b, ok := botMap[bot.Identifier]
+	if !ok {
+		return []pb.MsgPayload{}, nil
+	}
+
+	for _, rule := range b.ActionRule {
+		if rule.ID == id {
+			if f, ok := rule.OptionFunc[value]; ok {
+				result := f(ctx, comp)
+				return result, nil
+			}
+		}
+	}
+
+	return []pb.MsgPayload{}, nil
 }

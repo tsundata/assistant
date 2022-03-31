@@ -85,6 +85,8 @@ message Message {
   Avatar avatar = 20;
   // @inject_tag: gorm:"-"
   bytes data = 21;
+  // @inject_tag: gorm:"-" json:"sender_id,string"
+  int64 sender_id = 22;
 }
 
 message Alert {
@@ -192,7 +194,9 @@ message InboxReply {
 }
 
 message ActionRequest {
+  // @inject_tag: json:"group_id,string"
   int64 group_id = 1;
+  // @inject_tag: json:"bot_id,string"
   int64 bot_id = 2;
   string action_id = 3;
   string value = 4;

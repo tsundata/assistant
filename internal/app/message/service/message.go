@@ -11,7 +11,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
@@ -218,7 +217,7 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 	var reply []*pb.Message
 	for _, item := range messages {
 		if item.UserId != id {
-			return nil, exception.ErrGrpcUnauthenticated
+			continue
 		}
 
 		// avatar
@@ -243,6 +242,7 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 		}
 		item.Direction = direction
 		item.SendTime = util.Format(item.CreatedAt)
+		item.SenderId = item.Sender
 
 		reply = append(reply, item)
 	}
