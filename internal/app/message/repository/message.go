@@ -160,6 +160,7 @@ func (r *MysqlMessageRepository) SavePayload(ctx context.Context, id int64, payl
 		UpdateColumns(map[string]interface{}{
 			"payload":    payload,
 			"updated_at": time.Now().Unix(),
+			"status":     enum.MessageActionedStatus,
 		}).Error
 }
 

@@ -233,7 +233,7 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 
 	// process
 	r := robot.NewRobot()
-	msg, err := r.ProcessAction(ctx, s.comp, &b, payload.ActionId, payload.Value)
+	msg, err := r.ProcessAction(ctx, s.comp, b.Identifier, payload.ActionId, payload.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +292,7 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 		})
 	}
 	r := robot.NewRobot()
-	msg, err := r.ProcessForm(ctx, s.comp, &b, payload.FormId, field)
+	msg, err := r.ProcessForm(ctx, s.comp, b.Identifier, payload.FormId, field)
 	if err != nil {
 		return nil, err
 	}

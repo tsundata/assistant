@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -65,28 +66,14 @@ var commandRules = []command.Rule{
 		Define: `todo action`,
 		Help:   "test todo action",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			return []pb.MsgPayload{pb.ActionMsg{
-				ID:     "demo",
-				Title:  "demo?",
-				Option: []string{"true", "false"},
-			}}
+			return []pb.MsgPayload{msg.BotActionMsg(actionRules, DemoActionId)}
 		},
 	},
 	{
 		Define: `todo form`,
 		Help:   "test todo form",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			return []pb.MsgPayload{pb.FormMsg{
-				ID:    "demo",
-				Title: "demo?",
-				Field: []pb.FormField{
-					{
-						Key:      "title",
-						Type:     "string",
-						Required: true,
-					},
-				},
-			}}
+			return []pb.MsgPayload{msg.BotFormMsg(formRules, DemoFormId)}
 		},
 	},
 }

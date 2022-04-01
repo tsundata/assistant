@@ -8,6 +8,11 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
+const (
+	DemoActionId = "demo"
+	DemoFormId   = "demo"
+)
+
 var metadata = bot.Metadata{
 	Name:       "Todo",
 	Identifier: enum.TodoBot,
@@ -45,7 +50,7 @@ var workflowRules = []bot.PluginRule{
 
 var actionRules = []bot.ActionRule{
 	{
-		ID:    "demo",
+		ID:    DemoActionId,
 		Title: "demo action?",
 		OptionFunc: map[string]bot.ActionFunc{
 			"true": func(ctx context.Context, component component.Component) []pb.MsgPayload {
@@ -64,7 +69,7 @@ var actionRules = []bot.ActionRule{
 
 var formRules = []bot.FormRule{
 	{
-		ID:    "demo",
+		ID:    DemoFormId,
 		Title: "demo form?",
 		Field: []bot.FieldItem{
 			{

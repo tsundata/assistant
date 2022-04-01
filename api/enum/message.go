@@ -35,3 +35,13 @@ const (
 	InboxSend
 	InboxRead
 )
+
+const (
+	MessageCreatedStatus = iota
+	MessageSendingStatus
+	MessageSentSuccessStatus
+	MessageSentFailedStatus
+	MessageReadStatus
+	MessageActionedStatus
+	MessageArchivedStatus
+)

@@ -6,11 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/org"
 	_ "github.com/tsundata/assistant/internal/app/chatbot/bot/plugin"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/system"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger"
@@ -19,13 +15,6 @@ import (
 	"strings"
 )
 
-var botMap = map[string]*bot.Bot{
-	system.Bot.Metadata.Identifier:  system.Bot,
-	todo.Bot.Metadata.Identifier:    todo.Bot,
-	org.Bot.Metadata.Identifier:     org.Bot,
-	finance.Bot.Metadata.Identifier: finance.Bot,
-}
-
 type Robot struct{}
 
 func NewRobot() *Robot {
@@ -33,7 +22,7 @@ func NewRobot() *Robot {
 }
 
 func (r *Robot) bot(identifier string) *bot.Bot {
-	if b, ok := botMap[identifier]; ok {
+	if b, ok := BotMap[identifier]; ok {
 		return b
 	}
 	return nil
@@ -107,7 +96,7 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 	var output interface{}
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)
-		if b, ok := botMap[item.Identifier]; ok {
+		if b, ok := BotMap[item.Identifier]; ok {
 			out, err := b.Run(ctx, comp, input)
 			if err != nil {
 				return nil, err
@@ -126,8 +115,8 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 	return out, nil
 }
 
-func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, bot *pb.Bot, id, value string) ([]pb.MsgPayload, error) {
-	b, ok := botMap[bot.Identifier]
+func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, identifier, id, value string) ([]pb.MsgPayload, error) {
+	b, ok := BotMap[identifier]
 	if !ok {
 		return []pb.MsgPayload{}, nil
 	}
@@ -144,8 +133,8 @@ func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, bot
 	return []pb.MsgPayload{}, nil
 }
 
-func (r *Robot) ProcessForm(ctx context.Context, comp component.Component, bot *pb.Bot, id string, form []bot.FieldItem) ([]pb.MsgPayload, error) {
-	b, ok := botMap[bot.Identifier]
+func (r *Robot) ProcessForm(ctx context.Context, comp component.Component, identifier, id string, form []bot.FieldItem) ([]pb.MsgPayload, error) {
+	b, ok := BotMap[identifier]
 	if !ok {
 		return []pb.MsgPayload{}, nil
 	}

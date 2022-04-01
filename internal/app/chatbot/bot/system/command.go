@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
-	tags2 "github.com/tsundata/assistant/internal/pkg/robot/bot/trigger/tags"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -204,7 +205,7 @@ var commandRules = []command.Rule{
 			res.WriteString("Action:\n")
 			res.WriteString(reply.GetText())
 			res.WriteString("\n\nTag:\n")
-			for k := range tags2.Tags() {
+			for k := range tags.Tags() {
 				res.WriteString("#")
 				res.WriteString(k)
 				res.WriteString("\n")
@@ -378,6 +379,13 @@ var commandRules = []command.Rule{
 			}
 
 			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
+		},
+	},
+	{
+		Define: `push switch`,
+		Help:   "Push notification switch",
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			return []pb.MsgPayload{msg.BotFormMsg(formRules, PushSwitchFormID)}
 		},
 	},
 }
