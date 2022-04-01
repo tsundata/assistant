@@ -37,7 +37,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/rabbitmq/amqp091-go v1.3.2
+	github.com/rabbitmq/amqp091-go v1.3.4
 	github.com/rollbar/rollbar-go v1.4.2
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/sourcegraph/checkup v1.0.1-0.20200721114922-77e7567835d4
