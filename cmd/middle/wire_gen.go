@@ -77,11 +77,11 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	middleRepository := repository.NewMysqlMiddleRepository(globalID, conn)
-	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
+	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, userSvcClient)
+	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, storageSvcClient)
 	initServer := service.CreateInitServerFn(serviceMiddle)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {

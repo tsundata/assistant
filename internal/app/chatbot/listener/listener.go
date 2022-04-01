@@ -43,7 +43,7 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		}
 
 		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-		_, err = chatbot.Register(ctx, &pb.BotRequest{Bot: &b})
+		_, err = chatbot.Register(md.BuildAuthContext(enum.SuperUserID), &pb.BotRequest{Bot: &b})
 		if err != nil {
 			return err
 		}

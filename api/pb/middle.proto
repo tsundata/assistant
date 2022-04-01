@@ -46,6 +46,7 @@ service MiddleSvc {
   rpc Pinyin(TextRequest) returns (WordsReply) {}
   rpc Segmentation(TextRequest) returns (WordsReply) {}
   rpc Classifier(TextRequest) returns (TextReply) {}
+  rpc CreateAvatar(TextRequest) returns (TextReply) {}
 }
 
 message PageRequest {

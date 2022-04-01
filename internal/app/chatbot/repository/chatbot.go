@@ -193,7 +193,6 @@ func (r *MysqlChatbotRepository) Update(ctx context.Context, bot *pb.Bot) error 
 	return r.db.WithContext(ctx).Model(&bot).Updates(map[string]interface{}{
 		"name":   bot.Name,
 		"detail": bot.Detail,
-		"avatar": bot.Avatar,
 		"extend": bot.Extend,
 	}).Error
 }

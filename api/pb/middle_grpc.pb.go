@@ -51,6 +51,7 @@ type MiddleSvcClient interface {
 	Pinyin(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error)
 	Segmentation(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error)
 	Classifier(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	CreateAvatar(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 }
 
 type middleSvcClient struct {
@@ -358,6 +359,15 @@ func (c *middleSvcClient) Classifier(ctx context.Context, in *TextRequest, opts 
 	return out, nil
 }
 
+func (c *middleSvcClient) CreateAvatar(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error) {
+	out := new(TextReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CreateAvatar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MiddleSvcServer is the server API for MiddleSvc service.
 // All implementations should embed UnimplementedMiddleSvcServer
 // for forward compatibility
@@ -395,6 +405,7 @@ type MiddleSvcServer interface {
 	Pinyin(context.Context, *TextRequest) (*WordsReply, error)
 	Segmentation(context.Context, *TextRequest) (*WordsReply, error)
 	Classifier(context.Context, *TextRequest) (*TextReply, error)
+	CreateAvatar(context.Context, *TextRequest) (*TextReply, error)
 }
 
 // UnimplementedMiddleSvcServer should be embedded to have forward compatible implementations.
@@ -499,6 +510,9 @@ func (UnimplementedMiddleSvcServer) Segmentation(context.Context, *TextRequest) 
 }
 func (UnimplementedMiddleSvcServer) Classifier(context.Context, *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Classifier not implemented")
+}
+func (UnimplementedMiddleSvcServer) CreateAvatar(context.Context, *TextRequest) (*TextReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAvatar not implemented")
 }
 
 // UnsafeMiddleSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -1106,6 +1120,24 @@ func _MiddleSvc_Classifier_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_CreateAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).CreateAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/CreateAvatar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).CreateAvatar(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MiddleSvc_ServiceDesc is the grpc.ServiceDesc for MiddleSvc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1244,6 +1276,10 @@ var MiddleSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Classifier",
 			Handler:    _MiddleSvc_Classifier_Handler,
+		},
+		{
+			MethodName: "CreateAvatar",
+			Handler:    _MiddleSvc_CreateAvatar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

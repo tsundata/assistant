@@ -336,21 +336,27 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) Register(ctx context.Context, request *pb.BotRequest) (*pb.StateReply, error) {
-	b, err := s.repo.GetByIdentifier(ctx, request.Bot.Identifier)
+func (s *Chatbot) Register(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
+	b, err := s.repo.GetByIdentifier(ctx, payload.Bot.Identifier)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 	if b.Id > 0 {
-		request.Bot.Id = b.Id
-		err = s.repo.Update(ctx, request.Bot)
+		payload.Bot.Id = b.Id
+		err = s.repo.Update(ctx, payload.Bot)
 		if err != nil {
 			return nil, err
 		}
 		return &pb.StateReply{State: true}, nil
 	}
-	request.Bot.Uuid = util.UUID()
-	_, err = s.repo.Create(ctx, request.Bot)
+
+	avatarReply, err := s.middle.CreateAvatar(ctx, &pb.TextRequest{Text: payload.Bot.Identifier})
+	if err != nil {
+		return nil, err
+	}
+	payload.Bot.Avatar = avatarReply.Text
+	payload.Bot.Uuid = util.UUID()
+	_, err = s.repo.Create(ctx, payload.Bot)
 	if err != nil {
 		return nil, err
 	}
@@ -394,11 +400,15 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		return nil, err
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
+		avatarReply, err := s.middle.CreateAvatar(ctx, &pb.TextRequest{Text: defaultGroupName})
+		if err != nil {
+			return nil, err
+		}
 		_, err = s.repo.CreateGroup(ctx, &pb.Group{
 			Uuid:      util.UUID(),
 			UserId:    id,
 			Name:      defaultGroupName,
-			Avatar:    "",
+			Avatar:    avatarReply.Text,
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
 		})
@@ -459,7 +469,12 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 }
 
 func (s *Chatbot) CreateGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.StateReply, error) {
-	_, err := s.repo.CreateGroup(ctx, payload.Group)
+	avatarReply, err := s.middle.CreateAvatar(ctx, &pb.TextRequest{Text: payload.Group.Name})
+	if err != nil {
+		return nil, err
+	}
+	payload.Group.Avatar = avatarReply.Text
+	_, err = s.repo.CreateGroup(ctx, payload.Group)
 	if err != nil {
 		return nil, err
 	}
@@ -545,16 +560,16 @@ func (s *Chatbot) UpdateGroup(ctx context.Context, payload *pb.GroupRequest) (*p
 	return &pb.StateReply{State: true}, nil
 }
 
-func (s *Chatbot) GetGroupBotSetting(ctx context.Context, request *pb.BotSettingRequest) (*pb.BotSettingReply, error) {
-	kv, err := s.repo.GetGroupBotSettingByUuid(ctx, request.GroupUuid, request.BotUuid)
+func (s *Chatbot) GetGroupBotSetting(ctx context.Context, payload *pb.BotSettingRequest) (*pb.BotSettingReply, error) {
+	kv, err := s.repo.GetGroupBotSettingByUuid(ctx, payload.GroupUuid, payload.BotUuid)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.BotSettingReply{Kvs: kv}, nil
 }
 
-func (s *Chatbot) GetGroupSetting(ctx context.Context, request *pb.GroupSettingRequest) (*pb.GroupSettingReply, error) {
-	kv, err := s.repo.GetGroupSettingByUuid(ctx, request.GroupUuid)
+func (s *Chatbot) GetGroupSetting(ctx context.Context, payload *pb.GroupSettingRequest) (*pb.GroupSettingReply, error) {
+	kv, err := s.repo.GetGroupSettingByUuid(ctx, payload.GroupUuid)
 	if err != nil {
 		return nil, err
 	}

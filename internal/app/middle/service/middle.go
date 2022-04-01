@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -17,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
+	"io"
 	"net/url"
 	"sort"
 	"strconv"
@@ -27,14 +29,14 @@ import (
 const CronKey = "cron:rule"
 
 type Middle struct {
-	conf *config.AppConfig
-	rdb  *redis.Client
-	repo repository.MiddleRepository
-	user pb.UserSvcClient
+	conf    *config.AppConfig
+	rdb     *redis.Client
+	repo    repository.MiddleRepository
+	storage pb.StorageSvcClient
 }
 
-func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, user pb.UserSvcClient) *Middle {
-	return &Middle{rdb: rdb, repo: repo, conf: conf, user: user}
+func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, storage pb.StorageSvcClient) *Middle {
+	return &Middle{rdb: rdb, repo: repo, conf: conf, storage: storage}
 }
 
 func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
@@ -646,12 +648,12 @@ func (s *Middle) SetChartData(ctx context.Context, payload *pb.ChartDataRequest)
 	return &pb.ChartDataReply{ChartData: &pb.ChartData{Uuid: uuid}}, nil
 }
 
-func (s *Middle) Pinyin(_ context.Context, req *pb.TextRequest) (*pb.WordsReply, error) {
-	if req.GetText() == "" {
+func (s *Middle) Pinyin(_ context.Context, payload *pb.TextRequest) (*pb.WordsReply, error) {
+	if payload.GetText() == "" {
 		return &pb.WordsReply{Text: []string{}}, nil
 	}
 	a := pinyin.NewArgs()
-	py := pinyin.Pinyin(req.GetText(), a)
+	py := pinyin.Pinyin(payload.GetText(), a)
 	var result []string
 	for _, i := range py {
 		result = append(result, strings.Join(i, " "))
@@ -659,8 +661,8 @@ func (s *Middle) Pinyin(_ context.Context, req *pb.TextRequest) (*pb.WordsReply,
 	return &pb.WordsReply{Text: result}, nil
 }
 
-func (s *Middle) Segmentation(_ context.Context, req *pb.TextRequest) (*pb.WordsReply, error) {
-	if req.GetText() == "" {
+func (s *Middle) Segmentation(_ context.Context, payload *pb.TextRequest) (*pb.WordsReply, error) {
+	if payload.GetText() == "" {
 		return &pb.WordsReply{Text: []string{}}, nil
 	}
 	// gse preload dict
@@ -668,11 +670,11 @@ func (s *Middle) Segmentation(_ context.Context, req *pb.TextRequest) (*pb.Words
 	if err != nil {
 		return nil, err
 	}
-	result := seg.Cut(req.GetText(), true)
+	result := seg.Cut(payload.GetText(), true)
 	return &pb.WordsReply{Text: result}, nil
 }
 
-func (s *Middle) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextReply, error) {
+func (s *Middle) Classifier(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
 	rules, err := classifier.ReadRulesConfig(s.conf)
 	if err != nil {
 		return nil, err
@@ -684,11 +686,11 @@ func (s *Middle) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextRep
 		return nil, err
 	}
 
-	if req.GetText() == "" {
+	if payload.GetText() == "" {
 		return nil, app.ErrInvalidParameter
 	}
 
-	res, err := c.Do(req.GetText())
+	res, err := c.Do(payload.GetText())
 	if err != nil {
 		if errors.Is(err, app.ErrInvalidParameter) {
 			return &pb.TextReply{Text: ""}, nil
@@ -696,4 +698,43 @@ func (s *Middle) Classifier(_ context.Context, req *pb.TextRequest) (*pb.TextRep
 		return nil, err
 	}
 	return &pb.TextReply{Text: string(res)}, nil
+}
+
+func (s *Middle) CreateAvatar(ctx context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
+	avatarImage, err := util.Avatar(payload.Text)
+	if err != nil {
+		return nil, err
+	}
+
+	data := bytes.NewReader(avatarImage)
+	buf := make([]byte, 1024)
+	uc, err := s.storage.UploadFile(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = uc.Send(&pb.FileRequest{
+		Data: &pb.FileRequest_Info{Info: &pb.FileInfo{FileType: "png"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	for {
+		n, err := data.Read(buf)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		err = uc.Send(&pb.FileRequest{Data: &pb.FileRequest_Chuck{Chuck: buf[:n]}})
+		if err != nil {
+			return nil, err
+		}
+	}
+	fileReply, err := uc.CloseAndRecv()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.TextReply{Text: fileReply.Path}, nil
 }

@@ -76,6 +76,26 @@ func (mr *MockMiddleSvcClientMockRecorder) CloseSubscribe(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).CloseSubscribe), varargs...)
 }
 
+// CreateAvatar mocks base method.
+func (m *MockMiddleSvcClient) CreateAvatar(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateAvatar", varargs...)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAvatar indicates an expected call of CreateAvatar.
+func (mr *MockMiddleSvcClientMockRecorder) CreateAvatar(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAvatar", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreateAvatar), varargs...)
+}
+
 // CreateCredential mocks base method.
 func (m *MockMiddleSvcClient) CreateCredential(ctx context.Context, in *pb.KVsRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -747,6 +767,21 @@ func (m *MockMiddleSvcServer) CloseSubscribe(arg0 context.Context, arg1 *pb.Subs
 func (mr *MockMiddleSvcServerMockRecorder) CloseSubscribe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).CloseSubscribe), arg0, arg1)
+}
+
+// CreateAvatar mocks base method.
+func (m *MockMiddleSvcServer) CreateAvatar(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAvatar", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TextReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAvatar indicates an expected call of CreateAvatar.
+func (mr *MockMiddleSvcServerMockRecorder) CreateAvatar(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAvatar", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreateAvatar), arg0, arg1)
 }
 
 // CreateCredential mocks base method.
