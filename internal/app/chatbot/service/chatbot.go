@@ -199,7 +199,6 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				GroupId:      reply.Message.GetGroupId(),
 				UserId:       reply.Message.GetUserId(),
 				Sender:       botId,
-				SenderId:     botId,
 				SenderType:   enum.MessageBotType,
 				Receiver:     reply.Message.GetUserId(),
 				ReceiverType: enum.MessageUserType,
@@ -210,11 +209,11 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				Direction:    enum.MessageIncomingDirection,
 				SendTime:     util.Format(time.Now().Unix()),
 			}
-			_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+			messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 			if err != nil {
 				return nil, err
 			}
-			err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+			err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, messageReply.Message)
 			if err != nil {
 				return nil, err
 			}
@@ -255,7 +254,6 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 			GroupId:      payload.GroupId,
 			UserId:       payload.UserId,
 			Sender:       payload.BotId,
-			SenderId:     payload.BotId,
 			SenderType:   enum.MessageBotType,
 			Receiver:     payload.UserId,
 			ReceiverType: enum.MessageUserType,
@@ -266,11 +264,11 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 			Direction:    enum.MessageIncomingDirection,
 			SendTime:     util.Format(time.Now().Unix()),
 		}
-		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+		messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 		if err != nil {
 			return nil, err
 		}
-		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, messageReply.Message)
 		if err != nil {
 			return nil, err
 		}
@@ -315,7 +313,6 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 			GroupId:      payload.GroupId,
 			UserId:       payload.UserId,
 			Sender:       payload.BotId,
-			SenderId:     payload.BotId,
 			SenderType:   enum.MessageBotType,
 			Receiver:     payload.UserId,
 			ReceiverType: enum.MessageUserType,
@@ -326,11 +323,11 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 			Direction:    enum.MessageIncomingDirection,
 			SendTime:     util.Format(time.Now().Unix()),
 		}
-		_, err = s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
+		messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 		if err != nil {
 			return nil, err
 		}
-		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, outMessage)
+		err = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, messageReply.Message)
 		if err != nil {
 			return nil, err
 		}

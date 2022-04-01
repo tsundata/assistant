@@ -86,8 +86,6 @@ message Message {
   Avatar avatar = 20;
   // @inject_tag: gorm:"-"
   bytes data = 21;
-  // @inject_tag: gorm:"-" json:"sender_id,string"
-  int64 sender_id = 22;
 }
 
 message Alert {
@@ -195,23 +193,23 @@ message InboxReply {
 }
 
 message ActionRequest {
-  // @inject_tag: json:"group_id,string"
-  int64 group_id = 1;
-  // @inject_tag: json:"bot_id,string"
-  int64 bot_id = 2;
-  string action_id = 3;
-  string value = 4;
+  // @inject_tag: json:"message_id,string"
+  int64 message_id = 1;
+  string action_id = 2;
+  string value = 3;
 }
 
-message ActionReply {}
+message ActionReply {
+  bool state = 1;
+}
 
 message FormRequest {
-  // @inject_tag: json:"group_id,string"
-  int64 group_id = 1;
-  // @inject_tag: json:"bot_id,string"
-  int64 bot_id = 2;
-  string form_id = 3;
-  repeated KV form = 4;
+  // @inject_tag: json:"message_id,string"
+  int64 message_id = 1;
+  string form_id = 2;
+  repeated KV form = 3;
 }
 
-message FormReply {}
+message FormReply {
+  bool state = 1;
+}

@@ -242,7 +242,6 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 		}
 		item.Direction = direction
 		item.SendTime = util.Format(item.CreatedAt)
-		item.SenderId = item.Sender
 
 		reply = append(reply, item)
 	}
@@ -336,10 +335,11 @@ func (m *Message) LastByGroup(ctx context.Context, payload *pb.LastByGroupReques
 }
 
 func (m *Message) Save(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
-	_, err := m.repo.Create(ctx, payload.Message)
+	id, err := m.repo.Create(ctx, payload.Message)
 	if err != nil {
 		return nil, err
 	}
+	payload.Message.Id = id
 	return &pb.MessageReply{Message: payload.Message}, nil
 }
 
@@ -377,7 +377,6 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 	// setting
 
 	// push ws hub
-	payload.Message.SenderId = payload.Message.Sender
 	err = m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
 	if err != nil {
 		return nil, err
@@ -412,24 +411,32 @@ func (m *Message) Run(ctx context.Context, payload *pb.MessageRequest) (*pb.Text
 }
 
 func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.ActionReply, error) {
+	// store
 	id, _ := md.FromIncoming(ctx)
-
-	p := pb.ActionMsg{
-		ID:    payload.ActionId,
-		Value: payload.Value,
+	message, err := m.repo.GetByID(ctx, payload.MessageId)
+	if err != nil {
+		return nil, err
 	}
+	var p pb.ActionMsg
+	err = json.Unmarshal(util.StringToByte(message.Payload), &p)
+	if err != nil {
+		return nil, err
+	}
+	p.Value = payload.Value
 	data, err := json.Marshal(p)
 	if err != nil {
 		return nil, err
 	}
-
-	// todo store value
+	err = m.repo.SavePayload(ctx, payload.MessageId, util.ByteToString(data))
+	if err != nil {
+		return nil, err
+	}
 
 	// event
 	err = m.bus.Publish(ctx, enum.Chatbot, event.BotActionSubject, pb.Message{
 		UserId:     id,
-		GroupId:    payload.GroupId,
-		Sender:     payload.BotId,
+		GroupId:    message.GroupId,
+		Sender:     message.Sender,
 		SenderType: enum.MessageBotType,
 		Type:       string(enum.MessageTypeAction),
 		Payload:    util.ByteToString(data),
@@ -438,35 +445,44 @@ func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.Ac
 		return nil, err
 	}
 
-	return &pb.ActionReply{}, nil
+	return &pb.ActionReply{State: true}, nil
 }
 
 func (m *Message) Form(ctx context.Context, payload *pb.FormRequest) (*pb.FormReply, error) {
+	// store
 	id, _ := md.FromIncoming(ctx)
-
-	var field []pb.FormField
+	kvMap := make(map[string]interface{})
 	for _, item := range payload.Form {
-		field = append(field, pb.FormField{
-			Key:   item.Key,
-			Value: item.Value,
-		})
+		kvMap[item.Key] = item.Value
 	}
-	p := pb.FormMsg{
-		ID:    payload.FormId,
-		Field: field,
+	message, err := m.repo.GetByID(ctx, payload.MessageId)
+	if err != nil {
+		return nil, err
+	}
+	var p pb.FormMsg
+	err = json.Unmarshal(util.StringToByte(message.Payload), &p)
+	if err != nil {
+		return nil, err
+	}
+	for i, item := range p.Field {
+		if v, ok := kvMap[item.Key]; ok {
+			p.Field[i].Value = v
+		}
 	}
 	data, err := json.Marshal(p)
 	if err != nil {
 		return nil, err
 	}
-
-	// todo store value
+	err = m.repo.SavePayload(ctx, payload.MessageId, util.ByteToString(data))
+	if err != nil {
+		return nil, err
+	}
 
 	// event
 	err = m.bus.Publish(ctx, enum.Chatbot, event.BotFormSubject, pb.Message{
 		UserId:     id,
-		GroupId:    payload.GroupId,
-		Sender:     payload.BotId,
+		GroupId:    message.GroupId,
+		Sender:     message.Sender,
 		SenderType: enum.MessageBotType,
 		Type:       string(enum.MessageTypeForm),
 		Payload:    util.ByteToString(data),
@@ -475,7 +491,7 @@ func (m *Message) Form(ctx context.Context, payload *pb.FormRequest) (*pb.FormRe
 		return nil, err
 	}
 
-	return &pb.FormReply{}, nil
+	return &pb.FormReply{State: true}, nil
 }
 
 func (m *Message) ListInbox(ctx context.Context, payload *pb.InboxRequest) (*pb.InboxReply, error) {

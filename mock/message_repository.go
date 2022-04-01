@@ -245,6 +245,20 @@ func (mr *MockMessageRepositoryMockRecorder) Save(ctx, message interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockMessageRepository)(nil).Save), ctx, message)
 }
 
+// SavePayload mocks base method.
+func (m *MockMessageRepository) SavePayload(ctx context.Context, id int64, payload string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SavePayload", ctx, id, payload)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SavePayload indicates an expected call of SavePayload.
+func (mr *MockMessageRepositoryMockRecorder) SavePayload(ctx, id, payload interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SavePayload", reflect.TypeOf((*MockMessageRepository)(nil).SavePayload), ctx, id, payload)
+}
+
 // UpdateInboxStatus mocks base method.
 func (m *MockMessageRepository) UpdateInboxStatus(ctx context.Context, id int64, status int) error {
 	m.ctrl.T.Helper()

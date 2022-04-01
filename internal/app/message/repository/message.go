@@ -24,6 +24,7 @@ type MessageRepository interface {
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
 	Save(ctx context.Context, message *pb.Message) error
+	SavePayload(ctx context.Context, id int64, payload string) error
 	GetInbox(ctx context.Context, id int64) (pb.Inbox, error)
 	ListInbox(ctx context.Context, userId int64, page, limit int) (int64, []*pb.Inbox, error)
 	LastInbox(ctx context.Context, userId int64) (pb.Inbox, error)
@@ -152,6 +153,14 @@ func (r *MysqlMessageRepository) Delete(ctx context.Context, id int64) error {
 func (r *MysqlMessageRepository) Save(ctx context.Context, message *pb.Message) error {
 	message.UpdatedAt = time.Now().Unix()
 	return r.db.WithContext(ctx).Save(&message).Error
+}
+
+func (r *MysqlMessageRepository) SavePayload(ctx context.Context, id int64, payload string) error {
+	return r.db.WithContext(ctx).Model(&pb.Message{}).Where("id = ?", id).
+		UpdateColumns(map[string]interface{}{
+			"payload":    payload,
+			"updated_at": time.Now().Unix(),
+		}).Error
 }
 
 func (r *MysqlMessageRepository) GetInbox(ctx context.Context, id int64) (pb.Inbox, error) {
