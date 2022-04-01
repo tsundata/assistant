@@ -7,7 +7,7 @@ require (
 	github.com/RichardKnop/machinery/v2 v2.0.11
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
-	github.com/arsmn/fiber-swagger/v2 v2.24.0
+	github.com/arsmn/fiber-swagger/v2 v2.31.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dtm-labs/dtm v1.13.1
 	github.com/fogleman/gg v1.3.0
@@ -17,7 +17,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.31.0
-	github.com/gofiber/websocket/v2 v2.0.19
+	github.com/gofiber/websocket/v2 v2.0.20
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/golang-migrate/migrate/v4 v4.15.1
