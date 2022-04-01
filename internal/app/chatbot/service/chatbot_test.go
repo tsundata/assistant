@@ -254,8 +254,10 @@ func TestMessage_GetGroups(t *testing.T) {
 
 	repo := mock.NewMockChatbotRepository(ctl)
 	message := mock.NewMockMessageSvcClient(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetGroupByName(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Group{}, gorm.ErrRecordNotFound),
+		middle.EXPECT().CreateAvatar(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://test.png"}, nil),
 		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 		repo.EXPECT().GetBotsByUser(gomock.Any(), gomock.Any()).Return([]*pb.Bot{}, nil),
 		repo.EXPECT().ListGroup(gomock.Any(), gomock.Any()).Return([]*pb.Group{{
@@ -269,7 +271,7 @@ func TestMessage_GetGroups(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewChatbot(nil, nil, nil, repo, message, nil, nil, nil)
+	s := NewChatbot(nil, nil, nil, repo, message, middle, nil, nil)
 
 	type args struct {
 		in0 context.Context
