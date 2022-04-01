@@ -361,12 +361,15 @@ func TestMessage_CreateGroup(t *testing.T) {
 	defer ctl.Finish()
 
 	repo := mock.NewMockChatbotRepository(ctl)
+	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
+		middle.EXPECT().CreateAvatar(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://test.png"}, nil),
 		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		middle.EXPECT().CreateAvatar(gomock.Any(), gomock.Any()).Return(&pb.TextReply{Text: "https://test.png"}, nil),
 		repo.EXPECT().CreateGroup(gomock.Any(), gomock.Any()).Return(int64(2), nil),
 	)
 
-	s := NewChatbot(nil, nil, nil, repo, nil, nil, nil, nil)
+	s := NewChatbot(nil, nil, nil, repo, nil, middle, nil, nil)
 
 	type args struct {
 		in0     context.Context
