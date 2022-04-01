@@ -11,6 +11,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"io"
+	"time"
 )
 
 type Storage struct {
@@ -61,7 +62,13 @@ func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
 	if err != nil {
 		return err
 	}
-	path := fmt.Sprintf("%s.%s", uuid, fileType)
+	now := time.Now()
+	dir := fmt.Sprintf("%d/%d/%d", now.Year(), now.Month(), now.Day())
+	err = f.MakeDir(dir)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("%s/%s.%s", dir, uuid, fileType)
 	err = f.Put(path, fileData.Bytes(), false)
 	if err != nil {
 		return err

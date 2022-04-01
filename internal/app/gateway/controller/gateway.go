@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -529,7 +530,7 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 }
 
 func (gc *GatewayController) GetFile(c *fiber.Ctx) error {
-	path := c.Params("path")
+	path := c.Params("*")
 	reply, err := gc.storageSvc.AbsolutePath(md.BuildAuthContext(enum.SuperUserID), &pb.TextRequest{Text: path})
 	if err != nil {
 		return err
@@ -559,8 +560,8 @@ func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
 	}
 
 	// group id
-	ctx := md.BuildAuthContext(userId)
-	groupReply, err := gc.chatbotSvc.GetGroup(ctx, &pb.GroupRequest{Group: &pb.Group{Uuid: c.FormValue("group_uuid")}})
+	groupIdStr := c.FormValue("group_id")
+	groupId, err := strconv.ParseInt(groupIdStr, 10, 64)
 	if err != nil {
 		return err
 	}
@@ -570,7 +571,7 @@ func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
 		Uuid:    util.UUID(),
 		Type:    c.FormValue("type"),
 		Data:    data,
-		GroupId: groupReply.Group.Id,
+		GroupId: groupId,
 	}})
 	if err != nil {
 		return err

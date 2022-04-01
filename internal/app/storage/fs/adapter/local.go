@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"os"
+	"strings"
 )
 
 type Local struct {
@@ -89,7 +90,9 @@ func (l *Local) Dirs(dir string) ([]os.File, error) {
 }
 
 func (l *Local) MakeDir(path string) error {
-	panic("implement me")
+	path = l.AbsolutePath(path)
+	path = strings.ReplaceAll(path, "\\", "/")
+	return os.MkdirAll(path, os.ModePerm)
 }
 
 func (l *Local) MoveDir(from, to string, overwrite bool) error {

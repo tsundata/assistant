@@ -113,7 +113,7 @@ func CreateInitControllersFn(gc *GatewayController) func(router fiber.Router) {
 		router.Get("/qr/:text", gc.QR)
 		router.Get("/webhook/:flag", gc.Webhook)
 		router.Post("/webhook/:flag", gc.Webhook)
-		router.Get("file/:path", gc.GetFile)
+		router.Get("file/*", gc.GetFile)
 
 		// internal
 		auth := func(c *fiber.Ctx) error {
