@@ -2,8 +2,6 @@ package system
 
 import (
 	"context"
-	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
@@ -31,11 +29,6 @@ var formRules = []bot.FormRule{
 		Title: "Push notification switch",
 		Field: []bot.FieldItem{
 			{
-				Key:      enum.SystemBot,
-				Type:     bot.FieldItemTypeBool,
-				Required: true,
-			},
-			{
 				Key:      pushover.ID,
 				Type:     bot.FieldItemTypeBool,
 				Required: true,
@@ -48,7 +41,7 @@ var formRules = []bot.FormRule{
 		},
 		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
 			for _, item := range form {
-				c.GetRedis().Set(ctx, fmt.Sprintf("system:push:%s", item.Key), item.Value == "1", redis.KeepTTL)
+				c.GetRedis().HSet(ctx, "system:push:switch", item.Key, item.Value == "1")
 			}
 			return []pb.MsgPayload{
 				pb.TextMsg{Text: "switch success"},

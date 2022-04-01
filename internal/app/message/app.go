@@ -1,6 +1,7 @@
 package message
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/listener"
@@ -12,9 +13,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, rs *rpc.Server, repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, bus event.Bus, logger log.Logger, redis *redis.Client, rs *rpc.Server, repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, c, logger, repo, chatbot, storage)
+	err := listener.RegisterEventHandler(bus, c, logger, redis, repo, chatbot, storage)
 	if err != nil {
 		return nil, err
 	}

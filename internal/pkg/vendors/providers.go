@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsundata/assistant/api/pb"
-	push2 "github.com/tsundata/assistant/internal/pkg/push"
+	"github.com/tsundata/assistant/internal/pkg/push"
 	"github.com/tsundata/assistant/internal/pkg/vendors/bark"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudcone"
 	"github.com/tsundata/assistant/internal/pkg/vendors/cloudflare"
@@ -100,5 +100,19 @@ func NewOAuthProvider(rdb *redis.Client, category, url string) OAuthProvider {
 }
 
 type PushProvider interface {
-	Send(message push2.Message) error
+	Send(message push.Message) error
+}
+
+func NewPushProvider(category string) PushProvider {
+	var provider PushProvider
+
+	switch category {
+	case pushover.ID:
+		provider = pushover.NewPushover("", "")
+	case bark.ID:
+		provider = bark.NewBark("", "")
+	default:
+		return nil
+	}
+	return provider
 }

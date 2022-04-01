@@ -48,6 +48,14 @@ func CreateApp(id string) (*app.Application, error) {
 	logger := log.NewZapLogger(rollbarRollbar)
 	logLogger := log.NewAppLogger(logger)
 	bus := event.NewRabbitmqBus(connection, logLogger)
+	newrelicApp, err := newrelic.New(appConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis.New(appConfig, newrelicApp)
+	if err != nil {
+		return nil, err
+	}
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -83,21 +91,13 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, appConfig, messageRepository, chatbotSvcClient, storageSvcClient)
+	serviceMessage := service.NewMessage(bus, logLogger, redisClient, appConfig, messageRepository, chatbotSvcClient, storageSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
-	newrelicApp, err := newrelic.New(appConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	redisClient, err := redis.New(appConfig, newrelicApp)
-	if err != nil {
-		return nil, err
-	}
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, logLogger, server, messageRepository, chatbotSvcClient, storageSvcClient)
+	application, err := message.NewApp(appConfig, bus, logLogger, redisClient, server, messageRepository, chatbotSvcClient, storageSvcClient)
 	if err != nil {
 		return nil, err
 	}

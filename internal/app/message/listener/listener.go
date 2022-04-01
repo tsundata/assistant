@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/notify"
+	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/message/repository"
@@ -17,8 +18,8 @@ import (
 	"strings"
 )
 
-func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, repo repository.MessageRepository,
-	chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) error {
+func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, redis *redis.Client,
+	repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) error {
 	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
 		if msg.Callback != nil {
@@ -37,7 +38,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			return err
 		}
 
-		message := service.NewMessage(bus, logger, config, repo, chatbot, storage)
+		message := service.NewMessage(bus, logger, redis, config, repo, chatbot, storage)
 		_, err = message.Send(context.Background(), &pb.MessageRequest{Message: &m})
 		if err != nil {
 			return err

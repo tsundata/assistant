@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
@@ -11,8 +12,10 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/push"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"gorm.io/gorm"
 	"io"
 	"strings"
@@ -22,6 +25,7 @@ type Message struct {
 	bus     event.Bus
 	config  *config.AppConfig
 	logger  log.Logger
+	redis   *redis.Client
 	repo    repository.MessageRepository
 	chatbot pb.ChatbotSvcClient
 	storage pb.StorageSvcClient
@@ -30,6 +34,7 @@ type Message struct {
 func NewMessage(
 	bus event.Bus,
 	logger log.Logger,
+	redis *redis.Client,
 	config *config.AppConfig,
 	repo repository.MessageRepository,
 	chatbot pb.ChatbotSvcClient,
@@ -37,6 +42,7 @@ func NewMessage(
 	return &Message{
 		bus:     bus,
 		logger:  logger,
+		redis:   redis,
 		config:  config,
 		repo:    repo,
 		chatbot: chatbot,
@@ -357,7 +363,23 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 		return &pb.StateReply{State: false}, nil
 	}
 
-	// todo send message
+	// push provider
+	mapCmd := m.redis.HGetAll(ctx, "system:push:switch")
+	for k, v := range mapCmd.Val() {
+		if v == "1" {
+			provider := vendors.NewPushProvider(k)
+			if provider == nil {
+				continue
+			}
+			err := provider.Send(push.Message{
+				Title:   util.SubString(payload.Message.GetText(), 0, 100),
+				Content: util.SubString(payload.Message.GetText(), 0, 2000),
+			})
+			if err != nil {
+				m.logger.Error(err)
+			}
+		}
+	}
 
 	// push inbox
 	_, err := m.repo.CreateInbox(ctx, pb.Inbox{
@@ -373,8 +395,6 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 	if err != nil {
 		return nil, err
 	}
-
-	// setting
 
 	// push ws hub
 	err = m.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, payload.Message)
@@ -417,6 +437,9 @@ func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.Ac
 	if err != nil {
 		return nil, err
 	}
+	if message.Status == enum.MessageActionedStatus {
+		return &pb.ActionReply{State: true}, nil
+	}
 	var p pb.ActionMsg
 	err = json.Unmarshal(util.StringToByte(message.Payload), &p)
 	if err != nil {
@@ -458,6 +481,9 @@ func (m *Message) Form(ctx context.Context, payload *pb.FormRequest) (*pb.FormRe
 	message, err := m.repo.GetByID(ctx, payload.MessageId)
 	if err != nil {
 		return nil, err
+	}
+	if message.Status == enum.MessageActionedStatus {
+		return &pb.FormReply{State: true}, nil
 	}
 	var p pb.FormMsg
 	err = json.Unmarshal(util.StringToByte(message.Payload), &p)
