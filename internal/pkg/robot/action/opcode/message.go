@@ -61,7 +61,16 @@ func (o *Message) Run(ctx context.Context, comp *inside.Component, _ []interface
 		return false, nil
 	}
 
-	err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: text})
+	err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
+		GroupId:      comp.Message.GetGroupId(),
+		UserId:       comp.Message.GetUserId(),
+		Sender:       comp.Message.GetSender(),
+		SenderType:   comp.Message.GetSenderType(),
+		Receiver:     comp.Message.GetReceiver(),
+		ReceiverType: comp.Message.GetReceiverType(),
+		Type:         string(enum.MessageTypeText),
+		Text:         text,
+	})
 	if err != nil {
 		return false, err
 	}

@@ -3,20 +3,23 @@ package listener
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
 	"github.com/tsundata/assistant/internal/app/chatbot/service"
+	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"time"
 )
 
-func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
+func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Logger, bot *rulebot.RuleBot, message pb.MessageSvcClient,
 	middle pb.MiddleSvcClient, repo repository.ChatbotRepository, comp component.Component) error {
 	ctx := context.Background()
 
@@ -63,8 +66,18 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 		switch enum.MessageType(m.GetType()) {
 		case enum.MessageTypeScript:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-			_, err = chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
-			return err
+			reply, err := chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
+			if err != nil {
+				return err
+			}
+			if reply.GetText() != "" {
+				uuid := util.UUID()
+				rdb.Set(ctx, fmt.Sprintf("debug:%s", uuid), reply.GetText(), time.Hour)
+				m.Text = fmt.Sprintf("DEBUG %s/debug/%s", conf.Gateway.Url, uuid)
+				m.Type = string(enum.MessageTypeText)
+				_ = bus.Publish(ctx, enum.Message, event.MessageChannelSubject, m)
+			}
+			return nil
 		}
 		return nil
 	})
@@ -122,11 +135,11 @@ func RegisterEventHandler(bus event.Bus, rdb *redis.Client, logger log.Logger, b
 
 		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
 		_, err = chatbot.Form(md.BuildAuthContext(m.UserId), &pb.BotRequest{
-			UserId:   m.UserId,
-			GroupId:  m.GroupId,
-			BotId:    m.Sender,
-			FormId: p.ID,
-			Form:     form,
+			UserId:  m.UserId,
+			GroupId: m.GroupId,
+			BotId:   m.Sender,
+			FormId:  p.ID,
+			Form:    form,
 		})
 		return err
 	})

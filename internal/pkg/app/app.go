@@ -36,9 +36,9 @@ func RPCServerOption(svr *rpc.Server) Option {
 	}
 }
 
-func New(c *config.AppConfig, logger log.Logger, options ...Option) (*Application, error) {
+func New(conf *config.AppConfig, logger log.Logger, options ...Option) (*Application, error) {
 	app := &Application{
-		name:   c.Name,
+		name:   conf.Name,
 		logger: logger,
 	}
 

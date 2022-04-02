@@ -21,11 +21,11 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Logger, rs *rpc.Server,
+func NewApp(conf *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Logger, rs *rpc.Server,
 	message pb.MessageSvcClient, middle pb.MiddleSvcClient, repo repository.ChatbotRepository, bot *rulebot.RuleBot, comp component.Component,
 ) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, rdb, logger, bot, message, middle, repo, comp)
+	err := listener.RegisterEventHandler(conf, bus, rdb, logger, bot, message, middle, repo, comp)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func NewApp(c *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log.Lo
 		return nil, err
 	}
 
-	a, err := app.New(c, logger, app.RPCServerOption(rs))
+	a, err := app.New(conf, logger, app.RPCServerOption(rs))
 	if err != nil {
 		return nil, err
 	}

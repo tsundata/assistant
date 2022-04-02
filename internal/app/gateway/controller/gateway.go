@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -606,4 +607,10 @@ func (gc *GatewayController) MessageForm(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(reply)
+}
+
+func (gc *GatewayController) Debug(c *fiber.Ctx) error {
+	uuid := c.Params("uuid")
+	cmd := gc.rdb.Get(context.Background(), fmt.Sprintf("debug:%s", uuid))
+	return c.SendString(cmd.Val())
 }
