@@ -53,7 +53,13 @@ func TestTodoList(t *testing.T) {
 	cmd := "todo list"
 	comp := component.MockComponent(todo)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | PRIORITY | CONTENT | COMPLETE  \n-----+----------+---------+-----------\n   1 |        1 | todo    | true      \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
+		Title:  "Todo",
+		Header: []string{"Id", "Priority", "Content", "Complete"},
+		Row: [][]interface{}{
+			{"1", "1", "todo", "true"},
+		},
+	}}, res)
 }
 
 func TestTodoCommand(t *testing.T) {

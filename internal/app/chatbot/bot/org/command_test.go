@@ -51,7 +51,13 @@ func TestObjListCommand(t *testing.T) {
 	cmd := "obj list"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | NAME  \n-----+-------\n   1 | obj   \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
+		Title:  "Objectives",
+		Header: []string{"Id", "Name"},
+		Row: [][]interface{}{
+			{"1", "obj"},
+		},
+	}}, res)
 }
 
 func TestObjCreateCommand(t *testing.T) {
@@ -103,7 +109,13 @@ func TestKrListCommand(t *testing.T) {
 	cmd := "kr list"
 	comp := component.MockComponent(org)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  ID | NAME | OID | COMPLETE  \n-----+------+-----+-----------\n   1 | kr   |   1 | false     \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
+		Title:  "KeyResult",
+		Header: []string{"Id", "Name", "OID", "Complete"},
+		Row: [][]interface{}{
+			{"1", "kr", "1", "false"},
+		},
+	}}, res)
 }
 
 func TestKrCreateCommand(t *testing.T) {

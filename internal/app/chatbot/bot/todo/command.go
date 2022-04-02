@@ -37,7 +37,7 @@ var commandRules = []command.Rule{
 			}
 
 			return []pb.MsgPayload{pb.TableMsg{
-				Title:  "Subscribes",
+				Title:  "Todo",
 				Header: header,
 				Row:    row,
 			}}

@@ -91,13 +91,19 @@ func TestSubsListCommand(t *testing.T) {
 
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().ListSubscribe(gomock.Any(), gomock.Any()).Return(&pb.SubscribeReply{Subscribe: []*pb.Subscribe{{Name: "test1", Status: enum.SubscribeEnableStatus}}}, nil),
+		middle.EXPECT().GetUserSubscribe(gomock.Any(), gomock.Any()).Return(&pb.GetUserSubscribeReply{Subscribe: []*pb.KV{{Key: "test1", Value: "1"}}}, nil),
 	)
 
 	cmd := "subs list"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME  | SUBSCRIBE  \n--------+------------\n  test1 |         1  \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
+		Title:  "Subscribes",
+		Header: []string{"Name", "Subscribe"},
+		Row: [][]interface{}{
+			{"test1", "1"},
+		},
+	}}, res)
 }
 
 func TestSubsOpenCommand(t *testing.T) {
@@ -106,7 +112,7 @@ func TestSubsOpenCommand(t *testing.T) {
 
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().OpenSubscribe(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
+		middle.EXPECT().GetUserSubscribe(gomock.Any(), gomock.Any()).Return(&pb.GetUserSubscribeReply{Subscribe: []*pb.KV{{Key: "test1", Value: "1"}}}, nil),
 	)
 
 	cmd := "subs switch"
@@ -217,7 +223,13 @@ func TestCronListCommand(t *testing.T) {
 	cmd := "cron list"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "  NAME | ISCRON  \n-------+---------\n  test | true    \n"}}, res)
+	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
+		Title:  "Cron",
+		Header: []string{"Name", "IsCron"},
+		Row: [][]interface{}{
+			{"test", "true"},
+		},
+	}}, res)
 }
 
 func TestCronStartCommand(t *testing.T) {
