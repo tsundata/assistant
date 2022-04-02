@@ -476,6 +476,46 @@ func (mr *MockMiddleSvcClientMockRecorder) GetTags(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetTags), varargs...)
 }
 
+// GetUserSubscribe mocks base method.
+func (m *MockMiddleSvcClient) GetUserSubscribe(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.GetUserSubscribeReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetUserSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.GetUserSubscribeReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscribe indicates an expected call of GetUserSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) GetUserSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetUserSubscribe), varargs...)
+}
+
+// GetUserSubscribeStatus mocks base method.
+func (m *MockMiddleSvcClient) GetUserSubscribeStatus(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetUserSubscribeStatus", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscribeStatus indicates an expected call of GetUserSubscribeStatus.
+func (mr *MockMiddleSvcClientMockRecorder) GetUserSubscribeStatus(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribeStatus", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetUserSubscribeStatus), varargs...)
+}
+
 // ListCron mocks base method.
 func (m *MockMiddleSvcClient) ListCron(ctx context.Context, in *pb.CronRequest, opts ...grpc.CallOption) (*pb.CronReply, error) {
 	m.ctrl.T.Helper()
@@ -714,6 +754,26 @@ func (mr *MockMiddleSvcClientMockRecorder) StoreAppOAuth(ctx, in interface{}, op
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleSvcClient)(nil).StoreAppOAuth), varargs...)
+}
+
+// SwitchUserSubscribe mocks base method.
+func (m *MockMiddleSvcClient) SwitchUserSubscribe(ctx context.Context, in *pb.SwitchUserSubscribeRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SwitchUserSubscribe", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SwitchUserSubscribe indicates an expected call of SwitchUserSubscribe.
+func (mr *MockMiddleSvcClientMockRecorder) SwitchUserSubscribe(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SwitchUserSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).SwitchUserSubscribe), varargs...)
 }
 
 // MockMiddleSvcServer is a mock of MiddleSvcServer interface.
@@ -1069,6 +1129,36 @@ func (mr *MockMiddleSvcServerMockRecorder) GetTags(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetTags), arg0, arg1)
 }
 
+// GetUserSubscribe mocks base method.
+func (m *MockMiddleSvcServer) GetUserSubscribe(arg0 context.Context, arg1 *pb.TextRequest) (*pb.GetUserSubscribeReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetUserSubscribeReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscribe indicates an expected call of GetUserSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) GetUserSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetUserSubscribe), arg0, arg1)
+}
+
+// GetUserSubscribeStatus mocks base method.
+func (m *MockMiddleSvcServer) GetUserSubscribeStatus(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSubscribeStatus", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscribeStatus indicates an expected call of GetUserSubscribeStatus.
+func (mr *MockMiddleSvcServerMockRecorder) GetUserSubscribeStatus(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribeStatus", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetUserSubscribeStatus), arg0, arg1)
+}
+
 // ListCron mocks base method.
 func (m *MockMiddleSvcServer) ListCron(arg0 context.Context, arg1 *pb.CronRequest) (*pb.CronReply, error) {
 	m.ctrl.T.Helper()
@@ -1247,6 +1337,21 @@ func (m *MockMiddleSvcServer) StoreAppOAuth(arg0 context.Context, arg1 *pb.AppRe
 func (mr *MockMiddleSvcServerMockRecorder) StoreAppOAuth(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAppOAuth", reflect.TypeOf((*MockMiddleSvcServer)(nil).StoreAppOAuth), arg0, arg1)
+}
+
+// SwitchUserSubscribe mocks base method.
+func (m *MockMiddleSvcServer) SwitchUserSubscribe(arg0 context.Context, arg1 *pb.SwitchUserSubscribeRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SwitchUserSubscribe", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SwitchUserSubscribe indicates an expected call of SwitchUserSubscribe.
+func (mr *MockMiddleSvcServerMockRecorder) SwitchUserSubscribe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SwitchUserSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).SwitchUserSubscribe), arg0, arg1)
 }
 
 // MockUnsafeMiddleSvcServer is a mock of UnsafeMiddleSvcServer interface.

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
@@ -87,7 +88,7 @@ var commandRules = []command.Rule{
 			if comp.Middle() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
-			reply, err := comp.Middle().ListSubscribe(ctx, &pb.SubscribeRequest{})
+			reply, err := comp.Middle().GetUserSubscribe(ctx, &pb.TextRequest{})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -98,7 +99,7 @@ var commandRules = []command.Rule{
 				table.SetBorder(false)
 				table.SetHeader([]string{"Name", "Subscribe"})
 				for _, v := range reply.Subscribe {
-					table.Append([]string{v.Name, strconv.Itoa(int(v.Status))})
+					table.Append([]string{v.Key, v.Value})
 				}
 				table.Render()
 			}
@@ -110,45 +111,29 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
-		Define: "subs open [string]",
-		Help:   `Open subscribe`,
+		Define: "subs switch",
+		Help:   `Subscribe switch`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Middle() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
-
-			reply, err := comp.Middle().OpenSubscribe(ctx, &pb.SubscribeRequest{
-				Text: tokens[2].Value.(string),
-			})
+			var field []pb.FormField
+			reply, err := comp.Middle().GetUserSubscribe(ctx, &pb.TextRequest{})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
-			if reply.GetState() {
-				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
+			for _, item := range reply.Subscribe {
+				field = append(field, pb.FormField{
+					Key:      item.Key,
+					Type:     string(bot.FieldItemTypeString),
+					Required: true,
+				})
 			}
-
-			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
-		},
-	},
-	{
-		Define: `subs close [string]`,
-		Help:   `Close subscribe`,
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			if comp.Middle() == nil {
-				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
-			}
-
-			reply, err := comp.Middle().CloseSubscribe(ctx, &pb.SubscribeRequest{
-				Text: tokens[2].Value.(string),
-			})
-			if err != nil {
-				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
-			}
-			if reply.GetState() {
-				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
-			}
-
-			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
+			return []pb.MsgPayload{pb.FormMsg{
+				ID:    SubscribeSwitchFormID,
+				Title: "Subscribe switch",
+				Field: field,
+			}}
 		},
 	},
 	{

@@ -279,7 +279,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	}
 
 	// send
-	// todo channel
+	// todo user subscribe
 	fmt.Println(channel)
 	_, err = s.message.Send(ctx, &pb.MessageRequest{
 		Message: &pb.Message{

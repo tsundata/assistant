@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
@@ -28,6 +29,11 @@ type MiddleRepository interface {
 	ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error)
 	CreateSubscribe(ctx context.Context, subscribe pb.Subscribe) error
 	UpdateSubscribeStatus(ctx context.Context, name string, status int64) error
+	ListUserSubscribe(ctx context.Context, userId int64) ([]*pb.KV, error)
+	CreateUserSubscribe(ctx context.Context, subscribe pb.UserSubscribe) error
+	UpdateUserSubscribeStatus(ctx context.Context, userId, subscribeId int64, status int64) error
+	GetUserSubscribe(ctx context.Context, userId, subscribeId int64) (pb.UserSubscribe, error)
+	GetSubscribe(ctx context.Context, name string) (pb.Subscribe, error)
 }
 
 type MysqlMiddleRepository struct {
@@ -219,4 +225,74 @@ func (r *MysqlMiddleRepository) UpdateSubscribeStatus(ctx context.Context, name 
 			"status":     status,
 			"updated_at": time.Now().Unix(),
 		}).Error
+}
+
+func (r *MysqlMiddleRepository) ListUserSubscribe(ctx context.Context, userId int64) ([]*pb.KV, error) {
+	var items []struct {
+		Name   string
+		Status int
+	}
+	err := r.db.WithContext(ctx).
+		Model(&pb.UserSubscribe{}).
+		Select("subscribes.name as name, user_subscribes.status as status").
+		Where("user_id = ?", userId).
+		Joins("LEFT JOIN subscribes ON subscribes.id = user_subscribes.subscribe_id").
+		Order("user_subscribes.id DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	var result []*pb.KV
+	for _, item := range items {
+		result = append(result, &pb.KV{
+			Key:   item.Name,
+			Value: strconv.Itoa(item.Status),
+		})
+	}
+
+	return result, nil
+}
+
+func (r *MysqlMiddleRepository) CreateUserSubscribe(ctx context.Context, subscribe pb.UserSubscribe) error {
+	var find pb.UserSubscribe
+	err := r.db.WithContext(ctx).Where("user_id = ? AND subscribe_id = ?", subscribe.UserId, subscribe.SubscribeId).Take(&find).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	if find.Id <= 0 {
+		subscribe.Id = r.id.Generate(ctx)
+		subscribe.CreatedAt = time.Now().Unix()
+		subscribe.UpdatedAt = time.Now().Unix()
+		err = r.db.WithContext(ctx).Create(&subscribe).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *MysqlMiddleRepository) UpdateUserSubscribeStatus(ctx context.Context, userId, subscribeId int64, status int64) error {
+	return r.db.WithContext(ctx).Model(&pb.Subscribe{}).Where("user_id = ? AND subscribe_id = ?", userId, subscribeId).
+		UpdateColumns(map[string]interface{}{
+			"status":     status,
+			"updated_at": time.Now().Unix(),
+		}).Error
+}
+
+func (r *MysqlMiddleRepository) GetUserSubscribe(ctx context.Context, userId, subscribeId int64) (pb.UserSubscribe, error) {
+	var find pb.UserSubscribe
+	err := r.db.WithContext(ctx).Where("user_id = ? AND subscribe_id = ?", userId, subscribeId).
+		Take(&find).Error
+	if err != nil {
+		return pb.UserSubscribe{}, err
+	}
+	return find, nil
+}
+
+func (r *MysqlMiddleRepository) GetSubscribe(ctx context.Context, name string) (pb.Subscribe, error) {
+	var find pb.Subscribe
+	err := r.db.WithContext(ctx).Where("name = ?", name).Take(&find).Error
+	if err != nil {
+		return pb.Subscribe{}, err
+	}
+	return find, nil
 }

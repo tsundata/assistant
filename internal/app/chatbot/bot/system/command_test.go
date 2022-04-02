@@ -109,25 +109,10 @@ func TestSubsOpenCommand(t *testing.T) {
 		middle.EXPECT().OpenSubscribe(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	cmd := "subs open test1"
+	cmd := "subs switch"
 	comp := component.MockComponent(middle)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
-}
-
-func TestSubsCloseCommand(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	middle := mock.NewMockMiddleSvcClient(ctl)
-	gomock.InOrder(
-		middle.EXPECT().CloseSubscribe(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
-	)
-
-	cmd := "subs close test1"
-	comp := component.MockComponent(middle)
-	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
+	require.True(t, len(res) > 0)
 }
 
 func TestViewCommand(t *testing.T) {

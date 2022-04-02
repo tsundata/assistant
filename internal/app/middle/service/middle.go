@@ -18,6 +18,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
+	"gorm.io/gorm"
 	"io"
 	"net/url"
 	"sort"
@@ -481,6 +482,104 @@ func (s *Middle) GetSubscribeStatus(ctx context.Context, payload *pb.SubscribeRe
 	return &pb.StateReply{
 		State: false,
 	}, nil
+}
+
+func (s *Middle) GetUserSubscribe(ctx context.Context, _ *pb.TextRequest) (*pb.GetUserSubscribeReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	kv := make(map[string]string)
+
+	systemSubs, err := s.repo.ListSubscribe(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range systemSubs {
+		kv[item.Name] = strconv.Itoa(int(item.Status))
+	}
+
+	userSubs, err := s.repo.ListUserSubscribe(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range userSubs {
+		kv[item.Key] = item.Value
+	}
+
+	var result []*pb.KV
+	for k, v := range kv {
+		result = append(result, &pb.KV{
+			Key:   k,
+			Value: v,
+		})
+	}
+
+	return &pb.GetUserSubscribeReply{Subscribe: result}, nil
+}
+
+func (s *Middle) SwitchUserSubscribe(ctx context.Context, payload *pb.SwitchUserSubscribeRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	for _, item := range payload.Subscribe {
+		subs, err := s.repo.GetSubscribe(ctx, item.Key)
+		if err != nil {
+			return nil, err
+		}
+
+		find, err := s.repo.GetUserSubscribe(ctx, id, subs.Id)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+
+		var status int64
+		if item.Value == "1" {
+			status = enum.SubscribeEnableStatus
+		} else {
+			status = enum.SubscribeDisableStatus
+		}
+		if find.Id > 0 {
+			err = s.repo.UpdateUserSubscribeStatus(ctx, id, subs.Id, status)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			err = s.repo.CreateUserSubscribe(ctx, pb.UserSubscribe{
+				UserId:      id,
+				SubscribeId: subs.Id,
+				Status:      status,
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetUserSubscribeStatus(ctx context.Context, payload *pb.TextRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	state := false
+
+	subscribes, err := s.repo.ListSubscribe(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range subscribes {
+		if item.Name == payload.GetText() {
+			state = item.Status == enum.SubscribeEnableStatus
+			break
+		}
+	}
+
+	userSubs, err := s.repo.ListUserSubscribe(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range userSubs {
+		if item.Key == payload.GetText() {
+			state = item.Value == "1"
+			break
+		}
+	}
+
+	return &pb.StateReply{State: state}, nil
 }
 
 func (s *Middle) ListCron(ctx context.Context, _ *pb.CronRequest) (*pb.CronReply, error) {

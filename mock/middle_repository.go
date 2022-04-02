@@ -94,6 +94,20 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateSubscribe(ctx, subscribe inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).CreateSubscribe), ctx, subscribe)
 }
 
+// CreateUserSubscribe mocks base method.
+func (m *MockMiddleRepository) CreateUserSubscribe(ctx context.Context, subscribe pb.UserSubscribe) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUserSubscribe", ctx, subscribe)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateUserSubscribe indicates an expected call of CreateUserSubscribe.
+func (mr *MockMiddleRepositoryMockRecorder) CreateUserSubscribe(ctx, subscribe interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).CreateUserSubscribe), ctx, subscribe)
+}
+
 // GetAppByType mocks base method.
 func (m *MockMiddleRepository) GetAppByType(ctx context.Context, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
@@ -199,6 +213,36 @@ func (mr *MockMiddleRepositoryMockRecorder) GetPageByUUID(ctx, uuid interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPageByUUID", reflect.TypeOf((*MockMiddleRepository)(nil).GetPageByUUID), ctx, uuid)
 }
 
+// GetSubscribe mocks base method.
+func (m *MockMiddleRepository) GetSubscribe(ctx context.Context, name string) (pb.Subscribe, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubscribe", ctx, name)
+	ret0, _ := ret[0].(pb.Subscribe)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubscribe indicates an expected call of GetSubscribe.
+func (mr *MockMiddleRepositoryMockRecorder) GetSubscribe(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).GetSubscribe), ctx, name)
+}
+
+// GetUserSubscribe mocks base method.
+func (m *MockMiddleRepository) GetUserSubscribe(ctx context.Context, userId, subscribeId int64) (pb.UserSubscribe, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSubscribe", ctx, userId, subscribeId)
+	ret0, _ := ret[0].(pb.UserSubscribe)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscribe indicates an expected call of GetUserSubscribe.
+func (mr *MockMiddleRepositoryMockRecorder) GetUserSubscribe(ctx, userId, subscribeId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).GetUserSubscribe), ctx, userId, subscribeId)
+}
+
 // ListApps mocks base method.
 func (m *MockMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*pb.App, error) {
 	m.ctrl.T.Helper()
@@ -259,6 +303,21 @@ func (mr *MockMiddleRepositoryMockRecorder) ListTags(ctx interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTags", reflect.TypeOf((*MockMiddleRepository)(nil).ListTags), ctx)
 }
 
+// ListUserSubscribe mocks base method.
+func (m *MockMiddleRepository) ListUserSubscribe(ctx context.Context, userId int64) ([]*pb.KV, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUserSubscribe", ctx, userId)
+	ret0, _ := ret[0].([]*pb.KV)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUserSubscribe indicates an expected call of ListUserSubscribe.
+func (mr *MockMiddleRepositoryMockRecorder) ListUserSubscribe(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).ListUserSubscribe), ctx, userId)
+}
+
 // UpdateAppByID mocks base method.
 func (m *MockMiddleRepository) UpdateAppByID(ctx context.Context, id int64, token, extra string) error {
 	m.ctrl.T.Helper()
@@ -285,4 +344,18 @@ func (m *MockMiddleRepository) UpdateSubscribeStatus(ctx context.Context, name s
 func (mr *MockMiddleRepositoryMockRecorder) UpdateSubscribeStatus(ctx, name, status interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubscribeStatus", reflect.TypeOf((*MockMiddleRepository)(nil).UpdateSubscribeStatus), ctx, name, status)
+}
+
+// UpdateUserSubscribeStatus mocks base method.
+func (m *MockMiddleRepository) UpdateUserSubscribeStatus(ctx context.Context, userId, subscribeId, status int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserSubscribeStatus", ctx, userId, subscribeId, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserSubscribeStatus indicates an expected call of UpdateUserSubscribeStatus.
+func (mr *MockMiddleRepositoryMockRecorder) UpdateUserSubscribeStatus(ctx, userId, subscribeId, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserSubscribeStatus", reflect.TypeOf((*MockMiddleRepository)(nil).UpdateUserSubscribeStatus), ctx, userId, subscribeId, status)
 }

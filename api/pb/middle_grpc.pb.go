@@ -37,6 +37,9 @@ type MiddleSvcClient interface {
 	OpenSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
 	CloseSubscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetSubscribeStatus(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetUserSubscribe(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*GetUserSubscribeReply, error)
+	SwitchUserSubscribe(ctx context.Context, in *SwitchUserSubscribeRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetUserSubscribeStatus(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
 	ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error)
 	RegisterCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
 	StartCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*StateReply, error)
@@ -233,6 +236,33 @@ func (c *middleSvcClient) GetSubscribeStatus(ctx context.Context, in *SubscribeR
 	return out, nil
 }
 
+func (c *middleSvcClient) GetUserSubscribe(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*GetUserSubscribeReply, error) {
+	out := new(GetUserSubscribeReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetUserSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) SwitchUserSubscribe(ctx context.Context, in *SwitchUserSubscribeRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/SwitchUserSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetUserSubscribeStatus(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetUserSubscribeStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *middleSvcClient) ListCron(ctx context.Context, in *CronRequest, opts ...grpc.CallOption) (*CronReply, error) {
 	out := new(CronReply)
 	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ListCron", in, out, opts...)
@@ -391,6 +421,9 @@ type MiddleSvcServer interface {
 	OpenSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
 	CloseSubscribe(context.Context, *SubscribeRequest) (*StateReply, error)
 	GetSubscribeStatus(context.Context, *SubscribeRequest) (*StateReply, error)
+	GetUserSubscribe(context.Context, *TextRequest) (*GetUserSubscribeReply, error)
+	SwitchUserSubscribe(context.Context, *SwitchUserSubscribeRequest) (*StateReply, error)
+	GetUserSubscribeStatus(context.Context, *TextRequest) (*StateReply, error)
 	ListCron(context.Context, *CronRequest) (*CronReply, error)
 	RegisterCron(context.Context, *CronRequest) (*StateReply, error)
 	StartCron(context.Context, *CronRequest) (*StateReply, error)
@@ -468,6 +501,15 @@ func (UnimplementedMiddleSvcServer) CloseSubscribe(context.Context, *SubscribeRe
 }
 func (UnimplementedMiddleSvcServer) GetSubscribeStatus(context.Context, *SubscribeRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSubscribeStatus not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetUserSubscribe(context.Context, *TextRequest) (*GetUserSubscribeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSubscribe not implemented")
+}
+func (UnimplementedMiddleSvcServer) SwitchUserSubscribe(context.Context, *SwitchUserSubscribeRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchUserSubscribe not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetUserSubscribeStatus(context.Context, *TextRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSubscribeStatus not implemented")
 }
 func (UnimplementedMiddleSvcServer) ListCron(context.Context, *CronRequest) (*CronReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCron not implemented")
@@ -868,6 +910,60 @@ func _MiddleSvc_GetSubscribeStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_GetUserSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetUserSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetUserSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetUserSubscribe(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_SwitchUserSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SwitchUserSubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).SwitchUserSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/SwitchUserSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).SwitchUserSubscribe(ctx, req.(*SwitchUserSubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetUserSubscribeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetUserSubscribeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetUserSubscribeStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetUserSubscribeStatus(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MiddleSvc_ListCron_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CronRequest)
 	if err := dec(in); err != nil {
@@ -1220,6 +1316,18 @@ var MiddleSvc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSubscribeStatus",
 			Handler:    _MiddleSvc_GetSubscribeStatus_Handler,
+		},
+		{
+			MethodName: "GetUserSubscribe",
+			Handler:    _MiddleSvc_GetUserSubscribe_Handler,
+		},
+		{
+			MethodName: "SwitchUserSubscribe",
+			Handler:    _MiddleSvc_SwitchUserSubscribe_Handler,
+		},
+		{
+			MethodName: "GetUserSubscribeStatus",
+			Handler:    _MiddleSvc_GetUserSubscribeStatus_Handler,
 		},
 		{
 			MethodName: "ListCron",

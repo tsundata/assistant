@@ -11,6 +11,7 @@ import (
 )
 
 const PushSwitchFormID = "push_switch"
+const SubscribeSwitchFormID = "subscribe_switch"
 
 var metadata = bot.Metadata{
 	Name:       "System",
@@ -45,6 +46,34 @@ var formRules = []bot.FormRule{
 			}
 			return []pb.MsgPayload{
 				pb.TextMsg{Text: "switch success"},
+			}
+		},
+	},
+	{
+		ID:    SubscribeSwitchFormID,
+		Title: "Subscribe switch",
+		Field: []bot.FieldItem{},
+		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+			var kv []*pb.KV
+			for _, item := range form {
+				kv = append(kv, &pb.KV{
+					Key:   item.Key,
+					Value: item.Value.(string),
+				})
+			}
+			reply, err := c.Middle().SwitchUserSubscribe(ctx, &pb.SwitchUserSubscribeRequest{Subscribe: kv})
+			if err != nil {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: err.Error()},
+				}
+			}
+			if reply.State {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: "switch success"},
+				}
+			}
+			return []pb.MsgPayload{
+				pb.TextMsg{Text: "switch failed"},
 			}
 		},
 	},
