@@ -12,6 +12,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -27,8 +28,9 @@ type Crawler struct {
 	outCh chan rule.Result
 	jobs  map[string]rule.Rule
 
-	c       *config.AppConfig
+	conf    *config.AppConfig
 	rdb     *redis.Client
+	bus     event.Bus
 	logger  log.Logger
 	middle  pb.MiddleSvcClient
 	message pb.MessageSvcClient
@@ -41,14 +43,11 @@ func New() *Crawler {
 	}
 }
 
-func (s *Crawler) SetService(
-	c *config.AppConfig,
-	rdb *redis.Client,
-	logger log.Logger,
-	middle pb.MiddleSvcClient,
-	message pb.MessageSvcClient) {
-	s.c = c
+func (s *Crawler) SetService(conf *config.AppConfig, rdb *redis.Client, bus event.Bus,
+	logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient) {
+	s.conf = conf
 	s.rdb = rdb
+	s.bus = bus
 	s.logger = logger
 	s.middle = middle
 	s.message = message
@@ -56,7 +55,7 @@ func (s *Crawler) SetService(
 
 func (s *Crawler) LoadRule() error {
 	ctx := context.Background()
-	data, err := s.c.GetConfig(ctx, fmt.Sprintf("%s/rules", enum.Spider))
+	data, err := s.conf.GetConfig(ctx, fmt.Sprintf("%s/rules", enum.Spider))
 	if err != nil {
 		return err
 	}
@@ -83,7 +82,7 @@ func (s *Crawler) LoadRule() error {
 		}
 
 		// register
-		_, err = s.middle.RegisterSubscribe(ctx, &pb.SubscribeRequest{
+		err = s.bus.Publish(ctx, enum.Middle, event.SubscribeRegisterSubject, pb.SubscribeRequest{
 			Text: r.Name,
 		})
 		if err != nil {
@@ -125,6 +124,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 			})
 			if err != nil {
 				s.logger.Error(err, zap.String("spider", name))
+				time.Sleep(30 * time.Second)
 				continue
 			}
 			// unsubscribe
@@ -157,6 +157,7 @@ func (s *Crawler) ruleWorker(name string, r rule.Rule) {
 		nextTime, err = p.Next(time.Now())
 		if err != nil {
 			s.logger.Error(err, zap.String("spider", name))
+			time.Sleep(30 * time.Second)
 			continue
 		}
 		time.Sleep(2 * time.Second)
@@ -279,6 +280,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 
 	// send
 	// todo channel
+	fmt.Println(channel)
 	_, err = s.message.Send(ctx, &pb.MessageRequest{
 		Message: &pb.Message{
 			UserId:     enum.SuperUserID,

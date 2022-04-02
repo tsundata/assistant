@@ -11,10 +11,12 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/middleware/influx"
 	"github.com/tsundata/assistant/internal/pkg/middleware/jaeger"
+	"github.com/tsundata/assistant/internal/pkg/middleware/rabbitmq"
 	"github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/rpcclient"
@@ -44,7 +46,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	connection, err := rabbitmq.New(appConfig)
+	if err != nil {
+		return nil, err
+	}
 	logLogger := log.NewAppLogger(logger)
+	bus := event.NewRabbitmqBus(connection, logLogger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -69,7 +76,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, logLogger, middleSvcClient, messageSvcClient)
+	application, err := spider.NewApp(appConfig, redisClient, bus, logLogger, middleSvcClient, messageSvcClient)
 	if err != nil {
 		return nil, err
 	}
@@ -78,4 +85,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, spider.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, rpcclient.ProviderSet, newrelic.ProviderSet, rabbitmq.ProviderSet, event.ProviderSet)

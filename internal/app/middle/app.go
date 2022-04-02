@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/middle/listener"
+	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -11,9 +12,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server, bus event.Bus, rdb *redis.Client) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server, bus event.Bus, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, rdb)
+	err := listener.RegisterEventHandler(bus, rdb, repo)
 	if err != nil {
 		return nil, err
 	}

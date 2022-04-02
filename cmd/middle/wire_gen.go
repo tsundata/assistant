@@ -92,7 +92,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	bus := event.NewRabbitmqBus(connection, logLogger)
-	application, err := middle.NewApp(appConfig, logLogger, server, bus, redisClient)
+	application, err := middle.NewApp(appConfig, logLogger, server, bus, redisClient, middleRepository)
 	if err != nil {
 		return nil, err
 	}

@@ -7,14 +7,15 @@ import (
 	"github.com/tsundata/assistant/internal/app/spider/crawler"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
-func NewApp(c *config.AppConfig, rdb *redis.Client, logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, rdb *redis.Client, bus event.Bus, logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient) (*app.Application, error) {
 	// spider
 	go func() {
 		s := crawler.New()
-		s.SetService(c, rdb, logger, middle, message)
+		s.SetService(c, rdb, bus, logger, middle, message)
 		err := s.LoadRule()
 		if err != nil {
 			logger.Error(err)
