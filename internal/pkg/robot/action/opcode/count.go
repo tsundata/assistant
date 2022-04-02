@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"reflect"
+	"unicode/utf8"
 )
 
 type Count struct{}
@@ -22,7 +23,7 @@ func (o *Count) Doc() string {
 
 func (o *Count) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
 	if text, ok := comp.Value.(string); ok {
-		result := len(text)
+		result := utf8.RuneCountInString(text)
 		comp.SetValue(result)
 		return int64(result), nil
 	}
