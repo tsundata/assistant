@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
@@ -93,21 +92,23 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			tableString := &strings.Builder{}
+			var header []string
+			var row [][]interface{}
 			if len(reply.Subscribe) > 0 {
-				table := tablewriter.NewWriter(tableString)
-				table.SetBorder(false)
-				table.SetHeader([]string{"Name", "Subscribe"})
+				header = []string{"Name", "Subscribe"}
 				for _, v := range reply.Subscribe {
-					table.Append([]string{v.Key, v.Value})
+					row = append(row, []interface{}{v.Key, v.Value})
 				}
-				table.Render()
 			}
-			if tableString.String() == "" {
+			if len(row) == 0 {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty subscript"}}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Subscribes",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{
@@ -282,21 +283,23 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			tableString := &strings.Builder{}
+			var header []string
+			var row [][]interface{}
 			if len(reply.Cron) > 0 {
-				table := tablewriter.NewWriter(tableString)
-				table.SetBorder(false)
-				table.SetHeader([]string{"Name", "IsCron"})
+				header = []string{"Name", "IsCron"}
 				for _, v := range reply.Cron {
-					table.Append([]string{v.Name, util.BoolToString(v.State)})
+					row = append(row, []interface{}{v.Name, util.BoolToString(v.State)})
 				}
-				table.Render()
 			}
-			if tableString.String() == "" {
+			if len(row) == 0 {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty cron"}}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Cron",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{

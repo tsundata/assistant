@@ -2,13 +2,11 @@ package org
 
 import (
 	"context"
-	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
-	"strings"
 )
 
 var commandRules = []command.Rule{
@@ -25,21 +23,23 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			tableString := &strings.Builder{}
+			var header []string
+			var row [][]interface{}
 			if len(reply.Objective) > 0 {
-				table := tablewriter.NewWriter(tableString)
-				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Name"})
+				header = []string{"Id", "Name"}
 				for _, v := range reply.Objective {
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name})
+					row = append(row, []interface{}{strconv.Itoa(int(v.Id)), v.Name})
 				}
-				table.Render()
 			}
-			if tableString.String() == "" {
+			if len(row) == 0 {
 				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Objectives",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{
@@ -100,21 +100,23 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			tableString := &strings.Builder{}
+			var header []string
+			var row [][]interface{}
 			if len(reply.Result) > 0 {
-				table := tablewriter.NewWriter(tableString)
-				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Name", "OID", "Complete"})
+				header = []string{"Id", "Name", "OID", "Complete"}
 				for _, v := range reply.Result {
-					table.Append([]string{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), util.BoolToString(v.Complete)})
+					row = append(row, []interface{}{strconv.Itoa(int(v.Id)), v.Name, strconv.Itoa(int(v.ObjectiveId)), util.BoolToString(v.Complete)})
 				}
-				table.Render()
 			}
-			if tableString.String() == "" {
+			if len(row) == 0 {
 				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "KeyResult",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{

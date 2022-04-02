@@ -13,6 +13,7 @@ const (
 	MessageTypeScript   MessageType = "script"
 	MessageTypeAction   MessageType = "action"
 	MessageTypeForm     MessageType = "form"
+	MessageTypeTable    MessageType = "table"
 )
 
 const (

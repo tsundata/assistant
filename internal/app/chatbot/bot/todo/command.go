@@ -2,14 +2,12 @@ package todo
 
 import (
 	"context"
-	"github.com/olekukonko/tablewriter"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
-	"strings"
 )
 
 var commandRules = []command.Rule{
@@ -26,21 +24,23 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			tableString := &strings.Builder{}
+			var header []string
+			var row [][]interface{}
 			if len(reply.Todos) > 0 {
-				table := tablewriter.NewWriter(tableString)
-				table.SetBorder(false)
-				table.SetHeader([]string{"Id", "Priority", "Content", "Complete"})
+				header = []string{"Id", "Priority", "Content", "Complete"}
 				for _, v := range reply.Todos {
-					table.Append([]string{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete)})
+					row = append(row, []interface{}{strconv.Itoa(int(v.Id)), strconv.Itoa(int(v.Priority)), v.Content, util.BoolToString(v.Complete)})
 				}
-				table.Render()
 			}
-			if tableString.String() == "" {
+			if len(row) == 0 {
 				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: tableString.String()}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Subscribes",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{

@@ -115,63 +115,12 @@ func (a LocationMsg) Type() enum.MessageType {
 	return enum.MessageTypeLocation
 }
 
-func MockMsgPayload() []MsgPayload {
-	return []MsgPayload{
-		TextMsg{Text: "test"},
-		ImageMsg{
-			Src:    "https://chatscope.io/storybook/react/static/media/zoe.e31a4ff8.svg",
-			Width:  100,
-			Height: 100,
-			Alt:    "Avatar",
-		},
-		ScriptMsg{
-			Kind: enum.ActionScript,
-			Code: "#!action\necho 1",
-		},
-		LinkMsg{
-			Title: "test",
-			Cover: "https://chatscope.io/storybook/react/static/media/zoe.e31a4ff8.svg",
-			Url:   "https://test.dev",
-		},
-		ActionMsg{
-			ID:    "demo",
-			Title: "demo?",
-			Option: []string{
-				"true",
-				"false",
-			},
-		},
-		FormMsg{
-			ID:    "demo",
-			Title: "demo?",
-			Field: []FormField{
-				{
-					Key:      "title",
-					Type:     "string",
-					Required: true,
-					Value:    nil,
-				},
-			},
-		},
-		LocationMsg{
-			Longitude: 112.5,
-			Latitude:  52.1,
-		},
-		FileMsg{
-			Src: "test.go",
-			Alt: "Test",
-		},
-		VideoMsg{
-			Src:      "test.mp4",
-			Width:    1080,
-			Height:   720,
-			Alt:      "Test",
-			Duration: 120,
-		},
-		AudioMsg{
-			Src:      "test.mp3",
-			Alt:      "Test",
-			Duration: 50,
-		},
-	}
+type TableMsg struct {
+	Title  string          `json:"title"`
+	Header []string        `json:"header"`
+	Row    [][]interface{} `json:"row"`
+}
+
+func (t TableMsg) Type() enum.MessageType {
+	return enum.MessageTypeTable
 }
