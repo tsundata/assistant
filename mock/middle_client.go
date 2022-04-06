@@ -476,6 +476,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetTags(ctx, in interface{}, opts ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetTags), varargs...)
 }
 
+// GetTagsByModelId mocks base method.
+func (m *MockMiddleSvcClient) GetTagsByModelId(ctx context.Context, in *pb.ModelIdRequest, opts ...grpc.CallOption) (*pb.GetTagsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetTagsByModelId", varargs...)
+	ret0, _ := ret[0].(*pb.GetTagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTagsByModelId indicates an expected call of GetTagsByModelId.
+func (mr *MockMiddleSvcClientMockRecorder) GetTagsByModelId(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTagsByModelId", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetTagsByModelId), varargs...)
+}
+
 // GetUserSubscribe mocks base method.
 func (m *MockMiddleSvcClient) GetUserSubscribe(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.GetUserSubscribeReply, error) {
 	m.ctrl.T.Helper()
@@ -1127,6 +1147,21 @@ func (m *MockMiddleSvcServer) GetTags(arg0 context.Context, arg1 *pb.TagRequest)
 func (mr *MockMiddleSvcServerMockRecorder) GetTags(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetTags), arg0, arg1)
+}
+
+// GetTagsByModelId mocks base method.
+func (m *MockMiddleSvcServer) GetTagsByModelId(arg0 context.Context, arg1 *pb.ModelIdRequest) (*pb.GetTagsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTagsByModelId", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetTagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTagsByModelId indicates an expected call of GetTagsByModelId.
+func (mr *MockMiddleSvcServerMockRecorder) GetTagsByModelId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTagsByModelId", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetTagsByModelId), arg0, arg1)
 }
 
 // GetUserSubscribe mocks base method.

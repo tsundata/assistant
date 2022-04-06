@@ -43,6 +43,7 @@ service MiddleSvc {
   rpc GetOrCreateTag(TagRequest) returns (TagReply) {}
   rpc GetTags(TagRequest) returns (TagsReply) {}
   rpc SaveModelTag(ModelTagRequest) returns (ModelTagReply) {}
+  rpc GetTagsByModelId(ModelIdRequest) returns (GetTagsReply) {}
   rpc GetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc SetChartData(ChartDataRequest) returns (ChartDataReply) {}
   rpc GetChartUrl(TextRequest) returns (TextReply) {}
@@ -256,6 +257,9 @@ message ModelTag {
   int64 created_at = 6;
   // @inject_tag: db:"updated_at"
   int64 updated_at = 7;
+
+  // @inject_tag: gorm:"-"
+  string name = 8;
 }
 
 message TagRequest {
@@ -277,6 +281,14 @@ message ModelTagRequest {
 
 message ModelTagReply {
   ModelTag model = 1;
+}
+
+message ModelIdRequest {
+  repeated int64 model_id = 1;
+}
+
+message GetTagsReply {
+  repeated ModelTag tags = 1;
 }
 
 message ChartData {

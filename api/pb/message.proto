@@ -76,6 +76,9 @@ message Message {
   // @inject_tag: db:"updated_at"
   int64 updated_at = 16;
 
+  // @inject_tag: gorm:"-"
+  bytes data = 22;
+
   // @inject_tag: gorm:"->"
   string send_time = 17;
   // @inject_tag: gorm:"->"
@@ -85,7 +88,7 @@ message Message {
   // @inject_tag:gorm:"-"
   Avatar avatar = 20;
   // @inject_tag: gorm:"-"
-  bytes data = 21;
+  repeated string tags = 21;
 }
 
 message Alert {

@@ -43,19 +43,6 @@ CREATE TABLE `group_bot_settings`
     ENGINE = InnoDB;
 
 
-CREATE TABLE `group_tags`
-(
-    `id`         BIGINT(19)  NOT NULL AUTO_INCREMENT,
-    `group_id`   BIGINT(19)  NOT NULL,
-    `tag`        VARCHAR(36) NOT NULL,
-    `created_at` INT(10)     NOT NULL,
-    `updated_at` INT(10)     NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    INDEX `group_id` (`group_id`) USING BTREE
-)
-    ENGINE = InnoDB;
-
-
 CREATE TABLE `group_settings`
 (
     `group_id`   BIGINT(19)    NOT NULL,

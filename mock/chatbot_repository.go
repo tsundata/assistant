@@ -79,21 +79,6 @@ func (mr *MockChatbotRepositoryMockRecorder) CreateGroupBot(ctx, groupId, bot in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).CreateGroupBot), ctx, groupId, bot)
 }
 
-// CreateGroupTag mocks base method.
-func (m *MockChatbotRepository) CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateGroupTag", ctx, tag)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateGroupTag indicates an expected call of CreateGroupTag.
-func (mr *MockChatbotRepositoryMockRecorder) CreateGroupTag(ctx, tag interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).CreateGroupTag), ctx, tag)
-}
-
 // CreateTrigger mocks base method.
 func (m *MockChatbotRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
 	m.ctrl.T.Helper()
@@ -149,20 +134,6 @@ func (m *MockChatbotRepository) DeleteGroupBot(ctx context.Context, groupId, bot
 func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupBot(ctx, groupId, botId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupBot), ctx, groupId, botId)
-}
-
-// DeleteGroupTag mocks base method.
-func (m *MockChatbotRepository) DeleteGroupTag(ctx context.Context, id int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteGroupTag", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteGroupTag indicates an expected call of DeleteGroupTag.
-func (mr *MockChatbotRepositoryMockRecorder) DeleteGroupTag(ctx, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteGroupTag), ctx, id)
 }
 
 // DeleteTriggerByMessageID mocks base method.
@@ -492,21 +463,6 @@ func (m *MockChatbotRepository) ListGroupBot(ctx context.Context, groupId int64)
 func (mr *MockChatbotRepositoryMockRecorder) ListGroupBot(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupBot", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupBot), ctx, groupId)
-}
-
-// ListGroupTag mocks base method.
-func (m *MockChatbotRepository) ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListGroupTag", ctx, groupId)
-	ret0, _ := ret[0].([]*pb.GroupTag)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListGroupTag indicates an expected call of ListGroupTag.
-func (mr *MockChatbotRepositoryMockRecorder) ListGroupTag(ctx, groupId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGroupTag", reflect.TypeOf((*MockChatbotRepository)(nil).ListGroupTag), ctx, groupId)
 }
 
 // ListTriggersByType mocks base method.

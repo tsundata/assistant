@@ -691,19 +691,27 @@ func (s *Middle) GetTags(ctx context.Context, _ *pb.TagRequest) (*pb.TagsReply, 
 	}, nil
 }
 
-func (s *Middle) SaveModelTag(ctx context.Context, request *pb.ModelTagRequest) (*pb.ModelTagReply, error) {
+func (s *Middle) SaveModelTag(ctx context.Context, payload *pb.ModelTagRequest) (*pb.ModelTagReply, error) {
 	tag, err := s.repo.GetOrCreateTag(ctx, &pb.Tag{
-		Name: request.Tag,
+		Name: payload.Tag,
 	})
 	if err != nil {
 		return nil, err
 	}
-	request.Model.TagId = tag.Id
-	_, err = s.repo.GetOrCreateModelTag(ctx, request.Model)
+	payload.Model.TagId = tag.Id
+	_, err = s.repo.GetOrCreateModelTag(ctx, payload.Model)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.ModelTagReply{Model: request.Model}, nil
+	return &pb.ModelTagReply{Model: payload.Model}, nil
+}
+
+func (s *Middle) GetTagsByModelId(ctx context.Context, payload *pb.ModelIdRequest) (*pb.GetTagsReply, error) {
+	tags, err := s.repo.ListModelTags(ctx, payload.ModelId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetTagsReply{Tags: tags}, nil
 }
 
 func (s *Middle) GetChartData(ctx context.Context, payload *pb.ChartDataRequest) (*pb.ChartDataReply, error) {

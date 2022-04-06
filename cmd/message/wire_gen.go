@@ -91,13 +91,17 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	serviceMessage := service.NewMessage(bus, logLogger, redisClient, appConfig, messageRepository, chatbotSvcClient, storageSvcClient)
+	middleSvcClient, err := rpcclient.NewMiddleClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	serviceMessage := service.NewMessage(bus, logLogger, redisClient, appConfig, messageRepository, chatbotSvcClient, storageSvcClient, middleSvcClient)
 	initServer := service.CreateInitServerFn(serviceMessage)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
 	}
-	application, err := message.NewApp(appConfig, bus, logLogger, redisClient, server, messageRepository, chatbotSvcClient, storageSvcClient)
+	application, err := message.NewApp(appConfig, bus, logLogger, redisClient, server, messageRepository, chatbotSvcClient, storageSvcClient, middleSvcClient)
 	if err != nil {
 		return nil, err
 	}

@@ -24,6 +24,7 @@ type MiddleRepository interface {
 	ListCredentials(ctx context.Context, userId int64) ([]*pb.Credential, error)
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
 	ListTags(ctx context.Context) ([]*pb.Tag, error)
+	ListModelTags(ctx context.Context, modelId []int64) ([]*pb.ModelTag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
 	GetOrCreateModelTag(ctx context.Context, tag *pb.ModelTag) (pb.ModelTag, error)
 	ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error)
@@ -152,6 +153,33 @@ func (r *MysqlMiddleRepository) ListTags(ctx context.Context) ([]*pb.Tag, error)
 	return items, nil
 }
 
+func (r *MysqlMiddleRepository) ListModelTags(ctx context.Context, modelId []int64) ([]*pb.ModelTag, error) {
+	var m []struct {
+		ModelId int64
+		Name    string
+	}
+
+	err := r.db.WithContext(ctx).
+		Model(&pb.ModelTag{}).
+		Select("model_id, name").
+		Where("model_tags.model_id IN ?", modelId).
+		Joins("LEFT JOIN tags ON model_tags.tag_id = tags.id").
+		Order("model_tags.id DESC").Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var items []*pb.ModelTag
+	for _, item := range m {
+		items = append(items, &pb.ModelTag{
+			ModelId: item.ModelId,
+			Name:    item.Name,
+		})
+	}
+
+	return items, nil
+}
+
 func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error) {
 	var find pb.Tag
 	err := r.db.WithContext(ctx).Where("name = ?", tag.Name).First(&find).Error
@@ -160,10 +188,11 @@ func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag)
 	}
 
 	if find.Id <= 0 {
-		tag.Id = r.id.Generate(ctx)
-		tag.CreatedAt = time.Now().Unix()
-		tag.UpdatedAt = time.Now().Unix()
-		err = r.db.WithContext(ctx).Create(&tag).Error
+		find.Id = r.id.Generate(ctx)
+		find.Name = tag.Name
+		find.CreatedAt = time.Now().Unix()
+		find.UpdatedAt = time.Now().Unix()
+		err = r.db.WithContext(ctx).Create(&find).Error
 		if err != nil {
 			return pb.Tag{}, err
 		}

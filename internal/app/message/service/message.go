@@ -29,6 +29,7 @@ type Message struct {
 	repo    repository.MessageRepository
 	chatbot pb.ChatbotSvcClient
 	storage pb.StorageSvcClient
+	middle  pb.MiddleSvcClient
 }
 
 func NewMessage(
@@ -38,7 +39,8 @@ func NewMessage(
 	config *config.AppConfig,
 	repo repository.MessageRepository,
 	chatbot pb.ChatbotSvcClient,
-	storage pb.StorageSvcClient) *Message {
+	storage pb.StorageSvcClient,
+	middle pb.MiddleSvcClient) *Message {
 	return &Message{
 		bus:     bus,
 		logger:  logger,
@@ -47,6 +49,7 @@ func NewMessage(
 		repo:    repo,
 		chatbot: chatbot,
 		storage: storage,
+		middle:  middle,
 	}
 }
 
@@ -206,10 +209,12 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 
 	// avatar
 	var botId []int64
+	var messageId []int64
 	for _, item := range messages {
 		if item.SenderType == enum.MessageBotType && item.Sender > 0 {
 			botId = append(botId, item.Sender)
 		}
+		messageId = append(messageId, item.Id)
 	}
 	bots, err := m.chatbot.GetBots(ctx, &pb.BotsRequest{BotId: botId})
 	if err != nil {
@@ -218,6 +223,16 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 	botMap := make(map[int64]*pb.Bot)
 	for i, item := range bots.Bots {
 		botMap[item.Id] = bots.Bots[i]
+	}
+
+	// tags
+	tagsReply, err := m.middle.GetTagsByModelId(ctx, &pb.ModelIdRequest{ModelId: messageId})
+	if err != nil {
+		return nil, err
+	}
+	tagMap := make(map[int64][]string)
+	for _, item := range tagsReply.Tags {
+		tagMap[item.ModelId] = append(tagMap[item.ModelId], item.Name)
 	}
 
 	var reply []*pb.Message
@@ -238,6 +253,13 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 			}
 		}
 		item.Avatar = avatar
+
+		// tags
+		var tags []string
+		if t, ok := tagMap[item.Id]; ok {
+			tags = t
+		}
+		item.Tags = tags
 
 		// covert
 		direction := ""

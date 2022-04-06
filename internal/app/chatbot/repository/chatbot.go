@@ -44,9 +44,6 @@ type ChatbotRepository interface {
 	GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error)
 	GetGroupBotSettingByUuid(ctx context.Context, groupUuid, botUuid string) ([]*pb.KV, error)
 	GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error)
-	ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error)
-	CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error)
-	DeleteGroupTag(ctx context.Context, id int64) error
 	GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error)
 	ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error)
 	CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error)
@@ -454,28 +451,6 @@ func (r *MysqlChatbotRepository) UpdateGroupBotSetting(ctx context.Context, grou
 		}
 	}
 	return nil
-}
-
-func (r *MysqlChatbotRepository) ListGroupTag(ctx context.Context, groupId int64) ([]*pb.GroupTag, error) {
-	var list []*pb.GroupTag
-	err := r.db.WithContext(ctx).Where("group_id = ?", groupId).Order("id DESC").Find(&list).Error
-	if err != nil {
-		return nil, err
-	}
-	return list, nil
-}
-
-func (r *MysqlChatbotRepository) CreateGroupTag(ctx context.Context, tag *pb.GroupTag) (int64, error) {
-	tag.Id = r.id.Generate(ctx)
-	err := r.db.WithContext(ctx).Create(&tag).Error
-	if err != nil {
-		return 0, err
-	}
-	return tag.Id, nil
-}
-
-func (r *MysqlChatbotRepository) DeleteGroupTag(ctx context.Context, id int64) error {
-	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.GroupTag{}).Error
 }
 
 func (r *MysqlChatbotRepository) GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error) {

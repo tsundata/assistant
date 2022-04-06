@@ -19,7 +19,7 @@ import (
 )
 
 func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, redis *redis.Client,
-	repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient) error {
+	repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient, middle pb.MiddleSvcClient) error {
 	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
 		if msg.Callback != nil {
@@ -38,7 +38,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 			return err
 		}
 
-		message := service.NewMessage(bus, logger, redis, config, repo, chatbot, storage)
+		message := service.NewMessage(bus, logger, redis, config, repo, chatbot, storage, middle)
 		_, err = message.Send(context.Background(), &pb.MessageRequest{Message: &m})
 		if err != nil {
 			return err

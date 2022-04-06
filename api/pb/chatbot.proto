@@ -147,19 +147,6 @@ message GroupSetting {
   int64 updated_at = 5;
 }
 
-message GroupTag {
-  // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
-  int64 id = 1;
-  // @inject_tag: db:"group_id"
-  int64 group_id = 2;
-  // @inject_tag: db:"tag"
-  string tag = 3;
-  // @inject_tag: db:"created_at"
-  int64 created_at = 4;
-  // @inject_tag: db:"updated_at"
-  int64 updated_at = 5;
-}
-
 message Bot {
   // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
