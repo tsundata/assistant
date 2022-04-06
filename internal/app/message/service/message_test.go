@@ -19,12 +19,11 @@ func TestMessage_List(t *testing.T) {
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().List(gomock.Any()).Return([]*pb.Message{{
-			Uuid: "test",
 			Text: "test",
 		}}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, nil, repo, nil, nil,nil)
+	s := NewMessage(nil, nil, nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -65,15 +64,14 @@ func TestMessage_Get(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(pb.Message{
+		repo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(pb.Message{
 			Id:   1,
 			Text: "test",
-			Uuid: "test",
 			Type: "text",
 		}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, nil, repo, nil, nil,nil)
+	s := NewMessage(nil, nil, nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -93,7 +91,6 @@ func TestMessage_Get(t *testing.T) {
 			&pb.MessageReply{
 				Message: &pb.Message{
 					Id:   1,
-					Uuid: "test",
 					Text: "test",
 					Type: "text",
 				},
@@ -103,12 +100,12 @@ func TestMessage_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.GetByUuid(tt.args.in0, tt.args.payload)
+			got, err := tt.m.GetById(tt.args.in0, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Message.Uuid != tt.want.Message.Uuid || got.Message.GetText() != tt.want.Message.GetText() || got.Message.Type != tt.want.Message.Type) {
+			if got != nil && (got.Message.GetText() != tt.want.Message.GetText() || got.Message.Type != tt.want.Message.Type) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})
@@ -127,12 +124,10 @@ func TestMessage_Create(t *testing.T) {
 
 	repo := mock.NewMockMessageRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(pb.Message{Id: 2}, nil),
-		repo.EXPECT().GetByUUID(gomock.Any(), gomock.Any()).Return(pb.Message{Id: 0}, nil),
 		repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMessage(bus, nil, nil, nil, repo, nil, nil,nil)
+	s := NewMessage(bus, nil, nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -148,15 +143,8 @@ func TestMessage_Create(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo1", Uuid: "test", Payload: "{}"}}},
-			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo1", Payload: "{}"}},
-			false,
-		},
-		{
-			"case2",
-			s,
-			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Uuid: "test", Payload: "{}"}}},
-			&pb.MessageReply{Message: &pb.Message{Type: "text", Uuid: "test", Text: "demo2", Payload: "{}", SenderType: enum.MessageUserType, ReceiverType: enum.MessageGroupType}},
+			args{context.Background(), &pb.MessageRequest{Message: &pb.Message{Text: "demo2", Payload: "{}"}}},
+			&pb.MessageReply{Message: &pb.Message{Type: "text", Text: "demo2", Payload: "{}", SenderType: enum.MessageUserType, ReceiverType: enum.MessageGroupType}},
 			false,
 		},
 	}
@@ -184,7 +172,7 @@ func TestMessage_Delete(t *testing.T) {
 		repo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(gorm.ErrRecordNotFound),
 	)
 
-	s := NewMessage(nil, nil, nil, nil, repo, nil, nil,nil)
+	s := NewMessage(nil, nil, nil, nil, repo, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -242,7 +230,7 @@ func TestMessage_Run(t *testing.T) {
 			Return(pb.Message{Id: 1, Text: "test", Type: "other"}, nil),
 	)
 
-	s := NewMessage(nil, nil, nil, nil, repo, chatbot, nil,nil)
+	s := NewMessage(nil, nil, nil, nil, repo, chatbot, nil, nil)
 
 	type args struct {
 		ctx     context.Context

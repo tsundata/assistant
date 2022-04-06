@@ -253,7 +253,7 @@ func (gc *GatewayController) GetMessage(c *fiber.Ctx) error {
 		return err
 	}
 
-	reply, err := gc.messageSvc.GetByUuid(md.Outgoing(c), &pb.MessageRequest{Message: &in})
+	reply, err := gc.messageSvc.GetById(md.Outgoing(c), &pb.MessageRequest{Message: &in})
 	if err != nil {
 		return err
 	}
@@ -569,7 +569,6 @@ func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
 	// save
 	reply, err := gc.messageSvc.Create(md.Outgoing(c), &pb.MessageRequest{Message: &pb.Message{
 		UserId:  userId,
-		Uuid:    util.UUID(),
 		Type:    c.FormValue("type"),
 		Data:    data,
 		GroupId: groupId,

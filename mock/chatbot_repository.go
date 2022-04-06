@@ -150,19 +150,19 @@ func (mr *MockChatbotRepositoryMockRecorder) DeleteTriggerByMessageID(ctx, messa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTriggerByMessageID", reflect.TypeOf((*MockChatbotRepository)(nil).DeleteTriggerByMessageID), ctx, messageID)
 }
 
-// GetBotsByGroupUuid mocks base method.
-func (m *MockChatbotRepository) GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error) {
+// GetBotsByGroup mocks base method.
+func (m *MockChatbotRepository) GetBotsByGroup(ctx context.Context, groupId int64) ([]*pb.Bot, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBotsByGroupUuid", ctx, uuid)
+	ret := m.ctrl.Call(m, "GetBotsByGroup", ctx, groupId)
 	ret0, _ := ret[0].([]*pb.Bot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetBotsByGroupUuid indicates an expected call of GetBotsByGroupUuid.
-func (mr *MockChatbotRepositoryMockRecorder) GetBotsByGroupUuid(ctx, uuid interface{}) *gomock.Call {
+// GetBotsByGroup indicates an expected call of GetBotsByGroup.
+func (mr *MockChatbotRepositoryMockRecorder) GetBotsByGroup(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByGroupUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByGroupUuid), ctx, uuid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBotsByGroup", reflect.TypeOf((*MockChatbotRepository)(nil).GetBotsByGroup), ctx, groupId)
 }
 
 // GetBotsByIds mocks base method.
@@ -240,21 +240,6 @@ func (mr *MockChatbotRepositoryMockRecorder) GetByIdentifier(ctx, identifier int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdentifier", reflect.TypeOf((*MockChatbotRepository)(nil).GetByIdentifier), ctx, identifier)
 }
 
-// GetByUUID mocks base method.
-func (m *MockChatbotRepository) GetByUUID(ctx context.Context, uuid string) (pb.Bot, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUUID", ctx, uuid)
-	ret0, _ := ret[0].(pb.Bot)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetByUUID indicates an expected call of GetByUUID.
-func (mr *MockChatbotRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockChatbotRepository)(nil).GetByUUID), ctx, uuid)
-}
-
 // GetGroup mocks base method.
 func (m *MockChatbotRepository) GetGroup(ctx context.Context, id int64) (pb.Group, error) {
 	m.ctrl.T.Helper()
@@ -315,21 +300,6 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSettingByGroup(ctx, grou
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSettingByGroup", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSettingByGroup), ctx, groupId)
 }
 
-// GetGroupBotSettingByUuid mocks base method.
-func (m *MockChatbotRepository) GetGroupBotSettingByUuid(ctx context.Context, groupUuid, botUuid string) ([]*pb.KV, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupBotSettingByUuid", ctx, groupUuid, botUuid)
-	ret0, _ := ret[0].([]*pb.KV)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroupBotSettingByUuid indicates an expected call of GetGroupBotSettingByUuid.
-func (mr *MockChatbotRepositoryMockRecorder) GetGroupBotSettingByUuid(ctx, groupUuid, botUuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBotSettingByUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBotSettingByUuid), ctx, groupUuid, botUuid)
-}
-
 // GetGroupByName mocks base method.
 func (m *MockChatbotRepository) GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error) {
 	m.ctrl.T.Helper()
@@ -360,21 +330,6 @@ func (mr *MockChatbotRepositoryMockRecorder) GetGroupBySequence(ctx, userId, seq
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupBySequence", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupBySequence), ctx, userId, sequence)
 }
 
-// GetGroupByUUID mocks base method.
-func (m *MockChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupByUUID", ctx, uuid)
-	ret0, _ := ret[0].(pb.Group)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroupByUUID indicates an expected call of GetGroupByUUID.
-func (mr *MockChatbotRepositoryMockRecorder) GetGroupByUUID(ctx, uuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupByUUID", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupByUUID), ctx, uuid)
-}
-
 // GetGroupSetting mocks base method.
 func (m *MockChatbotRepository) GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error) {
 	m.ctrl.T.Helper()
@@ -388,21 +343,6 @@ func (m *MockChatbotRepository) GetGroupSetting(ctx context.Context, groupId int
 func (mr *MockChatbotRepositoryMockRecorder) GetGroupSetting(ctx, groupId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSetting", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSetting), ctx, groupId)
-}
-
-// GetGroupSettingByUuid mocks base method.
-func (m *MockChatbotRepository) GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupSettingByUuid", ctx, groupUuid)
-	ret0, _ := ret[0].([]*pb.KV)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGroupSettingByUuid indicates an expected call of GetGroupSettingByUuid.
-func (mr *MockChatbotRepositoryMockRecorder) GetGroupSettingByUuid(ctx, groupUuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupSettingByUuid", reflect.TypeOf((*MockChatbotRepository)(nil).GetGroupSettingByUuid), ctx, groupUuid)
 }
 
 // GetTriggerByFlag mocks base method.

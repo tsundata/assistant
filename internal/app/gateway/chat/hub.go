@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"go.uber.org/zap"
 )
 
@@ -106,11 +105,9 @@ func (h *Hub) Run() {
 			h.logger.Info("[chat] hub broadcast", zap.Any("room", m.roomId), zap.Any("data", m.data))
 		case m := <-h.incoming:
 			// create message
-			uuid := util.UUID()
 			_, err := h.messageSvc.Create(md.BuildAuthContext(m.userId), &pb.MessageRequest{
 				Message: &pb.Message{
 					UserId:  m.userId,
-					Uuid:    uuid,
 					Text:    m.data.Text,
 					Type:    m.data.Type,
 					GroupId: m.roomId,

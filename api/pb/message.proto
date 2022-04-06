@@ -16,7 +16,6 @@ service MessageSvc {
   rpc List(MessageRequest) returns (MessagesReply) {}
   rpc ListByGroup(GetMessagesRequest) returns (GetMessagesReply) {}
   rpc LastByGroup(LastByGroupRequest) returns (LastByGroupReply) {}
-  rpc GetByUuid(MessageRequest) returns (GetMessageReply) {}
   rpc GetById(MessageRequest) returns (GetMessageReply) {}
   rpc GetBySequence(MessageRequest) returns (GetMessageReply) {}
   rpc Create(MessageRequest) returns (MessageReply) {}
@@ -53,8 +52,6 @@ message Message {
   int64 user_id = 3;
   // @inject_tag: db:"sequence"
   int64 sequence = 4;
-  // @inject_tag: db:"uuid"
-  string uuid = 5;
   // @inject_tag: db:"sender" json:"sender,string"
   int64 sender = 6;
   // @inject_tag: db:"sender_type"
@@ -160,8 +157,6 @@ message Inbox {
   int64 user_id = 2;
   // @inject_tag: db:"sequence"
   int64 sequence = 3;
-  // @inject_tag: db:"uuid"
-  string uuid = 4;
   // @inject_tag: db:"sender"
   int64 sender = 5;
   // @inject_tag: db:"sender_type"

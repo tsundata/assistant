@@ -44,7 +44,7 @@ func TestChatbot_Handle(t *testing.T) {
 	repo := mock.NewMockChatbotRepository(ctl)
 
 	gomock.InOrder(
-		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Uuid: "test", Text: "text @System /version/ #tag1"}}, nil),
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Text: "text @System /version/ #tag1"}}, nil),
 		repo.EXPECT().TouchGroupUpdatedAt(gomock.Any(), gomock.Any()).Return(nil),
 		repo.EXPECT().ListGroupBot(gomock.Any(), gomock.Any()).Return([]*pb.Bot{
 			{
@@ -112,7 +112,6 @@ func TestChatbot_GetBot(t *testing.T) {
 
 	item := pb.Bot{
 		Id:        1,
-		Uuid:      "1",
 		Name:      "test",
 		Avatar:    "test",
 		CreatedAt: 0,
@@ -135,7 +134,7 @@ func TestChatbot_GetBot(t *testing.T) {
 		want    *pb.BotReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.BotRequest{Bot: &pb.Bot{Uuid: "1"}}},
+		{"case1", s, args{context.Background(), &pb.BotRequest{Bot: &pb.Bot{}}},
 			&pb.BotReply{Bot: &item}, false},
 	}
 	for _, tt := range tests {
@@ -166,7 +165,6 @@ func TestChatbot_GetBots(t *testing.T) {
 	items := []*pb.Bot{
 		{
 			Id:        1,
-			Uuid:      "1",
 			Name:      "test",
 			Avatar:    "test",
 			CreatedAt: 0,
@@ -174,7 +172,7 @@ func TestChatbot_GetBots(t *testing.T) {
 		},
 	}
 	gomock.InOrder(
-		repo.EXPECT().GetBotsByGroupUuid(gomock.Any(), gomock.Any()).Return(items, nil),
+		repo.EXPECT().GetBotsByGroup(gomock.Any(), gomock.Any()).Return(items, nil),
 		repo.EXPECT().GetBotsByIds(gomock.Any(), gomock.Any()).Return(items, nil),
 	)
 
@@ -191,7 +189,7 @@ func TestChatbot_GetBots(t *testing.T) {
 		want    *pb.BotsReply
 		wantErr bool
 	}{
-		{"case1", s, args{context.Background(), &pb.BotsRequest{GroupUuid: "test"}}, &pb.BotsReply{Bots: items}, false},
+		{"case1", s, args{context.Background(), &pb.BotsRequest{GroupId: 1}}, &pb.BotsReply{Bots: items}, false},
 		{"case1", s, args{context.Background(), &pb.BotsRequest{BotId: []int64{1}}}, &pb.BotsReply{Bots: items}, false},
 	}
 	for _, tt := range tests {
@@ -313,7 +311,7 @@ func TestMessage_GetGroup(t *testing.T) {
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
 		repo.EXPECT().GetGroup(gomock.Any(), gomock.Any()).Return(pb.Group{
-			Uuid: "test",
+			Name: "test",
 		}, nil),
 	)
 
@@ -333,10 +331,10 @@ func TestMessage_GetGroup(t *testing.T) {
 		{
 			"case1",
 			s,
-			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Uuid: "1"}}},
+			args{context.Background(), &pb.GroupRequest{Group: &pb.Group{Id: 1}}},
 			&pb.GroupReply{
 				Group: &pb.Group{
-					Uuid: "test",
+					Name: "test",
 				},
 			},
 			false,
@@ -349,7 +347,7 @@ func TestMessage_GetGroup(t *testing.T) {
 				t.Errorf("Message.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != nil && (got.Group.Uuid != tt.want.Group.Uuid) {
+			if got != nil && (got.Group.Name != tt.want.Group.Name) {
 				t.Errorf("Message.Get() = %v, want %v", got, tt.want)
 			}
 		})

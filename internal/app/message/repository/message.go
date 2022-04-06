@@ -8,14 +8,12 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
-	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"time"
 )
 
 type MessageRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Message, error)
-	GetByUUID(ctx context.Context, uuid string) (pb.Message, error)
 	GetBySequence(ctx context.Context, userId, sequence int64) (pb.Message, error)
 	GetLastByGroup(ctx context.Context, groupId int64) (pb.Message, error)
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
@@ -45,15 +43,6 @@ func NewMysqlMessageRepository(id *global.ID, locker *global.Locker, db *mysql.C
 func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (pb.Message, error) {
 	var message pb.Message
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&message).Error
-	if err != nil {
-		return pb.Message{}, err
-	}
-	return message, nil
-}
-
-func (r *MysqlMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb.Message, error) {
-	var message pb.Message
-	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&message).Error
 	if err != nil {
 		return pb.Message{}, err
 	}
@@ -134,9 +123,6 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 	}
 	sequence += 1
 
-	if message.Uuid == "" {
-		message.Uuid = util.UUID()
-	}
 	message.Id = r.id.Generate(ctx)
 	message.Sequence = sequence
 	err = r.db.WithContext(ctx).Create(&message).Error
@@ -222,9 +208,6 @@ func (r *MysqlMessageRepository) CreateInbox(ctx context.Context, inbox pb.Inbox
 	}
 	sequence += 1
 
-	if inbox.Uuid == "" {
-		inbox.Uuid = util.UUID()
-	}
 	inbox.Id = r.id.Generate(ctx)
 	inbox.Sequence = sequence
 	inbox.CreatedAt = time.Now().Unix()

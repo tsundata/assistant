@@ -58,7 +58,6 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	var message pb.Message
 	message.UserId = payload.Message.GetUserId()
 	message.GroupId = payload.Message.GetGroupId()
-	message.Uuid = payload.Message.GetUuid()
 	message.Sender = payload.Message.GetUserId()
 	message.SenderType = enum.MessageUserType
 	message.Receiver = payload.Message.GetGroupId()
@@ -76,22 +75,6 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	default:
 		message.Type = string(enum.MessageTypeText)
 		message.Text = strings.TrimSpace(payload.Message.GetText())
-	}
-
-	// check
-	find, err := m.repo.GetByUUID(ctx, message.Uuid)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
-	if !errors.Is(err, gorm.ErrRecordNotFound) && find.Id > 0 {
-		return &pb.MessageReply{
-			Message: &pb.Message{
-				Uuid:    message.Uuid,
-				Type:    message.Type,
-				Text:    message.Text,
-				Payload: message.Payload,
-			},
-		}, nil
 	}
 
 	// parse type
@@ -112,7 +95,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 	}
 
 	// store
-	_, err = m.repo.Create(ctx, &message)
+	_, err := m.repo.Create(ctx, &message)
 	if err != nil {
 		return nil, err
 	}
@@ -279,27 +262,6 @@ func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesReques
 		Page:     payload.Page,
 		PageSize: payload.Limit,
 		Messages: reply,
-	}, nil
-}
-
-func (m *Message) GetByUuid(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	message, err := m.repo.GetByUUID(ctx, payload.Message.GetUuid())
-	if err != nil {
-		return nil, err
-	}
-
-	// covert
-	direction := ""
-	if message.SenderType == enum.MessageBotType || message.SenderType == enum.MessageGroupType {
-		direction = enum.MessageIncomingDirection
-	} else {
-		direction = enum.MessageOutgoingDirection
-	}
-	message.Direction = direction
-	message.SendTime = util.Format(message.CreatedAt)
-
-	return &pb.GetMessageReply{
-		Message: &message,
 	}, nil
 }
 

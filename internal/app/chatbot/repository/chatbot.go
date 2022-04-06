@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
@@ -14,13 +13,12 @@ import (
 
 type ChatbotRepository interface {
 	GetByID(ctx context.Context, id int64) (pb.Bot, error)
-	GetByUUID(ctx context.Context, uuid string) (pb.Bot, error)
 	GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error)
 	GetGroupBot(ctx context.Context, groupId, botId int64) (pb.Bot, error)
 	List(ctx context.Context) ([]*pb.Bot, error)
 	GetBotsByIds(ctx context.Context, id []int64) ([]*pb.Bot, error)
-	GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error)
 	GetBotsByUser(ctx context.Context, userId int64) ([]*pb.Bot, error)
+	GetBotsByGroup(ctx context.Context, groupId int64) ([]*pb.Bot, error)
 	GetBotsByText(ctx context.Context, text []string) (map[string]*pb.Bot, error)
 	Create(ctx context.Context, bot *pb.Bot) (int64, error)
 	Update(ctx context.Context, bot *pb.Bot) error
@@ -29,7 +27,6 @@ type ChatbotRepository interface {
 	CreateGroupBot(ctx context.Context, groupId int64, bot *pb.Bot) error
 	DeleteGroupBot(ctx context.Context, groupId, botId int64) error
 	GetGroup(ctx context.Context, id int64) (pb.Group, error)
-	GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error)
 	GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error)
 	GetGroupByName(ctx context.Context, userId int64, name string) (pb.Group, error)
 	TouchGroupUpdatedAt(ctx context.Context, id int64) error
@@ -40,9 +37,7 @@ type ChatbotRepository interface {
 	UpdateGroupSetting(ctx context.Context, groupId int64, kvs []*pb.KV) error
 	UpdateGroupBotSetting(ctx context.Context, groupId, botId int64, kvs []*pb.KV) error
 	GetGroupSetting(ctx context.Context, groupId int64) ([]*pb.KV, error)
-	GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error)
 	GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error)
-	GetGroupBotSettingByUuid(ctx context.Context, groupUuid, botUuid string) ([]*pb.KV, error)
 	GetGroupBotSettingByGroup(ctx context.Context, groupId int64) (map[int64][]*pb.KV, error)
 	GetTriggerByFlag(ctx context.Context, t, flag string) (pb.Trigger, error)
 	ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error)
@@ -69,15 +64,6 @@ func (r *MysqlChatbotRepository) GetByID(ctx context.Context, id int64) (pb.Bot,
 	return bot, nil
 }
 
-func (r *MysqlChatbotRepository) GetByUUID(ctx context.Context, uuid string) (pb.Bot, error) {
-	var bot pb.Bot
-	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&bot).Error
-	if err != nil {
-		return pb.Bot{}, err
-	}
-	return bot, nil
-}
-
 func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier string) (pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).Where("identifier = ?", identifier).First(&bot).Error
@@ -90,7 +76,7 @@ func (r *MysqlChatbotRepository) GetByIdentifier(ctx context.Context, identifier
 func (r *MysqlChatbotRepository) GetGroupBot(ctx context.Context, groupId, botId int64) (pb.Bot, error) {
 	var bot pb.Bot
 	err := r.db.WithContext(ctx).
-		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
+		Select("bots.id, bots.name, bots.identifier, bots.avatar").
 		Where("group_bots.group_id = ? AND group_bots.bot_id = ?", groupId, botId).
 		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
 		First(&bot).Error
@@ -112,23 +98,9 @@ func (r *MysqlChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 func (r *MysqlChatbotRepository) GetBotsByIds(ctx context.Context, id []int64) ([]*pb.Bot, error) {
 	var bots []*pb.Bot
 	err := r.db.WithContext(ctx).
-		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
+		Select("bots.id, bots.name, bots.identifier, bots.avatar").
 		Where("bots.id IN ?", id).
 		Order("bots.id ASC").Find(&bots).Error
-	if err != nil {
-		return nil, err
-	}
-	return bots, nil
-}
-
-func (r *MysqlChatbotRepository) GetBotsByGroupUuid(ctx context.Context, uuid string) ([]*pb.Bot, error) {
-	var bots []*pb.Bot
-	err := r.db.WithContext(ctx).
-		Select("bots.id, bots.uuid as uuid, bots.name, bots.identifier, bots.avatar").
-		Where("groups.uuid = ?", uuid).
-		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
-		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
-		Order("group_bots.id ASC").Find(&bots).Error
 	if err != nil {
 		return nil, err
 	}
@@ -142,6 +114,19 @@ func (r *MysqlChatbotRepository) GetBotsByUser(ctx context.Context, userId int64
 		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
 		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
 		Where("groups.user_id = ?", userId).Find(&bots).Error
+	if err != nil {
+		return nil, err
+	}
+	return bots, nil
+}
+
+func (r *MysqlChatbotRepository) GetBotsByGroup(ctx context.Context, groupId int64) ([]*pb.Bot, error) {
+	var bots []*pb.Bot
+	err := r.db.WithContext(ctx).
+		Select("bots.id, groups.id as group_id, bots.name, bots.identifier, bots.avatar").
+		Joins("LEFT JOIN group_bots ON group_bots.bot_id = bots.id").
+		Joins("LEFT JOIN `groups` ON groups.id = group_bots.group_id").
+		Where("groups.group_id = ?", groupId).Find(&bots).Error
 	if err != nil {
 		return nil, err
 	}
@@ -175,9 +160,6 @@ func (r *MysqlChatbotRepository) GetBotsByText(ctx context.Context, text []strin
 }
 
 func (r *MysqlChatbotRepository) Create(ctx context.Context, bot *pb.Bot) (int64, error) {
-	if bot.Uuid == "" {
-		return 0, app.ErrInvalidParameter
-	}
 	bot.Id = r.id.Generate(ctx)
 	err := r.db.WithContext(ctx).Create(&bot).Error
 	if err != nil {
@@ -240,15 +222,6 @@ func (r *MysqlChatbotRepository) GetGroup(ctx context.Context, id int64) (pb.Gro
 	return find, nil
 }
 
-func (r *MysqlChatbotRepository) GetGroupByUUID(ctx context.Context, uuid string) (pb.Group, error) {
-	var find pb.Group
-	err := r.db.WithContext(ctx).Where("uuid = ?", uuid).First(&find).Error
-	if err != nil {
-		return pb.Group{}, err
-	}
-	return find, nil
-}
-
 func (r *MysqlChatbotRepository) GetGroupBySequence(ctx context.Context, userId, sequence int64) (pb.Group, error) {
 	var find pb.Group
 	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).First(&find).Error
@@ -305,9 +278,6 @@ func (r *MysqlChatbotRepository) CreateGroup(ctx context.Context, group *pb.Grou
 
 	group.Id = r.id.Generate(ctx)
 	group.Sequence = sequence
-	if group.Uuid == "" {
-		return 0, app.ErrInvalidParameter
-	}
 	err = r.db.WithContext(ctx).Create(&group).Error
 	if err != nil {
 		return 0, err
@@ -339,47 +309,9 @@ func (r *MysqlChatbotRepository) GetGroupSetting(ctx context.Context, groupId in
 	return result, nil
 }
 
-func (r *MysqlChatbotRepository) GetGroupSettingByUuid(ctx context.Context, groupUuid string) ([]*pb.KV, error) {
-	var find []*pb.GroupSetting
-	err := r.db.WithContext(ctx).Where("groups.uuid = ?", groupUuid).
-		Joins("LEFT JOIN `groups` ON groups.id = group_settings.group_id").
-		Find(&find).Error
-	if err != nil {
-		return nil, err
-	}
-	var result []*pb.KV
-	for _, item := range find {
-		result = append(result, &pb.KV{
-			Key:   item.Key,
-			Value: item.Value,
-		})
-	}
-	return result, nil
-}
-
 func (r *MysqlChatbotRepository) GetGroupBotSetting(ctx context.Context, groupId, botId int64) ([]*pb.KV, error) {
 	var find []*pb.GroupBotSetting
 	err := r.db.WithContext(ctx).Where("group_id = ? AND bot_id = ?", groupId, botId).Find(&find).Error
-	if err != nil {
-		return nil, err
-	}
-	var result []*pb.KV
-	for _, item := range find {
-		result = append(result, &pb.KV{
-			Key:   item.Key,
-			Value: item.Value,
-		})
-	}
-	return result, nil
-}
-
-func (r *MysqlChatbotRepository) GetGroupBotSettingByUuid(ctx context.Context, groupUuid, botUuid string) ([]*pb.KV, error) {
-	var find []*pb.GroupBotSetting
-	err := r.db.WithContext(ctx).
-		Where("`groups`.uuid = ? AND bots.uuid = ?", groupUuid, botUuid).
-		Joins("LEFT JOIN `groups` ON groups.id = group_bot_settings.group_id").
-		Joins("LEFT JOIN bots ON bots.id = group_bot_settings.bot_id").
-		Find(&find).Error
 	if err != nil {
 		return nil, err
 	}

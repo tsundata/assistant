@@ -29,7 +29,6 @@ service ChatbotSvc {
   rpc GetGroups(GroupRequest) returns (GetGroupsReply) {}
   rpc CreateGroup(GroupRequest) returns (StateReply) {}
   rpc GetGroup(GroupRequest) returns (GetGroupReply) {}
-  rpc GetGroupId(UuidRequest) returns (IdReply) {}
   rpc DeleteGroup(GroupRequest) returns (StateReply) {}
   rpc UpdateGroup(GroupRequest) returns (StateReply) {}
   rpc SyntaxCheck(WorkflowRequest) returns (StateReply) {}
@@ -44,7 +43,6 @@ service ChatbotSvc {
 
 message ChatbotRequest {
   int64 message_id = 1;
-  string message_uuid = 2;
 }
 
 message ChatbotReply {
@@ -58,12 +56,8 @@ message GroupBotRequest {
 
 message BotSettingRequest {
   int64 group_id = 1;
-  // @inject_tag: query:"group_uuid"
-  string group_uuid = 2;
-  int64 bot_id = 3;
-  // @inject_tag: query:"bot_uuid"
-  string bot_uuid = 4;
-  repeated KV kvs = 5;
+  int64 bot_id = 2;
+  repeated KV kvs = 3;
 }
 
 message BotSettingReply {
@@ -74,15 +68,12 @@ message BotSettingReply {
 
 message GroupSettingRequest {
   int64 group_id = 1;
-  // @inject_tag: query:"group_uuid"
-  string group_uuid = 2;
-  repeated KV kvs = 3;
+  repeated KV kvs = 2;
 }
 
 message GroupSettingReply {
   int64 group_id = 1;
-  string group_uuid = 2;
-  repeated KV kvs = 3;
+  repeated KV kvs = 2;
 }
 
 message Group {
@@ -92,8 +83,6 @@ message Group {
   int64 sequence = 2;
   // @inject_tag: db:"type"
   int32 type = 3;
-  // @inject_tag: db:"uuid"
-  string uuid = 4;
   // @inject_tag: db:"user_id"
   int64 user_id = 5;
   // @inject_tag: db:"name"
@@ -150,8 +139,6 @@ message GroupSetting {
 message Bot {
   // @inject_tag: db:"id" gorm:"primaryKey" json:"id,string"
   int64 id = 1;
-  // @inject_tag: db:"uuid"
-  string uuid = 2;
   // @inject_tag: db:"name"
   string name = 4;
   // @inject_tag: db:"identifier"
@@ -174,10 +161,6 @@ message Bot {
 
 message BotRequest {
   Bot bot = 1;
-  // @inject_tag: query:"group_uuid"
-  string group_uuid = 2;
-  // @inject_tag: query:"bot_uuid"
-  string bot_uuid = 3;
   int64 user_id = 8;
   int64 group_id = 4;
   int64 bot_id = 5;
@@ -193,9 +176,7 @@ message BotReply {
 
 message BotsRequest {
   int64 group_id = 1;
-  // @inject_tag: query:"group_uuid"
-  string group_uuid = 2;
-  repeated int64 bot_id = 3;
+  repeated int64 bot_id = 2;
 }
 
 message BotsReply {
@@ -213,7 +194,6 @@ message GroupReply {
 message GroupItem {
   int64 sequence = 1;
   int32 type = 2;
-  string uuid = 3;
   string name = 4;
   string avatar = 5;
   int32 unread_count = 7;

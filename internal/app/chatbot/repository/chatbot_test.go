@@ -10,14 +10,10 @@ import (
 )
 
 var (
-	uuid1, uuid2, uuid3                   string
 	identifier1, identifier2, identifier3 string
 )
 
 func TestMain(m *testing.M) {
-	uuid1 = util.UUID()
-	uuid2 = util.UUID()
-	uuid3 = util.UUID()
 	identifier1 = util.RandString(8, "lowercase") + "_bot"
 	identifier2 = util.RandString(8, "lowercase") + "_bot"
 	identifier3 = util.RandString(8, "lowercase") + "_bot"
@@ -40,9 +36,9 @@ func TestChatbotRepository_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{bot: &pb.Bot{Uuid: uuid1, Name: "test1", Identifier: identifier1}}, false},
-		{"case2", sto, args{bot: &pb.Bot{Uuid: uuid2, Name: "test2", Identifier: identifier2}}, false},
-		{"case3", sto, args{bot: &pb.Bot{Uuid: uuid3, Name: "test3", Identifier: identifier3}}, false},
+		{"case1", sto, args{bot: &pb.Bot{Name: "test1", Identifier: identifier1}}, false},
+		{"case2", sto, args{bot: &pb.Bot{Name: "test2", Identifier: identifier2}}, false},
+		{"case3", sto, args{bot: &pb.Bot{Name: "test3", Identifier: identifier3}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,37 +73,6 @@ func TestChatbotRepository_GetByID(t *testing.T) {
 			_, err := tt.r.GetByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChatbotRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
-func TestChatbotRepository_GetByUUID(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Chatbot)
-	if err != nil {
-		t.Fatalf("create bot Repository error, %+v", err)
-	}
-
-	type args struct {
-		uuid string
-	}
-	tests := []struct {
-		name    string
-		r       ChatbotRepository
-		args    args
-		wantErr bool
-	}{
-		{"uuid=" + uuid1, sto, args{uuid: uuid1}, false},
-		{"uuid=" + uuid1, sto, args{uuid: uuid2}, false},
-		{"uuid=" + uuid1, sto, args{uuid: uuid3}, false},
-		{"uuid=ff4103db-d554-4f22-b6c7-57a3f708d5eb", sto, args{uuid: "ff4103db-d554-4f22-b6c7-57a3f708d5eb"}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetByUUID(context.Background(), tt.args.uuid)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ChatbotRepository.GetByUUID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
@@ -210,9 +175,9 @@ func TestChatbotRepository_CreateGroup(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{group: &pb.Group{Uuid: uuid1, Name: "test1", UserId: 1}}, false},
-		{"case2", sto, args{group: &pb.Group{Uuid: uuid2, Name: "test2", UserId: 1}}, false},
-		{"case3", sto, args{group: &pb.Group{Uuid: uuid3, Name: "test3", UserId: 1}}, false},
+		{"case1", sto, args{group: &pb.Group{Name: "test1", UserId: 1}}, false},
+		{"case2", sto, args{group: &pb.Group{Name: "test2", UserId: 1}}, false},
+		{"case3", sto, args{group: &pb.Group{Name: "test3", UserId: 1}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -247,37 +212,6 @@ func TestChatbotRepository_GetGroup(t *testing.T) {
 			_, err := tt.r.GetGroup(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChatbotRepository.GetGroup() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
-func TestChatbotRepository_GetGroupByUUID(t *testing.T) {
-	sto, err := CreateChatbotRepository(enum.Chatbot)
-	if err != nil {
-		t.Fatalf("create chatbot Repository error, %+v", err)
-	}
-
-	type args struct {
-		uuid string
-	}
-	tests := []struct {
-		name    string
-		r       ChatbotRepository
-		args    args
-		wantErr bool
-	}{
-		{"uuid=1", sto, args{uuid: uuid1}, false},
-		{"uuid=2", sto, args{uuid: uuid2}, false},
-		{"uuid=3", sto, args{uuid: uuid3}, false},
-		{"uuid=99999", sto, args{uuid: "no_uuid"}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetGroupByUUID(context.Background(), tt.args.uuid)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ChatbotRepository.GetGroupByUUID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

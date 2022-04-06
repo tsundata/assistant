@@ -85,7 +85,6 @@ CREATE TABLE `inboxes`
     `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     BIGINT(19)          NOT NULL,
     `sequence`    INT(10)             NOT NULL,
-    `uuid`        VARCHAR(36)         NOT NULL DEFAULT '',
     `sender`      BIGINT(19)          NOT NULL,
     `sender_type` VARCHAR(20)         NOT NULL,
     `title`       VARCHAR(100)        NOT NULL DEFAULT '',
@@ -96,7 +95,6 @@ CREATE TABLE `inboxes`
     `created_at`  INT(10)             NOT NULL DEFAULT '0',
     `updated_at`  INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `uuid` (`uuid`) USING BTREE,
     UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
     INDEX `sender` (`sender`) USING BTREE,
     INDEX `status` (`status`) USING BTREE

@@ -109,21 +109,6 @@ func (mr *MockMessageRepositoryMockRecorder) GetBySequence(ctx, userId, sequence
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySequence", reflect.TypeOf((*MockMessageRepository)(nil).GetBySequence), ctx, userId, sequence)
 }
 
-// GetByUUID mocks base method.
-func (m *MockMessageRepository) GetByUUID(ctx context.Context, uuid string) (pb.Message, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUUID", ctx, uuid)
-	ret0, _ := ret[0].(pb.Message)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetByUUID indicates an expected call of GetByUUID.
-func (mr *MockMessageRepositoryMockRecorder) GetByUUID(ctx, uuid interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUUID", reflect.TypeOf((*MockMessageRepository)(nil).GetByUUID), ctx, uuid)
-}
-
 // GetInbox mocks base method.
 func (m *MockMessageRepository) GetInbox(ctx context.Context, id int64) (pb.Inbox, error) {
 	m.ctrl.T.Helper()

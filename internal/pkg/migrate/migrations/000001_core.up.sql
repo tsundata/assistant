@@ -3,15 +3,13 @@ CREATE TABLE `groups`
     `id`         BIGINT(19)   NOT NULL AUTO_INCREMENT,
     `sequence`   INT(10)      NOT NULL,
     `type`       TINYINT(1)   NOT NULL,
-    `uuid`       VARCHAR(36)  NOT NULL,
     `user_id`    BIGINT(19)   NOT NULL,
     `name`       VARCHAR(20)  NOT NULL,
     `avatar`     VARCHAR(256) NOT NULL,
     `created_at` INT(10)      NOT NULL,
     `updated_at` INT(10)      NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
-    UNIQUE INDEX `uuid` (`uuid`) USING BTREE
+    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE
 )
     ENGINE = InnoDB;
 
@@ -61,7 +59,6 @@ create table if not exists `messages`
     `group_id`      BIGINT(19)          NOT NULL,
     `user_id`       BIGINT(19)          NOT NULL,
     `sequence`      INT(10)             NOT NULL,
-    `uuid`          varchar(36)         NOT NULL DEFAULT '',
     `sender`        BIGINT(19)          NOT NULL,
     `sender_type`   VARCHAR(20)         NOT NULL,
     `receiver`      BIGINT(19)          NOT NULL,
@@ -74,7 +71,6 @@ create table if not exists `messages`
     `created_at`    INT(10)             NOT NULL DEFAULT '0',
     `updated_at`    INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uuid` (`uuid`),
     UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
     INDEX `group_id` (`group_id`) USING BTREE,
     INDEX `sender` (`sender`) USING BTREE,
@@ -86,7 +82,6 @@ create table if not exists `messages`
 CREATE TABLE `bots`
 (
     `id`         BIGINT(19)    NOT NULL AUTO_INCREMENT,
-    `uuid`       varchar(36)   NOT NULL DEFAULT '',
     `name`       VARCHAR(30)   NOT NULL,
     `identifier` VARCHAR(20)   NOT NULL,
     `detail`     VARCHAR(250)  NOT NULL,
@@ -96,7 +91,6 @@ CREATE TABLE `bots`
     `created_at` INT(10)       NOT NULL,
     `updated_at` INT(10)       NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `uuid` (`uuid`) USING BTREE,
     UNIQUE INDEX `identifier` (`identifier`) USING BTREE
 )
     ENGINE = InnoDB;
