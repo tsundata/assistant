@@ -18,6 +18,7 @@ const (
 	StringToken  = "string"
 	ObjectToken  = "object"
 	TagToken     = "tag"
+	MessageToken = "message"
 	EOFToken     = "eof"
 )
 
@@ -122,7 +123,31 @@ func (l *Lexer) Object() (*Token, error) {
 	return token, nil
 }
 
-func (l *Lexer) Tag() (*Token, error) {
+func (l *Lexer) TagOrMessage() (*Token, error) {
+	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+
+	l.Advance()
+
+	t := TagToken
+	var result []rune
+	if l.CurrentChar > 0 && unicode.IsDigit(l.CurrentChar) {
+		t = MessageToken
+	}
+	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
+		result = append(result, l.CurrentChar)
+		l.Advance()
+	}
+
+	l.Advance()
+
+	s := string(result)
+	token.Type = t
+	token.Value = s
+
+	return token, nil
+}
+
+func (l *Lexer) Message() (*Token, error) {
 	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
 
 	l.Advance()
@@ -155,7 +180,7 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 			return l.Object()
 		}
 		if l.CurrentChar == '#' {
-			return l.Tag()
+			return l.TagOrMessage()
 		}
 		if !unicode.IsSpace(l.CurrentChar) {
 			return l.String()

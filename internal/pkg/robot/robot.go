@@ -51,15 +51,16 @@ func (r *Robot) Help(bots []*pb.Bot, in string) (map[int64][]pb.MsgPayload, erro
 }
 
 //ParseText  tokens, objects, tags, commands
-func (r *Robot) ParseText(in *pb.Message) ([]*bot.Token, []string, []string, []string, error) {
+func (r *Robot) ParseText(in *pb.Message) ([]*bot.Token, []string, []string, []string, []string, error) {
 	tokens, err := bot.ParseText(in.GetText())
 	if err != nil || len(tokens) == 0 {
-		return nil, []string{}, []string{}, []string{}, nil
+		return nil, []string{}, []string{}, []string{}, []string{}, nil
 	}
 
 	var objects []string
 	var tags []string
 	var commands []string
+	var messages []string
 	for _, item := range tokens {
 		if item.Type == bot.ObjectToken {
 			objects = append(objects, item.Value)
@@ -67,12 +68,15 @@ func (r *Robot) ParseText(in *pb.Message) ([]*bot.Token, []string, []string, []s
 		if item.Type == bot.TagToken {
 			tags = append(tags, item.Value)
 		}
+		if item.Type == bot.MessageToken {
+			messages = append(messages, item.Value)
+		}
 		if item.Type == bot.CommandToken {
 			commands = append(commands, item.Value)
 		}
 	}
 
-	return tokens, objects, tags, commands, nil
+	return tokens, objects, tags, messages, commands, nil
 }
 
 func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in *pb.Message) error {

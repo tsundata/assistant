@@ -22,6 +22,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -118,7 +119,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 
 		// lexer
-		tokens, objects, tags, commands, err := r.ParseText(reply.Message)
+		tokens, objects, tags, messages, commands, err := r.ParseText(reply.Message)
 		if err != nil {
 			return nil, err
 		}
@@ -169,6 +170,18 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				})
 				if err != nil {
 					s.logger.Error(err)
+				}
+			}
+		}
+
+		// messages
+		if len(messages) > 0 {
+			for _, mid := range messages {
+				sequence, _ := strconv.ParseInt(mid, 10, 64)
+				messageReply, _ := s.message.GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{UserId: reply.Message.UserId, Sequence: sequence}})
+				if messageReply != nil && messageReply.Message.GetId() > 0 {
+					messageReply.Message.Direction = enum.MessageIncomingDirection
+					_ = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, messageReply.Message)
 				}
 			}
 		}

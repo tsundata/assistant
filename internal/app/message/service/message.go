@@ -325,7 +325,7 @@ func (m *Message) GetById(ctx context.Context, payload *pb.MessageRequest) (*pb.
 }
 
 func (m *Message) GetBySequence(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	message, err := m.repo.GetBySequence(ctx, payload.Message.GetUserId(), payload.Message.GetId())
+	message, err := m.repo.GetBySequence(ctx, payload.Message.GetUserId(), payload.Message.GetSequence())
 	if err != nil {
 		return nil, err
 	}
