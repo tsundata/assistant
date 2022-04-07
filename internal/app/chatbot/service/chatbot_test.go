@@ -838,7 +838,7 @@ func TestChatbot_CronTrigger(t *testing.T) {
 
 	messageID := rand.Int63()
 
-	rdb.Set(context.Background(), fmt.Sprintf("workflow:cron:%d:time", messageID), time.Now().Add(-2*time.Minute).Format("2006-01-02 15:04:05"), redis.KeepTTL)
+	rdb.Set(context.Background(), fmt.Sprintf("chatbot:cron:%d:time", messageID), time.Now().Add(-2*time.Minute).Format("2006-01-02 15:04:05"), redis.KeepTTL)
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)

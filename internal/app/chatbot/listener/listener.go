@@ -56,7 +56,7 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 		return err
 	}
 
-	err = bus.Subscribe(ctx, enum.Chatbot, event.WorkflowRunSubject, func(msg *event.Msg) error {
+	err = bus.Subscribe(ctx, enum.Chatbot, event.ScriptRunSubject, func(msg *event.Msg) error {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
@@ -75,6 +75,7 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 				rdb.Set(ctx, fmt.Sprintf("debug:%s", uuid), reply.GetText(), time.Hour)
 				m.Text = fmt.Sprintf("DEBUG %s/debug/%s", conf.Gateway.Url, uuid)
 				m.Type = string(enum.MessageTypeText)
+				m.Direction = enum.MessageIncomingDirection
 				_ = bus.Publish(ctx, enum.Message, event.MessageChannelSubject, m)
 			}
 			return nil

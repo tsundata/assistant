@@ -25,12 +25,12 @@ func (o *Env) Run(ctx context.Context, comp *inside.Component, params []interfac
 		return nil, nil
 	}
 
-	if comp.Middle == nil {
+	if comp.MiddleClient == nil {
 		return nil, nil
 	}
 
 	if text, ok := params[0].(string); ok {
-		reply, err := comp.Middle.GetSetting(ctx, &pb.TextRequest{Text: text})
+		reply, err := comp.MiddleClient.GetSetting(ctx, &pb.TextRequest{Text: text})
 		if err != nil {
 			return nil, err
 		}

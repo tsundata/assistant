@@ -115,7 +115,7 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		if err != nil {
 			return nil, err
 		}
-		err = m.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message)
+		err = m.bus.Publish(ctx, enum.Chatbot, event.ScriptRunSubject, message)
 		if err != nil {
 			return nil, err
 		}

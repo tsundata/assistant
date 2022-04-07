@@ -32,7 +32,12 @@ func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interfa
 		if comp.Bus == nil {
 			return false, nil
 		}
-		err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{UserId: comp.Message.UserId, GroupId: comp.Message.GroupId, Text: text})
+		err := comp.Bus.Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
+			UserId:  comp.Message.UserId,
+			GroupId: comp.Message.GroupId,
+			Text:    text,
+			Type:    string(enum.MessageTypeText),
+		})
 		if err != nil {
 			return false, err
 		}

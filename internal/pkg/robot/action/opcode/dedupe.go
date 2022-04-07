@@ -41,7 +41,7 @@ func (o *Dedupe) Run(_ context.Context, comp *inside.Component, params []interfa
 	}
 	if len(params) == 1 {
 		if key, ok := params[0].(string); ok {
-			bf := collection.NewBloomFilter(comp.RDB, fmt.Sprintf("workflow:dedupe:%s", key), 100000, 7)
+			bf := collection.NewBloomFilter(comp.Rdb, fmt.Sprintf("chatbot:opcode:dedupe:%s", key), 100000, 7)
 
 			if str, ok := comp.Value.(string); ok {
 				if !bf.Lookup(str) {

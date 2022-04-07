@@ -38,10 +38,10 @@ var rules = []Rule{
 		},
 	},
 	{
-		Name: "workflow_cron",
+		Name: "script_cron",
 		When: "* * * * *",
 		Action: func(ctx context.Context, comp component.Component) []result.Result {
-			return agent.WorkflowCron(ctx, comp)
+			return agent.ScriptCron(ctx, comp)
 		},
 	},
 	{

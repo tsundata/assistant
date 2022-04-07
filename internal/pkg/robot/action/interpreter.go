@@ -30,10 +30,10 @@ func (i *Interpreter) SetMessage(message pb.Message) {
 
 func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageSvcClient, middle pb.MiddleSvcClient, logger log.Logger) {
 	i.Comp.Bus = bus
-	i.Comp.RDB = rdb
+	i.Comp.Rdb = rdb
 	i.Comp.Logger = logger
 	i.Comp.MessageClient = message
-	i.Comp.Middle = middle
+	i.Comp.MiddleClient = middle
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {

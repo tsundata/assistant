@@ -40,7 +40,7 @@ func TestWorkflowCron(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := WorkflowCron(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
+			if got := ScriptCron(context.Background(), tt.args.comp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("WorkflowCron() = %v, want %v", got, tt.want)
 			}
 		})

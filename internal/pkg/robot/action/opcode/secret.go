@@ -25,12 +25,12 @@ func (o *Secret) Run(ctx context.Context, comp *inside.Component, params []inter
 		return nil, nil
 	}
 
-	if comp.Middle == nil {
+	if comp.MiddleClient == nil {
 		return nil, nil
 	}
 
 	if text, ok := params[0].(string); ok {
-		reply, err := comp.Middle.GetCredential(ctx, &pb.CredentialRequest{Name: text})
+		reply, err := comp.MiddleClient.GetCredential(ctx, &pb.CredentialRequest{Name: text})
 		if err != nil {
 			return nil, err
 		}

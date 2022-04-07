@@ -642,7 +642,7 @@ func (s *Chatbot) RunActionScript(ctx context.Context, payload *pb.WorkflowReque
 
 	var result string
 	if i.Comp.Debug {
-		result = fmt.Sprintf("Tracing\n-------\n %s", i.Stdout())
+		result = fmt.Sprintf("Tracing\n-------\n%s", i.Stdout())
 	}
 
 	return &pb.WorkflowReply{
@@ -672,7 +672,7 @@ func (s *Chatbot) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest
 	}
 
 	// publish event
-	err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message.Message)
+	err = s.bus.Publish(ctx, enum.Chatbot, event.ScriptRunSubject, message.Message)
 	if err != nil {
 		return nil, err
 	}
@@ -688,7 +688,7 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 
 	for _, trigger := range triggers {
 		var lastTime time.Time
-		key := fmt.Sprintf("workflow:cron:%d:time", trigger.MessageId)
+		key := fmt.Sprintf("chatbot:cron:%d:time", trigger.MessageId)
 		t := s.rdb.Get(ctx, key).Val()
 		if t == "" {
 			lastTime = time.Time{}
@@ -720,7 +720,7 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 			}
 
 			// publish event
-			err = s.bus.Publish(ctx, enum.Chatbot, event.WorkflowRunSubject, message.Message)
+			err = s.bus.Publish(ctx, enum.Chatbot, event.ScriptRunSubject, message.Message)
 			if err != nil {
 				return nil, err
 			}

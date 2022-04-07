@@ -9,7 +9,7 @@ const (
 	MessageSendSubject       Subject = "message_send"
 	MessagePushSubject       Subject = "message_push"
 	MessageChannelSubject    Subject = "message_channel"
-	WorkflowRunSubject       Subject = "workflow_run"
+	ScriptRunSubject         Subject = "script_run"
 	BotActionSubject         Subject = "bot_action"
 	BotFormSubject           Subject = "bot_form"
 	BotHandleSubject         Subject = "bot_handle"

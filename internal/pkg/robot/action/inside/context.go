@@ -17,10 +17,10 @@ type Component struct {
 	Credential map[string]string
 	Message    pb.Message
 
-	RDB           *redis.Client
+	Rdb           *redis.Client
 	Bus           event.Bus
 	Logger        log.Logger
-	Middle        pb.MiddleSvcClient
+	MiddleClient  pb.MiddleSvcClient
 	MessageClient pb.MessageSvcClient
 }
 

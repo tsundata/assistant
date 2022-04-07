@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
-func WorkflowCron(ctx context.Context, comp component.Component) []result.Result {
+func ScriptCron(ctx context.Context, comp component.Component) []result.Result {
 	if comp.Chatbot() == nil {
 		return []result.Result{result.EmptyResult()}
 	}
