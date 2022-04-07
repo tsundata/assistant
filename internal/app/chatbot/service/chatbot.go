@@ -777,7 +777,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 			trigger.Secret = symbolTable.Webhook.Secret
 
 			find, err := s.repo.GetTriggerByFlag(ctx, trigger.Type, trigger.Flag)
-			if err != nil {
+			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, err
 			}
 

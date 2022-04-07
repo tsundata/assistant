@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type Echo struct{}
@@ -33,10 +34,12 @@ func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interfa
 			return false, nil
 		}
 		err := comp.Bus.Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
-			UserId:  comp.Message.UserId,
-			GroupId: comp.Message.GroupId,
-			Text:    text,
-			Type:    string(enum.MessageTypeText),
+			UserId:   comp.Message.UserId,
+			GroupId:  comp.Message.GroupId,
+			Text:     text,
+			Type:     string(enum.MessageTypeText),
+			Sequence: comp.Message.Sequence,
+			SendTime: util.Now(),
 		})
 		if err != nil {
 			return false, err

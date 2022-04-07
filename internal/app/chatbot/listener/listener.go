@@ -76,6 +76,7 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 				m.Text = fmt.Sprintf("DEBUG %s/debug/%s", conf.Gateway.Url, uuid)
 				m.Type = string(enum.MessageTypeText)
 				m.Direction = enum.MessageIncomingDirection
+				m.SendTime = util.Now()
 				_ = bus.Publish(ctx, enum.Message, event.MessageChannelSubject, m)
 			}
 			return nil
