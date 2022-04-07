@@ -2,15 +2,15 @@ package util
 
 import (
 	"bytes"
+	"crypto/rand"
 	"errors"
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/color"
 	"image/png"
-	"math/rand"
+	"math/big"
 	"strings"
-	"time"
 )
 
 func Avatar(s string) ([]byte, error) {
@@ -20,7 +20,10 @@ func Avatar(s string) ([]byte, error) {
 	}
 	s = strings.ToUpper(string(r[0]))
 
-	rr := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rInt,err := rand.Int(rand.Reader, big.NewInt(int64(len(palette))))
+	if err != nil {
+		return nil, err
+	}
 
 	font, err := truetype.Parse(goregular.TTF)
 	if err != nil {
@@ -30,7 +33,7 @@ func Avatar(s string) ([]byte, error) {
 
 	dc := gg.NewContext(200, 200)
 	dc.SetFontFace(face)
-	dc.SetColor(palette[rr.Intn(len(palette))])
+	dc.SetColor(palette[rInt.Int64()])
 	dc.Clear()
 	dc.SetRGB(1, 1, 1)
 	dc.DrawString(s, 30, 170)

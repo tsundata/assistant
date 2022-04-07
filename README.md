@@ -32,7 +32,7 @@ Assistant Bot is a workflow engine for chatbot
 
 ## Requirements
 
-This project requires Go 1.16 or newer
+This project requires Go 1.17 or newer
 
 ## Installation
 
