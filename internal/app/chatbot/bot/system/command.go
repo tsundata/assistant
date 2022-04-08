@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
@@ -356,17 +357,21 @@ var commandRules = []command.Rule{
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
-			var result strings.Builder
-			for _, flag := range reply.Flag {
-				result.WriteString("/webhook/")
-				result.WriteString(flag)
-				result.WriteString("\n")
-			}
-			if result.Len() > 0 {
-				return []pb.MsgPayload{pb.TextMsg{Text: result.String()}}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.Flag) > 0 {
+				header = []string{"No", "Webhook url"}
+				for i, flag := range reply.Flag {
+					row = append(row, []interface{}{i + 1, fmt.Sprintf("%s/webhook/%s", comp.GetConfig().Gateway.Url, flag)})
+				}
 			}
 
-			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Webhook",
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 	{
@@ -374,6 +379,60 @@ var commandRules = []command.Rule{
 		Help:   "Push notification switch",
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			return []pb.MsgPayload{msg.BotFormMsg(formRules, PushSwitchFormID)}
+		},
+	},
+	{
+		Define: "webhook switch",
+		Help:   `Script Webhook switch`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Chatbot() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			var field []pb.FormField
+			reply, err := comp.Chatbot().GetWebhookTriggers(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{UserId: enum.SuperUserID}}) // fixme
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			for _, item := range reply.List {
+				field = append(field, pb.FormField{
+					Key:      strconv.FormatInt(item.MessageId, 10),
+					Type:     string(bot.FieldItemTypeString),
+					Required: true,
+					Intro:    fmt.Sprintf("/webhook/%s", item.Flag),
+				})
+			}
+			return []pb.MsgPayload{pb.FormMsg{
+				ID:    WebhookSwitchFormID,
+				Title: "Script Webhook switch",
+				Field: field,
+			}}
+		},
+	},
+	{
+		Define: "cron switch",
+		Help:   `Script cron switch`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Chatbot() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			var field []pb.FormField
+			reply, err := comp.Chatbot().GetCronTriggers(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{UserId: enum.SuperUserID}}) // fixme
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			for _, item := range reply.List {
+				field = append(field, pb.FormField{
+					Key:      strconv.FormatInt(item.MessageId, 10),
+					Type:     string(bot.FieldItemTypeString),
+					Required: true,
+					Intro:    fmt.Sprintf("#%d (%s)", item.Sequence, item.When),
+				})
+			}
+			return []pb.MsgPayload{pb.FormMsg{
+				ID:    CronSwitchFormID,
+				Title: "Script cron switch",
+				Field: field,
+			}}
 		},
 	},
 }

@@ -651,9 +651,13 @@ func (s *Chatbot) RunActionScript(ctx context.Context, payload *pb.WorkflowReque
 }
 
 func (s *Chatbot) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	trigger, err := s.repo.GetTriggerByFlag(ctx, payload.Trigger.GetType(), payload.Trigger.GetFlag())
+	trigger, err := s.repo.GetTriggerByFlag(ctx, enum.TriggerWebhookType, payload.Trigger.GetFlag())
 	if err != nil {
 		return nil, err
+	}
+
+	if trigger.Status == enum.TriggerDisable {
+		return nil, errors.New("webhook trigger disable")
 	}
 
 	// Authorization
@@ -681,12 +685,15 @@ func (s *Chatbot) WebhookTrigger(ctx context.Context, payload *pb.TriggerRequest
 }
 
 func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
-	triggers, err := s.repo.ListTriggersByType(ctx, "cron")
+	triggers, err := s.repo.ListTriggersByType(ctx, enum.TriggerCronType)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, trigger := range triggers {
+		if trigger.Status == enum.TriggerDisable {
+			continue
+		}
 		var lastTime time.Time
 		key := fmt.Sprintf("chatbot:cron:%d:time", trigger.MessageId)
 		t := s.rdb.Get(ctx, key).Val()
@@ -731,10 +738,16 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 }
 
 func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
+	messageReply, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.Trigger.GetMessageId()}})
+	if err != nil {
+		return nil, err
+	}
 	var trigger pb.Trigger
 	trigger.Type = payload.Trigger.GetType()
 	trigger.Kind = payload.Trigger.GetKind()
-	trigger.MessageId = payload.Trigger.GetMessageId()
+	trigger.UserId = messageReply.Message.GetUserId()
+	trigger.MessageId = messageReply.Message.GetId()
+	trigger.Status = enum.TriggerEnable
 
 	switch enum.MessageType(payload.Trigger.GetKind()) {
 	case enum.MessageTypeScript:
@@ -761,7 +774,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 		}
 
 		if symbolTable.Cron != nil {
-			trigger.Type = "cron"
+			trigger.Type = enum.TriggerCronType
 			trigger.When = symbolTable.Cron.When
 
 			// store
@@ -772,7 +785,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 		}
 
 		if symbolTable.Webhook != nil {
-			trigger.Type = "webhook"
+			trigger.Type = enum.TriggerWebhookType
 			trigger.Flag = symbolTable.Webhook.Flag
 			trigger.Secret = symbolTable.Webhook.Secret
 
@@ -820,7 +833,7 @@ func (s *Chatbot) ActionDoc(_ context.Context, payload *pb.WorkflowRequest) (*pb
 }
 
 func (s *Chatbot) ListWebhook(ctx context.Context, _ *pb.WorkflowRequest) (*pb.WebhooksReply, error) {
-	triggers, err := s.repo.ListTriggersByType(ctx, "webhook")
+	triggers, err := s.repo.ListTriggersByType(ctx, enum.TriggerWebhookType)
 	if err != nil {
 		return nil, err
 	}
@@ -829,4 +842,62 @@ func (s *Chatbot) ListWebhook(ctx context.Context, _ *pb.WorkflowRequest) (*pb.W
 		flags = append(flags, item.Flag)
 	}
 	return &pb.WebhooksReply{Flag: flags}, nil
+}
+
+func (s *Chatbot) GetWebhookTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
+	triggers, err := s.repo.GetTriggers(ctx, payload.Trigger.GetUserId(), enum.TriggerWebhookType)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TriggersReply{List: triggers}, nil
+}
+
+func (s *Chatbot) GetCronTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
+	triggers, err := s.repo.GetTriggers(ctx, payload.Trigger.GetUserId(), enum.TriggerCronType)
+	if err != nil {
+		return nil, err
+	}
+
+	// sequence
+	var messageId []int64
+	for _, item := range triggers {
+		messageId = append(messageId, item.MessageId)
+	}
+	messageReply, err := s.message.GetByIds(ctx, &pb.GetMessagesRequest{Ids: messageId})
+	if err != nil {
+		return nil, err
+	}
+	messageMap := make(map[int64]int64)
+	for _, item := range messageReply.Messages {
+		messageMap[item.Id] = item.Sequence
+	}
+	for i, item := range triggers {
+		if s, ok := messageMap[item.MessageId]; ok {
+			triggers[i].Sequence = s
+		}
+	}
+
+	return &pb.TriggersReply{List: triggers}, nil
+}
+
+func (s *Chatbot) SwitchTriggers(ctx context.Context, payload *pb.SwitchTriggersRequest) (*pb.StateReply, error) {
+	for _, item := range payload.Triggers {
+		messageId, err := strconv.ParseInt(item.Key, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		var status int64
+		if item.Value == "1" {
+			status = enum.TriggerEnable
+		} else {
+			status = enum.TriggerDisable
+		}
+
+		err = s.repo.SwitchTrigger(ctx, messageId, status)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &pb.StateReply{State: true}, nil
 }

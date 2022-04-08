@@ -185,6 +185,21 @@ func (mr *MockMessageRepositoryMockRecorder) ListByGroup(ctx, groupId, page, lim
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByGroup", reflect.TypeOf((*MockMessageRepository)(nil).ListByGroup), ctx, groupId, page, limit)
 }
 
+// ListByIds mocks base method.
+func (m *MockMessageRepository) ListByIds(ctx context.Context, messageId []int64) ([]*pb.Message, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByIds", ctx, messageId)
+	ret0, _ := ret[0].([]*pb.Message)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByIds indicates an expected call of ListByIds.
+func (mr *MockMessageRepositoryMockRecorder) ListByIds(ctx, messageId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByIds", reflect.TypeOf((*MockMessageRepository)(nil).ListByIds), ctx, messageId)
+}
+
 // ListByType mocks base method.
 func (m *MockMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {
 	m.ctrl.T.Helper()

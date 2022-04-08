@@ -504,11 +504,18 @@ func (gc *GatewayController) QR(c *fiber.Ctx) error {
 func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 	flag := c.Params("flag", "")
 
-	// Headers(Authorization: Base ?) -> query(secret)
+	// Headers(Authorization: Base ?) -> query(secret) -> body(secret:json|xml|form)
 	secret := c.Get("Authorization", "")
 	secret = strings.ReplaceAll(secret, "Base ", "")
 	if secret == "" {
 		secret = c.Query("secret", "")
+		if secret == "" {
+			var body struct {
+				Secret string `json:"secret" xml:"secret" form:"secret"`
+			}
+			_ = c.BodyParser(&body)
+			secret = body.Secret
+		}
 	}
 
 	_, err := gc.chatbotSvc.WebhookTrigger(md.BuildAuthContext(enum.SuperUserID), &pb.TriggerRequest{

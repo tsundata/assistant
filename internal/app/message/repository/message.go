@@ -19,6 +19,7 @@ type MessageRepository interface {
 	ListByType(ctx context.Context, t string) ([]*pb.Message, error)
 	List(ctx context.Context) ([]*pb.Message, error)
 	ListByGroup(ctx context.Context, groupId int64, page, limit int) (int64, []*pb.Message, error)
+	ListByIds(ctx context.Context, messageId []int64) ([]*pb.Message, error)
 	Create(ctx context.Context, message *pb.Message) (int64, error)
 	Delete(ctx context.Context, id int64) error
 	Save(ctx context.Context, message *pb.Message) error
@@ -51,7 +52,7 @@ func (r *MysqlMessageRepository) GetByID(ctx context.Context, id int64) (pb.Mess
 
 func (r *MysqlMessageRepository) GetBySequence(ctx context.Context, userId, sequence int64) (pb.Message, error) {
 	var message pb.Message
-	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).First(&message).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).Order("id DESC").Take(&message).Error
 	if err != nil {
 		return pb.Message{}, err
 	}
@@ -83,6 +84,15 @@ func (r *MysqlMessageRepository) ListByGroup(ctx context.Context, groupId int64,
 	return total, messages, nil
 }
 
+func (r *MysqlMessageRepository) ListByIds(ctx context.Context, messageId []int64) ([]*pb.Message, error) {
+	var messages []*pb.Message
+	err := r.db.WithContext(ctx).Where("id IN ?", messageId).Find(&messages).Error
+	if err != nil {
+		return nil, err
+	}
+	return messages, nil
+}
+
 func (r *MysqlMessageRepository) ListByType(ctx context.Context, t string) ([]*pb.Message, error) {
 	var messages []*pb.Message
 	err := r.db.WithContext(ctx).Where("type = ?", t).Order("id DESC").Find(&messages).Error
@@ -110,18 +120,20 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 		_ = l.Release()
 	}()
 
-	var max pb.Message
-	err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").Take(&max).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return 0, err
-	}
-
-	// sequence
 	sequence := int64(0)
-	if max.Sequence > 0 {
-		sequence = max.Sequence
+	if message.SenderType == enum.MessageUserType {
+		var max pb.Message
+		err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").Take(&max).Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return 0, err
+		}
+
+		// sequence
+		if max.Sequence > 0 {
+			sequence = max.Sequence
+		}
+		sequence += 1
 	}
-	sequence += 1
 
 	message.Id = r.id.Generate(ctx)
 	message.Sequence = sequence

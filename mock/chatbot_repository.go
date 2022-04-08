@@ -360,6 +360,21 @@ func (mr *MockChatbotRepositoryMockRecorder) GetTriggerByFlag(ctx, t, flag inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTriggerByFlag", reflect.TypeOf((*MockChatbotRepository)(nil).GetTriggerByFlag), ctx, t, flag)
 }
 
+// GetTriggers mocks base method.
+func (m *MockChatbotRepository) GetTriggers(ctx context.Context, userId int64, t string) ([]*pb.Trigger, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTriggers", ctx, userId, t)
+	ret0, _ := ret[0].([]*pb.Trigger)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTriggers indicates an expected call of GetTriggers.
+func (mr *MockChatbotRepositoryMockRecorder) GetTriggers(ctx, userId, t interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTriggers", reflect.TypeOf((*MockChatbotRepository)(nil).GetTriggers), ctx, userId, t)
+}
+
 // List mocks base method.
 func (m *MockChatbotRepository) List(ctx context.Context) ([]*pb.Bot, error) {
 	m.ctrl.T.Helper()
@@ -418,6 +433,20 @@ func (m *MockChatbotRepository) ListTriggersByType(ctx context.Context, t string
 func (mr *MockChatbotRepositoryMockRecorder) ListTriggersByType(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTriggersByType", reflect.TypeOf((*MockChatbotRepository)(nil).ListTriggersByType), ctx, t)
+}
+
+// SwitchTrigger mocks base method.
+func (m *MockChatbotRepository) SwitchTrigger(ctx context.Context, messageId, status int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SwitchTrigger", ctx, messageId, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SwitchTrigger indicates an expected call of SwitchTrigger.
+func (mr *MockChatbotRepositoryMockRecorder) SwitchTrigger(ctx, messageId, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SwitchTrigger", reflect.TypeOf((*MockChatbotRepository)(nil).SwitchTrigger), ctx, messageId, status)
 }
 
 // TouchGroupUpdatedAt mocks base method.

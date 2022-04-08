@@ -39,6 +39,9 @@ service ChatbotSvc {
   rpc DeleteTrigger(TriggerRequest) returns (StateReply) {}
   rpc ActionDoc(WorkflowRequest) returns (WorkflowReply) {}
   rpc ListWebhook(WorkflowRequest) returns (WebhooksReply) {}
+  rpc GetWebhookTriggers(TriggerRequest) returns (TriggersReply) {}
+  rpc GetCronTriggers(TriggerRequest) returns (TriggersReply) {}
+  rpc SwitchTriggers(SwitchTriggersRequest) returns (StateReply) {}
 }
 
 message ChatbotRequest {
@@ -244,10 +247,19 @@ message Trigger {
   string secret = 5;
   // @inject_tag: db:"when"
   string when = 6;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 7;
   // @inject_tag: db:"message_id"
-  int64 message_id = 7;
+  int64 message_id = 8;
+  // @inject_tag: db:"status"
+  int32 status = 9;
   // @inject_tag: db:"created_at"
-  int64 created_at = 8;
+  int64 created_at = 10;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 11;
+
+  // @inject_tag: gorm:"-"
+  int64 sequence = 12;
 }
 
 message TriggerInfo {
@@ -258,4 +270,12 @@ message TriggerInfo {
 
 message WebhooksReply {
   repeated string flag = 1;
+}
+
+message TriggersReply {
+  repeated Trigger list = 1;
+}
+
+message SwitchTriggersRequest {
+  repeated KV triggers = 1;
 }

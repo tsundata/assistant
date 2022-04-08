@@ -183,6 +183,14 @@ func (m *Message) List(ctx context.Context, _ *pb.MessageRequest) (*pb.MessagesR
 	return &pb.MessagesReply{Messages: messages}, nil
 }
 
+func (m *Message) GetByIds(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	messages, err := m.repo.ListByIds(ctx, payload.Ids)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetMessagesReply{Messages: messages}, nil
+}
+
 func (m *Message) ListByGroup(ctx context.Context, payload *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	total, messages, err := m.repo.ListByGroup(ctx, payload.GroupId, int(payload.Page), int(payload.Limit))

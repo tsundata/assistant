@@ -43,6 +43,8 @@ type ChatbotRepository interface {
 	ListTriggersByType(ctx context.Context, t string) ([]*pb.Trigger, error)
 	CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error)
 	DeleteTriggerByMessageID(ctx context.Context, messageID int64) error
+	GetTriggers(ctx context.Context, userId int64, t string) ([]*pb.Trigger, error)
+	SwitchTrigger(ctx context.Context, messageId int64, status int64) error
 }
 
 type MysqlChatbotRepository struct {
@@ -408,6 +410,8 @@ func (r *MysqlChatbotRepository) ListTriggersByType(ctx context.Context, t strin
 
 func (r *MysqlChatbotRepository) CreateTrigger(ctx context.Context, trigger *pb.Trigger) (int64, error) {
 	trigger.Id = r.id.Generate(ctx)
+	trigger.CreatedAt = time.Now().Unix()
+	trigger.UpdatedAt = time.Now().Unix()
 	err := r.db.WithContext(ctx).Create(&trigger).Error
 	if err != nil {
 		return 0, err
@@ -417,4 +421,20 @@ func (r *MysqlChatbotRepository) CreateTrigger(ctx context.Context, trigger *pb.
 
 func (r *MysqlChatbotRepository) DeleteTriggerByMessageID(ctx context.Context, messageID int64) error {
 	return r.db.WithContext(ctx).Where("message_id = ?", messageID).Delete(&pb.Trigger{}).Error
+}
+
+func (r *MysqlChatbotRepository) GetTriggers(ctx context.Context, userId int64, t string) ([]*pb.Trigger, error) {
+	var triggers []*pb.Trigger
+	err := r.db.WithContext(ctx).Where("user_id = ? AND `type` = ?", userId, t).Find(&triggers).Error
+	if err != nil {
+		return nil, err
+	}
+	return triggers, nil
+}
+
+func (r *MysqlChatbotRepository) SwitchTrigger(ctx context.Context, messageId int64, status int64) error {
+	return r.db.WithContext(ctx).Model(&pb.Trigger{}).Where("message_id = ?", messageId).UpdateColumns(map[string]interface{}{
+		"status":     status,
+		"updated_at": time.Now().Unix(),
+	}).Error
 }

@@ -93,6 +93,7 @@ type FormField struct {
 	Type     string      `json:"type"`
 	Required bool        `json:"required"`
 	Value    interface{} `json:"value"`
+	Intro    string      `json:"intro"`
 }
 
 type LinkMsg struct {

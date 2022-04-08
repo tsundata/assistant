@@ -71,7 +71,6 @@ create table if not exists `messages`
     `created_at`    INT(10)             NOT NULL DEFAULT '0',
     `updated_at`    INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `user_sequence_id` (`user_id`, `sequence`) USING BTREE,
     INDEX `group_id` (`group_id`) USING BTREE,
     INDEX `sender` (`sender`) USING BTREE,
     INDEX `receiver` (`receiver`) USING BTREE

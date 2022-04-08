@@ -129,6 +129,9 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 
 		var form []*pb.KV
 		for _, item := range p.Field {
+			if item.Value == nil {
+				continue
+			}
 			form = append(form, &pb.KV{
 				Key:   item.Key,
 				Value: item.Value.(string),

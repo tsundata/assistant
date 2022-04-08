@@ -136,6 +136,26 @@ func (mr *MockMessageSvcClientMockRecorder) GetById(ctx, in interface{}, opts ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockMessageSvcClient)(nil).GetById), varargs...)
 }
 
+// GetByIds mocks base method.
+func (m *MockMessageSvcClient) GetByIds(ctx context.Context, in *pb.GetMessagesRequest, opts ...grpc.CallOption) (*pb.GetMessagesReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetByIds", varargs...)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIds indicates an expected call of GetByIds.
+func (mr *MockMessageSvcClientMockRecorder) GetByIds(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIds", reflect.TypeOf((*MockMessageSvcClient)(nil).GetByIds), varargs...)
+}
+
 // GetBySequence mocks base method.
 func (m *MockMessageSvcClient) GetBySequence(ctx context.Context, in *pb.MessageRequest, opts ...grpc.CallOption) (*pb.GetMessageReply, error) {
 	m.ctrl.T.Helper()
@@ -452,6 +472,21 @@ func (m *MockMessageSvcServer) GetById(arg0 context.Context, arg1 *pb.MessageReq
 func (mr *MockMessageSvcServerMockRecorder) GetById(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockMessageSvcServer)(nil).GetById), arg0, arg1)
+}
+
+// GetByIds mocks base method.
+func (m *MockMessageSvcServer) GetByIds(arg0 context.Context, arg1 *pb.GetMessagesRequest) (*pb.GetMessagesReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIds", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetMessagesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIds indicates an expected call of GetByIds.
+func (mr *MockMessageSvcServerMockRecorder) GetByIds(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIds", reflect.TypeOf((*MockMessageSvcServer)(nil).GetByIds), arg0, arg1)
 }
 
 // GetBySequence mocks base method.
