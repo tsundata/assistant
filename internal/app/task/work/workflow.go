@@ -1,6 +1,7 @@
 package work
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
@@ -42,7 +43,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	ctx := md.BuildAuthContext(enum.SuperUserID)//fixme
+	ctx := context.Background()
 	message, err := t.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return false, err
@@ -50,7 +51,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 
 	switch enum.MessageType(tp) {
 	case enum.MessageTypeScript:
-		_, err = t.chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: message.Message})
+		_, err = t.chatbot.RunActionScript(md.BuildAuthContext(message.Message.UserId), &pb.WorkflowRequest{Message: message.Message})
 		if err != nil {
 			return false, err
 		}
