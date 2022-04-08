@@ -16,13 +16,16 @@ var ignoreFullMethod = []string{
 	"/pb.IdSvc/GetGlobalId",
 	"/pb.UserSvc/Login",
 	"/pb.UserSvc/Authorization",
+	// business
 	"/pb.ChatbotSvc/Register",
+	"/pb.MiddleSvc/GetCronStatus",
 	"/pb.MiddleSvc/RegisterSubscribe",
 	"/pb.MiddleSvc/GetSubscribeStatus",
-	// business
 	"/pb.MiddleSvc/GetPage",
 	"/pb.MiddleSvc/RegisterCron",
 	"/pb.ChatbotSvc/CronTrigger",
+	"/pb.ChatbotSvc/WebhookTrigger",
+	"/pb.StorageSvc/AbsolutePath",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

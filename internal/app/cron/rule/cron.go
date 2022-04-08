@@ -13,7 +13,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/robot/rulebot"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"go.uber.org/zap"
 	"time"
 )
@@ -60,7 +59,7 @@ func (r *cronRuleset) daemon(b *rulebot.RuleBot) {
 	b.Comp.GetLogger().Info("cron starting...")
 
 	// process cron
-	ctx := md.BuildAuthContext(enum.SuperUserID) // fixme
+	ctx := context.Background()
 	for rule := range r.cronRules {
 		b.Comp.GetLogger().Info("cron " + r.cronRules[rule].Name + ": start...")
 		go r.ruleWorker(ctx, b, r.cronRules[rule])

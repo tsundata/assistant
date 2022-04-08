@@ -33,6 +33,16 @@ func FromIncoming(ctx context.Context) (int64, bool) {
 			return int64(id), true
 		}
 	}
+	if md, ok := metadata.FromOutgoingContext(ctx); ok {
+		val := md.Get(enum.AuthKey)
+		if len(val) >= 1 {
+			id, err := strconv.Atoi(val[0])
+			if err != nil {
+				return 0, false
+			}
+			return int64(id), true
+		}
+	}
 	return 0, false
 }
 

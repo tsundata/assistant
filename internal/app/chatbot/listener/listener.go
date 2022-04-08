@@ -46,7 +46,7 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 		}
 
 		chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-		_, err = chatbot.Register(md.BuildAuthContext(enum.SuperUserID), &pb.BotRequest{Bot: &b})
+		_, err = chatbot.Register(ctx, &pb.BotRequest{Bot: &b})
 		if err != nil {
 			return err
 		}
@@ -66,7 +66,7 @@ func RegisterEventHandler(conf *config.AppConfig, bus event.Bus, rdb *redis.Clie
 		switch enum.MessageType(m.GetType()) {
 		case enum.MessageTypeScript:
 			chatbot := service.NewChatbot(logger, bus, rdb, repo, message, middle, bot, comp)
-			reply, err := chatbot.RunActionScript(ctx, &pb.WorkflowRequest{Message: &m})
+			reply, err := chatbot.RunActionScript(md.BuildAuthContext(m.UserId), &pb.WorkflowRequest{Message: &m})
 			if err != nil {
 				return err
 			}

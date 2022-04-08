@@ -518,7 +518,8 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 		}
 	}
 
-	_, err := gc.chatbotSvc.WebhookTrigger(md.BuildAuthContext(enum.SuperUserID), &pb.TriggerRequest{
+	ctx := context.Background()
+	_, err := gc.chatbotSvc.WebhookTrigger(ctx, &pb.TriggerRequest{
 		Trigger: &pb.Trigger{
 			Type:   "webhook",
 			Flag:   flag,
@@ -539,7 +540,8 @@ func (gc *GatewayController) Webhook(c *fiber.Ctx) error {
 
 func (gc *GatewayController) GetFile(c *fiber.Ctx) error {
 	path := c.Params("*")
-	reply, err := gc.storageSvc.AbsolutePath(md.BuildAuthContext(enum.SuperUserID), &pb.TextRequest{Text: path})
+	ctx := context.Background()
+	reply, err := gc.storageSvc.AbsolutePath(ctx, &pb.TextRequest{Text: path})
 	if err != nil {
 		return err
 	}

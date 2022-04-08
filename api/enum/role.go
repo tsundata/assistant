@@ -19,5 +19,9 @@ const (
 	IntellectShort   AttrShort = "int"
 )
 
-const TodoCreatedExp = 1
-const TodoCompletedExp = 2
+const (
+	TodoCreatedExp   = 3
+	TodoCompletedExp = 6
+
+	MessageCreateExp = 1
+)

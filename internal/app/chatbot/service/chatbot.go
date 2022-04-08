@@ -60,6 +60,7 @@ func NewChatbot(
 }
 
 func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.ChatbotReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	reply, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.MessageId}})
 	if err != nil {
 		return nil, err
@@ -178,7 +179,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		if len(messages) > 0 {
 			for _, mid := range messages {
 				sequence, _ := strconv.ParseInt(mid, 10, 64)
-				messageReply, _ := s.message.GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{UserId: reply.Message.UserId, Sequence: sequence}})
+				messageReply, _ := s.message.GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{UserId: id, Sequence: sequence}})
 				if messageReply != nil && messageReply.Message.GetId() > 0 {
 					messageReply.Message.Direction = enum.MessageIncomingDirection
 					_ = s.bus.Publish(ctx, enum.Message, event.MessageChannelSubject, messageReply.Message)
@@ -210,10 +211,10 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			}
 			outMessage := &pb.Message{
 				GroupId:      reply.Message.GetGroupId(),
-				UserId:       reply.Message.GetUserId(),
+				UserId:       id,
 				Sender:       botId,
 				SenderType:   enum.MessageBotType,
-				Receiver:     reply.Message.GetUserId(),
+				Receiver:     id,
 				ReceiverType: enum.MessageUserType,
 				Type:         string(item.Type()),
 				Text:         text,
@@ -239,6 +240,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 }
 
 func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	b, err := s.repo.GetByID(ctx, payload.BotId)
 	if err != nil {
 		return nil, err
@@ -265,10 +267,10 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 		}
 		outMessage := &pb.Message{
 			GroupId:      payload.GroupId,
-			UserId:       payload.UserId,
+			UserId:       id,
 			Sender:       payload.BotId,
 			SenderType:   enum.MessageBotType,
-			Receiver:     payload.UserId,
+			Receiver:     id,
 			ReceiverType: enum.MessageUserType,
 			Type:         string(item.Type()),
 			Text:         text,
@@ -291,6 +293,7 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 }
 
 func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	b, err := s.repo.GetByID(ctx, payload.BotId)
 	if err != nil {
 		return nil, err
@@ -324,10 +327,10 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 		}
 		outMessage := &pb.Message{
 			GroupId:      payload.GroupId,
-			UserId:       payload.UserId,
+			UserId:       id,
 			Sender:       payload.BotId,
 			SenderType:   enum.MessageBotType,
-			Receiver:     payload.UserId,
+			Receiver:     id,
 			ReceiverType: enum.MessageUserType,
 			Type:         string(item.Type()),
 			Text:         text,
@@ -738,6 +741,7 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 }
 
 func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	messageReply, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.Trigger.GetMessageId()}})
 	if err != nil {
 		return nil, err
@@ -745,7 +749,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 	var trigger pb.Trigger
 	trigger.Type = payload.Trigger.GetType()
 	trigger.Kind = payload.Trigger.GetKind()
-	trigger.UserId = messageReply.Message.GetUserId()
+	trigger.UserId = id
 	trigger.MessageId = messageReply.Message.GetId()
 	trigger.Status = enum.TriggerEnable
 
@@ -845,7 +849,8 @@ func (s *Chatbot) ListWebhook(ctx context.Context, _ *pb.WorkflowRequest) (*pb.W
 }
 
 func (s *Chatbot) GetWebhookTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
-	triggers, err := s.repo.GetTriggers(ctx, payload.Trigger.GetUserId(), enum.TriggerWebhookType)
+	id, _ := md.FromIncoming(ctx)
+	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerWebhookType)
 	if err != nil {
 		return nil, err
 	}
@@ -853,7 +858,8 @@ func (s *Chatbot) GetWebhookTriggers(ctx context.Context, payload *pb.TriggerReq
 }
 
 func (s *Chatbot) GetCronTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
-	triggers, err := s.repo.GetTriggers(ctx, payload.Trigger.GetUserId(), enum.TriggerCronType)
+	id, _ := md.FromIncoming(ctx)
+	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerCronType)
 	if err != nil {
 		return nil, err
 	}

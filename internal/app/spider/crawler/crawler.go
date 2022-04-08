@@ -242,7 +242,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	if len(out) == 0 {
 		return
 	}
-	ctx := md.BuildAuthContext(enum.SuperUserID)
+	ctx := md.BuildAuthContext(enum.SuperUserID) //fixme
 
 	// check send
 	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n")))) // #nosec
@@ -283,7 +283,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	fmt.Println(channel)
 	_, err = s.message.Send(ctx, &pb.MessageRequest{
 		Message: &pb.Message{
-			UserId:     enum.SuperUserID,
+			UserId:     enum.SuperUserID,//fixme
 			Sender:     0,
 			SenderType: enum.MessageBotType,
 			Type:       string(enum.MessageTypeText),

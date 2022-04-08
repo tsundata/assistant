@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
@@ -147,7 +146,7 @@ var commandRules = []command.Rule{
 			}
 
 			id := tokens[1].Value.(int64)
-			messageReply, err := comp.Message().GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{UserId: 0, Sequence: id}}) // fixme
+			messageReply, err := comp.Message().GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{Sequence: id}})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -389,7 +388,7 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			var field []pb.FormField
-			reply, err := comp.Chatbot().GetWebhookTriggers(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{UserId: enum.SuperUserID}}) // fixme
+			reply, err := comp.Chatbot().GetWebhookTriggers(ctx, &pb.TriggerRequest{})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -416,7 +415,7 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 			var field []pb.FormField
-			reply, err := comp.Chatbot().GetCronTriggers(ctx, &pb.TriggerRequest{Trigger: &pb.Trigger{UserId: enum.SuperUserID}}) // fixme
+			reply, err := comp.Chatbot().GetCronTriggers(ctx, &pb.TriggerRequest{})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}

@@ -216,7 +216,7 @@ func TestMiddleRepository_GetCredentialByName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetCredentialByName(context.Background(), enum.SuperUserID, tt.args.name)
+			_, err := tt.r.GetCredentialByName(context.Background(), 1, tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.GetCredentialByName() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -243,7 +243,7 @@ func TestMiddleRepository_GetCredentialByType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetCredentialByType(context.Background(), enum.SuperUserID, tt.args.t)
+			_, err := tt.r.GetCredentialByType(context.Background(), 1, tt.args.t)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.GetCredentialByType() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -266,7 +266,7 @@ func TestMiddleRepository_ListCredentials(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListCredentials(context.Background(), enum.SuperUserID)
+			_, err := tt.r.ListCredentials(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.ListCredentials() error = %v, wantErr %v", err, tt.wantErr)
 				return

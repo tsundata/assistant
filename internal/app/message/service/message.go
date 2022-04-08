@@ -54,11 +54,12 @@ func NewMessage(
 }
 
 func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.MessageReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	// check uuid
 	var message pb.Message
-	message.UserId = payload.Message.GetUserId()
+	message.UserId = id
 	message.GroupId = payload.Message.GetGroupId()
-	message.Sender = payload.Message.GetUserId()
+	message.Sender = id
 	message.SenderType = enum.MessageUserType
 	message.Receiver = payload.Message.GetGroupId()
 	message.ReceiverType = enum.MessageGroupType
@@ -167,6 +168,15 @@ func (m *Message) Create(ctx context.Context, payload *pb.MessageRequest) (*pb.M
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	// role exp
+	err = m.bus.Publish(ctx, enum.User, event.RoleChangeExpSubject, pb.Role{
+		UserId: id,
+		Exp:    enum.MessageCreateExp,
+	})
+	if err != nil {
+		m.logger.Error(err)
 	}
 
 	return &pb.MessageReply{
@@ -295,7 +305,8 @@ func (m *Message) GetById(ctx context.Context, payload *pb.MessageRequest) (*pb.
 }
 
 func (m *Message) GetBySequence(ctx context.Context, payload *pb.MessageRequest) (*pb.GetMessageReply, error) {
-	message, err := m.repo.GetBySequence(ctx, payload.Message.GetUserId(), payload.Message.GetSequence())
+	id, _ := md.FromIncoming(ctx)
+	message, err := m.repo.GetBySequence(ctx, id, payload.Message.GetSequence())
 	if err != nil {
 		return nil, err
 	}
@@ -351,6 +362,7 @@ func (m *Message) Delete(ctx context.Context, payload *pb.MessageRequest) (*pb.T
 }
 
 func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	if payload.Message.GetText() == "" {
 		return &pb.StateReply{State: false}, nil
 	}
@@ -375,7 +387,7 @@ func (m *Message) Send(ctx context.Context, payload *pb.MessageRequest) (*pb.Sta
 
 	// push inbox
 	_, err := m.repo.CreateInbox(ctx, pb.Inbox{
-		UserId:     payload.Message.GetUserId(),
+		UserId:     id,
 		Sender:     payload.Message.GetSender(),
 		SenderType: payload.Message.GetSenderType(),
 		Type:       payload.Message.GetType(),
@@ -464,8 +476,8 @@ func (m *Message) Action(ctx context.Context, payload *pb.ActionRequest) (*pb.Ac
 }
 
 func (m *Message) Form(ctx context.Context, payload *pb.FormRequest) (*pb.FormReply, error) {
-	// store
 	id, _ := md.FromIncoming(ctx)
+	// store
 	kvMap := make(map[string]interface{})
 	for _, item := range payload.Form {
 		kvMap[item.Key] = item.Value

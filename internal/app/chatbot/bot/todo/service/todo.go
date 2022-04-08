@@ -44,7 +44,6 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 	if s.bus != nil {
 		err = s.bus.Publish(ctx, enum.User, event.RoleChangeExpSubject, pb.Role{UserId: id, Exp: enum.TodoCreatedExp})
 		if err != nil {
-			s.logger.Error(err)
 			return nil, err
 		}
 	}

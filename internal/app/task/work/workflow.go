@@ -42,7 +42,7 @@ func (t *WorkflowTask) Run(data string) (bool, error) {
 		return false, err
 	}
 
-	ctx := md.BuildAuthContext(enum.SuperUserID)
+	ctx := md.BuildAuthContext(enum.SuperUserID)//fixme
 	message, err := t.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 	if err != nil {
 		return false, err

@@ -14,16 +14,18 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"go.uber.org/zap"
 	"strings"
 )
 
 func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Logger, redis *redis.Client,
 	repo repository.MessageRepository, chatbot pb.ChatbotSvcClient, storage pb.StorageSvcClient, middle pb.MiddleSvcClient) error {
-	err := bus.Subscribe(context.Background(), enum.Message, event.EchoSubject, func(msg *event.Msg) error {
+	ctx := context.Background()
+	err := bus.Subscribe(ctx, enum.Message, event.EchoSubject, func(msg *event.Msg) error {
 		fmt.Println(msg)
 		if msg.Callback != nil {
-			return bus.Publish(context.Background(), msg.Callback.Service, msg.Callback.Subject, pb.Message{Text: "echo"})
+			return bus.Publish(ctx, msg.Callback.Service, msg.Callback.Subject, pb.Message{Text: "echo"})
 		}
 		return nil
 	})
@@ -31,7 +33,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), enum.Message, event.MessageSendSubject, func(msg *event.Msg) error {
+	err = bus.Subscribe(ctx, enum.Message, event.MessageSendSubject, func(msg *event.Msg) error {
 		var m pb.Message
 		err := json.Unmarshal(msg.Data, &m)
 		if err != nil {
@@ -39,7 +41,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 		}
 
 		message := service.NewMessage(bus, logger, redis, config, repo, chatbot, storage, middle)
-		_, err = message.Send(context.Background(), &pb.MessageRequest{Message: &m})
+		_, err = message.Send(md.BuildAuthContext(m.UserId), &pb.MessageRequest{Message: &m})
 		if err != nil {
 			return err
 		}
@@ -49,7 +51,7 @@ func RegisterEventHandler(bus event.Bus, config *config.AppConfig, logger log.Lo
 		return err
 	}
 
-	err = bus.Subscribe(context.Background(), enum.Message, event.MessagePushSubject, func(msg *event.Msg) error {
+	err = bus.Subscribe(ctx, enum.Message, event.MessagePushSubject, func(msg *event.Msg) error {
 		var in pb.Notification
 		err := json.Unmarshal(msg.Data, &in)
 		if err != nil {
