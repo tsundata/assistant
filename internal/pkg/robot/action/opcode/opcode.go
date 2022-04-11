@@ -3,6 +3,7 @@ package opcode
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"sort"
 	"strings"
 )
@@ -16,7 +17,7 @@ const (
 type Opcoder interface {
 	Type() int
 	Doc() string
-	Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error)
+	Run(ctx context.Context, inCtx *inside.Context, comp component.Component, params []interface{}) (interface{}, error)
 }
 
 var opcodes = map[string]Opcoder{

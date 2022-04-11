@@ -3,6 +3,7 @@ package opcode
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type If struct{}
@@ -19,31 +20,31 @@ func (o *If) Doc() string {
 	return "if"
 }
 
-func (o *If) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
-	if integer, ok := comp.Value.(int64); ok {
-		comp.SetContinue(integer >= 0)
+func (o *If) Run(_ context.Context,  inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
+	if integer, ok := inCtx.Value.(int64); ok {
+		inCtx.SetContinue(integer >= 0)
 		return nil, nil
 	}
-	if float, ok := comp.Value.(float64); ok {
-		comp.SetContinue(float >= 0)
+	if float, ok := inCtx.Value.(float64); ok {
+		inCtx.SetContinue(float >= 0)
 		return nil, nil
 	}
-	if text, ok := comp.Value.(string); ok {
-		comp.SetContinue(text != "")
+	if text, ok := inCtx.Value.(string); ok {
+		inCtx.SetContinue(text != "")
 		return nil, nil
 	}
-	if boolean, ok := comp.Value.(bool); ok {
-		comp.SetContinue(boolean)
+	if boolean, ok := inCtx.Value.(bool); ok {
+		inCtx.SetContinue(boolean)
 		return nil, nil
 	}
-	if objects, ok := comp.Value.(map[string]interface{}); ok {
-		comp.SetContinue(len(objects) > 0)
+	if objects, ok := inCtx.Value.(map[string]interface{}); ok {
+		inCtx.SetContinue(len(objects) > 0)
 		return nil, nil
 	}
-	if arrays, ok := comp.Value.([]interface{}); ok {
-		comp.SetContinue(len(arrays) > 0)
+	if arrays, ok := inCtx.Value.([]interface{}); ok {
+		inCtx.SetContinue(len(arrays) > 0)
 		return nil, nil
 	}
-	comp.SetContinue(false)
+	inCtx.SetContinue(false)
 	return nil, nil
 }

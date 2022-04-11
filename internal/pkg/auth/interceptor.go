@@ -27,6 +27,7 @@ var ignoreFullMethod = []string{
 	"/pb.ChatbotSvc/WebhookTrigger",
 	"/pb.StorageSvc/AbsolutePath",
 	"/pb.MessageSvc/GetById",
+	"/pb.StorageSvc/AbsolutePath",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

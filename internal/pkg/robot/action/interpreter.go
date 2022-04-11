@@ -4,36 +4,32 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/event"
-	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/opcode"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strings"
 )
 
 type Interpreter struct {
+	Debug  bool
 	tree   Ast
 	stdout []interface{}
 	ctx    context.Context
-	Comp   *inside.Component
+	inCtx  *inside.Context
+	comp   component.Component
 }
 
 func NewInterpreter(ctx context.Context, tree Ast) *Interpreter {
-	return &Interpreter{ctx: ctx, tree: tree, Comp: inside.NewComponent()}
+	return &Interpreter{ctx: ctx, tree: tree, inCtx: inside.NewComponent()}
 }
 
 func (i *Interpreter) SetMessage(message pb.Message) {
-	i.Comp.SetMessage(message)
+	i.inCtx.SetMessage(message)
 }
 
-func (i *Interpreter) SetComponent(bus event.Bus, rdb *redis.Client, message pb.MessageSvcClient, middle pb.MiddleSvcClient, logger log.Logger) {
-	i.Comp.Bus = bus
-	i.Comp.Rdb = rdb
-	i.Comp.Logger = logger
-	i.Comp.MessageClient = message
-	i.Comp.MiddleClient = middle
+func (i *Interpreter) SetComponent(comp component.Component) {
+	i.comp = comp
 }
 
 func (i *Interpreter) Visit(node Ast) interface{} {
@@ -87,7 +83,7 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 	name := node.ID.(*Token).Value.(string)
 	debugLog(fmt.Sprintf("Run Opecode: %v", node.ID))
 	debugLog(fmt.Sprintf("params: %+v", params))
-	input := i.Comp.Value
+	input := i.inCtx.Value
 	debugLog(fmt.Sprintf("context: %+v", input))
 	op := opcode.NewOpcode(name)
 	if op == nil {
@@ -99,21 +95,22 @@ func (i *Interpreter) VisitOpcode(node *Opcode) float64 {
 		return 0
 	}
 	// Cond opcode
-	if op.Type() != opcode.TypeCond && !i.Comp.Continue {
+	if op.Type() != opcode.TypeCond && !i.inCtx.Continue {
 		debugLog(fmt.Sprintf("skip: %s", name))
 		return 0
 	}
 
 	// Run
-	res, err := op.Run(i.ctx, i.Comp, params)
+	res, err := op.Run(i.ctx, i.inCtx, i.comp, params)
 	i.stdout = append(i.stdout, opcodeLog(name, params, input, res, err))
 	if err != nil {
-		if i.Comp.Logger != nil {
-			i.Comp.Logger.Error(err)
+		if i.comp.GetLogger() != nil {
+			i.comp.GetLogger().Error(err)
 		}
 		return -1
 	}
 	debugLog(fmt.Sprintf("result: %+v\n", res))
+	i.Debug = i.inCtx.Debug
 
 	return 0
 }
@@ -135,15 +132,15 @@ func (i *Interpreter) VisitBooleanConst(node *BooleanConst) bool {
 }
 
 func (i *Interpreter) VisitMessageConst(node *MessageConst) interface{} {
-	if i.Comp.MessageClient != nil {
-		reply, err := i.Comp.MessageClient.GetBySequence(context.Background(), &pb.MessageRequest{
+	if i.comp.Message() != nil {
+		reply, err := i.comp.Message().GetBySequence(context.Background(), &pb.MessageRequest{
 			Message: &pb.Message{
-				UserId:   i.Comp.Message.UserId,
+				UserId:   i.inCtx.Message.UserId,
 				Sequence: node.Value.(int64),
 			},
 		})
 		if err != nil {
-			i.Comp.Logger.Error(err)
+			i.comp.GetLogger().Error(err)
 			return ""
 		}
 		return reply.Message.GetText()

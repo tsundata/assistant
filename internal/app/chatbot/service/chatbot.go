@@ -639,14 +639,14 @@ func (s *Chatbot) RunActionScript(ctx context.Context, payload *pb.WorkflowReque
 
 	i := action.NewInterpreter(ctx, tree)
 	i.SetMessage(*payload.Message)
-	i.SetComponent(s.bus, s.rdb, s.message, s.middle, s.logger)
+	i.SetComponent(s.comp)
 	_, err = i.Interpret()
 	if err != nil {
 		return nil, err
 	}
 
 	var result string
-	if i.Comp.Debug {
+	if i.Debug {
 		result = fmt.Sprintf("Tracing\n-------\n%s", i.Stdout())
 	}
 

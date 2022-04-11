@@ -7,6 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
@@ -24,27 +25,27 @@ func (o *Echo) Doc() string {
 	return "echo [any] : (nil -> bool)"
 }
 
-func (o *Echo) Run(ctx context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
+func (o *Echo) Run(ctx context.Context, inCtx *inside.Context, comp component.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, app.ErrInvalidParameter
 	}
 
 	if text, ok := params[0].(string); ok {
-		if comp.Bus == nil {
+		if comp.GetBus() == nil {
 			return false, nil
 		}
-		err := comp.Bus.Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
-			UserId:   comp.Message.UserId,
-			GroupId:  comp.Message.GroupId,
+		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
+			UserId:   inCtx.Message.UserId,
+			GroupId:  inCtx.Message.GroupId,
 			Text:     text,
 			Type:     string(enum.MessageTypeText),
-			Sequence: comp.Message.Sequence,
+			Sequence: inCtx.Message.Sequence,
 			SendTime: util.Now(),
 		})
 		if err != nil {
 			return false, err
 		}
-		comp.SetValue(true)
+		inCtx.SetValue(true)
 		return true, nil
 	}
 	return false, nil

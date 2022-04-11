@@ -9,6 +9,7 @@ import (
 	"github.com/sourcegraph/checkup/check/tls"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"strings"
 )
 
@@ -26,7 +27,7 @@ func (o *Status) Doc() string {
 	return "status [string:(http|tcp|dns|tls)] [string] : (nil -> bool)"
 }
 
-func (o *Status) Run(_ context.Context, _ *inside.Component, params []interface{}) (interface{}, error) {
+func (o *Status) Run(_ context.Context, _ *inside.Context, _ component.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 2 {
 		return false, app.ErrInvalidParameter
 	}

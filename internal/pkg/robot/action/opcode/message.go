@@ -8,6 +8,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"reflect"
 )
@@ -26,31 +27,31 @@ func (o *Message) Doc() string {
 	return "message : (any -> bool)"
 }
 
-func (o *Message) Run(ctx context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
-	if comp.Bus == nil {
+func (o *Message) Run(ctx context.Context, inCtx *inside.Context, comp component.Component, _ []interface{}) (interface{}, error) {
+	if comp.GetBus() == nil {
 		return false, nil
 	}
-	if comp.Value == nil {
+	if inCtx.Value == nil {
 		return false, nil
 	}
 
 	var text string
-	if str, ok := comp.Value.(string); ok {
+	if str, ok := inCtx.Value.(string); ok {
 		text = str
 	}
-	if num, ok := comp.Value.(int64); ok {
+	if num, ok := inCtx.Value.(int64); ok {
 		text = fmt.Sprintf("%d", num)
 	}
-	if boolean, ok := comp.Value.(bool); ok {
+	if boolean, ok := inCtx.Value.(bool); ok {
 		text = fmt.Sprintf("%v", boolean)
 	}
 
-	v := reflect.ValueOf(comp.Value)
+	v := reflect.ValueOf(inCtx.Value)
 	if v.Kind() == reflect.Slice || v.Kind() == reflect.Map {
 		if v.Len() == 0 {
 			return false, nil
 		}
-		b, err := json.Marshal(comp.Value)
+		b, err := json.Marshal(inCtx.Value)
 		if err != nil {
 			return false, err
 		}
@@ -61,19 +62,19 @@ func (o *Message) Run(ctx context.Context, comp *inside.Component, _ []interface
 		return false, nil
 	}
 
-	err := comp.Bus.Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
-		GroupId:      comp.Message.GetGroupId(),
-		UserId:       comp.Message.GetUserId(),
-		Sender:       comp.Message.GetSender(),
-		SenderType:   comp.Message.GetSenderType(),
-		Receiver:     comp.Message.GetReceiver(),
-		ReceiverType: comp.Message.GetReceiverType(),
+	err := comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
+		GroupId:      inCtx.Message.GetGroupId(),
+		UserId:       inCtx.Message.GetUserId(),
+		Sender:       inCtx.Message.GetSender(),
+		SenderType:   inCtx.Message.GetSenderType(),
+		Receiver:     inCtx.Message.GetReceiver(),
+		ReceiverType: inCtx.Message.GetReceiverType(),
 		Type:         string(enum.MessageTypeText),
 		Text:         text,
 	})
 	if err != nil {
 		return false, err
 	}
-	comp.SetValue(true)
+	inCtx.SetValue(true)
 	return true, nil
 }

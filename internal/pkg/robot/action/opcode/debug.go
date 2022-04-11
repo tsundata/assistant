@@ -3,6 +3,7 @@ package opcode
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type Debug struct{}
@@ -19,7 +20,7 @@ func (o *Debug) Doc() string {
 	return "debug : (nil -> bool)"
 }
 
-func (o *Debug) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
-	comp.Debug = true
+func (o *Debug) Run(_ context.Context, inCtx *inside.Context, _ component.Component, params []interface{}) (interface{}, error) {
+	inCtx.Debug = true
 	return true, nil
 }

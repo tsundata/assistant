@@ -5,6 +5,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"time"
 )
@@ -23,7 +24,7 @@ func (o *Get) Doc() string {
 	return "get [any] : (nil -> any)"
 }
 
-func (o *Get) Run(_ context.Context, comp *inside.Component, params []interface{}) (interface{}, error) {
+func (o *Get) Run(_ context.Context,  inCtx *inside.Context, _ component.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, app.ErrInvalidParameter
 	}
@@ -36,7 +37,7 @@ func (o *Get) Run(_ context.Context, comp *inside.Component, params []interface{
 				return nil, err
 			}
 			result := util.ByteToString(resp.Body())
-			comp.SetValue(result)
+			inCtx.SetValue(result)
 			return result, nil
 		}
 	}

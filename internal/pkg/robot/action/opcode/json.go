@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tidwall/gjson"
 	"github.com/tsundata/assistant/internal/pkg/robot/action/inside"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 type Json struct{}
@@ -20,10 +21,10 @@ func (o *Json) Doc() string {
 	return "json : (string -> any)"
 }
 
-func (o *Json) Run(_ context.Context, comp *inside.Component, _ []interface{}) (interface{}, error) {
-	if text, ok := comp.Value.(string); ok {
+func (o *Json) Run(_ context.Context, inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
+	if text, ok := inCtx.Value.(string); ok {
 		result := gjson.Parse(text).Value()
-		comp.SetValue(result)
+		inCtx.SetValue(result)
 		return result, nil
 	}
 	return nil, nil
