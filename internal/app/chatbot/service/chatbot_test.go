@@ -734,7 +734,8 @@ message "11"
 }
 
 func TestChatbot_RunAction(t *testing.T) {
-	s := NewChatbot(nil, nil, nil, nil, nil, nil, nil, nil)
+	comp := component.MockComponent()
+	s := NewChatbot(nil, nil, nil, nil, nil, nil, nil, comp)
 
 	type args struct {
 		in0     context.Context

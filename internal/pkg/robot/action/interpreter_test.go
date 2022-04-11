@@ -3,6 +3,7 @@ package action
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"testing"
 )
 
@@ -26,7 +27,9 @@ func run(t *testing.T, text string) {
 		fmt.Println(symbolTable.CurrentScope)
 	}
 
+	comp := component.MockComponent()
 	i := NewInterpreter(context.Background(), tree)
+	i.SetComponent(comp)
 	_, err = i.Interpret()
 	if err != nil {
 		t.Fatal(err)
