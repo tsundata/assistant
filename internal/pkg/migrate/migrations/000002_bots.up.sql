@@ -23,6 +23,7 @@ create table if not exists `triggers`
     `when`       varchar(128)        NOT NULL DEFAULT '',
     `user_id`    BIGINT(19)          NOT NULL DEFAULT '0',
     `message_id` BIGINT(19)          NOT NULL DEFAULT '0',
+    `status`     TINYINT(3)          NOT NULL DEFAULT '0',
     `created_at` INT(10)             NOT NULL DEFAULT '0',
     `updated_at` INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
