@@ -110,6 +110,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			return nil, err
 		}
 
+		// todo merge setting
 		fmt.Println(groupSetting)    // todo
 		fmt.Println(groupBotSetting) // todo
 
@@ -160,6 +161,7 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 
 		// tags
 		if len(tags) > 0 {
+			// todo bot tag
 			for _, tag := range tags {
 				_, err = s.middle.SaveModelTag(ctx, &pb.ModelTagRequest{
 					Model: &pb.ModelTag{

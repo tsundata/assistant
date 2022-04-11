@@ -91,7 +91,16 @@ Sended by Assistant
 			comp.GetLogger().Error(err)
 			return
 		}
-		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{Text: fmt.Sprintf("Sended to Mail: %s", mail)})
+		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
+			//GroupId:      comp.Message.GetGroupId(), todo
+			//UserId:       comp.Message.GetUserId(),
+			//Sender:       comp.Message.GetSender(),
+			//SenderType:   comp.Message.GetSenderType(),
+			//Receiver:     comp.Message.GetReceiver(),
+			//ReceiverType: comp.Message.GetReceiverType(),
+			Type: string(enum.MessageTypeText),
+			Text: fmt.Sprintf("Sended to Mail: %s", mail),
+		})
 		if err != nil {
 			return
 		}

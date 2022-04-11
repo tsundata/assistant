@@ -895,13 +895,15 @@ func TestChatbot_CreateTrigger(t *testing.T) {
 	defer ctl.Finish()
 
 	repo := mock.NewMockChatbotRepository(ctl)
+	message := mock.NewMockMessageSvcClient(ctl)
 	gomock.InOrder(
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Id: 1}}, nil),
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 		repo.EXPECT().GetTriggerByFlag(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.Trigger{}, nil),
 		repo.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewChatbot(nil, nil, nil, repo, nil, nil, nil, nil)
+	s := NewChatbot(nil, nil, nil, repo, message, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context

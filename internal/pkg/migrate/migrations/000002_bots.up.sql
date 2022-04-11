@@ -21,10 +21,12 @@ create table if not exists `triggers`
     `flag`       varchar(128)        NOT NULL DEFAULT '',
     `secret`     varchar(128)        NOT NULL DEFAULT '',
     `when`       varchar(128)        NOT NULL DEFAULT '',
+    `user_id`    BIGINT(19)          NOT NULL DEFAULT '0',
     `message_id` BIGINT(19)          NOT NULL DEFAULT '0',
     `created_at` INT(10)             NOT NULL DEFAULT '0',
     `updated_at` INT(10)             NOT NULL DEFAULT '0',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `user_id` (`user_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

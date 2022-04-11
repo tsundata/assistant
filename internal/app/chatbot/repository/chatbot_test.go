@@ -481,7 +481,7 @@ func TestChatbotRepository_CreateTrigger(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{trigger: &pb.Trigger{Type: "test", MessageId: 1}}, false},
+		{"case1", sto, args{trigger: &pb.Trigger{Type: "test", Kind: string(enum.MessageTypeScript), Flag: "test"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -509,7 +509,7 @@ func TestChatbotRepository_GetTriggerByFlag(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{t: "test", flag: ""}, false},
+		{"case1", sto, args{t: "test", flag: "test"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
