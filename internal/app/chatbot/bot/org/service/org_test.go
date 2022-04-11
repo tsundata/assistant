@@ -18,11 +18,8 @@ func TestOrg_CreateObjective(t *testing.T) {
 	repo := mock.NewMockOrgRepository(ctl)
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(&pb.TagReply{Tag: &pb.Tag{
-			Id:   1,
-			Name: "test",
-		}}, nil),
 		repo.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{Model: &pb.ModelTag{TagId: 1}}, nil),
 	)
 
 	s := NewOrg(repo, middle)
@@ -40,7 +37,7 @@ func TestOrg_CreateObjective(t *testing.T) {
 	}{
 		{"case1", s, args{context.Background(), &pb.ObjectiveRequest{Objective: &pb.Objective{
 			Name: "obj1",
-			//Tag:  "test",
+			Tag:  "test",
 		}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
@@ -68,7 +65,6 @@ func TestOrg_GetObjective(t *testing.T) {
 			Id:   1,
 			Name: "obj1",
 			//Tag:       "test",
-			TagId:     1,
 			CreatedAt: now,
 		}, nil),
 	)
@@ -91,7 +87,6 @@ func TestOrg_GetObjective(t *testing.T) {
 				Id:   1,
 				Name: "obj1",
 				//Tag:       "test",
-				TagId:     1,
 				CreatedAt: now,
 			}}, false,
 		},
@@ -122,7 +117,6 @@ func TestOrg_GetObjectives(t *testing.T) {
 				Id:   1,
 				Name: "obj1",
 				//Tag:       "test",
-				TagId:     1,
 				CreatedAt: now,
 			},
 		}, nil),
@@ -146,7 +140,6 @@ func TestOrg_GetObjectives(t *testing.T) {
 				Id:   1,
 				Name: "obj1",
 				//Tag:       "test",
-				TagId:     1,
 				CreatedAt: now,
 			},
 		}}, false},
@@ -211,11 +204,8 @@ func TestOrg_CreateKeyResult(t *testing.T) {
 	repo := mock.NewMockOrgRepository(ctl)
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
-		middle.EXPECT().GetOrCreateTag(gomock.Any(), gomock.Any()).Return(&pb.TagReply{Tag: &pb.Tag{
-			Id:   1,
-			Name: "test",
-		}}, nil),
 		repo.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{Model: &pb.ModelTag{TagId: 1}}, nil),
 	)
 
 	s := NewOrg(repo, middle)
@@ -234,7 +224,7 @@ func TestOrg_CreateKeyResult(t *testing.T) {
 		{"case1", s, args{context.Background(), &pb.KeyResultRequest{KeyResult: &pb.KeyResult{
 			ObjectiveId: 1,
 			Name:        "obj1",
-			//Tag:         "test",
+			Tag:         "test",
 		}}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
@@ -263,7 +253,6 @@ func TestOrg_GetKeyResult(t *testing.T) {
 			ObjectiveId: 1,
 			Name:        "obj1",
 			//Tag:         "test",
-			TagId:     1,
 			CreatedAt: now,
 		}, nil),
 	)
@@ -287,7 +276,6 @@ func TestOrg_GetKeyResult(t *testing.T) {
 				ObjectiveId: 1,
 				Name:        "obj1",
 				//Tag:         "test",
-				TagId:     1,
 				CreatedAt: now,
 			}}, false,
 		},
@@ -319,7 +307,6 @@ func TestOrg_GetKeyResults(t *testing.T) {
 				ObjectiveId: 1,
 				Name:        "obj1",
 				//Tag:         "test",
-				TagId:     1,
 				CreatedAt: now,
 			},
 		}, nil),
@@ -344,7 +331,6 @@ func TestOrg_GetKeyResults(t *testing.T) {
 				ObjectiveId: 1,
 				Name:        "obj1",
 				//Tag:         "test",
-				TagId:     1,
 				CreatedAt: now,
 			},
 		}}, false},

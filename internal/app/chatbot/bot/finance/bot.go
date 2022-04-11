@@ -18,7 +18,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, nil, workflowRules, commandRules, nil, nil)
+	Bot, err = bot.NewBot(metadata, nil, workflowRules, commandRules, nil, nil, nil)
 	if err != nil {
 		panic(err)
 	}

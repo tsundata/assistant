@@ -110,9 +110,12 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			return nil, err
 		}
 
-		// todo merge setting
-		fmt.Println(groupSetting)    // todo
-		fmt.Println(groupBotSetting) // todo
+		// merge setting
+		setting := make(map[int64][]*pb.KV)
+		setting[reply.Message.GetGroupId()] = groupSetting
+		for i, kvs := range groupBotSetting {
+			setting[i] = kvs
+		}
 
 		// trigger
 		err = r.ProcessTrigger(ctx, s.comp, reply.Message)
@@ -127,52 +130,33 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 		}
 
 		// filter bots
-		inBots, err := s.repo.GetBotsByText(ctx, objects)
+		objectBots, err := s.repo.GetBotsByText(ctx, objects)
 		if err != nil {
 			return nil, err
 		}
-		for k, item := range inBots {
+		for k, item := range objectBots {
 			if _, ok := groupBotsMap[item.Identifier]; !ok {
-				delete(inBots, k)
+				delete(objectBots, k)
 			}
 		}
 
+		botCtx := bot.Context{Setting: setting}
 		if len(commands) > 0 {
 			var commandsBots []*pb.Bot
 			if len(objects) == 0 {
 				commandsBots = groupBots
 			} else {
-				for k := range inBots {
-					commandsBots = append(commandsBots, inBots[k])
+				for k := range objectBots {
+					commandsBots = append(commandsBots, objectBots[k])
 				}
 			}
 			for _, item := range commandsBots {
 				for _, commandText := range commands {
-					commandMessages, err := r.ProcessCommand(ctx, s.comp, item, commandText)
+					commandMessages, err := r.ProcessCommand(ctx, botCtx, s.comp, item.Identifier, commandText)
 					if err != nil {
 						return nil, err
 					}
-					for i, payloads := range commandMessages {
-						outMessages[i] = payloads
-					}
-				}
-			}
-		}
-
-		// tags
-		if len(tags) > 0 {
-			// todo bot tag
-			for _, tag := range tags {
-				_, err = s.middle.SaveModelTag(ctx, &pb.ModelTagRequest{
-					Model: &pb.ModelTag{
-						Service: enum.Message,
-						Model:   util.ModelName(pb.Message{}),
-						ModelId: reply.Message.GetId(),
-					},
-					Tag: tag,
-				})
-				if err != nil {
-					s.logger.Error(err)
+					outMessages[item.Id] = commandMessages
 				}
 			}
 		}
@@ -189,11 +173,45 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			}
 		}
 
+		// workflow
 		if len(outMessages) == 0 {
-			// run
-			outMessages, err = r.ProcessWorkflow(ctx, s.comp, tokens, inBots)
+			outMessages, err = r.ProcessWorkflow(ctx, botCtx, s.comp, tokens, objectBots)
 			if err != nil {
 				return nil, err
+			}
+		}
+
+		// tags
+		if len(tags) > 0 {
+			var tagBots []*pb.Bot
+			if len(objects) == 0 {
+				tagBots = groupBots
+			} else {
+				for k := range objectBots {
+					tagBots = append(tagBots, objectBots[k])
+				}
+			}
+			for _, tag := range tags {
+				// save tag
+				_, err = s.middle.SaveModelTag(ctx, &pb.ModelTagRequest{
+					Model: &pb.ModelTag{
+						Service: enum.Message,
+						Model:   util.ModelName(pb.Message{}),
+						ModelId: reply.Message.GetId(),
+					},
+					Tag: tag,
+				})
+				if err != nil {
+					s.logger.Error(err)
+				}
+				// trigger tag
+				for _, item := range tagBots {
+					result, err := r.ProcessTag(ctx, botCtx, s.comp, item.Identifier, tag)
+					if err != nil {
+						return nil, err
+					}
+					outMessages[item.Id] = append(outMessages[item.Id], result...)
+				}
 			}
 		}
 	}
@@ -249,8 +267,9 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 	}
 
 	// process
+	botCtx := bot.Context{}
 	r := robot.NewRobot()
-	msg, err := r.ProcessAction(ctx, s.comp, b.Identifier, payload.ActionId, payload.Value)
+	msg, err := r.ProcessAction(ctx, botCtx, s.comp, b.Identifier, payload.ActionId, payload.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -309,8 +328,9 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 			Value: item.Value,
 		})
 	}
+	botCtx := bot.Context{FieldItem: field}
 	r := robot.NewRobot()
-	msg, err := r.ProcessForm(ctx, s.comp, b.Identifier, payload.FormId, field)
+	msg, err := r.ProcessForm(ctx, botCtx, s.comp, b.Identifier, payload.FormId)
 	if err != nil {
 		return nil, err
 	}
@@ -850,7 +870,7 @@ func (s *Chatbot) ListWebhook(ctx context.Context, _ *pb.WorkflowRequest) (*pb.W
 	return &pb.WebhooksReply{Flag: flags}, nil
 }
 
-func (s *Chatbot) GetWebhookTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
+func (s *Chatbot) GetWebhookTriggers(ctx context.Context, _ *pb.TriggerRequest) (*pb.TriggersReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerWebhookType)
 	if err != nil {
@@ -859,7 +879,7 @@ func (s *Chatbot) GetWebhookTriggers(ctx context.Context, payload *pb.TriggerReq
 	return &pb.TriggersReply{List: triggers}, nil
 }
 
-func (s *Chatbot) GetCronTriggers(ctx context.Context, payload *pb.TriggerRequest) (*pb.TriggersReply, error) {
+func (s *Chatbot) GetCronTriggers(ctx context.Context, _ *pb.TriggerRequest) (*pb.TriggersReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerCronType)
 	if err != nil {

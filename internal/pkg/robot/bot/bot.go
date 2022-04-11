@@ -15,6 +15,7 @@ type Bot struct {
 	CommandRule []command.Rule
 	ActionRule  []ActionRule
 	FormRule    []FormRule
+	TagRule     []TagRule
 	plugin      []Plugin
 
 	config *Config
@@ -52,20 +53,29 @@ type PluginRule struct {
 type ActionRule struct {
 	ID         string
 	Title      string
-	OptionFunc map[string]ActionFunc
+	OptionFunc map[string]ActFunc
 }
 
 type FormRule struct {
 	ID         string
 	Title      string
 	Field      []FieldItem
-	SubmitFunc FormFunc
+	SubmitFunc ActFunc
 }
 
-type ActionFunc func(context.Context, component.Component) []pb.MsgPayload
-type FormFunc func(context.Context, component.Component, []FieldItem) []pb.MsgPayload
+type TagRule struct {
+	Tag         string
+	TriggerFunc ActFunc
+}
 
-func NewBot(metadata Metadata, settings []FieldItem, workflowRule []PluginRule, commandsRule []command.Rule, actionRule []ActionRule, formRule []FormRule) (*Bot, error) {
+type ActFunc func(context.Context, Context, component.Component) []pb.MsgPayload
+
+func NewBot(metadata Metadata, settings []FieldItem,
+	workflowRule []PluginRule,
+	commandsRule []command.Rule,
+	actionRule []ActionRule,
+	formRule []FormRule,
+	tagRule []TagRule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
 		Metadata:    metadata,
@@ -74,6 +84,7 @@ func NewBot(metadata Metadata, settings []FieldItem, workflowRule []PluginRule, 
 		CommandRule: commandsRule,
 		ActionRule:  actionRule,
 		FormRule:    formRule,
+		TagRule:     tagRule,
 		config:      cfg,
 	}
 	ctrl := &Controller{

@@ -73,7 +73,7 @@ var commandRules = []command.Rule{
 			}
 			reply, err := comp.Org().CreateObjective(ctx, &pb.ObjectiveRequest{
 				Objective: &pb.Objective{
-					//Tag:  tokens[1].Value, // todo tag
+					Tag:  tokens[1].Value.(string),
 					Name: tokens[2].Value.(string),
 				},
 			})
@@ -131,8 +131,8 @@ var commandRules = []command.Rule{
 			reply, err := comp.Org().CreateKeyResult(ctx, &pb.KeyResultRequest{
 				KeyResult: &pb.KeyResult{
 					ObjectiveId: id,
-					//Tag:         tokens[2].Value,// todo tag
-					Name: tokens[3].Value.(string),
+					Tag:         tokens[2].Value.(string),
+					Name:        tokens[3].Value.(string),
 				},
 			})
 			if err != nil {

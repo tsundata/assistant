@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
 	finance2 "github.com/tsundata/assistant/internal/app/chatbot/bot/finance"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/github"
 	org2 "github.com/tsundata/assistant/internal/app/chatbot/bot/org"
 	system2 "github.com/tsundata/assistant/internal/app/chatbot/bot/system"
 	todo2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo"
@@ -31,7 +32,7 @@ func NewApp(conf *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log
 	}
 
 	// bots register
-	err = robot.RegisterBot(context.Background(), bus, system2.Bot, todo2.Bot, org2.Bot, finance2.Bot)
+	err = robot.RegisterBot(context.Background(), bus, system2.Bot, todo2.Bot, org2.Bot, finance2.Bot, github.Bot)
 	if err != nil {
 		return nil, err
 	}

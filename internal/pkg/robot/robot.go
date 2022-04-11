@@ -3,7 +3,6 @@ package robot
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	_ "github.com/tsundata/assistant/internal/app/chatbot/bot/plugin"
@@ -83,15 +82,7 @@ func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in
 	return trigger.Process(ctx, comp, in)
 }
 
-func (r *Robot) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, commandText string) (map[int64][]pb.MsgPayload, error) {
-	if r.bot(bot.Identifier) == nil {
-		return nil, errors.New("error identifier")
-	}
-	c := command.New(r.bot(bot.Identifier).CommandRule)
-	return c.ProcessCommand(ctx, comp, bot, commandText)
-}
-
-func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
+func (r *Robot) ProcessWorkflow(ctx context.Context, _ bot.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
 	if len(tokens) == 0 {
 		return map[int64][]pb.MsgPayload{}, nil
 	}
@@ -119,7 +110,17 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, comp component.Component, t
 	return out, nil
 }
 
-func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, identifier, id, value string) ([]pb.MsgPayload, error) {
+func (r *Robot) ProcessCommand(ctx context.Context, _ bot.Context, comp component.Component, identifier, commandText string) ([]pb.MsgPayload, error) {
+	b, ok := BotMap[identifier]
+	if !ok {
+		return []pb.MsgPayload{}, nil
+	}
+
+	c := command.New(b.CommandRule)
+	return c.ProcessCommand(ctx, comp, commandText)
+}
+
+func (r *Robot) ProcessAction(ctx context.Context, botCtx bot.Context, comp component.Component, identifier, id, value string) ([]pb.MsgPayload, error) {
 	b, ok := BotMap[identifier]
 	if !ok {
 		return []pb.MsgPayload{}, nil
@@ -128,7 +129,7 @@ func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, ide
 	for _, rule := range b.ActionRule {
 		if rule.ID == id {
 			if f, ok := rule.OptionFunc[value]; ok {
-				result := f(ctx, comp)
+				result := f(ctx, botCtx, comp)
 				return result, nil
 			}
 		}
@@ -137,7 +138,7 @@ func (r *Robot) ProcessAction(ctx context.Context, comp component.Component, ide
 	return []pb.MsgPayload{}, nil
 }
 
-func (r *Robot) ProcessForm(ctx context.Context, comp component.Component, identifier, id string, form []bot.FieldItem) ([]pb.MsgPayload, error) {
+func (r *Robot) ProcessForm(ctx context.Context, botCtx bot.Context, comp component.Component, identifier, id string) ([]pb.MsgPayload, error) {
 	b, ok := BotMap[identifier]
 	if !ok {
 		return []pb.MsgPayload{}, nil
@@ -145,7 +146,23 @@ func (r *Robot) ProcessForm(ctx context.Context, comp component.Component, ident
 
 	for _, rule := range b.FormRule {
 		if rule.ID == id {
-			result := rule.SubmitFunc(ctx, comp, form)
+			result := rule.SubmitFunc(ctx, botCtx, comp)
+			return result, nil
+		}
+	}
+
+	return []pb.MsgPayload{}, nil
+}
+
+func (r *Robot) ProcessTag(ctx context.Context, botCtx bot.Context, comp component.Component, identifier, tag string) ([]pb.MsgPayload, error) {
+	b, ok := BotMap[identifier]
+	if !ok {
+		return []pb.MsgPayload{}, nil
+	}
+
+	for _, rule := range b.TagRule {
+		if rule.Tag == tag {
+			result := rule.TriggerFunc(ctx, botCtx, comp)
 			return result, nil
 		}
 	}

@@ -40,36 +40,30 @@ func TestRegexRule(t *testing.T) {
 
 	b := New(testRules)
 
-	bot := &pb.Bot{
-		Id:         1,
-		Name:       "System",
-		Identifier: "system_bot",
-	}
-
-	out, err := b.ProcessCommand(context.Background(), nil, bot, "test")
+	out, err := b.ProcessCommand(context.Background(), nil, "test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out[1], pb.TextMsg{Text: "test"})
+	require.Contains(t, out, pb.TextMsg{Text: "test"})
 
-	out2, err := b.ProcessCommand(context.Background(), nil, bot, "add 1 2")
+	out2, err := b.ProcessCommand(context.Background(), nil, "add 1 2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out2[1], pb.TextMsg{Text: "3"})
+	require.Contains(t, out2, pb.TextMsg{Text: "3"})
 
-	out3, err := b.ProcessCommand(context.Background(), nil, bot, "help")
+	out3, err := b.ProcessCommand(context.Background(), nil, "help")
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Len(t, out3[1], 0)
+	require.Len(t, out3, 0)
 
 	help := b.Help("help")
 	assert.True(t, len(help) > 0)
 
-	out4, err := b.ProcessCommand(context.Background(), nil, bot, `todo "a b c"`)
+	out4, err := b.ProcessCommand(context.Background(), nil, `todo "a b c"`)
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Contains(t, out4[1], pb.TextMsg{Text: "a b c"})
+	require.Contains(t, out4, pb.TextMsg{Text: "a b c"})
 }

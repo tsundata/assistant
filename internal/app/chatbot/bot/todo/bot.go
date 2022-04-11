@@ -52,13 +52,13 @@ var actionRules = []bot.ActionRule{
 	{
 		ID:    DemoActionId,
 		Title: "demo action?",
-		OptionFunc: map[string]bot.ActionFunc{
-			"true": func(ctx context.Context, component component.Component) []pb.MsgPayload {
+		OptionFunc: map[string]bot.ActFunc{
+			"true": func(ctx context.Context, botCtx bot.Context, component component.Component) []pb.MsgPayload {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: "true"},
 				}
 			},
-			"false": func(ctx context.Context, component component.Component) []pb.MsgPayload {
+			"false": func(ctx context.Context, botCtx bot.Context, component component.Component) []pb.MsgPayload {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: "false"},
 				}
@@ -78,10 +78,19 @@ var formRules = []bot.FormRule{
 				Required: true,
 			},
 		},
-		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+		SubmitFunc: func(ctx context.Context, botCtx bot.Context, component component.Component) []pb.MsgPayload {
 			return []pb.MsgPayload{
 				pb.TextMsg{Text: "submit!"},
 			}
+		},
+	},
+}
+
+var tagRules = []bot.TagRule{
+	{
+		Tag: "todo",
+		TriggerFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
+			return nil
 		},
 	},
 }
@@ -90,7 +99,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules, formRules)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules, formRules, tagRules)
 	if err != nil {
 		panic(err)
 	}

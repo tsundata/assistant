@@ -43,7 +43,6 @@ func TestObjListCommand(t *testing.T) {
 			{
 				Id:    1,
 				Name:  "obj",
-				TagId: 1,
 			},
 		}}, nil),
 	)
@@ -101,7 +100,6 @@ func TestKrListCommand(t *testing.T) {
 				Id:          1,
 				ObjectiveId: 1,
 				Name:        "kr",
-				TagId:       1,
 			},
 		}}, nil),
 	)

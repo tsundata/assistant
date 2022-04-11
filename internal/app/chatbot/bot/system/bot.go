@@ -42,9 +42,9 @@ var formRules = []bot.FormRule{
 				Required: true,
 			},
 		},
-		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
-			for _, item := range form {
-				c.GetRedis().HSet(ctx, "system:push:switch", item.Key, item.Value == "1")
+		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
+			for _, item := range botCtx.FieldItem {
+				comp.GetRedis().HSet(ctx, "system:push:switch", item.Key, item.Value == "1")
 			}
 			return []pb.MsgPayload{
 				pb.TextMsg{Text: "switch success"},
@@ -55,15 +55,15 @@ var formRules = []bot.FormRule{
 		ID:    SubscribeSwitchFormID,
 		Title: "Subscribe switch",
 		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
 			var kv []*pb.KV
-			for _, item := range form {
+			for _, item := range botCtx.FieldItem {
 				kv = append(kv, &pb.KV{
 					Key:   item.Key,
 					Value: item.Value.(string),
 				})
 			}
-			reply, err := c.Middle().SwitchUserSubscribe(ctx, &pb.SwitchUserSubscribeRequest{Subscribe: kv})
+			reply, err := comp.Middle().SwitchUserSubscribe(ctx, &pb.SwitchUserSubscribeRequest{Subscribe: kv})
 			if err != nil {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: err.Error()},
@@ -83,15 +83,15 @@ var formRules = []bot.FormRule{
 		ID:    WebhookSwitchFormID,
 		Title: "Script Webhook switch",
 		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
 			var kv []*pb.KV
-			for _, item := range form {
+			for _, item := range botCtx.FieldItem {
 				kv = append(kv, &pb.KV{
 					Key:   item.Key,
 					Value: item.Value.(string),
 				})
 			}
-			reply, err := c.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
+			reply, err := comp.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
 			if err != nil {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: err.Error()},
@@ -111,15 +111,15 @@ var formRules = []bot.FormRule{
 		ID:    CronSwitchFormID,
 		Title: "Script Cron switch",
 		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, c component.Component, form []bot.FieldItem) []pb.MsgPayload {
+		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
 			var kv []*pb.KV
-			for _, item := range form {
+			for _, item := range botCtx.FieldItem {
 				kv = append(kv, &pb.KV{
 					Key:   item.Key,
 					Value: item.Value.(string),
 				})
 			}
-			reply, err := c.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
+			reply, err := comp.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
 			if err != nil {
 				return []pb.MsgPayload{
 					pb.TextMsg{Text: err.Error()},
@@ -137,11 +137,22 @@ var formRules = []bot.FormRule{
 	},
 }
 
+var tagRules = []bot.TagRule{
+	{
+		Tag: "test",
+		TriggerFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
+			return []pb.MsgPayload{
+				pb.TextMsg{Text: "test tag"},
+			}
+		},
+	},
+}
+
 var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, nil, formRules)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, nil, formRules, tagRules)
 	if err != nil {
 		panic(err)
 	}

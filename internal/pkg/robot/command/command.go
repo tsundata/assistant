@@ -31,8 +31,8 @@ func (r Ruleset) Help(in string) string {
 	return ""
 }
 
-func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, bot *pb.Bot, in string) (map[int64][]pb.MsgPayload, error) {
-	out := make(map[int64][]pb.MsgPayload)
+func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, in string) ([]pb.MsgPayload, error) {
+	var result []pb.MsgPayload
 	for _, rule := range r.rules {
 		tokens, err := ParseCommand(in)
 		if err != nil {
@@ -51,11 +51,11 @@ func (r Ruleset) ProcessCommand(ctx context.Context, comp component.Component, b
 		}
 
 		if ret := rule.Parse(ctx, comp, tokens); len(ret) > 0 {
-			out[bot.Id] = ret
+			result = ret
 		}
 	}
 
-	return out, nil
+	return result, nil
 }
 
 func New(rules []Rule) *Ruleset {
