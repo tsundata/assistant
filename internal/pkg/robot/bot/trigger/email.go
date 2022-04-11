@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/email"
@@ -43,7 +44,7 @@ func (t *Email) Cond(message *pb.Message) bool {
 	return true
 }
 
-func (t *Email) Handle(ctx context.Context, comp component.Component) {
+func (t *Email) Handle(ctx context.Context, botCtx bot.Context, comp component.Component) {
 	reply, err := comp.Middle().GetCredential(ctx, &pb.CredentialRequest{Type: email.ID})
 	if err != nil {
 		return
@@ -91,15 +92,13 @@ Sended by Assistant
 			comp.GetLogger().Error(err)
 			return
 		}
-		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
-			//GroupId:      comp.Message.GetGroupId(), todo
-			//UserId:       comp.Message.GetUserId(),
-			//Sender:       comp.Message.GetSender(),
-			//SenderType:   comp.Message.GetSenderType(),
-			//Receiver:     comp.Message.GetReceiver(),
-			//ReceiverType: comp.Message.GetReceiverType(),
-			Type: string(enum.MessageTypeText),
-			Text: fmt.Sprintf("Sended to Mail: %s", mail),
+		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
+			UserId:   botCtx.Message.GetUserId(),
+			GroupId:  botCtx.Message.GetGroupId(),
+			Text:     fmt.Sprintf("Sended to Mail: %s", mail),
+			Type:     string(enum.MessageTypeText),
+			Sequence: botCtx.Message.GetSequence(),
+			SendTime: util.Now(),
 		})
 		if err != nil {
 			return

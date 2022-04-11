@@ -3,7 +3,6 @@ package todo
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -60,20 +59,6 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
 			}
 			return []pb.MsgPayload{pb.TextMsg{Text: "success"}}
-		},
-	},
-	{
-		Define: `todo action`,
-		Help:   "test todo action",
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			return []pb.MsgPayload{msg.BotActionMsg(actionRules, DemoActionId)}
-		},
-	},
-	{
-		Define: `todo form`,
-		Help:   "test todo form",
-		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			return []pb.MsgPayload{msg.BotFormMsg(formRules, DemoFormId)}
 		},
 	},
 }

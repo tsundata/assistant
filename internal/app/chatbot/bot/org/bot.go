@@ -12,7 +12,7 @@ var metadata = bot.Metadata{
 	Avatar:     "",
 }
 
-var workflowRules []bot.PluginRule
+var workflowRules bot.WorkflowRule
 
 var Bot *bot.Bot
 

@@ -6,14 +6,16 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
-	"github.com/tsundata/assistant/internal/pkg/vendors/bark"
-	"github.com/tsundata/assistant/internal/pkg/vendors/pushover"
 )
 
-const PushSwitchFormID = "push_switch"
-const SubscribeSwitchFormID = "subscribe_switch"
-const WebhookSwitchFormID = "webhook_switch"
-const CronSwitchFormID = "cron_switch"
+const (
+	DemoActionId = "demo"
+
+	PushSwitchFormID      = "push_switch"
+	SubscribeSwitchFormID = "subscribe_switch"
+	WebhookSwitchFormID   = "webhook_switch"
+	CronSwitchFormID      = "cron_switch"
+)
 
 var metadata = bot.Metadata{
 	Name:       "System",
@@ -24,115 +26,41 @@ var metadata = bot.Metadata{
 
 var setting []bot.FieldItem
 
-var workflowRules []bot.PluginRule
+var workflowRules = bot.WorkflowRule{
+	Plugin: []bot.PluginRule{
+		{
+			Name: "any",
+		},
+		{
+			Name:  "filter",
+			Param: []interface{}{1},
+		},
+		{
+			Name: "save",
+		},
+	},
+	RunFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
+		return []pb.MsgPayload{
+			pb.TextMsg{Text: "system workflow run"},
+		}
+	},
+}
 
-var formRules = []bot.FormRule{
+var actionRules = []bot.ActionRule{
 	{
-		ID:    PushSwitchFormID,
-		Title: "Push notification switch",
-		Field: []bot.FieldItem{
-			{
-				Key:      pushover.ID,
-				Type:     bot.FieldItemTypeBool,
-				Required: true,
+		ID:    DemoActionId,
+		Title: "demo action?",
+		OptionFunc: map[string]bot.ActFunc{
+			"true": func(ctx context.Context, botCtx bot.Context, component component.Component) []pb.MsgPayload {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: "true"},
+				}
 			},
-			{
-				Key:      bark.ID,
-				Type:     bot.FieldItemTypeBool,
-				Required: true,
+			"false": func(ctx context.Context, botCtx bot.Context, component component.Component) []pb.MsgPayload {
+				return []pb.MsgPayload{
+					pb.TextMsg{Text: "false"},
+				}
 			},
-		},
-		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			for _, item := range botCtx.FieldItem {
-				comp.GetRedis().HSet(ctx, "system:push:switch", item.Key, item.Value == "1")
-			}
-			return []pb.MsgPayload{
-				pb.TextMsg{Text: "switch success"},
-			}
-		},
-	},
-	{
-		ID:    SubscribeSwitchFormID,
-		Title: "Subscribe switch",
-		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			var kv []*pb.KV
-			for _, item := range botCtx.FieldItem {
-				kv = append(kv, &pb.KV{
-					Key:   item.Key,
-					Value: item.Value.(string),
-				})
-			}
-			reply, err := comp.Middle().SwitchUserSubscribe(ctx, &pb.SwitchUserSubscribeRequest{Subscribe: kv})
-			if err != nil {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: err.Error()},
-				}
-			}
-			if reply.State {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: "switch success"},
-				}
-			}
-			return []pb.MsgPayload{
-				pb.TextMsg{Text: "switch failed"},
-			}
-		},
-	},
-	{
-		ID:    WebhookSwitchFormID,
-		Title: "Script Webhook switch",
-		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			var kv []*pb.KV
-			for _, item := range botCtx.FieldItem {
-				kv = append(kv, &pb.KV{
-					Key:   item.Key,
-					Value: item.Value.(string),
-				})
-			}
-			reply, err := comp.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
-			if err != nil {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: err.Error()},
-				}
-			}
-			if reply.State {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: "switch success"},
-				}
-			}
-			return []pb.MsgPayload{
-				pb.TextMsg{Text: "switch failed"},
-			}
-		},
-	},
-	{
-		ID:    CronSwitchFormID,
-		Title: "Script Cron switch",
-		Field: []bot.FieldItem{},
-		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			var kv []*pb.KV
-			for _, item := range botCtx.FieldItem {
-				kv = append(kv, &pb.KV{
-					Key:   item.Key,
-					Value: item.Value.(string),
-				})
-			}
-			reply, err := comp.Chatbot().SwitchTriggers(ctx, &pb.SwitchTriggersRequest{Triggers: kv})
-			if err != nil {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: err.Error()},
-				}
-			}
-			if reply.State {
-				return []pb.MsgPayload{
-					pb.TextMsg{Text: "switch success"},
-				}
-			}
-			return []pb.MsgPayload{
-				pb.TextMsg{Text: "switch failed"},
-			}
 		},
 	},
 }
@@ -152,7 +80,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, nil, formRules, tagRules)
+	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules, formRules, tagRules)
 	if err != nil {
 		panic(err)
 	}

@@ -10,13 +10,13 @@ import (
 
 type Bot struct {
 	Metadata
-	SettingRule []FieldItem
-	PluginRule  []PluginRule
-	CommandRule []command.Rule
-	ActionRule  []ActionRule
-	FormRule    []FormRule
-	TagRule     []TagRule
-	plugin      []Plugin
+	SettingRule  []FieldItem
+	WorkflowRule WorkflowRule
+	CommandRule  []command.Rule
+	ActionRule   []ActionRule
+	FormRule     []FormRule
+	TagRule      []TagRule
+	plugin       []Plugin
 
 	config *Config
 	ctrl   *Controller
@@ -45,6 +45,11 @@ type FieldItem struct {
 	Value    interface{}   `json:"value"`
 }
 
+type WorkflowRule struct {
+	Plugin  []PluginRule
+	RunFunc ActFunc
+}
+
 type PluginRule struct {
 	Name  string
 	Param []interface{}
@@ -71,21 +76,21 @@ type TagRule struct {
 type ActFunc func(context.Context, Context, component.Component) []pb.MsgPayload
 
 func NewBot(metadata Metadata, settings []FieldItem,
-	workflowRule []PluginRule,
+	workflowRule WorkflowRule,
 	commandsRule []command.Rule,
 	actionRule []ActionRule,
 	formRule []FormRule,
 	tagRule []TagRule) (*Bot, error) {
 	cfg := &Config{}
 	b := &Bot{
-		Metadata:    metadata,
-		SettingRule: settings,
-		PluginRule:  workflowRule,
-		CommandRule: commandsRule,
-		ActionRule:  actionRule,
-		FormRule:    formRule,
-		TagRule:     tagRule,
-		config:      cfg,
+		Metadata:     metadata,
+		SettingRule:  settings,
+		WorkflowRule: workflowRule,
+		CommandRule:  commandsRule,
+		ActionRule:   actionRule,
+		FormRule:     formRule,
+		TagRule:      tagRule,
+		config:       cfg,
 	}
 	ctrl := &Controller{
 		Instance:    b,
@@ -95,7 +100,7 @@ func NewBot(metadata Metadata, settings []FieldItem,
 	b.ctrl = ctrl
 
 	// setup plugins
-	err := SetupPlugins(ctrl, workflowRule)
+	err := SetupPlugins(ctrl, workflowRule.Plugin)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +117,7 @@ func NewBot(metadata Metadata, settings []FieldItem,
 	return b, nil
 }
 
-func (b *Bot) Run(ctx context.Context, comp component.Component, input interface{}) (interface{}, error) {
+func (b *Bot) RunPlugin(ctx context.Context, comp component.Component, input interface{}) (interface{}, error) {
 	b.ctrl.Comp = comp
 	if b.config.PluginChain != nil {
 		return b.config.PluginChain.Run(ctx, b.ctrl, input)

@@ -78,36 +78,35 @@ func (r *Robot) ParseText(in *pb.Message) ([]*bot.Token, []string, []string, []s
 	return tokens, objects, tags, messages, commands, nil
 }
 
-func (r *Robot) ProcessTrigger(ctx context.Context, comp component.Component, in *pb.Message) error {
-	return trigger.Process(ctx, comp, in)
+func (r *Robot) ProcessTrigger(ctx context.Context, botCtx bot.Context, comp component.Component, in *pb.Message) error {
+	return trigger.Process(ctx, botCtx, comp, in)
 }
 
-func (r *Robot) ProcessWorkflow(ctx context.Context, _ bot.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
+func (r *Robot) ProcessWorkflow(ctx context.Context, botCtx bot.Context, comp component.Component, tokens []*bot.Token, bots map[string]*pb.Bot) (map[int64][]pb.MsgPayload, error) {
 	if len(tokens) == 0 {
 		return map[int64][]pb.MsgPayload{}, nil
 	}
-	out := make(map[int64][]pb.MsgPayload)
-	var input interface{} = tokens[0].Value
-	var output interface{}
+	var err error
+	result := make(map[int64][]pb.MsgPayload)
+	botCtx.Input = tokens[0].Value
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)
 		if b, ok := BotMap[item.Identifier]; ok {
-			out, err := b.Run(ctx, comp, input)
+			botCtx.Input, err = b.RunPlugin(ctx, comp, botCtx.Input)
 			if err != nil {
 				return nil, err
 			}
-			input = out
-		}
+			if botCtx.Input == nil {
+				break
+			}
 
-		switch v := output.(type) {
-		case string:
-			out[item.Id] = append(out[item.Id], pb.TextMsg{Text: v})
-		case pb.MsgPayload:
-			out[item.Id] = append(out[item.Id], v)
+			runResult := b.WorkflowRule.RunFunc(ctx, botCtx, comp)
+			botCtx.Input = botCtx.Output
+			result[item.Id] = append(result[item.Id], runResult...)
 		}
 	}
 
-	return out, nil
+	return result, nil
 }
 
 func (r *Robot) ProcessCommand(ctx context.Context, _ bot.Context, comp component.Component, identifier, commandText string) ([]pb.MsgPayload, error) {

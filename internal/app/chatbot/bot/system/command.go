@@ -7,7 +7,6 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
-	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger/tags"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -190,12 +189,7 @@ var commandRules = []command.Rule{
 			res := strings.Builder{}
 			res.WriteString("Action:\n")
 			res.WriteString(reply.GetText())
-			res.WriteString("\n\nTag:\n")
-			for k := range tags.Tags() {
-				res.WriteString("#")
-				res.WriteString(k)
-				res.WriteString("\n")
-			}
+			res.WriteString("\n")
 			return []pb.MsgPayload{pb.TextMsg{Text: res.String()}}
 		},
 	},

@@ -6,4 +6,7 @@ type Context struct {
 	Setting   map[int64][]*pb.KV
 	Message   *pb.Message
 	FieldItem []FieldItem
+
+	Input  interface{}
+	Output interface{}
 }

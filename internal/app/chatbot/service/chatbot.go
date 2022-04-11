@@ -117,8 +117,10 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			setting[i] = kvs
 		}
 
+		botCtx := bot.Context{Setting: setting}
+
 		// trigger
-		err = r.ProcessTrigger(ctx, s.comp, reply.Message)
+		err = r.ProcessTrigger(ctx, botCtx, s.comp, reply.Message)
 		if err != nil {
 			return nil, err
 		}
@@ -140,7 +142,6 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 			}
 		}
 
-		botCtx := bot.Context{Setting: setting}
 		if len(commands) > 0 {
 			var commandsBots []*pb.Bot
 			if len(objects) == 0 {

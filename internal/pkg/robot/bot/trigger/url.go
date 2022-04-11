@@ -9,6 +9,7 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"regexp"
@@ -16,9 +17,8 @@ import (
 )
 
 type Url struct {
-	text    string
-	url     []string
-	message *pb.Message
+	text string
+	url  []string
 }
 
 func NewUrl() *Url {
@@ -26,7 +26,6 @@ func NewUrl() *Url {
 }
 
 func (t *Url) Cond(message *pb.Message) bool {
-	t.message = message
 	re := regexp.MustCompile(`(?m)` + util.UrlRegex)
 	ts := re.FindAllString(message.GetText(), -1)
 
@@ -45,7 +44,7 @@ func (t *Url) Cond(message *pb.Message) bool {
 	return true
 }
 
-func (t *Url) Handle(ctx context.Context, comp component.Component) {
+func (t *Url) Handle(ctx context.Context, botCtx bot.Context, comp component.Component) {
 	for _, url := range t.url {
 		// fetch html
 		r := resty.New()
@@ -73,9 +72,12 @@ func (t *Url) Handle(ctx context.Context, comp component.Component) {
 
 		// send message
 		err = comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
-			GroupId:   t.message.GetGroupId(),
-			Text:      fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText()),
-			Direction: enum.MessageIncomingDirection,
+			UserId:   botCtx.Message.GetUserId(),
+			GroupId:  botCtx.Message.GetGroupId(),
+			Text:     fmt.Sprintf("Archive URL: %s\nPage: %s", url, reply.GetText()),
+			Type:     string(enum.MessageTypeText),
+			Sequence: botCtx.Message.GetSequence(),
+			SendTime: util.Now(),
 		})
 		if err != nil {
 			return
