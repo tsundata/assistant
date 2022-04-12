@@ -109,33 +109,33 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateUserSubscribe(ctx, subscribe i
 }
 
 // GetAppByType mocks base method.
-func (m *MockMiddleRepository) GetAppByType(ctx context.Context, t string) (pb.App, error) {
+func (m *MockMiddleRepository) GetAppByType(ctx context.Context, userId int64, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAppByType", ctx, t)
+	ret := m.ctrl.Call(m, "GetAppByType", ctx, userId, t)
 	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAppByType indicates an expected call of GetAppByType.
-func (mr *MockMiddleRepositoryMockRecorder) GetAppByType(ctx, t interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) GetAppByType(ctx, userId, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetAppByType), ctx, t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetAppByType), ctx, userId, t)
 }
 
 // GetAvailableAppByType mocks base method.
-func (m *MockMiddleRepository) GetAvailableAppByType(ctx context.Context, t string) (pb.App, error) {
+func (m *MockMiddleRepository) GetAvailableAppByType(ctx context.Context, userId int64, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAvailableAppByType", ctx, t)
+	ret := m.ctrl.Call(m, "GetAvailableAppByType", ctx, userId, t)
 	ret0, _ := ret[0].(pb.App)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAvailableAppByType indicates an expected call of GetAvailableAppByType.
-func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(ctx, t interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(ctx, userId, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableAppByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetAvailableAppByType), ctx, t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableAppByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetAvailableAppByType), ctx, userId, t)
 }
 
 // GetCredentialByName mocks base method.

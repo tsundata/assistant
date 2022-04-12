@@ -77,7 +77,7 @@ func (s *subscription) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		// _ = c.ws.Close() FIXME
+		// _ = c.ws.Close()
 	}()
 	for {
 		select {

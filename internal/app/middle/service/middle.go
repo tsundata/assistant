@@ -27,8 +27,6 @@ import (
 	"time"
 )
 
-const CronKey = "cron:rule"
-
 type Middle struct {
 	conf    *config.AppConfig
 	rdb     *redis.Client
@@ -108,22 +106,22 @@ func (s *Middle) GetApps(ctx context.Context, _ *pb.TextRequest) (*pb.AppsReply,
 	for _, item := range apps {
 		haveApps[item.Type] = true
 		res = append(res, &pb.App{
-			//Title:        fmt.Sprintf("%s (%s)", app.Name, app.Type), todo
-			//IsAuthorized: app.Token != "",todo
-			Type:      item.Type,
-			Name:      item.Name,
-			Token:     item.Token,
-			Extra:     item.Extra,
-			CreatedAt: item.CreatedAt,
+			Title:        fmt.Sprintf("%s (%s)", item.Name, item.Type),
+			IsAuthorized: item.Token != "",
+			Type:         item.Type,
+			Name:         item.Name,
+			Token:        item.Token,
+			Extra:        item.Extra,
+			CreatedAt:    item.CreatedAt,
 		})
 	}
 
 	for k := range providerApps {
 		if _, ok := haveApps[k]; !ok {
 			res = append(res, &pb.App{
-				//Title:        fmt.Sprintf("%s (%s)", k, k),todo
-				//IsAuthorized: false,todo
-				Type: k,
+				Title:        fmt.Sprintf("%s (%s)", k, k),
+				IsAuthorized: false,
+				Type:         k,
 			})
 		}
 	}
@@ -134,7 +132,8 @@ func (s *Middle) GetApps(ctx context.Context, _ *pb.TextRequest) (*pb.AppsReply,
 }
 
 func (s *Middle) GetAvailableApp(ctx context.Context, payload *pb.TextRequest) (*pb.AppReply, error) {
-	find, err := s.repo.GetAvailableAppByType(ctx, payload.GetText())
+	id, _ := md.FromIncoming(ctx)
+	find, err := s.repo.GetAvailableAppByType(ctx, id, payload.GetText())
 	if err != nil {
 		return nil, err
 	}
@@ -165,13 +164,14 @@ func (s *Middle) GetAvailableApp(ctx context.Context, payload *pb.TextRequest) (
 }
 
 func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	if payload.App.GetToken() == "" {
 		return &pb.StateReply{
 			State: false,
 		}, nil
 	}
 
-	item, err := s.repo.GetAppByType(ctx, payload.App.GetType())
+	item, err := s.repo.GetAppByType(ctx, id, payload.App.GetType())
 	if err != nil {
 		return nil, err
 	}
@@ -183,10 +183,11 @@ func (s *Middle) StoreAppOAuth(ctx context.Context, payload *pb.AppRequest) (*pb
 		}
 	} else {
 		_, err = s.repo.CreateApp(ctx, &pb.App{
-			Name:  payload.App.GetName(),
-			Type:  payload.App.GetType(),
-			Token: payload.App.GetToken(),
-			Extra: payload.App.GetExtra(),
+			UserId: id,
+			Name:   payload.App.GetName(),
+			Type:   payload.App.GetType(),
+			Token:  payload.App.GetToken(),
+			Extra:  payload.App.GetExtra(),
 		})
 		if err != nil {
 			return nil, err
@@ -583,7 +584,7 @@ func (s *Middle) GetUserSubscribeStatus(ctx context.Context, payload *pb.TextReq
 }
 
 func (s *Middle) ListCron(ctx context.Context, _ *pb.CronRequest) (*pb.CronReply, error) {
-	res, err := s.rdb.HGetAll(ctx, CronKey).Result()
+	res, err := s.rdb.HGetAll(ctx, enum.CronKey).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -602,7 +603,7 @@ func (s *Middle) ListCron(ctx context.Context, _ *pb.CronRequest) (*pb.CronReply
 }
 
 func (s *Middle) RegisterCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HMGet(ctx, CronKey, payload.GetText()).Result()
+	resp, err := s.rdb.HMGet(ctx, enum.CronKey, payload.GetText()).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -613,7 +614,7 @@ func (s *Middle) RegisterCron(ctx context.Context, payload *pb.CronRequest) (*pb
 	}
 
 	if !exist {
-		_, err = s.rdb.HMSet(ctx, CronKey, payload.GetText(), "true").Result()
+		_, err = s.rdb.HMSet(ctx, enum.CronKey, payload.GetText(), "true").Result()
 		if err != nil {
 			return nil, err
 		}
@@ -623,7 +624,7 @@ func (s *Middle) RegisterCron(ctx context.Context, payload *pb.CronRequest) (*pb
 }
 
 func (s *Middle) StartCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(ctx, CronKey, payload.GetText(), "true").Result()
+	_, err := s.rdb.HMSet(ctx, enum.CronKey, payload.GetText(), "true").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -632,7 +633,7 @@ func (s *Middle) StartCron(ctx context.Context, payload *pb.CronRequest) (*pb.St
 }
 
 func (s *Middle) StopCron(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
-	_, err := s.rdb.HMSet(ctx, CronKey, payload.GetText(), "false").Result()
+	_, err := s.rdb.HMSet(ctx, enum.CronKey, payload.GetText(), "false").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -641,7 +642,7 @@ func (s *Middle) StopCron(ctx context.Context, payload *pb.CronRequest) (*pb.Sta
 }
 
 func (s *Middle) GetCronStatus(ctx context.Context, payload *pb.CronRequest) (*pb.StateReply, error) {
-	resp, err := s.rdb.HGetAll(ctx, CronKey).Result()
+	resp, err := s.rdb.HGetAll(ctx, enum.CronKey).Result()
 	if err != nil {
 		return nil, err
 	}

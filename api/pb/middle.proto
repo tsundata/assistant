@@ -110,6 +110,11 @@ message App {
   int64 created_at = 7;
   // @inject_tag: db:"updated_at"
   int64 updated_at = 8;
+
+  // @inject_tag: gorm:"-"
+  string title = 9;
+  // @inject_tag: gorm:"-"
+  bool is_authorized = 10;
 }
 
 message AppInfo {

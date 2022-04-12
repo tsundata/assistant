@@ -76,7 +76,11 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := spider.NewApp(appConfig, redisClient, bus, logLogger, middleSvcClient, messageSvcClient)
+	userSvcClient, err := rpcclient.NewUserClient(rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	application, err := spider.NewApp(appConfig, redisClient, bus, logLogger, middleSvcClient, messageSvcClient, userSvcClient)
 	if err != nil {
 		return nil, err
 	}

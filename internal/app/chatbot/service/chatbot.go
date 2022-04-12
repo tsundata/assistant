@@ -452,7 +452,6 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		if err != nil {
 			return nil, err
 		}
-		// todo group --- system bot
 	}
 
 	// bot avatar
@@ -494,7 +493,6 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 			Type:        group.Type,
 			Name:        group.Name,
 			Avatar:      group.Avatar,
-			UnreadCount: 0, // todo
 			LastMessage: &pb.LastMessage{
 				LastSender: last.Message.GetSenderName(),
 				Content:    last.Message.GetText(),

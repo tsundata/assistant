@@ -28,10 +28,10 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 		Content:        payload.Todo.GetContent(),
 		Priority:       payload.Todo.GetPriority(),
 		IsRemindAtTime: payload.Todo.GetIsRemindAtTime(),
-		RemindAt:       0, //&remindAt, fixme
+		RemindAt:       payload.Todo.GetRemindAt(),
 		RepeatMethod:   payload.Todo.GetRepeatMethod(),
 		RepeatRule:     payload.Todo.GetRepeatRule(),
-		RepeatEndAt:    0, //&endAt, fixme
+		RepeatEndAt:    payload.Todo.GetRepeatEndAt(),
 		Category:       "",
 		Remark:         payload.Todo.GetRemark(),
 		Complete:       false,

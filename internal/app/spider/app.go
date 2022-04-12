@@ -11,11 +11,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/log"
 )
 
-func NewApp(c *config.AppConfig, rdb *redis.Client, bus event.Bus, logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient) (*app.Application, error) {
+func NewApp(c *config.AppConfig, rdb *redis.Client, bus event.Bus, logger log.Logger,
+	middle pb.MiddleSvcClient, message pb.MessageSvcClient, user pb.UserSvcClient) (*app.Application, error) {
 	// spider
 	go func() {
 		s := crawler.New()
-		s.SetService(c, rdb, bus, logger, middle, message)
+		s.SetService(c, rdb, bus, logger, middle, message, user)
 		err := s.LoadRule()
 		if err != nil {
 			logger.Error(err)

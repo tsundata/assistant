@@ -15,8 +15,8 @@ type MiddleRepository interface {
 	CreatePage(ctx context.Context, page *pb.Page) (int64, error)
 	GetPageByUUID(ctx context.Context, uuid string) (pb.Page, error)
 	ListApps(ctx context.Context, userId int64) ([]*pb.App, error)
-	GetAvailableAppByType(ctx context.Context, t string) (pb.App, error)
-	GetAppByType(ctx context.Context, t string) (pb.App, error)
+	GetAvailableAppByType(ctx context.Context, userId int64, t string) (pb.App, error)
+	GetAppByType(ctx context.Context, userId int64, t string) (pb.App, error)
 	UpdateAppByID(ctx context.Context, id int64, token, extra string) error
 	CreateApp(ctx context.Context, app *pb.App) (int64, error)
 	GetCredentialByName(ctx context.Context, userId int64, name string) (pb.Credential, error)
@@ -73,18 +73,23 @@ func (r *MysqlMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*
 	return items, nil
 }
 
-func (r *MysqlMiddleRepository) GetAvailableAppByType(ctx context.Context, t string) (pb.App, error) {
+func (r *MysqlMiddleRepository) GetAvailableAppByType(ctx context.Context, userId int64, t string) (pb.App, error) {
 	var find pb.App
-	err := r.db.WithContext(ctx).Where("type = ?", t).Where("token <> ?", "").First(&find).Error
+	err := r.db.WithContext(ctx).
+		Where("user_id = ?", userId).
+		Where("type = ?", t).
+		Where("token <> ?", "").First(&find).Error
 	if err != nil {
 		return pb.App{}, err
 	}
 	return find, nil
 }
 
-func (r *MysqlMiddleRepository) GetAppByType(ctx context.Context, t string) (pb.App, error) {
+func (r *MysqlMiddleRepository) GetAppByType(ctx context.Context, userId int64, t string) (pb.App, error) {
 	var find pb.App
-	err := r.db.WithContext(ctx).Where("type = ?", t).Last(&find).Error
+	err := r.db.WithContext(ctx).
+		Where("user_id = ?", userId).
+		Where("type = ?", t).Last(&find).Error
 	if err != nil {
 		return pb.App{}, err
 	}

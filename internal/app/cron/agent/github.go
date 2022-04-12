@@ -58,6 +58,5 @@ func FetchGithubStarred(ctx context.Context, comp component.Component) []result.
 }
 
 func FetchGithubStargazers(_ context.Context, _ component.Component) []result.Result {
-	// todo
 	return []result.Result{}
 }

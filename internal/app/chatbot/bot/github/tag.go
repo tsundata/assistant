@@ -15,7 +15,7 @@ var tagRules = []bot.TagRule{
 	{
 		Tag: "issue",
 		TriggerFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			text := "" //todo
+			text := botCtx.Message.GetText()
 			// get access token
 			app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
 			if err != nil {
@@ -60,7 +60,7 @@ var tagRules = []bot.TagRule{
 	{
 		Tag: "project",
 		TriggerFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-			text := "" //todo
+			text := botCtx.Message.GetText()
 			// get access token
 			app, err := comp.Middle().GetAvailableApp(ctx, &pb.TextRequest{Text: github.ID})
 			if err != nil {

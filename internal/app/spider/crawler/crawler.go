@@ -34,6 +34,7 @@ type Crawler struct {
 	logger  log.Logger
 	middle  pb.MiddleSvcClient
 	message pb.MessageSvcClient
+	user    pb.UserSvcClient
 }
 
 func New() *Crawler {
@@ -44,13 +45,14 @@ func New() *Crawler {
 }
 
 func (s *Crawler) SetService(conf *config.AppConfig, rdb *redis.Client, bus event.Bus,
-	logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient) {
+	logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient, user pb.UserSvcClient) {
 	s.conf = conf
 	s.rdb = rdb
 	s.bus = bus
 	s.logger = logger
 	s.middle = middle
 	s.message = message
+	s.user = user
 }
 
 func (s *Crawler) LoadRule() error {
@@ -242,7 +244,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	if len(out) == 0 {
 		return
 	}
-	ctx := md.BuildAuthContext(enum.SuperUserID) //fixme
+	ctx := md.BuildAuthContext(enum.SuperUserID)
 
 	// check send
 	key := fmt.Sprintf("spider:send:%x", md5.Sum(util.StringToByte(strings.Join(out, "\n")))) // #nosec
@@ -278,20 +280,37 @@ func (s *Crawler) send(channel, name string, out []string) {
 		text = fmt.Sprintf("Channel %s (v%s)\n%s\n %s", name, version.Version, strings.Join(out[:5], "\n"), reply.GetText())
 	}
 
-	// send
-	// todo user subscribe
-	fmt.Println(channel)
-	_, err = s.message.Send(ctx, &pb.MessageRequest{
-		Message: &pb.Message{
-			UserId:     enum.SuperUserID, //fixme
-			Sender:     0,
-			SenderType: enum.MessageBotType,
-			Type:       string(enum.MessageTypeText),
-			Text:       text,
-		},
-	})
+	// batch send
+	usersReply, err := s.user.GetUsers(ctx, &pb.UserRequest{})
 	if err != nil {
 		s.logger.Error(err)
 		return
+	}
+	for _, user := range usersReply.Users {
+		subsReply, err := s.middle.GetUserSubscribe(md.BuildAuthContext(user.Id), &pb.TextRequest{})
+		if err != nil {
+			s.logger.Error(err)
+			continue
+		}
+		for _, subs := range subsReply.Subscribe {
+			if subs.Key == name {
+				if subs.Value != "1" {
+					continue
+				}
+				_, err = s.message.Send(md.BuildAuthContext(user.Id), &pb.MessageRequest{
+					Message: &pb.Message{
+						UserId:     user.Id,
+						Sender:     0,
+						SenderType: enum.MessageBotType,
+						Type:       string(enum.MessageTypeText),
+						Text:       text,
+					},
+				})
+				if err != nil {
+					s.logger.Error(err)
+					return
+				}
+			}
+		}
 	}
 }

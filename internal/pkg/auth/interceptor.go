@@ -28,6 +28,8 @@ var ignoreFullMethod = []string{
 	"/pb.StorageSvc/AbsolutePath",
 	"/pb.MessageSvc/GetById",
 	"/pb.StorageSvc/AbsolutePath",
+	"/pb.UserSvc/GetUsers",
+	"/pb.MiddleSvc/CreatePage",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

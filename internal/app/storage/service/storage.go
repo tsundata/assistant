@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/storage/fs"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -18,8 +19,6 @@ type Storage struct {
 	conf *config.AppConfig
 	rdb  *redis.Client
 }
-
-const MaxFileSize = 1 << 20
 
 func NewStorage(conf *config.AppConfig, rdb *redis.Client) *Storage {
 	return &Storage{conf: conf, rdb: rdb}
@@ -46,8 +45,8 @@ func (s *Storage) UploadFile(stream pb.StorageSvc_UploadFileServer) error {
 		size := len(chuck)
 
 		fileSize += size
-		if fileSize > MaxFileSize {
-			return fmt.Errorf("image is too large: %d > %d", fileSize, MaxFileSize)
+		if fileSize > enum.MaxFileSize {
+			return fmt.Errorf("image is too large: %d > %d", fileSize, enum.MaxFileSize)
 		}
 		_, err = fileData.Write(chuck)
 		if err != nil {
