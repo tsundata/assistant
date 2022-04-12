@@ -208,7 +208,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAvailableAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAvailableAppByType(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.App{
 			Id:    1,
 			Name:  "github",
 			Type:  "github",
@@ -258,7 +258,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.App{
 			Id:    1,
 			Name:  "github",
 			Type:  "github",
@@ -266,7 +266,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 			Token: "test",
 		}, nil),
 		repo.EXPECT().UpdateAppByID(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
-		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any()).Return(pb.App{
+		repo.EXPECT().GetAppByType(gomock.Any(), gomock.Any(), gomock.Any()).Return(pb.App{
 			Id: 0,
 		}, nil),
 		repo.EXPECT().CreateApp(gomock.Any(), gomock.Any()).Return(int64(1), nil),
@@ -1152,15 +1152,15 @@ func TestListCron(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = rdb.Del(context.Background(), CronKey).Result()
+	_, err = rdb.Del(context.Background(), enum.CronKey).Result()
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = rdb.HMSet(context.Background(), CronKey, "test1", "true").Result()
+	_, err = rdb.HMSet(context.Background(), enum.CronKey, "test1", "true").Result()
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = rdb.HMSet(context.Background(), CronKey, "test2", "true").Result()
+	_, err = rdb.HMSet(context.Background(), enum.CronKey, "test2", "true").Result()
 	if err != nil {
 		t.Fatal(err)
 	}

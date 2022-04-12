@@ -96,7 +96,8 @@ func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
 		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
-		t string
+		userId int64
+		t      string
 	}
 	tests := []struct {
 		name    string
@@ -104,11 +105,11 @@ func TestMiddleRepository_GetAvailableAppByType(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{t: "1"}, true},
+		{"case1", sto, args{userId: 1, t: "1"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetAvailableAppByType(context.Background(), tt.args.t)
+			_, err := tt.r.GetAvailableAppByType(context.Background(), tt.args.userId, tt.args.t)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.GetAvailableAppByType() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -123,7 +124,8 @@ func TestMiddleRepository_GetAppByType(t *testing.T) {
 		t.Fatalf("create middle Repository error, %+v", err)
 	}
 	type args struct {
-		t string
+		userId int64
+		t      string
 	}
 	tests := []struct {
 		name    string
@@ -131,11 +133,11 @@ func TestMiddleRepository_GetAppByType(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{t: "1"}, true},
+		{"case1", sto, args{userId: 1, t: "1"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.GetAppByType(context.Background(), tt.args.t)
+			_, err := tt.r.GetAppByType(context.Background(), tt.args.userId, tt.args.t)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.GetAppByType() error = %v, wantErr %v", err, tt.wantErr)
 				return
