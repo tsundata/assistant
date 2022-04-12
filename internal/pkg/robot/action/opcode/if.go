@@ -20,7 +20,7 @@ func (o *If) Doc() string {
 	return "if"
 }
 
-func (o *If) Run(_ context.Context,  inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
+func (o *If) Run(_ context.Context, inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
 	if integer, ok := inCtx.Value.(int64); ok {
 		inCtx.SetContinue(integer >= 0)
 		return nil, nil

@@ -283,7 +283,7 @@ func (s *Crawler) send(channel, name string, out []string) {
 	fmt.Println(channel)
 	_, err = s.message.Send(ctx, &pb.MessageRequest{
 		Message: &pb.Message{
-			UserId:     enum.SuperUserID,//fixme
+			UserId:     enum.SuperUserID, //fixme
 			Sender:     0,
 			SenderType: enum.MessageBotType,
 			Type:       string(enum.MessageTypeText),

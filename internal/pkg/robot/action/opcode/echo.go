@@ -35,12 +35,12 @@ func (o *Echo) Run(ctx context.Context, inCtx *inside.Context, comp component.Co
 			return false, nil
 		}
 		err := comp.GetBus().Publish(ctx, enum.Message, event.MessageChannelSubject, pb.Message{
-			UserId:    inCtx.Message.GetUserId(),
-			GroupId:   inCtx.Message.GetGroupId(),
-			Text:      text,
-			Type:      string(enum.MessageTypeText),
-			Sequence:  inCtx.Message.GetSequence(),
-			SendTime:  util.Now(),
+			UserId:   inCtx.Message.GetUserId(),
+			GroupId:  inCtx.Message.GetGroupId(),
+			Text:     text,
+			Type:     string(enum.MessageTypeText),
+			Sequence: inCtx.Message.GetSequence(),
+			SendTime: util.Now(),
 		})
 		if err != nil {
 			return false, err

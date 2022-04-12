@@ -21,9 +21,8 @@ func triggers() []Trigger {
 }
 
 func Process(ctx context.Context, botCtx bot.Context, comp component.Component, message *pb.Message) error {
-	triggers := triggers()
 	wg := sync.WaitGroup{}
-	for _, item := range triggers {
+	for _, item := range triggers() {
 		wg.Add(1)
 		go func(t Trigger) {
 			defer wg.Done()

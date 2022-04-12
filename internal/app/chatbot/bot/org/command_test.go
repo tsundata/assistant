@@ -41,8 +41,8 @@ func TestObjListCommand(t *testing.T) {
 	gomock.InOrder(
 		org.EXPECT().GetObjectives(gomock.Any(), gomock.Any()).Return(&pb.ObjectivesReply{Objective: []*pb.Objective{
 			{
-				Id:    1,
-				Name:  "obj",
+				Id:   1,
+				Name: "obj",
 			},
 		}}, nil),
 	)

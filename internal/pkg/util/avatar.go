@@ -20,7 +20,7 @@ func Avatar(s string) ([]byte, error) {
 	}
 	s = strings.ToUpper(string(r[0]))
 
-	rInt,err := rand.Int(rand.Reader, big.NewInt(int64(len(palette))))
+	rInt, err := rand.Int(rand.Reader, big.NewInt(int64(len(palette))))
 	if err != nil {
 		return nil, err
 	}

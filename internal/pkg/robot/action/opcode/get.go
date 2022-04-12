@@ -24,7 +24,7 @@ func (o *Get) Doc() string {
 	return "get [any] : (nil -> any)"
 }
 
-func (o *Get) Run(_ context.Context,  inCtx *inside.Context, _ component.Component, params []interface{}) (interface{}, error) {
+func (o *Get) Run(_ context.Context, inCtx *inside.Context, _ component.Component, params []interface{}) (interface{}, error) {
 	if len(params) != 1 {
 		return nil, app.ErrInvalidParameter
 	}

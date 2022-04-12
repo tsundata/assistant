@@ -20,7 +20,7 @@ func (o *Else) Doc() string {
 	return "else"
 }
 
-func (o *Else) Run(_ context.Context,  inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
+func (o *Else) Run(_ context.Context, inCtx *inside.Context, _ component.Component, _ []interface{}) (interface{}, error) {
 	inCtx.SetContinue(!inCtx.Continue)
 	return nil, nil
 }

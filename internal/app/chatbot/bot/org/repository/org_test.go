@@ -23,7 +23,7 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 		wantErr bool
 	}{
 		{"case1", sto, args{objective: &pb.Objective{
-			Name:  "obj1",
+			Name: "obj1",
 		}}, false},
 	}
 	for _, tt := range tests {
