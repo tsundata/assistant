@@ -16,11 +16,11 @@ func TestKeyword(t *testing.T) {
 	ctrl := bot.MockController(map[string][]interface{}{
 		"keyword": {"test"},
 	})
-	out, err := p.Run(context.Background(), ctrl, input)
+	output, err := p.Run(context.Background(), ctrl, input)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Len(t, input.Stack[p.Name()], 1)
 	assert.Equal(t, input.Stack[p.Name()], []string{"test"})
-	assert.Equal(t, input, out)
+	assert.Equal(t, input, output)
 }

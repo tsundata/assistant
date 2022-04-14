@@ -29,7 +29,8 @@ var setting []bot.FieldItem
 var workflowRules = bot.WorkflowRule{
 	Plugin: []bot.PluginRule{
 		{
-			Name: "trim",
+			Name: "expr",
+			Param: []interface{}{"Trim(Value)"},
 		},
 		{
 			Name:  "keyword",

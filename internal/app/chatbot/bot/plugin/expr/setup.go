@@ -1,15 +1,15 @@
-package any
+package expr
 
 import (
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 )
 
 func init() {
-	bot.RegisterPlugin("any", setup)
+	bot.RegisterPlugin("expr", setup)
 }
 
 func setup(c *bot.Controller) error {
-	a := Any{}
+	a := Expr{}
 	bot.GetConfig(c).AddPlugin(func(next bot.PluginHandler) bot.PluginHandler {
 		a.Next = next
 		return a

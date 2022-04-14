@@ -14,7 +14,7 @@ func (a Keyword) Run(ctx context.Context, ctrl *bot.Controller, input bot.Plugin
 	var in []string
 	for _, keyword := range bot.Param(ctrl, a) {
 		if s, ok := keyword.(string); ok {
-			if strings.Index(input.Value, s) > -1 {
+			if strings.Contains(input.Value, s) {
 				in = append(in, s)
 			}
 		}
