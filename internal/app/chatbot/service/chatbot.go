@@ -240,9 +240,9 @@ func (s *Chatbot) Handle(ctx context.Context, payload *pb.ChatbotRequest) (*pb.C
 				Type:         string(item.Type()),
 				Text:         text,
 				Payload:      string(j),
-				Status:       0,
+				Status:       enum.MessageCreatedStatus,
 				Direction:    enum.MessageIncomingDirection,
-				SendTime:     util.Format(time.Now().Unix()),
+				SendTime:     util.Now(),
 			}
 			messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 			if err != nil {
@@ -299,7 +299,7 @@ func (s *Chatbot) Action(ctx context.Context, payload *pb.BotRequest) (*pb.State
 			Payload:      string(j),
 			Status:       0,
 			Direction:    enum.MessageIncomingDirection,
-			SendTime:     util.Format(time.Now().Unix()),
+			SendTime:     util.Now(),
 		}
 		messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 		if err != nil {
@@ -360,7 +360,7 @@ func (s *Chatbot) Form(ctx context.Context, payload *pb.BotRequest) (*pb.StateRe
 			Payload:      string(j),
 			Status:       0,
 			Direction:    enum.MessageIncomingDirection,
-			SendTime:     util.Format(time.Now().Unix()),
+			SendTime:     util.Now(),
 		}
 		messageReply, err := s.message.Save(ctx, &pb.MessageRequest{Message: outMessage})
 		if err != nil {

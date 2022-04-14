@@ -3,6 +3,7 @@ package util
 import "time"
 
 const HourLayout = "2006-01-02 15:04"
+const TimeLayout = "2006-01-02 15:04:05"
 
 func IsApartDay(check, last, now string, day int) (bool, error) {
 	nowTime, err := time.ParseInLocation(HourLayout, now, time.Local)
@@ -50,13 +51,9 @@ func IsAnnually(check, last, now string) (bool, error) {
 }
 
 func Now() string {
-	return time.Now().Format("2006-01-02 15:04:05")
+	return time.Now().In(time.Local).Format(TimeLayout)
 }
 
 func Format(sec int64) string {
-	loc, err := time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		panic(err)
-	}
-	return time.Unix(sec, 0).In(loc).Format("2006-01-02 15:04:05")
+	return time.Unix(sec, 0).In(time.Local).Format(TimeLayout)
 }

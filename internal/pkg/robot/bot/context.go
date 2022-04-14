@@ -7,6 +7,6 @@ type Context struct {
 	Message   *pb.Message
 	FieldItem []FieldItem
 
-	Input  interface{}
-	Output interface{}
+	Input  PluginValue
+	Output PluginValue
 }

@@ -12,7 +12,7 @@ func TestAny(t *testing.T) {
 	p := Any{
 		Next: end2.End{},
 	}
-	input := "test"
+	input := bot.PluginValue{Value: "test"}
 	out, err := p.Run(context.Background(), bot.MockController(), input)
 	if err != nil {
 		t.Fatal(err)

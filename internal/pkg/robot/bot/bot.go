@@ -92,19 +92,22 @@ func NewBot(metadata Metadata, settings []FieldItem,
 		TagRule:      tagRule,
 		config:       cfg,
 	}
-	ctrl := &Controller{
+	b.ctrl = &Controller{
 		Instance:    b,
 		Config:      cfg,
 		PluginParam: make(map[string][]interface{}),
 	}
-	b.ctrl = ctrl
 
+	return b, nil
+}
+
+func (b *Bot) RunPlugin(ctx context.Context, comp component.Component, input PluginValue) (PluginValue, error) {
 	// setup plugins
-	err := SetupPlugins(ctrl, workflowRule.Plugin)
+	err := SetupPlugins(b.ctrl, b.WorkflowRule.Plugin)
 	if err != nil {
-		return nil, err
+		return PluginValue{}, err
 	}
-	b.plugin = cfg.Plugin
+	b.plugin = b.ctrl.Config.Plugin
 
 	// plugin chain
 	var stack PluginHandler
@@ -114,10 +117,7 @@ func NewBot(metadata Metadata, settings []FieldItem,
 	}
 	b.config.PluginChain = stack
 
-	return b, nil
-}
-
-func (b *Bot) RunPlugin(ctx context.Context, comp component.Component, input interface{}) (interface{}, error) {
+	// run chain
 	b.ctrl.Comp = comp
 	if b.config.PluginChain != nil {
 		return b.config.PluginChain.Run(ctx, b.ctrl, input)

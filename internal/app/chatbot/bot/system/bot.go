@@ -29,14 +29,11 @@ var setting []bot.FieldItem
 var workflowRules = bot.WorkflowRule{
 	Plugin: []bot.PluginRule{
 		{
-			Name: "any",
+			Name: "trim",
 		},
 		{
-			Name:  "filter",
-			Param: []interface{}{1},
-		},
-		{
-			Name: "save",
+			Name:  "keyword",
+			Param: []interface{}{"info", "version"},
 		},
 	},
 	RunFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {

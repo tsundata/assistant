@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
+	"log"
 )
 
 var (
@@ -44,16 +45,21 @@ func registerPlugin(name string, plugin SetupPlugin) {
 		panic("plugin named " + name + " already registered")
 	}
 	plugins[name] = plugin
-	fmt.Println("[robot] register plugin", name)
+	log.Println("[robot] register plugin:", name)
 }
 
 // -----
+
+type PluginValue struct {
+	Value string
+	Stack map[string]interface{}
+}
 
 type (
 	Plugin func(next PluginHandler) PluginHandler
 
 	PluginHandler interface {
-		Run(ctx context.Context, ctrl *Controller, input interface{}) (interface{}, error)
+		Run(ctx context.Context, ctrl *Controller, input PluginValue) (PluginValue, error)
 		Name() string
 	}
 )
@@ -63,13 +69,15 @@ func Error(name string, err error) error {
 	return fmt.Errorf("%s/%s: %s", "plugin", name, err)
 }
 
-func NextOrFailure(ctx context.Context, name string, next PluginHandler, ctrl *Controller, input interface{}) (interface{}, error) {
+func NextOrFailure(ctx context.Context, name string, next PluginHandler, ctrl *Controller, input PluginValue) (PluginValue, error) {
 	if next != nil {
-		return next.Run(ctx, ctrl, input)
+		out, err := next.Run(ctx, ctrl, input)
+		log.Println("[robot] run plugin:", name, input, out)
+		return out, err
 	}
-	return nil, Error(name, errors.New("no next plugin found"))
+	return PluginValue{Value: ""}, Error(name, errors.New("no next plugin found"))
 }
 
-func Param(ctrl *Controller, p PluginHandler) interface{} {
+func Param(ctrl *Controller, p PluginHandler) []interface{} {
 	return ctrl.PluginParam[p.Name()]
 }

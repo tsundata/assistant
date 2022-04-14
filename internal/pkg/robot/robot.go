@@ -88,7 +88,7 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, botCtx bot.Context, comp co
 	}
 	var err error
 	result := make(map[int64][]pb.MsgPayload)
-	botCtx.Input = tokens[0].Value
+	botCtx.Input = bot.PluginValue{Value: tokens[0].Value, Stack: make(map[string]interface{})}
 	for _, item := range bots {
 		fmt.Println("[robot] run bot", item.Identifier)
 		if b, ok := BotMap[item.Identifier]; ok {
@@ -96,12 +96,11 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, botCtx bot.Context, comp co
 			if err != nil {
 				return nil, err
 			}
-			if botCtx.Input == nil {
-				break
-			}
 
 			runResult := b.WorkflowRule.RunFunc(ctx, botCtx, comp)
 			botCtx.Input = botCtx.Output
+			botCtx.Input.Stack = make(map[string]interface{})
+			botCtx.Output = bot.PluginValue{}
 			result[item.Id] = append(result[item.Id], runResult...)
 		}
 	}

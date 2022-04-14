@@ -3,17 +3,13 @@ package filter
 import (
 	"context"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
-	"log"
 )
 
 type Filter struct {
 	Next bot.PluginHandler
 }
 
-func (a Filter) Run(ctx context.Context, ctrl *bot.Controller, input interface{}) (interface{}, error) {
-	log.Println(a.Name())
-	param := bot.Param(ctrl, a)
-	log.Println(param)
+func (a Filter) Run(ctx context.Context, ctrl *bot.Controller, input bot.PluginValue) (bot.PluginValue, error) {
 	return bot.NextOrFailure(ctx, a.Name(), a.Next, ctrl, input)
 }
 
