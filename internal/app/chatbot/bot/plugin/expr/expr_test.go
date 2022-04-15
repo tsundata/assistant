@@ -3,15 +3,12 @@ package expr
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/plugin/end"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"testing"
 )
 
 func TestExpr(t *testing.T) {
-	p := Expr{
-		Next: end.End{},
-	}
+	p := Expr{}
 
 	type args struct {
 		input  string
@@ -29,11 +26,12 @@ func TestExpr(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			input := bot.PluginValue{Value: tt.args.input, Stack: make(map[string]interface{})}
-			ctrl := bot.MockController(map[string][]interface{}{
-				"expr": {tt.args.code},
-			})
-			output, err := p.Run(context.Background(), ctrl, input)
+			input := bot.PluginValue{Value: tt.args.input, Stack: []interface{}{}}
+			ctrl := &bot.Controller{}
+			params := []interface{}{
+				tt.args.code,
+			}
+			output, err := p.Run(context.Background(), ctrl, params, input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TestExpr error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -42,7 +40,8 @@ func TestExpr(t *testing.T) {
 				return
 			}
 			input.Value = tt.args.output
-			assert.Equal(t, output.Stack[p.Name()], tt.args.stack)
+			input.Stack = []interface{}{tt.args.stack}
+			assert.Equal(t, output.Stack[0], tt.args.stack)
 			assert.Equal(t, input, output)
 		})
 	}

@@ -86,11 +86,22 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, botCtx bot.Context, comp co
 	if len(tokens) == 0 {
 		return map[int64][]pb.MsgPayload{}, nil
 	}
+
+	// sentence
+	var str []string
+	for _, token := range tokens {
+		if token.Type == bot.StringToken {
+			str = append(str, token.Value)
+		}
+	}
+	sentence := strings.Join(str, " ")
+
 	var err error
 	result := make(map[int64][]pb.MsgPayload)
-	botCtx.Input = bot.PluginValue{Value: tokens[0].Value, Stack: make(map[string]interface{})}
+	botCtx.Input = bot.PluginValue{Value: sentence, Stack: []interface{}{}}
+	fmt.Println("[robot] run workflow:", bots, botCtx.Input)
 	for _, item := range bots {
-		fmt.Println("[robot] run bot", item.Identifier)
+		fmt.Println("[robot] 	run bot:", item.Identifier)
 		if b, ok := BotMap[item.Identifier]; ok {
 			botCtx.Input, err = b.RunPlugin(ctx, comp, botCtx.Input)
 			if err != nil {
@@ -98,8 +109,9 @@ func (r *Robot) ProcessWorkflow(ctx context.Context, botCtx bot.Context, comp co
 			}
 
 			runResult := b.WorkflowRule.RunFunc(ctx, botCtx, comp)
+			fmt.Println("[robot] 		run func:", botCtx.Input, runResult)
 			botCtx.Input = botCtx.Output
-			botCtx.Input.Stack = make(map[string]interface{})
+			botCtx.Input.Stack = []interface{}{}
 			botCtx.Output = bot.PluginValue{}
 			result[item.Id] = append(result[item.Id], runResult...)
 		}

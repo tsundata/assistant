@@ -8,15 +8,12 @@ import (
 )
 
 // Expr https://github.com/antonmedv/expr/blob/master/docs/Language-Definition.md
-type Expr struct {
-	Next bot.PluginHandler
-}
+type Expr struct {}
 
-func (a Expr) Run(ctx context.Context, ctrl *bot.Controller, input bot.PluginValue) (bot.PluginValue, error) {
+func (a Expr) Run(_ context.Context, _ *bot.Controller,param []interface{}, input bot.PluginValue) (bot.PluginValue, error) {
 	var in interface{}
-	params := bot.Param(ctrl, a)
-	if len(params) > 0 {
-		if code, ok := params[0].(string); ok {
+	if len(param) > 0 {
+		if code, ok := param[0].(string); ok {
 			program, err := expr.Compile(code, expr.Env(Env{}))
 			if err != nil {
 				return bot.PluginValue{}, err
@@ -31,8 +28,8 @@ func (a Expr) Run(ctx context.Context, ctrl *bot.Controller, input bot.PluginVal
 			}
 		}
 	}
-	input.Stack[a.Name()] = in
-	return bot.NextOrFailure(ctx, a.Name(), a.Next, ctrl, input)
+	input.Stack = append(input.Stack, in)
+	return input, nil
 }
 
 func (a Expr) Name() string {

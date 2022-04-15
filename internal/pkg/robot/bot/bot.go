@@ -3,7 +3,6 @@ package bot
 import (
 	"context"
 	"fmt"
-	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
@@ -16,64 +15,9 @@ type Bot struct {
 	ActionRule   []ActionRule
 	FormRule     []FormRule
 	TagRule      []TagRule
-	plugin       []Plugin
 
-	config *Config
-	ctrl   *Controller
+	ctrl *Controller
 }
-
-type Metadata struct {
-	Name       string
-	Identifier string
-	Detail     string
-	Avatar     string
-}
-
-type FieldItemType string
-
-const (
-	FieldItemTypeString FieldItemType = "string"
-	FieldItemTypeInt    FieldItemType = "int"
-	FieldItemTypeFloat  FieldItemType = "float"
-	FieldItemTypeBool   FieldItemType = "bool"
-)
-
-type FieldItem struct {
-	Key      string        `json:"key"`
-	Type     FieldItemType `json:"type"`
-	Required bool          `json:"required"`
-	Value    interface{}   `json:"value"`
-}
-
-type WorkflowRule struct {
-	Plugin  []PluginRule
-	RunFunc ActFunc
-}
-
-type PluginRule struct {
-	Name  string
-	Param []interface{}
-}
-
-type ActionRule struct {
-	ID         string
-	Title      string
-	OptionFunc map[string]ActFunc
-}
-
-type FormRule struct {
-	ID         string
-	Title      string
-	Field      []FieldItem
-	SubmitFunc ActFunc
-}
-
-type TagRule struct {
-	Tag         string
-	TriggerFunc ActFunc
-}
-
-type ActFunc func(context.Context, Context, component.Component) []pb.MsgPayload
 
 func NewBot(metadata Metadata, settings []FieldItem,
 	workflowRule WorkflowRule,
@@ -81,7 +25,6 @@ func NewBot(metadata Metadata, settings []FieldItem,
 	actionRule []ActionRule,
 	formRule []FormRule,
 	tagRule []TagRule) (*Bot, error) {
-	cfg := &Config{}
 	b := &Bot{
 		Metadata:     metadata,
 		SettingRule:  settings,
@@ -90,39 +33,32 @@ func NewBot(metadata Metadata, settings []FieldItem,
 		ActionRule:   actionRule,
 		FormRule:     formRule,
 		TagRule:      tagRule,
-		config:       cfg,
 	}
 	b.ctrl = &Controller{
-		Instance:    b,
-		Config:      cfg,
-		PluginParam: make(map[string][]interface{}),
+		Instance: b,
 	}
 
 	return b, nil
 }
 
 func (b *Bot) RunPlugin(ctx context.Context, comp component.Component, input PluginValue) (PluginValue, error) {
-	// setup plugins
-	err := SetupPlugins(b.ctrl, b.WorkflowRule.Plugin)
-	if err != nil {
-		return PluginValue{}, err
-	}
-	b.plugin = b.ctrl.Config.Plugin
+	// setup
+	plugin, params := SetupPlugins(b.WorkflowRule.Plugin)
 
-	// plugin chain
-	var stack PluginHandler
-	for i := len(b.plugin) - 1; i >= 0; i-- {
-		stack = b.plugin[i](stack)
-		b.config.RegisterHandler(stack)
-	}
-	b.config.PluginChain = stack
-
-	// run chain
+	// run
+	var err error
 	b.ctrl.Comp = comp
-	if b.config.PluginChain != nil {
-		return b.config.PluginChain.Run(ctx, b.ctrl, input)
+	output := PluginValue{}
+	for i, item := range plugin {
+		output, err = item.Run(ctx, b.ctrl, params[i], input)
+		fmt.Println("[robot] 		run plugin:", item.Name(), params[i], input, output, err)
+		if err != nil {
+			return PluginValue{}, err
+		}
+		input = output
 	}
-	return input, nil
+
+	return output, nil
 }
 
 func (b *Bot) Info() string {

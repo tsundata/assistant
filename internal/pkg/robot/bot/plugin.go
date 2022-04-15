@@ -2,13 +2,11 @@ package bot
 
 import (
 	"context"
-	"fmt"
-	"github.com/pkg/errors"
 	"log"
 )
 
 var (
-	plugins = make(map[string]SetupPlugin)
+	plugins = make(map[string]Plugin)
 )
 
 type SetupFunc func(c *Controller) error
@@ -17,27 +15,19 @@ type SetupPlugin struct {
 	Action SetupFunc
 }
 
-func SetupPlugins(c *Controller, pluginRules []PluginRule) error {
-	pluginRules = append(pluginRules, PluginRule{Name: "end"})
+func SetupPlugins(pluginRules []PluginRule) ([]Plugin, [][]interface{}) {
+	var plugin []Plugin
+	var params [][]interface{}
 	for _, rule := range pluginRules {
-		if plugin, ok := plugins[rule.Name]; ok {
-			c.PluginParam[rule.Name] = rule.Param
-			err := plugin.Action(c)
-			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("plugin/%s", rule.Name))
-			}
+		if p, ok := plugins[rule.Name]; ok {
+			params = append(params, rule.Param)
+			plugin = append(plugin, p)
 		}
 	}
-	return nil
+	return plugin, params
 }
 
-func RegisterPlugin(name string, action SetupFunc) {
-	registerPlugin(name, SetupPlugin{
-		action,
-	})
-}
-
-func registerPlugin(name string, plugin SetupPlugin) {
+func RegisterPlugin(name string, plugin Plugin) {
 	if name == "" {
 		panic("plugin must have a name")
 	}
@@ -52,32 +42,10 @@ func registerPlugin(name string, plugin SetupPlugin) {
 
 type PluginValue struct {
 	Value string
-	Stack map[string]interface{}
+	Stack []interface{}
 }
 
-type (
-	Plugin func(next PluginHandler) PluginHandler
-
-	PluginHandler interface {
-		Run(ctx context.Context, ctrl *Controller, input PluginValue) (PluginValue, error)
-		Name() string
-	}
-)
-
-// Error returns err with 'plugin/name: ' prefixed to it.
-func Error(name string, err error) error {
-	return fmt.Errorf("%s/%s: %s", "plugin", name, err)
-}
-
-func NextOrFailure(ctx context.Context, name string, next PluginHandler, ctrl *Controller, input PluginValue) (PluginValue, error) {
-	if next != nil {
-		out, err := next.Run(ctx, ctrl, input)
-		log.Println("[robot] run plugin:", name, input, out)
-		return out, err
-	}
-	return PluginValue{Value: ""}, Error(name, errors.New("no next plugin found"))
-}
-
-func Param(ctrl *Controller, p PluginHandler) []interface{} {
-	return ctrl.PluginParam[p.Name()]
+type Plugin interface {
+	Run(ctx context.Context, ctrl *Controller, param []interface{}, input PluginValue) (PluginValue, error)
+	Name() string
 }

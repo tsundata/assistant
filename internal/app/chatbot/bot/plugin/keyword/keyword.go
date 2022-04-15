@@ -6,21 +6,19 @@ import (
 	"strings"
 )
 
-type Keyword struct {
-	Next bot.PluginHandler
-}
+type Keyword struct {}
 
-func (a Keyword) Run(ctx context.Context, ctrl *bot.Controller, input bot.PluginValue) (bot.PluginValue, error) {
+func (a Keyword) Run(_ context.Context, _ *bot.Controller, param []interface{}, input bot.PluginValue) (bot.PluginValue, error) {
 	var in []string
-	for _, keyword := range bot.Param(ctrl, a) {
+	for _, keyword := range param {
 		if s, ok := keyword.(string); ok {
 			if strings.Contains(input.Value, s) {
 				in = append(in, s)
 			}
 		}
 	}
-	input.Stack[a.Name()] = in
-	return bot.NextOrFailure(ctx, a.Name(), a.Next, ctrl, input)
+	input.Stack = append(input.Stack, in)
+	return input, nil
 }
 
 func (a Keyword) Name() string {

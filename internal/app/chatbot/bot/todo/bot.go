@@ -1,8 +1,11 @@
 package todo
 
 import (
+	"context"
 	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
 var metadata = bot.Metadata{
@@ -27,7 +30,19 @@ var setting = []bot.FieldItem{
 	},
 }
 
-var workflowRules bot.WorkflowRule
+var workflowRules = bot.WorkflowRule{
+	Plugin: []bot.PluginRule{
+		{
+			Name: "expr",
+			Param: []interface{}{"len(Value)"},
+		},
+	},
+	RunFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
+		return []pb.MsgPayload{
+			pb.TextMsg{Text: "todo workflow run"},
+		}
+	},
+}
 
 var actionRules []bot.ActionRule
 

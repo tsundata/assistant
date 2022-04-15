@@ -6,6 +6,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
+	"github.com/tsundata/assistant/internal/pkg/version"
 )
 
 const (
@@ -29,7 +30,7 @@ var setting []bot.FieldItem
 var workflowRules = bot.WorkflowRule{
 	Plugin: []bot.PluginRule{
 		{
-			Name: "expr",
+			Name:  "expr",
 			Param: []interface{}{"Trim(Value)"},
 		},
 		{
@@ -38,9 +39,18 @@ var workflowRules = bot.WorkflowRule{
 		},
 	},
 	RunFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {
-		return []pb.MsgPayload{
-			pb.TextMsg{Text: "system workflow run"},
+		var result []pb.MsgPayload
+		if a, ok := botCtx.Input.Stack[1].([]string); ok {
+			for _, keyword := range a {
+				switch keyword {
+				case "info":
+					result = append(result, pb.TextMsg{Text: botCtx.Input.Value})
+				case "version":
+					result = append(result, pb.TextMsg{Text: version.Info()})
+				}
+			}
 		}
+		return result
 	},
 }
 
