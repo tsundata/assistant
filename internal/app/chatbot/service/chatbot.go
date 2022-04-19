@@ -442,7 +442,7 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		if err != nil {
 			return nil, err
 		}
-		_, err = s.repo.CreateGroup(ctx, &pb.Group{
+		groupId, err := s.repo.CreateGroup(ctx, &pb.Group{
 			UserId:    id,
 			Name:      defaultGroupName,
 			Avatar:    avatarReply.Text,
@@ -451,6 +451,17 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		})
 		if err != nil {
 			return nil, err
+		}
+		// add default bots
+		bots, err := s.repo.List(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, item := range bots {
+			err = s.repo.CreateGroupBot(ctx, groupId, item)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -488,11 +499,11 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 		}
 
 		res = append(res, &pb.GroupItem{
-			Id:          group.Id,
-			Sequence:    group.Sequence,
-			Type:        group.Type,
-			Name:        group.Name,
-			Avatar:      group.Avatar,
+			Id:       group.Id,
+			Sequence: group.Sequence,
+			Type:     group.Type,
+			Name:     group.Name,
+			Avatar:   group.Avatar,
 			LastMessage: &pb.LastMessage{
 				LastSender: last.Message.GetSenderName(),
 				Content:    last.Message.GetText(),

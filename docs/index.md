@@ -26,14 +26,10 @@
 - chatbot:6000
 - message:6001
 - middle:6002
-- workflow:6003
 - user:6004
-- finance:6007
-- nlp:6008
 - storage:6009
 - task:6010
-
-
+- id:6012
 
 # dev
 
