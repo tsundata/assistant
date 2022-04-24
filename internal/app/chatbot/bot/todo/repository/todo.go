@@ -5,6 +5,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"time"
 )
 
 type TodoRepository interface {
@@ -28,6 +29,8 @@ func NewMysqlTodoRepository(id *global.ID, db *mysql.Conn) TodoRepository {
 
 func (r *MysqlTodoRepository) CreateTodo(ctx context.Context, todo *pb.Todo) (int64, error) {
 	todo.Id = r.id.Generate(ctx)
+	todo.CreatedAt = time.Now().Unix()
+	todo.UpdatedAt = time.Now().Unix()
 	err := r.db.WithContext(ctx).Create(&todo)
 	if err != nil {
 		return 0, nil

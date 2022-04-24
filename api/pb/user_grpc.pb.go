@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // UserSvcClient is the client API for UserSvc service.
@@ -200,8 +199,8 @@ type UnsafeUserSvcServer interface {
 	mustEmbedUnimplementedUserSvcServer()
 }
 
-func RegisterUserSvcServer(s grpc.ServiceRegistrar, srv UserSvcServer) {
-	s.RegisterService(&UserSvc_ServiceDesc, srv)
+func RegisterUserSvcServer(s *grpc.Server, srv UserSvcServer) {
+	s.RegisterService(&_UserSvc_serviceDesc, srv)
 }
 
 func _UserSvc_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -402,10 +401,7 @@ func _UserSvc_BindDevice_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserSvc_ServiceDesc is the grpc.ServiceDesc for UserSvc service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var UserSvc_ServiceDesc = grpc.ServiceDesc{
+var _UserSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.UserSvc",
 	HandlerType: (*UserSvcServer)(nil),
 	Methods: []grpc.MethodDesc{

@@ -9,6 +9,8 @@ import (
 	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
 	orgRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
 	orgService "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	systemRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
+	systemService "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
 	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
 	todoService "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
@@ -55,6 +57,8 @@ var providerSet = wire.NewSet(
 	orgService.ProviderSet,
 	todoRepository.ProviderSet,
 	todoService.ProviderSet,
+	systemRepository.ProviderSet,
+	systemService.ProviderSet,
 	orgRepository.ProviderSet,
 	financeService.ProviderSet,
 )

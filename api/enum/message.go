@@ -14,6 +14,7 @@ const (
 	MessageTypeAction   MessageType = "action"
 	MessageTypeForm     MessageType = "form"
 	MessageTypeTable    MessageType = "table"
+	MessageTypeDigit    MessageType = "digit"
 )
 
 const (

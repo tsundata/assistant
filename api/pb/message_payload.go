@@ -125,3 +125,12 @@ type TableMsg struct {
 func (t TableMsg) Type() enum.MessageType {
 	return enum.MessageTypeTable
 }
+
+type DigitMsg struct {
+	Title string `json:"title"`
+	Digit int    `json:"digit"`
+}
+
+func (a DigitMsg) Type() enum.MessageType {
+	return enum.MessageTypeDigit
+}

@@ -102,3 +102,27 @@ CREATE TABLE `inboxes`
     INDEX `status` (`status`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `counters`
+(
+    `id`         bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id`    bigint          NOT NULL DEFAULT '0',
+    `flag`       varchar(128)    NOT NULL DEFAULT '',
+    `digit`      bigint          NOT NULL DEFAULT '0',
+    `status`     tinyint         NOT NULL DEFAULT '0',
+    `created_at` int             NOT NULL DEFAULT '0',
+    `updated_at` int             NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `counter_records`
+(
+    `id`         bigint unsigned NOT NULL AUTO_INCREMENT,
+    `counter_id` bigint          NOT NULL DEFAULT '0',
+    `digit`      bigint          NOT NULL DEFAULT '0',
+    `created_at` int             NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4

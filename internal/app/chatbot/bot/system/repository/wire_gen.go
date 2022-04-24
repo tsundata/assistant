@@ -21,7 +21,7 @@ import (
 
 // Injectors from wire.go:
 
-func CreateMiddleRepository(id string) (MiddleRepository, error) {
+func CreateSystemRepository(id string) (SystemRepository, error) {
 	client, err := etcd.New()
 	if err != nil {
 		return nil, err
@@ -55,10 +55,10 @@ func CreateMiddleRepository(id string) (MiddleRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := NewMysqlMiddleRepository(globalID, conn)
-	return middleRepository, nil
+	systemRepository := NewMysqlSystemRepository(logLogger, globalID, conn)
+	return systemRepository, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet, global.ProviderSet, rpcclient.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rollbar.ProviderSet, mysql.ProviderSet, newrelic.ProviderSet, global.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, rpcclient.ProviderSet)

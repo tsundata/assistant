@@ -103,6 +103,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/message_grpc.pb.go -destination=./mock/message_client.go
       - mockgen -package=mock -source=./api/pb/middle_grpc.pb.go -destination=./mock/middle_client.go
       - mockgen -package=mock -source=./api/pb/todo_grpc.pb.go -destination=./mock/todo_client.go
+      - mockgen -package=mock -source=./api/pb/system_grpc.pb.go -destination=./mock/system_client.go
       - mockgen -package=mock -source=./api/pb/user_grpc.pb.go -destination=./mock/user_client.go
       - mockgen -package=mock -source=./api/pb/chatbot_grpc.pb.go -destination=./mock/chatbot_client.go
       - mockgen -package=mock -source=./api/pb/org_grpc.pb.go -destination=./mock/org_client.go
@@ -110,6 +111,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/finance_grpc.pb.go -destination=./mock/finance_client.go
       - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
       - mockgen -package=mock -source=./internal/app/chatbot/bot/todo/repository/todo.go -destination=./mock/todo_repository.go
+      - mockgen -package=mock -source=./internal/app/chatbot/bot/system/repository/system.go -destination=./mock/system_repository.go
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
       - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go

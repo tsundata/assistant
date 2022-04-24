@@ -428,4 +428,99 @@ var commandRules = []command.Rule{
 			}}
 		},
 	},
+	{
+		Define: `counters`,
+		Help:   `List Counter`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			reply, err := comp.System().GetCounters(ctx, &pb.CounterRequest{})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.Counters) > 0 {
+				header = []string{"No", "Title", "Digit"}
+				for i, item := range reply.Counters {
+					row = append(row, []interface{}{i + 1, item.Flag, item.Digit})
+				}
+			}
+
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Counter",
+				Header: header,
+				Row:    row,
+			}}
+		},
+	},
+	{
+		Define: "counter [string]",
+		Help:   `Count things`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(1)}
+			find, err := comp.System().GetCounterByFlag(ctx, &pb.CounterRequest{Counter: counter})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			if find.Counter.Id > 0 {
+				return []pb.MsgPayload{pb.DigitMsg{
+					Title: find.Counter.Flag,
+					Digit: int(find.Counter.Digit),
+				}}
+			}
+			_, err = comp.System().CreateCounter(ctx, &pb.CounterRequest{Counter: counter})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			return []pb.MsgPayload{pb.DigitMsg{
+				Title: counter.Flag,
+				Digit: int(counter.Digit),
+			}}
+		},
+	},
+	{
+		Define: "increase [string]",
+		Help:   `Increase Counter`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(1)}
+			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			return []pb.MsgPayload{pb.DigitMsg{
+				Title: latest.Counter.Flag,
+				Digit: int(latest.Counter.Digit),
+			}}
+		},
+	},
+	{
+		Define: "decrease [string]",
+		Help:   `Decrease Counter`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(-1)}
+			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			return []pb.MsgPayload{pb.DigitMsg{
+				Title: latest.Counter.Flag,
+				Digit: int(latest.Counter.Digit),
+			}}
+		},
+	},
+	{
+		Define: "reset [string]",
+		Help:   `Reset Counter`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			counter := &pb.Counter{Flag: tokens[1].Value.(string)}
+			latest, err := comp.System().ResetCounter(ctx, &pb.CounterRequest{Counter: counter})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			return []pb.MsgPayload{pb.DigitMsg{
+				Title: latest.Counter.Flag,
+				Digit: int(latest.Counter.Digit),
+			}}
+		},
+	},
 }
