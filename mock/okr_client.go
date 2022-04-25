@@ -56,6 +56,26 @@ func (mr *MockOkrSvcClientMockRecorder) CreateKeyResult(ctx, in interface{}, opt
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResult", reflect.TypeOf((*MockOkrSvcClient)(nil).CreateKeyResult), varargs...)
 }
 
+// CreateKeyResultValue mocks base method.
+func (m *MockOkrSvcClient) CreateKeyResultValue(ctx context.Context, in *pb.KeyResultValueRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateKeyResultValue", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateKeyResultValue indicates an expected call of CreateKeyResultValue.
+func (mr *MockOkrSvcClientMockRecorder) CreateKeyResultValue(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResultValue", reflect.TypeOf((*MockOkrSvcClient)(nil).CreateKeyResultValue), varargs...)
+}
+
 // CreateObjective mocks base method.
 func (m *MockOkrSvcClient) CreateObjective(ctx context.Context, in *pb.ObjectiveRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -232,6 +252,21 @@ func (m *MockOkrSvcServer) CreateKeyResult(arg0 context.Context, arg1 *pb.KeyRes
 func (mr *MockOkrSvcServerMockRecorder) CreateKeyResult(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResult", reflect.TypeOf((*MockOkrSvcServer)(nil).CreateKeyResult), arg0, arg1)
+}
+
+// CreateKeyResultValue mocks base method.
+func (m *MockOkrSvcServer) CreateKeyResultValue(arg0 context.Context, arg1 *pb.KeyResultValueRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateKeyResultValue", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateKeyResultValue indicates an expected call of CreateKeyResultValue.
+func (mr *MockOkrSvcServerMockRecorder) CreateKeyResultValue(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResultValue", reflect.TypeOf((*MockOkrSvcServer)(nil).CreateKeyResultValue), arg0, arg1)
 }
 
 // CreateObjective mocks base method.

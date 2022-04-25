@@ -123,7 +123,7 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 	sequence := int64(0)
 	if message.SenderType == enum.MessageUserType {
 		var max pb.Message
-		err = r.db.Where("user_id = ?", message.UserId).Order("sequence DESC").Take(&max).Error
+		err = r.db.WithContext(ctx).Where("user_id = ?", message.UserId).Order("sequence DESC").Take(&max).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, err
 		}

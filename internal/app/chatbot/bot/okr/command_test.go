@@ -41,8 +41,10 @@ func TestObjListCommand(t *testing.T) {
 	gomock.InOrder(
 		okr.EXPECT().GetObjectives(gomock.Any(), gomock.Any()).Return(&pb.ObjectivesReply{Objective: []*pb.Objective{
 			{
-				Id:    1,
-				Title: "obj",
+				Id:       1,
+				UserId:   1,
+				Sequence: 1,
+				Title:    "obj",
 			},
 		}}, nil),
 	)
@@ -52,7 +54,7 @@ func TestObjListCommand(t *testing.T) {
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
 		Title:  "Objectives",
-		Header: []string{"Id", "Name"},
+		Header: []string{"Sequence", "Name"},
 		Row: [][]interface{}{
 			{"1", "obj"},
 		},
@@ -109,9 +111,9 @@ func TestKrListCommand(t *testing.T) {
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
 		Title:  "KeyResult",
-		Header: []string{"Id", "Name", "OID", "Complete"},
+		Header: []string{"Id", "Name", "OID"},
 		Row: [][]interface{}{
-			{"1", "kr", "1", "false"},
+			{"1", "kr", "1"},
 		},
 	}}, res)
 }

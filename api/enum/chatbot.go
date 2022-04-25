@@ -17,3 +17,10 @@ const (
 	TriggerWebhookType = "webhook"
 	TriggerCronType    = "cron"
 )
+
+const (
+	ValueSumMode  = "sum"
+	ValueLastMode = "last"
+	ValueAvgMode  = "avg"
+	ValueMaxMode  = "max"
+)

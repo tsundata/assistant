@@ -105,7 +105,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	systemRepository := repository2.NewMysqlSystemRepository(logLogger, globalID, conn)
 	locker := global.NewLocker(client)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	okrRepository := repository3.NewMysqlOkrRepository(globalID, conn)
+	okrRepository := repository3.NewMysqlOkrRepository(locker, globalID, conn)
 	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
 	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := New(componentComponent)

@@ -80,7 +80,7 @@ func TestOkrRepository_ListObjectives(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListObjectives(context.Background())
+			_, err := tt.r.ListObjectives(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OkrRepository.ListObjectives() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -186,7 +186,7 @@ func TestOkrRepository_ListKeyResults(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListKeyResults(context.Background())
+			_, err := tt.r.ListKeyResults(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OkrRepository.ListKeyResults() error = %v, wantErr %v", err, tt.wantErr)
 				return

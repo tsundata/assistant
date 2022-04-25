@@ -5,6 +5,12 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 )
 
+const (
+	CreateObjectiveFormID      = "create_objective"
+	CreateKeyResultFormID      = "create_key_result"
+	CreateKeyResultValueFormID = "create_key_result_value"
+)
+
 var metadata = bot.Metadata{
 	Name:       "Okr",
 	Identifier: enum.OkrBot,
@@ -18,7 +24,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, nil, workflowRules, commandRules, nil, nil, nil)
+	Bot, err = bot.NewBot(metadata, nil, workflowRules, commandRules, nil, formRules, nil)
 	if err != nil {
 		panic(err)
 	}

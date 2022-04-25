@@ -26,6 +26,7 @@ func CreateOkrRepository(id string) (OkrRepository, error) {
 	if err != nil {
 		return nil, err
 	}
+	locker := global.NewLocker(client)
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
@@ -55,7 +56,7 @@ func CreateOkrRepository(id string) (OkrRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	okrRepository := NewMysqlOkrRepository(globalID, conn)
+	okrRepository := NewMysqlOkrRepository(locker, globalID, conn)
 	return okrRepository, nil
 }
 

@@ -97,10 +97,10 @@ CREATE TABLE `key_results`
 
 CREATE TABLE `key_result_values`
 (
-    `id`            int unsigned NOT NULL AUTO_INCREMENT,
-    `key_result_id` bigint       NOT NULL,
-    `value`         int          NOT NULL,
-    `created_at`    int          NOT NULL,
+    `id`            bigint unsigned NOT NULL AUTO_INCREMENT,
+    `key_result_id` bigint          NOT NULL,
+    `value`         int             NOT NULL,
+    `created_at`    int             NOT NULL,
     PRIMARY KEY (`id`),
     KEY `key_result_id` (`key_result_id`)
 ) ENGINE = InnoDB

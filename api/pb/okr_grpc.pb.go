@@ -25,6 +25,7 @@ type OkrSvcClient interface {
 	GetKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultReply, error)
 	GetKeyResults(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultsReply, error)
 	DeleteKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
+	CreateKeyResultValue(ctx context.Context, in *KeyResultValueRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type okrSvcClient struct {
@@ -107,6 +108,15 @@ func (c *okrSvcClient) DeleteKeyResult(ctx context.Context, in *KeyResultRequest
 	return out, nil
 }
 
+func (c *okrSvcClient) CreateKeyResultValue(ctx context.Context, in *KeyResultValueRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.OkrSvc/CreateKeyResultValue", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OkrSvcServer is the server API for OkrSvc service.
 // All implementations should embed UnimplementedOkrSvcServer
 // for forward compatibility
@@ -119,6 +129,7 @@ type OkrSvcServer interface {
 	GetKeyResult(context.Context, *KeyResultRequest) (*KeyResultReply, error)
 	GetKeyResults(context.Context, *KeyResultRequest) (*KeyResultsReply, error)
 	DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
+	CreateKeyResultValue(context.Context, *KeyResultValueRequest) (*StateReply, error)
 }
 
 // UnimplementedOkrSvcServer should be embedded to have forward compatible implementations.
@@ -148,6 +159,9 @@ func (UnimplementedOkrSvcServer) GetKeyResults(context.Context, *KeyResultReques
 }
 func (UnimplementedOkrSvcServer) DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteKeyResult not implemented")
+}
+func (UnimplementedOkrSvcServer) CreateKeyResultValue(context.Context, *KeyResultValueRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyResultValue not implemented")
 }
 
 // UnsafeOkrSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -305,6 +319,24 @@ func _OkrSvc_DeleteKeyResult_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OkrSvc_CreateKeyResultValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeyResultValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OkrSvcServer).CreateKeyResultValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.OkrSvc/CreateKeyResultValue",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OkrSvcServer).CreateKeyResultValue(ctx, req.(*KeyResultValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _OkrSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.OkrSvc",
 	HandlerType: (*OkrSvcServer)(nil),
@@ -340,6 +372,10 @@ var _OkrSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteKeyResult",
 			Handler:    _OkrSvc_DeleteKeyResult_Handler,
+		},
+		{
+			MethodName: "CreateKeyResultValue",
+			Handler:    _OkrSvc_CreateKeyResultValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

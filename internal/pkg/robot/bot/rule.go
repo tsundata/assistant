@@ -16,10 +16,11 @@ type Metadata struct {
 type FieldItemType string
 
 const (
-	FieldItemTypeString FieldItemType = "string"
-	FieldItemTypeInt    FieldItemType = "int"
-	FieldItemTypeFloat  FieldItemType = "float"
-	FieldItemTypeBool   FieldItemType = "bool"
+	FieldItemTypeString   FieldItemType = "string"
+	FieldItemTypeInt      FieldItemType = "int"
+	FieldItemTypeFloat    FieldItemType = "float"
+	FieldItemTypeBool     FieldItemType = "bool"
+	FieldItemTypeDatetime FieldItemType = "datetime"
 )
 
 type FieldItem struct {
@@ -27,6 +28,8 @@ type FieldItem struct {
 	Type     FieldItemType `json:"type"`
 	Required bool          `json:"required"`
 	Value    interface{}   `json:"value"`
+	Default  interface{}   `json:"default"`
+	Intro    string        `json:"intro"`
 }
 
 type WorkflowRule struct {

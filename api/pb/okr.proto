@@ -21,6 +21,7 @@ service OkrSvc {
   rpc GetKeyResult(KeyResultRequest) returns (KeyResultReply) {}
   rpc GetKeyResults(KeyResultRequest) returns (KeyResultsReply) {}
   rpc DeleteKeyResult(KeyResultRequest) returns (StateReply) {}
+  rpc CreateKeyResultValue(KeyResultValueRequest) returns (StateReply) {}
 }
 
 message Objective {
@@ -114,6 +115,7 @@ message ObjectivesReply {
 message KeyResultRequest {
   KeyResult key_result = 1;
   string tag = 2;
+  int64 objective_sequence = 3;
 }
 
 message KeyResultReply {
@@ -122,4 +124,9 @@ message KeyResultReply {
 
 message KeyResultsReply {
   repeated KeyResult result = 1;
+}
+
+message KeyResultValueRequest {
+  int64 key_result_sequence = 1;
+  int64 value = 2;
 }

@@ -33,6 +33,8 @@ func BotFormMsg(rule []bot.FormRule, formId string) pb.MsgPayload {
 					Type:     string(fieldItem.Type),
 					Required: fieldItem.Required,
 					Value:    fieldItem.Value,
+					Default:  fieldItem.Default,
+					Intro:    fieldItem.Intro,
 				})
 			}
 

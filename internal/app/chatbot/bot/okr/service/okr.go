@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
@@ -18,11 +20,10 @@ func NewOkr(repo repository.OkrRepository, middle pb.MiddleSvcClient) pb.OkrSvcS
 }
 
 func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
-	item := pb.Objective{
-		Title: payload.Objective.GetTitle(),
-	}
+	id, _ := md.FromIncoming(ctx)
+	payload.Objective.UserId = id
 
-	_, err := o.repo.CreateObjective(ctx, &item)
+	objectiveId, err := o.repo.CreateObjective(ctx, payload.Objective)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +33,7 @@ func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 			Model: &pb.ModelTag{
 				Service: enum.Chatbot,
 				Model:   util.ModelName(pb.Objective{}),
-				ModelId: item.Id,
+				ModelId: objectiveId,
 			},
 			Tag: payload.Tag,
 		})
@@ -60,21 +61,13 @@ func (o *Okr) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*
 }
 
 func (o *Okr) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
-	items, err := o.repo.ListObjectives(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := o.repo.ListObjectives(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []*pb.Objective
-	for _, item := range items {
-		res = append(res, &pb.Objective{
-			Id:        item.Id,
-			Title:     item.Title,
-			CreatedAt: item.CreatedAt,
-		})
-	}
-
-	return &pb.ObjectivesReply{Objective: res}, nil
+	return &pb.ObjectivesReply{Objective: items}, nil
 }
 
 func (o *Okr) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
@@ -87,12 +80,37 @@ func (o *Okr) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 }
 
 func (o *Okr) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
-	item := pb.KeyResult{
-		ObjectiveId: payload.KeyResult.GetObjectiveId(),
-		Title:       payload.KeyResult.GetTitle(),
+	id, _ := md.FromIncoming(ctx)
+	payload.KeyResult.UserId = id
+
+	objective, err := o.repo.GetObjectiveBySequence(ctx, id, payload.ObjectiveSequence)
+	if err != nil {
+		return nil, err
 	}
 
-	_, err := o.repo.CreateKeyResult(ctx, &item)
+	// check
+	if payload.KeyResult.TargetValue <= 0 {
+		return nil, errors.New("error key result target value")
+	}
+	if payload.KeyResult.ValueMode != enum.ValueSumMode &&
+		payload.KeyResult.ValueMode != enum.ValueLastMode &&
+		payload.KeyResult.ValueMode != enum.ValueAvgMode &&
+		payload.KeyResult.ValueMode != enum.ValueMaxMode {
+		return nil, errors.New("error key result value mode")
+	}
+
+	// store
+	if payload.KeyResult.InitialValue > 0 {
+		payload.KeyResult.CurrentValue = payload.KeyResult.InitialValue
+	}
+	payload.KeyResult.ObjectiveId = objective.Id
+	keyResultId, err := o.repo.CreateKeyResult(ctx, payload.KeyResult)
+	if err != nil {
+		return nil, err
+	}
+
+	// aggregate
+	err = o.repo.AggregateObjectiveValue(ctx, objective.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +120,7 @@ func (o *Okr) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest)
 			Model: &pb.ModelTag{
 				Service: enum.Chatbot,
 				Model:   util.ModelName(pb.KeyResult{}),
-				ModelId: item.Id,
+				ModelId: keyResultId,
 			},
 			Tag: payload.Tag,
 		})
@@ -132,23 +150,13 @@ func (o *Okr) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*
 }
 
 func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
-	items, err := o.repo.ListKeyResults(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := o.repo.ListKeyResults(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []*pb.KeyResult
-	for _, item := range items {
-		res = append(res, &pb.KeyResult{
-			Id:          item.Id,
-			Title:       item.Title,
-			ObjectiveId: item.ObjectiveId,
-			CreatedAt:   item.CreatedAt,
-			UpdatedAt:   item.UpdatedAt,
-		})
-	}
-
-	return &pb.KeyResultsReply{Result: res}, nil
+	return &pb.KeyResultsReply{Result: items}, nil
 }
 
 func (o *Okr) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
@@ -157,5 +165,26 @@ func (o *Okr) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest)
 		return nil, err
 	}
 
+	return &pb.StateReply{State: true}, nil
+}
+
+func (o *Okr) CreateKeyResultValue(ctx context.Context, payload *pb.KeyResultValueRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	keyResult, err := o.repo.GetKeyResultBySequence(ctx, id, payload.KeyResultSequence)
+	if err != nil {
+		return nil, err
+	}
+	_, err = o.repo.CreateKeyResultValue(ctx, &pb.KeyResultValue{Value: int32(payload.Value), KeyResultId: keyResult.Id})
+	if err != nil {
+		return nil, err
+	}
+	err = o.repo.AggregateKeyResultValue(ctx, keyResult.Id)
+	if err != nil {
+		return nil, err
+	}
+	err = o.repo.AggregateObjectiveValue(ctx, keyResult.ObjectiveId)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.StateReply{State: true}, nil
 }

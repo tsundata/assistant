@@ -116,7 +116,7 @@ func CreateApp(id string) (*app.Application, error) {
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	systemRepository := repository3.NewMysqlSystemRepository(logLogger, globalID, conn)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	okrRepository := repository4.NewMysqlOkrRepository(globalID, conn)
+	okrRepository := repository4.NewMysqlOkrRepository(locker, globalID, conn)
 	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
 	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := rulebot.New(componentComponent)

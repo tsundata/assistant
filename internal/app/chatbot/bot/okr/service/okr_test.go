@@ -112,7 +112,7 @@ func TestOkr_GetObjectives(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListObjectives(gomock.Any()).Return([]*pb.Objective{
+		repo.EXPECT().ListObjectives(gomock.Any(), gomock.Any()).Return([]*pb.Objective{
 			{
 				Id:    1,
 				Title: "obj1",
@@ -301,7 +301,7 @@ func TestOkr_GetKeyResults(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListKeyResults(gomock.Any()).Return([]*pb.KeyResult{
+		repo.EXPECT().ListKeyResults(gomock.Any(), gomock.Any()).Return([]*pb.KeyResult{
 			{
 				Id:          1,
 				ObjectiveId: 1,

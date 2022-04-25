@@ -35,6 +35,34 @@ func (m *MockOkrRepository) EXPECT() *MockOkrRepositoryMockRecorder {
 	return m.recorder
 }
 
+// AggregateKeyResultValue mocks base method.
+func (m *MockOkrRepository) AggregateKeyResultValue(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AggregateKeyResultValue", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AggregateKeyResultValue indicates an expected call of AggregateKeyResultValue.
+func (mr *MockOkrRepositoryMockRecorder) AggregateKeyResultValue(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AggregateKeyResultValue", reflect.TypeOf((*MockOkrRepository)(nil).AggregateKeyResultValue), ctx, id)
+}
+
+// AggregateObjectiveValue mocks base method.
+func (m *MockOkrRepository) AggregateObjectiveValue(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AggregateObjectiveValue", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AggregateObjectiveValue indicates an expected call of AggregateObjectiveValue.
+func (mr *MockOkrRepositoryMockRecorder) AggregateObjectiveValue(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AggregateObjectiveValue", reflect.TypeOf((*MockOkrRepository)(nil).AggregateObjectiveValue), ctx, id)
+}
+
 // CreateKeyResult mocks base method.
 func (m *MockOkrRepository) CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error) {
 	m.ctrl.T.Helper()
@@ -48,6 +76,21 @@ func (m *MockOkrRepository) CreateKeyResult(ctx context.Context, keyResult *pb.K
 func (mr *MockOkrRepositoryMockRecorder) CreateKeyResult(ctx, keyResult interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResult", reflect.TypeOf((*MockOkrRepository)(nil).CreateKeyResult), ctx, keyResult)
+}
+
+// CreateKeyResultValue mocks base method.
+func (m *MockOkrRepository) CreateKeyResultValue(ctx context.Context, keyResultValue *pb.KeyResultValue) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateKeyResultValue", ctx, keyResultValue)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateKeyResultValue indicates an expected call of CreateKeyResultValue.
+func (mr *MockOkrRepositoryMockRecorder) CreateKeyResultValue(ctx, keyResultValue interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateKeyResultValue", reflect.TypeOf((*MockOkrRepository)(nil).CreateKeyResultValue), ctx, keyResultValue)
 }
 
 // CreateObjective mocks base method.
@@ -108,6 +151,21 @@ func (mr *MockOkrRepositoryMockRecorder) GetKeyResultByID(ctx, id interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultByID", reflect.TypeOf((*MockOkrRepository)(nil).GetKeyResultByID), ctx, id)
 }
 
+// GetKeyResultBySequence mocks base method.
+func (m *MockOkrRepository) GetKeyResultBySequence(ctx context.Context, userId, sequence int64) (*pb.KeyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKeyResultBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(*pb.KeyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultBySequence indicates an expected call of GetKeyResultBySequence.
+func (mr *MockOkrRepositoryMockRecorder) GetKeyResultBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultBySequence", reflect.TypeOf((*MockOkrRepository)(nil).GetKeyResultBySequence), ctx, userId, sequence)
+}
+
 // GetObjectiveByID mocks base method.
 func (m *MockOkrRepository) GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error) {
 	m.ctrl.T.Helper()
@@ -123,32 +181,47 @@ func (mr *MockOkrRepositoryMockRecorder) GetObjectiveByID(ctx, id interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectiveByID", reflect.TypeOf((*MockOkrRepository)(nil).GetObjectiveByID), ctx, id)
 }
 
-// ListKeyResults mocks base method.
-func (m *MockOkrRepository) ListKeyResults(ctx context.Context) ([]*pb.KeyResult, error) {
+// GetObjectiveBySequence mocks base method.
+func (m *MockOkrRepository) GetObjectiveBySequence(ctx context.Context, userId, sequence int64) (*pb.Objective, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListKeyResults", ctx)
+	ret := m.ctrl.Call(m, "GetObjectiveBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(*pb.Objective)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetObjectiveBySequence indicates an expected call of GetObjectiveBySequence.
+func (mr *MockOkrRepositoryMockRecorder) GetObjectiveBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectiveBySequence", reflect.TypeOf((*MockOkrRepository)(nil).GetObjectiveBySequence), ctx, userId, sequence)
+}
+
+// ListKeyResults mocks base method.
+func (m *MockOkrRepository) ListKeyResults(ctx context.Context, userId int64) ([]*pb.KeyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListKeyResults", ctx, userId)
 	ret0, _ := ret[0].([]*pb.KeyResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListKeyResults indicates an expected call of ListKeyResults.
-func (mr *MockOkrRepositoryMockRecorder) ListKeyResults(ctx interface{}) *gomock.Call {
+func (mr *MockOkrRepositoryMockRecorder) ListKeyResults(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResults", reflect.TypeOf((*MockOkrRepository)(nil).ListKeyResults), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResults", reflect.TypeOf((*MockOkrRepository)(nil).ListKeyResults), ctx, userId)
 }
 
 // ListObjectives mocks base method.
-func (m *MockOkrRepository) ListObjectives(ctx context.Context) ([]*pb.Objective, error) {
+func (m *MockOkrRepository) ListObjectives(ctx context.Context, userId int64) ([]*pb.Objective, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListObjectives", ctx)
+	ret := m.ctrl.Call(m, "ListObjectives", ctx, userId)
 	ret0, _ := ret[0].([]*pb.Objective)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListObjectives indicates an expected call of ListObjectives.
-func (mr *MockOkrRepositoryMockRecorder) ListObjectives(ctx interface{}) *gomock.Call {
+func (mr *MockOkrRepositoryMockRecorder) ListObjectives(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListObjectives", reflect.TypeOf((*MockOkrRepository)(nil).ListObjectives), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListObjectives", reflect.TypeOf((*MockOkrRepository)(nil).ListObjectives), ctx, userId)
 }
