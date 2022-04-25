@@ -21,7 +21,7 @@ import (
 
 // Injectors from wire.go:
 
-func CreateOrgRepository(id string) (OrgRepository, error) {
+func CreateOkrRepository(id string) (OkrRepository, error) {
 	client, err := etcd.New()
 	if err != nil {
 		return nil, err
@@ -55,8 +55,8 @@ func CreateOrgRepository(id string) (OrgRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	orgRepository := NewMysqlOrgRepository(globalID, conn)
-	return orgRepository, nil
+	okrRepository := NewMysqlOkrRepository(globalID, conn)
+	return okrRepository, nil
 }
 
 // wire.go:

@@ -31,6 +31,6 @@ var testProviderSet = wire.NewSet(
 	rpcclient.ProviderSet,
 )
 
-func CreateOrgRepository(id string) (OrgRepository, error) {
+func CreateOkrRepository(id string) (OkrRepository, error) {
 	panic(wire.Build(testProviderSet))
 }

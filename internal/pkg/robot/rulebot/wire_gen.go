@@ -8,8 +8,8 @@ package rulebot
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
-	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
 	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
 	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
@@ -105,9 +105,9 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	systemRepository := repository2.NewMysqlSystemRepository(logLogger, globalID, conn)
 	locker := global.NewLocker(client)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	orgRepository := repository3.NewMysqlOrgRepository(globalID, conn)
-	orgSvcServer := service4.NewOrg(orgRepository, middleSvcClient)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, orgSvcServer)
+	okrRepository := repository3.NewMysqlOkrRepository(globalID, conn)
+	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
 }

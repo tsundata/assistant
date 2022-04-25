@@ -7,8 +7,8 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	orgRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
-	orgService "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	okrRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	okrService "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
 	systemRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
 	systemService "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
 	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
@@ -54,12 +54,12 @@ var providerSet = wire.NewSet(
 	global.ProviderSet,
 	rabbitmq.ProviderSet,
 	component.ProviderSet,
-	orgService.ProviderSet,
+	okrService.ProviderSet,
 	todoRepository.ProviderSet,
 	todoService.ProviderSet,
 	systemRepository.ProviderSet,
 	systemService.ProviderSet,
-	orgRepository.ProviderSet,
+	okrRepository.ProviderSet,
 	financeService.ProviderSet,
 )
 

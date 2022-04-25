@@ -4,22 +4,22 @@ import (
 	"context"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
+	"github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
-type Org struct {
+type Okr struct {
 	middle pb.MiddleSvcClient
-	repo   repository.OrgRepository
+	repo   repository.OkrRepository
 }
 
-func NewOrg(repo repository.OrgRepository, middle pb.MiddleSvcClient) pb.OrgSvcServer {
-	return &Org{repo: repo, middle: middle}
+func NewOkr(repo repository.OkrRepository, middle pb.MiddleSvcClient) pb.OkrSvcServer {
+	return &Okr{repo: repo, middle: middle}
 }
 
-func (o *Org) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
+func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
 	item := pb.Objective{
-		Name: payload.Objective.GetName(),
+		Title: payload.Objective.GetTitle(),
 	}
 
 	_, err := o.repo.CreateObjective(ctx, &item)
@@ -44,7 +44,7 @@ func (o *Org) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Org) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.ObjectiveReply, error) {
+func (o *Okr) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.ObjectiveReply, error) {
 	find, err := o.repo.GetObjectiveByID(ctx, payload.Objective.GetId())
 	if err != nil {
 		return nil, err
@@ -53,13 +53,13 @@ func (o *Org) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*
 	return &pb.ObjectiveReply{
 		Objective: &pb.Objective{
 			Id:        find.Id,
-			Name:      find.Name,
+			Title:     find.Title,
 			CreatedAt: find.CreatedAt,
 		},
 	}, nil
 }
 
-func (o *Org) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
+func (o *Okr) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
 	items, err := o.repo.ListObjectives(ctx)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (o *Org) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.Ob
 	for _, item := range items {
 		res = append(res, &pb.Objective{
 			Id:        item.Id,
-			Name:      item.Name,
+			Title:     item.Title,
 			CreatedAt: item.CreatedAt,
 		})
 	}
@@ -77,7 +77,7 @@ func (o *Org) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.Ob
 	return &pb.ObjectivesReply{Objective: res}, nil
 }
 
-func (o *Org) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
+func (o *Okr) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
 	err := o.repo.DeleteObjective(ctx, payload.Objective.GetId())
 	if err != nil {
 		return nil, err
@@ -86,10 +86,10 @@ func (o *Org) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Org) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
+func (o *Okr) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
 	item := pb.KeyResult{
 		ObjectiveId: payload.KeyResult.GetObjectiveId(),
-		Name:        payload.KeyResult.GetName(),
+		Title:       payload.KeyResult.GetTitle(),
 	}
 
 	_, err := o.repo.CreateKeyResult(ctx, &item)
@@ -114,7 +114,7 @@ func (o *Org) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest)
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Org) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
+func (o *Okr) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
 	find, err := o.repo.GetKeyResultByID(ctx, payload.KeyResult.GetId())
 	if err != nil {
 		return nil, err
@@ -123,16 +123,15 @@ func (o *Org) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*
 	return &pb.KeyResultReply{
 		KeyResult: &pb.KeyResult{
 			Id:          find.Id,
-			Name:        find.Name,
+			Title:       find.Title,
 			ObjectiveId: find.ObjectiveId,
-			Complete:    find.Complete,
 			CreatedAt:   find.CreatedAt,
 			UpdatedAt:   find.UpdatedAt,
 		},
 	}, nil
 }
 
-func (o *Org) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
+func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
 	items, err := o.repo.ListKeyResults(ctx)
 	if err != nil {
 		return nil, err
@@ -142,9 +141,8 @@ func (o *Org) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.Ke
 	for _, item := range items {
 		res = append(res, &pb.KeyResult{
 			Id:          item.Id,
-			Name:        item.Name,
+			Title:       item.Title,
 			ObjectiveId: item.ObjectiveId,
-			Complete:    item.Complete,
 			CreatedAt:   item.CreatedAt,
 			UpdatedAt:   item.UpdatedAt,
 		})
@@ -153,7 +151,7 @@ func (o *Org) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.Ke
 	return &pb.KeyResultsReply{Result: res}, nil
 }
 
-func (o *Org) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
+func (o *Okr) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
 	err := o.repo.DeleteKeyResult(ctx, payload.KeyResult.GetId())
 	if err != nil {
 		return nil, err

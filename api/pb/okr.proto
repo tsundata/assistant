@@ -1,0 +1,125 @@
+syntax = "proto3";
+package pb;
+
+import "base.proto";
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_getters_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
+
+option go_package = "api/pb";
+
+service OkrSvc {
+  rpc CreateObjective(ObjectiveRequest) returns (StateReply) {}
+  rpc GetObjective(ObjectiveRequest) returns (ObjectiveReply) {}
+  rpc GetObjectives(ObjectiveRequest) returns (ObjectivesReply) {}
+  rpc DeleteObjective(ObjectiveRequest) returns (StateReply) {}
+  rpc CreateKeyResult(KeyResultRequest) returns (StateReply) {}
+  rpc GetKeyResult(KeyResultRequest) returns (KeyResultReply) {}
+  rpc GetKeyResults(KeyResultRequest) returns (KeyResultsReply) {}
+  rpc DeleteKeyResult(KeyResultRequest) returns (StateReply) {}
+}
+
+message Objective {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 3;
+  // @inject_tag: db:"title"
+  string title = 4;
+  // @inject_tag: db:"memo"
+  string memo = 5;
+  // @inject_tag: db:"motive"
+  string motive = 6;
+  // @inject_tag: db:"feasibility"
+  string feasibility = 7;
+  // @inject_tag: db:"created_at"
+  bool is_plan = 8;
+  // @inject_tag: db:"created_at"
+  int64 plan_start = 9;
+  // @inject_tag: db:"updated_at"
+  int64 plan_end = 10;
+  // @inject_tag: db:"total_value"
+  int32 total_value = 11;
+  // @inject_tag: db:"current_value"
+  int32 current_value = 12;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 13;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 14;
+
+  // @inject_tag: gorm:"-"
+  string tag = 15;
+}
+
+message KeyResult {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"objective_id"
+  int64 objective_id = 3;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 4;
+  // @inject_tag: db:"title"
+  string title = 5;
+  // @inject_tag: db:"memo"
+  string memo = 6;
+  // @inject_tag: db:"initial_value"
+  int32 initial_value = 7;
+  // @inject_tag: db:"target_value"
+  int32 target_value = 8;
+  // @inject_tag: db:"current_value"
+  int32 current_value = 9;
+  // @inject_tag: db:"current_value"
+  string value_mode = 10;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 11;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 12;
+
+  // @inject_tag: gorm:"-"
+  string tag = 13;
+}
+
+message KeyResultValue {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"key_result_id"
+  int64 key_result_id = 2;
+  // @inject_tag: db:"value"
+  int32 value = 3;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 4;
+}
+
+message ObjectiveRequest {
+  Objective objective = 1;
+  string tag = 2;
+}
+
+message ObjectiveReply {
+  Objective objective = 1;
+}
+
+message ObjectivesReply {
+  repeated Objective objective = 1;
+}
+
+message KeyResultRequest {
+  KeyResult key_result = 1;
+  string tag = 2;
+}
+
+message KeyResultReply {
+  KeyResult key_result = 1;
+}
+
+message KeyResultsReply {
+  repeated KeyResult result = 1;
+}

@@ -25,7 +25,7 @@ type Comp struct {
 	serverFinance pb.FinanceSvcServer
 	serverTodo    pb.TodoSvcServer
 	serverSystem  pb.SystemSvcServer
-	serverOrg     pb.OrgSvcServer
+	serverOkr     pb.OkrSvcServer
 }
 
 func (c Comp) Message() pb.MessageSvcClient {
@@ -56,8 +56,8 @@ func (c Comp) System() pb.SystemSvcServer {
 	return c.serverSystem
 }
 
-func (c Comp) Org() pb.OrgSvcServer {
-	return c.serverOrg
+func (c Comp) Okr() pb.OkrSvcServer {
+	return c.serverOkr
 }
 
 func (c Comp) Finance() pb.FinanceSvcServer {
@@ -92,7 +92,7 @@ type Component interface {
 	User() pb.UserSvcClient
 	Todo() pb.TodoSvcServer
 	System() pb.SystemSvcServer
-	Org() pb.OrgSvcServer
+	Okr() pb.OkrSvcServer
 	Finance() pb.FinanceSvcServer
 }
 
@@ -111,7 +111,7 @@ func NewComponent(
 	serverFinance pb.FinanceSvcServer,
 	serverTodo pb.TodoSvcServer,
 	serverSystem pb.SystemSvcServer,
-	serverOrg pb.OrgSvcServer,
+	serverOkr pb.OkrSvcServer,
 ) Component {
 	return Comp{
 		Conf:          conf,
@@ -126,7 +126,7 @@ func NewComponent(
 		serverFinance: serverFinance,
 		serverTodo:    serverTodo,
 		serverSystem:  serverSystem,
-		serverOrg:     serverOrg,
+		serverOkr:     serverOkr,
 	}
 }
 
@@ -146,7 +146,7 @@ func MockComponent(deps ...interface{}) Component {
 		finance pb.FinanceSvcServer
 		todo    pb.TodoSvcServer
 		system  pb.SystemSvcServer
-		org     pb.OrgSvcServer
+		okr     pb.OkrSvcServer
 	)
 
 	for _, dep := range deps {
@@ -177,8 +177,8 @@ func MockComponent(deps ...interface{}) Component {
 			todo = v
 		case *mock.MockSystemSvcServer:
 			system = v
-		case *mock.MockOrgSvcServer:
-			org = v
+		case *mock.MockOkrSvcServer:
+			okr = v
 		}
 	}
 
@@ -195,7 +195,7 @@ func MockComponent(deps ...interface{}) Component {
 		serverFinance: finance,
 		serverTodo:    todo,
 		serverSystem:  system,
-		serverOrg:     org,
+		serverOkr:     okr,
 	}
 }
 

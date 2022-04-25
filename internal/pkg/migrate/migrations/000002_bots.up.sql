@@ -53,32 +53,56 @@ create table if not exists `todos`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
-
-create table if not exists `objectives`
+CREATE TABLE `objectives`
 (
-    `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`    BIGINT(19) UNSIGNED NOT NULL,
-    `name`       varchar(50)         NOT NULL DEFAULT '',
-    `created_at` INT(10)             NOT NULL DEFAULT '0',
-    `updated_at` INT(10)             NOT NULL DEFAULT '0',
+    `id`            bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id`       bigint unsigned NOT NULL,
+    `sequence`      int             NOT NULL,
+    `title`         varchar(50)     NOT NULL,
+    `memo`          varchar(300)    NOT NULL,
+    `motive`        varchar(300)    NOT NULL,
+    `feasibility`   varchar(300)    NOT NULL,
+    `is_plan`       tinyint         NOT NULL,
+    `plan_start`    int             NOT NULL,
+    `plan_end`      int             NOT NULL,
+    `total_value`   int             NOT NULL,
+    `current_value` int             NOT NULL,
+    `status`        tinyint         NOT NULL DEFAULT '0',
+    `created_at`    int             NOT NULL DEFAULT '0',
+    `updated_at`    int             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    INDEX `user_id` (`user_id`) USING BTREE
+    KEY `user_id` (`user_id`, `sequence`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
-
-create table if not exists `key_results`
+CREATE TABLE `key_results`
 (
-    `id`           BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`      BIGINT(19) UNSIGNED NOT NULL,
-    `objective_id` INT(10)             NOT NULL,
-    `name`         varchar(50)         NOT NULL DEFAULT '',
-    `complete`     TINYINT(4)          NOT NULL DEFAULT '0',
-    `created_at`   INT(10)             NOT NULL DEFAULT '0',
-    `updated_at`   INT(10)             NOT NULL DEFAULT '0',
+    `id`            bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id`       bigint unsigned NOT NULL,
+    `sequence`      int             NOT NULL,
+    `objective_id`  bigint          NOT NULL,
+    `title`         varchar(50)     NOT NULL,
+    `memo`          varchar(300)    NOT NULL,
+    `initial_value` int             NOT NULL DEFAULT '0',
+    `target_value`  int             NOT NULL,
+    `current_value` int             NOT NULL,
+    `value_mode`    varchar(20)     NOT NULL,
+    `status`        tinyint         NOT NULL DEFAULT '0',
+    `created_at`    int             NOT NULL DEFAULT '0',
+    `updated_at`    int             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    INDEX `user_id` (`user_id`) USING BTREE,
-    INDEX `objective_id` (`objective_id`) USING BTREE
+    KEY `user_id` (`user_id`, `sequence`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `key_result_values`
+(
+    `id`            int unsigned NOT NULL AUTO_INCREMENT,
+    `key_result_id` bigint       NOT NULL,
+    `value`         int          NOT NULL,
+    `created_at`    int          NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `key_result_id` (`key_result_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

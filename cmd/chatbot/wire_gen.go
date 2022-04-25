@@ -9,8 +9,8 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	repository4 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/repository"
-	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/org/service"
+	repository4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
 	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
 	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
 	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
@@ -116,9 +116,9 @@ func CreateApp(id string) (*app.Application, error) {
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	systemRepository := repository3.NewMysqlSystemRepository(logLogger, globalID, conn)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	orgRepository := repository4.NewMysqlOrgRepository(globalID, conn)
-	orgSvcServer := service4.NewOrg(orgRepository, middleSvcClient)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, orgSvcServer)
+	okrRepository := repository4.NewMysqlOkrRepository(globalID, conn)
+	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := rulebot.New(componentComponent)
 	serviceChatbot := service5.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
 	initServer := service5.CreateInitServerFn(serviceChatbot)

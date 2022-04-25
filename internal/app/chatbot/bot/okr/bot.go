@@ -1,4 +1,4 @@
-package org
+package okr
 
 import (
 	"github.com/tsundata/assistant/api/enum"
@@ -6,8 +6,8 @@ import (
 )
 
 var metadata = bot.Metadata{
-	Name:       "Org",
-	Identifier: enum.OrgBot,
+	Name:       "Okr",
+	Identifier: enum.OkrBot,
 	Detail:     "",
 	Avatar:     "",
 }

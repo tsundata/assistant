@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-func TestOrgRepository_CreateObjective(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_CreateObjective(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -18,29 +18,29 @@ func TestOrgRepository_CreateObjective(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
 		{"case1", sto, args{objective: &pb.Objective{
-			Name: "obj1",
+			Title: "obj1",
 		}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.CreateObjective(context.Background(), tt.args.objective)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.CreateObjective() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.CreateObjective() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_GetObjectiveByID(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_GetObjectiveByID(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -48,7 +48,7 @@ func TestOrgRepository_GetObjectiveByID(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
@@ -58,22 +58,22 @@ func TestOrgRepository_GetObjectiveByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetObjectiveByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.GetObjectiveByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.GetObjectiveByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_ListObjectives(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_ListObjectives(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		wantErr bool
 	}{
 		{"list", sto, false},
@@ -82,17 +82,17 @@ func TestOrgRepository_ListObjectives(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.ListObjectives(context.Background())
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.ListObjectives() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.ListObjectives() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_DeleteObjective(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_DeleteObjective(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -100,7 +100,7 @@ func TestOrgRepository_DeleteObjective(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
@@ -109,16 +109,16 @@ func TestOrgRepository_DeleteObjective(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.DeleteObjective(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.DeleteObjective() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.DeleteObjective() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestOrgRepository_CreateKeyResult(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_CreateKeyResult(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -126,27 +126,27 @@ func TestOrgRepository_CreateKeyResult(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
-		{"case1", sto, args{keyResult: &pb.KeyResult{ObjectiveId: 1, Name: "kr1"}}, false},
+		{"case1", sto, args{keyResult: &pb.KeyResult{ObjectiveId: 1, Title: "kr1"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.CreateKeyResult(context.Background(), tt.args.keyResult)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.CreateKeyResult() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.CreateKeyResult() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_GetKeyResultByID(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_GetKeyResultByID(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -154,7 +154,7 @@ func TestOrgRepository_GetKeyResultByID(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
@@ -164,22 +164,22 @@ func TestOrgRepository_GetKeyResultByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.GetKeyResultByID(context.Background(), tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.GetKeyResultByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.GetKeyResultByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_ListKeyResults(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_ListKeyResults(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		wantErr bool
 	}{
 		{"case1", sto, false},
@@ -188,17 +188,17 @@ func TestOrgRepository_ListKeyResults(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.r.ListKeyResults(context.Background())
 			if (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.ListKeyResults() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.ListKeyResults() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
 	}
 }
 
-func TestOrgRepository_DeleteKeyResult(t *testing.T) {
-	sto, err := CreateOrgRepository(enum.Chatbot)
+func TestOkrRepository_DeleteKeyResult(t *testing.T) {
+	sto, err := CreateOkrRepository(enum.Chatbot)
 	if err != nil {
-		t.Fatalf("create org Repository err %+v", err)
+		t.Fatalf("create okr Repository err %+v", err)
 	}
 
 	type args struct {
@@ -206,7 +206,7 @@ func TestOrgRepository_DeleteKeyResult(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		r       OrgRepository
+		r       OkrRepository
 		args    args
 		wantErr bool
 	}{
@@ -215,7 +215,7 @@ func TestOrgRepository_DeleteKeyResult(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.r.DeleteKeyResult(context.Background(), tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("OrgRepository.DeleteKeyResult() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("OkrRepository.DeleteKeyResult() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

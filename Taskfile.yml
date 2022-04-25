@@ -49,7 +49,7 @@ tasks:
       - protoc-go-inject-tag -input=./api/pb/user.pb.go
       - protoc-go-inject-tag -input=./api/pb/message.pb.go
       - protoc-go-inject-tag -input=./api/pb/middle.pb.go
-      - protoc-go-inject-tag -input=./api/pb/org.pb.go
+      - protoc-go-inject-tag -input=./api/pb/okr.pb.go
       - protoc-go-inject-tag -input=./api/pb/finance.pb.go
       - protoc-go-inject-tag -input=./api/pb/todo.pb.go
       - protoc-go-inject-tag -input=./api/pb/chatbot.pb.go
@@ -106,7 +106,7 @@ tasks:
       - mockgen -package=mock -source=./api/pb/system_grpc.pb.go -destination=./mock/system_client.go
       - mockgen -package=mock -source=./api/pb/user_grpc.pb.go -destination=./mock/user_client.go
       - mockgen -package=mock -source=./api/pb/chatbot_grpc.pb.go -destination=./mock/chatbot_client.go
-      - mockgen -package=mock -source=./api/pb/org_grpc.pb.go -destination=./mock/org_client.go
+      - mockgen -package=mock -source=./api/pb/okr_grpc.pb.go -destination=./mock/okr_client.go
       - mockgen -package=mock -source=./api/pb/storage_grpc.pb.go -destination=./mock/storage_client.go
       - mockgen -package=mock -source=./api/pb/finance_grpc.pb.go -destination=./mock/finance_client.go
       - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
@@ -115,7 +115,7 @@ tasks:
       - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
       - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
       - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go
-      - mockgen -package=mock -source=./internal/app/chatbot/bot/org/repository/org.go -destination=./mock/org_repository.go
+      - mockgen -package=mock -source=./internal/app/chatbot/bot/okr/repository/okr.go -destination=./mock/okr_repository.go
       - mockgen -package=mock -source=./internal/app/chatbot/repository/chatbot.go -destination=./mock/chatbot_repository.go
 
   swag:
