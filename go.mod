@@ -56,7 +56,7 @@ require (
 	google.golang.org/grpc v1.46.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.3
-	gorm.io/gorm v1.23.4
+	gorm.io/gorm v1.23.5
 )
 
 require (
@@ -181,5 +181,5 @@ require (
 	cloud.google.com/go/kms v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.0 // indirect
 )
