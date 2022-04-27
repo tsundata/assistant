@@ -240,3 +240,17 @@ func (o *Okr) CreateKeyResultValue(ctx context.Context, payload *pb.KeyResultVal
 	}
 	return &pb.StateReply{State: true}, nil
 }
+
+func (o *Okr) GetKeyResultValues(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultValuesReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	keyResult, err := o.repo.GetKeyResultBySequence(ctx, id, payload.KeyResult.GetSequence())
+	if err != nil {
+		return nil, err
+	}
+
+	values, err := o.repo.GetKeyResultValues(ctx, keyResult.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.KeyResultValuesReply{Values: values}, nil
+}

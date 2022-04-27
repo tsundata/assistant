@@ -2,11 +2,13 @@ package okr
 
 import (
 	"context"
+	"fmt"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
 
@@ -83,7 +85,7 @@ var commandRules = []command.Rule{
 
 			return []pb.MsgPayload{pb.FormMsg{
 				ID:    UpdateObjectiveFormID,
-				Title: "Update Objective",
+				Title: fmt.Sprintf("Update Objective #%d", sequence),
 				Field: []pb.FormField{
 					{
 						Key:      "sequence",
@@ -223,7 +225,7 @@ var commandRules = []command.Rule{
 
 			return []pb.MsgPayload{pb.FormMsg{
 				ID:    UpdateKeyResultFormID,
-				Title: "Update Key Result",
+				Title: fmt.Sprintf("Update KeyResult #%d", sequence),
 				Field: []pb.FormField{
 					{
 						Key:      "sequence",
@@ -265,6 +267,41 @@ var commandRules = []command.Rule{
 		Help:   `Create KeyResult value`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			return []pb.MsgPayload{msg.BotFormMsg(Bot.FormRule, CreateKeyResultValueFormID)}
+		},
+	},
+	{
+		Define: `kr value [number]`,
+		Help:   `List KeyResult value`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Okr() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			sequence, _ := tokens[2].Value.Int64()
+
+			reply, err := comp.Okr().GetKeyResultValues(ctx, &pb.KeyResultRequest{
+				KeyResult: &pb.KeyResult{Sequence: sequence},
+			})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.Values) > 0 {
+				header = []string{"Value", "Datetime"}
+				for _, v := range reply.Values {
+					row = append(row, []interface{}{strconv.Itoa(int(v.Value)), util.Format(v.CreatedAt)})
+				}
+			}
+			if len(row) == 0 {
+				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
+			}
+
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  fmt.Sprintf("KeyResult #%d Values", sequence),
+				Header: header,
+				Row:    row,
+			}}
 		},
 	},
 }

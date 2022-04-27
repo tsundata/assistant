@@ -156,6 +156,26 @@ func (mr *MockOkrSvcClientMockRecorder) GetKeyResult(ctx, in interface{}, opts .
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResult", reflect.TypeOf((*MockOkrSvcClient)(nil).GetKeyResult), varargs...)
 }
 
+// GetKeyResultValues mocks base method.
+func (m *MockOkrSvcClient) GetKeyResultValues(ctx context.Context, in *pb.KeyResultRequest, opts ...grpc.CallOption) (*pb.KeyResultValuesReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetKeyResultValues", varargs...)
+	ret0, _ := ret[0].(*pb.KeyResultValuesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultValues indicates an expected call of GetKeyResultValues.
+func (mr *MockOkrSvcClientMockRecorder) GetKeyResultValues(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultValues", reflect.TypeOf((*MockOkrSvcClient)(nil).GetKeyResultValues), varargs...)
+}
+
 // GetKeyResults mocks base method.
 func (m *MockOkrSvcClient) GetKeyResults(ctx context.Context, in *pb.KeyResultRequest, opts ...grpc.CallOption) (*pb.KeyResultsReply, error) {
 	m.ctrl.T.Helper()
@@ -387,6 +407,21 @@ func (m *MockOkrSvcServer) GetKeyResult(arg0 context.Context, arg1 *pb.KeyResult
 func (mr *MockOkrSvcServerMockRecorder) GetKeyResult(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResult", reflect.TypeOf((*MockOkrSvcServer)(nil).GetKeyResult), arg0, arg1)
+}
+
+// GetKeyResultValues mocks base method.
+func (m *MockOkrSvcServer) GetKeyResultValues(arg0 context.Context, arg1 *pb.KeyResultRequest) (*pb.KeyResultValuesReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKeyResultValues", arg0, arg1)
+	ret0, _ := ret[0].(*pb.KeyResultValuesReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultValues indicates an expected call of GetKeyResultValues.
+func (mr *MockOkrSvcServerMockRecorder) GetKeyResultValues(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultValues", reflect.TypeOf((*MockOkrSvcServer)(nil).GetKeyResultValues), arg0, arg1)
 }
 
 // GetKeyResults mocks base method.

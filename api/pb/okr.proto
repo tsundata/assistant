@@ -25,6 +25,7 @@ service OkrSvc {
   rpc DeleteKeyResult(KeyResultRequest) returns (StateReply) {}
   rpc CreateKeyResultValue(KeyResultValueRequest) returns (StateReply) {}
   rpc GetKeyResultsByTag(KeyResultRequest) returns (KeyResultsReply) {}
+  rpc GetKeyResultValues(KeyResultRequest) returns (KeyResultValuesReply) {}
 }
 
 message Objective {
@@ -138,4 +139,8 @@ message OkrValue {
   int64 user_id = 1;
   string tag = 2;
   int64 value = 3;
+}
+
+message KeyResultValuesReply {
+  repeated KeyResultValue values = 1;
 }

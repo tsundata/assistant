@@ -194,6 +194,21 @@ func (mr *MockOkrRepositoryMockRecorder) GetKeyResultBySequence(ctx, userId, seq
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultBySequence", reflect.TypeOf((*MockOkrRepository)(nil).GetKeyResultBySequence), ctx, userId, sequence)
 }
 
+// GetKeyResultValues mocks base method.
+func (m *MockOkrRepository) GetKeyResultValues(ctx context.Context, keyResultId int64) ([]*pb.KeyResultValue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKeyResultValues", ctx, keyResultId)
+	ret0, _ := ret[0].([]*pb.KeyResultValue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultValues indicates an expected call of GetKeyResultValues.
+func (mr *MockOkrRepositoryMockRecorder) GetKeyResultValues(ctx, keyResultId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultValues", reflect.TypeOf((*MockOkrRepository)(nil).GetKeyResultValues), ctx, keyResultId)
+}
+
 // GetObjectiveByID mocks base method.
 func (m *MockOkrRepository) GetObjectiveByID(ctx context.Context, id int64) (*pb.Objective, error) {
 	m.ctrl.T.Helper()

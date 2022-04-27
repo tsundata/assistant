@@ -32,6 +32,7 @@ type OkrRepository interface {
 	AggregateObjectiveValue(ctx context.Context, id int64) error
 	AggregateKeyResultValue(ctx context.Context, id int64) error
 	CreateKeyResultValue(ctx context.Context, keyResultValue *pb.KeyResultValue) (int64, error)
+	GetKeyResultValues(ctx context.Context, keyResultId int64) ([]*pb.KeyResultValue, error)
 }
 
 type MysqlOkrRepository struct {
@@ -280,4 +281,13 @@ func (r *MysqlOkrRepository) CreateKeyResultValue(ctx context.Context, keyResult
 		return 0, err
 	}
 	return keyResultValue.Id, nil
+}
+
+func (r *MysqlOkrRepository) GetKeyResultValues(ctx context.Context, keyResultId int64) ([]*pb.KeyResultValue, error) {
+	var values []*pb.KeyResultValue
+	err := r.db.WithContext(ctx).Where("key_result_id = ?", keyResultId).Order("id DESC").Find(&values).Error
+	if err != nil {
+		return nil, err
+	}
+	return values, nil
 }
