@@ -18,10 +18,12 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OkrSvcClient interface {
 	CreateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error)
+	UpdateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectiveReply, error)
 	GetObjectives(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*ObjectivesReply, error)
 	DeleteObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error)
 	CreateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
+	UpdateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
 	GetKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultReply, error)
 	GetKeyResults(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*KeyResultsReply, error)
 	DeleteKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error)
@@ -40,6 +42,15 @@ func NewOkrSvcClient(cc grpc.ClientConnInterface) OkrSvcClient {
 func (c *okrSvcClient) CreateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.OkrSvc/CreateObjective", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *okrSvcClient) UpdateObjective(ctx context.Context, in *ObjectiveRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.OkrSvc/UpdateObjective", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +87,15 @@ func (c *okrSvcClient) DeleteObjective(ctx context.Context, in *ObjectiveRequest
 func (c *okrSvcClient) CreateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.OkrSvc/CreateKeyResult", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *okrSvcClient) UpdateKeyResult(ctx context.Context, in *KeyResultRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.OkrSvc/UpdateKeyResult", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -132,10 +152,12 @@ func (c *okrSvcClient) GetKeyResultsByTag(ctx context.Context, in *KeyResultRequ
 // for forward compatibility
 type OkrSvcServer interface {
 	CreateObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
+	UpdateObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
 	GetObjective(context.Context, *ObjectiveRequest) (*ObjectiveReply, error)
 	GetObjectives(context.Context, *ObjectiveRequest) (*ObjectivesReply, error)
 	DeleteObjective(context.Context, *ObjectiveRequest) (*StateReply, error)
 	CreateKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
+	UpdateKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
 	GetKeyResult(context.Context, *KeyResultRequest) (*KeyResultReply, error)
 	GetKeyResults(context.Context, *KeyResultRequest) (*KeyResultsReply, error)
 	DeleteKeyResult(context.Context, *KeyResultRequest) (*StateReply, error)
@@ -150,6 +172,9 @@ type UnimplementedOkrSvcServer struct {
 func (UnimplementedOkrSvcServer) CreateObjective(context.Context, *ObjectiveRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateObjective not implemented")
 }
+func (UnimplementedOkrSvcServer) UpdateObjective(context.Context, *ObjectiveRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateObjective not implemented")
+}
 func (UnimplementedOkrSvcServer) GetObjective(context.Context, *ObjectiveRequest) (*ObjectiveReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjective not implemented")
 }
@@ -161,6 +186,9 @@ func (UnimplementedOkrSvcServer) DeleteObjective(context.Context, *ObjectiveRequ
 }
 func (UnimplementedOkrSvcServer) CreateKeyResult(context.Context, *KeyResultRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyResult not implemented")
+}
+func (UnimplementedOkrSvcServer) UpdateKeyResult(context.Context, *KeyResultRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateKeyResult not implemented")
 }
 func (UnimplementedOkrSvcServer) GetKeyResult(context.Context, *KeyResultRequest) (*KeyResultReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKeyResult not implemented")
@@ -203,6 +231,24 @@ func _OkrSvc_CreateObjective_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OkrSvcServer).CreateObjective(ctx, req.(*ObjectiveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OkrSvc_UpdateObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectiveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OkrSvcServer).UpdateObjective(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.OkrSvc/UpdateObjective",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OkrSvcServer).UpdateObjective(ctx, req.(*ObjectiveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -275,6 +321,24 @@ func _OkrSvc_CreateKeyResult_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OkrSvcServer).CreateKeyResult(ctx, req.(*KeyResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OkrSvc_UpdateKeyResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeyResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OkrSvcServer).UpdateKeyResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.OkrSvc/UpdateKeyResult",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OkrSvcServer).UpdateKeyResult(ctx, req.(*KeyResultRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -378,6 +442,10 @@ var _OkrSvc_serviceDesc = grpc.ServiceDesc{
 			Handler:    _OkrSvc_CreateObjective_Handler,
 		},
 		{
+			MethodName: "UpdateObjective",
+			Handler:    _OkrSvc_UpdateObjective_Handler,
+		},
+		{
 			MethodName: "GetObjective",
 			Handler:    _OkrSvc_GetObjective_Handler,
 		},
@@ -392,6 +460,10 @@ var _OkrSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateKeyResult",
 			Handler:    _OkrSvc_CreateKeyResult_Handler,
+		},
+		{
+			MethodName: "UpdateKeyResult",
+			Handler:    _OkrSvc_UpdateKeyResult_Handler,
 		},
 		{
 			MethodName: "GetKeyResult",

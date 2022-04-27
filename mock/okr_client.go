@@ -236,6 +236,46 @@ func (mr *MockOkrSvcClientMockRecorder) GetObjectives(ctx, in interface{}, opts 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectives", reflect.TypeOf((*MockOkrSvcClient)(nil).GetObjectives), varargs...)
 }
 
+// UpdateKeyResult mocks base method.
+func (m *MockOkrSvcClient) UpdateKeyResult(ctx context.Context, in *pb.KeyResultRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateKeyResult", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateKeyResult indicates an expected call of UpdateKeyResult.
+func (mr *MockOkrSvcClientMockRecorder) UpdateKeyResult(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKeyResult", reflect.TypeOf((*MockOkrSvcClient)(nil).UpdateKeyResult), varargs...)
+}
+
+// UpdateObjective mocks base method.
+func (m *MockOkrSvcClient) UpdateObjective(ctx context.Context, in *pb.ObjectiveRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateObjective", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateObjective indicates an expected call of UpdateObjective.
+func (mr *MockOkrSvcClientMockRecorder) UpdateObjective(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateObjective", reflect.TypeOf((*MockOkrSvcClient)(nil).UpdateObjective), varargs...)
+}
+
 // MockOkrSvcServer is a mock of OkrSvcServer interface.
 type MockOkrSvcServer struct {
 	ctrl     *gomock.Controller
@@ -407,6 +447,36 @@ func (m *MockOkrSvcServer) GetObjectives(arg0 context.Context, arg1 *pb.Objectiv
 func (mr *MockOkrSvcServerMockRecorder) GetObjectives(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObjectives", reflect.TypeOf((*MockOkrSvcServer)(nil).GetObjectives), arg0, arg1)
+}
+
+// UpdateKeyResult mocks base method.
+func (m *MockOkrSvcServer) UpdateKeyResult(arg0 context.Context, arg1 *pb.KeyResultRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateKeyResult", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateKeyResult indicates an expected call of UpdateKeyResult.
+func (mr *MockOkrSvcServerMockRecorder) UpdateKeyResult(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKeyResult", reflect.TypeOf((*MockOkrSvcServer)(nil).UpdateKeyResult), arg0, arg1)
+}
+
+// UpdateObjective mocks base method.
+func (m *MockOkrSvcServer) UpdateObjective(arg0 context.Context, arg1 *pb.ObjectiveRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateObjective", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateObjective indicates an expected call of UpdateObjective.
+func (mr *MockOkrSvcServerMockRecorder) UpdateObjective(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateObjective", reflect.TypeOf((*MockOkrSvcServer)(nil).UpdateObjective), arg0, arg1)
 }
 
 // MockUnsafeOkrSvcServer is a mock of UnsafeOkrSvcServer interface.

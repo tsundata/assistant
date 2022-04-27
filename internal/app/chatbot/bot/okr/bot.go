@@ -7,7 +7,9 @@ import (
 
 const (
 	CreateObjectiveFormID      = "create_objective"
+	UpdateObjectiveFormID      = "update_objective"
 	CreateKeyResultFormID      = "create_key_result"
+	UpdateKeyResultFormID      = "Update_key_result"
 	CreateKeyResultValueFormID = "create_key_result_value"
 )
 

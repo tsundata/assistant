@@ -45,19 +45,24 @@ func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 	return &pb.StateReply{State: true}, nil
 }
 
+func (o *Okr) UpdateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	payload.Objective.UserId = id
+	err := o.repo.UpdateObjective(ctx, payload.Objective)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
+}
+
 func (o *Okr) GetObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.ObjectiveReply, error) {
-	find, err := o.repo.GetObjectiveByID(ctx, payload.Objective.GetId())
+	id, _ := md.FromIncoming(ctx)
+	find, err := o.repo.GetObjectiveBySequence(ctx, id, payload.Objective.GetSequence())
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ObjectiveReply{
-		Objective: &pb.Objective{
-			Id:        find.Id,
-			Title:     find.Title,
-			CreatedAt: find.CreatedAt,
-		},
-	}, nil
+	return &pb.ObjectiveReply{Objective: find}, nil
 }
 
 func (o *Okr) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.ObjectivesReply, error) {
@@ -133,21 +138,43 @@ func (o *Okr) CreateKeyResult(ctx context.Context, payload *pb.KeyResultRequest)
 	return &pb.StateReply{State: true}, nil
 }
 
-func (o *Okr) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
-	find, err := o.repo.GetKeyResultByID(ctx, payload.KeyResult.GetId())
+func (o *Okr) UpdateKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+
+	if payload.KeyResult.ValueMode != enum.ValueSumMode &&
+		payload.KeyResult.ValueMode != enum.ValueLastMode &&
+		payload.KeyResult.ValueMode != enum.ValueAvgMode &&
+		payload.KeyResult.ValueMode != enum.ValueMaxMode {
+		return nil, errors.New("error key result value mode")
+	}
+
+	payload.KeyResult.UserId = id
+	err := o.repo.UpdateKeyResult(ctx, payload.KeyResult)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.KeyResultReply{
-		KeyResult: &pb.KeyResult{
-			Id:          find.Id,
-			Title:       find.Title,
-			ObjectiveId: find.ObjectiveId,
-			CreatedAt:   find.CreatedAt,
-			UpdatedAt:   find.UpdatedAt,
-		},
-	}, nil
+	// update value
+	reply, err := o.repo.GetKeyResultBySequence(ctx, id, payload.KeyResult.Sequence)
+	if err != nil {
+		return nil, err
+	}
+	err = o.repo.AggregateKeyResultValue(ctx, reply.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StateReply{State: true}, nil
+}
+
+func (o *Okr) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	find, err := o.repo.GetKeyResultBySequence(ctx, id, payload.KeyResult.GetSequence())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.KeyResultReply{KeyResult: find}, nil
 }
 
 func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {

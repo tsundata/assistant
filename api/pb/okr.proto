@@ -14,10 +14,12 @@ option go_package = "api/pb";
 
 service OkrSvc {
   rpc CreateObjective(ObjectiveRequest) returns (StateReply) {}
+  rpc UpdateObjective(ObjectiveRequest) returns (StateReply) {}
   rpc GetObjective(ObjectiveRequest) returns (ObjectiveReply) {}
   rpc GetObjectives(ObjectiveRequest) returns (ObjectivesReply) {}
   rpc DeleteObjective(ObjectiveRequest) returns (StateReply) {}
   rpc CreateKeyResult(KeyResultRequest) returns (StateReply) {}
+  rpc UpdateKeyResult(KeyResultRequest) returns (StateReply) {}
   rpc GetKeyResult(KeyResultRequest) returns (KeyResultReply) {}
   rpc GetKeyResults(KeyResultRequest) returns (KeyResultsReply) {}
   rpc DeleteKeyResult(KeyResultRequest) returns (StateReply) {}

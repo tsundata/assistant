@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/tsundata/assistant/api/enum"
@@ -17,6 +18,7 @@ type OkrRepository interface {
 	GetObjectiveBySequence(ctx context.Context, userId, sequence int64) (*pb.Objective, error)
 	ListObjectives(ctx context.Context, userId int64) ([]*pb.Objective, error)
 	CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error)
+	UpdateObjective(ctx context.Context, objective *pb.Objective) error
 	DeleteObjective(ctx context.Context, id int64) error
 	DeleteObjectiveBySequence(ctx context.Context, userId, sequence int64) error
 	GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error)
@@ -24,6 +26,7 @@ type OkrRepository interface {
 	ListKeyResults(ctx context.Context, userId int64) ([]*pb.KeyResult, error)
 	ListKeyResultsById(ctx context.Context, id []int64) ([]*pb.KeyResult, error)
 	CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error)
+	UpdateKeyResult(ctx context.Context, keyResult *pb.KeyResult) error
 	DeleteKeyResult(ctx context.Context, id int64) error
 	DeleteKeyResultBySequence(ctx context.Context, userId, sequence int64) error
 	AggregateObjectiveValue(ctx context.Context, id int64) error
@@ -98,6 +101,21 @@ func (r *MysqlOkrRepository) CreateObjective(ctx context.Context, objective *pb.
 		return 0, err
 	}
 	return objective.Id, nil
+}
+
+func (r *MysqlOkrRepository) UpdateObjective(ctx context.Context, objective *pb.Objective) error {
+	return r.db.WithContext(ctx).Model(&pb.Objective{}).
+		Where("user_id = ? AND sequence = ?", objective.UserId, objective.Sequence).
+		UpdateColumns(map[string]interface{}{
+			"title":       objective.Title,
+			"memo":        objective.Memo,
+			"motive":      objective.Motive,
+			"feasibility": objective.Feasibility,
+			"is_plan":     objective.IsPlan,
+			"plan_start":  objective.PlanStart,
+			"plan_end":    objective.PlanEnd,
+			"updated_at":  time.Now().Unix(),
+		}).Error
 }
 
 func (r *MysqlOkrRepository) DeleteObjective(ctx context.Context, id int64) error {
@@ -190,6 +208,18 @@ func (r *MysqlOkrRepository) CreateKeyResult(ctx context.Context, keyResult *pb.
 	return keyResult.Id, nil
 }
 
+func (r *MysqlOkrRepository) UpdateKeyResult(ctx context.Context, keyResult *pb.KeyResult) error {
+	return r.db.WithContext(ctx).Model(&pb.KeyResult{}).
+		Where("user_id = ? AND sequence = ?", keyResult.UserId, keyResult.Sequence).
+		UpdateColumns(map[string]interface{}{
+			"title":        keyResult.Title,
+			"memo":         keyResult.Memo,
+			"target_value": keyResult.TargetValue,
+			"value_mode":   keyResult.ValueMode,
+			"updated_at":   time.Now().Unix(),
+		}).Error
+}
+
 func (r *MysqlOkrRepository) DeleteKeyResult(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.KeyResult{}).Error
 }
@@ -217,7 +247,7 @@ func (r *MysqlOkrRepository) AggregateKeyResultValue(ctx context.Context, id int
 	if err != nil {
 		return err
 	}
-	value := int64(0)
+	var value sql.NullInt64
 	switch keyResult.ValueMode {
 	case enum.ValueSumMode:
 		err = r.db.WithContext(ctx).Model(&pb.KeyResultValue{}).Where("key_result_id = ?", id).
@@ -237,7 +267,7 @@ func (r *MysqlOkrRepository) AggregateKeyResultValue(ctx context.Context, id int
 	}
 
 	return r.db.WithContext(ctx).Model(&pb.KeyResult{}).Where("id = ?", id).UpdateColumns(map[string]interface{}{
-		"current_value": value,
+		"current_value": value.Int64,
 		"updated_at":    time.Now().Unix(),
 	}).Error
 }

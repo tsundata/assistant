@@ -268,3 +268,31 @@ func (mr *MockOkrRepositoryMockRecorder) ListObjectives(ctx, userId interface{})
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListObjectives", reflect.TypeOf((*MockOkrRepository)(nil).ListObjectives), ctx, userId)
 }
+
+// UpdateKeyResult mocks base method.
+func (m *MockOkrRepository) UpdateKeyResult(ctx context.Context, keyResult *pb.KeyResult) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateKeyResult", ctx, keyResult)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateKeyResult indicates an expected call of UpdateKeyResult.
+func (mr *MockOkrRepositoryMockRecorder) UpdateKeyResult(ctx, keyResult interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKeyResult", reflect.TypeOf((*MockOkrRepository)(nil).UpdateKeyResult), ctx, keyResult)
+}
+
+// UpdateObjective mocks base method.
+func (m *MockOkrRepository) UpdateObjective(ctx context.Context, objective *pb.Objective) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateObjective", ctx, objective)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateObjective indicates an expected call of UpdateObjective.
+func (mr *MockOkrRepositoryMockRecorder) UpdateObjective(ctx, objective interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateObjective", reflect.TypeOf((*MockOkrRepository)(nil).UpdateObjective), ctx, objective)
+}
