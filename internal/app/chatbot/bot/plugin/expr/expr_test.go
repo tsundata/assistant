@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )
 
@@ -28,8 +29,8 @@ func TestExpr(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			input := bot.PluginValue{Value: tt.args.input, Stack: []interface{}{}}
 			ctrl := &bot.Controller{}
-			params := []interface{}{
-				tt.args.code,
+			params := []util.Value{
+				util.Variable(tt.args.code),
 			}
 			output, err := p.Run(context.Background(), ctrl, params, input)
 			if (err != nil) != tt.wantErr {

@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"log"
 )
 
@@ -15,12 +16,16 @@ type SetupPlugin struct {
 	Action SetupFunc
 }
 
-func SetupPlugins(pluginRules []PluginRule) ([]Plugin, [][]interface{}) {
+func SetupPlugins(pluginRules []PluginRule) ([]Plugin, [][]util.Value) {
 	var plugin []Plugin
-	var params [][]interface{}
+	var params [][]util.Value
 	for _, rule := range pluginRules {
 		if p, ok := plugins[rule.Name]; ok {
-			params = append(params, rule.Param)
+			var tmp []util.Value
+			for _, item := range rule.Param {
+				tmp = append(tmp, util.Variable(item))
+			}
+			params = append(params, tmp)
 			plugin = append(plugin, p)
 		}
 	}
@@ -46,6 +51,6 @@ type PluginValue struct {
 }
 
 type Plugin interface {
-	Run(ctx context.Context, ctrl *Controller, param []interface{}, input PluginValue) (PluginValue, error)
+	Run(ctx context.Context, ctrl *Controller, param []util.Value, input PluginValue) (PluginValue, error)
 	Name() string
 }

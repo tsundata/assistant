@@ -4,16 +4,17 @@ import (
 	"context"
 	"github.com/antonmedv/expr"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"strings"
 )
 
 // Expr https://github.com/antonmedv/expr/blob/master/docs/Language-Definition.md
-type Expr struct {}
+type Expr struct{}
 
-func (a Expr) Run(_ context.Context, _ *bot.Controller,param []interface{}, input bot.PluginValue) (bot.PluginValue, error) {
+func (a Expr) Run(_ context.Context, _ *bot.Controller, param []util.Value, input bot.PluginValue) (bot.PluginValue, error) {
 	var in interface{}
 	if len(param) > 0 {
-		if code, ok := param[0].(string); ok {
+		if code, ok := param[0].String(); ok {
 			program, err := expr.Compile(code, expr.Env(Env{}))
 			if err != nil {
 				return bot.PluginValue{}, err
