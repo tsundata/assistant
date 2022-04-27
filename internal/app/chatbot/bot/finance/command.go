@@ -17,8 +17,9 @@ var commandRules = []command.Rule{
 			if comp.Finance() == nil || comp.Middle() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
+			text, _ := tokens[1].Value.String()
 			reply, err := comp.Finance().GetFund(ctx, &pb.TextRequest{
-				Text: tokens[1].Value.(string),
+				Text: text,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -63,8 +64,9 @@ var commandRules = []command.Rule{
 			if comp.Finance() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
+			text, _ := tokens[1].Value.String()
 			reply, err := comp.Finance().GetStock(ctx, &pb.TextRequest{
-				Text: tokens[1].Value.(string),
+				Text: text,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}

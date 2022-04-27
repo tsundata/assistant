@@ -71,7 +71,8 @@ func (o *Okr) GetObjectives(ctx context.Context, _ *pb.ObjectiveRequest) (*pb.Ob
 }
 
 func (o *Okr) DeleteObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
-	err := o.repo.DeleteObjective(ctx, payload.Objective.GetId())
+	id, _ := md.FromIncoming(ctx)
+	err := o.repo.DeleteObjectiveBySequence(ctx, id, payload.Objective.GetSequence())
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,8 @@ func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.Ke
 }
 
 func (o *Okr) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
-	err := o.repo.DeleteKeyResult(ctx, payload.KeyResult.GetId())
+	id, _ := md.FromIncoming(ctx)
+	err := o.repo.DeleteKeyResultBySequence(ctx, id, payload.KeyResult.GetSequence())
 	if err != nil {
 		return nil, err
 	}

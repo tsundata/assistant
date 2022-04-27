@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"regexp"
 	"strconv"
 	"unicode"
@@ -54,7 +55,7 @@ func (l *Syntax) SkipWhitespace() {
 }
 
 func (l *Syntax) Parameter() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+	token := &Token{Type: "", Value: util.Variable(""), LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
 	if l.CurrentChar == '[' {
@@ -69,14 +70,14 @@ func (l *Syntax) Parameter() (*Token, error) {
 		l.Advance()
 
 		token.Type = ParameterToken
-		token.Value = string(result)
+		token.Value = util.Variable(string(result))
 	}
 
 	return token, nil
 }
 
 func (l *Syntax) Character() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+	token := &Token{Type: "", Value: util.Variable(""), LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
 	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
@@ -86,7 +87,7 @@ func (l *Syntax) Character() (*Token, error) {
 
 	s := string(result)
 	token.Type = CharacterToken
-	token.Value = s
+	token.Value = util.Variable(s)
 
 	return token, nil
 }
@@ -107,7 +108,7 @@ func (l *Syntax) GetNextToken() (*Token, error) {
 		return nil, l.error()
 	}
 
-	return &Token{Type: EOFToken, Value: ""}, nil
+	return &Token{Type: EOFToken, Value: util.Variable("")}, nil
 }
 
 func SyntaxCheck(define string, actual []*Token) (bool, error) {
@@ -141,13 +142,9 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 			}
 		}
 		if t.Type == ParameterToken {
-			switch t.Value {
+			switch t.Value.Source {
 			case "number":
-				n := ""
-				if v, ok := actual[i].Value.(string); ok {
-					n = v
-				}
-
+				n, _ := actual[i].Value.String()
 				re := regexp.MustCompile(`\d+`)
 				if !re.MatchString(n) {
 					res = false
@@ -155,19 +152,19 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 				} else {
 					num, err := strconv.ParseInt(n, 10, 64)
 					if err == nil {
-						actual[i].Value = num
+						actual[i].Value = util.Variable(num)
 					}
 				}
 			case "bool":
-				if !(actual[i].Value == "true" || actual[i].Value == "false") {
+				if !(actual[i].Value.Source == "true" || actual[i].Value.Source == "false") {
 					res = false
 					continue
 				} else {
-					if actual[i].Value == "true" {
-						actual[i].Value = true
+					if actual[i].Value.Source == "true" {
+						actual[i].Value = util.Variable(true)
 					}
-					if actual[i].Value == "false" {
-						actual[i].Value = false
+					if actual[i].Value.Source == "false" {
+						actual[i].Value = util.Variable(false)
 					}
 				}
 			case "string":

@@ -23,16 +23,16 @@ func TestRegexRule(t *testing.T) {
 			Define: `todo [string]`,
 			Help:   `todo something`,
 			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []pb.MsgPayload {
-				return []pb.MsgPayload{pb.TextMsg{Text: tokens[1].Value.(string)}}
+				text, _ := tokens[1].Value.String()
+				return []pb.MsgPayload{pb.TextMsg{Text: text}}
 			},
 		},
 		{
 			Define: `add [number] [number]`,
 			Help:   `Addition`,
 			Parse: func(ctx context.Context, comp component.Component, tokens []*Token) []pb.MsgPayload {
-				tt1 := tokens[1].Value.(int64)
-				tt2 := tokens[2].Value.(int64)
-
+				tt1, _ := tokens[1].Value.Int64()
+				tt2, _ := tokens[2].Value.Int64()
 				return []pb.MsgPayload{pb.TextMsg{Text: strconv.Itoa(int(tt1 + tt2))}}
 			},
 		},

@@ -49,10 +49,10 @@ var commandRules = []command.Rule{
 			if comp.Okr() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
-			id := tokens[2].Value.(int64)
+			sequence, _ := tokens[2].Value.Int64()
 
 			reply, err := comp.Okr().DeleteObjective(ctx, &pb.ObjectiveRequest{
-				Objective: &pb.Objective{Id: id},
+				Objective: &pb.Objective{Sequence: sequence},
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -111,16 +111,16 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
-		Define: `kr delete [number]`,
+		Define: `kr del [number]`,
 		Help:   `Delete KeyResult`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			if comp.Okr() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
-			id := tokens[2].Value.(int64)
+			sequence, _ := tokens[2].Value.Int64()
 
 			reply, err := comp.Okr().DeleteKeyResult(ctx, &pb.KeyResultRequest{
-				KeyResult: &pb.KeyResult{Id: id},
+				KeyResult: &pb.KeyResult{Sequence: sequence},
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}

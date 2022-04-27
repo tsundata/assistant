@@ -18,11 +18,13 @@ type OkrRepository interface {
 	ListObjectives(ctx context.Context, userId int64) ([]*pb.Objective, error)
 	CreateObjective(ctx context.Context, objective *pb.Objective) (int64, error)
 	DeleteObjective(ctx context.Context, id int64) error
+	DeleteObjectiveBySequence(ctx context.Context, userId, sequence int64) error
 	GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error)
 	GetKeyResultBySequence(ctx context.Context, userId, sequence int64) (*pb.KeyResult, error)
 	ListKeyResults(ctx context.Context, userId int64) ([]*pb.KeyResult, error)
 	CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error)
 	DeleteKeyResult(ctx context.Context, id int64) error
+	DeleteKeyResultBySequence(ctx context.Context, userId, sequence int64) error
 	AggregateObjectiveValue(ctx context.Context, id int64) error
 	AggregateKeyResultValue(ctx context.Context, id int64) error
 	CreateKeyResultValue(ctx context.Context, keyResultValue *pb.KeyResultValue) (int64, error)
@@ -101,6 +103,10 @@ func (r *MysqlOkrRepository) DeleteObjective(ctx context.Context, id int64) erro
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.Objective{}).Error
 }
 
+func (r *MysqlOkrRepository) DeleteObjectiveBySequence(ctx context.Context, userId, sequence int64) error {
+	return r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).Delete(&pb.Objective{}).Error
+}
+
 func (r *MysqlOkrRepository) GetKeyResultByID(ctx context.Context, id int64) (*pb.KeyResult, error) {
 	var keyResult pb.KeyResult
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&keyResult).Error
@@ -176,6 +182,10 @@ func (r *MysqlOkrRepository) CreateKeyResult(ctx context.Context, keyResult *pb.
 
 func (r *MysqlOkrRepository) DeleteKeyResult(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&pb.KeyResult{}).Error
+}
+
+func (r *MysqlOkrRepository) DeleteKeyResultBySequence(ctx context.Context, userId, sequence int64) error {
+	return r.db.WithContext(ctx).Where("user_id = ? AND sequence = ?", userId, sequence).Delete(&pb.KeyResult{}).Error
 }
 
 func (r *MysqlOkrRepository) AggregateObjectiveValue(ctx context.Context, id int64) error {

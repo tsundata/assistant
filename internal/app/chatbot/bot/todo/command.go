@@ -49,8 +49,9 @@ var commandRules = []command.Rule{
 			if comp.Todo() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
+			content, _ := tokens[1].Value.String()
 			reply, err := comp.Todo().CreateTodo(ctx, &pb.TodoRequest{
-				Todo: &pb.Todo{Content: tokens[1].Value.(string)},
+				Todo: &pb.Todo{Content: content},
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}

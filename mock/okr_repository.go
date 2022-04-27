@@ -122,6 +122,20 @@ func (mr *MockOkrRepositoryMockRecorder) DeleteKeyResult(ctx, id interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteKeyResult", reflect.TypeOf((*MockOkrRepository)(nil).DeleteKeyResult), ctx, id)
 }
 
+// DeleteKeyResultBySequence mocks base method.
+func (m *MockOkrRepository) DeleteKeyResultBySequence(ctx context.Context, userId, sequence int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteKeyResultBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteKeyResultBySequence indicates an expected call of DeleteKeyResultBySequence.
+func (mr *MockOkrRepositoryMockRecorder) DeleteKeyResultBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteKeyResultBySequence", reflect.TypeOf((*MockOkrRepository)(nil).DeleteKeyResultBySequence), ctx, userId, sequence)
+}
+
 // DeleteObjective mocks base method.
 func (m *MockOkrRepository) DeleteObjective(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -134,6 +148,20 @@ func (m *MockOkrRepository) DeleteObjective(ctx context.Context, id int64) error
 func (mr *MockOkrRepositoryMockRecorder) DeleteObjective(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteObjective", reflect.TypeOf((*MockOkrRepository)(nil).DeleteObjective), ctx, id)
+}
+
+// DeleteObjectiveBySequence mocks base method.
+func (m *MockOkrRepository) DeleteObjectiveBySequence(ctx context.Context, userId, sequence int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteObjectiveBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteObjectiveBySequence indicates an expected call of DeleteObjectiveBySequence.
+func (mr *MockOkrRepositoryMockRecorder) DeleteObjectiveBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteObjectiveBySequence", reflect.TypeOf((*MockOkrRepository)(nil).DeleteObjectiveBySequence), ctx, userId, sequence)
 }
 
 // GetKeyResultByID mocks base method.

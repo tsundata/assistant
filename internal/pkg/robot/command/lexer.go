@@ -3,12 +3,13 @@ package command
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"unicode"
 )
 
 type Token struct {
 	Type   string
-	Value  interface{}
+	Value  util.Value
 	LineNo int
 	Column int
 }
@@ -65,7 +66,7 @@ func (l *Lexer) SkipWhitespace() {
 }
 
 func (l *Lexer) Character() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+	token := &Token{Type: "", Value: util.Variable(""), LineNo: l.LineNo, Column: l.Column}
 
 	var result []rune
 	for l.CurrentChar > 0 && !unicode.IsSpace(l.CurrentChar) {
@@ -75,13 +76,13 @@ func (l *Lexer) Character() (*Token, error) {
 
 	s := string(result)
 	token.Type = CharacterToken
-	token.Value = s
+	token.Value = util.Variable(s)
 
 	return token, nil
 }
 
 func (l *Lexer) String() (*Token, error) {
-	token := &Token{Type: "", Value: "", LineNo: l.LineNo, Column: l.Column}
+	token := &Token{Type: "", Value: util.Variable(""), LineNo: l.LineNo, Column: l.Column}
 
 	l.Advance()
 
@@ -95,7 +96,7 @@ func (l *Lexer) String() (*Token, error) {
 
 	s := string(result)
 	token.Type = CharacterToken
-	token.Value = s
+	token.Value = util.Variable(s)
 
 	return token, nil
 }
@@ -115,7 +116,7 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 		return nil, l.error()
 	}
 
-	return &Token{Type: EOFToken, Value: ""}, nil
+	return &Token{Type: EOFToken, Value: util.Variable("")}, nil
 }
 
 type Command struct {

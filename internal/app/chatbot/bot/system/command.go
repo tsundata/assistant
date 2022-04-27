@@ -33,8 +33,9 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
+			text, _ := tokens[1].Value.String()
 			reply, err := comp.Middle().GetQrUrl(ctx, &pb.TextRequest{
-				Text: tokens[1].Value.(string),
+				Text: text,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -47,7 +48,8 @@ var commandRules = []command.Rule{
 		Define: `ut [number]`,
 		Help:   `Unix Timestamp`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			t := time.Unix(tokens[1].Value.(int64), 0)
+			num, _ := tokens[1].Value.Int64()
+			t := time.Unix(num, 0)
 
 			return []pb.MsgPayload{pb.TextMsg{Text: t.String()}}
 		},
@@ -56,8 +58,8 @@ var commandRules = []command.Rule{
 		Define: `rand [number] [number]`,
 		Help:   `Unix Timestamp`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			min := tokens[1].Value.(int64)
-			max := tokens[2].Value.(int64)
+			min, _ := tokens[1].Value.Int64()
+			max, _ := tokens[2].Value.Int64()
 
 			nBing, err := rand.Int(rand.Reader, big.NewInt(max+1-min))
 			if err != nil {
@@ -72,7 +74,7 @@ var commandRules = []command.Rule{
 		Define: `pwd [number]`,
 		Help:   `Generate Password`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			length := tokens[1].Value.(int64)
+			length, _ := tokens[1].Value.Int64()
 
 			pwd := util.RandString(int(length), "lowercase|uppercase|numbers")
 
@@ -144,7 +146,7 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
-			id := tokens[1].Value.(int64)
+			id, _ := tokens[1].Value.Int64()
 			messageReply, err := comp.Message().GetBySequence(ctx, &pb.MessageRequest{Message: &pb.Message{Sequence: id}})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -165,7 +167,7 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
-			id := tokens[1].Value.(int64)
+			id, _ := tokens[1].Value.Int64()
 
 			reply, err := comp.Message().Run(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 			if err != nil {
@@ -241,7 +243,8 @@ var commandRules = []command.Rule{
 			if comp.Middle() == nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
-			reply, err := comp.Middle().Pinyin(ctx, &pb.TextRequest{Text: tokens[1].Value.(string)})
+			text, _ := tokens[1].Value.String()
+			reply, err := comp.Middle().Pinyin(ctx, &pb.TextRequest{Text: text})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -255,7 +258,7 @@ var commandRules = []command.Rule{
 		Define: `del [number]`,
 		Help:   `Delete message`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			id := tokens[1].Value.(int64)
+			id, _ := tokens[1].Value.Int64()
 
 			_, err := comp.Message().Delete(ctx, &pb.MessageRequest{Message: &pb.Message{Id: id}})
 			if err != nil {
@@ -304,8 +307,9 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
+			text, _ := tokens[2].Value.String()
 			reply, err := comp.Middle().StartCron(ctx, &pb.CronRequest{
-				Text: tokens[2].Value.(string),
+				Text: text,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -325,8 +329,9 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
 			}
 
+			text, _ := tokens[2].Value.String()
 			reply, err := comp.Middle().StopCron(ctx, &pb.CronRequest{
-				Text: tokens[2].Value.(string),
+				Text: text,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -457,7 +462,8 @@ var commandRules = []command.Rule{
 		Define: "counter [string]",
 		Help:   `Count things`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(1)}
+			flag, _ := tokens[1].Value.String()
+			counter := &pb.Counter{Flag: flag, Digit: int64(1)}
 			find, err := comp.System().GetCounterByFlag(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -482,7 +488,8 @@ var commandRules = []command.Rule{
 		Define: "increase [string]",
 		Help:   `Increase Counter`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(1)}
+			flag, _ := tokens[1].Value.String()
+			counter := &pb.Counter{Flag: flag, Digit: int64(1)}
 			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -497,7 +504,8 @@ var commandRules = []command.Rule{
 		Define: "decrease [string]",
 		Help:   `Decrease Counter`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			counter := &pb.Counter{Flag: tokens[1].Value.(string), Digit: int64(-1)}
+			flag, _ := tokens[1].Value.String()
+			counter := &pb.Counter{Flag: flag, Digit: int64(-1)}
 			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
@@ -512,7 +520,8 @@ var commandRules = []command.Rule{
 		Define: "reset [string]",
 		Help:   `Reset Counter`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			counter := &pb.Counter{Flag: tokens[1].Value.(string)}
+			flag, _ := tokens[1].Value.String()
+			counter := &pb.Counter{Flag: flag}
 			latest, err := comp.System().ResetCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
