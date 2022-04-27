@@ -180,8 +180,9 @@ func (r *Robot) ProcessTag(ctx context.Context, botCtx bot.Context, comp compone
 	return []pb.MsgPayload{}, nil
 }
 
-func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
+func RegisterBot(ctx context.Context, bus event.Bus, comp component.Component, bots ...*bot.Bot) error {
 	for _, item := range bots {
+		// info register
 		err := bus.Publish(ctx, enum.Chatbot, event.BotRegisterSubject, pb.Bot{
 			Name:       item.Name,
 			Identifier: item.Identifier,
@@ -191,6 +192,13 @@ func RegisterBot(ctx context.Context, bus event.Bus, bots ...*bot.Bot) error {
 		})
 		if err != nil {
 			return err
+		}
+		// event handler
+		if item.EventHandler != nil {
+			err = item.EventHandler(comp)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

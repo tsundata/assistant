@@ -176,6 +176,26 @@ func (mr *MockOkrSvcClientMockRecorder) GetKeyResults(ctx, in interface{}, opts 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResults", reflect.TypeOf((*MockOkrSvcClient)(nil).GetKeyResults), varargs...)
 }
 
+// GetKeyResultsByTag mocks base method.
+func (m *MockOkrSvcClient) GetKeyResultsByTag(ctx context.Context, in *pb.KeyResultRequest, opts ...grpc.CallOption) (*pb.KeyResultsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetKeyResultsByTag", varargs...)
+	ret0, _ := ret[0].(*pb.KeyResultsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultsByTag indicates an expected call of GetKeyResultsByTag.
+func (mr *MockOkrSvcClientMockRecorder) GetKeyResultsByTag(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultsByTag", reflect.TypeOf((*MockOkrSvcClient)(nil).GetKeyResultsByTag), varargs...)
+}
+
 // GetObjective mocks base method.
 func (m *MockOkrSvcClient) GetObjective(ctx context.Context, in *pb.ObjectiveRequest, opts ...grpc.CallOption) (*pb.ObjectiveReply, error) {
 	m.ctrl.T.Helper()
@@ -342,6 +362,21 @@ func (m *MockOkrSvcServer) GetKeyResults(arg0 context.Context, arg1 *pb.KeyResul
 func (mr *MockOkrSvcServerMockRecorder) GetKeyResults(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResults", reflect.TypeOf((*MockOkrSvcServer)(nil).GetKeyResults), arg0, arg1)
+}
+
+// GetKeyResultsByTag mocks base method.
+func (m *MockOkrSvcServer) GetKeyResultsByTag(arg0 context.Context, arg1 *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKeyResultsByTag", arg0, arg1)
+	ret0, _ := ret[0].(*pb.KeyResultsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetKeyResultsByTag indicates an expected call of GetKeyResultsByTag.
+func (mr *MockOkrSvcServerMockRecorder) GetKeyResultsByTag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKeyResultsByTag", reflect.TypeOf((*MockOkrSvcServer)(nil).GetKeyResultsByTag), arg0, arg1)
 }
 
 // GetObjective mocks base method.

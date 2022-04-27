@@ -115,6 +115,7 @@ var formRules = []bot.FormRule{
 				Key:      "value_mode",
 				Type:     bot.FieldItemTypeString,
 				Required: true,
+				Intro:    "avg|max|sum|last",
 			},
 		},
 		SubmitFunc: func(ctx context.Context, botCtx bot.Context, comp component.Component) []pb.MsgPayload {

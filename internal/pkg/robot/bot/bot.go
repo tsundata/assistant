@@ -10,6 +10,7 @@ import (
 type Bot struct {
 	Metadata
 	SettingRule  []FieldItem
+	EventHandler func(component.Component) error
 	WorkflowRule WorkflowRule
 	CommandRule  []command.Rule
 	ActionRule   []ActionRule
@@ -19,7 +20,7 @@ type Bot struct {
 	ctrl *Controller
 }
 
-func NewBot(metadata Metadata, settings []FieldItem,
+func NewBot(metadata Metadata, settings []FieldItem, event func(component.Component) error,
 	workflowRule WorkflowRule,
 	commandsRule []command.Rule,
 	actionRule []ActionRule,
@@ -28,6 +29,7 @@ func NewBot(metadata Metadata, settings []FieldItem,
 	b := &Bot{
 		Metadata:     metadata,
 		SettingRule:  settings,
+		EventHandler: event,
 		WorkflowRule: workflowRule,
 		CommandRule:  commandsRule,
 		ActionRule:   actionRule,

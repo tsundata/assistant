@@ -53,7 +53,7 @@ CREATE TABLE `group_settings`
     ENGINE = InnoDB;
 
 
-create table if not exists `messages`
+CREATE TABLE `messages`
 (
     `id`            BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `group_id`      BIGINT(19)          NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE `devices`
   DEFAULT CHARSET = utf8mb4;
 
 
-create table if not exists `apps`
+CREATE TABLE `apps`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`    BIGINT(19) UNSIGNED NOT NULL,
@@ -137,7 +137,7 @@ create table if not exists `apps`
   DEFAULT CHARSET = utf8mb4;
 
 
-create table if not exists `credentials`
+CREATE TABLE `credentials`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`    BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -153,7 +153,7 @@ create table if not exists `credentials`
 
 
 
-create table if not exists `roles`
+CREATE TABLE `roles`
 (
     `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     BIGINT(10)          NOT NULL,
@@ -179,7 +179,7 @@ INSERT INTO `roles` (`user_id`, `profession`, `exp`, `level`, `strength`, `cultu
 VALUES (1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
 
-create table if not exists `role_records`
+CREATE TABLE `role_records`
 (
     `id`          BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`     BIGINT(10)          NOT NULL,
@@ -206,7 +206,7 @@ INSERT INTO `role_records` (`user_id`, `profession`, `exp`, `level`, `strength`,
 VALUES (1, 'super', 0, 1, 0, 0, 0, 0, 0, 0);
 
 
-create table if not exists `users`
+CREATE TABLE `users`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `username`   VARCHAR(50)         NOT NULL,
@@ -227,9 +227,10 @@ VALUES ('admin', '$2a$10$UbySCK7RHJwyD7DYMjIyTOIfvL8t2KEmz.3jVFIwGlOvzV2P373uu',
         '1625068800');
 
 
-create table if not exists `tags`
+CREATE TABLE `tags`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`    BIGINT              NOT NULL,
     `name`       varchar(50)         NOT NULL DEFAULT '',
     `created_at` INT(10)             NOT NULL DEFAULT '0',
     `updated_at` INT(10)             NOT NULL DEFAULT '0',
@@ -238,9 +239,10 @@ create table if not exists `tags`
   DEFAULT CHARSET = utf8mb4;
 
 
-create table if not exists `model_tags`
+CREATE TABLE `model_tags`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`    BIGINT              NOT NULL,
     `service`    VARCHAR(50)         NOT NULL DEFAULT '',
     `model`      VARCHAR(50)         NOT NULL DEFAULT '',
     `model_id`   BIGINT(19)          NOT NULL,

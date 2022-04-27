@@ -16,4 +16,5 @@ const (
 	BotRegisterSubject       Subject = "bot_register"
 	CronRegisterSubject      Subject = "cron_register"
 	SubscribeRegisterSubject Subject = "subscribe_register"
+	OkrValueSubject          Subject = "okr_value"
 )

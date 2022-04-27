@@ -958,7 +958,7 @@ func TestMiddle_GetTags(t *testing.T) {
 
 	repo := mock.NewMockMiddleRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTags(gomock.Any()).Return([]*pb.Tag{{
+		repo.EXPECT().ListTags(gomock.Any(), 1).Return([]*pb.Tag{{
 			Id:        1,
 			Name:      "test1",
 			CreatedAt: time.Now().Unix(),

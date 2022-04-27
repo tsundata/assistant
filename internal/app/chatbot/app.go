@@ -32,7 +32,7 @@ func NewApp(conf *config.AppConfig, bus event.Bus, rdb *redis.Client, logger log
 	}
 
 	// bots register
-	err = robot.RegisterBot(context.Background(), bus, system.Bot, todo.Bot, okr.Bot, finance.Bot, github.Bot)
+	err = robot.RegisterBot(context.Background(), bus, comp, system.Bot, todo.Bot, okr.Bot, finance.Bot, github.Bot)
 	if err != nil {
 		return nil, err
 	}

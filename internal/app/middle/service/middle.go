@@ -673,7 +673,8 @@ func (s *Middle) GetOrCreateTag(ctx context.Context, payload *pb.TagRequest) (*p
 }
 
 func (s *Middle) GetTags(ctx context.Context, _ *pb.TagRequest) (*pb.TagsReply, error) {
-	items, err := s.repo.ListTags(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := s.repo.ListTags(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -693,12 +694,15 @@ func (s *Middle) GetTags(ctx context.Context, _ *pb.TagRequest) (*pb.TagsReply, 
 }
 
 func (s *Middle) SaveModelTag(ctx context.Context, payload *pb.ModelTagRequest) (*pb.ModelTagReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	tag, err := s.repo.GetOrCreateTag(ctx, &pb.Tag{
-		Name: payload.Tag,
+		UserId: id,
+		Name:   payload.Tag,
 	})
 	if err != nil {
 		return nil, err
 	}
+	payload.Model.UserId = id
 	payload.Model.TagId = tag.Id
 	_, err = s.repo.GetOrCreateModelTag(ctx, payload.Model)
 	if err != nil {
@@ -708,7 +712,17 @@ func (s *Middle) SaveModelTag(ctx context.Context, payload *pb.ModelTagRequest) 
 }
 
 func (s *Middle) GetTagsByModelId(ctx context.Context, payload *pb.ModelIdRequest) (*pb.GetTagsReply, error) {
-	tags, err := s.repo.ListModelTags(ctx, payload.ModelId)
+	id, _ := md.FromIncoming(ctx)
+	tags, err := s.repo.ListModelTagsByModelId(ctx, id, payload.ModelId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetTagsReply{Tags: tags}, nil
+}
+
+func (s *Middle) GetModelTags(ctx context.Context, payload *pb.ModelTagRequest) (*pb.GetTagsReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	tags, err := s.repo.ListModelTagsByModel(ctx, id, *payload.Model)
 	if err != nil {
 		return nil, err
 	}

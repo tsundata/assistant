@@ -1,4 +1,4 @@
-create table if not exists `pages`
+CREATE TABLE `pages`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `uuid`       varchar(36)         NOT NULL DEFAULT '',
@@ -13,7 +13,7 @@ create table if not exists `pages`
   DEFAULT CHARSET = utf8mb4;
 
 
-create table if not exists `triggers`
+CREATE TABLE `triggers`
 (
     `id`         BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `type`       varchar(16)         NOT NULL DEFAULT '',
@@ -32,7 +32,7 @@ create table if not exists `triggers`
   DEFAULT CHARSET = utf8mb4;
 
 
-create table if not exists `todos`
+CREATE TABLE `todos`
 (
     `id`                BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`           BIGINT(10)          NOT NULL,

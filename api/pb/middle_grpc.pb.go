@@ -48,6 +48,7 @@ type MiddleSvcClient interface {
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*TagsReply, error)
 	SaveModelTag(ctx context.Context, in *ModelTagRequest, opts ...grpc.CallOption) (*ModelTagReply, error)
 	GetTagsByModelId(ctx context.Context, in *ModelIdRequest, opts ...grpc.CallOption) (*GetTagsReply, error)
+	GetModelTags(ctx context.Context, in *ModelTagRequest, opts ...grpc.CallOption) (*GetTagsReply, error)
 	GetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error)
 	SetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error)
 	GetChartUrl(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
@@ -344,6 +345,15 @@ func (c *middleSvcClient) GetTagsByModelId(ctx context.Context, in *ModelIdReque
 	return out, nil
 }
 
+func (c *middleSvcClient) GetModelTags(ctx context.Context, in *ModelTagRequest, opts ...grpc.CallOption) (*GetTagsReply, error) {
+	out := new(GetTagsReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetModelTags", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *middleSvcClient) GetChartData(ctx context.Context, in *ChartDataRequest, opts ...grpc.CallOption) (*ChartDataReply, error) {
 	out := new(ChartDataReply)
 	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetChartData", in, out, opts...)
@@ -442,6 +452,7 @@ type MiddleSvcServer interface {
 	GetTags(context.Context, *TagRequest) (*TagsReply, error)
 	SaveModelTag(context.Context, *ModelTagRequest) (*ModelTagReply, error)
 	GetTagsByModelId(context.Context, *ModelIdRequest) (*GetTagsReply, error)
+	GetModelTags(context.Context, *ModelTagRequest) (*GetTagsReply, error)
 	GetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
 	SetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error)
 	GetChartUrl(context.Context, *TextRequest) (*TextReply, error)
@@ -547,6 +558,9 @@ func (UnimplementedMiddleSvcServer) SaveModelTag(context.Context, *ModelTagReque
 }
 func (UnimplementedMiddleSvcServer) GetTagsByModelId(context.Context, *ModelIdRequest) (*GetTagsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTagsByModelId not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetModelTags(context.Context, *ModelTagRequest) (*GetTagsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetModelTags not implemented")
 }
 func (UnimplementedMiddleSvcServer) GetChartData(context.Context, *ChartDataRequest) (*ChartDataReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChartData not implemented")
@@ -1139,6 +1153,24 @@ func _MiddleSvc_GetTagsByModelId_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_GetModelTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModelTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetModelTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetModelTags",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetModelTags(ctx, req.(*ModelTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MiddleSvc_GetChartData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChartDataRequest)
 	if err := dec(in); err != nil {
@@ -1392,6 +1424,10 @@ var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTagsByModelId",
 			Handler:    _MiddleSvc_GetTagsByModelId_Handler,
+		},
+		{
+			MethodName: "GetModelTags",
+			Handler:    _MiddleSvc_GetModelTags_Handler,
 		},
 		{
 			MethodName: "GetChartData",

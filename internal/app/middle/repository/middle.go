@@ -23,8 +23,9 @@ type MiddleRepository interface {
 	GetCredentialByType(ctx context.Context, userId int64, t string) (pb.Credential, error)
 	ListCredentials(ctx context.Context, userId int64) ([]*pb.Credential, error)
 	CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error)
-	ListTags(ctx context.Context) ([]*pb.Tag, error)
-	ListModelTags(ctx context.Context, modelId []int64) ([]*pb.ModelTag, error)
+	ListTags(ctx context.Context, userId int64) ([]*pb.Tag, error)
+	ListModelTagsByModelId(ctx context.Context, userId int64, modelId []int64) ([]*pb.ModelTag, error)
+	ListModelTagsByModel(ctx context.Context, userId int64, model pb.ModelTag) ([]*pb.ModelTag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
 	GetOrCreateModelTag(ctx context.Context, tag *pb.ModelTag) (pb.ModelTag, error)
 	ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error)
@@ -149,16 +150,16 @@ func (r *MysqlMiddleRepository) CreateCredential(ctx context.Context, credential
 	return credential.Id, nil
 }
 
-func (r *MysqlMiddleRepository) ListTags(ctx context.Context) ([]*pb.Tag, error) {
+func (r *MysqlMiddleRepository) ListTags(ctx context.Context, userId int64) ([]*pb.Tag, error) {
 	var items []*pb.Tag
-	err := r.db.WithContext(ctx).Order("id DESC").Find(&items).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Order("id DESC").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}
 	return items, nil
 }
 
-func (r *MysqlMiddleRepository) ListModelTags(ctx context.Context, modelId []int64) ([]*pb.ModelTag, error) {
+func (r *MysqlMiddleRepository) ListModelTagsByModelId(ctx context.Context, userId int64, modelId []int64) ([]*pb.ModelTag, error) {
 	var m []struct {
 		ModelId int64
 		Name    string
@@ -167,7 +168,35 @@ func (r *MysqlMiddleRepository) ListModelTags(ctx context.Context, modelId []int
 	err := r.db.WithContext(ctx).
 		Model(&pb.ModelTag{}).
 		Select("model_id, name").
-		Where("model_tags.model_id IN ?", modelId).
+		Where("model_tags.user_id = ? AND model_tags.model_id IN ?", userId, modelId).
+		Joins("LEFT JOIN tags ON model_tags.tag_id = tags.id").
+		Order("model_tags.id DESC").Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var items []*pb.ModelTag
+	for _, item := range m {
+		items = append(items, &pb.ModelTag{
+			ModelId: item.ModelId,
+			Name:    item.Name,
+		})
+	}
+
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) ListModelTagsByModel(ctx context.Context, userId int64, model pb.ModelTag) ([]*pb.ModelTag, error) {
+	var m []struct {
+		ModelId int64
+		Name    string
+	}
+
+	err := r.db.WithContext(ctx).
+		Model(&pb.ModelTag{}).
+		Select("model_id, name").
+		Where("model_tags.user_id = ?", userId).
+		Where("model_tags.service = ? AND model_tags.model = ? AND tags.name = ?", model.Service, model.Model, model.Name).
 		Joins("LEFT JOIN tags ON model_tags.tag_id = tags.id").
 		Order("model_tags.id DESC").Find(&m).Error
 	if err != nil {
@@ -187,13 +216,14 @@ func (r *MysqlMiddleRepository) ListModelTags(ctx context.Context, modelId []int
 
 func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error) {
 	var find pb.Tag
-	err := r.db.WithContext(ctx).Where("name = ?", tag.Name).First(&find).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND name = ?", tag.UserId, tag.Name).First(&find).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return pb.Tag{}, err
 	}
 
 	if find.Id <= 0 {
 		find.Id = r.id.Generate(ctx)
+		find.UserId = tag.UserId
 		find.Name = tag.Name
 		find.CreatedAt = time.Now().Unix()
 		find.UpdatedAt = time.Now().Unix()
@@ -208,7 +238,8 @@ func (r *MysqlMiddleRepository) GetOrCreateTag(ctx context.Context, tag *pb.Tag)
 
 func (r *MysqlMiddleRepository) GetOrCreateModelTag(ctx context.Context, model *pb.ModelTag) (pb.ModelTag, error) {
 	var find pb.ModelTag
-	err := r.db.WithContext(ctx).Where("service = ? AND model = ? AND model_id = ? AND tag_id = ?", model.Service, model.Model, model.ModelId, model.TagId).First(&find).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND service = ? AND model = ? AND model_id = ? AND tag_id = ?",
+		model.UserId, model.Service, model.Model, model.ModelId, model.TagId).First(&find).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return pb.ModelTag{}, err
 	}

@@ -160,6 +160,29 @@ func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.Ke
 	return &pb.KeyResultsReply{Result: items}, nil
 }
 
+func (o *Okr) GetKeyResultsByTag(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
+	reply, err := o.middle.GetModelTags(ctx, &pb.ModelTagRequest{Model: &pb.ModelTag{
+		Service: enum.Chatbot,
+		Model:   util.ModelName(pb.KeyResult{}),
+		Name:    payload.Tag,
+	}})
+	if err != nil {
+		return nil, err
+	}
+
+	var krId []int64
+	for _, item := range reply.Tags {
+		krId = append(krId, item.Id)
+	}
+
+	items, err := o.repo.ListKeyResultsById(ctx, krId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.KeyResultsReply{Result: items}, nil
+}
+
 func (o *Okr) DeleteKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*pb.StateReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	err := o.repo.DeleteKeyResultBySequence(ctx, id, payload.KeyResult.GetSequence())

@@ -33,7 +33,7 @@ var setting = []bot.FieldItem{
 var workflowRules = bot.WorkflowRule{
 	Plugin: []bot.PluginRule{
 		{
-			Name: "expr",
+			Name:  "expr",
 			Param: []interface{}{"len(Value)"},
 		},
 	},
@@ -54,7 +54,7 @@ var Bot *bot.Bot
 
 func init() {
 	var err error
-	Bot, err = bot.NewBot(metadata, setting, workflowRules, commandRules, actionRules, formRules, tagRules)
+	Bot, err = bot.NewBot(metadata, setting, nil, workflowRules, commandRules, actionRules, formRules, tagRules)
 	if err != nil {
 		panic(err)
 	}

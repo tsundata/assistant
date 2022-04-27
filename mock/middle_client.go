@@ -316,6 +316,26 @@ func (mr *MockMiddleSvcClientMockRecorder) GetMaskingCredentials(ctx, in interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetMaskingCredentials), varargs...)
 }
 
+// GetModelTags mocks base method.
+func (m *MockMiddleSvcClient) GetModelTags(ctx context.Context, in *pb.ModelTagRequest, opts ...grpc.CallOption) (*pb.GetTagsReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetModelTags", varargs...)
+	ret0, _ := ret[0].(*pb.GetTagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetModelTags indicates an expected call of GetModelTags.
+func (mr *MockMiddleSvcClientMockRecorder) GetModelTags(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModelTags", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetModelTags), varargs...)
+}
+
 // GetOrCreateTag mocks base method.
 func (m *MockMiddleSvcClient) GetOrCreateTag(ctx context.Context, in *pb.TagRequest, opts ...grpc.CallOption) (*pb.TagReply, error) {
 	m.ctrl.T.Helper()
@@ -1027,6 +1047,21 @@ func (m *MockMiddleSvcServer) GetMaskingCredentials(arg0 context.Context, arg1 *
 func (mr *MockMiddleSvcServerMockRecorder) GetMaskingCredentials(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMaskingCredentials", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetMaskingCredentials), arg0, arg1)
+}
+
+// GetModelTags mocks base method.
+func (m *MockMiddleSvcServer) GetModelTags(arg0 context.Context, arg1 *pb.ModelTagRequest) (*pb.GetTagsReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetModelTags", arg0, arg1)
+	ret0, _ := ret[0].(*pb.GetTagsReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetModelTags indicates an expected call of GetModelTags.
+func (mr *MockMiddleSvcServerMockRecorder) GetModelTags(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModelTags", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetModelTags), arg0, arg1)
 }
 
 // GetOrCreateTag mocks base method.

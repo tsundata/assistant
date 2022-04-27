@@ -320,7 +320,7 @@ func TestMiddleRepository_ListTags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListTags(context.Background())
+			_, err := tt.r.ListTags(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MysqlMiddleRepository.ListTags() error = %v, wantErr %v", err, tt.wantErr)
 				return

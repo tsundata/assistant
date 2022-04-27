@@ -239,6 +239,21 @@ func (mr *MockOkrRepositoryMockRecorder) ListKeyResults(ctx, userId interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResults", reflect.TypeOf((*MockOkrRepository)(nil).ListKeyResults), ctx, userId)
 }
 
+// ListKeyResultsById mocks base method.
+func (m *MockOkrRepository) ListKeyResultsById(ctx context.Context, id []int64) ([]*pb.KeyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListKeyResultsById", ctx, id)
+	ret0, _ := ret[0].([]*pb.KeyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListKeyResultsById indicates an expected call of ListKeyResultsById.
+func (mr *MockOkrRepositoryMockRecorder) ListKeyResultsById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListKeyResultsById", reflect.TypeOf((*MockOkrRepository)(nil).ListKeyResultsById), ctx, id)
+}
+
 // ListObjectives mocks base method.
 func (m *MockOkrRepository) ListObjectives(ctx context.Context, userId int64) ([]*pb.Objective, error) {
 	m.ctrl.T.Helper()
