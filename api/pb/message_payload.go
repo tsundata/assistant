@@ -145,3 +145,12 @@ type OkrMsg struct {
 func (o OkrMsg) Type() enum.MessageType {
 	return enum.MessageTypeOkr
 }
+
+type InfoMsg struct {
+	Title string      `json:"title"`
+	Model interface{} `json:"model"`
+}
+
+func (i InfoMsg) Type() enum.MessageType {
+	return enum.MessageTypeInfo
+}

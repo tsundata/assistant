@@ -16,6 +16,7 @@ const (
 	MessageTypeTable    MessageType = "table"
 	MessageTypeDigit    MessageType = "digit"
 	MessageTypeOkr      MessageType = "okr"
+	MessageTypeInfo     MessageType = "info"
 )
 
 const (

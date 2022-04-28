@@ -214,6 +214,28 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
+		Define: `kr [number]`,
+		Help:   `View KeyResult`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Okr() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			sequence, _ := tokens[1].Value.Int64()
+
+			reply, err := comp.Okr().GetKeyResult(ctx, &pb.KeyResultRequest{
+				KeyResult: &pb.KeyResult{Sequence: sequence},
+			})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			return []pb.MsgPayload{pb.InfoMsg{
+				Title: fmt.Sprintf("KeyResult #%d", sequence),
+				Model: reply.KeyResult,
+			}}
+		},
+	},
+	{
 		Define: `kr del [number]`,
 		Help:   `Delete KeyResult`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
