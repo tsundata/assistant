@@ -39,28 +39,30 @@ message Todo {
   int64 id = 1;
   // @inject_tag: db:"user_id"
   int64 user_id = 2;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 3;
   // @inject_tag: db:"content"
-  string content = 3;
+  string content = 4;
   // @inject_tag: db:"category"
-  string category = 4;
+  string category = 5;
   // @inject_tag: db:"remark"
-  string remark = 5;
+  string remark = 6;
   // @inject_tag: db:"priority"
-  int64 priority = 6;
+  int64 priority = 7;
   // @inject_tag: db:"is_remind_at_time"
-  bool is_remind_at_time = 7;
+  bool is_remind_at_time = 8;
   // @inject_tag: db:"remind_at"
-  int64 remind_at = 8;
+  int64 remind_at = 9;
   // @inject_tag: db:"repeat_method"
-  string repeat_method = 9;
+  string repeat_method = 10;
   // @inject_tag: db:"repeat_rule"
-  string repeat_rule = 10;
+  string repeat_rule = 11;
   // @inject_tag: db:"repeat_end_at"
-  int64 repeat_end_at = 11;
+  int64 repeat_end_at = 12;
   // @inject_tag: db:"complete"
-  bool complete = 12;
+  bool complete = 13;
   // @inject_tag: db:"created_at"
-  int64 created_at = 13;
+  int64 created_at = 14;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 14;
+  int64 updated_at = 15;
 }

@@ -112,12 +112,12 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	financeSvcServer := service.NewFinance()
-	todoRepository := repository2.NewMysqlTodoRepository(globalID, conn)
+	todoRepository := repository2.NewMysqlTodoRepository(locker, globalID, conn)
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	systemRepository := repository3.NewMysqlSystemRepository(logLogger, globalID, conn)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
 	okrRepository := repository4.NewMysqlOkrRepository(locker, globalID, conn)
-	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
+	okrSvcServer := service4.NewOkr(bus, okrRepository, middleSvcClient)
 	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := rulebot.New(componentComponent)
 	serviceChatbot := service5.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)

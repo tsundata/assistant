@@ -78,6 +78,20 @@ func (mr *MockTodoRepositoryMockRecorder) DeleteTodo(ctx, id interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).DeleteTodo), ctx, id)
 }
 
+// DeleteTodoBySequence mocks base method.
+func (m *MockTodoRepository) DeleteTodoBySequence(ctx context.Context, userId, sequence int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTodoBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTodoBySequence indicates an expected call of DeleteTodoBySequence.
+func (mr *MockTodoRepositoryMockRecorder) DeleteTodoBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTodoBySequence", reflect.TypeOf((*MockTodoRepository)(nil).DeleteTodoBySequence), ctx, userId, sequence)
+}
+
 // GetTodo mocks base method.
 func (m *MockTodoRepository) GetTodo(ctx context.Context, id int64) (*pb.Todo, error) {
 	m.ctrl.T.Helper()
@@ -93,34 +107,49 @@ func (mr *MockTodoRepositoryMockRecorder) GetTodo(ctx, id interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodo", reflect.TypeOf((*MockTodoRepository)(nil).GetTodo), ctx, id)
 }
 
-// ListRemindTodos mocks base method.
-func (m *MockTodoRepository) ListRemindTodos(ctx context.Context) ([]*pb.Todo, error) {
+// GetTodoBySequence mocks base method.
+func (m *MockTodoRepository) GetTodoBySequence(ctx context.Context, userId, sequence int64) (*pb.Todo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListRemindTodos", ctx)
+	ret := m.ctrl.Call(m, "GetTodoBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(*pb.Todo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTodoBySequence indicates an expected call of GetTodoBySequence.
+func (mr *MockTodoRepositoryMockRecorder) GetTodoBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTodoBySequence", reflect.TypeOf((*MockTodoRepository)(nil).GetTodoBySequence), ctx, userId, sequence)
+}
+
+// ListRemindTodos mocks base method.
+func (m *MockTodoRepository) ListRemindTodos(ctx context.Context, userId int64) ([]*pb.Todo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListRemindTodos", ctx, userId)
 	ret0, _ := ret[0].([]*pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListRemindTodos indicates an expected call of ListRemindTodos.
-func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos(ctx interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) ListRemindTodos(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRemindTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListRemindTodos), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRemindTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListRemindTodos), ctx, userId)
 }
 
 // ListTodos mocks base method.
-func (m *MockTodoRepository) ListTodos(ctx context.Context) ([]*pb.Todo, error) {
+func (m *MockTodoRepository) ListTodos(ctx context.Context, userId int64) ([]*pb.Todo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListTodos", ctx)
+	ret := m.ctrl.Call(m, "ListTodos", ctx, userId)
 	ret0, _ := ret[0].([]*pb.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListTodos indicates an expected call of ListTodos.
-func (mr *MockTodoRepositoryMockRecorder) ListTodos(ctx interface{}) *gomock.Call {
+func (mr *MockTodoRepositoryMockRecorder) ListTodos(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListTodos), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodos", reflect.TypeOf((*MockTodoRepository)(nil).ListTodos), ctx, userId)
 }
 
 // UpdateTodo mocks base method.

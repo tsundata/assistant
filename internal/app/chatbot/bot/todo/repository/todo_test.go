@@ -48,7 +48,7 @@ func TestTodoRepository_ListTodos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListTodos(context.Background())
+			_, err := tt.r.ListTodos(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TodoRepository.ListTodos() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -71,7 +71,7 @@ func TestTodoRepository_ListRemindTodos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.r.ListRemindTodos(context.Background())
+			_, err := tt.r.ListRemindTodos(context.Background(), 1)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TodoRepository.ListTodos() error = %v, wantErr %v", err, tt.wantErr)
 				return

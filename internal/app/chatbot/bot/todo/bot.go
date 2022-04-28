@@ -8,6 +8,11 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 )
 
+const (
+	CreateTodoFormID = "create_todo"
+	UpdateTodoFormID = "update_todo"
+)
+
 var metadata = bot.Metadata{
 	Name:       "Todo",
 	Identifier: enum.TodoBot,
@@ -45,8 +50,6 @@ var workflowRules = bot.WorkflowRule{
 }
 
 var actionRules []bot.ActionRule
-
-var formRules []bot.FormRule
 
 var tagRules []bot.TagRule
 

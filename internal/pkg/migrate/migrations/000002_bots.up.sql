@@ -36,6 +36,7 @@ CREATE TABLE `todos`
 (
     `id`                BIGINT(19) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`           BIGINT(10)          NOT NULL,
+    `sequence`          INT(10)             NOT NULL,
     `content`           VARCHAR(1024)       NOT NULL DEFAULT '',
     `priority`          TINYINT(4)          NOT NULL DEFAULT '0',
     `is_remind_at_time` TINYINT(4)          NOT NULL DEFAULT '0',
@@ -49,7 +50,7 @@ CREATE TABLE `todos`
     `created_at`        INT(10)             NOT NULL DEFAULT '0',
     `updated_at`        INT(10)             NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX `user_id` (`user_id`) USING BTREE
+    KEY `user_id` (`user_id`, `sequence`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

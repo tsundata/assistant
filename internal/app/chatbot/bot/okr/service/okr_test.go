@@ -22,7 +22,7 @@ func TestOkr_CreateObjective(t *testing.T) {
 		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{Model: &pb.ModelTag{TagId: 1}}, nil),
 	)
 
-	s := NewOkr(repo, middle)
+	s := NewOkr(nil, repo, middle)
 
 	type args struct {
 		ctx     context.Context
@@ -69,7 +69,7 @@ func TestOkr_GetObjective(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -122,7 +122,7 @@ func TestOkr_GetObjectives(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -167,7 +167,7 @@ func TestOkr_DeleteObjective(t *testing.T) {
 		repo.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -208,7 +208,7 @@ func TestOkr_CreateKeyResult(t *testing.T) {
 		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{Model: &pb.ModelTag{TagId: 1}}, nil),
 	)
 
-	s := NewOkr(repo, middle)
+	s := NewOkr(nil, repo, middle)
 
 	type args struct {
 		ctx     context.Context
@@ -257,7 +257,7 @@ func TestOkr_GetKeyResult(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -312,7 +312,7 @@ func TestOkr_GetKeyResults(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -358,7 +358,7 @@ func TestOkr_DeleteKeyResult(t *testing.T) {
 		repo.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(nil),
 	)
 
-	s := NewOkr(repo, nil)
+	s := NewOkr(nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context

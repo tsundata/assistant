@@ -25,6 +25,7 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 
 	var err error
 	todo := pb.Todo{
+		UserId:         id,
 		Content:        payload.Todo.GetContent(),
 		Priority:       payload.Todo.GetPriority(),
 		IsRemindAtTime: payload.Todo.GetIsRemindAtTime(),
@@ -32,7 +33,7 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 		RepeatMethod:   payload.Todo.GetRepeatMethod(),
 		RepeatRule:     payload.Todo.GetRepeatRule(),
 		RepeatEndAt:    payload.Todo.GetRepeatEndAt(),
-		Category:       "",
+		Category:       payload.Todo.GetCategory(),
 		Remark:         payload.Todo.GetRemark(),
 		Complete:       false,
 	}
@@ -52,39 +53,29 @@ func (s *Todo) CreateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 }
 
 func (s *Todo) GetTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.TodoReply, error) {
-	find, err := s.repo.GetTodo(ctx, payload.Todo.GetId())
+	id, _ := md.FromIncoming(ctx)
+	var err error
+	var find *pb.Todo
+	if payload.Todo.Sequence > 0 {
+		find, err = s.repo.GetTodoBySequence(ctx, id, payload.Todo.GetSequence())
+	} else {
+		find, err = s.repo.GetTodo(ctx, payload.Todo.GetId())
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.TodoReply{
-		Todo: &pb.Todo{
-			Content:  find.Content,
-			Priority: find.Priority,
-			Remark:   find.Remark,
-			Complete: find.Complete,
-		},
-	}, nil
+	return &pb.TodoReply{Todo: find}, nil
 }
 
 func (s *Todo) GetTodos(ctx context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
-	items, err := s.repo.ListTodos(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := s.repo.ListTodos(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []*pb.Todo
-	for _, item := range items {
-		res = append(res, &pb.Todo{
-			Id:       item.Id,
-			Content:  item.Content,
-			Priority: item.Priority,
-			Remark:   item.Remark,
-			Complete: item.Complete,
-		})
-	}
-
-	return &pb.TodosReply{Todos: res}, nil
+	return &pb.TodosReply{Todos: items}, nil
 }
 
 func (s *Todo) DeleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
@@ -97,9 +88,14 @@ func (s *Todo) DeleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 }
 
 func (s *Todo) UpdateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
 	err := s.repo.UpdateTodo(ctx, &pb.Todo{
-		Id:      payload.Todo.GetId(),
-		Content: payload.Todo.GetContent(),
+		UserId:   id,
+		Sequence: payload.Todo.GetSequence(),
+		Content:  payload.Todo.GetContent(),
+		Category: payload.Todo.GetCategory(),
+		Remark:   payload.Todo.GetRemark(),
+		Priority: payload.Todo.GetPriority(),
 	})
 	if err != nil {
 		return nil, err
@@ -138,25 +134,11 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 }
 
 func (s *Todo) GetRemindTodos(ctx context.Context, _ *pb.TodoRequest) (*pb.TodosReply, error) {
-	items, err := s.repo.ListRemindTodos(ctx)
+	id, _ := md.FromIncoming(ctx)
+	items, err := s.repo.ListRemindTodos(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []*pb.Todo
-	for _, item := range items {
-		res = append(res, &pb.Todo{
-			Id:             item.Id,
-			Content:        item.Content,
-			Priority:       item.Priority,
-			IsRemindAtTime: item.IsRemindAtTime,
-			RemindAt:       item.RemindAt,
-			RepeatMethod:   item.RepeatMethod,
-			RepeatRule:     item.RepeatRule,
-			RepeatEndAt:    item.RepeatEndAt,
-			CreatedAt:      item.CreatedAt,
-		})
-	}
-
-	return &pb.TodosReply{Todos: res}, nil
+	return &pb.TodosReply{Todos: items}, nil
 }

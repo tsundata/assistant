@@ -91,6 +91,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 		return nil, err
 	}
 	financeSvcServer := service.NewFinance()
+	locker := global.NewLocker(client)
 	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
 	if err != nil {
 		return nil, err
@@ -100,13 +101,12 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := repository.NewMysqlTodoRepository(globalID, conn)
+	todoRepository := repository.NewMysqlTodoRepository(locker, globalID, conn)
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
 	systemRepository := repository2.NewMysqlSystemRepository(logLogger, globalID, conn)
-	locker := global.NewLocker(client)
 	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
 	okrRepository := repository3.NewMysqlOkrRepository(locker, globalID, conn)
-	okrSvcServer := service4.NewOkr(okrRepository, middleSvcClient)
+	okrSvcServer := service4.NewOkr(bus, okrRepository, middleSvcClient)
 	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil

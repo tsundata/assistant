@@ -20,8 +20,10 @@ const (
 )
 
 const (
-	TodoCreatedExp   = 3
-	TodoCompletedExp = 6
+	ObjectiveCreatedExp = 10
+
+	TodoCreatedExp   = 5
+	TodoCompletedExp = 10
 
 	MessageCreateExp = 1
 )

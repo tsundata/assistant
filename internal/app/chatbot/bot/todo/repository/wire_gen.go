@@ -26,6 +26,7 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	if err != nil {
 		return nil, err
 	}
+	locker := global.NewLocker(client)
 	appConfig := config.NewConfig(id, client)
 	rollbarRollbar := rollbar.New(appConfig)
 	logger := log.NewZapLogger(rollbarRollbar)
@@ -55,7 +56,7 @@ func CreateTodoRepository(id string) (TodoRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := NewMysqlTodoRepository(globalID, conn)
+	todoRepository := NewMysqlTodoRepository(locker, globalID, conn)
 	return todoRepository, nil
 }
 

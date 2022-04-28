@@ -6,17 +6,19 @@ import (
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 type Okr struct {
+	bus    event.Bus
 	middle pb.MiddleSvcClient
 	repo   repository.OkrRepository
 }
 
-func NewOkr(repo repository.OkrRepository, middle pb.MiddleSvcClient) pb.OkrSvcServer {
-	return &Okr{repo: repo, middle: middle}
+func NewOkr(bus event.Bus, repo repository.OkrRepository, middle pb.MiddleSvcClient) pb.OkrSvcServer {
+	return &Okr{bus: bus, repo: repo, middle: middle}
 }
 
 func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest) (*pb.StateReply, error) {
@@ -37,6 +39,13 @@ func (o *Okr) CreateObjective(ctx context.Context, payload *pb.ObjectiveRequest)
 			},
 			Tag: payload.Tag,
 		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if o.bus != nil {
+		err = o.bus.Publish(ctx, enum.User, event.RoleChangeExpSubject, pb.Role{UserId: id, Exp: enum.ObjectiveCreatedExp})
 		if err != nil {
 			return nil, err
 		}
