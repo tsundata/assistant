@@ -177,11 +177,25 @@ func (o *Okr) GetKeyResult(ctx context.Context, payload *pb.KeyResultRequest) (*
 	return &pb.KeyResultReply{KeyResult: find}, nil
 }
 
-func (o *Okr) GetKeyResults(ctx context.Context, _ *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
+func (o *Okr) GetKeyResults(ctx context.Context, payload *pb.KeyResultRequest) (*pb.KeyResultsReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	items, err := o.repo.ListKeyResults(ctx, id)
-	if err != nil {
-		return nil, err
+
+	var err error
+	var items []*pb.KeyResult
+	if payload.ObjectiveSequence > 0 {
+		obj, err := o.repo.GetObjectiveBySequence(ctx, id, payload.ObjectiveSequence)
+		if err != nil {
+			return nil, err
+		}
+		items, err = o.repo.ListKeyResultsByObjectiveId(ctx, obj.Id)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		items, err = o.repo.ListKeyResults(ctx, id)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &pb.KeyResultsReply{Result: items}, nil

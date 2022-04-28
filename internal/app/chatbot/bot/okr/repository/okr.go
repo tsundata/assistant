@@ -25,6 +25,7 @@ type OkrRepository interface {
 	GetKeyResultBySequence(ctx context.Context, userId, sequence int64) (*pb.KeyResult, error)
 	ListKeyResults(ctx context.Context, userId int64) ([]*pb.KeyResult, error)
 	ListKeyResultsById(ctx context.Context, id []int64) ([]*pb.KeyResult, error)
+	ListKeyResultsByObjectiveId(ctx context.Context, objectiveId int64) ([]*pb.KeyResult, error)
 	CreateKeyResult(ctx context.Context, keyResult *pb.KeyResult) (int64, error)
 	UpdateKeyResult(ctx context.Context, keyResult *pb.KeyResult) error
 	DeleteKeyResult(ctx context.Context, id int64) error
@@ -157,6 +158,15 @@ func (r *MysqlOkrRepository) ListKeyResults(ctx context.Context, userId int64) (
 func (r *MysqlOkrRepository) ListKeyResultsById(ctx context.Context, id []int64) ([]*pb.KeyResult, error) {
 	var keyResult []*pb.KeyResult
 	err := r.db.WithContext(ctx).Where("id IN ?", id).Order("id DESC").Find(&keyResult).Error
+	if err != nil {
+		return nil, err
+	}
+	return keyResult, nil
+}
+
+func (r *MysqlOkrRepository) ListKeyResultsByObjectiveId(ctx context.Context, objectiveId int64) ([]*pb.KeyResult, error) {
+	var keyResult []*pb.KeyResult
+	err := r.db.WithContext(ctx).Where("objective_id = ?", objectiveId).Order("id DESC").Find(&keyResult).Error
 	if err != nil {
 		return nil, err
 	}

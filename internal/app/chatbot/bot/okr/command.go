@@ -46,6 +46,34 @@ var commandRules = []command.Rule{
 		},
 	},
 	{
+		Define: `obj [number]`,
+		Help:   `View objective`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Okr() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			sequence, _ := tokens[1].Value.Int64()
+
+			reply, err := comp.Okr().GetObjective(ctx, &pb.ObjectiveRequest{
+				Objective: &pb.Objective{Sequence: sequence},
+			})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			keyResultReply, err := comp.Okr().GetKeyResults(ctx, &pb.KeyResultRequest{ObjectiveSequence: sequence})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			return []pb.MsgPayload{pb.OkrMsg{
+				Title:     fmt.Sprintf("Objective #%d", reply.Objective.GetSequence()),
+				Objective: *reply.Objective,
+				KeyResult: keyResultReply.Result,
+			}}
+		},
+	},
+	{
 		Define: `obj del [number]`,
 		Help:   `Delete objective`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {

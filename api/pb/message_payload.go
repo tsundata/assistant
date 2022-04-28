@@ -135,3 +135,13 @@ type DigitMsg struct {
 func (a DigitMsg) Type() enum.MessageType {
 	return enum.MessageTypeDigit
 }
+
+type OkrMsg struct {
+	Title     string       `json:"title"`
+	Objective Objective    `json:"objective"`
+	KeyResult []*KeyResult `json:"key_result"`
+}
+
+func (o OkrMsg) Type() enum.MessageType {
+	return enum.MessageTypeOkr
+}
