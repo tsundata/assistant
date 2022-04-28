@@ -722,10 +722,17 @@ func (s *Middle) GetTagsByModelId(ctx context.Context, payload *pb.ModelIdReques
 
 func (s *Middle) GetModelTags(ctx context.Context, payload *pb.ModelTagRequest) (*pb.GetTagsReply, error) {
 	id, _ := md.FromIncoming(ctx)
-	tags, err := s.repo.ListModelTagsByModel(ctx, id, *payload.Model)
+	var err error
+	var tags []*pb.ModelTag
+	if payload.Model != nil {
+		tags, err = s.repo.ListModelTagsByModel(ctx, id, *payload.Model)
+	} else {
+		tags, err = s.repo.ListModelTagsByTag(ctx, id, payload.Tag)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	return &pb.GetTagsReply{Tags: tags}, nil
 }
 

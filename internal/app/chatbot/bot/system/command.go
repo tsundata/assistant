@@ -532,4 +532,62 @@ var commandRules = []command.Rule{
 			}}
 		},
 	},
+	{
+		Define: "tags",
+		Help:   `List Tag`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			reply, err := comp.Middle().GetTags(ctx, &pb.TagRequest{})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.Tags) > 0 {
+				header = []string{"Id", "Name"}
+				for _, v := range reply.Tags {
+					row = append(row, []interface{}{v.Id, v.Name})
+				}
+			}
+			if len(row) == 0 {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty tags"}}
+			}
+
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Tags",
+				Header: header,
+				Row:    row,
+			}}
+		},
+	},
+	{
+		Define: "tag [string]",
+		Help:   `Get Model tags`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			tag, _ := tokens[1].Value.String()
+
+			reply, err := comp.Middle().GetModelTags(ctx, &pb.ModelTagRequest{Tag: tag})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.Tags) > 0 {
+				header = []string{"Id", "Service", "Model", "ModelId"}
+				for _, v := range reply.Tags {
+					row = append(row, []interface{}{v.Id, v.Service, v.Model, v.ModelId})
+				}
+			}
+			if len(row) == 0 {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty model tags"}}
+			}
+
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Model Tags",
+				Header: header,
+				Row:    row,
+			}}
+		},
+	},
 }

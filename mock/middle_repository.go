@@ -303,6 +303,21 @@ func (mr *MockMiddleRepositoryMockRecorder) ListModelTagsByModelId(ctx, userId, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListModelTagsByModelId", reflect.TypeOf((*MockMiddleRepository)(nil).ListModelTagsByModelId), ctx, userId, modelId)
 }
 
+// ListModelTagsByTag mocks base method.
+func (m *MockMiddleRepository) ListModelTagsByTag(ctx context.Context, userId int64, tag string) ([]*pb.ModelTag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListModelTagsByTag", ctx, userId, tag)
+	ret0, _ := ret[0].([]*pb.ModelTag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListModelTagsByTag indicates an expected call of ListModelTagsByTag.
+func (mr *MockMiddleRepositoryMockRecorder) ListModelTagsByTag(ctx, userId, tag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListModelTagsByTag", reflect.TypeOf((*MockMiddleRepository)(nil).ListModelTagsByTag), ctx, userId, tag)
+}
+
 // ListSubscribe mocks base method.
 func (m *MockMiddleRepository) ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error) {
 	m.ctrl.T.Helper()

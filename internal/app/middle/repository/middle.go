@@ -26,6 +26,7 @@ type MiddleRepository interface {
 	ListTags(ctx context.Context, userId int64) ([]*pb.Tag, error)
 	ListModelTagsByModelId(ctx context.Context, userId int64, modelId []int64) ([]*pb.ModelTag, error)
 	ListModelTagsByModel(ctx context.Context, userId int64, model pb.ModelTag) ([]*pb.ModelTag, error)
+	ListModelTagsByTag(ctx context.Context, userId int64, tag string) ([]*pb.ModelTag, error)
 	GetOrCreateTag(ctx context.Context, tag *pb.Tag) (pb.Tag, error)
 	GetOrCreateModelTag(ctx context.Context, tag *pb.ModelTag) (pb.ModelTag, error)
 	ListSubscribe(ctx context.Context) ([]*pb.Subscribe, error)
@@ -187,28 +188,30 @@ func (r *MysqlMiddleRepository) ListModelTagsByModelId(ctx context.Context, user
 }
 
 func (r *MysqlMiddleRepository) ListModelTagsByModel(ctx context.Context, userId int64, model pb.ModelTag) ([]*pb.ModelTag, error) {
-	var m []struct {
-		ModelId int64
-		Name    string
-	}
+	var items []*pb.ModelTag
 
 	err := r.db.WithContext(ctx).
-		Model(&pb.ModelTag{}).
-		Select("model_id, name").
 		Where("model_tags.user_id = ?", userId).
 		Where("model_tags.service = ? AND model_tags.model = ? AND tags.name = ?", model.Service, model.Model, model.Name).
 		Joins("LEFT JOIN tags ON model_tags.tag_id = tags.id").
-		Order("model_tags.id DESC").Find(&m).Error
+		Order("model_tags.id DESC").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}
 
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) ListModelTagsByTag(ctx context.Context, userId int64, tag string) ([]*pb.ModelTag, error) {
 	var items []*pb.ModelTag
-	for _, item := range m {
-		items = append(items, &pb.ModelTag{
-			ModelId: item.ModelId,
-			Name:    item.Name,
-		})
+
+	err := r.db.WithContext(ctx).
+		Where("model_tags.user_id = ?", userId).
+		Where("tags.name = ?", tag).
+		Joins("LEFT JOIN tags ON model_tags.tag_id = tags.id").
+		Order("model_tags.id DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
 	}
 
 	return items, nil
