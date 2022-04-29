@@ -45,6 +45,13 @@ var rules = []Rule{
 		},
 	},
 	{
+		Name: "script_watch",
+		When: "* * * * *",
+		Action: func(ctx context.Context, comp component.Component) []result.Result {
+			return agent.ScriptWatch(ctx, comp)
+		},
+	},
+	{
 		Name: "cloudflare_report",
 		When: "0 0 * * 0",
 		Action: func(ctx context.Context, comp component.Component) []result.Result {

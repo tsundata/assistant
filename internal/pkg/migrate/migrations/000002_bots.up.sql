@@ -21,6 +21,8 @@ CREATE TABLE `triggers`
     `flag`       varchar(128)        NOT NULL DEFAULT '',
     `secret`     varchar(128)        NOT NULL DEFAULT '',
     `when`       varchar(128)        NOT NULL DEFAULT '',
+    `category`   varchar(128)        NOT NULL DEFAULT '',
+    `expr`       varchar(128)        NOT NULL DEFAULT '',
     `user_id`    BIGINT(19)          NOT NULL DEFAULT '0',
     `message_id` BIGINT(19)          NOT NULL DEFAULT '0',
     `status`     TINYINT(3)          NOT NULL DEFAULT '0',

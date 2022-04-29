@@ -38,13 +38,15 @@ type ChatbotSvcClient interface {
 	RunActionScript(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	WebhookTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	CronTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	WatchTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
 	CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
 	DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error)
-	ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
-	ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error)
 	GetWebhookTriggers(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*TriggersReply, error)
 	GetCronTriggers(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*TriggersReply, error)
+	GetWatchTriggers(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*TriggersReply, error)
 	SwitchTriggers(ctx context.Context, in *SwitchTriggersRequest, opts ...grpc.CallOption) (*StateReply, error)
+	ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error)
+	ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error)
 }
 
 type chatbotSvcClient struct {
@@ -244,6 +246,15 @@ func (c *chatbotSvcClient) CronTrigger(ctx context.Context, in *TriggerRequest, 
 	return out, nil
 }
 
+func (c *chatbotSvcClient) WatchTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/WatchTrigger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatbotSvcClient) CreateTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/CreateTrigger", in, out, opts...)
@@ -256,24 +267,6 @@ func (c *chatbotSvcClient) CreateTrigger(ctx context.Context, in *TriggerRequest
 func (c *chatbotSvcClient) DeleteTrigger(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/DeleteTrigger", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatbotSvcClient) ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
-	out := new(WorkflowReply)
-	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ActionDoc", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatbotSvcClient) ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error) {
-	out := new(WebhooksReply)
-	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ListWebhook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -298,9 +291,36 @@ func (c *chatbotSvcClient) GetCronTriggers(ctx context.Context, in *TriggerReque
 	return out, nil
 }
 
+func (c *chatbotSvcClient) GetWatchTriggers(ctx context.Context, in *TriggerRequest, opts ...grpc.CallOption) (*TriggersReply, error) {
+	out := new(TriggersReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/GetWatchTriggers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatbotSvcClient) SwitchTriggers(ctx context.Context, in *SwitchTriggersRequest, opts ...grpc.CallOption) (*StateReply, error) {
 	out := new(StateReply)
 	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/SwitchTriggers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) ActionDoc(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WorkflowReply, error) {
+	out := new(WorkflowReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ActionDoc", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotSvcClient) ListWebhook(ctx context.Context, in *WorkflowRequest, opts ...grpc.CallOption) (*WebhooksReply, error) {
+	out := new(WebhooksReply)
+	err := c.cc.Invoke(ctx, "/pb.ChatbotSvc/ListWebhook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -332,13 +352,15 @@ type ChatbotSvcServer interface {
 	RunActionScript(context.Context, *WorkflowRequest) (*WorkflowReply, error)
 	WebhookTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
 	CronTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
+	WatchTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error)
 	CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error)
 	DeleteTrigger(context.Context, *TriggerRequest) (*StateReply, error)
-	ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error)
-	ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error)
 	GetWebhookTriggers(context.Context, *TriggerRequest) (*TriggersReply, error)
 	GetCronTriggers(context.Context, *TriggerRequest) (*TriggersReply, error)
+	GetWatchTriggers(context.Context, *TriggerRequest) (*TriggersReply, error)
 	SwitchTriggers(context.Context, *SwitchTriggersRequest) (*StateReply, error)
+	ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error)
+	ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error)
 }
 
 // UnimplementedChatbotSvcServer should be embedded to have forward compatible implementations.
@@ -408,17 +430,14 @@ func (UnimplementedChatbotSvcServer) WebhookTrigger(context.Context, *TriggerReq
 func (UnimplementedChatbotSvcServer) CronTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CronTrigger not implemented")
 }
+func (UnimplementedChatbotSvcServer) WatchTrigger(context.Context, *TriggerRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WatchTrigger not implemented")
+}
 func (UnimplementedChatbotSvcServer) CreateTrigger(context.Context, *TriggerRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTrigger not implemented")
 }
 func (UnimplementedChatbotSvcServer) DeleteTrigger(context.Context, *TriggerRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTrigger not implemented")
-}
-func (UnimplementedChatbotSvcServer) ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ActionDoc not implemented")
-}
-func (UnimplementedChatbotSvcServer) ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListWebhook not implemented")
 }
 func (UnimplementedChatbotSvcServer) GetWebhookTriggers(context.Context, *TriggerRequest) (*TriggersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWebhookTriggers not implemented")
@@ -426,8 +445,17 @@ func (UnimplementedChatbotSvcServer) GetWebhookTriggers(context.Context, *Trigge
 func (UnimplementedChatbotSvcServer) GetCronTriggers(context.Context, *TriggerRequest) (*TriggersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCronTriggers not implemented")
 }
+func (UnimplementedChatbotSvcServer) GetWatchTriggers(context.Context, *TriggerRequest) (*TriggersReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWatchTriggers not implemented")
+}
 func (UnimplementedChatbotSvcServer) SwitchTriggers(context.Context, *SwitchTriggersRequest) (*StateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SwitchTriggers not implemented")
+}
+func (UnimplementedChatbotSvcServer) ActionDoc(context.Context, *WorkflowRequest) (*WorkflowReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActionDoc not implemented")
+}
+func (UnimplementedChatbotSvcServer) ListWebhook(context.Context, *WorkflowRequest) (*WebhooksReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWebhook not implemented")
 }
 
 // UnsafeChatbotSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -819,6 +847,24 @@ func _ChatbotSvc_CronTrigger_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotSvc_WatchTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).WatchTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/WatchTrigger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).WatchTrigger(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatbotSvc_CreateTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TriggerRequest)
 	if err := dec(in); err != nil {
@@ -851,42 +897,6 @@ func _ChatbotSvc_DeleteTrigger_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatbotSvcServer).DeleteTrigger(ctx, req.(*TriggerRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatbotSvc_ActionDoc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WorkflowRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatbotSvcServer).ActionDoc(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.ChatbotSvc/ActionDoc",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotSvcServer).ActionDoc(ctx, req.(*WorkflowRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatbotSvc_ListWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WorkflowRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatbotSvcServer).ListWebhook(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.ChatbotSvc/ListWebhook",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotSvcServer).ListWebhook(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -927,6 +937,24 @@ func _ChatbotSvc_GetCronTriggers_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotSvc_GetWatchTriggers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).GetWatchTriggers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/GetWatchTriggers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).GetWatchTriggers(ctx, req.(*TriggerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatbotSvc_SwitchTriggers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SwitchTriggersRequest)
 	if err := dec(in); err != nil {
@@ -941,6 +969,42 @@ func _ChatbotSvc_SwitchTriggers_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatbotSvcServer).SwitchTriggers(ctx, req.(*SwitchTriggersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_ActionDoc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).ActionDoc(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/ActionDoc",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).ActionDoc(ctx, req.(*WorkflowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotSvc_ListWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkflowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotSvcServer).ListWebhook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ChatbotSvc/ListWebhook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotSvcServer).ListWebhook(ctx, req.(*WorkflowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1034,20 +1098,16 @@ var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ChatbotSvc_CronTrigger_Handler,
 		},
 		{
+			MethodName: "WatchTrigger",
+			Handler:    _ChatbotSvc_WatchTrigger_Handler,
+		},
+		{
 			MethodName: "CreateTrigger",
 			Handler:    _ChatbotSvc_CreateTrigger_Handler,
 		},
 		{
 			MethodName: "DeleteTrigger",
 			Handler:    _ChatbotSvc_DeleteTrigger_Handler,
-		},
-		{
-			MethodName: "ActionDoc",
-			Handler:    _ChatbotSvc_ActionDoc_Handler,
-		},
-		{
-			MethodName: "ListWebhook",
-			Handler:    _ChatbotSvc_ListWebhook_Handler,
 		},
 		{
 			MethodName: "GetWebhookTriggers",
@@ -1058,8 +1118,20 @@ var _ChatbotSvc_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ChatbotSvc_GetCronTriggers_Handler,
 		},
 		{
+			MethodName: "GetWatchTriggers",
+			Handler:    _ChatbotSvc_GetWatchTriggers_Handler,
+		},
+		{
 			MethodName: "SwitchTriggers",
 			Handler:    _ChatbotSvc_SwitchTriggers_Handler,
+		},
+		{
+			MethodName: "ActionDoc",
+			Handler:    _ChatbotSvc_ActionDoc_Handler,
+		},
+		{
+			MethodName: "ListWebhook",
+			Handler:    _ChatbotSvc_ListWebhook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -16,6 +16,7 @@ const (
 const (
 	TriggerWebhookType = "webhook"
 	TriggerCronType    = "cron"
+	TriggerWatchType   = "watch"
 )
 
 const (

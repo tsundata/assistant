@@ -376,6 +376,26 @@ func (mr *MockChatbotSvcClientMockRecorder) GetGroups(ctx, in interface{}, opts 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetGroups), varargs...)
 }
 
+// GetWatchTriggers mocks base method.
+func (m *MockChatbotSvcClient) GetWatchTriggers(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.TriggersReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetWatchTriggers", varargs...)
+	ret0, _ := ret[0].(*pb.TriggersReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWatchTriggers indicates an expected call of GetWatchTriggers.
+func (mr *MockChatbotSvcClientMockRecorder) GetWatchTriggers(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWatchTriggers", reflect.TypeOf((*MockChatbotSvcClient)(nil).GetWatchTriggers), varargs...)
+}
+
 // GetWebhookTriggers mocks base method.
 func (m *MockChatbotSvcClient) GetWebhookTriggers(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.TriggersReply, error) {
 	m.ctrl.T.Helper()
@@ -574,6 +594,26 @@ func (mr *MockChatbotSvcClientMockRecorder) UpdateGroupSetting(ctx, in interface
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupSetting", reflect.TypeOf((*MockChatbotSvcClient)(nil).UpdateGroupSetting), varargs...)
+}
+
+// WatchTrigger mocks base method.
+func (m *MockChatbotSvcClient) WatchTrigger(ctx context.Context, in *pb.TriggerRequest, opts ...grpc.CallOption) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "WatchTrigger", varargs...)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WatchTrigger indicates an expected call of WatchTrigger.
+func (mr *MockChatbotSvcClientMockRecorder) WatchTrigger(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).WatchTrigger), varargs...)
 }
 
 // WebhookTrigger mocks base method.
@@ -874,6 +914,21 @@ func (mr *MockChatbotSvcServerMockRecorder) GetGroups(arg0, arg1 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroups", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetGroups), arg0, arg1)
 }
 
+// GetWatchTriggers mocks base method.
+func (m *MockChatbotSvcServer) GetWatchTriggers(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.TriggersReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWatchTriggers", arg0, arg1)
+	ret0, _ := ret[0].(*pb.TriggersReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWatchTriggers indicates an expected call of GetWatchTriggers.
+func (mr *MockChatbotSvcServerMockRecorder) GetWatchTriggers(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWatchTriggers", reflect.TypeOf((*MockChatbotSvcServer)(nil).GetWatchTriggers), arg0, arg1)
+}
+
 // GetWebhookTriggers mocks base method.
 func (m *MockChatbotSvcServer) GetWebhookTriggers(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.TriggersReply, error) {
 	m.ctrl.T.Helper()
@@ -1022,6 +1077,21 @@ func (m *MockChatbotSvcServer) UpdateGroupSetting(arg0 context.Context, arg1 *pb
 func (mr *MockChatbotSvcServerMockRecorder) UpdateGroupSetting(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupSetting", reflect.TypeOf((*MockChatbotSvcServer)(nil).UpdateGroupSetting), arg0, arg1)
+}
+
+// WatchTrigger mocks base method.
+func (m *MockChatbotSvcServer) WatchTrigger(arg0 context.Context, arg1 *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WatchTrigger", arg0, arg1)
+	ret0, _ := ret[0].(*pb.WorkflowReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WatchTrigger indicates an expected call of WatchTrigger.
+func (mr *MockChatbotSvcServerMockRecorder) WatchTrigger(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).WatchTrigger), arg0, arg1)
 }
 
 // WebhookTrigger mocks base method.

@@ -41,6 +41,7 @@ var opcodes = map[string]Opcoder{
 	"counter":  NewCounter(),
 	"increase": NewIncrease(),
 	"decrease": NewDecrease(),
+	"watch":    NewWatch(),
 }
 
 func NewOpcode(name string) Opcoder {

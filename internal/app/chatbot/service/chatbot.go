@@ -772,6 +772,36 @@ func (s *Chatbot) CronTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.Wo
 	return &pb.WorkflowReply{}, nil
 }
 
+func (s *Chatbot) WatchTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.WorkflowReply, error) {
+	triggers, err := s.repo.ListTriggersByType(ctx, enum.TriggerWatchType)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, trigger := range triggers {
+		if trigger.Status == enum.TriggerDisable {
+			continue
+		}
+
+		// todo expr
+		if trigger.Expr == "something" {
+			// get message
+			message, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: trigger.MessageId}})
+			if err != nil {
+				return nil, err
+			}
+
+			// publish event
+			err = s.bus.Publish(ctx, enum.Chatbot, event.ScriptRunSubject, message.Message)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return &pb.WorkflowReply{}, nil
+}
+
 func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest) (*pb.StateReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	messageReply, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: payload.Trigger.GetMessageId()}})
@@ -805,7 +835,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 			return nil, err
 		}
 
-		if symbolTable.Cron == nil && symbolTable.Webhook == nil {
+		if symbolTable.Cron == nil && symbolTable.Webhook == nil && symbolTable.Watch == nil {
 			return &pb.StateReply{State: false}, nil
 		}
 
@@ -833,6 +863,18 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 			if find.Id > 0 {
 				return nil, errors.New("exist flag: " + trigger.Flag)
 			}
+
+			// store
+			_, err = s.repo.CreateTrigger(ctx, &trigger)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if symbolTable.Watch != nil {
+			trigger.Type = enum.TriggerWatchType
+			trigger.Category = symbolTable.Watch.Category
+			trigger.Expr = symbolTable.Watch.Expr
 
 			// store
 			_, err = s.repo.CreateTrigger(ctx, &trigger)
@@ -892,6 +934,35 @@ func (s *Chatbot) GetWebhookTriggers(ctx context.Context, _ *pb.TriggerRequest) 
 func (s *Chatbot) GetCronTriggers(ctx context.Context, _ *pb.TriggerRequest) (*pb.TriggersReply, error) {
 	id, _ := md.FromIncoming(ctx)
 	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerCronType)
+	if err != nil {
+		return nil, err
+	}
+
+	// sequence
+	var messageId []int64
+	for _, item := range triggers {
+		messageId = append(messageId, item.MessageId)
+	}
+	messageReply, err := s.message.GetByIds(ctx, &pb.GetMessagesRequest{Ids: messageId})
+	if err != nil {
+		return nil, err
+	}
+	messageMap := make(map[int64]int64)
+	for _, item := range messageReply.Messages {
+		messageMap[item.Id] = item.Sequence
+	}
+	for i, item := range triggers {
+		if s, ok := messageMap[item.MessageId]; ok {
+			triggers[i].Sequence = s
+		}
+	}
+
+	return &pb.TriggersReply{List: triggers}, nil
+}
+
+func (s *Chatbot) GetWatchTriggers(ctx context.Context, _ *pb.TriggerRequest) (*pb.TriggersReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	triggers, err := s.repo.GetTriggers(ctx, id, enum.TriggerWatchType)
 	if err != nil {
 		return nil, err
 	}

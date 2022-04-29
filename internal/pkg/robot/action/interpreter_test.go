@@ -143,3 +143,11 @@ decrease "abc"
 `
 	run(t, text)
 }
+
+func TestInterpreter8(t *testing.T) {
+	text := `
+counter "abc"
+watch "counter" "change(value)"
+`
+	run(t, text)
+}
