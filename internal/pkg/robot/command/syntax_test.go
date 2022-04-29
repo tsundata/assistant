@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )
 
@@ -12,37 +13,37 @@ func TestSyntax(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "subs", token.Value)
+	require.Equal(t, util.Variable("subs"), token.Value)
 
 	token, err = s.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "open", token.Value)
+	require.Equal(t, util.Variable("open"), token.Value)
 
 	token, err = s.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "string", token.Value)
+	require.Equal(t, util.Variable("string"), token.Value)
 
 	token, err = s.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "number", token.Value)
+	require.Equal(t, util.Variable("number"), token.Value)
 
 	token, err = s.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "any", token.Value)
+	require.Equal(t, util.Variable("any"), token.Value)
 
 	token, err = s.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "bool", token.Value)
+	require.Equal(t, util.Variable("bool"), token.Value)
 }
 
 func TestCheck(t *testing.T) {

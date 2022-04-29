@@ -61,10 +61,9 @@ func TestOkr_GetObjective(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetObjectiveByID(gomock.Any(), gomock.Any()).Return(&pb.Objective{
-			Id:    1,
-			Title: "obj1",
-			//Tag:       "test",
+		repo.EXPECT().GetObjectiveBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Objective{
+			Id:        1,
+			Title:     "obj1",
 			CreatedAt: now,
 		}, nil),
 	)
@@ -84,9 +83,8 @@ func TestOkr_GetObjective(t *testing.T) {
 	}{
 		{"case1", s, args{context.Background(), &pb.ObjectiveRequest{Objective: &pb.Objective{Id: 1}}},
 			&pb.ObjectiveReply{Objective: &pb.Objective{
-				Id:    1,
-				Title: "obj1",
-				//Tag:       "test",
+				Id:        1,
+				Title:     "obj1",
 				CreatedAt: now,
 			}}, false,
 		},
@@ -164,7 +162,7 @@ func TestOkr_DeleteObjective(t *testing.T) {
 
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteObjective(gomock.Any(), gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteObjectiveBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewOkr(nil, repo, nil)
@@ -204,7 +202,9 @@ func TestOkr_CreateKeyResult(t *testing.T) {
 	repo := mock.NewMockOkrRepository(ctl)
 	middle := mock.NewMockMiddleSvcClient(ctl)
 	gomock.InOrder(
+		repo.EXPECT().GetObjectiveBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.Objective{Id: 1}, nil),
 		repo.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+		repo.EXPECT().AggregateObjectiveValue(gomock.Any(), gomock.Any()).Return(nil),
 		middle.EXPECT().SaveModelTag(gomock.Any(), gomock.Any()).Return(&pb.ModelTagReply{Model: &pb.ModelTag{TagId: 1}}, nil),
 	)
 
@@ -222,10 +222,13 @@ func TestOkr_CreateKeyResult(t *testing.T) {
 		wantErr bool
 	}{
 		{"case1", s, args{context.Background(), &pb.KeyResultRequest{KeyResult: &pb.KeyResult{
-			ObjectiveId: 1,
-			Title:       "obj1",
-			Tag:         "test",
-		}}}, &pb.StateReply{State: true}, false},
+			ObjectiveId:  1,
+			Title:        "obj1",
+			Tag:          "test",
+			InitialValue: 0,
+			TargetValue:  10,
+			ValueMode:    "sum",
+		}, ObjectiveSequence: 1}}, &pb.StateReply{State: true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -248,7 +251,7 @@ func TestOkr_GetKeyResult(t *testing.T) {
 	now := time.Now().Unix()
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().GetKeyResultByID(gomock.Any(), gomock.Any()).Return(&pb.KeyResult{
+		repo.EXPECT().GetKeyResultBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(&pb.KeyResult{
 			Id:          1,
 			ObjectiveId: 1,
 			Title:       "obj1",
@@ -355,7 +358,7 @@ func TestOkr_DeleteKeyResult(t *testing.T) {
 
 	repo := mock.NewMockOkrRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(nil),
+		repo.EXPECT().DeleteKeyResultBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewOkr(nil, repo, nil)

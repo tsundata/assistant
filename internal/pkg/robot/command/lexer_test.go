@@ -2,6 +2,7 @@ package command
 
 import (
 	"github.com/stretchr/testify/require"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"testing"
 )
 
@@ -48,7 +49,7 @@ func TestParseCommand(t *testing.T) {
 	}
 	require.Len(t, c, 3)
 
-	require.Equal(t, "subs", c[0].Value)
-	require.Equal(t, "open", c[1].Value)
-	require.Equal(t, "abc", c[2].Value)
+	require.Equal(t, util.Variable("subs"), c[0].Value)
+	require.Equal(t, util.Variable("open"), c[1].Value)
+	require.Equal(t, util.Variable("abc"), c[2].Value)
 }

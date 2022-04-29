@@ -41,10 +41,12 @@ func TestObjListCommand(t *testing.T) {
 	gomock.InOrder(
 		okr.EXPECT().GetObjectives(gomock.Any(), gomock.Any()).Return(&pb.ObjectivesReply{Objective: []*pb.Objective{
 			{
-				Id:       1,
-				UserId:   1,
-				Sequence: 1,
-				Title:    "obj",
+				Id:           1,
+				UserId:       1,
+				Sequence:     1,
+				Title:        "obj",
+				CurrentValue: 1,
+				TotalValue:   10,
 			},
 		}}, nil),
 	)
@@ -54,9 +56,9 @@ func TestObjListCommand(t *testing.T) {
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
 		Title:  "Objectives",
-		Header: []string{"Sequence", "Name"},
+		Header: []string{"Sequence", "Title", "Current Value", "Total Value"},
 		Row: [][]interface{}{
-			{"1", "obj"},
+			{"1", "obj", "1", "10"},
 		},
 	}}, res)
 }
@@ -66,14 +68,11 @@ func TestObjCreateCommand(t *testing.T) {
 	defer ctl.Finish()
 
 	okr := mock.NewMockOkrSvcServer(ctl)
-	gomock.InOrder(
-		okr.EXPECT().CreateObjective(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
-	)
 
-	cmd := "obj obj obj-1"
+	cmd := "obj create"
 	comp := component.MockComponent(okr)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
+	require.Equal(t, 1, len(res))
 }
 
 func TestObjDeleteCommand(t *testing.T) {
@@ -99,9 +98,12 @@ func TestKrListCommand(t *testing.T) {
 	gomock.InOrder(
 		okr.EXPECT().GetKeyResults(gomock.Any(), gomock.Any()).Return(&pb.KeyResultsReply{Result: []*pb.KeyResult{
 			{
-				Id:          1,
-				ObjectiveId: 1,
-				Title:       "kr",
+				Id:           1,
+				ObjectiveId:  1,
+				Title:        "kr",
+				Sequence:     1,
+				CurrentValue: 1,
+				TargetValue:  10,
 			},
 		}}, nil),
 	)
@@ -111,9 +113,9 @@ func TestKrListCommand(t *testing.T) {
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TableMsg{
 		Title:  "KeyResult",
-		Header: []string{"Id", "Name", "OID"},
+		Header: []string{"Sequence", "Title", "Current Value", "Target Value"},
 		Row: [][]interface{}{
-			{"1", "kr", "1"},
+			{"1", "kr", "1", "10"},
 		},
 	}}, res)
 }
@@ -123,14 +125,11 @@ func TestKrCreateCommand(t *testing.T) {
 	defer ctl.Finish()
 
 	okr := mock.NewMockOkrSvcServer(ctl)
-	gomock.InOrder(
-		okr.EXPECT().CreateKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
-	)
 
-	cmd := "kr 1 kr kr-1"
+	cmd := "kr create"
 	comp := component.MockComponent(okr)
 	res := parseCommand(t, comp, cmd)
-	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
+	require.Equal(t, 1, len(res))
 }
 
 func TestKrDeleteCommand(t *testing.T) {
@@ -142,7 +141,7 @@ func TestKrDeleteCommand(t *testing.T) {
 		okr.EXPECT().DeleteKeyResult(gomock.Any(), gomock.Any()).Return(&pb.StateReply{State: true}, nil),
 	)
 
-	cmd := "kr delete 1"
+	cmd := "kr del 1"
 	comp := component.MockComponent(okr)
 	res := parseCommand(t, comp, cmd)
 	require.Equal(t, []pb.MsgPayload{pb.TextMsg{Text: "ok"}}, res)
