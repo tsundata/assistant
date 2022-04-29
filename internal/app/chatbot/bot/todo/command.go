@@ -8,7 +8,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/msg"
 	"github.com/tsundata/assistant/internal/pkg/robot/command"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
-	"github.com/tsundata/assistant/internal/pkg/util"
 )
 
 var commandRules = []command.Rule{
@@ -25,22 +24,9 @@ var commandRules = []command.Rule{
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
 
-			var header []string
-			var row [][]interface{}
-			if len(reply.Todos) > 0 {
-				header = []string{"Sequence", "Content", "Priority", "Complete"}
-				for _, v := range reply.Todos {
-					row = append(row, []interface{}{v.Sequence, v.Content, v.Priority, util.BoolToString(v.Complete)})
-				}
-			}
-			if len(row) == 0 {
-				return []pb.MsgPayload{pb.TextMsg{Text: "Empty"}}
-			}
-
-			return []pb.MsgPayload{pb.TableMsg{
-				Title:  "Todo",
-				Header: header,
-				Row:    row,
+			return []pb.MsgPayload{pb.TodoMsg{
+				Title: "Todo",
+				Todo:  reply.Todos,
 			}}
 		},
 	},

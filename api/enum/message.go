@@ -17,6 +17,7 @@ const (
 	MessageTypeDigit    MessageType = "digit"
 	MessageTypeOkr      MessageType = "okr"
 	MessageTypeInfo     MessageType = "info"
+	MessageTypeTodo     MessageType = "todo"
 )
 
 const (

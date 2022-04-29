@@ -59,7 +59,7 @@ message Todo {
   string repeat_rule = 11;
   // @inject_tag: db:"repeat_end_at"
   int64 repeat_end_at = 12;
-  // @inject_tag: db:"complete"
+  // @inject_tag: db:"complete" json:"complete"
   bool complete = 13;
   // @inject_tag: db:"created_at"
   int64 created_at = 14;

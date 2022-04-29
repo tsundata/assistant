@@ -154,3 +154,12 @@ type InfoMsg struct {
 func (i InfoMsg) Type() enum.MessageType {
 	return enum.MessageTypeInfo
 }
+
+type TodoMsg struct {
+	Title string  `json:"title"`
+	Todo  []*Todo `json:"todo"`
+}
+
+func (t TodoMsg) Type() enum.MessageType {
+	return enum.MessageTypeTodo
+}

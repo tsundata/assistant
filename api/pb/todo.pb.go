@@ -151,8 +151,8 @@ type Todo struct {
 	RepeatRule string `protobuf:"bytes,11,opt,name=repeat_rule,json=repeatRule,proto3" json:"repeat_rule,omitempty" db:"repeat_rule"`
 	// @inject_tag: db:"repeat_end_at"
 	RepeatEndAt int64 `protobuf:"varint,12,opt,name=repeat_end_at,json=repeatEndAt,proto3" json:"repeat_end_at,omitempty" db:"repeat_end_at"`
-	// @inject_tag: db:"complete"
-	Complete bool `protobuf:"varint,13,opt,name=complete,proto3" json:"complete,omitempty" db:"complete"`
+	// @inject_tag: db:"complete" json:"complete"
+	Complete bool `protobuf:"varint,13,opt,name=complete,proto3" json:"complete" db:"complete"`
 	// @inject_tag: db:"created_at"
 	CreatedAt int64 `protobuf:"varint,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" db:"created_at"`
 	// @inject_tag: db:"updated_at"
