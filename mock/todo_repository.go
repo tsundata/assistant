@@ -49,6 +49,20 @@ func (mr *MockTodoRepositoryMockRecorder) CompleteTodo(ctx, id interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodo", reflect.TypeOf((*MockTodoRepository)(nil).CompleteTodo), ctx, id)
 }
 
+// CompleteTodoBySequence mocks base method.
+func (m *MockTodoRepository) CompleteTodoBySequence(ctx context.Context, userId, sequence int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CompleteTodoBySequence", ctx, userId, sequence)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CompleteTodoBySequence indicates an expected call of CompleteTodoBySequence.
+func (mr *MockTodoRepositoryMockRecorder) CompleteTodoBySequence(ctx, userId, sequence interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteTodoBySequence", reflect.TypeOf((*MockTodoRepository)(nil).CompleteTodoBySequence), ctx, userId, sequence)
+}
+
 // CreateTodo mocks base method.
 func (m *MockTodoRepository) CreateTodo(ctx context.Context, todo *pb.Todo) (int64, error) {
 	m.ctrl.T.Helper()

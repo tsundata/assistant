@@ -107,7 +107,7 @@ func (s *Todo) UpdateTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.Sta
 func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.StateReply, error) {
 	id, _ := md.FromIncoming(ctx)
 
-	err := s.repo.CompleteTodo(ctx, payload.Todo.GetId())
+	err := s.repo.CompleteTodoBySequence(ctx, id, payload.Todo.GetSequence())
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (s *Todo) CompleteTodo(ctx context.Context, payload *pb.TodoRequest) (*pb.S
 			return nil, err
 		}
 
-		find, err := s.repo.GetTodo(ctx, payload.Todo.GetId())
+		find, err := s.repo.GetTodoBySequence(ctx, id, payload.Todo.GetSequence())
 		if err != nil {
 			return nil, err
 		}

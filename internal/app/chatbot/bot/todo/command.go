@@ -91,4 +91,26 @@ var commandRules = []command.Rule{
 			}}
 		},
 	},
+	{
+		Define: `todo complete [number]`,
+		Help:   "Complete Todo",
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			if comp.Todo() == nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty client"}}
+			}
+			sequence, _ := tokens[2].Value.Int64()
+
+			reply, err := comp.Todo().CompleteTodo(ctx, &pb.TodoRequest{
+				Todo: &pb.Todo{Sequence: sequence},
+			})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+			if reply.GetState() {
+				return []pb.MsgPayload{pb.TextMsg{Text: "ok"}}
+			}
+
+			return []pb.MsgPayload{pb.TextMsg{Text: "failed"}}
+		},
+	},
 }

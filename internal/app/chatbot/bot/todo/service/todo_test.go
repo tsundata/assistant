@@ -238,7 +238,7 @@ func TestTodo_CompleteTodo(t *testing.T) {
 
 	repo := mock.NewMockTodoRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().CompleteTodo(gomock.Any(), gomock.Any()).Return(nil),
+		repo.EXPECT().CompleteTodoBySequence(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
 	)
 
 	s := NewTodo(nil, nil, repo)

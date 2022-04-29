@@ -18,6 +18,7 @@ type TodoRepository interface {
 	GetTodo(ctx context.Context, id int64) (*pb.Todo, error)
 	GetTodoBySequence(ctx context.Context, userId, sequence int64) (*pb.Todo, error)
 	CompleteTodo(ctx context.Context, id int64) error
+	CompleteTodoBySequence(ctx context.Context, userId, sequence int64) error
 	UpdateTodo(ctx context.Context, todo *pb.Todo) error
 	DeleteTodo(ctx context.Context, id int64) error
 	DeleteTodoBySequence(ctx context.Context, userId, sequence int64) error
@@ -113,6 +114,12 @@ func (r *MysqlTodoRepository) GetTodoBySequence(ctx context.Context, userId, seq
 func (r *MysqlTodoRepository) CompleteTodo(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Model(&pb.Todo{}).
 		Where("id = ?", id).
+		Update("complete", true).Error
+}
+
+func (r *MysqlTodoRepository) CompleteTodoBySequence(ctx context.Context, userId, sequence int64) error {
+	return r.db.WithContext(ctx).Model(&pb.Todo{}).
+		Where("user_id = ? AND sequence = ?", userId, sequence).
 		Update("complete", true).Error
 }
 
