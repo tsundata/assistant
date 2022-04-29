@@ -3,6 +3,9 @@ package action
 import (
 	"context"
 	"fmt"
+	"github.com/tsundata/assistant/api/enum"
+	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"testing"
 )
@@ -27,9 +30,16 @@ func run(t *testing.T, text string) {
 		fmt.Println(symbolTable.CurrentScope)
 	}
 
-	comp := component.MockComponent()
+	mq, err := event.CreateRabbitmq(enum.Chatbot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bus := event.NewRabbitmqBus(mq, nil)
+
+	comp := component.MockComponent(bus)
 	i := NewInterpreter(context.Background(), tree)
 	i.SetComponent(comp)
+	i.SetMessage(pb.Message{UserId: 1, GroupId: 1})
 	_, err = i.Interpret()
 	if err != nil {
 		t.Fatal(err)
@@ -121,6 +131,15 @@ query "json" "headers.Host"
 
 get "https://httpbin.org/robots.txt"
 query "regex" "^Disallow: .*$"
+`
+	run(t, text)
+}
+
+func TestInterpreter7(t *testing.T) {
+	text := `
+counter "abc"
+increase "abc"
+decrease "abc"
 `
 	run(t, text)
 }
