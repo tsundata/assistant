@@ -58,6 +58,8 @@ service MiddleSvc {
   rpc ChangeCounter(CounterRequest) returns (CounterReply) {}
   rpc ResetCounter(CounterRequest) returns (CounterReply) {}
   rpc GetCounterByFlag(CounterRequest) returns (CounterReply) {}
+  rpc Search(TextRequest) returns (MetadataReply) {}
+  rpc CollectMetadata(TextRequest) returns (StateReply) {}
 }
 
 message PageRequest {
@@ -359,4 +361,29 @@ message Counter {
   int64 created_at = 6;
   // @inject_tag: db:"updated_at"
   int64 updated_at = 7;
+}
+
+message Metadata {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"model"
+  string model = 4;
+  // @inject_tag: db:"model_id"
+  int64 model_id = 5;
+  // @inject_tag: db:"text"
+  string text = 6;
+  // @inject_tag: db:"data"
+  string data = 7;
+  // @inject_tag: db:"extra"
+  string extra = 8;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 9;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 10;
+}
+
+message MetadataReply {
+  repeated Metadata list = 1;
 }

@@ -7,8 +7,13 @@ import (
 )
 
 func TestLexer(t *testing.T) {
-	l := NewLexer([]rune("subs  open abc"))
+	l := NewLexer([]rune("subs  open abc \"a b c\""))
 	token, err := l.GetNextToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, CharacterToken, token.Type)
+	token, err = l.GetNextToken()
 	if err != nil {
 		t.Fatal(err)
 	}

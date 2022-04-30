@@ -119,12 +119,6 @@ func (l *Lexer) GetNextToken() (*Token, error) {
 	return &Token{Type: EOFToken, Value: util.Variable("")}, nil
 }
 
-type Command struct {
-	Main string
-	Sub  string
-	Args []string
-}
-
 func ParseCommand(in string) ([]*Token, error) {
 	if in == "" {
 		return []*Token{}, nil

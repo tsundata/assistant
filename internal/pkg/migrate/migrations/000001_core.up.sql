@@ -283,3 +283,21 @@ CREATE TABLE `user_subscribes`
     INDEX `status` (`status`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `metadata`
+(
+    `id`         bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id`    bigint          NOT NULL,
+    `model`      varchar(30)     NOT NULL,
+    `model_id`   bigint          NOT NULL,
+    `text`       varchar(100)    NOT NULL,
+    `data`       json            NOT NULL,
+    `extra`      json            NOT NULL,
+    `created_at` int             NOT NULL,
+    `updated_at` int             NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `model` (`model`),
+    KEY `model_id` (`model_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

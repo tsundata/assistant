@@ -62,6 +62,8 @@ type MiddleSvcClient interface {
 	ChangeCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
 	ResetCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
 	GetCounterByFlag(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
+	Search(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MetadataReply, error)
+	CollectMetadata(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error)
 }
 
 type middleSvcClient struct {
@@ -477,6 +479,24 @@ func (c *middleSvcClient) GetCounterByFlag(ctx context.Context, in *CounterReque
 	return out, nil
 }
 
+func (c *middleSvcClient) Search(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*MetadataReply, error) {
+	out := new(MetadataReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) CollectMetadata(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CollectMetadata", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MiddleSvcServer is the server API for MiddleSvc service.
 // All implementations should embed UnimplementedMiddleSvcServer
 // for forward compatibility
@@ -526,6 +546,8 @@ type MiddleSvcServer interface {
 	ChangeCounter(context.Context, *CounterRequest) (*CounterReply, error)
 	ResetCounter(context.Context, *CounterRequest) (*CounterReply, error)
 	GetCounterByFlag(context.Context, *CounterRequest) (*CounterReply, error)
+	Search(context.Context, *TextRequest) (*MetadataReply, error)
+	CollectMetadata(context.Context, *TextRequest) (*StateReply, error)
 }
 
 // UnimplementedMiddleSvcServer should be embedded to have forward compatible implementations.
@@ -666,6 +688,12 @@ func (UnimplementedMiddleSvcServer) ResetCounter(context.Context, *CounterReques
 }
 func (UnimplementedMiddleSvcServer) GetCounterByFlag(context.Context, *CounterRequest) (*CounterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCounterByFlag not implemented")
+}
+func (UnimplementedMiddleSvcServer) Search(context.Context, *TextRequest) (*MetadataReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedMiddleSvcServer) CollectMetadata(context.Context, *TextRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectMetadata not implemented")
 }
 
 // UnsafeMiddleSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -1489,6 +1517,42 @@ func _MiddleSvc_GetCounterByFlag_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).Search(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/Search",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).Search(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_CollectMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).CollectMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/CollectMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).CollectMetadata(ctx, req.(*TextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.MiddleSvc",
 	HandlerType: (*MiddleSvcServer)(nil),
@@ -1672,6 +1736,14 @@ var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCounterByFlag",
 			Handler:    _MiddleSvc_GetCounterByFlag_Handler,
+		},
+		{
+			MethodName: "Search",
+			Handler:    _MiddleSvc_Search_Handler,
+		},
+		{
+			MethodName: "CollectMetadata",
+			Handler:    _MiddleSvc_CollectMetadata_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

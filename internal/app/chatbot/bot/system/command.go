@@ -590,4 +590,33 @@ var commandRules = []command.Rule{
 			}}
 		},
 	},
+	{
+		Define: "search [string]",
+		Help:   `Search anything`,
+		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
+			expr, _ := tokens[1].Value.String()
+			reply, err := comp.Middle().Search(ctx, &pb.TextRequest{Text: expr})
+			if err != nil {
+				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
+			}
+
+			var header []string
+			var row [][]interface{}
+			if len(reply.List) > 0 {
+				header = []string{"Model", "ModelId", "Text"}
+				for _, v := range reply.List {
+					row = append(row, []interface{}{v.Model, v.ModelId, v.Text})
+				}
+			}
+			if len(row) == 0 {
+				return []pb.MsgPayload{pb.TextMsg{Text: "empty"}}
+			}
+
+			return []pb.MsgPayload{pb.TableMsg{
+				Title:  "Search",
+				Header: header,
+				Row:    row,
+			}}
+		},
+	},
 }

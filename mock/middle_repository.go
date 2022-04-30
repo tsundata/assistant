@@ -35,6 +35,20 @@ func (m *MockMiddleRepository) EXPECT() *MockMiddleRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CollectMetadata mocks base method.
+func (m *MockMiddleRepository) CollectMetadata(ctx context.Context, model []interface{}) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CollectMetadata", ctx, model)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CollectMetadata indicates an expected call of CollectMetadata.
+func (mr *MockMiddleRepositoryMockRecorder) CollectMetadata(ctx, model interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectMetadata", reflect.TypeOf((*MockMiddleRepository)(nil).CollectMetadata), ctx, model)
+}
+
 // CreateApp mocks base method.
 func (m *MockMiddleRepository) CreateApp(ctx context.Context, app *pb.App) (int64, error) {
 	m.ctrl.T.Helper()
@@ -449,6 +463,21 @@ func (m *MockMiddleRepository) ListUserSubscribe(ctx context.Context, userId int
 func (mr *MockMiddleRepositoryMockRecorder) ListUserSubscribe(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).ListUserSubscribe), ctx, userId)
+}
+
+// Search mocks base method.
+func (m *MockMiddleRepository) Search(ctx context.Context, userId int64, filter [][]string) ([]*pb.Metadata, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Search", ctx, userId, filter)
+	ret0, _ := ret[0].([]*pb.Metadata)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Search indicates an expected call of Search.
+func (mr *MockMiddleRepositoryMockRecorder) Search(ctx, userId, filter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockMiddleRepository)(nil).Search), ctx, userId, filter)
 }
 
 // UpdateAppByID mocks base method.

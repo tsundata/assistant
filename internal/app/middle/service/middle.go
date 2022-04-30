@@ -947,3 +947,34 @@ func (s *Middle) GetCounterByFlag(ctx context.Context, payload *pb.CounterReques
 	}
 	return &pb.CounterReply{Counter: &find}, nil
 }
+
+func (s *Middle) Search(ctx context.Context, payload *pb.TextRequest) (*pb.MetadataReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	expr := payload.Text
+	var filter [][]string
+	field := strings.Split(expr, " ")
+	for _, item := range field {
+		if item == "" {
+			continue
+		}
+		kv := strings.Split(item, ":")
+		filter = append(filter, kv)
+	}
+	list, err := s.repo.Search(ctx, id, filter)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.MetadataReply{List: list}, nil
+}
+
+func (s *Middle) CollectMetadata(ctx context.Context, _ *pb.TextRequest) (*pb.StateReply, error) {
+	err := s.repo.CollectMetadata(ctx, []interface{}{
+		[]pb.App{},
+		[]pb.Counter{},
+		[]pb.Message{},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
+}

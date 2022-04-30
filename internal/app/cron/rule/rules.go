@@ -72,6 +72,13 @@ var rules = []Rule{
 			return agent.CloudconeWeeklyBilling(ctx, comp)
 		},
 	},
+	{
+		Name: "search_metadata",
+		When: "* */1 * * *",
+		Action: func(ctx context.Context, comp component.Component) []result.Result {
+			return agent.SearchMetadata(ctx, comp)
+		},
+	},
 }
 
 var Options = []rulebot.Option{

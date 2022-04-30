@@ -2,11 +2,15 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
+	"github.com/tidwall/gjson"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"strconv"
 	"time"
@@ -44,6 +48,8 @@ type MiddleRepository interface {
 	ListCounter(ctx context.Context, userId int64) ([]*pb.Counter, error)
 	GetCounter(ctx context.Context, id int64) (pb.Counter, error)
 	GetCounterByFlag(ctx context.Context, userId int64, flag string) (pb.Counter, error)
+	Search(ctx context.Context, userId int64, filter [][]string) ([]*pb.Metadata, error)
+	CollectMetadata(ctx context.Context, model []interface{}) error
 }
 
 type MysqlMiddleRepository struct {
@@ -441,4 +447,58 @@ func (r *MysqlMiddleRepository) GetCounterByFlag(ctx context.Context, userId int
 		return pb.Counter{}, err
 	}
 	return find, nil
+}
+
+func (r *MysqlMiddleRepository) Search(ctx context.Context, userId int64, filter [][]string) ([]*pb.Metadata, error) {
+	var items []*pb.Metadata
+	builder := r.db.WithContext(ctx).Where("user_id = ?", userId)
+
+	for _, item := range filter {
+		if len(item) != 2 {
+			continue
+		}
+		switch item[0] {
+		case "model":
+			builder.Where("model = ?", item[1])
+		case "model_id":
+			builder.Where("model_id = ?", item[1])
+		case "text":
+			builder.Where("text = ?", item[1])
+		default:
+			builder.Where(fmt.Sprintf("`data`->'$.\"%s\"' = ?", item[0]), item[1])
+		}
+	}
+
+	err := builder.Limit(10).Order("updated_at DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) CollectMetadata(ctx context.Context, model []interface{}) error {
+	// todo opt
+	for _, m := range model {
+		r.db.WithContext(ctx).Find(&m)
+		jsonByte, _ := json.Marshal(m)
+		arrData := util.ByteToString(jsonByte)
+		arrValue := gjson.Get(arrData, "@this")
+
+		for _, result := range arrValue.Array() {
+			idValue := gjson.Get(result.Raw, "id")
+			userIdValue := gjson.Get(result.Raw, "user_id")
+			r.db.WithContext(ctx).Create(&pb.Metadata{
+				Id:        r.id.Generate(ctx),
+				UserId:    userIdValue.Int(),
+				Model:     util.ModelName(m),
+				ModelId:   idValue.Int(),
+				Text:      "",
+				Data:      result.Raw,
+				Extra:     "{}",
+				CreatedAt: time.Now().Unix(),
+				UpdatedAt: time.Now().Unix(),
+			})
+		}
+	}
+	return nil
 }

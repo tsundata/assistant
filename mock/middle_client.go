@@ -96,6 +96,26 @@ func (mr *MockMiddleSvcClientMockRecorder) CloseSubscribe(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).CloseSubscribe), varargs...)
 }
 
+// CollectMetadata mocks base method.
+func (m *MockMiddleSvcClient) CollectMetadata(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CollectMetadata", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CollectMetadata indicates an expected call of CollectMetadata.
+func (mr *MockMiddleSvcClientMockRecorder) CollectMetadata(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectMetadata", reflect.TypeOf((*MockMiddleSvcClient)(nil).CollectMetadata), varargs...)
+}
+
 // CreateAvatar mocks base method.
 func (m *MockMiddleSvcClient) CreateAvatar(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -816,6 +836,26 @@ func (mr *MockMiddleSvcClientMockRecorder) SaveModelTag(ctx, in interface{}, opt
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcClient)(nil).SaveModelTag), varargs...)
 }
 
+// Search mocks base method.
+func (m *MockMiddleSvcClient) Search(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.MetadataReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Search", varargs...)
+	ret0, _ := ret[0].(*pb.MetadataReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Search indicates an expected call of Search.
+func (mr *MockMiddleSvcClientMockRecorder) Search(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockMiddleSvcClient)(nil).Search), varargs...)
+}
+
 // Segmentation mocks base method.
 func (m *MockMiddleSvcClient) Segmentation(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.WordsReply, error) {
 	m.ctrl.T.Helper()
@@ -1002,6 +1042,21 @@ func (m *MockMiddleSvcServer) CloseSubscribe(arg0 context.Context, arg1 *pb.Subs
 func (mr *MockMiddleSvcServerMockRecorder) CloseSubscribe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).CloseSubscribe), arg0, arg1)
+}
+
+// CollectMetadata mocks base method.
+func (m *MockMiddleSvcServer) CollectMetadata(arg0 context.Context, arg1 *pb.TextRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CollectMetadata", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CollectMetadata indicates an expected call of CollectMetadata.
+func (mr *MockMiddleSvcServerMockRecorder) CollectMetadata(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectMetadata", reflect.TypeOf((*MockMiddleSvcServer)(nil).CollectMetadata), arg0, arg1)
 }
 
 // CreateAvatar mocks base method.
@@ -1542,6 +1597,21 @@ func (m *MockMiddleSvcServer) SaveModelTag(arg0 context.Context, arg1 *pb.ModelT
 func (mr *MockMiddleSvcServerMockRecorder) SaveModelTag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveModelTag", reflect.TypeOf((*MockMiddleSvcServer)(nil).SaveModelTag), arg0, arg1)
+}
+
+// Search mocks base method.
+func (m *MockMiddleSvcServer) Search(arg0 context.Context, arg1 *pb.TextRequest) (*pb.MetadataReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Search", arg0, arg1)
+	ret0, _ := ret[0].(*pb.MetadataReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Search indicates an expected call of Search.
+func (mr *MockMiddleSvcServerMockRecorder) Search(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockMiddleSvcServer)(nil).Search), arg0, arg1)
 }
 
 // Segmentation mocks base method.
