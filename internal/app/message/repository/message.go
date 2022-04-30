@@ -135,6 +135,9 @@ func (r *MysqlMessageRepository) Create(ctx context.Context, message *pb.Message
 		sequence += 1
 	}
 
+	if message.Payload == "" {
+		message.Payload = "{}"
+	}
 	message.Id = r.id.Generate(ctx)
 	message.Sequence = sequence
 	err = r.db.WithContext(ctx).Create(&message).Error

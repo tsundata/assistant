@@ -65,7 +65,7 @@ CREATE TABLE `messages`
     `receiver_type` VARCHAR(20)         NOT NULL,
     `type`          varchar(12)         NOT NULL DEFAULT '',
     `text`          varchar(2048)       NOT NULL DEFAULT '',
-    `payload`       varchar(5120)       NOT NULL DEFAULT '',
+    `payload`       json                NOT NULL,
     `action`        varchar(5120)       NOT NULL DEFAULT '',
     `status`        TINYINT(2)          NOT NULL,
     `created_at`    INT(10)             NOT NULL DEFAULT '0',
