@@ -61,16 +61,16 @@ func (s *CronSymbol) String() string {
 }
 
 type WatchSymbol struct {
-	Category string
+	Variable string
 	Expr     string
 }
 
-func NewWatchSymbol(category, expr string) *WatchSymbol {
-	return &WatchSymbol{Category: category, Expr: expr}
+func NewWatchSymbol(variable, expr string) *WatchSymbol {
+	return &WatchSymbol{Variable: variable, Expr: expr}
 }
 
 func (s *WatchSymbol) String() string {
-	return fmt.Sprintf("<WatchSymbol(category=%s, expr=%s)>", s.Category, s.Expr)
+	return fmt.Sprintf("<WatchSymbol(variable=%s, expr=%s)>", s.Variable, s.Expr)
 }
 
 type ScopedSymbolTable struct {

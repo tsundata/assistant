@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/antonmedv/expr"
 	"github.com/go-redis/redis/v8"
 	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/api/enum"
@@ -783,8 +784,28 @@ func (s *Chatbot) WatchTrigger(ctx context.Context, _ *pb.TriggerRequest) (*pb.W
 			continue
 		}
 
-		// todo expr
-		if trigger.Expr == "something" {
+		// run variable
+		program, err := expr.Compile(trigger.Variable, expr.Env(ExprEnv{}))
+		if err != nil {
+			return nil, err
+		}
+		value, err := expr.Run(program, ExprEnv{Comp: s.comp})
+		if err != nil {
+			return nil, err
+		}
+
+		// run expr
+		program, err = expr.Compile(trigger.Expr, expr.Env(ExprEnv{}))
+		if err != nil {
+			return nil, err
+		}
+		output, err := expr.Run(program, ExprEnv{Ctx: ctx, Comp: s.comp, Value: value})
+		if err != nil {
+			return nil, err
+		}
+
+		// check
+		if b, ok := output.(bool); ok && b {
 			// get message
 			message, err := s.message.GetById(ctx, &pb.MessageRequest{Message: &pb.Message{Id: trigger.MessageId}})
 			if err != nil {
@@ -873,7 +894,7 @@ func (s *Chatbot) CreateTrigger(ctx context.Context, payload *pb.TriggerRequest)
 
 		if symbolTable.Watch != nil {
 			trigger.Type = enum.TriggerWatchType
-			trigger.Category = symbolTable.Watch.Category
+			trigger.Variable = symbolTable.Watch.Variable
 			trigger.Expr = symbolTable.Watch.Expr
 
 			// store

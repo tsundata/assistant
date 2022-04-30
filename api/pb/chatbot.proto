@@ -249,8 +249,8 @@ message Trigger {
   string secret = 5;
   // @inject_tag: db:"when"
   string when = 6;
-  // @inject_tag: db:"category"
-  string category = 7;
+  // @inject_tag: db:"variable"
+  string variable = 7;
   // @inject_tag: db:"expr"
   string expr = 8;
   // @inject_tag: db:"user_id"
