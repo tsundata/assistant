@@ -8,8 +8,6 @@ import (
 	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
 	okrRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
 	okrService "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
-	systemRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
-	systemService "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
 	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
 	todoService "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -47,8 +45,6 @@ var testProviderSet = wire.NewSet(
 	okrService.ProviderSet,
 	todoRepository.ProviderSet,
 	todoService.ProviderSet,
-	systemRepository.ProviderSet,
-	systemService.ProviderSet,
 	okrRepository.ProviderSet,
 	financeService.ProviderSet,
 )

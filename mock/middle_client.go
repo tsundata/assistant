@@ -36,6 +36,26 @@ func (m *MockMiddleSvcClient) EXPECT() *MockMiddleSvcClientMockRecorder {
 	return m.recorder
 }
 
+// ChangeCounter mocks base method.
+func (m *MockMiddleSvcClient) ChangeCounter(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ChangeCounter", varargs...)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ChangeCounter indicates an expected call of ChangeCounter.
+func (mr *MockMiddleSvcClientMockRecorder) ChangeCounter(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeCounter", reflect.TypeOf((*MockMiddleSvcClient)(nil).ChangeCounter), varargs...)
+}
+
 // Classifier mocks base method.
 func (m *MockMiddleSvcClient) Classifier(ctx context.Context, in *pb.TextRequest, opts ...grpc.CallOption) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -94,6 +114,26 @@ func (mr *MockMiddleSvcClientMockRecorder) CreateAvatar(ctx, in interface{}, opt
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAvatar", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreateAvatar), varargs...)
+}
+
+// CreateCounter mocks base method.
+func (m *MockMiddleSvcClient) CreateCounter(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateCounter", varargs...)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCounter indicates an expected call of CreateCounter.
+func (mr *MockMiddleSvcClientMockRecorder) CreateCounter(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCounter", reflect.TypeOf((*MockMiddleSvcClient)(nil).CreateCounter), varargs...)
 }
 
 // CreateCredential mocks base method.
@@ -234,6 +274,66 @@ func (mr *MockMiddleSvcClientMockRecorder) GetChartUrl(ctx, in interface{}, opts
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartUrl", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetChartUrl), varargs...)
+}
+
+// GetCounter mocks base method.
+func (m *MockMiddleSvcClient) GetCounter(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetCounter", varargs...)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounter indicates an expected call of GetCounter.
+func (mr *MockMiddleSvcClientMockRecorder) GetCounter(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounter", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCounter), varargs...)
+}
+
+// GetCounterByFlag mocks base method.
+func (m *MockMiddleSvcClient) GetCounterByFlag(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetCounterByFlag", varargs...)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounterByFlag indicates an expected call of GetCounterByFlag.
+func (mr *MockMiddleSvcClientMockRecorder) GetCounterByFlag(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounterByFlag", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCounterByFlag), varargs...)
+}
+
+// GetCounters mocks base method.
+func (m *MockMiddleSvcClient) GetCounters(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.CountersReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetCounters", varargs...)
+	ret0, _ := ret[0].(*pb.CountersReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounters indicates an expected call of GetCounters.
+func (mr *MockMiddleSvcClientMockRecorder) GetCounters(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounters", reflect.TypeOf((*MockMiddleSvcClient)(nil).GetCounters), varargs...)
 }
 
 // GetCredential mocks base method.
@@ -676,6 +776,26 @@ func (mr *MockMiddleSvcClientMockRecorder) RegisterSubscribe(ctx, in interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcClient)(nil).RegisterSubscribe), varargs...)
 }
 
+// ResetCounter mocks base method.
+func (m *MockMiddleSvcClient) ResetCounter(ctx context.Context, in *pb.CounterRequest, opts ...grpc.CallOption) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ResetCounter", varargs...)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ResetCounter indicates an expected call of ResetCounter.
+func (mr *MockMiddleSvcClientMockRecorder) ResetCounter(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetCounter", reflect.TypeOf((*MockMiddleSvcClient)(nil).ResetCounter), varargs...)
+}
+
 // SaveModelTag mocks base method.
 func (m *MockMiddleSvcClient) SaveModelTag(ctx context.Context, in *pb.ModelTagRequest, opts ...grpc.CallOption) (*pb.ModelTagReply, error) {
 	m.ctrl.T.Helper()
@@ -839,6 +959,21 @@ func (m *MockMiddleSvcServer) EXPECT() *MockMiddleSvcServerMockRecorder {
 	return m.recorder
 }
 
+// ChangeCounter mocks base method.
+func (m *MockMiddleSvcServer) ChangeCounter(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ChangeCounter", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ChangeCounter indicates an expected call of ChangeCounter.
+func (mr *MockMiddleSvcServerMockRecorder) ChangeCounter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeCounter", reflect.TypeOf((*MockMiddleSvcServer)(nil).ChangeCounter), arg0, arg1)
+}
+
 // Classifier mocks base method.
 func (m *MockMiddleSvcServer) Classifier(arg0 context.Context, arg1 *pb.TextRequest) (*pb.TextReply, error) {
 	m.ctrl.T.Helper()
@@ -882,6 +1017,21 @@ func (m *MockMiddleSvcServer) CreateAvatar(arg0 context.Context, arg1 *pb.TextRe
 func (mr *MockMiddleSvcServerMockRecorder) CreateAvatar(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAvatar", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreateAvatar), arg0, arg1)
+}
+
+// CreateCounter mocks base method.
+func (m *MockMiddleSvcServer) CreateCounter(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.StateReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCounter", arg0, arg1)
+	ret0, _ := ret[0].(*pb.StateReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCounter indicates an expected call of CreateCounter.
+func (mr *MockMiddleSvcServerMockRecorder) CreateCounter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCounter", reflect.TypeOf((*MockMiddleSvcServer)(nil).CreateCounter), arg0, arg1)
 }
 
 // CreateCredential mocks base method.
@@ -987,6 +1137,51 @@ func (m *MockMiddleSvcServer) GetChartUrl(arg0 context.Context, arg1 *pb.TextReq
 func (mr *MockMiddleSvcServerMockRecorder) GetChartUrl(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChartUrl", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetChartUrl), arg0, arg1)
+}
+
+// GetCounter mocks base method.
+func (m *MockMiddleSvcServer) GetCounter(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCounter", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounter indicates an expected call of GetCounter.
+func (mr *MockMiddleSvcServerMockRecorder) GetCounter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounter", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCounter), arg0, arg1)
+}
+
+// GetCounterByFlag mocks base method.
+func (m *MockMiddleSvcServer) GetCounterByFlag(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCounterByFlag", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounterByFlag indicates an expected call of GetCounterByFlag.
+func (mr *MockMiddleSvcServerMockRecorder) GetCounterByFlag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounterByFlag", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCounterByFlag), arg0, arg1)
+}
+
+// GetCounters mocks base method.
+func (m *MockMiddleSvcServer) GetCounters(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.CountersReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCounters", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CountersReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounters indicates an expected call of GetCounters.
+func (mr *MockMiddleSvcServerMockRecorder) GetCounters(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounters", reflect.TypeOf((*MockMiddleSvcServer)(nil).GetCounters), arg0, arg1)
 }
 
 // GetCredential mocks base method.
@@ -1317,6 +1512,21 @@ func (m *MockMiddleSvcServer) RegisterSubscribe(arg0 context.Context, arg1 *pb.S
 func (mr *MockMiddleSvcServerMockRecorder) RegisterSubscribe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterSubscribe", reflect.TypeOf((*MockMiddleSvcServer)(nil).RegisterSubscribe), arg0, arg1)
+}
+
+// ResetCounter mocks base method.
+func (m *MockMiddleSvcServer) ResetCounter(arg0 context.Context, arg1 *pb.CounterRequest) (*pb.CounterReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ResetCounter", arg0, arg1)
+	ret0, _ := ret[0].(*pb.CounterReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ResetCounter indicates an expected call of ResetCounter.
+func (mr *MockMiddleSvcServerMockRecorder) ResetCounter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetCounter", reflect.TypeOf((*MockMiddleSvcServer)(nil).ResetCounter), arg0, arg1)
 }
 
 // SaveModelTag mocks base method.

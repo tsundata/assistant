@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/global"
+	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/middleware/mysql"
 	"gorm.io/gorm"
 	"strconv"
@@ -37,15 +38,22 @@ type MiddleRepository interface {
 	UpdateUserSubscribeStatus(ctx context.Context, userId, subscribeId int64, status int64) error
 	GetUserSubscribe(ctx context.Context, userId, subscribeId int64) (pb.UserSubscribe, error)
 	GetSubscribe(ctx context.Context, name string) (pb.Subscribe, error)
+	CreateCounter(ctx context.Context, counter *pb.Counter) (int64, error)
+	IncreaseCounter(ctx context.Context, id, amount int64) error
+	DecreaseCounter(ctx context.Context, id, amount int64) error
+	ListCounter(ctx context.Context, userId int64) ([]*pb.Counter, error)
+	GetCounter(ctx context.Context, id int64) (pb.Counter, error)
+	GetCounterByFlag(ctx context.Context, userId int64, flag string) (pb.Counter, error)
 }
 
 type MysqlMiddleRepository struct {
-	id *global.ID
-	db *mysql.Conn
+	logger log.Logger
+	id     *global.ID
+	db     *mysql.Conn
 }
 
-func NewMysqlMiddleRepository(id *global.ID, db *mysql.Conn) MiddleRepository {
-	return &MysqlMiddleRepository{id: id, db: db}
+func NewMysqlMiddleRepository(logger log.Logger, id *global.ID, db *mysql.Conn) MiddleRepository {
+	return &MysqlMiddleRepository{logger: logger, id: id, db: db}
 }
 
 func (r *MysqlMiddleRepository) CreatePage(ctx context.Context, page *pb.Page) (int64, error) {
@@ -361,6 +369,76 @@ func (r *MysqlMiddleRepository) GetSubscribe(ctx context.Context, name string) (
 	err := r.db.WithContext(ctx).Where("name = ?", name).Take(&find).Error
 	if err != nil {
 		return pb.Subscribe{}, err
+	}
+	return find, nil
+}
+
+func (r *MysqlMiddleRepository) CreateCounter(ctx context.Context, counter *pb.Counter) (int64, error) {
+	counter.Id = r.id.Generate(ctx)
+	counter.CreatedAt = time.Now().Unix()
+	counter.UpdatedAt = time.Now().Unix()
+	err := r.db.WithContext(ctx).Create(&counter)
+	if err != nil {
+		return 0, nil
+	}
+	r.record(ctx, counter.Id, counter.Digit)
+	return counter.Id, nil
+}
+
+func (r *MysqlMiddleRepository) IncreaseCounter(ctx context.Context, id, amount int64) error {
+	err := r.db.WithContext(ctx).Model(&pb.Counter{}).
+		Where("id = ?", id).
+		Update("digit", gorm.Expr("digit + ?", amount)).Error
+	if err != nil {
+		return err
+	}
+	r.record(ctx, id, amount)
+	return nil
+}
+
+func (r *MysqlMiddleRepository) DecreaseCounter(ctx context.Context, id, amount int64) error {
+	err := r.db.WithContext(ctx).Model(&pb.Counter{}).
+		Where("id = ?", id).
+		Update("digit", gorm.Expr("digit - ?", amount)).Error
+	if err != nil {
+		return err
+	}
+	r.record(ctx, id, -amount)
+	return nil
+}
+
+func (r *MysqlMiddleRepository) ListCounter(ctx context.Context, userId int64) ([]*pb.Counter, error) {
+	var items []*pb.Counter
+	err := r.db.WithContext(ctx).Where("user_id = ?", userId).
+		Order("updated_at DESC").Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *MysqlMiddleRepository) record(ctx context.Context, id, digit int64) {
+	err := r.db.WithContext(ctx).Exec("INSERT INTO `counter_records` (`id`, `counter_id`, `digit`, `created_at`) VALUES (?, ?, ?, ?)",
+		r.id.Generate(ctx), id, digit, time.Now().Unix()).Error
+	if err != nil {
+		r.logger.Error(err)
+	}
+}
+
+func (r *MysqlMiddleRepository) GetCounter(ctx context.Context, id int64) (pb.Counter, error) {
+	var find pb.Counter
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&find).Error
+	if err != nil {
+		return pb.Counter{}, err
+	}
+	return find, nil
+}
+
+func (r *MysqlMiddleRepository) GetCounterByFlag(ctx context.Context, userId int64, flag string) (pb.Counter, error) {
+	var find pb.Counter
+	err := r.db.WithContext(ctx).Where("user_id = ? AND flag = ?", userId, flag).First(&find).Error
+	if err != nil {
+		return pb.Counter{}, err
 	}
 	return find, nil
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/tsundata/assistant/internal/app/middle/repository"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
@@ -30,12 +31,13 @@ import (
 type Middle struct {
 	conf    *config.AppConfig
 	rdb     *redis.Client
+	locker  *global.Locker
 	repo    repository.MiddleRepository
 	storage pb.StorageSvcClient
 }
 
-func NewMiddle(conf *config.AppConfig, rdb *redis.Client, repo repository.MiddleRepository, storage pb.StorageSvcClient) *Middle {
-	return &Middle{rdb: rdb, repo: repo, conf: conf, storage: storage}
+func NewMiddle(conf *config.AppConfig, rdb *redis.Client, locker *global.Locker, repo repository.MiddleRepository, storage pb.StorageSvcClient) *Middle {
+	return &Middle{rdb: rdb, repo: repo, conf: conf, storage: storage, locker: locker}
 }
 
 func (s *Middle) GetQrUrl(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {
@@ -866,4 +868,82 @@ func (s *Middle) CreateAvatar(ctx context.Context, payload *pb.TextRequest) (*pb
 	}
 
 	return &pb.TextReply{Text: fileReply.Path}, nil
+}
+
+func (s *Middle) CreateCounter(ctx context.Context, payload *pb.CounterRequest) (*pb.StateReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	payload.Counter.UserId = id
+	_, err := s.repo.CreateCounter(ctx, payload.Counter)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.StateReply{State: true}, nil
+}
+
+func (s *Middle) GetCounter(ctx context.Context, payload *pb.CounterRequest) (*pb.CounterReply, error) {
+	find, err := s.repo.GetCounter(ctx, payload.Counter.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CounterReply{Counter: &find}, nil
+}
+
+func (s *Middle) GetCounters(ctx context.Context, _ *pb.CounterRequest) (*pb.CountersReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	list, err := s.repo.ListCounter(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CountersReply{Counters: list}, nil
+}
+
+func (s *Middle) ChangeCounter(ctx context.Context, payload *pb.CounterRequest) (*pb.CounterReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	find, err := s.repo.GetCounterByFlag(ctx, id, payload.Counter.GetFlag())
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.IncreaseCounter(ctx, find.Id, payload.Counter.GetDigit())
+	if err != nil {
+		return nil, err
+	}
+	find, err = s.repo.GetCounter(ctx, find.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CounterReply{Counter: &find}, nil
+}
+
+func (s *Middle) ResetCounter(ctx context.Context, payload *pb.CounterRequest) (*pb.CounterReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	l, err := s.locker.Acquire(fmt.Sprintf("chatbot:system:counter:reset:%d", id))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = l.Release()
+	}()
+
+	find, err := s.repo.GetCounterByFlag(ctx, id, payload.Counter.GetFlag())
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.IncreaseCounter(ctx, find.Id, 1-find.Digit)
+	if err != nil {
+		return nil, err
+	}
+	find, err = s.repo.GetCounter(ctx, find.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CounterReply{Counter: &find}, nil
+}
+
+func (s *Middle) GetCounterByFlag(ctx context.Context, payload *pb.CounterRequest) (*pb.CounterReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	find, err := s.repo.GetCounterByFlag(ctx, id, payload.Counter.GetFlag())
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	return &pb.CounterReply{Counter: &find}, nil
 }

@@ -8,10 +8,8 @@ package rulebot
 import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
-	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
-	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
-	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
+	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
 	service2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
@@ -103,15 +101,13 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	}
 	todoRepository := repository.NewMysqlTodoRepository(locker, globalID, conn)
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
-	systemRepository := repository2.NewMysqlSystemRepository(logLogger, globalID, conn)
-	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	okrRepository := repository3.NewMysqlOkrRepository(locker, globalID, conn)
-	okrSvcServer := service4.NewOkr(bus, okrRepository, middleSvcClient)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
+	okrRepository := repository2.NewMysqlOkrRepository(locker, globalID, conn)
+	okrSvcServer := service3.NewOkr(bus, okrRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, okrSvcServer)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
 }
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, global.ProviderSet, mysql.ProviderSet, service4.ProviderSet, repository.ProviderSet, service2.ProviderSet, repository2.ProviderSet, service3.ProviderSet, repository3.ProviderSet, service.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, global.ProviderSet, mysql.ProviderSet, service3.ProviderSet, repository.ProviderSet, service2.ProviderSet, repository2.ProviderSet, service.ProviderSet)

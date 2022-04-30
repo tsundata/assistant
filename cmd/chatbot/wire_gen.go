@@ -9,14 +9,12 @@ import (
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/internal/app/chatbot"
 	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	repository4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
-	service4 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
-	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/repository"
-	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/system/service"
+	repository3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
+	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
 	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
 	service2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
 	"github.com/tsundata/assistant/internal/app/chatbot/repository"
-	service5 "github.com/tsundata/assistant/internal/app/chatbot/service"
+	service4 "github.com/tsundata/assistant/internal/app/chatbot/service"
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -114,14 +112,12 @@ func CreateApp(id string) (*app.Application, error) {
 	financeSvcServer := service.NewFinance()
 	todoRepository := repository2.NewMysqlTodoRepository(locker, globalID, conn)
 	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
-	systemRepository := repository3.NewMysqlSystemRepository(logLogger, globalID, conn)
-	systemSvcServer := service3.NewSystem(systemRepository, logLogger, locker)
-	okrRepository := repository4.NewMysqlOkrRepository(locker, globalID, conn)
-	okrSvcServer := service4.NewOkr(bus, okrRepository, middleSvcClient)
-	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, systemSvcServer, okrSvcServer)
+	okrRepository := repository3.NewMysqlOkrRepository(locker, globalID, conn)
+	okrSvcServer := service3.NewOkr(bus, okrRepository, middleSvcClient)
+	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, okrSvcServer)
 	ruleBot := rulebot.New(componentComponent)
-	serviceChatbot := service5.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
-	initServer := service5.CreateInitServerFn(serviceChatbot)
+	serviceChatbot := service4.NewChatbot(logLogger, bus, redisClient, chatbotRepository, messageSvcClient, middleSvcClient, ruleBot, componentComponent)
+	initServer := service4.CreateInitServerFn(serviceChatbot)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
 		return nil, err
@@ -135,4 +131,4 @@ func CreateApp(id string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service5.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, service4.ProviderSet, repository2.ProviderSet, service2.ProviderSet, repository3.ProviderSet, service3.ProviderSet, repository4.ProviderSet, service.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, influx.ProviderSet, redis.ProviderSet, chatbot.ProviderSet, rollbar.ProviderSet, etcd.ProviderSet, service4.ProviderSet, rpcclient.ProviderSet, rulebot.ProviderSet, event.ProviderSet, newrelic.ProviderSet, mysql.ProviderSet, repository.ProviderSet, global.ProviderSet, rabbitmq.ProviderSet, component.ProviderSet, service3.ProviderSet, repository2.ProviderSet, service2.ProviderSet, repository3.ProviderSet, service.ProviderSet)

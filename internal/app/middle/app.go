@@ -8,13 +8,14 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/app"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
+	"github.com/tsundata/assistant/internal/pkg/global"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc"
 )
 
-func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server, bus event.Bus, rdb *redis.Client, repo repository.MiddleRepository) (*app.Application, error) {
+func NewApp(c *config.AppConfig, logger log.Logger, rs *rpc.Server, bus event.Bus, rdb *redis.Client, locker *global.Locker, repo repository.MiddleRepository) (*app.Application, error) {
 	// event bus register
-	err := listener.RegisterEventHandler(bus, rdb, repo)
+	err := listener.RegisterEventHandler(bus, rdb, locker, repo)
 	if err != nil {
 		return nil, err
 	}

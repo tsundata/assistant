@@ -56,6 +56,12 @@ type MiddleSvcClient interface {
 	Segmentation(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*WordsReply, error)
 	Classifier(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
 	CreateAvatar(ctx context.Context, in *TextRequest, opts ...grpc.CallOption) (*TextReply, error)
+	CreateCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*StateReply, error)
+	GetCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
+	GetCounters(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CountersReply, error)
+	ChangeCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
+	ResetCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
+	GetCounterByFlag(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error)
 }
 
 type middleSvcClient struct {
@@ -417,6 +423,60 @@ func (c *middleSvcClient) CreateAvatar(ctx context.Context, in *TextRequest, opt
 	return out, nil
 }
 
+func (c *middleSvcClient) CreateCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*StateReply, error) {
+	out := new(StateReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/CreateCounter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error) {
+	out := new(CounterReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCounter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetCounters(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CountersReply, error) {
+	out := new(CountersReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCounters", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) ChangeCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error) {
+	out := new(CounterReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ChangeCounter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) ResetCounter(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error) {
+	out := new(CounterReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/ResetCounter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *middleSvcClient) GetCounterByFlag(ctx context.Context, in *CounterRequest, opts ...grpc.CallOption) (*CounterReply, error) {
+	out := new(CounterReply)
+	err := c.cc.Invoke(ctx, "/pb.MiddleSvc/GetCounterByFlag", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MiddleSvcServer is the server API for MiddleSvc service.
 // All implementations should embed UnimplementedMiddleSvcServer
 // for forward compatibility
@@ -460,6 +520,12 @@ type MiddleSvcServer interface {
 	Segmentation(context.Context, *TextRequest) (*WordsReply, error)
 	Classifier(context.Context, *TextRequest) (*TextReply, error)
 	CreateAvatar(context.Context, *TextRequest) (*TextReply, error)
+	CreateCounter(context.Context, *CounterRequest) (*StateReply, error)
+	GetCounter(context.Context, *CounterRequest) (*CounterReply, error)
+	GetCounters(context.Context, *CounterRequest) (*CountersReply, error)
+	ChangeCounter(context.Context, *CounterRequest) (*CounterReply, error)
+	ResetCounter(context.Context, *CounterRequest) (*CounterReply, error)
+	GetCounterByFlag(context.Context, *CounterRequest) (*CounterReply, error)
 }
 
 // UnimplementedMiddleSvcServer should be embedded to have forward compatible implementations.
@@ -582,6 +648,24 @@ func (UnimplementedMiddleSvcServer) Classifier(context.Context, *TextRequest) (*
 }
 func (UnimplementedMiddleSvcServer) CreateAvatar(context.Context, *TextRequest) (*TextReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAvatar not implemented")
+}
+func (UnimplementedMiddleSvcServer) CreateCounter(context.Context, *CounterRequest) (*StateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCounter not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetCounter(context.Context, *CounterRequest) (*CounterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCounter not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetCounters(context.Context, *CounterRequest) (*CountersReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCounters not implemented")
+}
+func (UnimplementedMiddleSvcServer) ChangeCounter(context.Context, *CounterRequest) (*CounterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeCounter not implemented")
+}
+func (UnimplementedMiddleSvcServer) ResetCounter(context.Context, *CounterRequest) (*CounterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetCounter not implemented")
+}
+func (UnimplementedMiddleSvcServer) GetCounterByFlag(context.Context, *CounterRequest) (*CounterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCounterByFlag not implemented")
 }
 
 // UnsafeMiddleSvcServer may be embedded to opt out of forward compatibility for this service.
@@ -1297,6 +1381,114 @@ func _MiddleSvc_CreateAvatar_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MiddleSvc_CreateCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).CreateCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/CreateCounter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).CreateCounter(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetCounter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetCounter(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetCounters_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetCounters(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetCounters",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetCounters(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_ChangeCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).ChangeCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/ChangeCounter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).ChangeCounter(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_ResetCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).ResetCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/ResetCounter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).ResetCounter(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MiddleSvc_GetCounterByFlag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MiddleSvcServer).GetCounterByFlag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MiddleSvc/GetCounterByFlag",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MiddleSvcServer).GetCounterByFlag(ctx, req.(*CounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.MiddleSvc",
 	HandlerType: (*MiddleSvcServer)(nil),
@@ -1456,6 +1648,30 @@ var _MiddleSvc_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAvatar",
 			Handler:    _MiddleSvc_CreateAvatar_Handler,
+		},
+		{
+			MethodName: "CreateCounter",
+			Handler:    _MiddleSvc_CreateCounter_Handler,
+		},
+		{
+			MethodName: "GetCounter",
+			Handler:    _MiddleSvc_GetCounter_Handler,
+		},
+		{
+			MethodName: "GetCounters",
+			Handler:    _MiddleSvc_GetCounters_Handler,
+		},
+		{
+			MethodName: "ChangeCounter",
+			Handler:    _MiddleSvc_ChangeCounter_Handler,
+		},
+		{
+			MethodName: "ResetCounter",
+			Handler:    _MiddleSvc_ResetCounter_Handler,
+		},
+		{
+			MethodName: "GetCounterByFlag",
+			Handler:    _MiddleSvc_GetCounterByFlag_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

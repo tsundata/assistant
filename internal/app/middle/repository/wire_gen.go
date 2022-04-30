@@ -55,7 +55,7 @@ func CreateMiddleRepository(id string) (MiddleRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := NewMysqlMiddleRepository(globalID, conn)
+	middleRepository := NewMysqlMiddleRepository(logLogger, globalID, conn)
 	return middleRepository, nil
 }
 

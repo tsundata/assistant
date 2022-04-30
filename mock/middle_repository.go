@@ -50,6 +50,21 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateApp(ctx, app interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateApp", reflect.TypeOf((*MockMiddleRepository)(nil).CreateApp), ctx, app)
 }
 
+// CreateCounter mocks base method.
+func (m *MockMiddleRepository) CreateCounter(ctx context.Context, counter *pb.Counter) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCounter", ctx, counter)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCounter indicates an expected call of CreateCounter.
+func (mr *MockMiddleRepositoryMockRecorder) CreateCounter(ctx, counter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCounter", reflect.TypeOf((*MockMiddleRepository)(nil).CreateCounter), ctx, counter)
+}
+
 // CreateCredential mocks base method.
 func (m *MockMiddleRepository) CreateCredential(ctx context.Context, credential *pb.Credential) (int64, error) {
 	m.ctrl.T.Helper()
@@ -108,6 +123,20 @@ func (mr *MockMiddleRepositoryMockRecorder) CreateUserSubscribe(ctx, subscribe i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).CreateUserSubscribe), ctx, subscribe)
 }
 
+// DecreaseCounter mocks base method.
+func (m *MockMiddleRepository) DecreaseCounter(ctx context.Context, id, amount int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DecreaseCounter", ctx, id, amount)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DecreaseCounter indicates an expected call of DecreaseCounter.
+func (mr *MockMiddleRepositoryMockRecorder) DecreaseCounter(ctx, id, amount interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecreaseCounter", reflect.TypeOf((*MockMiddleRepository)(nil).DecreaseCounter), ctx, id, amount)
+}
+
 // GetAppByType mocks base method.
 func (m *MockMiddleRepository) GetAppByType(ctx context.Context, userId int64, t string) (pb.App, error) {
 	m.ctrl.T.Helper()
@@ -136,6 +165,36 @@ func (m *MockMiddleRepository) GetAvailableAppByType(ctx context.Context, userId
 func (mr *MockMiddleRepositoryMockRecorder) GetAvailableAppByType(ctx, userId, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableAppByType", reflect.TypeOf((*MockMiddleRepository)(nil).GetAvailableAppByType), ctx, userId, t)
+}
+
+// GetCounter mocks base method.
+func (m *MockMiddleRepository) GetCounter(ctx context.Context, id int64) (pb.Counter, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCounter", ctx, id)
+	ret0, _ := ret[0].(pb.Counter)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounter indicates an expected call of GetCounter.
+func (mr *MockMiddleRepositoryMockRecorder) GetCounter(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounter", reflect.TypeOf((*MockMiddleRepository)(nil).GetCounter), ctx, id)
+}
+
+// GetCounterByFlag mocks base method.
+func (m *MockMiddleRepository) GetCounterByFlag(ctx context.Context, userId int64, flag string) (pb.Counter, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCounterByFlag", ctx, userId, flag)
+	ret0, _ := ret[0].(pb.Counter)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCounterByFlag indicates an expected call of GetCounterByFlag.
+func (mr *MockMiddleRepositoryMockRecorder) GetCounterByFlag(ctx, userId, flag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounterByFlag", reflect.TypeOf((*MockMiddleRepository)(nil).GetCounterByFlag), ctx, userId, flag)
 }
 
 // GetCredentialByName mocks base method.
@@ -243,6 +302,20 @@ func (mr *MockMiddleRepositoryMockRecorder) GetUserSubscribe(ctx, userId, subscr
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscribe", reflect.TypeOf((*MockMiddleRepository)(nil).GetUserSubscribe), ctx, userId, subscribeId)
 }
 
+// IncreaseCounter mocks base method.
+func (m *MockMiddleRepository) IncreaseCounter(ctx context.Context, id, amount int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncreaseCounter", ctx, id, amount)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// IncreaseCounter indicates an expected call of IncreaseCounter.
+func (mr *MockMiddleRepositoryMockRecorder) IncreaseCounter(ctx, id, amount interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseCounter", reflect.TypeOf((*MockMiddleRepository)(nil).IncreaseCounter), ctx, id, amount)
+}
+
 // ListApps mocks base method.
 func (m *MockMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*pb.App, error) {
 	m.ctrl.T.Helper()
@@ -256,6 +329,21 @@ func (m *MockMiddleRepository) ListApps(ctx context.Context, userId int64) ([]*p
 func (mr *MockMiddleRepositoryMockRecorder) ListApps(ctx, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListApps", reflect.TypeOf((*MockMiddleRepository)(nil).ListApps), ctx, userId)
+}
+
+// ListCounter mocks base method.
+func (m *MockMiddleRepository) ListCounter(ctx context.Context, userId int64) ([]*pb.Counter, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListCounter", ctx, userId)
+	ret0, _ := ret[0].([]*pb.Counter)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCounter indicates an expected call of ListCounter.
+func (mr *MockMiddleRepositoryMockRecorder) ListCounter(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCounter", reflect.TypeOf((*MockMiddleRepository)(nil).ListCounter), ctx, userId)
 }
 
 // ListCredentials mocks base method.

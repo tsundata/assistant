@@ -437,7 +437,7 @@ var commandRules = []command.Rule{
 		Define: `counters`,
 		Help:   `List Counter`,
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
-			reply, err := comp.System().GetCounters(ctx, &pb.CounterRequest{})
+			reply, err := comp.Middle().GetCounters(ctx, &pb.CounterRequest{})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -464,7 +464,7 @@ var commandRules = []command.Rule{
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			flag, _ := tokens[1].Value.String()
 			counter := &pb.Counter{Flag: flag, Digit: int64(1)}
-			find, err := comp.System().GetCounterByFlag(ctx, &pb.CounterRequest{Counter: counter})
+			find, err := comp.Middle().GetCounterByFlag(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -474,7 +474,7 @@ var commandRules = []command.Rule{
 					Digit: int(find.Counter.Digit),
 				}}
 			}
-			_, err = comp.System().CreateCounter(ctx, &pb.CounterRequest{Counter: counter})
+			_, err = comp.Middle().CreateCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -490,7 +490,7 @@ var commandRules = []command.Rule{
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			flag, _ := tokens[1].Value.String()
 			counter := &pb.Counter{Flag: flag, Digit: int64(1)}
-			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
+			latest, err := comp.Middle().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -506,7 +506,7 @@ var commandRules = []command.Rule{
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			flag, _ := tokens[1].Value.String()
 			counter := &pb.Counter{Flag: flag, Digit: int64(-1)}
-			latest, err := comp.System().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
+			latest, err := comp.Middle().ChangeCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}
@@ -522,7 +522,7 @@ var commandRules = []command.Rule{
 		Parse: func(ctx context.Context, comp component.Component, tokens []*command.Token) []pb.MsgPayload {
 			flag, _ := tokens[1].Value.String()
 			counter := &pb.Counter{Flag: flag}
-			latest, err := comp.System().ResetCounter(ctx, &pb.CounterRequest{Counter: counter})
+			latest, err := comp.Middle().ResetCounter(ctx, &pb.CounterRequest{Counter: counter})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}
 			}

@@ -25,7 +25,7 @@ func (o *Increase) Doc() string {
 
 func (o *Increase) Run(ctx context.Context, inCtx *inside.Context, comp component.Component, params []interface{}) (interface{}, error) {
 	if flag, ok := params[0].(string); ok {
-		err := comp.GetBus().Publish(ctx, enum.Chatbot, event.SystemCounterIncreaseSubject, pb.Counter{
+		err := comp.GetBus().Publish(ctx, enum.Middle, event.CounterIncreaseSubject, pb.Counter{
 			UserId: inCtx.Message.GetUserId(),
 			Flag:   flag,
 			Digit:  1,

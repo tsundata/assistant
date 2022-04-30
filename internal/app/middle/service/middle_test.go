@@ -23,7 +23,7 @@ func TestMiddle_GetQrUrl(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -67,7 +67,7 @@ func TestMiddle_CreatePage(t *testing.T) {
 		repo.EXPECT().CreatePage(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(conf, nil, repo, nil)
+	s := NewMiddle(conf, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -112,7 +112,7 @@ func TestMiddle_GetPage(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -167,7 +167,7 @@ func TestMiddle_GetApps(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -217,7 +217,7 @@ func TestMiddle_GetAvailableApp(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -272,7 +272,7 @@ func TestMiddle_StoreAppOAuth(t *testing.T) {
 		repo.EXPECT().CreateApp(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -341,7 +341,7 @@ func TestMiddle_GetCredential(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -405,7 +405,7 @@ func TestMiddle_GetCredentials(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -454,7 +454,7 @@ func TestMiddle_GetMaskingCredentials(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -498,7 +498,7 @@ func TestMiddle_CreateCredential(t *testing.T) {
 		repo.EXPECT().CreateCredential(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0     context.Context
@@ -554,7 +554,7 @@ func TestMiddle_GetSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil, nil)
 
 	type args struct {
 		in0 context.Context
@@ -590,7 +590,7 @@ func TestMiddle_GetSetting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -626,7 +626,7 @@ func TestMiddle_CreateSetting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(conf, nil, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil, nil)
 
 	type args struct {
 		in0     context.Context
@@ -669,7 +669,7 @@ func TestMiddle_GetStats(t *testing.T) {
 	rdb.MSet(context.Background(), "stats:count:test", "test")
 	rdb.MSet(context.Background(), "stats:month:0000", 0)
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	s := NewMiddle(nil, rdb, nil, nil, nil)
 
 	type args struct {
 		ctx context.Context
@@ -717,7 +717,7 @@ func TestSubscribe_List(t *testing.T) {
 			CreatedAt: time.Now().Unix(),
 		}}, nil),
 	)
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		ctx context.Context
@@ -760,7 +760,7 @@ func TestSubscribe_Register(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().CreateSubscribe(gomock.Any(), gomock.Any()).Return(nil),
 	)
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -803,7 +803,7 @@ func TestSubscribe_Open(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().UpdateSubscribeStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
 	)
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -846,7 +846,7 @@ func TestSubscribe_Close(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().UpdateSubscribeStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
 	)
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -910,7 +910,7 @@ func TestSubscribe_Status(t *testing.T) {
 			CreatedAt: time.Now().Unix(),
 		}}, nil),
 	)
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -965,7 +965,7 @@ func TestMiddle_GetTags(t *testing.T) {
 		}}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -1013,7 +1013,7 @@ func TestMiddle_GetOrCreateTag(t *testing.T) {
 		}, nil),
 	)
 
-	s := NewMiddle(nil, nil, repo, nil)
+	s := NewMiddle(nil, nil, nil, repo, nil)
 
 	type args struct {
 		in0 context.Context
@@ -1054,7 +1054,7 @@ func TestSetChartData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	s := NewMiddle(nil, rdb, nil, nil, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -1112,7 +1112,7 @@ func TestGetChartData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	s := NewMiddle(nil, rdb, nil, nil, nil)
 
 	type args struct {
 		ctx     context.Context
@@ -1165,7 +1165,7 @@ func TestListCron(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := NewMiddle(nil, rdb, nil, nil)
+	s := NewMiddle(nil, rdb, nil, nil, nil)
 
 	type args struct {
 		ctx context.Context
@@ -1201,7 +1201,7 @@ func TestListCron(t *testing.T) {
 }
 
 func TestNLP_Pinyin(t *testing.T) {
-	s := NewMiddle(nil, nil, nil, nil)
+	s := NewMiddle(nil, nil, nil, nil, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -1243,7 +1243,7 @@ func TestNLP_Pinyin(t *testing.T) {
 }
 
 func TestNLP_Segmentation(t *testing.T) {
-	s := NewMiddle(nil, nil, nil, nil)
+	s := NewMiddle(nil, nil, nil, nil, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest
@@ -1289,7 +1289,7 @@ func TestNLP_Classifier(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewMiddle(conf, nil, nil, nil)
+	s := NewMiddle(conf, nil, nil, nil, nil)
 	type args struct {
 		in0 context.Context
 		req *pb.TextRequest

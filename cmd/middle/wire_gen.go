@@ -50,6 +50,7 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
+	locker := global.NewLocker(client)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err
@@ -75,12 +76,12 @@ func CreateApp(id string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	middleRepository := repository.NewMysqlMiddleRepository(globalID, conn)
+	middleRepository := repository.NewMysqlMiddleRepository(logLogger, globalID, conn)
 	storageSvcClient, err := rpcclient.NewStorageClient(rpcClient)
 	if err != nil {
 		return nil, err
 	}
-	serviceMiddle := service.NewMiddle(appConfig, redisClient, middleRepository, storageSvcClient)
+	serviceMiddle := service.NewMiddle(appConfig, redisClient, locker, middleRepository, storageSvcClient)
 	initServer := service.CreateInitServerFn(serviceMiddle)
 	server, err := rpc.NewServer(appConfig, logger, logLogger, initServer, tracer, redisClient, newrelicApp)
 	if err != nil {
@@ -91,7 +92,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	bus := event.NewRabbitmqBus(connection, logLogger)
-	application, err := middle.NewApp(appConfig, logLogger, server, bus, redisClient, middleRepository)
+	application, err := middle.NewApp(appConfig, logLogger, server, bus, redisClient, locker, middleRepository)
 	if err != nil {
 		return nil, err
 	}

@@ -52,6 +52,12 @@ service MiddleSvc {
   rpc Segmentation(TextRequest) returns (WordsReply) {}
   rpc Classifier(TextRequest) returns (TextReply) {}
   rpc CreateAvatar(TextRequest) returns (TextReply) {}
+  rpc CreateCounter(CounterRequest) returns (StateReply) {}
+  rpc GetCounter(CounterRequest) returns (CounterReply) {}
+  rpc GetCounters(CounterRequest) returns (CountersReply) {}
+  rpc ChangeCounter(CounterRequest) returns (CounterReply) {}
+  rpc ResetCounter(CounterRequest) returns (CounterReply) {}
+  rpc GetCounterByFlag(CounterRequest) returns (CounterReply) {}
 }
 
 message PageRequest {
@@ -324,4 +330,33 @@ message ChartDataReply {
 
 message WordsReply {
   repeated string text = 1;
+}
+
+message CounterRequest {
+  Counter counter = 1;
+}
+
+message CounterReply {
+  Counter counter = 1;
+}
+
+message CountersReply {
+  repeated Counter counters = 1;
+}
+
+message Counter {
+  // @inject_tag: db:"id" gorm:"primaryKey"
+  int64 id = 1;
+  // @inject_tag: db:"user_id"
+  int64 user_id = 2;
+  // @inject_tag: db:"flag"
+  string flag = 3;
+  // @inject_tag: db:"digit"
+  int64 digit = 4;
+  // @inject_tag: db:"status"
+  int32 status = 5;
+  // @inject_tag: db:"created_at"
+  int64 created_at = 6;
+  // @inject_tag: db:"updated_at"
+  int64 updated_at = 7;
 }

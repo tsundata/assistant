@@ -25,7 +25,7 @@ func (o *Counter) Doc() string {
 
 func (o *Counter) Run(ctx context.Context, inCtx *inside.Context, comp component.Component, params []interface{}) (interface{}, error) {
 	if flag, ok := params[0].(string); ok {
-		err := comp.GetBus().Publish(ctx, enum.Chatbot, event.SystemCounterCreateSubject, pb.Counter{
+		err := comp.GetBus().Publish(ctx, enum.Middle, event.CounterCreateSubject, pb.Counter{
 			UserId: inCtx.Message.GetUserId(),
 			Flag:   flag,
 			Digit:  1,
