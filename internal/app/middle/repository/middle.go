@@ -13,6 +13,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"gorm.io/gorm"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -49,7 +50,7 @@ type MiddleRepository interface {
 	GetCounter(ctx context.Context, id int64) (pb.Counter, error)
 	GetCounterByFlag(ctx context.Context, userId int64, flag string) (pb.Counter, error)
 	Search(ctx context.Context, userId int64, filter [][]string) ([]*pb.Metadata, error)
-	CollectMetadata(ctx context.Context, model []interface{}) error
+	CollectMetadata(ctx context.Context, models []interface{}) error
 }
 
 type MysqlMiddleRepository struct {
@@ -465,7 +466,7 @@ func (r *MysqlMiddleRepository) Search(ctx context.Context, userId int64, filter
 		case "text":
 			builder.Where("text = ?", item[1])
 		default:
-			builder.Where(fmt.Sprintf("`data`->'$.\"%s\"' = ?", item[0]), item[1])
+			builder.Where(fmt.Sprintf("`data`->'$.\"%s\"' = ? OR `extra`->'$.\"%s\"' = ?", item[0], item[0]), item[1], item[1])
 		}
 	}
 
@@ -476,28 +477,65 @@ func (r *MysqlMiddleRepository) Search(ctx context.Context, userId int64, filter
 	return items, nil
 }
 
-func (r *MysqlMiddleRepository) CollectMetadata(ctx context.Context, model []interface{}) error {
-	// todo opt
-	for _, m := range model {
+func (r *MysqlMiddleRepository) CollectMetadata(ctx context.Context, models []interface{}) error {
+	for _, m := range models {
 		r.db.WithContext(ctx).Find(&m)
 		jsonByte, _ := json.Marshal(m)
 		arrData := util.ByteToString(jsonByte)
 		arrValue := gjson.Get(arrData, "@this")
 
 		for _, result := range arrValue.Array() {
-			idValue := gjson.Get(result.Raw, "id")
-			userIdValue := gjson.Get(result.Raw, "user_id")
-			r.db.WithContext(ctx).Create(&pb.Metadata{
-				Id:        r.id.Generate(ctx),
-				UserId:    userIdValue.Int(),
-				Model:     util.ModelName(m),
-				ModelId:   idValue.Int(),
-				Text:      "",
-				Data:      result.Raw,
-				Extra:     "{}",
-				CreatedAt: time.Now().Unix(),
-				UpdatedAt: time.Now().Unix(),
-			})
+			modelId := gjson.Get(result.Raw, "id").Int()
+			userId := gjson.Get(result.Raw, "user_id").Int()
+			sequence := gjson.Get(result.Raw, "sequence").Int()
+			extra := "{}"
+			extraValue := gjson.Get(result.Raw, "payload")
+			if extraValue.Exists() {
+				extra = extraValue.String()
+			}
+			model := util.ModelName(m)
+
+			name := gjson.Get(result.Raw, "name").String()
+			title := gjson.Get(result.Raw, "title").String()
+			text := gjson.Get(result.Raw, "text").String()
+			content := gjson.Get(result.Raw, "content").String()
+			b := strings.Builder{}
+			b.WriteString(name)
+			b.WriteString(title)
+			b.WriteString(text)
+			b.WriteString(content)
+			text = util.SubString(b.String(), 0, 100)
+
+			var find pb.Metadata
+			r.db.WithContext(ctx).
+				Model(&pb.Metadata{}).
+				Select("id").
+				Where("user_id = ? AND model = ? AND model_id = ?", userId, model, modelId).
+				Take(&find)
+			if find.Id > 0 {
+				r.db.WithContext(ctx).
+					Model(&pb.Metadata{}).
+					Where("user_id = ? AND model = ? AND model_id = ?", userId, model, modelId).
+					UpdateColumns(map[string]interface{}{
+						"text":       text,
+						"data":       result.Raw,
+						"extra":      extra,
+						"updated_at": time.Now().Unix(),
+					})
+			} else {
+				r.db.WithContext(ctx).Create(&pb.Metadata{
+					Id:        r.id.Generate(ctx),
+					UserId:    userId,
+					Model:     model,
+					ModelId:   modelId,
+					Sequence:  sequence,
+					Text:      text,
+					Data:      result.Raw,
+					Extra:     extra,
+					CreatedAt: time.Now().Unix(),
+					UpdatedAt: time.Now().Unix(),
+				})
+			}
 		}
 	}
 	return nil

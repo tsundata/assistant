@@ -290,6 +290,7 @@ CREATE TABLE `metadata`
     `user_id`    bigint          NOT NULL,
     `model`      varchar(30)     NOT NULL,
     `model_id`   bigint          NOT NULL,
+    `sequence`   int             NOT NULL,
     `text`       varchar(100)    NOT NULL,
     `data`       json            NOT NULL,
     `extra`      json            NOT NULL,

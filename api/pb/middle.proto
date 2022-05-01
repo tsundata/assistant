@@ -372,16 +372,18 @@ message Metadata {
   string model = 4;
   // @inject_tag: db:"model_id"
   int64 model_id = 5;
+  // @inject_tag: db:"sequence"
+  int64 sequence = 6;
   // @inject_tag: db:"text"
-  string text = 6;
+  string text = 7;
   // @inject_tag: db:"data"
-  string data = 7;
+  string data = 8;
   // @inject_tag: db:"extra"
-  string extra = 8;
+  string extra = 9;
   // @inject_tag: db:"created_at"
-  int64 created_at = 9;
+  int64 created_at = 10;
   // @inject_tag: db:"updated_at"
-  int64 updated_at = 10;
+  int64 updated_at = 11;
 }
 
 message MetadataReply {

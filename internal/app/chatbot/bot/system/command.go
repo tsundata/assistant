@@ -603,9 +603,9 @@ var commandRules = []command.Rule{
 			var header []string
 			var row [][]interface{}
 			if len(reply.List) > 0 {
-				header = []string{"Model", "ModelId", "Text"}
+				header = []string{"Model", "Sequence", "Text"}
 				for _, v := range reply.List {
-					row = append(row, []interface{}{v.Model, v.ModelId, v.Text})
+					row = append(row, []interface{}{v.Model, v.Sequence, v.Text})
 				}
 			}
 			if len(row) == 0 {

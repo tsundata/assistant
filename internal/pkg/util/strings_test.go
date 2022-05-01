@@ -227,18 +227,18 @@ func TestStructName(t *testing.T) {
 		{
 			"case1",
 			pb.Message{},
-			"Message",
+			"pb.Message",
 		},
 		{
 			"case2",
 			&pb.Message{},
-			"Message",
+			"*pb.Message",
 		},
 	}
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			require.Equal(t, tt.expect, StructName(tt.data))
+			require.Equal(t, tt.expect, TypeName(tt.data))
 		})
 	}
 }
@@ -257,6 +257,21 @@ func TestModelName(t *testing.T) {
 		{
 			"case2",
 			&pb.Message{},
+			"message",
+		},
+		{
+			"case3",
+			[]pb.Message{},
+			"message",
+		},
+		{
+			"case4",
+			[]*pb.Message{},
+			"message",
+		},
+		{
+			"case5",
+			&[]pb.Message{},
 			"message",
 		},
 	}

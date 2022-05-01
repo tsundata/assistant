@@ -971,7 +971,15 @@ func (s *Middle) CollectMetadata(ctx context.Context, _ *pb.TextRequest) (*pb.St
 	err := s.repo.CollectMetadata(ctx, []interface{}{
 		[]pb.App{},
 		[]pb.Counter{},
+		[]pb.Group{},
+		[]pb.Inbox{},
+		[]pb.KeyResult{},
 		[]pb.Message{},
+		[]pb.Objective{},
+		[]pb.Role{},
+		[]pb.Tag{},
+		[]pb.Todo{},
+		[]pb.Trigger{},
 	})
 	if err != nil {
 		return nil, err
