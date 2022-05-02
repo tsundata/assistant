@@ -36,17 +36,17 @@ func (m *MockMiddleRepository) EXPECT() *MockMiddleRepositoryMockRecorder {
 }
 
 // CollectMetadata mocks base method.
-func (m *MockMiddleRepository) CollectMetadata(ctx context.Context, model []interface{}) error {
+func (m *MockMiddleRepository) CollectMetadata(ctx context.Context, models []interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CollectMetadata", ctx, model)
+	ret := m.ctrl.Call(m, "CollectMetadata", ctx, models)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CollectMetadata indicates an expected call of CollectMetadata.
-func (mr *MockMiddleRepositoryMockRecorder) CollectMetadata(ctx, model interface{}) *gomock.Call {
+func (mr *MockMiddleRepositoryMockRecorder) CollectMetadata(ctx, models interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectMetadata", reflect.TypeOf((*MockMiddleRepository)(nil).CollectMetadata), ctx, model)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectMetadata", reflect.TypeOf((*MockMiddleRepository)(nil).CollectMetadata), ctx, models)
 }
 
 // CreateApp mocks base method.

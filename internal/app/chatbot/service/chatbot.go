@@ -433,19 +433,18 @@ func (s *Chatbot) GetGroups(ctx context.Context, _ *pb.GroupRequest) (*pb.GetGro
 	id, _ := md.FromIncoming(ctx)
 
 	// default group
-	const defaultGroupName = "System"
-	_, err := s.repo.GetGroupByName(ctx, id, defaultGroupName)
+	_, err := s.repo.GetGroupByName(ctx, id, enum.DefaultGroupName)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		avatarReply, err := s.middle.CreateAvatar(ctx, &pb.TextRequest{Text: defaultGroupName})
+		avatarReply, err := s.middle.CreateAvatar(ctx, &pb.TextRequest{Text: enum.DefaultGroupName})
 		if err != nil {
 			return nil, err
 		}
 		groupId, err := s.repo.CreateGroup(ctx, &pb.Group{
 			UserId:    id,
-			Name:      defaultGroupName,
+			Name:      enum.DefaultGroupName,
 			Avatar:    avatarReply.Text,
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
@@ -544,6 +543,15 @@ func (s *Chatbot) GetGroup(ctx context.Context, payload *pb.GroupRequest) (*pb.G
 		Name:     group.Name,
 		Avatar:   group.Avatar,
 	}}, nil
+}
+
+func (s *Chatbot) DefaultGroupId(ctx context.Context, _ *pb.IdRequest) (*pb.IdReply, error) {
+	id, _ := md.FromIncoming(ctx)
+	group, err := s.repo.GetGroupByName(ctx, id, enum.DefaultGroupName)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.IdReply{Id: group.Id}, nil
 }
 
 func (s *Chatbot) CreateGroupBot(ctx context.Context, payload *pb.GroupBotRequest) (*pb.StateReply, error) {

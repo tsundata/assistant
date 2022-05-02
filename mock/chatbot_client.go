@@ -156,6 +156,26 @@ func (mr *MockChatbotSvcClientMockRecorder) CronTrigger(ctx, in interface{}, opt
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockChatbotSvcClient)(nil).CronTrigger), varargs...)
 }
 
+// DefaultGroupId mocks base method.
+func (m *MockChatbotSvcClient) DefaultGroupId(ctx context.Context, in *pb.IdRequest, opts ...grpc.CallOption) (*pb.IdReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DefaultGroupId", varargs...)
+	ret0, _ := ret[0].(*pb.IdReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DefaultGroupId indicates an expected call of DefaultGroupId.
+func (mr *MockChatbotSvcClientMockRecorder) DefaultGroupId(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultGroupId", reflect.TypeOf((*MockChatbotSvcClient)(nil).DefaultGroupId), varargs...)
+}
+
 // DeleteGroup mocks base method.
 func (m *MockChatbotSvcClient) DeleteGroup(ctx context.Context, in *pb.GroupRequest, opts ...grpc.CallOption) (*pb.StateReply, error) {
 	m.ctrl.T.Helper()
@@ -747,6 +767,21 @@ func (m *MockChatbotSvcServer) CronTrigger(arg0 context.Context, arg1 *pb.Trigge
 func (mr *MockChatbotSvcServerMockRecorder) CronTrigger(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CronTrigger", reflect.TypeOf((*MockChatbotSvcServer)(nil).CronTrigger), arg0, arg1)
+}
+
+// DefaultGroupId mocks base method.
+func (m *MockChatbotSvcServer) DefaultGroupId(arg0 context.Context, arg1 *pb.IdRequest) (*pb.IdReply, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DefaultGroupId", arg0, arg1)
+	ret0, _ := ret[0].(*pb.IdReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DefaultGroupId indicates an expected call of DefaultGroupId.
+func (mr *MockChatbotSvcServerMockRecorder) DefaultGroupId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultGroupId", reflect.TypeOf((*MockChatbotSvcServer)(nil).DefaultGroupId), arg0, arg1)
 }
 
 // DeleteGroup mocks base method.

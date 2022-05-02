@@ -25,3 +25,5 @@ const (
 	ValueAvgMode  = "avg"
 	ValueMaxMode  = "max"
 )
+
+const DefaultGroupName = "System"
