@@ -49,7 +49,10 @@ var tagRules = []bot.TagRule{
 
 			// send message
 			err = comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
-				Text: fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)}) //todo
+				GroupId: botCtx.Message.GetGroupId(),
+				UserId:  botCtx.Message.GetUserId(),
+				Type:    string(enum.MessageTypeText),
+				Text:    fmt.Sprintf("Created Issue #%d %s", *issue.Number, *issue.HTMLURL)})
 			if err != nil {
 				comp.GetLogger().Error(err)
 				return nil
@@ -115,7 +118,11 @@ var tagRules = []bot.TagRule{
 
 			// send message
 			err = comp.GetBus().Publish(ctx, enum.Message, event.MessageSendSubject, pb.Message{
-				Text: fmt.Sprintf("Created Project Card #%d", *card.ID)}) //todo
+				GroupId: botCtx.Message.GetGroupId(),
+				UserId:  botCtx.Message.GetUserId(),
+				Type:    string(enum.MessageTypeText),
+				Text:    fmt.Sprintf("Created Project Card #%d", *card.ID),
+			})
 			if err != nil {
 				comp.GetLogger().Error(err)
 				return nil

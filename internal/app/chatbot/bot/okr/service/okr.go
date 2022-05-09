@@ -249,7 +249,7 @@ func (o *Okr) CreateKeyResultValue(ctx context.Context, payload *pb.KeyResultVal
 	if err != nil {
 		return nil, err
 	}
-	_, err = o.repo.CreateKeyResultValue(ctx, &pb.KeyResultValue{Value: int32(payload.Value), KeyResultId: keyResult.Id})
+	_, err = o.repo.CreateKeyResultValue(ctx, &pb.KeyResultValue{Value: payload.Value, KeyResultId: keyResult.Id})
 	if err != nil {
 		return nil, err
 	}
