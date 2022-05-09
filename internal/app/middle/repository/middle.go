@@ -478,9 +478,9 @@ func (r *MysqlMiddleRepository) Search(ctx context.Context, userId int64, filter
 }
 
 func (r *MysqlMiddleRepository) CollectMetadata(ctx context.Context, models []interface{}) error {
-	for _, m := range models {
-		r.db.WithContext(ctx).Find(&m)
-		jsonByte, _ := json.Marshal(m)
+	for i := range models {
+		r.db.WithContext(ctx).Find(&models[i])
+		jsonByte, _ := json.Marshal(models[i])
 		arrData := util.ByteToString(jsonByte)
 		arrValue := gjson.Get(arrData, "@this")
 
@@ -493,7 +493,7 @@ func (r *MysqlMiddleRepository) CollectMetadata(ctx context.Context, models []in
 			if extraValue.Exists() {
 				extra = extraValue.String()
 			}
-			model := util.ModelName(m)
+			model := util.ModelName(models[i])
 
 			name := gjson.Get(result.Raw, "name").String()
 			title := gjson.Get(result.Raw, "title").String()
