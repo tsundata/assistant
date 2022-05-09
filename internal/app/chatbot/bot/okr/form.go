@@ -5,6 +5,7 @@ import (
 	"github.com/tsundata/assistant/api/pb"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
+	"github.com/tsundata/assistant/internal/pkg/util"
 	"strconv"
 )
 
@@ -214,11 +215,9 @@ var formRules = []bot.FormRule{
 				case "memo":
 					keyResult.Memo = item.Value.(string)
 				case "initial_value":
-					i, _ := strconv.Atoi(item.Value.(string))
-					keyResult.InitialValue = int32(i)
+					keyResult.InitialValue = util.ParseInt32(item.Value.(string))
 				case "target_value":
-					i, _ := strconv.Atoi(item.Value.(string))
-					keyResult.TargetValue = int32(i)
+					keyResult.TargetValue = util.ParseInt32(item.Value.(string))
 				case "value_mode":
 					keyResult.ValueMode = item.Value.(string)
 				}
@@ -285,8 +284,7 @@ var formRules = []bot.FormRule{
 				case "memo":
 					keyResult.Memo = item.Value.(string)
 				case "target_value":
-					i, _ := strconv.Atoi(item.Value.(string))
-					keyResult.TargetValue = int32(i)
+					keyResult.TargetValue = util.ParseInt32(item.Value.(string))
 				case "value_mode":
 					keyResult.ValueMode = item.Value.(string)
 				}
@@ -327,19 +325,19 @@ var formRules = []bot.FormRule{
 			}
 
 			keyResultSequence := int64(0)
-			value := 0
+			value := int32(0)
 			for _, item := range botCtx.FieldItem {
 				switch item.Key {
 				case "key_result_sequence":
 					keyResultSequence, _ = strconv.ParseInt(item.Value.(string), 10, 64)
 				case "value":
-					value, _ = strconv.Atoi(item.Value.(string))
+					value = util.ParseInt32(item.Value.(string))
 				}
 			}
 
 			reply, err := comp.Okr().CreateKeyResultValue(ctx, &pb.KeyResultValueRequest{
 				KeyResultSequence: keyResultSequence,
-				Value:             int32(value),
+				Value:             value,
 			})
 			if err != nil {
 				return []pb.MsgPayload{pb.TextMsg{Text: "error call: " + err.Error()}}

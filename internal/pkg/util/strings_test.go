@@ -64,7 +64,6 @@ func TestExtractUUID(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, ExtractUUID(tt.path))
 		})
@@ -104,7 +103,6 @@ func TestDataMasking(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, DataMasking(tt.data))
 		})
@@ -129,7 +127,6 @@ func TestToBase64(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, ToBase64(tt.data))
 		})
@@ -181,7 +178,6 @@ func TestImageToBase64(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, ImageToBase64(tt.data))
 		})
@@ -211,7 +207,6 @@ func TestFirstToUpper(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, FirstToUpper(tt.data))
 		})
@@ -236,7 +231,6 @@ func TestStructName(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, TypeName(tt.data))
 		})
@@ -276,7 +270,6 @@ func TestModelName(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, ModelName(tt.data))
 		})
@@ -314,9 +307,28 @@ func TestSubString(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			require.Equal(t, tt.expect, SubString(tt.s, tt.start, tt.end))
+		})
+	}
+}
+
+func TestParseInt32(t *testing.T) {
+	tests := []struct {
+		name string
+
+		desired string
+		expect  int32
+	}{
+		{
+			"case1",
+			"123",
+			123,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expect, ParseInt32(tt.desired))
 		})
 	}
 }

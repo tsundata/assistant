@@ -4,11 +4,13 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"github.com/google/uuid"
+	"math"
 	"math/big"
 	"net"
 	"net/http"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -170,4 +172,18 @@ func SubString(s string, start, end int) string {
 		end = l
 	}
 	return string(r[start:end])
+}
+
+const DefaultAllocate int32 = 256
+
+func ParseInt32(desired string) int32 {
+	parsed, err := strconv.Atoi(desired)
+	if err != nil {
+		return DefaultAllocate
+	}
+	// check for lower and upper bounds
+	if parsed > 0 && parsed <= math.MaxInt32 {
+		return int32(parsed)
+	}
+	return DefaultAllocate
 }
