@@ -102,15 +102,13 @@ func (t *ScopedSymbolTable) String() string {
 
 	var lines []string
 
-	lines = append(lines, fmt.Sprintf("Scope name : %s", t.ScopeName))
-	lines = append(lines, fmt.Sprintf("Scope level : %d", t.ScopeLevel))
+	lines = append(lines, fmt.Sprintf("Scope name : %s", t.ScopeName), fmt.Sprintf("Scope level : %d", t.ScopeLevel))
 
 	if t.EnclosingScope != nil {
 		lines = append(lines, fmt.Sprintf("Enclosing scope : %s", t.EnclosingScope.ScopeName))
 	}
 
-	lines = append(lines, "------------------------------------")
-	lines = append(lines, "Scope (Scoped symbol table) contents")
+	lines = append(lines, "------------------------------------", "Scope (Scoped symbol table) contents")
 
 	i := 0
 	for v := range t.symbols.Iterate() {

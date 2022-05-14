@@ -82,5 +82,5 @@ var rules = []Rule{
 }
 
 var Options = []rulebot.Option{
-	rulebot.RegisterRuleset(New(rules)),
+	rulebot.RegisterRuleset(newCronRuleset(rules)),
 }

@@ -1,7 +1,6 @@
 package rpc
 
 import (
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -25,6 +24,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"net"
+	"strconv"
 )
 
 type Server struct {
@@ -93,7 +93,7 @@ func (s *Server) Start() error {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.conf.Rpc.Host, s.conf.Rpc.Port)
+	addr := net.JoinHostPort(s.conf.Rpc.Host, strconv.Itoa(s.conf.Rpc.Port))
 	s.logger.Info("rpc server starting ... ", zap.String("addr", addr), zap.String("uuid", s.conf.ID))
 
 	lis, err := net.Listen("tcp", addr)

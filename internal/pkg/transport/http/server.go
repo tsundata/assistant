@@ -8,7 +8,9 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/log"
 	"github.com/tsundata/assistant/internal/pkg/util"
+	"net"
 	"net/http"
+	"strconv"
 )
 
 type Server struct {
@@ -39,8 +41,7 @@ func (s *Server) Start() error {
 		return errors.New("get local ipv4 error")
 	}
 
-	addr := fmt.Sprintf("%s:%d", s.conf.Http.Host, s.conf.Http.Port)
-
+	addr := net.JoinHostPort(s.conf.Http.Host, strconv.Itoa(s.conf.Http.Port))
 	s.logger.Info("start http server " + addr)
 
 	// server

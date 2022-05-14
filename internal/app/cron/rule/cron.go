@@ -29,7 +29,7 @@ type cronRuleset struct {
 }
 
 // New returns a cron rule set
-func New(rules []Rule) *cronRuleset {
+func newCronRuleset(rules []Rule) *cronRuleset {
 	r := &cronRuleset{
 		cronRules: rules,
 		outCh:     make(chan result.Result, 100),

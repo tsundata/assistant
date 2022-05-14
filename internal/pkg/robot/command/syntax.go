@@ -149,23 +149,21 @@ func SyntaxCheck(define string, actual []*Token) (bool, error) {
 				if !re.MatchString(n) {
 					res = false
 					continue
-				} else {
-					num, err := strconv.ParseInt(n, 10, 64)
-					if err == nil {
-						actual[i].Value = util.Variable(num)
-					}
+				}
+				num, err := strconv.ParseInt(n, 10, 64)
+				if err == nil {
+					actual[i].Value = util.Variable(num)
 				}
 			case "bool":
 				if !(actual[i].Value.Source == "true" || actual[i].Value.Source == "false") {
 					res = false
 					continue
-				} else {
-					if actual[i].Value.Source == "true" {
-						actual[i].Value = util.Variable(true)
-					}
-					if actual[i].Value.Source == "false" {
-						actual[i].Value = util.Variable(false)
-					}
+				}
+				if actual[i].Value.Source == "true" {
+					actual[i].Value = util.Variable(true)
+				}
+				if actual[i].Value.Source == "false" {
+					actual[i].Value = util.Variable(false)
 				}
 			case "string":
 			case "any":

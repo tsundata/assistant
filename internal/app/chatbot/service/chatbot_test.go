@@ -958,7 +958,7 @@ func TestChatbot_ActionDoc(t *testing.T) {
 				return
 			}
 			if i == 0 {
-				if got != nil && len(got.Text) == 0 {
+				if got != nil && got.Text == "" {
 					t.Errorf("Workflow.ActionDoc() = %v, want %v", got, tt.want)
 				}
 			} else {
