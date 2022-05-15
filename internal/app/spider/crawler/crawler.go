@@ -198,10 +198,10 @@ func (s *Crawler) filter(name, mode string, latest []string) []string {
 	}
 
 	// merge
-	tobeCompared := append(old, todo...)
+	old = append(old, todo...)
 
 	// diff
-	diff := util.StringSliceDiff(latest, tobeCompared)
+	diff := util.StringSliceDiff(latest, old)
 
 	switch mode {
 	case "instant":

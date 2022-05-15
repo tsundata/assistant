@@ -87,5 +87,4 @@ func (a *Application) AwaitSignal() {
 	}
 
 	a.logger.Info("Complete end")
-	os.Exit(0)
 }

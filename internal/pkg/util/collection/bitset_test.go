@@ -1,22 +1,21 @@
 package collection
 
 import (
+	"crypto/rand"
 	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/enum"
 	"math"
-	"math/rand"
 	"testing"
-	"time"
 )
 
 func TestNewBinSet(t *testing.T) {
-	rand.Seed(int64(time.Now().Second()))
 	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewBinSet(rdb, fmt.Sprintf("bin_set:%d", rand.Int63()))
+	randId, _ := rand.Read(nil)
+	s := NewBinSet(rdb, fmt.Sprintf("bin_set:%d", randId))
 
 	s.SetTo(1, 1)
 	b := s.Test(1)

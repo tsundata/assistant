@@ -1,21 +1,20 @@
 package collection
 
 import (
+	"crypto/rand"
 	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/enum"
-	"math/rand"
 	"testing"
-	"time"
 )
 
 func TestBloomFilter(t *testing.T) {
-	rand.Seed(int64(time.Now().Second()))
 	rdb, err := CreateRedisClient(enum.Message)
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := NewBloomFilter(rdb, fmt.Sprintf("bloom_filter:%d", rand.Int63()), 10000, 10)
+	randId, _ := rand.Read(nil)
+	f := NewBloomFilter(rdb, fmt.Sprintf("bloom_filter:%d", randId), 10000, 10)
 
 	f.Add("abc")
 	b := f.Lookup("abc")

@@ -58,7 +58,8 @@ func CloudconeWeeklyBilling(ctx context.Context, comp component.Component) []res
 	res.WriteString("Total Disk: ")
 	res.WriteString(strconv.Itoa(instances.Data.TotalDisk))
 	res.WriteString("\n---\n")
-	for _, item := range instances.Data.Instances {
+	for i := range instances.Data.Instances {
+		item := instances.Data.Instances[i]
 		res.WriteString("Hostname: ")
 		res.WriteString(item.Hostname)
 		res.WriteString("\n")

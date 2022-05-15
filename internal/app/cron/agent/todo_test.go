@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/tsundata/assistant/api/enum"
@@ -9,7 +10,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/robot/component"
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
-	"math/rand"
 	"testing"
 	"time"
 )
@@ -19,7 +19,8 @@ func TestTodoRemind1(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	id := rand.Int63()
+	randId, _ := rand.Read(nil)
+	id := int64(randId)
 	clear(t, id)
 
 	todo := mock.NewMockTodoSvcClient(ctl)
@@ -77,7 +78,8 @@ func TestTodoRemind2(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	id := rand.Int63()
+	randId, _ := rand.Read(nil)
+	id := int64(randId)
 	clear(t, id)
 
 	todo := mock.NewMockTodoSvcClient(ctl)
@@ -135,7 +137,8 @@ func TestTodoRemind3(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	id := rand.Int63()
+	randId, _ := rand.Read(nil)
+	id := int64(randId)
 	clear(t, id)
 
 	todo := mock.NewMockTodoSvcClient(ctl)
@@ -193,7 +196,8 @@ func TestTodoRemind4(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	id := rand.Int63()
+	randId, _ := rand.Read(nil)
+	id := int64(randId)
 	clear(t, id)
 
 	todo := mock.NewMockTodoSvcClient(ctl)
@@ -251,7 +255,8 @@ func TestTodoRemind5(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	id := rand.Int63()
+	randId, _ := rand.Read(nil)
+	id := int64(randId)
 	clear(t, id)
 	now := time.Now()
 

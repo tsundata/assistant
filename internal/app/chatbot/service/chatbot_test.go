@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
@@ -16,7 +17,6 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/vendors"
 	"github.com/tsundata/assistant/mock"
 	"gorm.io/gorm"
-	"math/rand"
 	"reflect"
 	"testing"
 	"time"
@@ -755,16 +755,16 @@ func TestChatbot_CronTrigger(t *testing.T) {
 	}
 	bus := event.NewRabbitmqBus(mq, nil)
 
-	messageID := rand.Int63()
+	messageID, _ := rand.Read(nil)
 
 	rdb.Set(context.Background(), fmt.Sprintf("chatbot:cron:%d:time", messageID), time.Now().Add(-2*time.Minute).Format("2006-01-02 15:04:05"), redis.KeepTTL)
 
 	message := mock.NewMockMessageSvcClient(ctl)
 	repo := mock.NewMockChatbotRepository(ctl)
 	gomock.InOrder(
-		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
-		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Id: messageID, Text: ""}}, nil),
-		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: messageID, When: "* * * * *"}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: int64(messageID), When: "* * * * *"}}, nil),
+		message.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(&pb.GetMessageReply{Message: &pb.Message{Id: int64(messageID), Text: ""}}, nil),
+		repo.EXPECT().ListTriggersByType(gomock.Any(), "cron").Return([]*pb.Trigger{{MessageId: int64(messageID), When: "* * * * *"}}, nil),
 	)
 
 	s := NewChatbot(nil, bus, rdb, repo, message, nil, nil, nil)

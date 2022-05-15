@@ -50,7 +50,8 @@ func FetchPocket(ctx context.Context, comp component.Component) []result.Result 
 	}
 
 	var r []result.Result
-	for _, item := range resp.List {
+	for i := range resp.List {
+		item := resp.List[i]
 		s := sha1.New()                              // #nosec
 		s.Write(util.StringToByte(item.ResolvedUrl)) // #nosec
 		bs := s.Sum(nil)

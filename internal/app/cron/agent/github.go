@@ -38,8 +38,10 @@ func FetchGithubStarred(ctx context.Context, comp component.Component) []result.
 	if err != nil {
 		return []result.Result{result.ErrorResult(err)}
 	}
+	reposList := *repos
 	var r []result.Result
-	for _, item := range *repos {
+	for i := range reposList {
+		item := reposList[i]
 		s := sha1.New()                           // #nosec
 		s.Write(util.StringToByte(*item.HTMLURL)) // #nosec
 		bs := s.Sum(nil)

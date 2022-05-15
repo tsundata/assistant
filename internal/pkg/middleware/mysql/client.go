@@ -30,6 +30,7 @@ func New(c *config.AppConfig) (*Conn, error) {
 		Logger:                                   newLogger,
 		DisableForeignKeyConstraintWhenMigrating: true,
 		PrepareStmt:                              true,
+		SkipDefaultTransaction:                   true,
 	})
 	if err != nil {
 		return nil, err
