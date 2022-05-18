@@ -47,7 +47,7 @@ require (
 	github.com/swaggo/swag v1.8.2
 	github.com/tidwall/gjson v1.14.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
-	github.com/valyala/fasthttp v1.36.0
+	github.com/valyala/fasthttp v1.37.0
 	go.etcd.io/etcd/client/v3 v3.5.4
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.21.0
