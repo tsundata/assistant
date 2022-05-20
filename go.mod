@@ -12,7 +12,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dtm-labs/dtm v1.14.0
 	github.com/fogleman/gg v1.3.0
-	github.com/go-ego/gse v0.70.1
+	github.com/go-ego/gse v0.70.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
