@@ -55,11 +55,12 @@ func (l *AppLogger) Warn(msg string, fields ...interface{}) {
 
 func (l *AppLogger) Error(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	extras := make(map[string]interface{})
-	for _, kv := range kvs {
-		extras[kv.Key] = kv.Interface
-	}
-	rollbar.ErrorWithExtras("error", err, extras)
+	// todo rollbar
+	//extras := make(map[string]interface{})
+	//for _, kv := range kvs {
+	//	extras[kv.Key] = kv.Interface
+	//}
+	//rollbar.ErrorWithExtras("error", err, extras)
 	l.logger.Error(err.Error(), kvs...)
 }
 

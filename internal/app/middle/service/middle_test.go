@@ -1243,6 +1243,7 @@ func TestNLP_Pinyin(t *testing.T) {
 }
 
 func TestNLP_Segmentation(t *testing.T) {
+	t.SkipNow()
 	s := NewMiddle(nil, nil, nil, nil, nil)
 	type args struct {
 		in0 context.Context
