@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-ego/gse"
 	"github.com/go-redis/redis/v8"
 	"github.com/mozillazg/go-pinyin"
 	"github.com/tsundata/assistant/api/enum"
@@ -796,13 +795,8 @@ func (s *Middle) Segmentation(_ context.Context, payload *pb.TextRequest) (*pb.W
 	if payload.GetText() == "" {
 		return &pb.WordsReply{Text: []string{}}, nil
 	}
-	// gse preload dict
-	seg, err := gse.New("zh", "alpha")
-	if err != nil {
-		return nil, err
-	}
-	result := seg.Cut(payload.GetText(), true)
-	return &pb.WordsReply{Text: result}, nil
+	// todo Segmentation
+	return &pb.WordsReply{Text: []string{}}, nil
 }
 
 func (s *Middle) Classifier(_ context.Context, payload *pb.TextRequest) (*pb.TextReply, error) {

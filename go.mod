@@ -12,7 +12,6 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dtm-labs/dtm v1.14.1
 	github.com/fogleman/gg v1.3.0
-	github.com/go-ego/gse v0.70.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -54,6 +53,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	google.golang.org/grpc v1.46.2
+	google.golang.org/protobuf v1.28.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/gorm v1.23.5
@@ -149,7 +149,6 @@ require (
 	github.com/tidwall/tinyqueue v0.1.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	github.com/vcaesar/cedar v0.20.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect
@@ -181,5 +180,4 @@ require (
 	cloud.google.com/go/kms v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
 )
