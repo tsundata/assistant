@@ -35,8 +35,7 @@ func CreateApp(id2 string) (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id2, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
+	logger := log.NewZapLogger()
 	logLogger := log.NewAppLogger(logger)
 	conn, err := mysql.New(appConfig)
 	if err != nil {

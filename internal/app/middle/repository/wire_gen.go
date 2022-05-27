@@ -22,14 +22,13 @@ import (
 // Injectors from wire.go:
 
 func CreateMiddleRepository(id string) (MiddleRepository, error) {
+	logger := log.NewZapLogger()
+	logLogger := log.NewAppLogger(logger)
 	client, err := etcd.New()
 	if err != nil {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
-	logLogger := log.NewAppLogger(logger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {
 		return nil, err

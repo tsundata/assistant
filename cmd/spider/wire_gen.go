@@ -35,8 +35,7 @@ func CreateApp(id string) (*app.Application, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
+	logger := log.NewZapLogger()
 	newrelicApp, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err

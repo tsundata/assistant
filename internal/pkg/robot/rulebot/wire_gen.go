@@ -40,8 +40,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
+	logger := log.NewZapLogger()
 	logLogger := log.NewAppLogger(logger)
 	bus := event.NewRabbitmqBus(connection, logLogger)
 	app, err := newrelic.New(appConfig, logger)

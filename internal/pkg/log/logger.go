@@ -3,8 +3,6 @@ package log
 import (
 	"fmt"
 	"github.com/google/wire"
-	"github.com/rollbar/rollbar-go"
-	rb "github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 )
 
@@ -17,11 +15,7 @@ type Logger interface {
 	Fatal(err error, fields ...interface{})
 }
 
-func NewZapLogger(r *rb.Rollbar) *zap.Logger {
-	if r != nil {
-		r.Config()
-	}
-
+func NewZapLogger() *zap.Logger {
 	logger, err := zap.NewProduction()
 	if err != nil {
 		fmt.Printf("can't initialize logger: %v\n", err)
@@ -55,32 +49,16 @@ func (l *AppLogger) Warn(msg string, fields ...interface{}) {
 
 func (l *AppLogger) Error(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	// todo rollbar
-	//extras := make(map[string]interface{})
-	//for _, kv := range kvs {
-	//	extras[kv.Key] = kv.Interface
-	//}
-	//rollbar.ErrorWithExtras("error", err, extras)
 	l.logger.Error(err.Error(), kvs...)
 }
 
 func (l *AppLogger) Panic(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	extras := make(map[string]interface{})
-	for _, kv := range kvs {
-		extras[kv.Key] = kv.Interface
-	}
-	rollbar.ErrorWithExtras("critical", err, extras)
 	l.logger.Panic(err.Error(), kvs...)
 }
 
 func (l *AppLogger) Fatal(err error, fields ...interface{}) {
 	kvs := zapFields(fields)
-	extras := make(map[string]interface{})
-	for _, kv := range kvs {
-		extras[kv.Key] = kv.Interface
-	}
-	rollbar.ErrorWithExtras("critical", err, extras)
 	l.logger.Fatal(err.Error(), kvs...)
 }
 

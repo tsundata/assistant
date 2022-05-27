@@ -27,8 +27,7 @@ func CreateChatbotRepository(id string) (ChatbotRepository, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
+	logger := log.NewZapLogger()
 	logLogger := log.NewAppLogger(logger)
 	configuration, err := jaeger.NewConfiguration(appConfig, logLogger)
 	if err != nil {

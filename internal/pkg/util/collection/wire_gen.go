@@ -24,8 +24,7 @@ func CreateRedisClient(id string) (*redis.Client, error) {
 		return nil, err
 	}
 	appConfig := config.NewConfig(id, client)
-	rollbarRollbar := rollbar.New(appConfig)
-	logger := log.NewZapLogger(rollbarRollbar)
+	logger := log.NewZapLogger()
 	app, err := newrelic.New(appConfig, logger)
 	if err != nil {
 		return nil, err
