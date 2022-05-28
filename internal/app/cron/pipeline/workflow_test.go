@@ -21,7 +21,7 @@ func TestWorkflowDone(t *testing.T) {
 }
 
 func TestWorkflowError(t *testing.T) {
-	z := log.NewZapLogger(nil)
+	z := log.NewZapLogger()
 	l := log.NewAppLogger(z)
 
 	comp := component.MockComponent(l)
