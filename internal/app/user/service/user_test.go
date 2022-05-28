@@ -38,7 +38,7 @@ func TestUser_Login(t *testing.T) {
 		}, nil),
 	)
 
-	logger := log.NewAppLogger(log.NewZapLogger(nil))
+	logger := log.NewAppLogger(log.NewZapLogger())
 
 	s := NewUser(conf, logger, nil, repo)
 	type args struct {

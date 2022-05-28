@@ -2,11 +2,12 @@ package auth
 
 import (
 	"context"
+	"log"
+
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/exception"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"google.golang.org/grpc"
-	"log"
 )
 
 var ignoreFullMethod = []string{
@@ -30,6 +31,8 @@ var ignoreFullMethod = []string{
 	"/pb.StorageSvc/AbsolutePath",
 	"/pb.UserSvc/GetUsers",
 	"/pb.MiddleSvc/CreatePage",
+	"/pb.ChatbotSvc/WatchTrigger",
+	"/pb.MiddleSvc/CollectMetadata",
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
