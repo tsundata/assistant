@@ -16,7 +16,6 @@ import (
 	redisMiddle "github.com/tsundata/assistant/internal/pkg/middleware/redis"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"github.com/tsundata/assistant/internal/pkg/vendors/newrelic"
-	"github.com/tsundata/assistant/internal/pkg/vendors/rollbar"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -47,7 +46,7 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 		grpc.StreamInterceptor(
 			grpcMiddleware.ChainStreamServer(
 				grpcRecovery.StreamServerInterceptor(recoveryOpts...),
-				rollbar.StreamServerInterceptor(),
+				//rollbar.StreamServerInterceptor(),
 				grpcZap.StreamServerInterceptor(z),
 				otgrpc.OpenTracingStreamServerInterceptor(tracer),
 				redisMiddle.StatsStreamServerInterceptor(rdb),
@@ -58,7 +57,7 @@ func NewServer(opt *config.AppConfig, z *zap.Logger, logger log.Logger, init Ini
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
 				grpcRecovery.UnaryServerInterceptor(recoveryOpts...),
-				rollbar.UnaryServerInterceptor(),
+				//rollbar.UnaryServerInterceptor(),
 				grpcZap.UnaryServerInterceptor(z, grpcZap.WithDecider(func(fullMethodName string, err error) bool {
 					return fullMethodName != "/grpc.health.v1.Health/Check"
 				})),
