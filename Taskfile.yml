@@ -44,16 +44,7 @@ tasks:
       - buf lint --config buf.yaml
       - go run github.com/tsundata/assistant/cmd/cli clear
       - buf generate
-      - protoc-go-inject-tag -input=./api/pb/middle.pb.go
-      - protoc-go-inject-tag -input=./api/pb/todo.pb.go
-      - protoc-go-inject-tag -input=./api/pb/user.pb.go
-      - protoc-go-inject-tag -input=./api/pb/message.pb.go
-      - protoc-go-inject-tag -input=./api/pb/middle.pb.go
-      - protoc-go-inject-tag -input=./api/pb/okr.pb.go
-      - protoc-go-inject-tag -input=./api/pb/finance.pb.go
-      - protoc-go-inject-tag -input=./api/pb/todo.pb.go
-      - protoc-go-inject-tag -input=./api/pb/chatbot.pb.go
-      - protoc-go-inject-tag -input=./api/pb/id.pb.go
+      - protoc-go-inject-tag -input="./api/pb/*.pb.go"
       - git add api/pb/*.pb.go
 
   release:
