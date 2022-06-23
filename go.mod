@@ -10,7 +10,7 @@ require (
 	github.com/appleboy/gorush v1.14.1-0.20210901142333-61af86605ed2
 	github.com/arsmn/fiber-swagger/v2 v2.31.1
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/dtm-labs/dtm v1.14.2
+	github.com/dtm-labs/dtm v1.14.3
 	github.com/fogleman/gg v1.3.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
