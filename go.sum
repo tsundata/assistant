@@ -496,8 +496,8 @@ github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDD
 github.com/docker/libtrust v0.0.0-20150114040149-fa567046d9b1/go.mod h1:cyGadeNEkKy96OOhEzfZl+yxihPEzKnqJwvfuSUqbZE=
 github.com/docker/spdystream v0.0.0-20160310174837-449fdfce4d96/go.mod h1:Qh8CwZgvJUkLughtfhJv5dyTYa91l1fOUCrgjqmcifM=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
-github.com/dtm-labs/dtm v1.14.4 h1:zCC+G0pAZJYCHs75qP8fN1IV9chKNt79/GD+jSbcsR4=
-github.com/dtm-labs/dtm v1.14.4/go.mod h1:TUwDDhiuumv6CgSjyXakpRmS0bH1I6OVTmd4p40pO3w=
+github.com/dtm-labs/dtm v1.15.0 h1:RT4354ahoxf+itaBZhQJ2NrJeJpxQh+Nxa87Iw4pI3A=
+github.com/dtm-labs/dtm v1.15.0/go.mod h1:TUwDDhiuumv6CgSjyXakpRmS0bH1I6OVTmd4p40pO3w=
 github.com/dtm-labs/dtmdriver v0.0.1/go.mod h1:fLiEeD2BPwM9Yq96TfcP9KpbTwFsn5nTxa/PP0jmFuk=
 github.com/dtm-labs/dtmdriver v0.0.2/go.mod h1:fLiEeD2BPwM9Yq96TfcP9KpbTwFsn5nTxa/PP0jmFuk=
 github.com/dtm-labs/dtmdriver v0.0.3 h1:9iAtvXKR3lJXQ7dvS87e4xdtmqkzN+ofek+CF9AvUSY=
