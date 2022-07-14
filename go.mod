@@ -52,7 +52,7 @@ require (
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
-	google.golang.org/grpc v1.47.0
+	google.golang.org/grpc v1.48.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/gorm v1.23.8
