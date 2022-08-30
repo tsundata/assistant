@@ -15,7 +15,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.35.0
+	github.com/gofiber/fiber/v2 v2.37.0
 	github.com/gofiber/websocket/v2 v2.0.23
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -46,7 +46,7 @@ require (
 	github.com/swaggo/swag v1.8.4
 	github.com/tidwall/gjson v1.14.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
-	github.com/valyala/fasthttp v1.38.0
+	github.com/valyala/fasthttp v1.39.0
 	go.etcd.io/etcd/client/v3 v3.5.4
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.21.0
