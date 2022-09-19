@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: etcd-config
-  namespace: assistant
-data:
-  etcd.address: 127.0.0.1:2379
-  etcd.username: ""
-  etcd.password: ""

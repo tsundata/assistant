@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	_ "github.com/tsundata/assistant/internal/app/chatbot/bot/plugin"
+	_ "github.com/tsundata/assistant/internal/app/bot/plugin"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot/trigger"

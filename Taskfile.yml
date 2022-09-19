@@ -90,27 +90,27 @@ tasks:
   mock:
     desc: Generate mock files
     cmds:
-      - mockgen -package=mock -source=./api/pb/id_grpc.pb.go -destination=./mock/id_client.go
-      - mockgen -package=mock -source=./api/pb/message_grpc.pb.go -destination=./mock/message_client.go
-      - mockgen -package=mock -source=./api/pb/middle_grpc.pb.go -destination=./mock/middle_client.go
-      - mockgen -package=mock -source=./api/pb/todo_grpc.pb.go -destination=./mock/todo_client.go
-      - mockgen -package=mock -source=./api/pb/user_grpc.pb.go -destination=./mock/user_client.go
-      - mockgen -package=mock -source=./api/pb/chatbot_grpc.pb.go -destination=./mock/chatbot_client.go
-      - mockgen -package=mock -source=./api/pb/okr_grpc.pb.go -destination=./mock/okr_client.go
-      - mockgen -package=mock -source=./api/pb/storage_grpc.pb.go -destination=./mock/storage_client.go
-      - mockgen -package=mock -source=./api/pb/finance_grpc.pb.go -destination=./mock/finance_client.go
-      - mockgen -package=mock -source=./internal/app/id/repository/id.go -destination=./mock/id_repository.go
-      - mockgen -package=mock -source=./internal/app/chatbot/bot/todo/repository/todo.go -destination=./mock/todo_repository.go
-      - mockgen -package=mock -source=./internal/app/message/repository/message.go -destination=./mock/message_repository.go
-      - mockgen -package=mock -source=./internal/app/middle/repository/middle.go -destination=./mock/middle_repository.go
-      - mockgen -package=mock -source=./internal/app/user/repository/user.go -destination=./mock/user_repository.go
-      - mockgen -package=mock -source=./internal/app/chatbot/bot/okr/repository/okr.go -destination=./mock/okr_repository.go
-      - mockgen -package=mock -source=./internal/app/chatbot/repository/chatbot.go -destination=./mock/chatbot_repository.go
+      - mockgen -package=mock -source=./internal/app/service/id.go -destination=./mock/id_client.go
+      - mockgen -package=mock -source=./internal/app/service/message.go -destination=./mock/message_client.go
+      - mockgen -package=mock -source=./internal/app/service/middle.go -destination=./mock/middle_client.go
+      - mockgen -package=mock -source=./internal/app/service/todo.go -destination=./mock/todo_client.go
+      - mockgen -package=mock -source=./internal/app/service/user.go -destination=./mock/user_client.go
+      - mockgen -package=mock -source=./internal/app/service/chatbot.go -destination=./mock/chatbot_client.go
+      - mockgen -package=mock -source=./internal/app/bot/okr/service/okr.go -destination=./mock/okr_client.go
+      - mockgen -package=mock -source=./internal/app/service/storage.go -destination=./mock/storage_client.go
+      - mockgen -package=mock -source=./internal/app/bot/finance/service/finance.go -destination=./mock/finance_client.go
+      - mockgen -package=mock -source=./internal/app/repository/id.go -destination=./mock/id_repository.go
+      - mockgen -package=mock -source=./internal/app/bot/todo/repository/todo.go -destination=./mock/todo_repository.go
+      - mockgen -package=mock -source=./internal/app/repository/message.go -destination=./mock/message_repository.go
+      - mockgen -package=mock -source=./internal/app/repository/middle.go -destination=./mock/middle_repository.go
+      - mockgen -package=mock -source=./internal/app/repository/user.go -destination=./mock/user_repository.go
+      - mockgen -package=mock -source=./internal/app/bot/okr/repository/okr.go -destination=./mock/okr_repository.go
+      - mockgen -package=mock -source=./internal/app/repository/chatbot.go -destination=./mock/chatbot_repository.go
 
   swag:
     desc: Generate Swagger docs
     cmds:
-      - swag init --dir ./cmd/gateway --parseDependency --parseDepth 2
+      - swag init --dir ./cmd/server --parseDependency --parseDepth 2
 
   migrate:
     desc: Database migration

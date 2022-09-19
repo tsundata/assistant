@@ -75,8 +75,8 @@ var UserCredentialOptions = map[string]interface{}{
 type OAuthProvider interface {
 	AuthorizeURL() string
 	GetAccessToken(code string) (interface{}, error)
-	Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error
-	StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error
+	Redirect(c *fiber.Ctx, reply *pb.CredentialReply) error
+	StoreAccessToken(c *fiber.Ctx, reply *pb.CredentialReply) (*pb.App, error)
 }
 
 func NewOAuthProvider(rdb *redis.Client, category, url string) OAuthProvider {

@@ -10,6 +10,7 @@ import (
 	"github.com/influxdata/cron"
 	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/service"
 	"github.com/tsundata/assistant/internal/app/spider/rule"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
@@ -32,9 +33,9 @@ type Crawler struct {
 	rdb     *redis.Client
 	bus     event.Bus
 	logger  log.Logger
-	middle  pb.MiddleSvcClient
-	message pb.MessageSvcClient
-	user    pb.UserSvcClient
+	middle  service.MiddleSvcClient
+	message service.MessageSvcClient
+	user    service.UserSvcClient
 }
 
 func New() *Crawler {
@@ -45,7 +46,7 @@ func New() *Crawler {
 }
 
 func (s *Crawler) SetService(conf *config.AppConfig, rdb *redis.Client, bus event.Bus,
-	logger log.Logger, middle pb.MiddleSvcClient, message pb.MessageSvcClient, user pb.UserSvcClient) {
+	logger log.Logger, middle service.MiddleSvcClient, message service.MessageSvcClient, user service.UserSvcClient) {
 	s.conf = conf
 	s.rdb = rdb
 	s.bus = bus

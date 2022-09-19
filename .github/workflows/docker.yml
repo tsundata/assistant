@@ -51,92 +51,11 @@ jobs:
           username: ${{ secrets.IMAGE_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push id
+      - name: Build and push server
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          file: build/id/Dockerfile
+          file: build/server/Dockerfile
           tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/id:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push chatbot
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/chatbot/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/chatbot:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push cron
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/cron/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/cron:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push gateway
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/gateway/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/gateway:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push message
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/message/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/message:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push middle
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/middle/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/middle:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push spider
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/spider/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/spider:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push storage
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/storage/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/storage:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push task
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/task/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/task:${{ steps.meta.outputs.tag }}
-
-      - name: Build and push user
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: build/user/Dockerfile
-          tags: |
-            ghcr.io/${{ secrets.IMAGE_USER }}/user:${{ steps.meta.outputs.tag }}
+            ghcr.io/${{ secrets.IMAGE_USER }}/assistant:${{ steps.meta.outputs.tag }}

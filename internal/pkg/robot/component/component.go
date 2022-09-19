@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/log"
@@ -16,26 +17,26 @@ type Comp struct {
 	RDB    *redis.Client
 	Logger log.Logger
 
-	MessageClient pb.MessageSvcClient
-	ChatbotClient pb.ChatbotSvcClient
-	MiddleClient  pb.MiddleSvcClient
+	MessageClient service.MessageSvcClient
+	ChatbotClient service.ChatbotSvcClient
+	MiddleClient  service.MiddleSvcClient
 	StorageClient pb.StorageSvcClient
-	UserClient    pb.UserSvcClient
+	UserClient    service.UserSvcClient
 
 	serverFinance pb.FinanceSvcServer
 	serverTodo    pb.TodoSvcServer
 	serverOkr     pb.OkrSvcServer
 }
 
-func (c Comp) Message() pb.MessageSvcClient {
+func (c Comp) Message() service.MessageSvcClient {
 	return c.MessageClient
 }
 
-func (c Comp) Middle() pb.MiddleSvcClient {
+func (c Comp) Middle() service.MiddleSvcClient {
 	return c.MiddleClient
 }
 
-func (c Comp) Chatbot() pb.ChatbotSvcClient {
+func (c Comp) Chatbot() service.ChatbotSvcClient {
 	return c.ChatbotClient
 }
 
@@ -43,7 +44,7 @@ func (c Comp) Storage() pb.StorageSvcClient {
 	return c.StorageClient
 }
 
-func (c Comp) User() pb.UserSvcClient {
+func (c Comp) User() service.UserSvcClient {
 	return c.UserClient
 }
 
@@ -80,11 +81,11 @@ type Component interface {
 	GetBus() event.Bus
 	GetRedis() *redis.Client
 	GetLogger() log.Logger
-	Message() pb.MessageSvcClient
-	Chatbot() pb.ChatbotSvcClient
-	Middle() pb.MiddleSvcClient
+	Message() service.MessageSvcClient
+	Chatbot() service.ChatbotSvcClient
+	Middle() service.MiddleSvcClient
 	Storage() pb.StorageSvcClient
-	User() pb.UserSvcClient
+	User() service.UserSvcClient
 	Todo() pb.TodoSvcServer
 	Okr() pb.OkrSvcServer
 	Finance() pb.FinanceSvcServer
@@ -96,11 +97,11 @@ func NewComponent(
 	rdb *redis.Client,
 	logger log.Logger,
 
-	messageClient pb.MessageSvcClient,
-	chatbotClient pb.ChatbotSvcClient,
-	middleClient pb.MiddleSvcClient,
+	messageClient service.MessageSvcClient,
+	chatbotClient service.ChatbotSvcClient,
+	middleClient service.MiddleSvcClient,
 	storageClient pb.StorageSvcClient,
-	userClient pb.UserSvcClient,
+	userClient service.UserSvcClient,
 
 	serverFinance pb.FinanceSvcServer,
 	serverTodo pb.TodoSvcServer,
@@ -129,11 +130,11 @@ func MockComponent(deps ...interface{}) Component {
 		rdb    *redis.Client
 		logger log.Logger
 
-		messageClient pb.MessageSvcClient
-		middleClient  pb.MiddleSvcClient
-		chatbotClient pb.ChatbotSvcClient
+		messageClient service.MessageSvcClient
+		middleClient  service.MiddleSvcClient
+		chatbotClient service.ChatbotSvcClient
 		storageClient pb.StorageSvcClient
-		userClient    pb.UserSvcClient
+		userClient    service.UserSvcClient
 
 		finance pb.FinanceSvcServer
 		todo    pb.TodoSvcServer
@@ -151,16 +152,16 @@ func MockComponent(deps ...interface{}) Component {
 		case log.Logger:
 			logger = v
 
-		case *mock.MockMessageSvcClient:
-			messageClient = v
-		case *mock.MockMiddleSvcClient:
-			middleClient = v
-		case *mock.MockChatbotSvcClient:
-			chatbotClient = v
-		case *mock.MockStorageSvcClient:
-			storageClient = v
-		case *mock.MockUserSvcClient:
-			userClient = v
+		//case *mock.MockMessageSvcClient:
+		//	messageClient = v
+		//case *mock.MockMiddleSvcClient:
+		//	middleClient = v
+		//case *mock.MockChatbotSvcClient:
+		//	chatbotClient = v
+		//case *mock.MockStorageSvcClient:
+		//	storageClient = v
+		//case *mock.MockUserSvcClient:
+		//	userClient = v
 
 		case *mock.MockFinanceSvcServer:
 			finance = v

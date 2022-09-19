@@ -39,10 +39,6 @@ jobs:
           MYSQL_DATABASE: test
         ports:
           - 3306:3306
-      mock_id:
-        image: tsundata/mock_id:latest
-        ports:
-          - 6012:6012
 
     steps:
       - uses: actions/checkout@v2

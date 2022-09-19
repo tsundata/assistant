@@ -8,9 +8,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"net/http"
 	"time"
@@ -123,11 +121,7 @@ func (v *Pocket) GetAccessToken(code string) (interface{}, error) {
 	}
 }
 
-func (v *Pocket) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
-	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
-	if err != nil {
-		return err
-	}
+func (v *Pocket) Redirect(c *fiber.Ctx, reply *pb.CredentialReply) error {
 	clientId := ""
 	for _, item := range reply.GetContent() {
 		if item.Key == ClientIdKey {
@@ -136,7 +130,7 @@ func (v *Pocket) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
 	}
 	v.clientId = clientId
 
-	_, err = v.GetCode("")
+	_, err := v.GetCode("")
 	if err != nil {
 		return err
 	}
@@ -147,11 +141,7 @@ func (v *Pocket) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
 	return c.Redirect(appRedirectURI, http.StatusFound)
 }
 
-func (v *Pocket) StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
-	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
-	if err != nil {
-		return err
-	}
+func (v *Pocket) StoreAccessToken(_ *fiber.Ctx, reply *pb.CredentialReply) (*pb.App, error) {
 	clientId := ""
 	for _, item := range reply.GetContent() {
 		if item.Key == ClientIdKey {
@@ -162,34 +152,26 @@ func (v *Pocket) StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error
 
 	code, err := v.rdb.Get(context.Background(), "pocket:code").Result()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if code != "" {
 		tokenResp, err := v.GetAccessToken(code)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		extra, err := json.Marshal(&tokenResp)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		appReply, err := middle.StoreAppOAuth(md.BuildAuthContext(enum.SuperUserID), &pb.AppRequest{
-			App: &pb.App{
-				Name:  "pocket",
-				Type:  "pocket",
-				Token: v.accessToken,
-				Extra: util.ByteToString(extra),
-			},
-		})
-		if err != nil {
-			return err
-		}
-		if appReply.GetState() {
-			return c.SendString("Success")
-		}
+		return &pb.App{
+			Name:  ID,
+			Type:  ID,
+			Token: v.accessToken,
+			Extra: util.ByteToString(extra),
+		}, nil
 	}
-	return errors.New("error")
+	return nil, errors.New("error")
 }
 
 func (v *Pocket) Retrieve(count int) (*ListResponse, error) {

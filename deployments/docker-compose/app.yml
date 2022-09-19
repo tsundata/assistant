@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  gateway:
-    image: ghcr.io/tsundata/gateway:${APP_VERSION}
+  server:
+    image: ghcr.io/tsundata/assistant:${APP_VERSION}
     restart: always
     environment:
       ETCD_ADDRESS: ${ETCD_ADDRESS}
@@ -11,13 +11,3 @@ services:
       ETCD_PASSWORD: ${ETCD_PASSWORD}
     ports:
       - "5000:5000"
-
-  web:
-    image: ghcr.io/tsundata/web:${APP_VERSION}
-    restart: always
-    environment:
-      ETCD_ADDRESS: ${ETCD_ADDRESS}
-      ETCD_USERNAME: ${ETCD_USERNAME}
-      ETCD_PASSWORD: ${ETCD_PASSWORD}
-    ports:
-      - "7000:7000"

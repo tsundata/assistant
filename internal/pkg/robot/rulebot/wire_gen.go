@@ -7,11 +7,11 @@ package rulebot
 
 import (
 	"github.com/google/wire"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	repository2 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
-	service3 "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
-	service2 "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
+	service4 "github.com/tsundata/assistant/internal/app/bot/finance/service"
+	repository4 "github.com/tsundata/assistant/internal/app/bot/okr/repository"
+	service6 "github.com/tsundata/assistant/internal/app/bot/okr/service"
+	repository3 "github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	service5 "github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/global"
@@ -87,7 +87,7 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	financeSvcServer := service.NewFinance()
+	financeSvcServer := service4.NewFinance()
 	locker := global.NewLocker(client)
 	idSvcClient, err := rpcclient.NewIdClient(rpcClient)
 	if err != nil {
@@ -98,10 +98,10 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 	if err != nil {
 		return nil, err
 	}
-	todoRepository := repository.NewMysqlTodoRepository(locker, globalID, conn)
-	todoSvcServer := service2.NewTodo(bus, logLogger, todoRepository)
-	okrRepository := repository2.NewMysqlOkrRepository(locker, globalID, conn)
-	okrSvcServer := service3.NewOkr(bus, okrRepository, middleSvcClient)
+	todoRepository := repository3.NewMysqlTodoRepository(locker, globalID, conn)
+	todoSvcServer := service5.NewTodo(bus, logLogger, todoRepository)
+	okrRepository := repository4.NewMysqlOkrRepository(locker, globalID, conn)
+	okrSvcServer := service6.NewOkr(bus, okrRepository, middleSvcClient)
 	componentComponent := component.NewComponent(appConfig, bus, redisClient, logLogger, messageSvcClient, chatbotSvcClient, middleSvcClient, storageSvcClient, userSvcClient, financeSvcServer, todoSvcServer, okrSvcServer)
 	ruleBot := New(componentComponent)
 	return ruleBot, nil
@@ -109,4 +109,4 @@ func CreateRuleBot(id string) (*RuleBot, error) {
 
 // wire.go:
 
-var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, global.ProviderSet, mysql.ProviderSet, service3.ProviderSet, repository.ProviderSet, service2.ProviderSet, repository2.ProviderSet, service.ProviderSet)
+var testProviderSet = wire.NewSet(log.ProviderSet, config.ProviderSet, etcd.ProviderSet, ProviderSet, rpcclient.ProviderSet, redis.ProviderSet, rollbar.ProviderSet, rpc.ProviderSet, jaeger.ProviderSet, newrelic.ProviderSet, component.ProviderSet, event.ProviderSet, rabbitmq.ProviderSet, global.ProviderSet, mysql.ProviderSet, service6.ProviderSet, repository3.ProviderSet, service5.ProviderSet, repository4.ProviderSet, service4.ProviderSet)

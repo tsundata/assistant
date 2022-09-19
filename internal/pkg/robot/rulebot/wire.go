@@ -5,11 +5,11 @@ package rulebot
 
 import (
 	"github.com/google/wire"
-	financeService "github.com/tsundata/assistant/internal/app/chatbot/bot/finance/service"
-	okrRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/repository"
-	okrService "github.com/tsundata/assistant/internal/app/chatbot/bot/okr/service"
-	todoRepository "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/repository"
-	todoService "github.com/tsundata/assistant/internal/app/chatbot/bot/todo/service"
+	financeService "github.com/tsundata/assistant/internal/app/bot/finance/service"
+	okrRepository "github.com/tsundata/assistant/internal/app/bot/okr/repository"
+	okrService "github.com/tsundata/assistant/internal/app/bot/okr/service"
+	todoRepository "github.com/tsundata/assistant/internal/app/bot/todo/repository"
+	todoService "github.com/tsundata/assistant/internal/app/bot/todo/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/event"
 	"github.com/tsundata/assistant/internal/pkg/global"

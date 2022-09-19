@@ -12,14 +12,10 @@ Assistant Bot is a workflow engine for chatbot
 
 ## Features
 
-- Chat bot
+- Chatbot
 - Message Publish/Subscribe Hub
 - Message Cron, Trigger, Task, Pipeline
 - Workflow Action ([Syntax](./docs/syntax.md))
-
-## Architecture
-
-<img src="./docs/architecture.png" alt="Architecture" align="center" width="100%" /> 
 
 ## Applications used
 

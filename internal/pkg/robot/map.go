@@ -2,11 +2,11 @@ package robot
 
 import (
 	"github.com/tsundata/assistant/api/enum"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/finance"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/github"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/okr"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/system"
-	"github.com/tsundata/assistant/internal/app/chatbot/bot/todo"
+	"github.com/tsundata/assistant/internal/app/bot/finance"
+	"github.com/tsundata/assistant/internal/app/bot/github"
+	"github.com/tsundata/assistant/internal/app/bot/okr"
+	"github.com/tsundata/assistant/internal/app/bot/system"
+	"github.com/tsundata/assistant/internal/app/bot/todo"
 	"github.com/tsundata/assistant/internal/pkg/robot/bot"
 )
 

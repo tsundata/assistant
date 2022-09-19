@@ -1,6 +1,7 @@
 package enum
 
 const (
+	Server  = "server"
 	Id      = "id"
 	Chatbot = "chatbot"
 	Message = "message"

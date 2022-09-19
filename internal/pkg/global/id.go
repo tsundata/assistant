@@ -3,6 +3,7 @@ package global
 import (
 	"context"
 	"github.com/tsundata/assistant/api/pb"
+	"github.com/tsundata/assistant/internal/app/service"
 	"github.com/tsundata/assistant/internal/pkg/config"
 	"github.com/tsundata/assistant/internal/pkg/transport/rpc/discovery"
 	"github.com/tsundata/assistant/internal/pkg/util"
@@ -12,10 +13,10 @@ import (
 
 type ID struct {
 	conf   *config.AppConfig
-	client pb.IdSvcClient
+	client service.IdSvcClient
 }
 
-func NewID(conf *config.AppConfig, client pb.IdSvcClient) *ID {
+func NewID(conf *config.AppConfig, client service.IdSvcClient) *ID {
 	return &ID{
 		conf:   conf,
 		client: client,

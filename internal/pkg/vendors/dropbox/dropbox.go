@@ -2,13 +2,10 @@ package dropbox
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/tsundata/assistant/api/enum"
 	"github.com/tsundata/assistant/api/pb"
-	"github.com/tsundata/assistant/internal/pkg/transport/rpc/md"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"io"
 	"net/http"
@@ -77,11 +74,7 @@ func (v *Dropbox) GetAccessToken(code string) (interface{}, error) {
 	}
 }
 
-func (v *Dropbox) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
-	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
-	if err != nil {
-		return c.SendStatus(http.StatusBadRequest)
-	}
+func (v *Dropbox) Redirect(c *fiber.Ctx, reply *pb.CredentialReply) error {
 	clientId := ""
 	for _, item := range reply.GetContent() {
 		if item.Key == ClientIdKey {
@@ -94,12 +87,8 @@ func (v *Dropbox) Redirect(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
 	return c.Redirect(appRedirectURI, http.StatusFound)
 }
 
-func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) error {
+func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, reply *pb.CredentialReply) (*pb.App, error) {
 	code := c.FormValue("code")
-	reply, err := middle.GetCredential(md.BuildAuthContext(enum.SuperUserID), &pb.CredentialRequest{Type: ID})
-	if err != nil {
-		return err
-	}
 	clientId := ""
 	clientSecret := ""
 	for _, item := range reply.GetContent() {
@@ -115,28 +104,19 @@ func (v *Dropbox) StoreAccessToken(c *fiber.Ctx, middle pb.MiddleSvcClient) erro
 
 	tokenResp, err := v.GetAccessToken(code)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	extra, err := json.Marshal(&tokenResp)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	appReply, err := middle.StoreAppOAuth(md.BuildAuthContext(enum.SuperUserID), &pb.AppRequest{
-		App: &pb.App{
-			Name:  ID,
-			Type:  ID,
-			Token: v.accessToken,
-			Extra: util.ByteToString(extra),
-		},
-	})
-	if err != nil {
-		return err
-	}
-	if appReply.GetState() {
-		return nil
-	}
-	return errors.New("error")
+	return &pb.App{
+		Name:  ID,
+		Type:  ID,
+		Token: v.accessToken,
+		Extra: util.ByteToString(extra),
+	}, nil
 }
 
 func (v *Dropbox) Upload(path string, content io.Reader) error {
