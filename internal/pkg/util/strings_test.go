@@ -3,7 +3,7 @@ package util
 import (
 	"github.com/stretchr/testify/require"
 	"github.com/tsundata/assistant/api/pb"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 )
@@ -140,7 +140,7 @@ func TestImageToBase64(t *testing.T) {
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +151,7 @@ func TestImageToBase64(t *testing.T) {
 	}
 	defer func() { _ = resp2.Body.Close() }()
 
-	bytes2, err := ioutil.ReadAll(resp2.Body)
+	bytes2, err := io.ReadAll(resp2.Body)
 	if err != nil {
 		t.Fatal(err)
 	}

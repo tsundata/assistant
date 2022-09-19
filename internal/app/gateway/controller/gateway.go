@@ -21,7 +21,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -564,7 +564,7 @@ func (gc *GatewayController) UploadFile(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	data, err := ioutil.ReadAll(f)
+	data, err := io.ReadAll(f)
 	if err != nil {
 		return err
 	}

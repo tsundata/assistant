@@ -7,7 +7,7 @@ import (
 	"github.com/tsundata/assistant/internal/pkg/middleware/etcd"
 	"github.com/tsundata/assistant/internal/pkg/util"
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -36,7 +36,7 @@ var configCmd = &cobra.Command{
 			}
 
 			path = filepath.Clean(path)
-			data, err := ioutil.ReadFile(path) // #nosec
+			data, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}

@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -11,7 +10,7 @@ func GetSocketCount() uint64 {
 	var socketCount uint64
 	pid := os.Getpid()
 	base := fmt.Sprintf("/proc/%d/fd", pid)
-	fds, err := ioutil.ReadDir(base)
+	fds, err := os.ReadDir(base)
 	if err != nil {
 		return 0
 	}
@@ -32,7 +31,7 @@ func GetSocketCount() uint64 {
 func GetFDCount() uint64 {
 	pid := os.Getpid()
 	path := fmt.Sprintf("/proc/%d/fd", pid)
-	fds, err := ioutil.ReadDir(path)
+	fds, err := os.ReadDir(path)
 	if err != nil {
 		return 0
 	}
