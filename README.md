@@ -1,3 +1,5 @@
+# [Deprecated] Alternative project: github.com/sysatom/tinode (extra branch)
+
 # Assistant Bot
 
 ![Build](https://github.com/tsundata/assistant/workflows/Build/badge.svg)
